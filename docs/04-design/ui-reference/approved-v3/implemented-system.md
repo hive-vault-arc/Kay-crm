@@ -234,9 +234,10 @@ Asset provenance:
   Casablanca panorama. Its embedded prompt excludes any claim about an exact
   view or inventory record, along with text, logos and interface. PageHeader
   supplies the legibility scrim in CSS.
-- `frontend/public/images/kay-logo.png` preserves supplied KAY raster artwork,
-  including its opaque black background. It is not a generated replacement or
-  a production vector master.
+- The shared `Brand` uses the owner-supplied 2026-10-16 Luxury Gold PNG on black
+  and transparent Champagne Gold PNG for authentication. The earlier active logo
+  is removed; [asset provenance and favicon coverage](../../../../branding/kay-logos.md)
+  supersede the original screenshot's artwork only, not its layout.
 - Inventory cards use authorized record files through `InventoryThumbnail`;
   neither generated scene supplies a record photograph. Missing, pending and
   failed previews remain honestly described.

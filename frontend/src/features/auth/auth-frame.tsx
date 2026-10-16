@@ -9,7 +9,7 @@ export function AuthFrame({ title, description, children }: { title: string; des
     <Image src="/images/login-villa.png" fill alt="" sizes="100vw" className="-z-20 object-cover object-right" preload />
     <div aria-hidden="true" className="absolute inset-0 -z-10 bg-linear-to-r from-background via-background/90 to-background/20" />
     <div className="grid w-full max-w-2xl gap-5">
-      <Brand className="w-36" />
+      <Brand className="w-36" appearance="transparent" />
       <section className="grid gap-6 rounded-lg border bg-card p-6 sm:p-10">
       <div className="grid gap-3"><h1 className="text-page font-semibold">{title}</h1>
         <p className="text-sm text-muted-foreground">{description}</p></div>
