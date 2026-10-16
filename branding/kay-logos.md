@@ -3,6 +3,8 @@
 Owner request:2026-10-16. Replace the earlier low-resolution logo and the empty
 favicon with the two supplied PNGs; preserve the existing Approved V3 interface.
 No generated/redrawn brand, backend, data, permission or business-rule changes.
+This explicit owner instruction supersedes the older reference-only restriction
+for these raster logos; it does not claim a vector master or a new font license.
 
 ## Sources and use
 
@@ -26,11 +28,15 @@ The transparent source's existing edge texture is retained exactly.
 | Desktop shell on every authenticated route/tab/record | `AppShell` → `Brand` | `kay-luxury-gold.png` on black |
 | Mobile navigation | Existing text-based drawer preserved | No previous logo image to replace |
 | Every page's browser tab | Root metadata | Self-contained `favicon.svg`, versioned URL;16/32/48px ICO fallback |
-| iOS/home-screen bookmark | Root metadata |180px `kay-apple-icon.png` |
-| Local website simulator favicon | Existing `/favicon.svg` forwarding | Same new self-contained SVG, no backend change |
+| iOS/home-screen bookmark | Root metadata, hashed Next static import |180px `kay-apple-icon.png` |
+| Local website simulator icons | Existing `/favicon.svg` and `/_next/static/` forwarding | Same SVG and touch icon, no backend change |
 
 The tiny favicon uses the original KAY/key lettermark without the small wordmark,
 not invented lettering. The SVG embeds its PNG and needs no secondary request.
+Both explicit browser-icon links use the SVG so the separate simulator can serve
+them too; `/favicon.ico` remains the conventional fallback. The touch icon's
+hashed Next static path uses the simulator's existing asset allowlist, not a new
+backend proxy route.
 The old active `frontend/public/images/kay-logo.png` is removed (recoverable from
 Git history). Original approved screenshots and historical evidence retain their
 original pixels; rewriting those would falsify their provenance. No history rewrite.
@@ -53,13 +59,18 @@ Artwork aspect ratios remain intact. Logos are not form text or a new status cue
 - `cd frontend; npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`:
   pass, no lint/build warnings. Icon inventory remains27 semantics/0 violations.
 - `$env:KAY_E2E_PRODUCTION='1'; npm.cmd run test:chrome -- tests/e2e/brand.spec.ts --reporter=list`:
-  final3/3 pass in38.8s, compiled stack and visible isolated installed Chrome.
-  The earlier2/2 run is superseded, not added to this count.
+  final4/4 pass in36.5s, compiled stack and visible isolated installed Chrome.
+  Earlier2/2 and3/3 runs are superseded, not added to this count.
 - Checks include both original hashes,5 actual public asset responses/MIME types,
   ICO16/32/48 entries, server-rendered/no-JavaScript login, browser-decoded SVG
   with actual gold pixels, mandatory password-change branding, eight navigation
   routes, actual loaded images,320/768/1440px login and360px keyboard drawer
   open/Escape/focus return. No page overflow or collected page/console errors.
+- The separate simulator advertises only icons its existing allowlist can serve:
+  real SVG and hashed touch-icon responses all200. The first added simulator case
+  raced process readiness and failed before navigation; it now uses the same
+  real200 readiness poll as the incumbent intake helper. No timeout, application
+  guard or assertion is weakened. All four cases pass in the final rerun.
 - All five generated assets reproduce byte-for-byte on a second generator run.
 - Five safe native captures under ignored `frontend/output/playwright/brand/`:
   three empty-login widths, synthetic empty Leads and mobile navigation.

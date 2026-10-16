@@ -1,6 +1,8 @@
 import { mkdir, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { test, expect, signIn, clearActorContext, createActor, removeActor } from "../helpers/auth";
+import { testControl } from "../helpers/api-process";
+import { simulatorOrigin } from "../helpers/intake";
 
 const iconUrl = "/favicon.svg?v=kay-gold-20261016";
 const captures = "output/playwright/brand";
@@ -37,7 +39,7 @@ test("KAY branding: supplied originals, real favicon assets and server-rendered 
     await serverPage.goto("/login");
     await expect(serverPage.getByRole("img", { name: "KAY Real Estate", exact: true })).toHaveAttribute("src", /kay-champagne-gold/);
     await expect(serverPage.locator('link[rel="icon"]')).toHaveAttribute("href", iconUrl);
-    await expect(serverPage.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", "/images/kay-apple-icon.png");
+    await expect(serverPage.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", /^\/_next\/static\/media\/kay-apple-icon\.[\w-]+\.png$/);
   } finally { await noScript.close(); }
 
   const errors: string[] = [];
@@ -65,6 +67,25 @@ test("KAY branding: supplied originals, real favicon assets and server-rendered 
     await page.screenshot({ path: `${captures}/login-${width}.png` });
   }
   expect(errors).toEqual([]);
+});
+
+test("KAY branding: separate website simulator serves every advertised icon", async ({ page }) => {
+  await testControl("simulator-start");
+  try {
+    await expect.poll(async () => {
+      try { return (await page.request.get(simulatorOrigin)).status(); } catch { return 0; }
+    }, { timeout: 10000 }).toBe(200);
+    await page.goto(simulatorOrigin);
+    await expect(page.getByRole("heading", { name: "Formulaire web local", exact: true })).toBeVisible();
+    const urls = await page.locator('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]').evaluateAll(links => links.map(link => (link as HTMLLinkElement).href));
+    expect(urls.length).toBeGreaterThanOrEqual(3);
+    for (const url of urls) {
+      const response = await page.request.get(url);
+      expect(response.status()).toBe(200);
+      expect(response.headers()["content-type"]).toMatch(/image\/(svg\+xml|png)/);
+      expect((await response.body()).length).toBeGreaterThan(100);
+    }
+  } finally { await testControl("simulator-stop"); }
 });
 
 test("KAY branding: mandatory password-change screen reuses transparent artwork", async ({ page }) => {

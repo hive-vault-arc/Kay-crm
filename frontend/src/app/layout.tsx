@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import appleIcon from "../../public/images/kay-apple-icon.png";
 import { themeVariables } from "@/lib/theme";
 import "./globals.css";
 
@@ -8,8 +9,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   icons: {
     icon: { url: "/favicon.svg?v=kay-gold-20261016", type: "image/svg+xml" },
-    shortcut: "/favicon.ico?v=kay-gold-20261016",
-    apple: { url: "/images/kay-apple-icon.png", sizes: "180x180", type: "image/png" },
+    shortcut: "/favicon.svg?v=kay-gold-20261016",
+    apple: { url: appleIcon.src, sizes: "180x180", type: "image/png" },
   },
 };
 
