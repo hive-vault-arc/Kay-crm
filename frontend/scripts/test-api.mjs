@@ -17,6 +17,7 @@ let simulator;
 let workerExit;
 let workerFailure = "";
 let workerReady = false;
+let workerCycles = 0;
 let changing = false;
 let lease;
 let shuttingDown = false;
@@ -54,7 +55,7 @@ async function fixture(command) {
   }); } finally { if (resumeWorker && !shuttingDown) await startWorker(); }
 }
 async function startWorker(unavailable = false) {
-  workerExit = undefined; workerFailure = ""; workerReady = false;
+  workerExit = undefined; workerFailure = ""; workerReady = false; workerCycles = 0;
   const running = spawn(path.join(backend, ".venv/Scripts/python.exe"), ["-m", "tests.supervised_worker"], {
     cwd: backend, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
     env: { ...process.env, APP_ENVIRONMENT: activeEnvironment, ANTIVIRUS_PORT: unavailable ? "1" : "3310" },
@@ -62,6 +63,7 @@ async function startWorker(unavailable = false) {
   worker = running;
   running.on("error", () => { process.exitCode = 1; });
   running.stderr.on("data", chunk => {
+    workerCycles += (chunk.toString().match(/KAY_TEST_WORKER_CYCLE/g) ?? []).length;
     const match = chunk.toString().match(/(?:RuntimeError|IdentityError): ([A-Z_]{4,80})|(?:sqlalchemy\.exc\.|psycopg\.errors\.)([A-Za-z]{3,60})/);
     if (match) workerFailure = match[1] ?? match[2];
   });
@@ -174,7 +176,7 @@ const server = createServer(async (request, response) => {
       await stopWorker(); await stopSimulator(); await stop();
       activeEnvironment = request.url === "/recovery-start" ? "recovery" : "test";
       await start();
-    } else if (request.url === "/worker-status") result = { running: Boolean(worker), ready: workerReady, exit: workerExit ?? null, failure: workerFailure };
+    } else if (request.url === "/worker-status") result = { running: Boolean(worker), ready: workerReady, cycles: workerCycles, exit: workerExit ?? null, failure: workerFailure, exports: await fixture({ action: "queue-status" }) };
     else if (request.url === "/simulator-start") await startSimulator();
     else if (request.url === "/simulator-stop") await stopSimulator();
     else if (request.url === "/worker-stop") await stopWorker();

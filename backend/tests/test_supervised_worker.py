@@ -22,5 +22,7 @@ def test_worker_readiness_observes_but_never_grants_admission(monkeypatch, capsy
     monkeypatch.setattr(supervised_worker, "worker_main", real_entrypoint)
     supervised_worker.main()
     assert calls == [admission] * 3
-    assert capsys.readouterr().out == "KAY_TEST_WORKER_READY\n"
+    captured = capsys.readouterr()
+    assert captured.out == "KAY_TEST_WORKER_READY\n"
+    assert captured.err == "KAY_TEST_WORKER_CYCLE\n" * 2
     assert supervised_worker.Admission.enter is original
