@@ -731,5 +731,8 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
 - Keep pytest and Playwright fixture writers serial even for focused startup
   checks; the shared lease correctly refused an accidental overlap before any
   fixture write. Rerun only after the owning browser supervisor has exited.
+- Renaming a dependency artifact also changes recovery inputs. Inspect code
+  archives/compatibility digests, not only install scripts and the detector;
+  keep the canonical requirements file in both the archive and its fingerprint.
 - Promote to AGENTS.md: no; existing security, real-command and serial-writer
   requirements already cover these corrections.

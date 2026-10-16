@@ -6,7 +6,9 @@ The full pinned runtime list moves to `backend/requirements.txt` without changin
 any dependency version/hash. The old `requirements.lock` is a hash-enforcing
 compatibility include. Existing Python pin3.14.3 remains, and the lock generator
 writes the conventional filename. Repository safety now requires its presence.
-Focused packaging/Uvicorn checks: final9/9 passed1.18s; Ruff check/format3 files
+Recovery's code manifest additionally includes the canonical filename; its new
+regression first fails for the missing path and passes after correction.
+Focused packaging/Uvicorn checks: final10/10 passed2.61s; Ruff check/format4 files
 and strict mypy177 modules pass. Both conventional/compatibility requirement
 files pass pip's real hash-enforcing dry-run; the runtime audit via the compatibility
 include finds no known vulnerabilities. A byte-for-byte comparison preserves

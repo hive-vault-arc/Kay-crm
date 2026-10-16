@@ -6,6 +6,9 @@ The owner requests a conventional full `requirements.txt` and publication to
 main. Runtime package pins/hashes move without changes; the old lock filename
 becomes a hash-enforcing compatibility include and no development packages are
 added to runtime. Packaging guards check the full-list/alias/Python-pin boundary.
+Recovery's existing code archive/compatibility digest additionally includes the
+new canonical filename, retaining dependency-change detection and extraction.
+A focused regression reproduces the omission before the one-path correction.
 No Dockerfile, cloud credentials, resource creation, production configuration or
 Windows/loopback/TLS/storage guard bypass is introduced. DigitalOcean detection
 is distinct from deployment; current runtime blockers are [explicitly recorded](06-delivery-and-operations/digitalocean-detection.md).

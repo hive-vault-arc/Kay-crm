@@ -29,6 +29,7 @@ def code_paths() -> list[Path]:
         root / name
         for name in (
             "backend/pyproject.toml",
+            "backend/requirements.txt",
             "backend/requirements.lock",
             "backend/requirements-dev.lock",
             "frontend/package.json",

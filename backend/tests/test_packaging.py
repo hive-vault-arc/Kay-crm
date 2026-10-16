@@ -26,3 +26,11 @@ def test_buildpack_python_version_matches_project_and_ci():
         project = tomllib.load(source)["project"]
     assert project["requires-python"] == f"=={version}"
     assert (BACKEND_ROOT.parent / ".python-version").read_text(encoding="utf-8").strip() == version
+
+
+def test_runtime_requirements_are_preserved_in_recovery_code_and_compatibility():
+    from app.recovery.snapshot import code_paths
+
+    paths = code_paths()
+    assert BACKEND_ROOT / "requirements.txt" in paths
+    assert BACKEND_ROOT / "requirements.lock" in paths

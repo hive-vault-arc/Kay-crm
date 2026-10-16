@@ -16,6 +16,10 @@ include of `requirements.txt`, not a second dependency list. The lock-generation
 command now writes `requirements.txt`. It does not pull in development tools,
 remove hashes or change package versions. The
 existing `backend/.python-version` remains3.14.3, matching pyproject.toml and CI.
+
+The existing recovery code manifest/compatibility digest also includes the new
+canonical filename. A regression test first reproduced its omission, then passes
+after adding that one path; the compatibility guard is not relaxed or bypassed.
 DigitalOcean documents3.14.3 support on its Ubuntu-22 Python buildpack. No Docker
 image, Procfile, credentials, public deployment spec or auto-deploy workflow is
 added by this repair.
@@ -53,7 +57,7 @@ Repository index/secret checks and the existing full hosted CI must pass before
 merge. Actual DigitalOcean detection/build/deployment is not claimed until
 observed in that service; no cloud resources are created by these checks.
 
-Local preflight: final packaging/Uvicorn9/9 pass1.18s; Ruff check/format3 files
+Local preflight: final packaging/Uvicorn10/10 pass2.61s; Ruff check/format4 files
 and strict mypy177 modules pass. Both requirement filenames parse successfully
 with pip's hash-enforcing dry-run; the compatibility runtime pip-audit is clean.
 The full pin/hash content is independently compared against the former lock,
