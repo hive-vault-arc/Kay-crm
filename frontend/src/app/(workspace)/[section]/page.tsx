@@ -1,10 +1,7 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { AuditPanel } from "@/features/discovery/audit-panel";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
-import { ServiceStatus } from "@/features/shell/service-status";
 import { requireIdentity } from "@/lib/auth/server";
 import { AuthUnavailable } from "@/features/auth/auth-frame";
 import { WorkDashboard } from "@/features/work/work-dashboard";
@@ -29,7 +26,7 @@ export default async function WorkspacePage({ params, searchParams }: Props) {
     {identity.profile.user.role === "agent" ? <p role="alert">Accès non autorisé : le journal est réservé aux responsables et administrateurs.</p> : <AuditPanel />}
   </>;
   return <>
-    <PageHeader title="Tableau de bord" description={identity.profile.user.role === "agent" ? "Le travail affiché concerne uniquement vos dossiers attribués ou partagés." : "Le travail affiché respecte vos droits sur les dossiers de l’équipe."} route="/dashboard" actions={<><ServiceStatus />{identity.profile.user.role !== "agent" ? <Button asChild variant="outline"><Link href="/dashboard?view=audit">Journal d’audit</Link></Button> : null}</>} />
+    <PageHeader title="Tableau de bord" description={identity.profile.user.role === "agent" ? "Le travail affiché concerne uniquement vos dossiers attribués ou partagés." : "Le travail affiché respecte vos droits sur les dossiers de l’équipe."} route="/dashboard" />
     <WorkDashboard />
   </>;
 }

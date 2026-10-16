@@ -31,9 +31,12 @@ export async function signIn(page: Page, actor: TestActor, returnTo?: string) {
   // Poll a primitive: page matchers can attach secret-bearing input snapshots.
   await expect.poll(() => /\/(dashboard|leads|deals|visits|projects|change-password)$/.test(page.url())).toBe(true);
   await page.waitForLoadState("load");
-  await expect(page.getByRole("button", { name: "Se déconnecter", exact: true })).toBeEnabled();
+  const readyControl = new URL(page.url()).pathname === "/change-password"
+    ? page.getByRole("button", { name: "Se déconnecter", exact: true })
+    : page.getByRole("button", { name: "Ouvrir les notifications", exact: true });
+  await expect(readyControl).toBeEnabled();
   if (new URL(page.url()).pathname === "/dashboard")
-    await expect(page.getByText("Service local disponible", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
 }
 
 export function removeInputSnapshots(errors: readonly TestInfoError[]) {

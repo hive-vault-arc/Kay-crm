@@ -21,5 +21,5 @@ function Prefilled({ actorId, contactId }: { actorId: string; contactId: string 
 function ForContact({ actorId, contact }: { actorId: string; contact: ContactSummary }) {
   const router = useRouter();
   if (contact.archived_at) return <p role="status">Contact archivé. Restaurez-le avant de planifier une visite.</p>;
-  return <div className="grid min-w-0 gap-6"><VisitForm contactId={contact.id} contactName={contact.name} actorId={actorId} saved={id => router.push(`/visits/${id}`)} /><Button variant="outline" className="justify-self-start" onClick={() => router.push("/visits")}>Retour au calendrier</Button></div>;
+  return <div className="grid min-w-0 gap-6"><VisitForm contactId={contact.id} contactName={contact.name} actorId={actorId} saved={id => router.push(`/visits/${id}`)} /><Button action="back" variant="outline" className="justify-self-start" onClick={() => router.push("/visits")}>Retour au calendrier</Button></div>;
 }

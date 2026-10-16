@@ -1,5 +1,141 @@
 # KAY security check for changes
 
+## DigitalOcean public PostgreSQL CA (2026-10-16)
+
+Owner-provided file is one parseable public X.509 CA, no key or extra content;
+byte/hash equality and self-signature verified. Public `.crt` is intentionally
+bundled, not a private-key ignore exception. Both managed launchers preflight
+readability/public-only content before settings; failures expose only
+`DATABASE_URL:TLS_ROOT_INVALID`. Existing production `verify-full`, exact managed
+host, absolute root parsing, authorization and database/migration/isolated-test
+guards are unchanged. No secrets read, URLs printed, trust roots installed,
+production connection or deployment. Public CA/launchers enter recovery code
+artifacts; old restore points and database safeguards are not modified.
+105 connection-forbidden unit cases pass;503 deselected are not passed. Two
+non-root read-only/network-disabled Linux probes verify the intended file path,
+API startup and worker configuration only, not actual managed TLS/queue activity.
+Invalid-CA launchers fail before settings, public-bundle redacted scan0 findings.
+Live container readbacks and the full pre-customer-data release gate remain
+pending. [Evidence and safe console check](06-delivery-and-operations/digitalocean-postgres-ca.md).
+
+## Dashboard header controls (2026-10-16)
+
+Owner-requested UI-only removal of the audit shortcut; the local readiness/retry
+widget was already removed. The direct audit view, server role guard and API
+authorization remain unchanged. No backend, health/TLS, database, migration,
+credential or permission change. Tests retain privileged access and agent403
+checks using the isolated synthetic harness, never production.
+[Current scope and results](04-design/ui-reference/approved-v3/dashboard-header.md).
+
+## Performance-dashboard presentation (2026-10-16)
+
+UI-only use of existing report/enquiry/deal projections: no new backend metric,
+route, permission, database table, migration or configuration. Current snapshot
+pipelines are not presented as conversion cohorts; activity counts are not
+invented unique worked-Lead/Deal totals. Money remains an exact backend decimal
+string, finance is absent/denied for agents, and drill-down retains the same
+attribution/period intersection. Neutral KPI styling, Bklit funnel composition
+and stacked agent contributions preserve the complete numeric legends/tables.
+Existing APIs still apply scope before count/group/page. No client role or
+unrestricted-data aggregation is introduced. No new package or remote loader.
+
+Browser setup/cleanup uses the existing exclusive synthetic-database lease,
+versioned authenticated commands and disposable actors. The11-contributor page
+edge case uses an explicitly synthetic browser response after real API parity
+checks; it is not represented as an application feature or a server data test.
+Captures are post-login synthetic UI only; traces/password snapshots remain off.
+Backend working diff is empty. No push, production connection or deployment.
+[Scope, actual verification and limits](04-design/ui-reference/approved-v3/performance-dashboard.md).
+
+## Dashboard development diagnostic removal (2026-10-16)
+
+Remove only the frontend local-service widget and its unused component. Backend
+readiness/liveness endpoints, HTTPS/TLS facade, authentication, authorization,
+database/migration checks and monitoring are unchanged. Authorized audit access
+and normal report failure/retry stay visible. Tests wait for real report content
+instead of diagnostic copy and retain real health status/body/cache/request-ID,
+invalid-route/query and outage503/restart200 checks. Five focused compiled
+headed Chrome cases pass against the guarded synthetic target; no production
+access, customer data, credential capture, new dependency, push or deployment.
+[Evidence and release-test limitation](04-design/ui-reference/approved-v3/dashboard-header.md#subsequent-owner-request-remove-local-diagnostics).
+
+## Local dashboard city-header presentation (2026-10-16)
+
+Only the title strip's border/radius/minimum height and decorative image scale
+change. Existing image origin, empty alt, controls, permission checks, API data,
+auth/session/CSRF and backend remain unchanged. No new dependency, remote asset,
+credential, customer record or production access. Visible compiled Chrome uses
+the guarded synthetic database; scoped admin/agent/audit and failure/recovery
+checks pass. Safe captures exclude credentials. Test services stop afterward,
+shared PostgreSQL preserved. No UI commit/push/deployment performed.
+[Scope and evidence](04-design/ui-reference/approved-v3/dashboard-header.md).
+
+## Local login icon presentation (2026-10-16)
+
+Only inline semantic icons, local corner-radius classes and flex spacing change.
+Existing form association, generic errors, password clearing, hydration disable,
+pending state, password visibility labels, authentication/session/CSRF/cookie/
+redirect and rate-limit logic are preserved. No backend diff or new dependency.
+Two source-verified official Free assets use the existing licensed SSR-safe layer;
+no remote loader, asset request, key, subscription or public sign-up is added.
+Real guarded synthetic auth/retry/password-change Chrome cases pass. No password
+is captured; safe screenshots and disposable profiles stay ignored. Test services
+stop afterward, shared PostgreSQL preserved. No commit/push/deployment performed.
+[Scope and evidence](04-design/ui-reference/approved-v3/login-icons.md).
+
+## Managed application runtime exception (2026-10-16)
+
+The owner requests repairing the supplied Linux buildpack import failure and
+publishing the fix. Only exact Python3.14.3 at this backend's resolved Linux
+`.heroku/python` prefix gains application-import compatibility. Wrong prefixes,
+patches/platforms remain denied; require_venv and app.cli remain local-venv-only.
+No database URL, TLS, session, permission, bootstrap, worker or backup boundary is
+disabled. Missing cloud configuration still fails closed. The actual Linux
+probe mounts only source/public hash lock/probe read-only, uses random transient
+facade proof and a synthetic unavailable loopback DB, publishes no host port
+and verifies503 rather than false readiness. No laptop configuration, key, record
+or file is copied into it. Managed runtime artifacts are ignored/index-rejected.
+Actions remain read-only; Linux joins the existing aggregate and main protection
+is read back, not bypassed. [Published evidence and remaining scope](06-delivery-and-operations/digitalocean-runtime-fix.md).
+This shared file's earlier unrelated UI notes remain excluded from the hotfix.
+
+## Left directory filter presentation (2026-10-16)
+
+Only frontend layout, selected-agent display persistence and table overflow
+guidance change. The real applied-filter objects, pagination reset, query
+allowlists, archive timing and role predicates remain authoritative. AgentPicker's
+optional selectedLabel is the existing selector's display string, never a new
+ID, scope grant or payload field. No backend, migration or API contract diff.
+Synthetic-only guarded browser fixtures/captures, no credential-bearing trace;
+new output paths are ignored. Final compiled client scan checks4 roots/352 JS
+files and finds0 configured facade-secret/0 configured signing-key occurrences.
+[Current interaction evidence and limits](04-design/ui-reference/approved-v3/filter-rail.md)
+are separate from historical full-product checks. No real records, import/export,
+external message, new dependency or deployment is introduced by this change.
+
+## Leads/Deals header action hierarchy (2026-10-16)
+
+Opt-in gold/quiet Button variants and shared presentation grouping change only
+list headers and compact triggers. Existing import/export role conditions,
+column preferences, export filter payloads, explicit confirmation, idempotency,
+pending/retry, private download and record creation commands are unchanged.
+Actual scoped CSV download/agent403 and Lead/Deal creation regressions pass;
+new header cases check agent-hidden import/export and real touch/keyboard paths.
+Backend/API/permission files remain untouched, and fixtures/captures are synthetic.
+No credential, external asset, deployment or new dependency added. [Evidence](04-design/ui-reference/approved-v3/list-header-actions.md).
+
+## Sidebar account footer boundary (2026-10-16)
+
+Only shared frontend presentation and optional logout styling props change.
+CSRF retrieval, POST revocation, cookie handling, session monitor and forced
+password-change behavior remain unchanged; no backend path is modified. The
+password-change route remains available, with only its sidebar links removed as
+requested. Real isolated Chrome checks pass pending/failure/retry, mobile touch
+revocation401, keyboard logout, refresh/replay, restricted-password fresh login
+and late-denial races. Failed transport leaves the real session valid before
+retry; the alert uses existing readable danger tokens. All identities/data are
+synthetic; no credential-bearing trace/capture is added. [Evidence and limits](04-design/ui-reference/approved-v3/account-footer.md).
+
 ## DigitalOcean detection metadata (2026-10-16)
 
 The owner requests a conventional full `requirements.txt` and publication to
@@ -423,6 +559,30 @@ access. Both verified schemas head0019/no drift. Synthetic fixture deletion
 and expired/orphan reconciliation do not establish a real-data retention policy.
 
 ## Local runtime repairs (2026-10-16)
+
+Subsequent app-wide button refinement adds only explicit presentation metadata,
+the shared shadcn composition and selected verified Iconsax assets. Labels,
+hrefs, types, disabled gates, handlers, command bodies and real authorization
+remain. Destructive business cancellation stays separate from neutral dialog
+dismissal; archive/release/outcome confirmations and required reasons remain.
+Backend and GitHub workflow diffs are empty. Compiled headed checks exercise
+actual staff handoff/password/session/disable, role/private-ID denial and safe
+read retry alongside real record creation/proposal/stage changes. All43 inline
+glyphs have no external SVG references or offline requests. No premium key,
+secret, dependency install, production access or real customer data is used.
+Synthetic post-login captures and test profiles stay ignored; no issued
+credential capture. This is not a complete production/release security result.
+[Scope, source inventory, retained failures and final checks](04-design/ui-reference/approved-v3/action-buttons.md).
+
+Subsequent Lead/Deal fact-layout refinement is UI-only: backend and workflow
+diffs remain empty, HTTPS/session/CSRF/authorization/version checks are unchanged.
+Guarded synthetic headed checks verify actual creation/edit/retry/conflicts and
+real copied-ID denial for another agent; unauthorized facts/contact name are
+not rendered. Admin-only assignment remains absent for agents. No production
+database, real records, secrets, export or external send is used. Screenshots
+are post-login synthetic only; output/test-results paths remain ignored.
+Focused UI evidence is not a complete database/release/security-suite pass.
+[Actual verification and scope](04-design/ui-reference/approved-v3/record-facts.md).
 
 No facade/identity/secure-cookie/TLS checks were disabled. The Windows server loop
 change does not filter exceptions or logs. Static filename compatibility accepts

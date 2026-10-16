@@ -37,7 +37,7 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
   if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
   if (!contact) return <>{heading}<p role="status">Chargement du contact…</p></>;
   return <div className="record-stack grid min-w-0 gap-5">
-    <PageHeader title={<><span className="sr-only">Contact : </span>{contact.name}</>} description="Fiche contact · Identité, coordonnées et demandes dans votre périmètre." route={`/contacts/${id}`} actions={!contact.archived_at && !editing ? <Button disabled={!hydrated} onClick={() => { setTab("identity"); setEditing(true); setSaved(false); }}>Modifier le contact</Button> : undefined} />
+    <PageHeader title={<><span className="sr-only">Contact : </span>{contact.name}</>} description="Fiche contact · Identité, coordonnées et demandes dans votre périmètre." route={`/contacts/${id}`} actions={!contact.archived_at && !editing ? <Button action="edit" disabled={!hydrated} onClick={() => { setTab("identity"); setEditing(true); setSaved(false); }}>Modifier le contact</Button> : undefined} />
     <div><Badge variant={contact.archived_at ? "neutral" : "success"}>{contact.archived_at ? "Contact archivé" : "Contact actif"}</Badge></div>
     {contact.id !== id ? <p>Cette ancienne fiche a été fusionnée. Vous consultez la <Link className="inline-flex min-h-control items-center text-link underline" href={`/contacts/${contact.id}`}>fiche conservée</Link>.</p> : null}
     {contact.archived_at ? <p role="status" className="text-muted-foreground">Contact archivé. Les liens et les auteurs sont conservés. Restaurez-le pour reprendre les modifications.</p> : null}

@@ -1,6 +1,9 @@
 "use client";
 import { PageHeader } from "@/components/shared/page-header";
 import { RecordStatusStrip } from "@/components/shared/record-status-strip";
+import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
+import { SectionHeading } from "@/components/shared/section-heading";
+import { CalendarIcon, ContactIcon, ContactsIcon, EmailIcon, EnquiryIcon, InboxIcon, PhoneIcon, RadioIndicatorIcon } from "@/components/icons";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -20,15 +23,27 @@ export function LeadRecord({ id, edit = false, role = "agent" }: { id: string; e
   if (error) return <>{heading}<RecordError error={error} retry={refresh} /></>;
   if (!enquiry) return <>{heading}<p role="status">Chargement de la demande…</p></>;
   if (edit && !enquiry.contact.archived_at) return <LeadEditor key={id} enquiry={enquiry} />;
-  return <div className="record-stack grid max-w-reading gap-5">
-    {!edit ? <PageHeader title={enquiry.contact.name} description="Détail du Lead · La demande et les coordonnées accessibles de son contact." route={`/leads/${id}`} actions={!enquiry.contact.archived_at ? <><Button asChild><Link href={`/leads/${id}/edit`}>Modifier le Lead</Link></Button><Button asChild variant="outline"><Link href={`/deals/new?contact_id=${enquiry.contact.id}&enquiry_id=${id}`}>Créer une affaire</Link></Button></> : undefined} /> : null}
+  return <div className="record-stack grid min-w-0 gap-5">
+    {!edit ? <PageHeader title={enquiry.contact.name} description="Détail du Lead · La demande et les coordonnées accessibles de son contact." route={`/leads/${id}`} actions={!enquiry.contact.archived_at ? <><Button action="edit" asChild><Link href={`/leads/${id}/edit`}>Modifier le Lead</Link></Button><Button action="create" asChild variant="outline"><Link href={`/deals/new?contact_id=${enquiry.contact.id}&enquiry_id=${id}`}>Créer une affaire</Link></Button></> : undefined} /> : null}
     <RecordStatusStrip label="Statuts de la demande, lecture seule" current={enquiry.status} items={Object.entries(statusLabels).map(([id, label]) => ({ id, label }))} />
     <p className="flex flex-wrap items-center gap-2"><Badge variant={enquiry.status === "new" ? "info" : enquiry.status === "in_progress" ? "warning" : "neutral"}>{statusLabels[enquiry.status]}</Badge><span className="text-xs text-muted-foreground">Demande reçue le {formatInstant(enquiry.received_at)}</span></p>
-    <section className="grid gap-4"><h2 className="text-section font-semibold">Contact</h2><dl className="grid gap-4"><div><dt>Nom du contact</dt><dd><Link className="inline-flex min-h-control items-center wrap-anywhere text-link underline" href={`/contacts/${enquiry.contact.id}`}>{enquiry.contact.name}</Link></dd></div><div><dt>Téléphone principal</dt><dd>{enquiry.contact.primary_phone}</dd></div>{enquiry.contact.primary_email ? <div><dt>E-mail principal</dt><dd className="wrap-anywhere">{enquiry.contact.primary_email}</dd></div> : null}<div><dt>Agent responsable</dt><dd className="wrap-anywhere">{enquiry.contact.primary_agent.display_name}</dd></div></dl></section>
-    <section className="grid gap-4"><h2 className="text-section font-medium">Demande reçue</h2><dl className="grid grid-cols-1 gap-4 sm:grid-cols-2"><div><dt className="text-sm text-muted-foreground">Statut</dt><dd>{statusLabels[enquiry.status]}</dd></div><div><dt className="text-sm text-muted-foreground">Source initiale</dt><dd>{sourceLabels[enquiry.source]}</dd></div><div><dt className="text-sm text-muted-foreground">Reçue le</dt><dd>{formatInstant(enquiry.received_at)}</dd></div><div><dt className="text-sm text-muted-foreground">Attribuée à</dt><dd className="wrap-anywhere">{enquiry.assigned_agent?.display_name ?? "Non attribuée, file du responsable"}</dd></div></dl><p className="whitespace-pre-wrap wrap-anywhere">{enquiry.message || "Aucun message renseigné."}</p>{enquiry.source_submission_id ? <p className="wrap-anywhere text-sm text-muted-foreground">Référence initiale : {enquiry.source_submission_id}</p> : null}</section>
+    <section className="grid min-w-0 gap-5" aria-label="Contact"><SectionHeading icon={ContactIcon}>Contact</SectionHeading><RecordFacts>
+      <RecordFact icon={ContactIcon} label="Nom du contact"><Link className="inline-flex min-h-control items-center wrap-anywhere text-link underline" href={`/contacts/${enquiry.contact.id}`}>{enquiry.contact.name}</Link></RecordFact>
+      <RecordFact icon={PhoneIcon} label="Téléphone principal">{enquiry.contact.primary_phone}</RecordFact>
+      <RecordFact icon={EmailIcon} label="E-mail principal">{enquiry.contact.primary_email || "Non renseigné"}</RecordFact>
+      <RecordFact icon={ContactsIcon} label="Agent responsable">{enquiry.contact.primary_agent.display_name}</RecordFact>
+    </RecordFacts></section>
+    <section className="grid min-w-0 gap-5" aria-label="Demande reçue"><SectionHeading icon={EnquiryIcon} tone="purple">Demande reçue</SectionHeading><RecordFacts>
+      <RecordFact icon={RadioIndicatorIcon} label="Statut">{statusLabels[enquiry.status]}</RecordFact>
+      <RecordFact icon={InboxIcon} label="Source initiale">{sourceLabels[enquiry.source]}</RecordFact>
+      <RecordFact icon={CalendarIcon} label="Reçue le">{formatInstant(enquiry.received_at)}</RecordFact>
+      <RecordFact icon={ContactsIcon} label="Attribuée à">{enquiry.assigned_agent?.display_name ?? "Non attribuée, file du responsable"}</RecordFact>
+      <RecordFact icon={EnquiryIcon} label="Message">{enquiry.message || "Aucun message renseigné."}</RecordFact>
+      {enquiry.source_submission_id ? <RecordFact icon={EnquiryIcon} label="Référence initiale">{enquiry.source_submission_id}</RecordFact> : null}
+    </RecordFacts></section>
     {saved ? <p role="status" className="text-success">Attribution enregistrée.</p> : null}
     {role !== "agent" && !enquiry.contact.archived_at ? <EnquiryAssignment key={enquiry.version} enquiry={enquiry} saved={() => { setSaved(true); refresh(); }} /> : null}
-    <div className="flex flex-wrap gap-2">{enquiry.contact.archived_at ? <p>Le contact est archivé. Restaurez-le avant de modifier la demande.</p> : null}<Button asChild variant="outline"><Link href="/leads">Tous les Leads</Link></Button></div>
+    <div className="flex flex-wrap gap-2">{enquiry.contact.archived_at ? <p>Le contact est archivé. Restaurez-le avant de modifier la demande.</p> : null}<Button action="back" asChild variant="outline"><Link href="/leads">Tous les Leads</Link></Button></div>
     <Link className="inline-flex min-h-control items-center justify-self-start text-link underline" href={`/contacts/${enquiry.contact.id}`}>Ouvrir le contact et son historique</Link>
     <RequirementPanel key={enquiry.contact.id} contactId={enquiry.contact.id} writable={!enquiry.contact.archived_at} />
     <p className="text-sm text-muted-foreground">Créer une affaire ne convertit ni ne clôture cette demande.</p>

@@ -66,7 +66,7 @@ export function FoundationCheck() {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={!hydrated}>
+          <Button action="confirm" type="submit" disabled={!hydrated}>
             Vérifier le libellé
           </Button>
           {validated && <p role="status">Préférence validée localement.</p>}
@@ -84,7 +84,7 @@ export function FoundationCheck() {
         title="Lecture des lignes indisponible"
         description="Une erreur de lecture ne confirme aucun enregistrement."
       />
-      <Button variant="outline" onClick={() => setCrashed(true)}>
+      <Button action="preview" variant="outline" onClick={() => setCrashed(true)}>
         Déclencher l’erreur de test
       </Button>
     </div>

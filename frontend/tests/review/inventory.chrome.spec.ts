@@ -6,7 +6,7 @@ import { createLead } from "../helpers/leads";
 import { addOwners, confirmCampaign, createCampaign, createProperty, openProperty } from "../helpers/inventory";
 
 async function capture(page: Page, destination: string) {
-  await expect(page.getByRole("button", { name: "Se déconnecter", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   const client = await page.evaluate(() => document.documentElement.clientWidth);
   const cdp = await page.context().newCDPSession(page);
   try {

@@ -5,7 +5,34 @@ Approved V3, shadcn/ui, Tailwind and Bklit remain authoritative. Current technic
 results and limitations: [execution.md](execution.md). A source checkbox is not
 a claim of one browser screenshot for every nested permission/state permutation.
 
+## Local login extension (2026-10-16)
+
+The later [app-wide action-button refinement](../../04-design/ui-reference/approved-v3/action-buttons.md)
+adds14 verified Free linear assets to the same SSR-safe semantic layer. Current
+local inventory:43 semantic exports,28 icon consumers,113 icon sites and0
+violations;3 chart roots excluded. The action registry reaches276 explicitly
+mapped buttons across95 files, with5 existing icon buttons and4 reviewed data
+exceptions (285 total). The full original/login/detail counts below remain
+historical evidence, not the latest source totals. No premium/runtime package,
+new license claim, dependency installation, icon CDN or push.
+
+The later explicit login refinement adds five requested placements and two
+verified Free assets (`security.lock`, `arrow.login-02`). Current totals are29
+semantic exports from28 unique official assets,23 consumer files and45 sites;
+the original migration counts and browser evidence below remain historical.
+The original statement about not adding icons to text-only buttons describes
+that migration, not this subsequently requested sign-in icon.
+[Scope, provenance and current checks](../../04-design/ui-reference/approved-v3/login-icons.md).
+No push is authorized for this local extension.
+
 ## Integration and license
+
+The subsequent [Lead/Deal fact-layout extension](../../04-design/ui-reference/approved-v3/record-facts.md)
+reuses the same verified assets and typed layer for summary labels and section
+headings. Its actual inventory is29 semantic exports,27 consumer files,67 sites,
+0 violations and3 excluded chart roots. No new asset/license/dependency or
+browser loader is introduced. These are current local counts, not a replacement
+claim for the original migration's historical browser coverage.
 
 The official `iconsax@0.1.1` npm archive was fetched and its SHA-512 integrity
 checked against the publisher's versioned registry metadata before selecting

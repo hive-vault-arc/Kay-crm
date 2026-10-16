@@ -8,6 +8,10 @@ References: [DESIGN.md](../../../../DESIGN.md), [decision D32](../../../../decis
 
 ## Authority and scope
 
+The owner's subsequent2026-10-16 push-to-main request authorizes publication of
+the prepared refinements through required CI. Earlier no-push/local-only notes
+remain historical evidence. [Current publication scope and verification](../../../06-delivery-and-operations/ui-refinements-publication.md).
+
 These nine pictures are the approved appearance, not a second functional specification. Open the actual PNGs before implementation. They override earlier Try One/Try Two and older conflicting visual proposals. Existing business rules, permissions, API/data contracts, security, accessibility and working functionality remain authoritative. Resolve visual differences centrally through shared components and tokens; do not reproduce a separate design system for every screenshot.
 
 The original reference handoff moved assets and Markdown only. The subsequent
@@ -15,6 +19,36 @@ explicit UI-only implementation is tracked in [coverage](coverage.md),
 [execution](execution.md) and [implemented system](implemented-system.md).
 Approved mockups, verified implementation and human product acceptance remain
 separate milestones. See [D32](../../../../decisions.md).
+
+Later explicit owner refinements are narrow overrides of the original pictures:
+the [account/logout footer and pure-black navigation](account-footer.md),
+[gold creation/quiet list utilities](list-header-actions.md), and
+[left directory search/filter rail](filter-rail.md). The last moves the old
+horizontal filter bars on Leads, Deals, Contacts and both Projects tabs into a
+left rail or responsive Sheet, not the global header search or record-scoped
+filters. The later [login icons and softened corners](login-icons.md) add only
+the requested field/action/supporting-text glyphs and existing10px radius on
+login controls. The [dashboard city-header refinement](dashboard-header.md)
+removes only that strip's outer border and enlarges the full-height photo.
+Its subsequent local-service status/retry removal keeps operational health
+endpoints and normal application error/retry handling intact.
+All other V3 and functional constraints below still apply.
+
+The later [performance-dashboard reference](performance-dashboard.md) explicitly
+overrides filled dashboard KPI tiles and ordinary pipeline bars: neutral grouped
+summary, distribution funnels and existing contributor totals in stacked bars.
+It does not introduce screenshot-only statuses, daily metrics or conversion rates.
+
+The later [Lead/Deal fact-layout refinement](record-facts.md) keeps sections
+vertically stacked but replaces single-column summary facts with paired desktop
+columns and semantic Iconsax labels. Narrow screens reflow; existing forms,
+links, permissions and business behavior remain authoritative. No reference-only
+field or inline-edit affordance is implemented.
+
+The later [app-wide button refinement](action-buttons.md) applies shared semantic
+Iconsax glyphs and action colors to existing buttons across every route family.
+It extends gold creation beyond the earlier list-only scope while preserving
+real functions, standard shadcn controls, French labels and existing data marks.
 
 ## Screen-to-route map
 

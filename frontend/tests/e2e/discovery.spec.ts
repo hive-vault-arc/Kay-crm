@@ -28,7 +28,7 @@ test("SP19 AT22/24/29: scoped cross-domain search, filtered export, archive/rest
     expect(csv).toContain("SP19 visible"); expect(csv).toContain("'+212600000001"); expect(csv).not.toContain("SP19 privé"); await file.delete();
     await testControl("worker-stop");
     await page.goto(`/projects/properties/${data.pid}`); await lifecycle(page); await page.reload(); await expect(page.getByRole("heading", { name: "État : Archivé", exact: true })).toBeVisible(); await lifecycle(page, true);
-    await page.goto("/dashboard"); await page.getByRole("link", { name: "Journal d’audit", exact: true }).click();
+    await page.goto("/dashboard?view=audit");
     await expect(page.getByText("exports.downloaded", { exact: true })).toBeVisible();
     await clearActorContext(page); await signIn(page, data.agent); await searchFor(page);
     await expect(page.getByRole("link", { name: "SP19 visible synthétique", exact: true }).first()).toBeVisible();

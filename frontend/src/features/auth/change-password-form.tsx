@@ -44,6 +44,6 @@ export function ChangePasswordForm() {
       {name === "new_password" ? <FormDescription>Au moins 12 caractères. Les phrases de passe sont acceptées.</FormDescription> : null}<FormMessage />
     </FormItem>} />)}
     {error ? <Alert variant="destructive" className="bg-danger-background text-danger"><AlertDescription className="text-danger">{error}</AlertDescription></Alert> : null}
-    <Button disabled={!hydrated || form.formState.isSubmitting} type="submit">{form.formState.isSubmitting ? "Enregistrement en cours…" : "Changer le mot de passe"}</Button>
+    <Button action="password" disabled={!hydrated || form.formState.isSubmitting} type="submit">{form.formState.isSubmitting ? "Enregistrement en cours…" : "Changer le mot de passe"}</Button>
   </form></Form>;
 }

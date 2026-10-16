@@ -23,11 +23,11 @@ export function CredentialNotice({ issued, clear }: { issued: IssuedCredential; 
     <p>Vérifiez l’identité de la personne et remettez-lui ce mot de passe en personne. Ne l’envoyez pas par e-mail, SMS, chat ou document.</p>
     <div className="grid gap-2"><Label htmlFor="temporary-credential">Mot de passe temporaire</Label>
       <Input id="temporary-credential" type={revealed ? "text" : "password"} value={issued.temporary_password} readOnly autoComplete="off" data-private-credential />
-      <Button variant="outline" type="button" aria-pressed={revealed} onClick={() => setRevealed(!revealed)}>{revealed ? "Masquer" : "Afficher le mot de passe"}</Button>
+      <Button action={revealed ? "hide" : "show"} variant="outline" type="button" aria-pressed={revealed} onClick={() => setRevealed(!revealed)}>{revealed ? "Masquer" : "Afficher le mot de passe"}</Button>
     </div>
     <p>Expire le {new Intl.DateTimeFormat("fr-MA", { dateStyle: "short", timeStyle: "short", timeZone: "Africa/Casablanca" }).format(new Date(issued.user.temporary_expires_at!))}. Un changement de fenêtre, une fermeture ou un rechargement efface cet affichage.</p>
     <p>Affichage perdu ou mot de passe expiré ? Réinitialisez le compte avec votre mot de passe administrateur. Le mot de passe précédent ne peut pas être retrouvé.</p>
-    <Button variant="outline" onClick={clear}>Fermer et effacer</Button>
+    <Button action="close" variant="outline" onClick={clear}>Fermer et effacer</Button>
     <Link className="min-h-control py-3 text-link underline" href={`/settings/users/${issued.user.id}/edit`} onClick={clear}>Ouvrir le compte pour confirmer la remise</Link>
   </section>;
 }

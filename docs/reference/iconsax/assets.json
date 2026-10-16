@@ -106,6 +106,40 @@
       "adaptation": "Original paths retained."
     },
     {
+      "export": "PasswordIcon",
+      "semanticName": "password",
+      "asset": "lock",
+      "style": "linear",
+      "source": "package/dist/data/security.json",
+      "originalSvgSha256": "eafe8c498470bd477566da1a1bba43939d1b7d24ad7975bb0698d9dd06d2dcb2",
+      "pathCount": 5,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "SignInIcon",
+      "semanticName": "sign-in",
+      "asset": "login-02",
+      "style": "linear",
+      "source": "package/dist/data/arrow.json",
+      "originalSvgSha256": "890ec3b0d8cc79d606bfd4bb3002b2e8f217a7cc045405bb3872d0ccf19d1a85",
+      "pathCount": 3,
+      "originalPathIndices": [
+        0,
+        1,
+        2
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
       "export": "ShowPasswordIcon",
       "semanticName": "show-password",
       "asset": "eye",
@@ -451,6 +485,227 @@
       "originalPathIndices": [
         0,
         1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "AddIcon",
+      "semanticName": "add",
+      "asset": "add",
+      "style": "linear",
+      "source": "package/dist/data/essential.json",
+      "originalSvgSha256": "6f9b08a3663f7ac38769133eee817f02a911fe08e5448a3d1ed78e84af03b062",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "EditIcon",
+      "semanticName": "edit",
+      "asset": "edit-2",
+      "style": "linear",
+      "source": "package/dist/data/content-edit.json",
+      "originalSvgSha256": "5b60b059b0de5d74c9b7c50bee26de4997a1f13050c314aba7d71ab2e54c11fc",
+      "pathCount": 3,
+      "originalPathIndices": [
+        0,
+        1,
+        2
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "DeleteIcon",
+      "semanticName": "delete",
+      "asset": "trash",
+      "style": "linear",
+      "source": "package/dist/data/essential.json",
+      "originalSvgSha256": "e64cb7b71a37d2131218f20f24023bf701dfd79c5e3c79e1a85e08bd573a8156",
+      "pathCount": 5,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "ArchiveIcon",
+      "semanticName": "archive",
+      "asset": "archive",
+      "style": "linear",
+      "source": "package/dist/data/essential.json",
+      "originalSvgSha256": "47201554b48e9fedb4b0006243ef5bd2928189b14c2b257171e51391016cb2e7",
+      "pathCount": 3,
+      "originalPathIndices": [
+        0,
+        1,
+        2
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "BackIcon",
+      "semanticName": "back",
+      "asset": "arrow-left-01",
+      "style": "linear",
+      "source": "package/dist/data/arrow.json",
+      "originalSvgSha256": "8d6ac665ebd66bf2adc6c57b6e6fbb39619cbed696d141dbd914b2ccfaa78467",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "ForwardIcon",
+      "semanticName": "forward",
+      "asset": "arrow-right-01",
+      "style": "linear",
+      "source": "package/dist/data/arrow.json",
+      "originalSvgSha256": "11aea931d6bc435f6a989a8adfd980dd9d498f94519fb41179e7b93b0cfe06bf",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "FilterIcon",
+      "semanticName": "filter",
+      "asset": "filter",
+      "style": "linear",
+      "source": "package/dist/data/essential.json",
+      "originalSvgSha256": "029a4d2f63b71e4ce7878210b05cb9838df968bc1234a7cd448c53e98c20e17e",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "ColumnsIcon",
+      "semanticName": "columns",
+      "asset": "row-horizontal",
+      "style": "linear",
+      "source": "package/dist/data/grid.json",
+      "originalSvgSha256": "48dbef92804967065d7a3a21b6f3f982060f85cb7f503af1171e19ee3bbd47ed",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "DownloadIcon",
+      "semanticName": "download",
+      "asset": "document-download",
+      "style": "linear",
+      "source": "package/dist/data/content-edit.json",
+      "originalSvgSha256": "c566d23967cedec88b4c992ea04c5561f04d549113ccab9d22a88a40987124f5",
+      "pathCount": 4,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "UploadIcon",
+      "semanticName": "upload",
+      "asset": "document-upload",
+      "style": "linear",
+      "source": "package/dist/data/content-edit.json",
+      "originalSvgSha256": "4a9ec59ed160a8bbbeb8c5e55d74ca44b34f90b6f008e7721c6893d88a3a526e",
+      "pathCount": 4,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "RefreshIcon",
+      "semanticName": "refresh",
+      "asset": "refresh-arrow-01",
+      "style": "linear",
+      "source": "package/dist/data/arrow.json",
+      "originalSvgSha256": "844dc5770fbb4ffb028e9ed4208354dc056da4ed2ff47eb55cc5b18ca324c152",
+      "pathCount": 1,
+      "originalPathIndices": [
+        0
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "SignOutIcon",
+      "semanticName": "sign-out",
+      "asset": "logout-02",
+      "style": "linear",
+      "source": "package/dist/data/arrow.json",
+      "originalSvgSha256": "8f0f3c64e6cafd32fa7993833d006e8f268e7673557a9da3516580c57cfe17aa",
+      "pathCount": 3,
+      "originalPathIndices": [
+        0,
+        1,
+        2
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "RestoreIcon",
+      "semanticName": "restore",
+      "asset": "undo-arrow",
+      "style": "linear",
+      "source": "package/dist/data/arrow.json",
+      "originalSvgSha256": "718f63a149de61dfa78d518e3ab9bed5cc6713eed0f50a68147a4d75d2dd6034",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "CompareIcon",
+      "semanticName": "compare",
+      "asset": "arrow-swap-01",
+      "style": "linear",
+      "source": "package/dist/data/arrow.json",
+      "originalSvgSha256": "45c02333c4bc784915f6f2d90fd10a5e7b20b33414b21880ba17e96cb55137a7",
+      "pathCount": 4,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3
       ],
       "viewBox": "0 0 24 24",
       "adaptation": "Original paths retained."

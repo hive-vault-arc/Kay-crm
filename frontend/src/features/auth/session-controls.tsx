@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { apiGet, apiPost, ApiError } from "@/lib/api/client";
 import { meSchema, safeReturnPath } from "@/lib/auth/contracts";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { cn } from "@/lib/utils";
 
 // A read denied after revocation must not replace an intentional logout redirect.
 let logoutPending = false;
@@ -48,7 +49,7 @@ export function SessionMonitor({ expiresAt, restricted = false }: { expiresAt: s
   return null;
 }
 
-export function LogoutButton() {
+export function LogoutButton({ buttonClassName, errorClassName }: { buttonClassName?: string; errorClassName?: string } = {}) {
   const hydrated = useHydrated();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -66,8 +67,8 @@ export function LogoutButton() {
       setPending(false);
     }
   }
-  return <div className="grid gap-2">
-    <Button variant="outline" onClick={signOut} disabled={!hydrated || pending}>{pending ? "Déconnexion en cours…" : "Se déconnecter"}</Button>
-    {error ? <p role="alert" className="max-w-reading text-sm text-danger">{error}</p> : null}
+  return <div className="grid min-w-0 gap-2">
+    <Button action="signout" variant="outline" className={buttonClassName} onClick={signOut} disabled={!hydrated || pending}>{pending ? "Déconnexion en cours…" : "Se déconnecter"}</Button>
+    {error ? <p role="alert" className={cn("max-w-reading text-sm text-danger", errorClassName)}>{error}</p> : null}
   </div>;
 }

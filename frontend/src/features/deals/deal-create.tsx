@@ -42,5 +42,5 @@ function CreateForContact({ contact, context, change }: { contact: ContactSummar
     void load(); return () => controller.abort();
   }, [contact.id, enquiryId, requirementId, offeringId, retry]);
   if (contact.archived_at) return <p role="status">Contact archivé. Restaurez-le avant de créer une affaire.</p>;
-  return <div className="grid min-w-0 gap-6">{change ? <Button type="button" variant="outline" className="justify-self-start" disabled={busy} onClick={change}>Changer de contact</Button> : null}{error ? <RecordError error={error} retry={() => setRetry(v => v + 1)} /> : !loaded ? <p role="status">Vérification du contexte de l’affaire…</p> : <DealForm contact={contact} context={context} offering={loaded.offering} busyChanged={setBusy} saved={async id => { router.push(`/deals/${id}`); }} />}</div>;
+  return <div className="grid min-w-0 gap-6">{change ? <Button action="contact" type="button" variant="outline" className="justify-self-start" disabled={busy} onClick={change}>Changer de contact</Button> : null}{error ? <RecordError error={error} retry={() => setRetry(v => v + 1)} /> : !loaded ? <p role="status">Vérification du contexte de l’affaire…</p> : <DealForm contact={contact} context={context} offering={loaded.offering} busyChanged={setBusy} saved={async id => { router.push(`/deals/${id}`); }} />}</div>;
 }

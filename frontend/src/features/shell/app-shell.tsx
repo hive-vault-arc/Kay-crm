@@ -1,10 +1,8 @@
 "use client";
 
 import { SearchTrigger } from "@/features/discovery/search-trigger";
-import Link from "next/link";
 import { NotificationIcon, NavigationMenuIcon } from "@/components/icons";
 import { Brand } from "@/components/shared/brand";
-import { roles as roleLabels } from "@/features/users/contracts";
 import { NotificationPanel } from "@/features/work/notification-panel";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -18,9 +16,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Navigation } from "./navigation";
+import { AccountFooter } from "./account-footer";
 import { useHydrated } from "@/hooks/use-hydrated";
 import type { PublicIdentity } from "@/lib/auth/contracts";
-import { LogoutButton, SessionMonitor } from "@/features/auth/session-controls";
+import { SessionMonitor } from "@/features/auth/session-controls";
 
 export function AppShell({ children, identity }: { children: React.ReactNode; identity: PublicIdentity }) {
   const hydrated = useHydrated();
@@ -75,15 +74,7 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
       >
         <Brand className="mx-auto w-28 shrink-0" />
         <Navigation administrator={identity.user.role === "administrator"} />
-        <div className="mt-auto grid gap-1 border-t border-sidebar-foreground/20 px-3 pt-4 text-sm">
-          <span className="wrap-anywhere">{identity.user.display_name}</span>
-          <Link
-            href="/change-password" prefetch={false}
-            className="flex min-h-control items-center underline underline-offset-4"
-          >
-            Changer le mot de passe
-          </Link>
-        </div>
+        <AccountFooter user={identity.user} />
       </aside>
       <div className="min-w-0">
         <header className="page-gutter flex min-h-17 flex-wrap items-center gap-3 border-b bg-card py-2">
@@ -120,7 +111,7 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
                     Votre espace de travail KAY.
                   </SheetDescription>
                 </SheetHeader>
-                <div className="mt-8">
+                <div className="mt-8 shrink-0">
                   <Navigation
                     administrator={identity.user.role === "administrator"}
                     onNavigate={(href) => {
@@ -129,11 +120,8 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
                       setOpen(false);
                     }}
                   />
-                  <Link href="/change-password" prefetch={false} onClick={() => setOpen(false)}
-                    className="mt-6 flex min-h-control items-center text-sm underline underline-offset-4">
-                    Changer le mot de passe
-                  </Link>
                 </div>
+                <AccountFooter user={identity.user} />
               </SheetContent>
             </Sheet>
             <p className="hidden min-w-0 text-sm font-medium md:block lg:hidden">
@@ -148,9 +136,6 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
             <Sheet><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Ouvrir les notifications" disabled={!hydrated}><NotificationIcon aria-hidden="true" /></Button></SheetTrigger>
               <SheetContent closeLabel="Fermer les notifications" className="w-full overflow-y-auto p-5 sm:max-w-reading"><SheetHeader className="mb-6 p-0 pr-6 text-left"><SheetTitle>Votre boîte de réception</SheetTitle><SheetDescription>Notifications internes accessibles avec vos droits actuels.</SheetDescription></SheetHeader><NotificationPanel /></SheetContent>
             </Sheet>
-            <span aria-hidden="true" className="flex size-control shrink-0 items-center justify-center rounded-full bg-accent text-sm font-semibold text-accent-foreground">{identity.user.display_name.split(/\s+/).map(part => part[0]).slice(0, 2).join("")}</span>
-            <div className="hidden max-w-40 text-xs sm:grid"><span className="truncate font-medium">{identity.user.display_name}</span><span className="text-muted-foreground">{roleLabels[identity.user.role]}</span></div>
-            <LogoutButton />
           </div>
         </header>
         <main

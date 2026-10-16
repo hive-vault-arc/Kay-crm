@@ -34,7 +34,7 @@ export function EnquiryAssignment({ enquiry, saved }: { enquiry: Enquiry; saved:
       <fieldset className="grid gap-4" disabled={busy}>
         <div className="grid gap-2"><Label htmlFor={`${control}-agent`}>Attribuer à un agent du contact</Label><NativeSelect id={`${control}-agent`} value={selected} onChange={event => setSelected(event.target.value)}><option value="">File du responsable, non attribuée</option>{[query.value.primary_agent, ...query.value.collaborators].map(value => <option key={value.id} value={value.id}>{value.display_name}</option>)}</NativeSelect></div>
         <div className="grid gap-2"><Label htmlFor={`${control}-reason`}>Motif de l’attribution</Label><Textarea required maxLength={1000} rows={2} id={`${control}-reason`} value={reason} onChange={event => setReason(event.target.value)} /></div>
-        <Button className="justify-self-start" disabled={selected === (enquiry.assigned_agent?.id ?? "")}>Attribuer cette demande</Button>
+        <Button action="assign" className="justify-self-start" disabled={selected === (enquiry.assigned_agent?.id ?? "")}>Attribuer cette demande</Button>
       </fieldset>
       {error ? <RecordError error={error} /> : null}
       <p className="text-sm text-muted-foreground">L’accès au contact est revérifié à l’enregistrement ; le changement conserve l’ancien et le nouvel agent ainsi que l’acteur de la décision.</p>

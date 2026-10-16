@@ -16,6 +16,10 @@
   --color-primary-foreground: var(--action-primary-foreground);
   --color-primary-hover: var(--action-primary-hover);
   --color-primary-pressed: var(--action-primary-pressed);
+  --color-creation: var(--action-creation-background);
+  --color-creation-foreground: var(--action-creation-foreground);
+  --color-creation-hover: var(--action-creation-hover);
+  --color-creation-pressed: var(--action-creation-pressed);
   --color-secondary: var(--action-secondary-background);
   --color-secondary-foreground: var(--action-secondary-foreground);
   --color-muted: var(--neutral-surface-muted);
@@ -100,6 +104,9 @@
     margin: 0;
     @apply text-sm leading-relaxed;
   }
+  [data-slot="button"] {
+    @apply max-w-full;
+  }
   ::selection {
     background: var(--selection-background);
     color: var(--selection-foreground);
@@ -128,6 +135,35 @@
     @apply hidden;
   }
 }
+@utility filter-rail {
+  & form, & .filter-toolbar {
+    @apply min-w-0 rounded-none border-0 bg-transparent p-0;
+  }
+  & form {
+    @apply grid gap-4;
+  }
+  & form fieldset {
+    @apply grid min-w-0 grid-cols-1 items-stretch gap-4;
+  }
+  & form fieldset > * {
+    @apply col-span-1;
+  }
+  & form .contents {
+    @apply grid grid-cols-1 gap-4;
+  }
+  & form details > div {
+    @apply grid-cols-1;
+  }
+  & form fieldset > .flex {
+    @apply grid grid-cols-1;
+  }
+  & form label {
+    @apply not-sr-only;
+  }
+  & form button[type="submit"] {
+    @apply w-full;
+  }
+}
 @utility record-stack {
   @apply min-w-0 gap-5;
   & > section, & > [data-slot="tabs"] > [data-slot="tabs-content"] > section {
@@ -144,6 +180,16 @@
   }
   & dd {
     @apply text-sm;
+  }
+}
+
+@utility record-facts {
+  @apply grid min-w-0 grid-cols-1 gap-x-8 gap-y-5 xl:grid-cols-2;
+  & dt {
+    @apply mb-0;
+  }
+  & dd > a {
+    @apply items-start;
   }
 }
 @utility form-surface {

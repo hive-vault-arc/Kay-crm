@@ -46,6 +46,6 @@ export function PropertyEditor({ property, developmentId = property?.development
     <p className="text-sm text-muted-foreground">Ces informations seront lisibles par toute l’équipe. N’y saisissez pas de coordonnées privées.</p>
     {validation ? <p id="property-validation" role="alert" className="text-danger">{validation}</p> : null}
     <InventoryError error={command.error} id={property?.id} choose={current => { setVersion(current.version); command.clear(); }} />
-    <div className="flex flex-wrap gap-2"><Button type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : property ? "Enregistrer le bien" : developmentId ? "Créer l’unité" : "Créer le bien"}</Button><Button variant="outline" asChild><Link href={property ? `/projects/properties/${property.id}` : "/projects"}>Annuler</Link></Button></div>
+    <div className="flex flex-wrap gap-2"><Button action={property ? "save" : "create"} type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : property ? "Enregistrer le bien" : developmentId ? "Créer l’unité" : "Créer le bien"}</Button><Button action="cancel" variant="outline" asChild><Link href={property ? `/projects/properties/${property.id}` : "/projects"}>Annuler</Link></Button></div>
   </form>;
 }

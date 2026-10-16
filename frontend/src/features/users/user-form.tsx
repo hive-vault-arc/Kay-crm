@@ -55,7 +55,7 @@ export function UserForm({ user, actorId, changed }: { user?: StaffUser; actorId
     <p className="text-sm text-muted-foreground">{user ? "Enregistrer révoque les sessions de ce compte. Modifier votre propre compte nécessite une nouvelle connexion." : "Un mot de passe aléatoire sera affiché une fois. Le compte restera en attente jusqu’à la remise en personne."}</p>
     {error ? <p role="alert" className="text-danger">{error}</p> : null}
     {success ? <p role="status" className="text-success">{success}</p> : null}
-    <div className="flex flex-wrap gap-2"><Button type="submit" disabled={!hydrated || form.formState.isSubmitting}>{form.formState.isSubmitting ? "Enregistrement…" : user ? "Enregistrer" : "Créer le compte"}</Button><Button asChild variant="outline"><Link href="/settings/users">Annuler</Link></Button></div>
-    {error ? <Button type="button" variant="outline" onClick={() => window.location.reload()}>Recharger la fiche</Button> : null}
+    <div className="flex flex-wrap gap-2"><Button action={user ? "save" : "create"} type="submit" disabled={!hydrated || form.formState.isSubmitting}>{form.formState.isSubmitting ? "Enregistrement…" : user ? "Enregistrer" : "Créer le compte"}</Button><Button action="cancel" asChild variant="outline"><Link href="/settings/users">Annuler</Link></Button></div>
+    {error ? <Button action="refresh" type="button" variant="outline" onClick={() => window.location.reload()}>Recharger la fiche</Button> : null}
   </form></Form>;
 }

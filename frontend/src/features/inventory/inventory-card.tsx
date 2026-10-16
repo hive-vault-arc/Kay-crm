@@ -22,7 +22,7 @@ export function InventoryCard({ reference, name, location, category, href, offer
         const offering = offerings.find(value => value.kind === kind);
         return <section key={kind} className="grid min-w-0 gap-1"><h3 className="text-xs font-medium text-muted-foreground">{kindLabels[kind]}{units ? " du programme entier" : ""}</h3>{offering ? <><InventoryStatus state={offering.state} occupied={offering.occupied} conflict={offering.reservation_conflict} /><Price offering={offering} /></> : <p className="text-xs text-muted-foreground">Aucune campagne actuelle</p>}</section>;
       })}</div>
-      <Button variant="outline" asChild><Link href={href}>Ouvrir la fiche</Link></Button>
+      <Button action="preview" variant="outline" asChild><Link href={href}>Ouvrir la fiche</Link></Button>
     </div>
   </article>;
 }

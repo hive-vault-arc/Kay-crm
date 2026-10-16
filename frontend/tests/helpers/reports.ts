@@ -35,14 +35,18 @@ export async function comparePoints(page: Page) {
     const section = page.getByRole("region", { name: metric.label, exact: true });
     if (!metric.series.length) { await expect(section.getByText(/Aucune donnée pour ce graphique/)).toBeVisible(); continue; }
     const table = section.getByRole("table", { name: `Valeurs : ${metric.label}`, exact: true });
-    const colors: Record<string, string> = { contacts: "var(--chart-series3)", won: "var(--chart-series5)", activities: "var(--chart-series4)" };
-    const bars = section.locator(`svg rect[fill="${colors[metric.key]}"]`);
+    const colors = ["var(--chart-series3)", "var(--chart-series4)", "var(--chart-series5)", "var(--chart-series2)", "var(--chart-series1)"];
+    const bars = section.getByRole("group", { name: `Graphique : ${metric.label}`, exact: true }).locator('svg rect[fill^="var(--chart-series"]');
     await expect(bars).toHaveCount(metric.series.length);
     let ratio: number | undefined;
     for (const [index, point] of metric.series.entries()) {
       const row = table.getByRole("row").nth(index + 1); await expect(row.getByRole("button")).toHaveText(`${index + 1}. ${point.label}`); await expect(row.getByRole("cell").last()).toHaveText(String(point.value));
-      const height = Number(await bars.nth(index).getAttribute("height"));
-      expect(height).toBeGreaterThan(0); if (ratio !== undefined) expect(height / point.value).toBeCloseTo(ratio, 1); else ratio = height / point.value;
+      await expect(bars.nth(index)).toHaveAttribute("fill", colors[index % colors.length]);
+      const width = Number(await bars.nth(index).getAttribute("width"));
+      expect(width).toBeGreaterThan(0); if (ratio !== undefined) expect(width / point.value).toBeCloseTo(ratio, 1); else ratio = width / point.value;
+      const x = Number(await bars.nth(index).getAttribute("x"));
+      if (index === 0) expect(x).toBeCloseTo(0, 1);
+      else expect(x).toBeCloseTo(Number(await bars.nth(index - 1).getAttribute("x")) + Number(await bars.nth(index - 1).getAttribute("width")), 1);
       const detail = await (await page.request.get(`/api/v1/reports/drill-down?metric=${metric.key}&attribution_id=${point.id}&start_on=${report.start_on}&end_on=${report.end_on}`)).json();
       expect(detail.total).toBe(point.value);
     }

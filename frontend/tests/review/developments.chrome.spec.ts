@@ -5,7 +5,7 @@ import { clearActorContext, test, expect, createActor, removeActor, signIn } fro
 import { createDevelopment, createBlock, createFloor, createType, createUnit, openDevelopment } from "../helpers/developments";
 
 async function capture(page: Page, name: string) {
-  await expect(page.getByRole("button", { name: "Se déconnecter", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   const before = await page.evaluate(() => document.documentElement.clientWidth);
   const cdp = await page.context().newCDPSession(page);
   try { const result = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true }); await writeFile(path.resolve(`output/playwright/sp08-${name}.png`), Buffer.from(result.data, "base64")); }

@@ -12,6 +12,12 @@ test("SP18 AT-20/23: mixed CSV, corrected file, row/fallback agents, atomic resu
     await expect(page.getByRole("button", { name: "Approuver l’import", exact: true })).toBeDisabled();
     await prepareCorrected(page, data.agent, data.other); const bid = new URL(page.url()).searchParams.get("batch")!;
     await expect(page.getByText("2 à créer ; 1 ignorée(s) ; 0 à corriger ; 0 créée(s).", { exact: true })).toBeVisible();
+    const approve = page.getByRole("button", { name: "Approuver l’import", exact: true });
+    await approve.click();
+    const back = page.getByRole("alertdialog").getByRole("button", { name: "Revenir à l’aperçu", exact: true });
+    await expect(back).toHaveAttribute("data-action", "back");
+    await expect(back.locator("[data-action-icon]")).toHaveCount(1);
+    await back.click(); await expect(approve).toBeFocused();
     await confirmImport(page); await expect(page.getByText("Import approuvé : 2 contact(s) créé(s), 1 ligne(s) ignorée(s).", { exact: true })).toBeVisible();
     const report = await page.request.get(`/api/v1/imports/${bid}`); expect(report.status()).toBe(200); expect(report.headers()["cache-control"]).toBe("no-store");
     const rows = (await report.json()).items; expect(rows[1].agent_id).toBe(data.other.id); expect(rows[2].agent_id).toBe(data.agent.id);

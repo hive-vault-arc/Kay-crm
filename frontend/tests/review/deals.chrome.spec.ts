@@ -10,7 +10,7 @@ import { syntheticFile, uploadFile, downloadFile } from "../helpers/files";
 
 async function capture(page: Page, name: string, full = false) {
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Se déconnecter", exact: true, includeHidden: true })).toBeAttached();
+  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   const cdp = await page.context().newCDPSession(page);
   try {
     if (full) await page.evaluate(() => window.scrollTo(0, 0));
