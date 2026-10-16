@@ -1,7 +1,17 @@
 # KAY local backend
 
+DigitalOcean's repository picker uses the standard `requirements.txt` entry
+point, which contains the full pinned/hash-locked runtime dependencies. Read the
+[detection scope and remaining cloud blockers](../docs/06-delivery-and-operations/digitalocean-detection.md)
+before attempting deployment; detecting Python does not make this local-only
+backend production-ready.
+
 Current copy/paste startup/shutdown, frontend, antivirus, worker and first-login
 commands: [Local startup](../docs/06-delivery-and-operations/local-startup.md).
+Manual development supports the standard `uvicorn app.main:app --reload`
+entry point. Use the runbook's certificate/loop options for the connected HTTPS
+frontend; the bare Uvicorn command defaults to HTTP, not HTTPS. The KAY CLI is
+optional for manual startup and remains available for existing automation.
 Windows HTTP entry points now use an explicit socket-selector loop factory,
 without deprecated global event-loop policies or suppressing exception logs.
 
@@ -51,7 +61,8 @@ py -3.14 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --no-deps --no-build-isolation -e .
 ```
 
-Runtime-only dependencies are separately locked in `requirements.lock`. pip,
+Runtime-only dependencies are pinned with hashes in `requirements.txt`.
+`requirements.lock` remains a compatibility include for existing commands. pip,
 setuptools and the declared tooling are pinned in the development lock. No global
 pip/tool installation or assumed shell activation is required. The application
 refuses a different interpreter prefix/version. All Python subprocesses use

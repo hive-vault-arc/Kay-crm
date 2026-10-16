@@ -3,6 +3,9 @@
 import sys
 
 import pytest
+from fastapi import FastAPI
+from uvicorn.config import Config
+from uvicorn.importer import import_from_string
 
 from app.cli import serve
 from app.runtime import create_server_loop
@@ -50,6 +53,30 @@ def test_http_loop_factory_is_socket_selector_without_changing_global_policy():
         assert not loop.is_running()
     finally:
         loop.close()
+
+
+def test_standard_uvicorn_import_target_is_an_app_without_an_import_time_connection():
+    application = import_from_string("app.main:app")
+    assert isinstance(application, FastAPI)
+    assert not hasattr(application.state, "database")
+    assert application.docs_url is None and application.openapi_url is None
+
+
+def test_standard_uvicorn_target_does_not_need_factory_detection_or_replace_the_factory(caplog):
+    config = Config("app.main:app", log_level="warning", access_log=False)
+    config.load()
+    assert not config.factory
+    assert config.loaded_app is not None
+    assert "factory detected" not in caplog.text.lower()
+    exported = import_from_string("app.main:app")
+    constructed = serve.create_app()
+    assert constructed is not exported
+    assert [getattr(route, "path", None) for route in constructed.routes] == [
+        getattr(route, "path", None) for route in exported.routes
+    ]
+    assert [middleware.cls for middleware in constructed.user_middleware] == [
+        middleware.cls for middleware in exported.user_middleware
+    ]
 
 
 @pytest.mark.parametrize("workers", [0, 5])

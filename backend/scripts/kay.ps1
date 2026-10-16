@@ -32,7 +32,7 @@ try {
             & $interpreter -m mypy app
         }
         'lock' {
-            & $interpreter -m piptools compile --allow-unsafe --strip-extras --generate-hashes --output-file requirements.lock pyproject.toml
+            & $interpreter -m piptools compile --allow-unsafe --strip-extras --generate-hashes --output-file requirements.txt pyproject.toml
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
             & $interpreter -m piptools compile --allow-unsafe --strip-extras --extra dev --generate-hashes --output-file requirements-dev.lock pyproject.toml
         }

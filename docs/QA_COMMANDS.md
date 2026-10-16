@@ -1,5 +1,41 @@
 # KAY QA command register
 
+## Standard requirements and DigitalOcean detection metadata (2026-10-16)
+
+The full pinned runtime list moves to `backend/requirements.txt` without changing
+any dependency version/hash. The old `requirements.lock` is a hash-enforcing
+compatibility include. Existing Python pin3.14.3 remains, and the lock generator
+writes the conventional filename. Repository safety now requires its presence.
+Focused packaging/Uvicorn checks: final9/9 passed1.18s; Ruff check/format3 files
+and strict mypy177 modules pass. Both conventional/compatibility requirement
+files pass pip's real hash-enforcing dry-run; the runtime audit via the compatibility
+include finds no known vulnerabilities. A byte-for-byte comparison preserves
+the former full lock's pins/hashes, changing only its generated output filename
+comment. Full hosted CI/PR checks still determine main publication.
+See [detection scope and runtime blockers](06-delivery-and-operations/digitalocean-detection.md).
+No cloud detection/build/deployment success is inferred from local packaging tests.
+
+## Direct Uvicorn and trusted development browser (2026-10-16)
+
+This is a focused startup repair, not a new full-CRM certification. Source changes
+were first verified locally on `fix/direct-uvicorn-local-startup`; the subsequent
+authorized detection/publication request includes them through protected CI/PR.
+
+| Command/check | Actual result |
+|---|---|
+| backend explicit-venv `uvicorn.exe app.main:app --reload` | Starts without the missing-attribute error; HTTP liveness200 |
+| Same direct Uvicorn with SSL key/cert, custom Windows loop and no access log | HTTPS liveness200; actual StatReload shutdown/restart/startup verified |
+| frontend `npm.cmd run dev` on3000 | Trusted Windows HTTPS login200; facade real PostgreSQL readiness200; direct API readiness without facade403 |
+| backend explicit-venv `python.exe -m pytest tests/test_serve.py tests/test_foundation.py -q --tb=short --maxfail=1` | Final14/14 passed9.38s, serial after browser completion |
+| backend Ruff check/format on main.py and test_serve.py; mypy app | Pass;2 formatted files/177 modules |
+| frontend `npm.cmd run test:chrome -- tests/e2e/integration.spec.ts --max-failures=1` | Final1/1 passed28.7s total; real facade/outage/restart/HMR; conflicting NO_COLOR removed only within that test shell |
+| frontend `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build` | All exit0; dev server stopped before production build;27 icons/21 consumers/40 sites/0 violations |
+| Windows default chain + visible Chrome and in-app browser | Known local CA explicitly approved/imported only to CurrentUser; real login form hydrated with no certificate bypass |
+
+An attempted pytest overlap correctly refused the browser's existing isolated
+lease before fixture writes; it is not counted as a pass. The final serial rerun
+above passes. [Scope, commands and retained limitations](06-delivery-and-operations/local-startup-execution.md#direct-uvicorn-and-approved-currentuser-trust).
+
 ## GitHub CI preparation (2026-10-16)
 
 Run from project root unless stated otherwise. Actual hosted runs and corrected

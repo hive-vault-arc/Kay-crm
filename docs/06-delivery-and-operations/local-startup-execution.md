@@ -137,3 +137,78 @@ still listens on its two address families. ClamAV is exited143 after the request
 stop, with no published ports; this is termination status, not a failed startup.
 The saved Playwright report privacy audit found3 JSON entries/2 step arrays/zero
 input-bearing detailed step arrays. Generated reports remain local artifacts.
+
+## Direct Uvicorn and approved CurrentUser trust
+
+2026-10-16, subsequent user-reported repair. The reported command was the standard
+`uvicorn app.main:app --reload`, not the earlier KAY launcher. It failed because
+main.py exported only `create_app`. The frontend screenshot separately showed
+`ERR_CERT_AUTHORITY_INVALID` despite a successfully listening development server.
+
+Changes are local on `fix/direct-uvicorn-local-startup`; no new push, PR, main
+update or deployment was performed by this repair. main.py now exports
+`app = create_app()` after its handler definitions. Connections remain lifespan-
+owned; existing factory callers and authorization/middleware are unchanged.
+Two regression cases check a real FastAPI Uvicorn target, no import-time database,
+no implicit-factory warning and the retained factory's equivalent routes/middleware.
+No frontend UI/dependency/backend business/schema change was required.
+
+Khalid explicitly approved this existing checkout's CA in Windows CurrentUser.
+The known localhost leaf first verifies against the exact local CA; a fresh
+CurrentUser store read finds that authority and Windows' default trust chain
+validates the leaf. The certificate provider initially returned stale presence
+information after import; the fresh store/default-chain checks resolve it.
+Only this public CA was imported, not a private key or machine-wide root change.
+Neither browser nor server certificate validation was disabled.
+
+Actual verification:
+
+- The exact direct-venv Uvicorn command with `--reload` starts successfully at
+  HTTP127.0.0.1:8000, completes ASGI startup and returns200 public liveness.
+- The connected CRM uses Uvicorn's standard `--ssl-keyfile`, `--ssl-certfile`,
+  `--loop app.runtime:create_server_loop` and `--no-access-log` options, as copied
+  in the runbook. HTTPS8000 liveness200 and dev3000 facade database readiness200
+  pass with normal Windows validation; direct readiness without authority is403.
+- A real Python source edit triggers StatReload, graceful lifespan shutdown,
+  a new server child and completed startup; post-reload facade readiness200.
+  Uvicorn's normal file-change/reload notice is not an application failure.
+- `npm.cmd run dev` uses the existing3000 HTTPS launcher. Ordinary isolated
+  visible Chrome and the in-app browser reach `/login` with enabled email/password
+  controls and submit button, not a certificate-error page. No staff credentials
+  were entered in these ordinary development-profile checks.
+- Focused backend initial14/14 passed9.94s. After strengthening route/middleware
+  assertions, the final serial14/14 passes9.38s. Ruff check/format passes2 files;
+  strict mypy passes177 application modules.
+- Headed native integration first passes1/1 in33.1s with test-shell conflicting
+  NO_COLOR/FORCE_COLOR warnings. The final rerun removes only NO_COLOR within
+  that shell, restores it afterward and passes1/1 in28.7s without those warnings.
+  The test exercises real authenticated synthetic facade readiness, secure HMR,
+  API stop/restart, retry and responsive widths. Tests use isolated3100/8100,
+  separate from the direct manual8000/dev3000 smoke.
+- An accidental concurrent pytest attempt refuses `ISOLATED_TEST_RUN_ALREADY_ACTIVE`
+  before fixture writes; it is retained as a rejected attempt, not a pass or a
+  relaxed lease. The final backend run starts only after browser supervision exits.
+- Frontend full lint, route typecheck/TypeScript and production build all exit0.
+  The manual dev server is stopped before the build touches its `.next` directory.
+  Icon guard remains27 semantic/21 consumers/40 sites/zero violations.
+
+No fresh full508+ backend/79-browser, five-browser, recovery/load or production
+certification is claimed for this narrow repair. Existing compiled-mode guidance
+for the separate signed website simulator still applies. No administrator was
+seeded, account changed or development data reset. Private runtime values, keys,
+tokens and contact records were not copied into this record.
+
+Final post-build manual dev restart: login200, facade real readiness200 and direct
+Uvicorn HTTPS liveness200 with default Windows certificate verification. Visible
+Chrome reload again shows the enabled login. The earlier in-app navigation had
+also succeeded without a certificate bypass; after stopping the server for the
+build, that tab retained a connection-refused data-URL error page which the host
+browser tool would not navigate. No browser URL-policy/security bypass was used;
+close/reopen an old error tab after starting the servers if it remains cached.
+
+A final read-only isolated lease/ORM probe confirms0 users/contacts/staff sessions
+after fixture teardown; no extra cleanup write was performed. Manual Uvicorn
+shuts down its lifespan/reloader, npm dev exits after Ctrl+C/Y. All ten project
+ports above and project service processes are0. Shared PostgreSQL5432 and Codex's
+browser-helper processes are intentionally preserved. No service is left to
+occupy the user's manual3000/8000 startup ports.

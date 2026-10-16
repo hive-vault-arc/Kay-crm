@@ -12,8 +12,27 @@ In PowerShell terminal1:
 ```powershell
 Set-Location -LiteralPath 'C:\Users\khali\Desktop\HVA\03 - PROJECTS\CUSTOM PROJECTS\Kayrealestate\backend'
 docker compose -f compose.clamav.yaml up -d --wait
-.\.venv\Scripts\python.exe -m app.cli.serve
+.\.venv\Scripts\Activate.ps1
+uvicorn app.main:app --reload `
+  --ssl-keyfile .local-data/certificates/localhost-key.pem `
+  --ssl-certfile .local-data/certificates/localhost.pem `
+  --loop app.runtime:create_server_loop `
+  --no-access-log
 ```
+
+This is the installed project's standard Uvicorn executable, not a KAY launcher.
+Without activating, use `.\.venv\Scripts\uvicorn.exe` with the same arguments.
+The `app.main:app` object and `app.main:create_app` factory expose the same routes,
+middleware and lifespan-owned database resources. Reload is for development only.
+The explicit Windows loop avoids Proactor reset callbacks; access logging stays
+off so request paths/record identifiers are not written to ordinary server logs.
+
+`uvicorn app.main:app --reload` alone now imports and starts successfully, but
+Uvicorn defaults to **HTTP**. It cannot serve the connected HTTPS CRM without
+the two certificate options above. Do not point the facade at HTTP or disable
+certificate verification. Uvicorn does not read its `UVICORN_*` server options
+from an application `--env-file`. The older `app.cli.serve` remains available
+for existing supervisors/benchmarks; it is not required for manual development.
 
 API origin:`https://localhost:8000`. Public liveness is
 `https://localhost:8000/api/v1/health/live`. The direct readiness endpoint is
@@ -27,16 +46,16 @@ In PowerShell terminal2:
 
 ```powershell
 Set-Location -LiteralPath 'C:\Users\khali\Desktop\HVA\03 - PROJECTS\CUSTOM PROJECTS\Kayrealestate\frontend'
-npm.cmd run build
-npm.cmd run start
+npm.cmd run dev
 ```
 
-Open **https://localhost:3000**. This compiled local mode is the recommended
-manual workflow, including the separate signed website simulator. It is not
-a deployment.
+Open **https://localhost:3000**. `npm run dev` starts that exact port with hot
+reload and the existing local HTTPS certificate. A printed listening URL proves
+the process is running, not that a particular browser trusts its certificate.
 
-For coding with hot reload, stop start and run `npm.cmd run dev` instead.
-Normal CRM development and secure HMR are verified. The separate signed simulator
+For the separate signed website simulator, stop dev, run `npm.cmd run build`,
+then `npm.cmd run start` on the same3000 origin. This is compiled local mode,
+not deployment. Normal CRM development and secure HMR are verified. The simulator
 does not reliably hydrate Next's development runtime through its restricted
 proxy; use compiled mode for that workflow. This remains an explicit development
 limitation, not a passing test or a reason to widen the staff/API proxy.
@@ -80,10 +99,15 @@ this command is not a password-reset mechanism. [Bootstrap runbook](admin-bootst
 
 ## Local browser certificate trust is a separate user choice
 
-The project's private CA is valid, but was not trusted by Windows during the
-startup check. Therefore an ordinary Chrome profile can show
-`ERR_CERT_AUTHORITY_INVALID` until the user explicitly trusts it. Server-side
-TLS verification remains enabled and passed the direct/facade checks.
+On2026-10-16 Khalid explicitly approved trusting this checkout's existing CA in
+his Windows CurrentUser root store. Its exact presence and the localhost leaf
+chain were verified, and ordinary Chrome and Windows HTTPS requests open the
+development frontend without a certificate bypass. This is a local user-store
+change, not a tracked certificate, machine-wide change or automatic setup policy.
+
+On a new account/checkout an untrusted CA causes `ERR_CERT_AUTHORITY_INVALID`
+even while `npm run dev` is correctly listening. Server-side TLS verification
+remains mandatory. Obtain approval for that account's trust-store change first.
 
 No Windows trust change is performed without the user's approval. To deliberately
 trust **this existing project's public CA for your current Windows account**,
