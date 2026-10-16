@@ -27,7 +27,7 @@ if (issues.length) {
   console.error("REPOSITORY_CONTENT_REFUSED", [...new Set(issues)]);
   process.exit(1);
 }
-const required = [".gitignore", ".gitattributes", ".github/workflows/ci.yml", "frontend/package-lock.json", "backend/requirements.lock", "backend/requirements-dev.lock", "frontend/THIRD_PARTY_NOTICES.md", "frontend/public/licenses/iconsax.txt"];
+const required = [".gitignore", ".gitattributes", ".github/workflows/ci.yml", "frontend/package-lock.json", "backend/requirements.txt", "backend/.python-version", "backend/requirements.lock", "backend/requirements-dev.lock", "frontend/THIRD_PARTY_NOTICES.md", "frontend/public/licenses/iconsax.txt"];
 for (const file of required) if (!entries.some(entry => entry.file === file)) throw new Error(`REQUIRED_FILE_MISSING: ${file}`);
 const probes = ["backend/.env", "frontend/.env.local", "backend/.venv/Scripts/python.exe", "backend/.local-data/certificates/localhost-key.pem", "docs/03-planning/local-database-credentials.md", "frontend/node_modules/example/index.js", "frontend/.next/server.js", "frontend/test-results/probe.txt", "frontend/playwright-report/index.html", "output/probe.yml", "private.dump", "pgpass.conf", "docs/reference/bklit-ui/probe/packages/studio/index.ts"];
 const ignored = git(["check-ignore", "--no-index", "--stdin"], probes.join("\n") + "\n").trim().split("\n");

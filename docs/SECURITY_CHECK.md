@@ -1,5 +1,38 @@
 # KAY security check for changes
 
+## DigitalOcean detection metadata (2026-10-16)
+
+The owner requests a conventional full `requirements.txt` and publication to
+main. Runtime package pins/hashes move without changes; the old lock filename
+becomes a hash-enforcing compatibility include and no development packages are
+added to runtime. Packaging guards check the full-list/alias/Python-pin boundary.
+Recovery's existing code archive/compatibility digest additionally includes the
+new canonical filename, retaining dependency-change detection and extraction.
+A focused regression reproduces the omission before the one-path correction.
+No Dockerfile, cloud credentials, resource creation, production configuration or
+Windows/loopback/TLS/storage guard bypass is introduced. DigitalOcean detection
+is distinct from deployment; current runtime blockers are [explicitly recorded](06-delivery-and-operations/digitalocean-detection.md).
+The owner confirms this is not fully live and authorizes pushing the fixes.
+Main's existing PR/check/admin protections remain mandatory and are not disabled.
+
+## Direct Uvicorn startup and approved browser trust (2026-10-16)
+
+The conventional `app.main:app` object reuses the existing application factory,
+routers, middleware, validation and lifespan; no database is connected at import.
+No API, authorization, schema, cookie or facade transport rule changes. The bare
+Uvicorn command starts HTTP for its liveness smoke; the connected CRM command
+explicitly enables the existing HTTPS certificate and keeps access logging off.
+Actual HTTPS liveness/facade readiness200 and unauthenticated direct readiness403
+pass, including real reload. No HTTP facade fallback or TLS bypass was added.
+
+Khalid explicitly approved adding the existing project CA to his CurrentUser
+trusted roots. The leaf was first verified against that exact CA; a fresh store
+read and Windows default-chain verification confirm the installed authority.
+Machine-wide roots were not changed. Ordinary Chrome and the in-app browser
+hydrate the dev login without bypassing a security interstitial. Private keys and
+configuration remain ignored and unprinted. A new account/checkout still needs
+its own approval, not an automatic trust import. [Evidence and limits](06-delivery-and-operations/local-startup-execution.md#direct-uvicorn-and-approved-currentuser-trust).
+
 ## GitHub publication and CI boundary (2026-10-16)
 
 Public publication excludes real configuration, credential note, keys, private

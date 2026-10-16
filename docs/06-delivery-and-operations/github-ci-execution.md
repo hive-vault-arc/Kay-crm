@@ -141,6 +141,24 @@ resolves the initial loose/temporary-object warnings without deleting source.
   in a task-specific Windows temporary directory because deletion was blocked;
   its process/port is stopped. It is outside Git and contains no customer data.
 
+## Backend detection candidate: hosted export diagnostics
+
+The normal requirements/Uvicorn candidate at8b49a50 passes repository/frontend
+jobs, but both full hosted browser runs stop after17 passes at SP-19's export
+readiness assertion (queued, not ready). The real worker reports admitted/ready
+and no captured exception. The same compiled discovery selection passes2/2
+locally in1.1m. These outcomes do not justify skipping the hosted failure or
+merging through a failed required check.
+
+The isolated supervisor now reports completed admission counts and read-only
+aggregate export job states/error codes in its existing worker-status probe.
+No record identifier, content, actor, credential or SQL parameter is returned.
+This instrumentation neither dispatches work nor changes the production loop,
+admission rules or original15-second export-ready assertion. Its PostgreSQL
+metadata/read-only regression and admission delegation regression pass2/2 in
+1.94s; Ruff check/format passes5 affected Python files. Hosted results remain
+authoritative, including any new diagnostic failure rather than a claimed fix.
+
 Promotion procedure: select only a commit with a completed successful `KAY CI`
 run and the genuine GitHub Actions `CI required` check; create main at that exact
 SHA, apply [.github/main-protection.json](../../.github/main-protection.json), then

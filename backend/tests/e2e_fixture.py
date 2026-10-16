@@ -127,6 +127,10 @@ def main() -> int:
             while processed < 50 and run_once(database, clock):
                 processed += 1
             print(json.dumps({"processed": processed}))
+        elif action == "queue-status":
+            from tests.queue_status import export_queue
+
+            print(json.dumps(export_queue(database)))
         elif action == "file-bytes":
             import base64
 

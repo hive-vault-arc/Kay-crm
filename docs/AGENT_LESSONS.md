@@ -714,3 +714,25 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
   not a deprecated global policy or a blanket exception filter. Keep verified
   HTTPS probes separate from ordinary Chrome's user-controlled root-CA trust.
 - Promote to AGENTS.md: no; existing isolation/security/evidence gates suffice.
+
+## Default manual commands need their own verification
+
+- A passing factory-based KAY launcher did not verify the user's conventional
+  `uvicorn app.main:app --reload` import target. Export the actual ASGI app and
+  test Uvicorn's import without implicit-factory warnings, while retaining the
+  explicit factory for existing isolated callers. Verify an actual reload too.
+- Uvicorn defaults to HTTP; making the import work does not make an HTTPS-only
+  facade compatible. Document/test the standard Uvicorn SSL options rather than
+  weakening TLS or telling the user a bare HTTP process serves the whole CRM.
+- A listening frontend URL does not establish browser trust. After explicit CA
+  approval, validate the exact leaf/authority and read the user store freshly;
+  a stale certificate-provider path is not proof that import failed. Use public-
+  certificate parsing, not a helper that also expects a matching private key.
+- Keep pytest and Playwright fixture writers serial even for focused startup
+  checks; the shared lease correctly refused an accidental overlap before any
+  fixture write. Rerun only after the owning browser supervisor has exited.
+- Renaming a dependency artifact also changes recovery inputs. Inspect code
+  archives/compatibility digests, not only install scripts and the detector;
+  keep the canonical requirements file in both the archive and its fingerprint.
+- Promote to AGENTS.md: no; existing security, real-command and serial-writer
+  requirements already cover these corrections.

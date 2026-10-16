@@ -1,5 +1,7 @@
 """Observe real worker admission readiness without changing its loop or verdicts."""
 
+import sys
+
 from app.cli.worker import main as worker_main
 from app.recovery.maintenance import Admission
 
@@ -11,6 +13,8 @@ def main() -> None:
     def observed(admission: Admission) -> bool:
         nonlocal announced
         admitted = original(admission)
+        if admitted:
+            print("KAY_TEST_WORKER_CYCLE", file=sys.stderr, flush=True)
         if admitted and not announced:
             print("KAY_TEST_WORKER_READY", flush=True)
             announced = True

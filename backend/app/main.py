@@ -230,3 +230,7 @@ async def safe_http_error(request: Request, exception: Exception) -> Response:
 async def safe_validation_error(request: Request, exception: Exception) -> Response:
     """Validation failure fields must not echo rejected secret-bearing input."""
     return error_response(422, "VALIDATION_ERROR", request.state.request_id)
+
+
+# Standard Uvicorn import target; connections remain owned by the ASGI lifespan.
+app = create_app()
