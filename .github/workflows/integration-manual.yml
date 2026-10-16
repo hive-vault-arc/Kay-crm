@@ -1,0 +1,134 @@
+name: KAY manual database integration
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_synthetic_targets:
+        description: 'Run only disposable synthetic PostgreSQL/ClamAV targets, never production'
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kay-manual-integration-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+  PYTHONUTF8: '1'
+  PIP_DISABLE_PIP_VERSION_CHECK: '1'
+
+jobs:
+  integration:
+    name: ${{ matrix.suite == 'backend' && 'Backend regression' || 'Browser regression' }}
+    runs-on: windows-2025
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [backend, browser]
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Require synthetic-only confirmation
+        env:
+          CONFIRM: ${{ inputs.confirm_synthetic_targets }}
+        run: if ($env:CONFIRM -ne 'true') { throw 'SYNTHETIC_INTEGRATION_CONFIRMATION_REQUIRED' }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version-file: .python-version
+      - name: Create the project venv (only base-interpreter operation)
+        run: python -m venv backend/.venv
+      - name: Install hash-locked Python packages
+        working-directory: backend
+        run: |
+          ./.venv/Scripts/python.exe -m pip install --require-hashes -r requirements-dev.lock
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./.venv/Scripts/python.exe -m pip install --no-deps --no-build-isolation -e .
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./.venv/Scripts/python.exe -m pip check
+      - name: Start disposable loopback PostgreSQL18 and real ClamAV
+        run: ./.github/scripts/windows-services.ps1
+      - name: Configure fresh synthetic targets and HTTPS without workstation secrets
+        working-directory: backend
+        run: ./.venv/Scripts/python.exe -m tests.ci_setup
+      - name: Migrate disposable development and isolated test targets
+        working-directory: backend
+        run: |
+          foreach ($environment in 'development','test','benchmark') {
+            $env:APP_ENVIRONMENT = $environment
+            ./.venv/Scripts/python.exe -m alembic upgrade head
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+      - name: Full real-PostgreSQL backend regression (serial)
+        if: matrix.suite == 'backend'
+        working-directory: backend
+        env:
+          APP_ENVIRONMENT: test
+        run: ./.venv/Scripts/python.exe -m pytest -q --tb=short --maxfail=1
+      - name: Install and compile the actual frontend
+        if: matrix.suite == 'browser'
+        working-directory: frontend
+        run: |
+          npm ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npx playwright install chromium
+      - name: Full compiled Chromium end-to-end regression (serial)
+        if: matrix.suite == 'browser'
+        working-directory: frontend
+        env:
+          KAY_E2E_PRODUCTION: '1'
+        run: npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=1
+      - name: Check browser bundles for configured secrets
+        if: matrix.suite == 'browser'
+        working-directory: frontend
+        run: node scripts/scan-client-secrets.mjs
+      - name: Safe scanner diagnostics on failure
+        if: failure()
+        run: |
+          $services = Join-Path $env:RUNNER_TEMP 'kay-ci-services'
+          @{ clamav_processes = @(Get-Process clamd -ErrorAction SilentlyContinue).Count; scanner_listeners = @(Get-NetTCPConnection -State Listen -LocalPort 3310 -ErrorAction SilentlyContinue).Count } | ConvertTo-Json -Compress
+          $scannerLog = Join-Path $services 'clamd.log'
+          if (Test-Path -LiteralPath $scannerLog) { Get-Content -LiteralPath $scannerLog -Tail 15 }
+      - name: Stop only this disposable job's services
+        if: always()
+        run: |
+          $services = Join-Path $env:RUNNER_TEMP 'kay-ci-services'
+          $clamav = Get-CimInstance Win32_Service -Filter "Name='clamd'"
+          if ($clamav -and $clamav.PathName.Contains($services)) {
+            Stop-Service -Name clamd -ErrorAction Stop
+            sc.exe delete clamd
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          $pgCtl = Join-Path $services 'postgres/pgsql/bin/pg_ctl.exe'
+          $pgData = Join-Path $services 'pgdata'
+          if ((Test-Path -LiteralPath $pgCtl) -and (Test-Path -LiteralPath (Join-Path $pgData 'postmaster.pid'))) {
+            & $pgCtl '-D' $pgData '-m' 'fast' '-w' 'stop'
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+  release-integration:
+    name: Release integration required
+    if: ${{ always() }}
+    needs: [integration]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Require both real integration matrix runs
+        env:
+          RESULT: ${{ needs.integration.result }}
+        run: test "$RESULT" = success

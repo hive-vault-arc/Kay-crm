@@ -1,5 +1,5 @@
 """Server-local tools. They are never exposed as HTTP routes."""
 
-from app.runtime import require_venv
+from app.runtime import require_operator_runtime
 
-require_venv()
+require_operator_runtime()

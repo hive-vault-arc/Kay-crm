@@ -8,6 +8,29 @@ import pytest
 from app import runtime
 
 
+@pytest.mark.parametrize("environment", ["production", "development", "test", "recovery"])
+def test_managed_operator_runtime_requires_explicit_production(monkeypatch, environment):
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(sys, "prefix", str(runtime.BACKEND_ROOT / ".heroku" / "python"))
+    monkeypatch.setenv("APP_ENVIRONMENT", environment)
+    if environment == "production":
+        runtime.require_operator_runtime()
+    else:
+        with pytest.raises(RuntimeError, match="backend/.venv"):
+            runtime.require_operator_runtime()
+
+
+def test_managed_production_does_not_authorize_local_setup_or_probe_tools(monkeypatch):
+    from app.cli import inspect_database, serve, setup_local, smoke
+
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(sys, "prefix", str(runtime.BACKEND_ROOT / ".heroku" / "python"))
+    monkeypatch.setenv("APP_ENVIRONMENT", "production")
+    for module in (inspect_database, serve, setup_local, smoke):
+        with pytest.raises(RuntimeError, match="backend/.venv"):
+            module.main()
+
+
 def test_package_import_accepts_pinned_linux_buildpack(monkeypatch):
     monkeypatch.setattr(sys, "platform", "linux")
     monkeypatch.setattr(sys, "prefix", str(runtime.BACKEND_ROOT / ".heroku" / "python"))

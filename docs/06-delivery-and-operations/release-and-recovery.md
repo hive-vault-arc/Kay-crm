@@ -8,6 +8,12 @@ References: [architecture](../04-design/architecture.md), [security](../04-desig
 
 ## Prepare each environment
 
+The [production-settings/CI split](production-settings-ci.md) keeps full database
+and browser integration manual-only, not optional for real-data release. Require
+both successful preserved suites on the exact candidate commit and disposable
+synthetic targets before customer access. Automatic `CI required` is a merge
+gate, not evidence these suites ran. Never target production with test fixtures.
+
 The implemented same-laptop Windows procedure is the
 [SP-21 local runbook](local-backup-recovery.md), with actual synthetic exercise
 results in [execution](../03-planning/sprints/sp-21-execution.md). The cloud,

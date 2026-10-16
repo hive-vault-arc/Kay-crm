@@ -15,7 +15,7 @@ from starlette.requests import ClientDisconnect
 from app.contacts.access import ContactConflict
 from app.contacts.ownership_router import router as ownership_router
 from app.contacts.router import router as contacts_router
-from app.db.isolation import assert_isolated
+from app.db.isolation import assert_runtime_target
 from app.db.session import Database
 from app.deals.router import router as deals_router
 from app.discovery.router import router as discovery_router
@@ -49,8 +49,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
-        if config.app_environment != "development":
-            assert_isolated(config)
+        assert_runtime_target(config)
         dummy_hash()  # Equal verification work for unknown identities, including the first request.
         database = Database(config.selected_database_url())
         application.state.database = database

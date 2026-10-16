@@ -16,7 +16,8 @@ filters can leave the required check pending for documentation-only changes.
 |---|---|
 | Repository safety | Indexed path/size/mode rules,13 ignore probes, approved archive hashes, full-history Gitleaks with redacted diagnostics, actionlint, portable documentation checks |
 | Frontend quality | Exact Node version, `npm ci`, icon inventory/ESLint with zero warnings, TypeScript, production build, runtime dependency audit |
-| Backend regression / Browser regression | Separate hosted matrix instances; exact Python venv/hash locks, Ruff/format/mypy, locked runtime audit, actual PostgreSQL18/ClamAV, migrations, full serial pytest, compiled serial Chromium journeys and bundle-secret checks |
+| Backend quality and unit tests | Exact Python venv/hash locks, pip check, Ruff/format/mypy, locked runtime audit and DB-independent units; database fixtures/connections denied in unit mode |
+| Linux managed runtime | Exact managed-prefix Python/hash locks, production-mode Uvicorn startup/liveness/shutdown and truthful503 for a synthetic unavailable database |
 | CI required | Always runs and fails if any prerequisite failed, was cancelled or skipped |
 
 Khalid explicitly approved one30-day development-only exception on2026-10-16:
@@ -28,14 +29,25 @@ any runtime issue, different advisory, critical escalation or expired exception
 fails. Eight policy tests include negative/expiry/cycle/malformed-report cases.
 This is not a clean full audit, and no framework downgrade is used to hide it.
 
-The Chromium configuration currently discovers79 cases, including two Iconsax
-SSR/offline tests. It intentionally excludes the development-only `/ui-checks`
+Database-dependent backend and compiled browser suites, services and test
+migrations now live only in the `workflow_dispatch`-only
+[manual integration workflow](../../.github/workflows/integration-manual.yml).
+They are **not executed or passed by automatic CI**. Test files and fixture
+guards remain. Successful manual backend/browser runs on the exact candidate
+commit remain mandatory before release with real customer data; never run them
+against production. [Configuration, checks and release blocker](production-settings-ci.md).
+
+The preserved Chromium configuration intentionally excludes the development-only `/ui-checks`
 interactive case: that route is closed in compiled mode. Mobile, Edge, WebKit,
 visible native Chrome, full-size load/recovery timing and human product review
 remain separate local acceptance exercises, not claimed by this CI configuration.
-The backend regression includes its real Windows DPAPI/ACL/pg_dump recovery tests.
+The manual backend regression includes real Windows DPAPI/ACL/pg_dump recovery tests.
 
 ## CI isolation and supply chain
+
+PostgreSQL/ClamAV/fixture provisioning below belongs to the manual workflow, not
+automatic CI. Read-only Actions permissions/supply-chain rules apply to both.
+`CI required` checks exactly repository/frontend/backend/managed-runtime results.
 
 - GitHub-hosted runners only; no self-hosted access to this laptop/development DB.
 - Windows job downloads PostgreSQL18.6 binaries from EDB, the official Windows

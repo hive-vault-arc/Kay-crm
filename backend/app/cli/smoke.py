@@ -4,12 +4,13 @@ import ssl
 
 import httpx
 
-from app.runtime import BACKEND_ROOT
+from app.runtime import BACKEND_ROOT, require_venv
 from app.settings import load_settings
 
 
 def main() -> None:
     """Use HTTPX with explicit local CA, never a global verification bypass."""
+    require_venv()
     settings = load_settings()
     authority = BACKEND_ROOT / ".local-data/certificates/ca.pem"
     context = ssl.create_default_context(cafile=str(authority))

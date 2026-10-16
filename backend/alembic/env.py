@@ -5,13 +5,12 @@ from sqlalchemy import text
 
 from alembic import context
 from app.db import models as registered_models  # noqa: F401
-from app.db.isolation import assert_isolated
+from app.db.isolation import assert_runtime_target
 from app.db.session import Base, create_database_engine
 from app.settings import load_settings
 
 settings = load_settings()
-if settings.app_environment != "development":
-    assert_isolated(settings)
+assert_runtime_target(settings)
 if context.is_offline_mode():
     raise RuntimeError("OFFLINE_MIGRATIONS_DISABLED: inspect the real target first")
 

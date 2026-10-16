@@ -7,12 +7,13 @@ import sys
 import uvicorn
 
 from app.main import create_app
-from app.runtime import BACKEND_ROOT
+from app.runtime import BACKEND_ROOT, require_venv
 from app.settings import load_settings
 
 
 def main() -> None:
     """Bind only loopback and share the ignored certificate with Next.js."""
+    require_venv()
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--workers", type=int, choices=range(1, 5), default=1)

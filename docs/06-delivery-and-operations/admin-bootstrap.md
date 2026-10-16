@@ -8,6 +8,37 @@ References: [C01 scope](../../core-scope.md), [decisions](../../decisions.md), [
 
 ## Boundary
 
+### DigitalOcean first-user convenience script
+
+The owner's2026-10-16 request adds `backend/create_first_admin.py`, preset to
+`itteam@kayrealestate.ma`. It calls the same guarded bootstrap, always creating
+the `administrator` role, not a direct SQL insert or an existing-user reset.
+The display name is prompted. The password and its confirmation use hidden TTY
+input only, never source, command arguments, environment or deployment logs.
+Use a fresh private password rather than one previously shared in chat.
+
+After the required schema migrations have been approved/applied, open the API
+component's private interactive Console. From `/workspace/backend`, with the
+existing private production configuration and verified database TLS, run:
+
+```sh
+./.heroku/python/bin/python create_first_admin.py
+```
+
+Enter the display name and then the password twice. A terminal that cannot
+disable echo is refused. No automatic startup hook runs this script. It creates
+the user only on an uninitialized installation; `ALREADY_INITIALIZED`,
+`MANUAL_RECOVERY_REQUIRED` and `MIGRATION_REQUIRED` retain their existing meaning.
+It does not run or bypass migrations, create a public registration route or
+connect to production during automated tests. The original generic
+`python -m app.cli.bootstrap_admin` command still prompts for the email too.
+
+The later [production settings support](production-settings-ci.md) permits the
+existing managed Python runtime for bootstrap only with explicit production
+configuration and verified PostgreSQL TLS. It does not run bootstrap, seed an
+administrator or replace the TTY/one-time transaction rules below. Automated
+integration/fixture commands must never target that production database.
+
 For approved local SP-03, run and test this same interactive script on the laptop's local API installation through backend/.venv after local migrations. The deployed-host references describe its later operational location, not a deployment prerequisite for the local sprint. Synthetic automated TTY cases use isolated databases; no hardcoded default administrator is added. Real staff handoff approval remains a separate human event.
 
 The first administrator cannot be created by `POST /users`, because that operation already requires an administrator. SP-03 provides the one-time, **server-local** script at `backend/app/cli/bootstrap_admin.py`. From `backend/`, after inspection and `scripts/kay.ps1 -Task migrate`, run `scripts/kay.ps1 -Task bootstrap` (equivalent to `.venv/Scripts/python.exe -m app.cli.bootstrap_admin`) in an interactive terminal. Do not supply a password in the command, environment, file, pipe or chat. The name/email prompts are visible; the two password prompts are hidden. The script fails closed if hidden input is unavailable. Local synthetic verification is recorded in [SP-03 evidence](../03-planning/sprints/sp-03-evidence.md); deployment and actual first-administrator execution remain separate human operations. No public setup route, default account/password, credential migration or startup seed exists.

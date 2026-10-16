@@ -175,17 +175,29 @@ def test_hidden_prompt_fallback_fails_closed(monkeypatch: pytest.MonkeyPatch) ->
     assert bootstrap_admin.main() == 2 and "TTY_REQUIRED" in output.getvalue()
 
 
-@pytest.mark.parametrize("case", ["valid", "weak", "mismatch", "interrupt", "repeat"])
+@pytest.mark.parametrize(
+    "case",
+    ["valid", "weak", "mismatch", "interrupt", "repeat", "first_admin", "first_admin_repeat"],
+)
 def test_real_hidden_tty(case: str, database: Database) -> None:
     from winpty import PtyProcess
 
-    if case == "repeat":
+    if case in {"repeat", "first_admin_repeat"}:
         bootstrap_administrator(
             database, "Compte synthétique", "sp03-existing@example.com", secrets.token_urlsafe(24)
         )
 
+    command = [sys.executable, "-m", "app.cli.bootstrap_admin"]
+    if case.startswith("first_admin"):
+        command = [
+            sys.executable,
+            "-c",
+            "import create_first_admin as setup; "
+            "setup.INITIAL_ADMIN_EMAIL='sp03-first-admin@example.com'; "
+            "raise SystemExit(setup.main())",
+        ]
     process = PtyProcess.spawn(
-        [sys.executable, "-m", "app.cli.bootstrap_admin"],
+        command,
         cwd=str(BACKEND_ROOT),
         dimensions=(30, 160),
         env={**os.environ, "APP_ENVIRONMENT": "test", "PYTHONIOENCODING": "utf-8"},
@@ -209,8 +221,9 @@ def test_real_hidden_tty(case: str, database: Database) -> None:
     try:
         until("Nom affich")
         process.write("Compte synthétique\r")
-        until("Adresse e-mail")
-        process.write("sp03-tty@example.com\r")
+        if not case.startswith("first_admin"):
+            until("Adresse e-mail")
+            process.write("sp03-tty@example.com\r")
         until("minimum)")
         if case == "interrupt":
             process.write("\x03")
@@ -224,10 +237,18 @@ def test_real_hidden_tty(case: str, database: Database) -> None:
                 "weak": "PASSWORD_POLICY",
                 "mismatch": "PASSWORD_MISMATCH",
                 "repeat": "ALREADY_INITIALIZED",
+                "first_admin": "BOOTSTRAP_COMPLETED",
+                "first_admin_repeat": "ALREADY_INITIALIZED",
             }[case]
             until(expected)
         if password in captured or confirmation in captured:
             raise AssertionError("HIDDEN_INPUT_ECHOED")
     finally:
         process.close(force=True)
-    assert count(database, User) == (1 if case in {"valid", "repeat"} else 0)
+    assert count(database, User) == (
+        1 if case in {"valid", "repeat", "first_admin", "first_admin_repeat"} else 0
+    )
+    if case == "first_admin":
+        with database.session() as session:
+            user = session.scalar(select(User).where(User.email == "sp03-first-admin@example.com"))
+            assert user is not None and user.role == "administrator" and user.state == "active"

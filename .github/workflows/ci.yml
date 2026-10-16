@@ -41,6 +41,8 @@ jobs:
         run: node .github/scripts/check-tools.mjs actionlint
       - name: Test dependency-gate allowed, new, runtime and expiry paths
         run: node --test .github/scripts/dependency-policy.test.mjs
+      - name: Test CI aggregate and manual integration policy
+        run: node --test .github/scripts/required-check.test.mjs
       - name: Validate repository documentation without private workstation files
         shell: pwsh
         run: ./docs/03-planning/validate-sprints.ps1 -RepositoryOnly
@@ -87,33 +89,24 @@ jobs:
       - name: Verify real Uvicorn import, HTTP liveness, fail-closed dependency and shutdown
         run: backend/.heroku/python/bin/python .github/scripts/buildpack-smoke.py
 
-  integration:
-    name: ${{ matrix.suite == 'backend' && 'Backend regression' || 'Browser regression' }}
+  backend:
+    name: Backend quality and unit tests
     runs-on: windows-2025
-    timeout-minutes: 55
-    strategy:
-      fail-fast: false
-      matrix:
-        suite: [backend, browser]
+    timeout-minutes: 15
     defaults:
       run:
         shell: pwsh
+        working-directory: backend
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version-file: .python-version
-      - name: Create the project venv (only base-interpreter operation)
-        run: python -m venv backend/.venv
-      - name: Install hash-locked Python packages
-        working-directory: backend
+      - name: Create project venv (only base-interpreter operation)
+        run: python -m venv .venv
+      - name: Install and check hash-locked dependencies
         run: |
           ./.venv/Scripts/python.exe -m pip install --require-hashes -r requirements-dev.lock
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -121,84 +114,24 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           ./.venv/Scripts/python.exe -m pip check
       - name: Python lint, formatting and strict types
-        if: matrix.suite == 'backend'
-        working-directory: backend
         run: ./scripts/kay.ps1 -Task check
-      - name: Audit locked Python runtime dependencies
-        if: matrix.suite == 'backend'
-        working-directory: backend
+      - name: Audit locked runtime dependencies
         run: ./.venv/Scripts/python.exe -m pip_audit -r requirements.lock --require-hashes --disable-pip
-      - name: Start disposable loopback PostgreSQL18 and real ClamAV
-        run: ./.github/scripts/windows-services.ps1
-      - name: Configure fresh synthetic targets and HTTPS without workstation secrets
-        working-directory: backend
-        run: ./.venv/Scripts/python.exe -m tests.ci_setup
-      - name: Migrate disposable development and isolated test targets
-        working-directory: backend
-        run: |
-          foreach ($environment in 'development','test','benchmark') {
-            $env:APP_ENVIRONMENT = $environment
-            ./.venv/Scripts/python.exe -m alembic upgrade head
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          }
-      - name: Full real-PostgreSQL backend regression (serial)
-        if: matrix.suite == 'backend'
-        working-directory: backend
-        env:
-          APP_ENVIRONMENT: test
-        run: ./.venv/Scripts/python.exe -m pytest -q --tb=short --maxfail=1
-      - name: Install and compile the actual frontend
-        if: matrix.suite == 'browser'
-        working-directory: frontend
-        run: |
-          npm ci
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          npm run build
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          npx playwright install chromium
-      - name: Full compiled Chromium end-to-end regression (serial)
-        if: matrix.suite == 'browser'
-        working-directory: frontend
-        env:
-          KAY_E2E_PRODUCTION: '1'
-        run: npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=1
-      - name: Check browser bundles for configured secrets
-        if: matrix.suite == 'browser'
-        working-directory: frontend
-        run: node scripts/scan-client-secrets.mjs
-      - name: Safe scanner diagnostics on failure
-        if: failure()
-        run: |
-          $services = Join-Path $env:RUNNER_TEMP 'kay-ci-services'
-          @{ clamav_processes = @(Get-Process clamd -ErrorAction SilentlyContinue).Count; scanner_listeners = @(Get-NetTCPConnection -State Listen -LocalPort 3310 -ErrorAction SilentlyContinue).Count } | ConvertTo-Json -Compress
-          $scannerLog = Join-Path $services 'clamd.log'
-          if (Test-Path -LiteralPath $scannerLog) { Get-Content -LiteralPath $scannerLog -Tail 15 }
-      - name: Stop only this disposable job's services
-        if: always()
-        run: |
-          $services = Join-Path $env:RUNNER_TEMP 'kay-ci-services'
-          $clamav = Get-CimInstance Win32_Service -Filter "Name='clamd'"
-          if ($clamav -and $clamav.PathName.Contains($services)) {
-            Stop-Service -Name clamd -ErrorAction Stop
-            sc.exe delete clamd
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          }
-          $pgCtl = Join-Path $services 'postgres/pgsql/bin/pg_ctl.exe'
-          $pgData = Join-Path $services 'pgdata'
-          if ((Test-Path -LiteralPath $pgCtl) -and (Test-Path -LiteralPath (Join-Path $pgData 'postmaster.pid'))) {
-            & $pgCtl '-D' $pgData '-m' 'fast' '-w' 'stop'
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          }
+      - name: Database-independent unit tests (connections forbidden)
+        run: ./.venv/Scripts/python.exe -m tests.unit_runner
 
   required:
     name: CI required
     if: ${{ always() }}
-    needs: [repository, frontend, managed-runtime, integration]
+    needs: [repository, frontend, backend, managed-runtime]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Reject failed, cancelled or skipped prerequisite jobs
         env:
           RESULTS: ${{ toJSON(needs) }}
         run: |
-          node -e 'const jobs = Object.values(JSON.parse(process.env.RESULTS)); if (jobs.length !== 4 || jobs.some(job => job.result !== "success")) process.exit(1); console.log("All required KAY checks passed.");'
+          node .github/scripts/required-check.mjs

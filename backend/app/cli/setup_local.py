@@ -13,7 +13,7 @@ from dotenv import dotenv_values
 from psycopg import sql
 from sqlalchemy.engine import URL
 
-from app.runtime import BACKEND_ROOT
+from app.runtime import BACKEND_ROOT, require_venv
 
 ROOT = BACKEND_ROOT.parent
 CERTIFICATES = BACKEND_ROOT / ".local-data" / "certificates"
@@ -149,6 +149,7 @@ def configure_https() -> None:
 
 def main() -> None:
     """Bootstrap only local foundation resources approved by SP-02."""
+    require_venv()
     try:
         configure_databases()
         configure_https()

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from sqlalchemy import Engine, text
 
 from app.db.session import create_database_engine
-from app.settings import Settings
+from app.settings import ISOLATED_ENVIRONMENTS, Settings
 
 
 class UnsafeDatabaseTarget(RuntimeError):
@@ -35,12 +35,13 @@ def resolve_identity(engine: Engine) -> DatabaseIdentity:
 
 def assert_isolated(settings: Settings) -> DatabaseIdentity:
     """Fail closed before migration or test DDL, comparing live resolved identities."""
-    if settings.app_environment == "development":
+    if settings.app_environment not in ISOLATED_ENVIRONMENTS:
         raise UnsafeDatabaseTarget("ISOLATED_DATABASE_REQUIRED")
+    selected = settings.selected_database_url()
     expected = f"kayrealestate_{settings.app_environment}"
     engines = [
         create_database_engine(settings.database_url.get_secret_value()),
-        create_database_engine(settings.selected_database_url()),
+        create_database_engine(selected),
     ]
     try:
         development, target = [resolve_identity(engine) for engine in engines]
@@ -53,3 +54,10 @@ def assert_isolated(settings: Settings) -> DatabaseIdentity:
     finally:
         for engine in engines:
             engine.dispose()
+
+
+def assert_runtime_target(settings: Settings) -> None:
+    """Only synthetic environments need the live test-versus-development identity proof."""
+    settings.selected_database_url()
+    if settings.app_environment in ISOLATED_ENVIRONMENTS:
+        assert_isolated(settings)
