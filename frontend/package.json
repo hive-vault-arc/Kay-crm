@@ -9,6 +9,7 @@
     "lint": "node scripts/icon-inventory.mjs --check && eslint src tests scripts next.config.ts playwright*.ts *.mjs --max-warnings=0",
     "icons:check": "node scripts/icon-inventory.mjs --check",
     "typecheck": "next typegen && tsc --noEmit",
+    "security:check": "node ../.github/scripts/dependency-audit.mjs",
     "test:e2e": "playwright test",
     "test:chrome": "playwright test --config=playwright.chrome.config.ts --headed --workers=1"
   },

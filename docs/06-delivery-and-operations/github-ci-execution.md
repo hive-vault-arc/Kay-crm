@@ -33,7 +33,26 @@ actual hosted results. [Policy and commands](github-ci.md).
 ## Not yet verified
 
 Hosted job execution and protected-main read-back remain pending until recorded
-below. An inherited frontend dev-tool advisory has no patched release; its narrow
-exception versus blocking-publication policy was presented to the user. Runtime
-npm audit is clean. No framework downgrade, global audit suppression or false
-zero-vulnerability claim was made.
+below. Khalid explicitly approved the narrow30-day existing dev-only advisory
+exception. Its exact advisory/expiry and fail-closed runtime/new/critical checks
+are now executable and covered by eight passing policy tests. Runtime npm audit
+is clean; full audit reports nine inherited affected packages, not zero. No
+framework downgrade, global audit suppression or false clean-audit claim was made.
+
+The first real hosted run published commit20b80e4 to `ci/initial-setup` only.
+Its frontend job passed. Repository safety found four links to the intentionally
+absent private credential note in a fresh checkout; local presence had hidden
+those missing-file failures. The validator now skips that one resolved private
+path in repository-only mode, without creating/copying the note or skipping other
+project links. Windows Python install/lint/types/runtime audit passed and its
+real PostgreSQL18.6/ClamAV setup, fresh configuration and migrations passed.
+Its backend suite began, but a corrected revision supersedes the failed run;
+no partial test run is counted as a complete pass. Main has not been created
+on a failed CI result. The corrected workflow uses separate disposable Windows
+matrix machines for backend/browser suites, reducing elapsed time without
+parallel writers against the same isolated target.
+
+Git housekeeping moved18 incomplete `tmp_obj_*` files into ignored recoverable
+quarantine, then ran `git gc --no-prune` and full integrity verification. No valid
+object/history was pruned: loose objects/garbage0, two packs, clean fsck. This
+resolves the initial loose/temporary-object warnings without deleting source.

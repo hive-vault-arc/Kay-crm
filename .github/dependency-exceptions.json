@@ -1,0 +1,8 @@
+{
+  "advisory": "GHSA-vfj7-8cjw-p6xm",
+  "approved_by": "Khalid",
+  "approved_on": "2026-10-16",
+  "expires": "2026-11-15T00:00:00Z",
+  "scope": "development-only",
+  "reason": "No upstream patched braces release exists. This existing development-tool dependency is not shipped in the runtime closure. Preserve the approved framework stack; reject all runtime and new advisories."
+}

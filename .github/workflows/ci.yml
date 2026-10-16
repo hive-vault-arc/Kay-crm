@@ -38,6 +38,8 @@ jobs:
         run: node .github/scripts/check-tools.mjs gitleaks
       - name: Validate workflow syntax
         run: node .github/scripts/check-tools.mjs actionlint
+      - name: Test dependency-gate allowed, new, runtime and expiry paths
+        run: node --test .github/scripts/dependency-policy.test.mjs
       - name: Validate repository documentation without private workstation files
         shell: pwsh
         run: ./docs/03-planning/validate-sprints.ps1 -RepositoryOnly
@@ -62,13 +64,17 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
-      - name: Audit runtime dependencies
-        run: npm audit --omit=dev --audit-level=low
+      - name: Reject runtime and new dependency advisories
+        run: npm run security:check
 
   integration:
-    name: Backend and browser tests
+    name: ${{ matrix.suite == 'backend' && 'Backend regression' || 'Browser regression' }}
     runs-on: windows-2025
     timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [backend, browser]
     defaults:
       run:
         shell: pwsh
@@ -93,9 +99,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           ./.venv/Scripts/python.exe -m pip install --no-deps --no-build-isolation -e .
       - name: Python lint, formatting and strict types
+        if: matrix.suite == 'backend'
         working-directory: backend
         run: ./scripts/kay.ps1 -Task check
       - name: Audit locked Python runtime dependencies
+        if: matrix.suite == 'backend'
         working-directory: backend
         run: ./.venv/Scripts/python.exe -m pip_audit -r requirements.lock --require-hashes --disable-pip
       - name: Start disposable loopback PostgreSQL18 and real ClamAV
@@ -112,11 +120,13 @@ jobs:
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
       - name: Full real-PostgreSQL backend regression (serial)
+        if: matrix.suite == 'backend'
         working-directory: backend
         env:
           APP_ENVIRONMENT: test
         run: ./.venv/Scripts/python.exe -m pytest -q --tb=short --maxfail=1
       - name: Install and compile the actual frontend
+        if: matrix.suite == 'browser'
         working-directory: frontend
         run: |
           npm ci
@@ -125,11 +135,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           npx playwright install chromium
       - name: Full compiled Chromium end-to-end regression (serial)
+        if: matrix.suite == 'browser'
         working-directory: frontend
         env:
           KAY_E2E_PRODUCTION: '1'
         run: npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=1
       - name: Check browser bundles for configured secrets
+        if: matrix.suite == 'browser'
         working-directory: frontend
         run: node scripts/scan-client-secrets.mjs
 

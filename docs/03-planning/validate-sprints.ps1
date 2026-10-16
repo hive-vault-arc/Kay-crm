@@ -109,9 +109,8 @@ foreach ($path in $documents) {
     foreach ($match in [regex]::Matches($body, '\[[^\]\r\n]+\]\((?<target><[^>]+>|[^)\r\n]+)\)')) {
         $target = $match.Groups['target'].Value.Trim().Trim('<', '>')
         if ($target -match '^https?://') { continue }
-        if ($RepositoryOnly -and ($target -eq '../local-database-credentials.md' -or
-            $target -eq 'docs/03-planning/local-database-credentials.md' -or
-            $target -in @($requiredSkills | ForEach-Object { "C:/Users/khali/.codex/skills/$_/SKILL.md" }))) {
+        if ($RepositoryOnly -and
+            $target -in @($requiredSkills | ForEach-Object { "C:/Users/khali/.codex/skills/$_/SKILL.md" })) {
             continue
         }
         $parts = $target -split '#', 2
@@ -119,6 +118,7 @@ foreach ($path in $documents) {
         $resolved = if (-not $relativePath) { $path }
             elseif ([IO.Path]::IsPathRooted($relativePath)) { [IO.Path]::GetFullPath($relativePath) }
             else { [IO.Path]::GetFullPath((Join-Path $parent $relativePath)) }
+        if ($RepositoryOnly -and $resolved -eq [IO.Path]::GetFullPath($credentialNote)) { continue }
         $linkCount++
         if (-not $resolved.StartsWith($projectPrefix, [StringComparison]::OrdinalIgnoreCase)) {
             if ($resolved -notin $approvedSkillPaths) {
