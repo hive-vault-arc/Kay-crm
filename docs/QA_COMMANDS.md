@@ -15,12 +15,19 @@ not inferred from a workflow file. Main requires the successful aggregate check.
 | `npm run security:check` (frontend/) |Runtime0;9 existing dev-tool findings use the explicitly approved expiring exception |
 | `.venv/Scripts/python.exe -m pytest tests/test_ci_setup.py -q --tb=short` (backend/) |6/6 pass1.78s |
 | `npm run lint`, `npm run typecheck`, `npm run build` (frontend/) |Pass; fresh Ubuntu hosted frontend also passes |
-| `.venv/Scripts/python.exe -m ruff check .`, `ruff format --check .`, `mypy app`, `pip check` (backend/) |Pass;284 formatted files/177 application modules/no broken requirements |
+| `.venv/Scripts/python.exe -m ruff check .`, `ruff format --check .`, `mypy app`, `pip check` (backend/) |Pass;288 formatted files/177 application modules/no broken requirements |
 | `powershell -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly` |22 sprints/1127 repository links before final policy links/41 acceptance mappings/13 Mermaid pairs/10 JSON samples |
 
-Backend current collection499; compiled Chromium79 cases. Counts are discovery,
+Backend current collection508; compiled Chromium79 cases. Counts are discovery,
 not a pass until the hosted complete results are recorded. Earlier failed native
 scanner setup/tests remain failures, not skipped or relabelled as accepted.
+
+Final local corrections: CI setup/identity/observer15/15 passed1.22s; real
+recovery test1/1 passed23.78s, retaining the fixed local identity guard. Compiled
+Chromium focused export/retry/protected-files3/3 passed1.8m. Final private-value
+index check8185 blobs/seven values/zero matches. Hosted complete outcomes are
+published by the [required workflow](https://github.com/hive-vault-arc/Kay-crm/actions/workflows/ci.yml),
+not inferred from these focused local results.
 
 ## Iconsax UI-only migration (2026-10-16)
 

@@ -1,5 +1,24 @@
 # KAY agent lessons
 
+## GitHub CI: prove clean-runner state instead of copying laptop assumptions
+
+- An open ClamD port/PONG did not prove byte scanning. Use the official native
+  Windows service lifecycle, explicit config/certificate/temp directories, and
+  real clean/rejected readiness before the suite. Keep failed native scan states
+  as failures; never substitute a fake clean verdict or disable authorization.
+- A clean clone intentionally lacks the private credential note and installed
+  user skills. Repository-only documentation checks skip exactly those approved
+  external/private targets, not arbitrary missing project links or fake notes.
+- Recovery fixture OIDs are stable on one laptop, not a fresh CI cluster. Retain
+  the fixed workstation guard; capture/sign fresh CI identities before migrations
+  and reject altered, aliased, missing or foreign-workspace proofs before DDL.
+- A spawned worker is not a ready worker. Test supervision observes original
+  real maintenance admission and awaits its signal; it does not grant admission,
+  change the worker loop or replace the business-ready assertion with a sleep.
+- Workflow YAML alone does not protect main. Require the actual successful
+  aggregate on the promoted SHA, apply server-side protection including admins
+  and verify its read-back. Publication is not deployment/product approval.
+
 ## Iconsax: verify the delivery format and allow genuinely icon-free screens
 
 - The official Iconsax package is a browser custom element, not assumed React

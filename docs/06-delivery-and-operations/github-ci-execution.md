@@ -1,7 +1,10 @@
 # GitHub CI execution
 
-2026-10-16. Setup in progress. This record distinguishes local verification from
-actual hosted results. [Policy and commands](github-ci.md).
+2026-10-16. Publication preflight and chronological correction ledger. This record
+distinguishes local verification from actual hosted results. [Policy and commands](github-ci.md).
+The [current workflow runs](https://github.com/hive-vault-arc/Kay-crm/actions/workflows/ci.yml)
+and server-side main settings are authoritative for later revisions; historical
+failed attempts below are not the current revision's status.
 
 ## Local verification before publication
 
@@ -30,10 +33,10 @@ actual hosted results. [Policy and commands](github-ci.md).
 - GitHub repository read-back confirms Dependabot security updates, secret scanning
   and secret push protection enabled. No paid feature/subscription was enabled.
 
-## Not yet verified
+## Initial hosted-run preflight
 
-Hosted job execution and protected-main read-back remain pending until recorded
-below. Khalid explicitly approved the narrow30-day existing dev-only advisory
+At first publication, hosted execution and protected-main read-back were not yet
+verified. Khalid explicitly approved the narrow30-day existing dev-only advisory
 exception. Its exact advisory/expiry and fail-closed runtime/new/critical checks
 are now executable and covered by eight passing policy tests. Runtime npm audit
 is clean; full audit reports nine inherited affected packages, not zero. No
@@ -78,7 +81,7 @@ resolves the initial loose/temporary-object warnings without deleting source.
   A failed file assertion additionally reports only its safe scan-error code.
   Safe native service logs/status and unconditional owned-service shutdown support
   diagnosis without outputting application credentials or broadening a proxy.
-  Hosted verification of this correction remains pending.
+  Hosted verification of that correction was not yet available at this revision.
 
 - [Run38866375381](https://github.com/hive-vault-arc/Kay-crm/actions/runs/38866375381)
   caught an installer argument error before tests: native ClamAV reads its config
@@ -106,6 +109,42 @@ resolves the initial loose/temporary-object warnings without deleting source.
   The original15-second export-ready assertion remains unchanged. Process-control
   timeouts now include acknowledged worker/fixture startup, not a fixed sleep.
 - Final local focused export cases pass27.2s/16.5s on the corrected observer;
-  file/recovery and final hosted aggregate outcomes are recorded when available.
+  file/recovery checks are recorded below; these are not a full hosted result.
   Current CI guard/readiness/identity/observer selection:15/15 passed1.22s.
   Backend formatted source count288. No main promotion on these failed runs.
+
+## Corrected local preflight and final candidate
+
+- The complete focused compiled Chromium selection passes3/3 in1.8m: real filtered
+  export/download/private scope, same-key lost-acknowledgement recovery and actual
+  clean/rejected protected file bytes. Original ready/permission assertions remain.
+- The real local coherent restore/revocation/replay case passes1/1 in23.78s,
+  including the unchanged fixed local recovery cluster/OID boundary. New CI identity
+  and observer unit cases bring current backend discovery to508; Chromium remains79.
+- Private-value index comparison repeats on8185 blobs/seven private values with
+  zero matches. Full-history Gitleaks, actionlint, document validation, frontend
+  lint/types and backend guard tests pass on the corrected sources.
+- Ten shadcn starter archives independently match the official pinned upstream
+  Git blob IDs, in addition to the checked SHA256 archive manifest. No arbitrary
+  binary/archive exemption was introduced.
+- Dependabot's obsolete major proposals close after the compatible-update policy
+  takes effect. No product dependency upgrade was merged. Official actions only
+  were upgraded after primary release/input/runtime review.
+- Guarded test cleanup leaves66 record tables empty/bootstrap unset and removes
+  seven synthetic orphan objects. Read-only developmentOID109060 remains empty,
+  policy1/capacity2/no editor/hours/lunch. Local real recovery cleanup succeeds.
+- Local API/frontend/worker processes and all project listeners, including the
+  diagnostic3320, are zero. Docker ClamAV is stopped with cache/volume retained;
+  shared PostgreSQL5432 remains running on its two address families.
+- Eighteen incomplete Git temporary objects remain in ignored recoverable
+  quarantine. The downloaded public native scanner/definition probe is retained
+  in a task-specific Windows temporary directory because deletion was blocked;
+  its process/port is stopped. It is outside Git and contains no customer data.
+
+Promotion procedure: select only a commit with a completed successful `KAY CI`
+run and the genuine GitHub Actions `CI required` check; create main at that exact
+SHA, apply [.github/main-protection.json](../../.github/main-protection.json), then
+read back checks/admin/PR/force-push/deletion/history/conversation settings.
+No failed, cancelled, skipped or merely locally tested candidate qualifies.
+The final handoff reports the actual selected commit, hosted counts/run URL and
+protection read-back. No deployment or fresh production/load certification.
