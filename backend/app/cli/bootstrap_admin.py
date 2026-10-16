@@ -6,11 +6,11 @@ import warnings
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.db.isolation import assert_isolated
+from app.db.isolation import assert_runtime_target
 from app.db.session import Database
 from app.identity.bootstrap import bootstrap_administrator
 from app.identity.security import IdentityError
-from app.settings import load_settings
+from app.settings import ConfigurationError, load_settings
 
 
 def main() -> int:
@@ -31,12 +31,14 @@ def main() -> int:
         if password != confirmation:
             raise IdentityError("PASSWORD_MISMATCH")
         configuration = load_settings()
-        if configuration.app_environment != "development":
-            assert_isolated(configuration)
+        assert_runtime_target(configuration)
         database = Database(configuration.selected_database_url())
         user_id = bootstrap_administrator(database, name, email, password)
         print(f"BOOTSTRAP_COMPLETED: compte {user_id}. Connectez-vous depuis l’interface KAY.")
         return 0
+    except ConfigurationError as error:
+        print(str(error))
+        return 1
     except IdentityError as error:
         print(error.code)
         return 1

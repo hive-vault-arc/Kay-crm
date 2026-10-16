@@ -10,7 +10,7 @@ import sys
 import time
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 
 def main() -> None:
@@ -22,15 +22,19 @@ def main() -> None:
     ):
         raise RuntimeError("MANAGED_PYTHON_3_14_3_REQUIRED")
     environment = os.environ.copy()
-    database = "postgresql+psycopg://synthetic@127.0.0.1:1/kay_runtime_probe"
+    database = (
+        "postgresql://synthetic:synthetic-probe@kay-postgres.synthetic.invalid:25060/kay_runtime_probe"
+        "?sslmode=verify-full&sslrootcert=system"
+    )
+    for variable in ("TEST_DATABASE_URL", "BENCHMARK_DATABASE_URL", "RECOVERY_DATABASE_URL"):
+        environment.pop(variable, None)
+    facade = secrets.token_hex(32)
     environment.update(
-        APP_ENVIRONMENT="development",
+        APP_ENVIRONMENT="production",
+        PRODUCTION_DATABASE_HOST="kay-postgres.synthetic.invalid",
         DATABASE_URL=database,
-        TEST_DATABASE_URL=database,
-        BENCHMARK_DATABASE_URL=database,
-        RECOVERY_DATABASE_URL=database,
-        FACADE_SECRET=secrets.token_hex(32),
-        FRONTEND_ORIGIN="https://localhost:3000",
+        FACADE_SECRET=facade,
+        FRONTEND_ORIGIN="https://kay.synthetic.invalid",
         PYTHONWARNINGS="error",
     )
     with socket.socket() as available:
@@ -71,7 +75,11 @@ def main() -> None:
                     raise RuntimeError("MANAGED_UVICORN_STARTUP_TIMEOUT") from None
                 time.sleep(0.1)
         try:
-            with urlopen(f"http://127.0.0.1:{port}/api/v1/health/ready", timeout=5):  # noqa: S310
+            request = Request(
+                f"http://127.0.0.1:{port}/api/v1/health/ready",
+                headers={"X-Kay-Facade-Secret": facade},
+            )
+            with urlopen(request, timeout=5):  # noqa: S310 - fixed disposable loopback process.
                 raise RuntimeError("UNAVAILABLE_DATABASE_MUST_NOT_REPORT_READY")
         except HTTPError as failure:
             if failure.code != 503:
@@ -90,7 +98,9 @@ def main() -> None:
         or any(word in output.lower() for word in ("warning", "traceback", "error"))
     ):
         raise RuntimeError("MANAGED_UVICORN_DIAGNOSTICS_FAILED")
-    print("Managed Linux Python: Uvicorn startup/liveness/shutdown pass; unavailable DB stays503.")
+    print(
+        "Production-mode Linux Python: startup/live200/shutdown pass; synthetic unavailable DB503."
+    )
 
 
 if __name__ == "__main__":

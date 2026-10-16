@@ -1,5 +1,10 @@
 # DigitalOcean managed Python startup repair
 
+Historical runtime-only repair below. The subsequently authorized
+[production settings and CI split](production-settings-ci.md) supersedes its
+all-URLs/local-only configuration limitation and automatic integration policy,
+not its historical test results or remaining production-readiness limitations.
+
 2026-10-16. Owner-authorized fix/publication for the supplied deployment failure,
 not production acceptance or permission to weaken unrelated runtime boundaries.
 

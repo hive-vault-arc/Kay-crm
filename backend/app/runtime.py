@@ -1,6 +1,7 @@
 """Pinned application runtimes, with stricter local operator-tool isolation."""
 
 import asyncio
+import os
 import sys
 from pathlib import Path
 
@@ -28,3 +29,11 @@ def require_runtime() -> None:
     ):
         return
     require_venv()
+
+
+def require_operator_runtime() -> None:
+    """Managed operator commands require explicit production, never a test-mode escape."""
+    if os.environ.get("APP_ENVIRONMENT") == "production":
+        require_runtime()
+    else:
+        require_venv()

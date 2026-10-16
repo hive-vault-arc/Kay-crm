@@ -9,12 +9,13 @@ from sqlalchemy import text
 from app.db import models as registered_models  # noqa: F401
 from app.db.isolation import assert_isolated, resolve_identity
 from app.db.session import Base, create_database_engine
-from app.runtime import BACKEND_ROOT
+from app.runtime import BACKEND_ROOT, require_venv
 from app.settings import load_settings
 
 
 def main() -> None:
     """Save metadata only to ignored local evidence for before/after comparison."""
+    require_venv()
     settings = load_settings()
     if settings.app_environment != "development":
         assert_isolated(settings)

@@ -1,5 +1,10 @@
 # KEPVY for KAY: specification index
 
+Production configuration and the automatic/manual CI split are documented in
+[production settings and release gates](docs/06-delivery-and-operations/production-settings-ci.md).
+Automatic CI does not execute database/browser integration; those preserved
+manual suites remain mandatory before real-customer release.
+
 Approved V3 is now implemented across the existing frontend, including unpictured
 workflows. The [route/surface checklist](docs/04-design/ui-reference/approved-v3/coverage.md)
 maps29 route files and168 contextual sites; the

@@ -4,12 +4,12 @@ import argparse
 import json
 import time
 
-from app.runtime import require_venv
+from app.runtime import require_operator_runtime
 
 
 def main() -> None:
-    require_venv()
-    from app.db.isolation import assert_isolated
+    require_operator_runtime()
+    from app.db.isolation import assert_runtime_target
     from app.db.session import Database
     from app.discovery.export_worker import run_once as export_once
     from app.files.worker import run_once
@@ -25,8 +25,7 @@ def main() -> None:
     mode.add_argument("--status", action="store_true")
     args = parser.parse_args()
     settings = load_settings()
-    if settings.app_environment != "development":
-        assert_isolated(settings)
+    assert_runtime_target(settings)
     database = Database(settings.selected_database_url())
     admission = Admission(settings)
     try:
