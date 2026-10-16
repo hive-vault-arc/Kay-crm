@@ -68,6 +68,25 @@ jobs:
       - name: Reject runtime and new dependency advisories
         run: npm run security:check
 
+  managed-runtime:
+    name: Linux managed runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version-file: .python-version
+      - name: Create the managed-prefix interpreter (base interpreter only creates environments)
+        run: python -m venv backend/.heroku/python
+      - name: Install existing hash-locked runtime dependencies
+        working-directory: backend
+        run: ./.heroku/python/bin/python -m pip install --require-hashes -r requirements.txt
+      - name: Verify real Uvicorn import, HTTP liveness, fail-closed dependency and shutdown
+        run: backend/.heroku/python/bin/python .github/scripts/buildpack-smoke.py
+
   integration:
     name: ${{ matrix.suite == 'backend' && 'Backend regression' || 'Browser regression' }}
     runs-on: windows-2025
@@ -174,7 +193,7 @@ jobs:
   required:
     name: CI required
     if: ${{ always() }}
-    needs: [repository, frontend, integration]
+    needs: [repository, frontend, managed-runtime, integration]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
@@ -182,4 +201,4 @@ jobs:
         env:
           RESULTS: ${{ toJSON(needs) }}
         run: |
-          node -e 'const jobs = Object.values(JSON.parse(process.env.RESULTS)); if (jobs.length !== 3 || jobs.some(job => job.result !== "success")) process.exit(1); console.log("All required KAY checks passed.");'
+          node -e 'const jobs = Object.values(JSON.parse(process.env.RESULTS)); if (jobs.length !== 4 || jobs.some(job => job.result !== "success")) process.exit(1); console.log("All required KAY checks passed.");'

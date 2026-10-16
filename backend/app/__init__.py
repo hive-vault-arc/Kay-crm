@@ -1,5 +1,5 @@
-"""KAY backend package; all execution requires the project virtual environment."""
+"""KAY backend package; application execution requires a pinned project runtime."""
 
-from app.runtime import require_venv
+from app.runtime import require_runtime
 
-require_venv()
+require_runtime()
