@@ -14,7 +14,7 @@ status: ready-for-review
 
 ## KAY-facing interface extension
 
-This page documents the **KEPVY** brand magazine, not the KAY Real Estate logo. The customer's supplied logo references are [flat](kay-logo-reference-flat.png) and [textured](kay-logo-reference-textured.png); they are raster references, not production vector masters. The proposed KAY-facing [interface design system](../docs/04-design/design-system.md) and its [exact UI tokens](kay-ui-tokens.json) combine this guide's neutral foundation with a limited, proposed gold accent. Keep the two identities separate and obtain KAY's approval before treating the new palette as final.
+This page documents the **KEPVY** brand magazine, not the KAY Real Estate logo. On 2026-10-16 Khalid explicitly replaced the earlier KAY artwork with the supplied [transparent Champagne Gold](kay-logo-reference-flat.png) and [black-background Luxury Gold](kay-logo-reference-textured.png) PNGs. These two reference paths now contain the new originals unchanged, not the retired artwork. See [current logo usage and verification](kay-logos.md). They are approved raster assets, not vector masters. The KAY-facing [interface design system](../docs/04-design/design-system.md) and [exact UI tokens](kay-ui-tokens.json) remain separate from this KEPVY identity guide.
 
 ## Quick Jump
 
