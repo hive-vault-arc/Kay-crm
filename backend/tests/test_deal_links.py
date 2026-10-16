@@ -185,7 +185,7 @@ async def test_private_deal_file_real_scan_and_post_permit_scope_revocation(sett
         assert sent.status_code == 200 and sent.json()["state"] == "pending_scan"
         assert run_once(database, settings)
         clean = read_document(database, owner, UUID(document["id"]))
-        assert clean["versions"][0]["state"] == "clean"
+        assert clean["versions"][0]["state"] == "clean", clean["versions"][0]["scan_error"]
         download = grant(database, owner, clean, "download", upload["version_id"])
         change(settings, database, manager, contact, intent("assign", primary_agent_id=next_id))
         assert (

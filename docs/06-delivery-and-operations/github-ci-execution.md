@@ -56,3 +56,26 @@ Git housekeeping moved18 incomplete `tmp_obj_*` files into ignored recoverable
 quarantine, then ran `git gc --no-prune` and full integrity verification. No valid
 object/history was pruned: loose objects/garbage0, two packs, clean fsck. This
 resolves the initial loose/temporary-object warnings without deleting source.
+
+## Hosted failures retained before promotion
+
+- [Run38864605404](https://github.com/hive-vault-arc/Kay-crm/actions/runs/38864605404):
+  frontend passed; four missing private-note links failed the clean-checkout
+  validator; backend100 passed/1 failed at the protected-file clean-state assertion.
+  Native definitions/PONG had passed, which did not prove actual byte scanning.
+- [Run38865233639](https://github.com/hive-vault-arc/Kay-crm/actions/runs/38865233639):
+  corrected repository and approved dependency-policy/frontend jobs pass. Backend
+  again100 passed/1 failed at the same pending-scan assertion; browser19 passed/
+  1 failed at the real file workflow. The required aggregate correctly fails.
+  Neither failed revision was promoted to main.
+- The same protected-file test passes locally (8.71s) with the identical verified
+  native ClamAV1.5.4 binary and real cached definitions on isolated port3320.
+  That diagnostic service was stopped afterward. No product scanner verdict,
+  timeout, permission or durable retry behavior was relaxed.
+- CI setup now uses native SCM service mode, an explicit writable scan temp
+  directory and real clean/rejected INSTREAM readiness before running tests.
+  Six CI-setup guard/readiness tests pass; current backend discovery is499 cases.
+  A failed file assertion additionally reports only its safe scan-error code.
+  Safe native service logs/status and unconditional owned-service shutdown support
+  diagnosis without outputting application credentials or broadening a proxy.
+  Hosted verification of this correction remains pending.

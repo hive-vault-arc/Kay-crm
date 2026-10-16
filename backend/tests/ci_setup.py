@@ -2,6 +2,7 @@
 
 import os
 import secrets
+import time
 from pathlib import Path
 
 import psycopg
@@ -9,7 +10,28 @@ from psycopg import sql
 from sqlalchemy.engine import URL
 
 from app.cli.setup_local import TARGETS, configure_https, write_environment
+from app.files.scanner import scan
+from app.identity.security import IdentityError
 from app.runtime import BACKEND_ROOT, require_venv
+from app.settings import load_settings
+from tests.file_support import eicar_bytes, image_bytes
+
+
+def verify_scanner() -> None:
+    settings = load_settings()
+    for attempt in range(3):
+        try:
+            clean, version = scan(settings, image_bytes())
+            rejected, _ = scan(settings, eicar_bytes())
+        except IdentityError:
+            if attempt == 2:
+                raise RuntimeError("CI_REAL_SCANNER_NOT_READY") from None
+            time.sleep(2)
+            continue
+        if clean != "clean" or rejected != "rejected":
+            raise RuntimeError("CI_REAL_SCANNER_VERDICT_FAILED")
+        print(f"Real scanner ready: clean image and controlled signature rejected; {version}")
+        return
 
 
 def main() -> None:
@@ -83,6 +105,7 @@ def main() -> None:
         },
     )
     print("Disposable PostgreSQL targets and ignored HTTPS configuration prepared.")
+    verify_scanner()
 
 
 if __name__ == "__main__":

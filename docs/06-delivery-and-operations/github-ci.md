@@ -42,6 +42,10 @@ The backend regression includes its real Windows DPAPI/ACL/pg_dump recovery test
   distribution linked by PostgreSQL, and ClamAV1.5.4 from Cisco-Talos. ZIPs are
   pinned by SHA256; antivirus definitions are fetched and verified by freshclam.
   Failed download/update/readiness fails the job; no fake scan verdict fallback.
+  Native ClamAV runs through its official Windows service mode, with an explicit
+  writable temporary directory. Readiness requires a real clean image and a real
+  rejected controlled signature, not merely an open port/PONG. Owned services are
+  stopped in an always-run cleanup step, even after test failure.
   Local PostgreSQL18.2 and Docker configuration are not upgraded by CI setup.
 - A new loopback-only PostgreSQL cluster uses5433 and a random masked password.
   Four fresh named databases preserve development/test/benchmark/recovery identity

@@ -39,15 +39,25 @@ if (-not $clamavBin) { throw 'CLAMAV_BINARY_MISSING' }
 $definitions = Join-Path $serviceRoot 'definitions'
 New-Item -ItemType Directory -Path $definitions | Out-Null
 $freshConfig = Join-Path $serviceRoot 'freshclam.conf'
-[IO.File]::WriteAllText($freshConfig, "DatabaseDirectory $definitions`nDatabaseMirror database.clamav.net`nTestDatabases yes`n")
+$cvdCertificates = Join-Path $clamavBin 'certs'
+[IO.File]::WriteAllText($freshConfig, "DatabaseDirectory $definitions`nCVDCertsDirectory $cvdCertificates`nDatabaseMirror database.clamav.net`nTestDatabases yes`n")
 & (Join-Path $clamavBin 'freshclam.exe') "--config-file=$freshConfig" '--stdout'
 if ($LASTEXITCODE -ne 0) { throw 'CLAMAV_DEFINITION_UPDATE_FAILED' }
 $clamConfig = Join-Path $serviceRoot 'clamd.conf'
-[IO.File]::WriteAllText($clamConfig, "DatabaseDirectory $definitions`nTCPSocket 3310`nTCPAddr 127.0.0.1`nForeground yes`nMaxFileSize 32M`nMaxScanSize 64M`n")
-$clamProcess = Start-Process -FilePath (Join-Path $clamavBin 'clamd.exe') -ArgumentList "--config-file=$clamConfig" -PassThru -WindowStyle Hidden -RedirectStandardOutput (Join-Path $serviceRoot 'clamd.stdout.log') -RedirectStandardError (Join-Path $serviceRoot 'clamd.stderr.log')
+$scanTemp = Join-Path $serviceRoot 'scan-temp'
+New-Item -ItemType Directory -Path $scanTemp | Out-Null
+[IO.File]::WriteAllText($clamConfig, "DatabaseDirectory $definitions`nCVDCertsDirectory $cvdCertificates`nTemporaryDirectory $scanTemp`nTCPSocket 3310`nTCPAddr 127.0.0.1`nMaxFileSize 32M`nMaxScanSize 64M`nLogFile $(Join-Path $serviceRoot 'clamd.log')`nLogTime yes`n")
+if (Get-Service -Name clamd -ErrorAction SilentlyContinue) { throw 'EXISTING_CLAMAV_SERVICE_REFUSED' }
+$clamd = Join-Path $clamavBin 'clamd.exe'
+& $clamd '--install-service'
+if ($LASTEXITCODE -ne 0 -or -not (Get-Service -Name clamd -ErrorAction SilentlyContinue)) { throw 'CLAMAV_SERVICE_INSTALL_FAILED' }
+$serviceCommand = '"' + $clamd + '" --daemon --service-mode --config-file="' + $clamConfig + '"'
+& sc.exe config clamd binPath= $serviceCommand
+if ($LASTEXITCODE -ne 0) { throw 'CLAMAV_SERVICE_CONFIG_FAILED' }
+Start-Service -Name clamd
 $deadline = [DateTime]::UtcNow.AddMinutes(3)
 do {
-    if ($clamProcess.HasExited) { throw 'CLAMAV_START_FAILED' }
+    if ((Get-Service -Name clamd).Status -eq 'Stopped') { throw 'CLAMAV_START_FAILED' }
     try {
         $socket = [Net.Sockets.TcpClient]::new('127.0.0.1', 3310)
         $stream = $socket.GetStream()

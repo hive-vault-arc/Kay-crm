@@ -144,6 +144,29 @@ jobs:
         if: matrix.suite == 'browser'
         working-directory: frontend
         run: node scripts/scan-client-secrets.mjs
+      - name: Safe scanner diagnostics on failure
+        if: failure()
+        run: |
+          $services = Join-Path $env:RUNNER_TEMP 'kay-ci-services'
+          @{ clamav_processes = @(Get-Process clamd -ErrorAction SilentlyContinue).Count; scanner_listeners = @(Get-NetTCPConnection -State Listen -LocalPort 3310 -ErrorAction SilentlyContinue).Count } | ConvertTo-Json -Compress
+          $scannerLog = Join-Path $services 'clamd.log'
+          if (Test-Path -LiteralPath $scannerLog) { Get-Content -LiteralPath $scannerLog -Tail 15 }
+      - name: Stop only this disposable job's services
+        if: always()
+        run: |
+          $services = Join-Path $env:RUNNER_TEMP 'kay-ci-services'
+          $clamav = Get-CimInstance Win32_Service -Filter "Name='clamd'"
+          if ($clamav -and $clamav.PathName.Contains($services)) {
+            Stop-Service -Name clamd -ErrorAction Stop
+            sc.exe delete clamd
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          $pgCtl = Join-Path $services 'postgres/pgsql/bin/pg_ctl.exe'
+          $pgData = Join-Path $services 'pgdata'
+          if ((Test-Path -LiteralPath $pgCtl) -and (Test-Path -LiteralPath (Join-Path $pgData 'postmaster.pid'))) {
+            & $pgCtl '-D' $pgData '-m' 'fast' '-w' 'stop'
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
 
   required:
     name: CI required
