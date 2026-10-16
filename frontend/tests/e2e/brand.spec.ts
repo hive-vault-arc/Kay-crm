@@ -2,7 +2,7 @@ import { mkdir, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { test, expect, signIn, clearActorContext, createActor, removeActor } from "../helpers/auth";
 import { testControl } from "../helpers/api-process";
-import { simulatorOrigin } from "../helpers/intake";
+import { clearIntake, simulatorOrigin } from "../helpers/intake";
 
 const iconUrl = "/favicon.svg?v=kay-gold-20261016";
 const captures = "output/playwright/brand";
@@ -70,8 +70,10 @@ test("KAY branding: supplied originals, real favicon assets and server-rendered 
 });
 
 test("KAY branding: separate website simulator serves every advertised icon", async ({ page }) => {
-  await testControl("simulator-start");
+  const agent = await createActor("agent");
   try {
+    await testControl("fixture", { action: "website-source", id: agent.id });
+    await testControl("simulator-start");
     await expect.poll(async () => {
       try { return (await page.request.get(simulatorOrigin)).status(); } catch { return 0; }
     }, { timeout: 10000 }).toBe(200);
@@ -85,7 +87,7 @@ test("KAY branding: separate website simulator serves every advertised icon", as
       expect(response.headers()["content-type"]).toMatch(/image\/(svg\+xml|png)/);
       expect((await response.body()).length).toBeGreaterThan(100);
     }
-  } finally { await testControl("simulator-stop"); }
+  } finally { await clearIntake(); }
 });
 
 test("KAY branding: mandatory password-change screen reuses transparent artwork", async ({ page }) => {

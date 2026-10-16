@@ -59,8 +59,8 @@ Artwork aspect ratios remain intact. Logos are not form text or a new status cue
 - `cd frontend; npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`:
   pass, no lint/build warnings. Icon inventory remains27 semantics/0 violations.
 - `$env:KAY_E2E_PRODUCTION='1'; npm.cmd run test:chrome -- tests/e2e/brand.spec.ts --reporter=list`:
-  final4/4 pass in36.5s, compiled stack and visible isolated installed Chrome.
-  Earlier2/2 and3/3 runs are superseded, not added to this count.
+  final4/4 pass in39.8s, compiled stack and visible isolated installed Chrome.
+  Earlier2/2,3/3 and4/4 runs are superseded, not added to this count.
 - Checks include both original hashes,5 actual public asset responses/MIME types,
   ICO16/32/48 entries, server-rendered/no-JavaScript login, browser-decoded SVG
   with actual gold pixels, mandatory password-change branding, eight navigation
@@ -71,6 +71,11 @@ Artwork aspect ratios remain intact. Logos are not form text or a new status cue
   raced process readiness and failed before navigation; it now uses the same
   real200 readiness poll as the incumbent intake helper. No timeout, application
   guard or assertion is weakened. All four cases pass in the final rerun.
+- The first hosted run then exposed a second fixture prerequisite: a clean CI
+  runner has no local website signing/source configuration. The icon case now
+  explicitly creates a synthetic agent and configures the isolated source through
+  the existing guarded fixture, then cleans it through the incumbent intake
+  cleanup. No real source/secret, backend change or readiness fallback is used.
 - All five generated assets reproduce byte-for-byte on a second generator run.
 - Five safe native captures under ignored `frontend/output/playwright/brand/`:
   three empty-login widths, synthetic empty Leads and mobile navigation.
