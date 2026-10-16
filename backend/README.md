@@ -277,8 +277,12 @@ docker compose -f compose.clamav.yaml ps
 
 Wait for healthy ClamAV before expecting scan completion. The compose file pins
 the digest, persisted signatures,4GiB memory limit and127.0.0.1:3310 only.
-`ANTIVIRUS_HOST` is loopback-only; `ANTIVIRUS_PORT` defaults3310. API and worker
-share the selected ignored configuration (`APP_ENVIRONMENT=development` normally).
+`ANTIVIRUS_HOST` stays `127.0.0.1` in local/isolated environments;
+`ANTIVIRUS_PORT` defaults3310. Explicit `APP_ENVIRONMENT=production` also accepts
+a configured private ClamAV DNS name or IP, with the port configured separately.
+Use the same endpoint in API and worker; see the
+[production configuration and test boundary](../docs/06-delivery-and-operations/production-antivirus.md).
+API and worker share the selected ignored configuration (`APP_ENVIRONMENT=development` normally).
 FastAPI8000 and Next3000 require the exact configured frontend Origin and trusted
 local certificate. Scanner outages retain quarantine, never fake success.
 

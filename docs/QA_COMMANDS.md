@@ -1,5 +1,23 @@
 # KAY QA command register
 
+## Production private antivirus host (2026-10-16)
+
+Backend `./scripts/kay.ps1 -Task check`: Ruff/format pass, 301 formatted files,
+178 strict typed modules. Additional venv Ruff checks for the two Linux smoke
+scripts pass. `.venv/Scripts/python.exe -m tests.unit_runner`: 154 passed,
+513 deselected in 6.92s. Real database connections are refused before collection;
+scanner tests deny real DNS/socket connections and use synthetic protocol peers.
+Production API lifespan and worker configuration retain verified PostgreSQL TLS
+and use the configured private ClamAV DNS hostname. Malformed inputs and DNS/
+refusal/timeout/protocol failure paths pass without value-bearing diagnostics or
+clean-on-failure fallback. [Scope and commands](06-delivery-and-operations/production-antivirus.md).
+
+Linux automatic CI now supplies synthetic private scanner DNS to both managed
+configuration probes. Hosted results must pass before protected-main promotion;
+local units are not a hosted or real-scanner deployment pass. Complete manual DB,
+browser and real-ClamAV integration is **not executed, not passed** for this patch,
+and remains required before real customer data. No production connection.
+
 ## DigitalOcean public PostgreSQL CA (2026-10-16)
 
 Bundled supplied public-only certificate, byte-identical SHA-256, with shared

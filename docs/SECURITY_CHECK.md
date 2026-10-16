@@ -1,5 +1,27 @@
 # KAY security check for changes
 
+## Production private antivirus endpoint (2026-10-16)
+
+Owner-authorized production settings fix: valid configured DNS names (including
+single-label private names) and IP addresses replace the unconditional loopback
+literal only in production. Local/isolated defaults and endpoint restrictions
+remain. Malformed hosts/URLs and out-of-range ports fail with variable/code-only
+diagnostics, without exposing inputs or exception chains. No startup DNS probe,
+secret input, production connection, schema, authorization, TLS/database isolation
+or migration change. ClamD must stay on the operator's trusted private network;
+this task does not add encrypted/authenticated scanner transport or provisioning.
+
+The scanner algorithm is unchanged: signature/version and INSTREAM checks remain,
+infection rejects, DNS/refusal/timeout/protocol failures return503
+`ANTIVIRUS_UNAVAILABLE`; no fallback marks a file clean. Database-backed quarantine,
+lease, retry and download authorization paths are untouched. The current pure unit
+selection passes154 cases,513 integration cases deselected, not passed. New tests
+deny real scanner connections/DNS, exercise controlled transport and inspect API
+lifespan/worker configuration with synthetic private DNS. Linux CI startup probes
+also explicitly configure that synthetic private scanner host. Complete manual
+database/browser/real-scanner release suites remain required before customer data,
+not executed for this patch. [Commands and limits](06-delivery-and-operations/production-antivirus.md).
+
 ## DigitalOcean public PostgreSQL CA (2026-10-16)
 
 Owner-provided file is one parseable public X.509 CA, no key or extra content;

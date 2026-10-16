@@ -36,7 +36,11 @@ def main() -> None:
         recovery_database_url=None,
         facade_secret=secrets.token_hex(32),
         frontend_origin="https://kay.synthetic.invalid",
+        antivirus_host="kay-clamav.synthetic.invalid",
+        antivirus_port=3310,
     )
+    if settings.antivirus_host != "kay-clamav.synthetic.invalid" or settings.antivirus_port != 3310:
+        raise RuntimeError("WORKER_ANTIVIRUS_CONFIGURATION_INVALID")
     observed: list[Database] = []
 
     def configured(database: Database) -> dict[str, bool]:

@@ -252,7 +252,9 @@ is checked on every scan/read. Archiving never purges committed evidence.
 
 The separate explicit-venv `app.cli.worker` dispatches PostgreSQL outbox rows
 with deduplicated jobs. SKIP LOCKED claims have90-second UUID-fenced leases;
-actual loopback ClamAV INSTREAM happens outside the database transaction.
+actual ClamAV INSTREAM happens outside the database transaction: loopback locally,
+or the explicitly configured private DNS/IP endpoint in production. See the
+[production configuration boundary](../06-delivery-and-operations/production-antivirus.md).
 Only the still-current lease can publish a verdict and one deduplicated internal
 notification. Errors retain quarantine, bounded backoff and at most5 attempts;
 expired claims recover after worker restart. An explicit authorized retry resets
