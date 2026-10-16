@@ -16,7 +16,7 @@ filters can leave the required check pending for documentation-only changes.
 |---|---|
 | Repository safety | Indexed path/size/mode rules,13 ignore probes, approved archive hashes, full-history Gitleaks with redacted diagnostics, actionlint, portable documentation checks |
 | Frontend quality | Exact Node version, `npm ci`, icon inventory/ESLint with zero warnings, TypeScript, production build, runtime dependency audit |
-| Backend and browser tests | Exact Python venv/hash locks, Ruff/format/mypy, locked runtime audit, actual PostgreSQL18/ClamAV, migrations, full serial pytest, compiled serial Chromium journeys and bundle-secret checks |
+| Backend regression / Browser regression | Separate hosted matrix instances; exact Python venv/hash locks, Ruff/format/mypy, locked runtime audit, actual PostgreSQL18/ClamAV, migrations, full serial pytest, compiled serial Chromium journeys and bundle-secret checks |
 | CI required | Always runs and fails if any prerequisite failed, was cancelled or skipped |
 
 Khalid explicitly approved one30-day development-only exception on2026-10-16:
@@ -52,11 +52,19 @@ The backend regression includes its real Windows DPAPI/ACL/pg_dump recovery test
   separation. Configuration refuses existing targets/configuration or non-GitHub
   Windows execution. HTTPS keys/facade secrets are generated per job, ignored and
   masked. No repository secret, staff account or local private note is required.
+  Before migrations, provisioning records all four live database identities in
+  an ignored, HMAC-authenticated baseline. Recovery fixture cleanup must match
+  that exact workspace/cluster/OID/name set and loopback5433 URLs, or refuses DDL.
+  The fixed laptop recovery identity remains mandatory outside GitHub CI.
 - All Python operations after venv creation use `backend/.venv/Scripts/python.exe`.
   Database-writing pytest and browser supervision run sequentially under their
   existing exclusive lease within each target. Backend/browser matrix jobs run
   on different fresh hosted machines, so their independent clusters can safely
   execute concurrently. No application authorization/isolation guard is relaxed.
+  Browser supervision acknowledges worker startup only after the real worker's
+  first successful maintenance admission. The test-only observer delegates the
+  original method unchanged; it cannot grant admission or fake a queued effect.
+  Existing export readiness assertions still require real publication/delivery.
 - Actions use full commit SHAs; checkout does not persist credentials. Workflow
   token is read-only. No `pull_request_target`, deployment, remote messaging or
   automatic merge/push step executes untrusted PR code with elevated permissions.

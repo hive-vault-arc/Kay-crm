@@ -28,6 +28,7 @@ from app.intake.worker import run_once as intake_once
 from app.inventory.models import Offering
 from app.recovery.maintenance import ready_path
 from app.recovery.service import recovery_settings
+from tests.ci_identity import require_recovery_identity
 from tests.contact_support import create_lead
 from tests.deal_support import run as deal_run
 from tests.file_support import grant, image_bytes, new_document
@@ -162,8 +163,7 @@ def count_contacts(database):
 def clear_recovery(settings):
     target = recovery_settings(settings)
     identity = assert_isolated(target)
-    assert identity.name == "kayrealestate_recovery" and identity.oid == 109063
-    assert identity.cluster == "7607060034405909976"
+    require_recovery_identity(target, identity)
     db = Database(target.selected_database_url())
     try:
         with db.engine.begin() as connection:

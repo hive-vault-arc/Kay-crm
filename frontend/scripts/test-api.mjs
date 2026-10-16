@@ -16,6 +16,7 @@ let worker;
 let simulator;
 let workerExit;
 let workerFailure = "";
+let workerReady = false;
 let changing = false;
 let lease;
 let shuttingDown = false;
@@ -50,20 +51,34 @@ async function fixture(command) {
       else { try { resolve(JSON.parse(stdout)); } catch { reject(new Error("INVALID_FIXTURE_RESPONSE")); } }
     });
     task.stdin.end(JSON.stringify(command));
-  }); } finally { if (resumeWorker && !shuttingDown) startWorker(); }
+  }); } finally { if (resumeWorker && !shuttingDown) await startWorker(); }
 }
-function startWorker(unavailable = false) {
-  workerExit = undefined; workerFailure = "";
-  worker = spawn(path.join(backend, ".venv/Scripts/python.exe"), ["-m", "app.cli.worker"], {
-    cwd: backend, windowsHide: true, stdio: ["ignore", "ignore", "pipe"],
+async function startWorker(unavailable = false) {
+  workerExit = undefined; workerFailure = ""; workerReady = false;
+  const running = spawn(path.join(backend, ".venv/Scripts/python.exe"), ["-m", "tests.supervised_worker"], {
+    cwd: backend, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
     env: { ...process.env, APP_ENVIRONMENT: activeEnvironment, ANTIVIRUS_PORT: unavailable ? "1" : "3310" },
   });
-  worker.on("error", () => { process.exitCode = 1; });
-  worker.stderr.on("data", chunk => {
+  worker = running;
+  running.on("error", () => { process.exitCode = 1; });
+  running.stderr.on("data", chunk => {
     const match = chunk.toString().match(/(?:RuntimeError|IdentityError): ([A-Z_]{4,80})|(?:sqlalchemy\.exc\.|psycopg\.errors\.)([A-Za-z]{3,60})/);
     if (match) workerFailure = match[1] ?? match[2];
   });
-  worker.once("exit", code => { workerExit = code; worker = undefined; });
+  running.once("exit", code => { if (worker === running) { workerExit = code; worker = undefined; workerReady = false; } });
+  try { await new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error("REAL_WORKER_READINESS_TIMEOUT")), 30_000);
+    let output = "";
+    running.once("error", () => { clearTimeout(timeout); reject(new Error("REAL_WORKER_START_FAILED")); });
+    running.once("exit", () => { clearTimeout(timeout); reject(new Error("REAL_WORKER_START_FAILED")); });
+    running.stdout.on("data", chunk => {
+      output += chunk.toString();
+      if (output.length > 128) { clearTimeout(timeout); reject(new Error("UNEXPECTED_WORKER_OUTPUT")); }
+      else if (output.trim() === "KAY_TEST_WORKER_READY") {
+        clearTimeout(timeout); workerReady = true; resolve();
+      }
+    });
+  }); } catch (error) { if (worker === running) await stopWorker(); throw error; }
 }
 async function stopWorker() {
   const running = worker;
@@ -159,11 +174,11 @@ const server = createServer(async (request, response) => {
       await stopWorker(); await stopSimulator(); await stop();
       activeEnvironment = request.url === "/recovery-start" ? "recovery" : "test";
       await start();
-    } else if (request.url === "/worker-status") result = { running: Boolean(worker), exit: workerExit ?? null, failure: workerFailure };
+    } else if (request.url === "/worker-status") result = { running: Boolean(worker), ready: workerReady, exit: workerExit ?? null, failure: workerFailure };
     else if (request.url === "/simulator-start") await startSimulator();
     else if (request.url === "/simulator-stop") await stopSimulator();
     else if (request.url === "/worker-stop") await stopWorker();
-    else if (request.url === "/worker-start" || request.url === "/worker-unavailable") { await stopWorker(); startWorker(request.url === "/worker-unavailable"); }
+    else if (request.url === "/worker-start" || request.url === "/worker-unavailable") { await stopWorker(); await startWorker(request.url === "/worker-unavailable"); }
     else if (request.url === "/stop") await stop();
     else if (!child) await start();
     else await waitForLive(child);
@@ -194,10 +209,11 @@ server.listen(8101, "127.0.0.1", async () => {
   try {
     // Interrupted browser runs can leave synthetic actors; refuse any other data.
     await fixture({ action: "clear" });
+    await startWorker();
     await start();
-    startWorker();
   } catch {
     console.error("Guarded isolated fixture cleanup refused.");
+    await stopWorker();
     shuttingDown = true; lease.stdin.end();
     server.close(() => process.exit(1));
   }

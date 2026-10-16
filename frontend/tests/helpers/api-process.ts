@@ -12,7 +12,7 @@ export async function testControl(action: "start" | "stop" | "fixture" | "worker
   const response = await fetch(`${control.url}/${action}`, {
     method: "POST", headers: { Authorization: control.token },
     body: body ? JSON.stringify(body) : undefined,
-    signal: AbortSignal.timeout(action === "fixture" && body && "action" in body && ["recovery-prepare", "recovery-run"].includes(String(body.action)) ? 90_000 : 15_000),
+    signal: AbortSignal.timeout(action === "fixture" && body && "action" in body && ["recovery-prepare", "recovery-run"].includes(String(body.action)) ? 90_000 : action === "fixture" ? 60_000 : action === "worker-start" || action === "worker-unavailable" ? 45_000 : 15_000),
   });
   if (!response.ok) throw new Error(`TEST_API_PROCESS_CONTROL_FAILED_${action}`);
   return response.json();

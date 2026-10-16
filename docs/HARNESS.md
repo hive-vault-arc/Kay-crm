@@ -1,5 +1,12 @@
 # KAY project harness
 
+GitHub CI uses fresh hosted runners, never this laptop's database or credentials.
+Its backend/browser Windows matrix uses separate hosted job instances/clusters;
+writers within each isolated target remain serial under the existing lease.
+Required repository/frontend/integration outcomes fail closed through `CI required`.
+Follow [CI policy](06-delivery-and-operations/github-ci.md) and its execution ledger;
+hosted Chromium does not replace native/physical-device, load or human UI review.
+
 SP-22 local technical gates pass; [ledger](03-planning/sprints/sp-22-execution.md),
 [41-scenario map](03-planning/sprints/sp-22-acceptance-map.md) and
 [repeatable commands](06-delivery-and-operations/local-final-acceptance.md).

@@ -1,5 +1,32 @@
 # KAY security check for changes
 
+## GitHub publication and CI boundary (2026-10-16)
+
+Public publication excludes real configuration, credential note, keys, private
+files/backups and generated evidence. Pattern-based full-history scans are
+redacted, with narrow reviewed upstream-example exceptions. The initial staged
+blob scan compares seven known private runtime values in memory and finds zero
+matching files. Index guard13 ignore probes pass; isolated temporary-index tests
+reject an ignored env file, an unknown archive and a symlink. Ten shadcn archives
+independently match the pinned upstream Git blob IDs; all11 allowed reference
+archives have explicit SHA256s. Licenses/notices remain; no new KAY license invented.
+
+Hosted CI uses new loopback-only PostgreSQL18 targets with random masked
+credentials, fresh HTTPS/facade keys and real ClamAV. Provisioning refuses
+workstations/existing configuration/targets. No local secret or self-hosted runner
+is used. Real byte readiness includes clean/rejected cases, not just PONG. Matrix
+jobs do not share clusters; existing identity/lease/current-scope rules remain.
+Workflow token is read-only, review approval disabled, actions SHA-pinned and
+credential persistence off. Repo read-back confirms secret scanning/push protection,
+Dependabot security updates and full-SHA action enforcement enabled, without paid
+features. Main protection is applied/read back only after actual successful CI.
+
+Khalid approved only existing dev-only GHSA-vfj7-8cjw-p6xm until2026-11-15T00:00Z.
+All runtime/new/critical/expired advisory cases fail. Eight dependency-policy
+tests cover positive/negative/expiry/cycle cases; six CI-bootstrap tests cover
+workstation refusal and scanner-readiness control flow. This does not claim the
+full npm audit is clean or certify deployment/real data. [Execution and limits](06-delivery-and-operations/github-ci-execution.md).
+
 ## Iconsax migration boundary (2026-10-16)
 
 [Migration evidence](reference/iconsax/execution.md):279 baseline Python sources

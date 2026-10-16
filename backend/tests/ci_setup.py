@@ -14,6 +14,7 @@ from app.files.scanner import scan
 from app.identity.security import IdentityError
 from app.runtime import BACKEND_ROOT, require_venv
 from app.settings import load_settings
+from tests.ci_identity import BASELINE, signed_baseline
 from tests.file_support import eicar_bytes, image_bytes
 
 
@@ -67,6 +68,14 @@ def main() -> None:
             connection.execute(
                 sql.SQL("CREATE DATABASE {} TEMPLATE template0").format(sql.Identifier(name))
             )
+        identities = {
+            name: {"name": name, "oid": oid, "cluster": cluster}
+            for cluster, name, oid in connection.execute(
+                "SELECT system_identifier::text,datname,oid "
+                "FROM pg_control_system(),pg_database WHERE datname=ANY(%s)",
+                (TARGETS,),
+            ).fetchall()
+        }
     secret = secrets.token_urlsafe(48)
     print(f"::add-mask::{secret}")
     updates = {
@@ -96,6 +105,8 @@ def main() -> None:
     )
     write_environment(BACKEND_ROOT / ".env", updates)
     configure_https()
+    with BASELINE.open("x", encoding="utf8") as baseline:
+        baseline.write(signed_baseline(identities, secret))
     write_environment(
         root / "frontend/.env.local",
         {

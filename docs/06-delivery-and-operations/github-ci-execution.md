@@ -89,3 +89,23 @@ resolves the initial loose/temporary-object warnings without deleting source.
   setup-python7.0.0 after an old action emitted a punycode deprecation warning.
   Their official input/runtime contracts were inspected; product runtimes remain
   Node24.13.1/Python3.14.3, not upgraded with the action runtime.
+
+- [Run38866820245](https://github.com/hive-vault-arc/Kay-crm/actions/runs/38866820245):
+  repository/frontend pass and native SCM real clean/rejected readiness succeeds.
+  Backend334 passed/1 failed: the restore body verifies69 tables/3 objects, but
+  cleanup correctly refuses the CI database because the old helper hard-coded
+  this laptop's recovery OID/cluster. The correction preserves that exact local
+  guard and captures signed per-job identities before migrations for CI only.
+  Eight identity-baseline tests cover valid, tampered, missing, wrong-workspace,
+  wrong-port, aliased and wrong-observed identities plus the retained local guard.
+- That run's browser17 passed/1 failed at queued export readiness; the old
+  supervisor reported a live child, not completed initialization. A test-only
+  observer now emits readiness only after original real maintenance admission,
+  without replacing the production worker loop or granting access. A delegation
+  test proves false admission remains false and readiness is emitted once.
+  The original15-second export-ready assertion remains unchanged. Process-control
+  timeouts now include acknowledged worker/fixture startup, not a fixed sleep.
+- Final local focused export cases pass27.2s/16.5s on the corrected observer;
+  file/recovery and final hosted aggregate outcomes are recorded when available.
+  Current CI guard/readiness/identity/observer selection:15/15 passed1.22s.
+  Backend formatted source count288. No main promotion on these failed runs.

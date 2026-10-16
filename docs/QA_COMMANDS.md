@@ -1,5 +1,27 @@
 # KAY QA command register
 
+## GitHub CI preparation (2026-10-16)
+
+Run from project root unless stated otherwise. Actual hosted runs and corrected
+failures are in [CI execution](06-delivery-and-operations/github-ci-execution.md),
+not inferred from a workflow file. Main requires the successful aggregate check.
+
+| Command | Verified local result |
+|---|---|
+| `node .github/scripts/repository-check.mjs` |8181 indexed files/zero forbidden or oversized paths/13 ignore probes at c3e5909 |
+| `node .github/scripts/check-tools.mjs gitleaks` |Full published history, zero leaks after narrow public-example review |
+| `node .github/scripts/check-tools.mjs actionlint` |Pass |
+| `node --test .github/scripts/dependency-policy.test.mjs` |8/8 pass, including fail-closed runtime/new/expiry cases |
+| `npm run security:check` (frontend/) |Runtime0;9 existing dev-tool findings use the explicitly approved expiring exception |
+| `.venv/Scripts/python.exe -m pytest tests/test_ci_setup.py -q --tb=short` (backend/) |6/6 pass1.78s |
+| `npm run lint`, `npm run typecheck`, `npm run build` (frontend/) |Pass; fresh Ubuntu hosted frontend also passes |
+| `.venv/Scripts/python.exe -m ruff check .`, `ruff format --check .`, `mypy app`, `pip check` (backend/) |Pass;284 formatted files/177 application modules/no broken requirements |
+| `powershell -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly` |22 sprints/1127 repository links before final policy links/41 acceptance mappings/13 Mermaid pairs/10 JSON samples |
+
+Backend current collection499; compiled Chromium79 cases. Counts are discovery,
+not a pass until the hosted complete results are recorded. Earlier failed native
+scanner setup/tests remain failures, not skipped or relabelled as accepted.
+
 ## Iconsax UI-only migration (2026-10-16)
 
 [Coverage/license](reference/iconsax/migration.md) and

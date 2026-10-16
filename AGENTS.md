@@ -8,7 +8,7 @@ CLI is implemented but must not be executed on real/development data without
 explicit approval; protected business/finance history is preserved.
 
 Status: active project working rules for documentation and future implementation  
-Date: 2026-10-15
+Date: 2026-10-16
 
 ## Read first
 
@@ -21,7 +21,7 @@ Date: 2026-10-15
    Also read all three installed skills linked in the [mandatory UI skill rules](docs/03-planning/ui-skill-rules.md). Use design-system-ops for system-first layout; assess design-taste-frontend's scope explicitly; preserve the user's antislop AFTER timing. Record skill applicability and visual/audit evidence, not just a claimed skill name.
 5. For local implementation, read the [approved local roadmap](docs/03-planning/local-roadmap.md), [sprint index](docs/03-planning/sprints/README.md), and current sprint specification. The owner is the implementing agent; technical acceptance and Khalid's product review are separate.
 
-SP-01 created the local `frontend/` shell and root Git repository. SP-02 adds `backend/`, Python 3.14.3 `.venv`, hash locks, guarded PostgreSQL/Alembic setup and local HTTPS health/facade integration. CI is not configured; implemented business modules and current evidence are listed below. Use actual commands and latest evidence in `docs/QA_COMMANDS.md`; do not generalize scoped verification into completed CRM features or backups.
+SP-01 created the local `frontend/` shell and root Git repository. SP-02 adds `backend/`, Python 3.14.3 `.venv`, hash locks, guarded PostgreSQL/Alembic setup and local HTTPS health/facade integration. GitHub CI is configured in `.github/workflows/ci.yml`; follow [publication and main-branch policy](docs/06-delivery-and-operations/github-ci.md) and [actual execution](docs/06-delivery-and-operations/github-ci-execution.md). Main promotion requires the real aggregate check, not a claimed local pass. Use actual commands and latest evidence in `docs/QA_COMMANDS.md`; do not generalize scoped verification into completed CRM features or backups.
 
 SP-05 adds canonical contacts and separate enquiries (Leads), scoped list/detail/
 edit/atomic create, private-phone denial and ID-only column preferences. No real
