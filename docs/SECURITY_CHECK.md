@@ -1,5 +1,32 @@
 # KAY security check for changes
 
+## Production server-only frontend facade (2026-10-16)
+
+Owner-authorized remote HTTPS support replaces only the unconditional localhost/
+local-CA requirement. Remote origins omit the custom `ca` option and keep
+`rejectUnauthorized: true`, default trusted roots, hostname verification and no
+redirect following. Local HTTPS still requires the local CA, including compiled
+local mode. Base URL credentials, non-root paths, HTTP, query and fragment remain
+refused. Request targets additionally must stay on that exact origin under
+`/api/v1/`; caller paths cannot redirect facade/session/CSRF headers elsewhere.
+
+The `server-only` boundary, minimum facade-secret length, secure host-only HttpOnly
+SameSite cookie, auth-origin checks, CSRF forwarding, private no-store responses,
+bounded JSON/timeout limits and backend authorization remain. No browser config,
+TLS bypass, runtime dependency, database change or production access. Vercel
+server-side guidance informed the branch-local CA read and request-local state;
+no interface or visual redesign is included.
+
+39 isolated tests pass, including real local TLS handshakes for production-style
+synthetic DNS, untrusted/wrong-host certificates, explicit local CA, redirects,
+timeouts, interrupted/oversized/malformed responses, URL rejection and auth-cookie/
+origin/CSRF contracts. Only test DNS maps to loopback; only the disposable test
+child extends its default roots with an ephemeral synthetic certificate. Product
+code does neither. Browser bundle scan: 349 JS files, 0 configured facade/
+signing-secret matches. Full database/browser integration is not executed/not
+passed for this patch; it remains mandatory before real customer data. Actual
+hosted Vercel → DigitalOcean connectivity is not claimed. [Evidence and settings](06-delivery-and-operations/production-api-facade.md).
+
 ## Production private antivirus endpoint (2026-10-16)
 
 Owner-authorized production settings fix: valid configured DNS names (including

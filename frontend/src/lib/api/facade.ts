@@ -19,19 +19,29 @@ export function facadeError(status: number, code: string, requestId: string) {
 export async function upstreamRequest(path: string, requestId: string, options: {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE"; body?: string; token?: string; csrf?: string; origin?: string; idempotencyKey?: string; maxResponseBytes?: number; timeoutMs?: number;
 } = {}) {
-  const origin = new URL(process.env.API_BASE_URL ?? "");
+  let origin: URL;
+  try { origin = new URL(process.env.API_BASE_URL ?? ""); }
+  catch { throw new Error("INVALID_SERVER_CONFIGURATION"); }
   const secret = process.env.FACADE_SECRET;
   const authorityFile = process.env.API_CA_FILE;
+  const local = ["localhost", "127.0.0.1", "[::1]"].includes(origin.hostname);
   if (
-    origin.protocol !== "https:" || origin.hostname !== "localhost" ||
+    origin.protocol !== "https:" ||
     origin.pathname !== "/" || origin.username || origin.password || origin.search ||
-    origin.hash || !secret || secret.length < 32 || !authorityFile
+    origin.hash || !secret || secret.length < 32 || (local && !authorityFile)
   ) throw new Error("INVALID_SERVER_CONFIGURATION");
-  const ca = await readFile(authorityFile);
+  let target: URL;
+  try { target = new URL(path, origin); }
+  catch { throw new Error("INVALID_UPSTREAM_TARGET"); }
+  if (!path.startsWith("/api/v1/") || target.origin !== origin.origin ||
+    !target.pathname.startsWith("/api/v1/") || target.username || target.password || target.hash)
+    throw new Error("INVALID_UPSTREAM_TARGET");
+  // Remote HTTPS keeps Node's default trust store and hostname verification.
+  const tls = local ? { ca: await readFile(authorityFile!) } : {};
   return new Promise<{ status: number; body: unknown }>((resolve, reject) => {
-    const outgoing = request(new URL(path, origin), {
-      method: options.method ?? "GET", ca, rejectUnauthorized: true,
-      family: 4, // Verified loopback; avoid dual-stack aggregate errors on outage.
+    const outgoing = request(target, {
+      method: options.method ?? "GET", ...tls, rejectUnauthorized: true,
+      ...(origin.hostname === "localhost" ? { family: 4 } : {}),
       headers: {
         Accept: "application/json", "X-Kay-Facade-Secret": secret,
         "X-Request-ID": requestId,

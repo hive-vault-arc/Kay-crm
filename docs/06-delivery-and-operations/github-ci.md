@@ -15,7 +15,7 @@ filters can leave the required check pending for documentation-only changes.
 | Job | Boundary |
 |---|---|
 | Repository safety | Indexed path/size/mode rules,13 ignore probes, approved archive hashes, full-history Gitleaks with redacted diagnostics, actionlint, portable documentation checks |
-| Frontend quality | Exact Node version, `npm ci`, icon inventory/ESLint with zero warnings, TypeScript, production build, runtime dependency audit |
+| Frontend quality | Exact Node version, `npm ci`, icon inventory/ESLint with zero warnings, TypeScript, isolated facade/TLS/auth units, production build, runtime dependency audit |
 | Backend quality and unit tests | Exact Python venv/hash locks, pip check, Ruff/format/mypy, locked runtime audit and DB-independent units; database fixtures/connections denied in unit mode |
 | Linux managed runtime | Exact managed-prefix Python/hash locks, production-mode Uvicorn startup/liveness/shutdown and truthful503 for a synthetic unavailable database |
 | CI required | Always runs and fails if any prerequisite failed, was cancelled or skipped |

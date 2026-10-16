@@ -1,5 +1,24 @@
 # KAY QA command register
 
+## Production server-only frontend facade (2026-10-16)
+
+From `frontend/`: `npm.cmd run test:unit` passes 39/39, 0 skipped, 857.52ms final
+run; `npm.cmd run lint`, `npm.cmd run typecheck` and `npm.cmd run build` pass.
+An initial lint error rejected the test harness's variable name `module`; rename
+to `loadedModule` resolves it without disabling any rule. The build uses unchanged
+application source after that harness-only correction. Units compile actual
+server TypeScript in memory and exercise local synthetic TLS plus config/auth
+guards, without real API/database access. No DB/scanner service is started.
+
+`node scripts/scan-client-secrets.mjs`: 4 roots/349 browser JS files/0 configured
+facade or signing-secret occurrences. `npm.cmd run security:check`: runtime 0,
+full 9 inherited dev-only packages under the same approved exception expiring
+2026-11-15; no dependency or lock change and no clean-full-audit claim.
+Hosted frontend quality now runs the 39 units, with unchanged required-job count
+and manual integration policy. [Exact commands and limitations](06-delivery-and-operations/production-api-facade.md).
+Complete database/browser integration is not executed/not passed for this patch,
+and remains required on synthetic disposable targets before real customer data.
+
 ## Production private antivirus host (2026-10-16)
 
 Backend `./scripts/kay.ps1 -Task check`: Ruff/format pass, 301 formatted files,
