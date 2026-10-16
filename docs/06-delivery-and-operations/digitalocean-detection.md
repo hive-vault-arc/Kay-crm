@@ -2,6 +2,12 @@
 
 2026-10-16. Detection metadata only, not a cloud deployment or production approval.
 
+Subsequent owner-authorized [managed-runtime startup repair](digitalocean-runtime-fix.md)
+addresses the reported `.heroku/python` import rejection and adds a real Linux
+Uvicorn CI probe. Detection, runtime compatibility and full cloud readiness remain
+separate; the other local-only configuration/storage/recovery boundaries below
+are not removed by that repair.
+
 The selected source directory is `backend` in `hive-vault-arc/Kay-crm`, branch
 `main`. DigitalOcean's [Python buildpack reference](https://docs.digitalocean.com/products/app-platform/reference/buildpacks/python/)
 lists `requirements.txt`, `Pipfile` and `setup.py` as detection markers. A bare
@@ -32,12 +38,13 @@ alone. Main protection/CI must not be bypassed to make the picker refresh sooner
 
 ## Runtime blockers remain explicit
 
-The approved implementation is local only. It intentionally requires this
-checkout's Python3.14.3 `.venv`, loopback PostgreSQL URLs, private local storage,
+The approved sprint implementation is local only. It originally required this
+checkout's Python3.14.3 `.venv` even for application import; the linked runtime
+repair additionally accepts the pinned Linux buildpack prefix for the API,
+while keeping local CLI tools strict. It still requires loopback PostgreSQL URLs, private local storage,
 local HTTPS/facade configuration and a real antivirus worker. Backup protection
 uses Windows current-user DPAPI/ACLs, and recovery targets have guarded local
-identities. A Linux buildpack's Python prefix is not this Windows venv, and a
-remote managed-database URL is currently rejected. The frontend also validates
+identities. A remote managed-database URL is still rejected. The frontend also validates
 its current localhost HTTPS upstream. These are existing safety boundaries, not
 errors to disable as a detection workaround.
 

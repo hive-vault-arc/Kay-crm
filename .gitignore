@@ -10,6 +10,7 @@ out/
 .env*
 !.env.example
 .venv/
+.heroku/
 .local-data/
 certificates/
 *.pem
