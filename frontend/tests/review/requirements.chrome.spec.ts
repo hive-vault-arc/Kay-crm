@@ -8,7 +8,7 @@ import { apiProcess } from "../helpers/api-process";
 import { manage, previewOperation, confirmOperation } from "../helpers/ownership";
 
 async function capture(page: Page, name: string) {
-  await expect(page.getByRole("button", { name: "Se déconnecter", exact: true, includeHidden: true })).toBeAttached();
+  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
   const cdp = await page.context().newCDPSession(page);
   try { const shot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true }); await writeFile(path.resolve(`output/playwright/sp10-${name}.png`), Buffer.from(shot.data, "base64")); }

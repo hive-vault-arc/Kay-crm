@@ -19,7 +19,7 @@ export function UserEditor({ id, actorId }: { id: string; actorId: string }) {
     });
     return () => controller.abort();
   }, [id, retry]);
-  if (error) return <div className="grid gap-4"><p role="alert" className="text-danger">{error}</p><Button variant="outline" onClick={() => { setError(""); setRetry(retry + 1); }}>Réessayer</Button><Link className="py-3 text-link underline" href="/settings/users">Tous les utilisateurs</Link></div>;
+  if (error) return <div className="grid gap-4"><p role="alert" className="text-danger">{error}</p><Button action="retry" variant="outline" onClick={() => { setError(""); setRetry(retry + 1); }}>Réessayer</Button><Link className="py-3 text-link underline" href="/settings/users">Tous les utilisateurs</Link></div>;
   if (!user) return <p role="status">Chargement du compte…</p>;
   return <div className="grid gap-8"><UserForm user={user} actorId={actorId} changed={setUser} /><UserActions user={user} actorId={actorId} changed={setUser} /></div>;
 }

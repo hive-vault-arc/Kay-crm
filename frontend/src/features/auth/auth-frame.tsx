@@ -3,6 +3,7 @@ import { DataState } from "@/components/shared/data-state";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Brand } from "@/components/shared/brand";
+import { ContactsIcon } from "@/components/icons";
 
 export function AuthFrame({ title, description, children }: { title: string; description: string; children: ReactNode }) {
   return <main className="relative isolate grid min-h-dvh content-start overflow-hidden bg-background px-4 py-8 sm:px-10 lg:px-[7.1vw] lg:pt-10">
@@ -15,7 +16,7 @@ export function AuthFrame({ title, description, children }: { title: string; des
         <p className="text-sm text-muted-foreground">{description}</p></div>
       {children}
       </section>
-      <p className="text-xs text-muted-foreground">Espace réservé à l’équipe KAY Real Estate.</p>
+      <p className="flex items-start gap-2 text-xs text-muted-foreground"><ContactsIcon size={16} className="shrink-0" /><span>Espace réservé à l’équipe KAY Real Estate.</span></p>
     </div>
   </main>;
 }
@@ -23,5 +24,5 @@ export function AuthFrame({ title, description, children }: { title: string; des
 export function AuthUnavailable({ path = "/login" }: { path?: string }) {
   return <DataState state="error" title="Connexion au service indisponible"
     description="Votre accès n’a pas pu être vérifié. Aucune donnée privée n’est affichée."
-    action={<Button variant="outline" asChild><a href={path}>Réessayer</a></Button>} />;
+    action={<Button action="retry" variant="outline" asChild><a href={path}>Réessayer</a></Button>} />;
 }

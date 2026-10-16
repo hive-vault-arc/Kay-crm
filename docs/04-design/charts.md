@@ -39,6 +39,24 @@ The other chart types remain available in the [offline catalogue](../reference/b
 
 ## Data, appearance, and verification
 
+2026-10-16 owner-requested [performance refinement](ui-reference/approved-v3/performance-dashboard.md):
+current pipeline counts are shown as distribution funnels, not cumulative
+conversion cohorts. KAY composes its installed Bklit horizontal stacked BarChart
+with a rotated, square funnel silhouette; segment height encodes exact count.
+The legend retains every stage, including zeros, and explains that stages can be
+skipped. Do not feed these nonmonotonic snapshot counts to a cohort funnel or
+calculate conversion percentages. Bklit's optional `valueDomain` supplies exact
+total bounds without changing defaults for other consumers. The local horizontal
+stack width correction uses scale(offset+value)-scale(offset), avoiding negative
+or shortened later segments. Contributor charts use that same Bklit stack with
+one segment per authorized contributor, exact tables/drill-downs and numbered
+ten-contributor pages. No new chart library or package is introduced.
+The shared compact distribution bar is96px high with8px top/bottom chart margins:
+one stacked category needs less plotting height than the old16rem agent columns.
+Funnel canvases are responsive squares, with a3:2 canvas/legend split from the
+existing sm breakpoint and a vertical stack below it. These component-owned
+geometry roles use existing spacing/breakpoint scales, not new global tokens.
+
 The chart API response should carry its metric definition, period, bucket timezone (`Africa/Casablanca`), unit (`MAD` for money), and authorized series. Keep money calculations exact in the backend; format values for display in the frontend. Handle empty, loading, error, and denied responses. Provide a textual value or accessible table alongside charts so color or hover is not the only way to read a result. On mobile, verify labels, legend, tooltips, and touch behavior without horizontal overflow.
 
 Bklit uses its own `--chart-*` CSS variables. See the [theming reference](../reference/bklit-ui/2026-10-14-b9302b14/apps/web/content/docs/theming.mdx). Map them to the [proposed chart tokens](../../branding/kay-ui-tokens.json) using the approved local light-token/Radix-New York baseline; do not adopt demo colors as a final palette. Test both themes only if KAY ships a theme switch. Chart animation must not obstruct the data and should respect reduced-motion preferences.

@@ -12,6 +12,23 @@ Khalid selected the [nine Approved V3 screenshots](ui-reference/approved-v3/READ
 
 ## Identity and design intent
 
+Owner-requested directory layout,2026-10-16: shared `FilterResultsLayout` places
+the existing search/filter form in a256px left rail (`layout.filterPanel`) with
+a24px gap to `minmax(0,1fr)` results at the content-tested1280px breakpoint.
+Below it, one labelled shadcn Sheet replaces the rail. There is one active form,
+not hidden duplicates. Visible labels and single-column controls retain44px
+targets; long rails scroll within the viewport. Wide tables keep named keyboard-
+scrollable regions and show the helper when actual overflow exists, including
+desktop widths. Contact-record lists retain their inline presentation. Existing
+KAY tokens, gold creation/quiet utilities, black navigation and real handlers
+remain authoritative. [Scope and evidence](ui-reference/approved-v3/filter-rail.md).
+
+Owner-requested refinement,2026-10-16: `color.surface.sidebar` is pure black
+`#000000`, matching the existing logo background, for both desktop navigation and
+the mobile drawer. This explicitly overrides the older charcoal/black exclusions
+below for this one surface. Main text/actions remain charcoal; gold selection,
+white sidebar text, geometry and the account/logout footer are unchanged.
+
 KEPVY is the software product; KAY Real Estate is the customer and the intended visible identity for this team's workspace. The five existing branding pages specify a **KEPVY** rounded-K identity with white `#FFFFFF`, neutral dark grey `#272727`, soft beige `#F6ECDA`, and proposed Satoshi typography. The supplied **KAY** logo is a different, fine-line key-and-wordmark in cream/gold on black. Neither logo should be substituted for the other. This document adapts the neutral foundation to a KAY-facing CRM and proposes one restrained gold family because of KAY's supplied mark. It does not revise the KEPVY logo master or assert that KAY's raster artwork contains an exact flat gold hex.
 
 The intended feeling is a quiet real-estate workroom: clear records and decisions first, the KAY identity present without competing with dense CRM data. A dark navigation rail can anchor the workspace; white content areas carry forms and tables; a small gold line or fill highlights the current place or a selected item. The logo's key geometry may inform a simple line divider or selected-state indicator, but not repeated decorative key icons. Data and workflow cues outrank decoration.
@@ -79,6 +96,16 @@ Use the meaning, not the entity name, to select a token. For example, an availab
 
 ## Actions, feedback, and safety
 
+Current list-header exception,2026-10-16: Khalid requests gold creation actions
+on Leads/Deals, with smaller/less prominent utilities. The opt-in shadcn Button
+`creation` variant uses `action.creation*` tokens: KAY gold `#C9A75C`, charcoal
+`#272727`, darker hover/pressed fills. `quiet` plus `size="compact"` gives adjacent
+utilities transparent rest surfaces, normal-weight14px labels and8px inline
+padding, preserving44px targets. `ListHeaderActions` separates creation from the
+secondary group with16px, and keeps8px between secondary controls. Default
+buttons elsewhere, including save/submit/export confirmations, are unchanged.
+See [coverage and checks](ui-reference/approved-v3/list-header-actions.md).
+
 | Role | Proposed treatment | Rule |
 |---|---|---|
 | Primary action | Charcoal fill, white label; darker hover/pressed tokens | One dominant action per region, e.g. “Enregistrer le client” |
@@ -133,7 +160,52 @@ License notice, source integrity and coverage: [Iconsax migration](../reference/
 Older Lucide references below describe D29's historical baseline, superseded
 for icons only by D33.
 
+The local [login refinement](ui-reference/approved-v3/login-icons.md) adds
+semantic field/action/team icons and uses the existing large10px radius on
+login controls. It does not restyle every Input/Button or change authentication.
+
 ## Decision and verification log
+
+The [app-wide action-button refinement](ui-reference/approved-v3/action-buttons.md)
+reuses existing palette/spacing/radius roles. Gold creation is now app-wide,
+positive saves/confirmations use the existing success foreground as a filled
+background with white text, and secondary controls retain neutral surfaces with
+semantic16px icon accents. Gold/red/green filled actions inherit readable label
+color; quiet/outline actions carry the semantic icon color. Standard8px icon gaps
+and44px targets remain. Buttons may wrap long French labels within their parent
+instead of leaking horizontal overflow. Existing caller-selected destructive,
+quiet, compact, outline and link variants remain, apart from explicitly gold
+creation. No new raw palette, font, chart role or component-kit dependency.
+
+The [Lead/Deal detail refinement](ui-reference/approved-v3/record-facts.md) adds
+opt-in `RecordFacts` / `RecordFact` definition lists. Summary labels use existing
+16px semantic Iconsax icons,8px icon gaps,20px row gaps and32px column gutters.
+At1280px the list has two fact columns; at640px each fact places its label/value
+in a2:3 grid; below640px the value follows the label. Values wrap without fixed
+heights. Neutral existing record sections remain vertically stacked; existing
+`SectionHeading` icon tiles identify Contact, Demande and Affaire summaries.
+Only these detail pages remove their52rem reading cap. All other record-stack
+consumers and operation forms retain their existing layout. The summary opt-out
+marker prevents the legacy single-column rule from overriding this composition.
+
+The later [performance-dashboard refinement](ui-reference/approved-v3/performance-dashboard.md)
+replaces filled KPI tiles with neutral grouped current/period cells, retaining
+semantic icon/value accents. Equal-height pipeline panels contain current-count
+distribution funnels with complete legends. Existing contributor totals use
+Bklit stacked bars below; recorded actions span the row, then wins/contacts share
+the next row. Exact tables, ten-contributor pagination and real drill-downs
+remain. No new global token, daily metric, conversion denominator or API change.
+
+The local [dashboard-header refinement](ui-reference/approved-v3/dashboard-header.md)
+removes the city strip's outer border/radius and uses existing28/32 spacing steps
+for112/128px responsive minimum heights. The same decorative photo fills the
+strip with a static1.05 scale; its clipping/overlay and existing controls remain.
+This applies only to `/dashboard` with the title `Tableau de bord`, not audit or
+other shared PageHeader consumers. No new global token or card style is added.
+The owner's subsequent requests remove local diagnostics and the audit shortcut
+from that header. Only its title and description remain, without an empty action
+wrapper for any role. The authorized audit view and API readiness/liveness
+endpoints are retained; no replacement control or status badge is added.
 
 The approved [local roadmap](../03-planning/local-roadmap.md) selects these light tokens, Radix/New York, Lucide and system sans-serif for synthetic local work. Shadcn initialization and screen sprints can proceed on that basis. Final visual review, Satoshi licensing/files and a transparent vector logo master remain real-use validation; no dark theme is included. If dark mode is commissioned later, define and test its separate semantic mapping.
 

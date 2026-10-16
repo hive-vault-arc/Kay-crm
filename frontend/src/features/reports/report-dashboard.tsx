@@ -10,15 +10,10 @@ import { formatBusinessDate, formatMAD } from "@/lib/format";
 import { dashboardSchema, periodQuery, type MetricKey } from "./contracts";
 import { DrillDown, type Selection } from "./drill-down";
 import { Exceptions } from "./exceptions";
-import { DevelopmentIcon, CompletedIcon, DealIcon, InboxIcon, ContactsIcon, FinanceIcon } from "@/components/icons";
+import { DevelopmentIcon } from "@/components/icons";
+import { KpiSummary } from "./kpi-summary";
 
-const highlights: { key: MetricKey; tone: string; icon: typeof ContactsIcon }[] = [
-  { key: "contacts", tone: "bg-info-background text-info", icon: ContactsIcon },
-  { key: "enquiries", tone: "bg-purple-background text-purple", icon: InboxIcon },
-  { key: "active_deals", tone: "bg-warning-background text-warning", icon: DealIcon },
-  { key: "won", tone: "bg-success-background text-success", icon: CompletedIcon },
-  { key: "collections", tone: "bg-teal-background text-teal", icon: FinanceIcon },
-];
+const highlightKeys: MetricKey[] = ["contacts", "enquiries", "active_deals", "won", "collections"];
 
 const MetricChart = dynamic(() => import("./metric-chart").then(module => module.MetricChart), { ssr: false, loading: () => <p role="status">Chargement du graphique…</p> });
 const PipelineOverview = dynamic(() => import("./pipeline-overview").then(module => module.PipelineOverview), { ssr: false, loading: () => <p role="status">Chargement des pipelines…</p> });
@@ -37,12 +32,6 @@ export function ReportDashboard({ children }: { children?: ReactNode }) {
   }
   return <div className="grid min-w-0 gap-4">
     <section className="grid min-w-0 gap-4" aria-label="Indicateurs CRM"><h2 className="sr-only">Indicateurs CRM</h2>
-      {query.value ? <dl className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-5">{highlights.map(({ key, tone, icon: Icon }) => {
-          const metric = query.value?.metrics.find(value => value.key === key);
-          return metric ? <div key={key} className={`grid min-w-0 content-start gap-1 rounded-md border border-current/15 px-4 py-2 ${tone}`}><dt className="flex items-start justify-between gap-2 text-sm font-medium"><span className="wrap-anywhere">{metric.label}</span><Icon aria-hidden="true" className="size-5 shrink-0" /></dt><dd><Button variant="link" className="h-auto min-h-control min-w-control max-w-full justify-start whitespace-normal p-0 text-left text-2xl font-semibold text-inherit tabular-nums wrap-anywhere" aria-label={`Dossiers : ${metric.label}`} onClick={() => open(metric.key)}>{metric.unit === "MAD" ? formatMAD(metric.value) : metric.value}</Button></dd><p className="text-xs">{metric.basis === "current" ? "Situation actuelle" : "Période sélectionnée"}</p></div> : null;
-        })}</dl> : null}
-      {query.value ? <PipelineOverview /> : null}
-      {children}
       <form className="filter-surface flex flex-wrap items-end gap-3" aria-label="Période des indicateurs" onSubmit={e => {
         e.preventDefault(); const draft = { start_on: start.current?.value, end_on: end.current?.value };
         if (!periodQuery.safeParse(draft).success || !draft.start_on || !draft.end_on) { setValidation(true); start.current?.focus(); return; }
@@ -50,17 +39,26 @@ export function ReportDashboard({ children }: { children?: ReactNode }) {
       }}>
         <div className="grid gap-2"><Label htmlFor="report-start">Du (inclus)</Label><Input ref={start} id="report-start" type="date" min="1900-01-01" max="2100-12-31" required defaultValue={period.start_on ?? query.value?.start_on} aria-describedby={validation ? "report-period-error" : undefined} /></div>
         <div className="grid gap-2"><Label htmlFor="report-end">Au (inclus)</Label><Input ref={end} id="report-end" type="date" min="1900-01-01" max="2100-12-31" required defaultValue={period.end_on ?? query.value?.end_on} aria-describedby={validation ? "report-period-error" : undefined} /></div>
-        <Button type="submit">Appliquer la période</Button><Button variant="outline" type="button" onClick={() => { setSelection(undefined); query.refresh(); }}>Actualiser les indicateurs</Button>
+        <Button action="filter" type="submit">Appliquer la période</Button><Button action="refresh" variant="outline" type="button" onClick={() => { setSelection(undefined); query.refresh(); }}>Actualiser les indicateurs</Button>
       </form>
       {validation ? <p role="alert" id="report-period-error" className="text-danger">Choisissez deux dates dans l’ordre, sur 366 jours maximum.</p> : null}
       {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des indicateurs…</p> : <>
-        <p>{query.value.scope === "agency" ? "Périmètre : agence." : "Périmètre : dossiers attribués ou partagés. Inventaire lié uniquement aux affaires et sélections accessibles."}</p>
+        <KpiSummary metrics={query.value.metrics} open={open} />
+        <p className="text-sm text-muted-foreground">{query.value.scope === "agency" ? "Périmètre : agence." : "Périmètre : dossiers attribués ou partagés. Inventaire lié uniquement aux affaires et sélections accessibles."}</p>
         <p className="text-sm text-muted-foreground">Du {formatBusinessDate(query.value.start_on)} au {formatBusinessDate(query.value.end_on)}, Africa/Casablanca. Contacts, affaires actives et inventaire : situation actuelle. Résultats, demandes, actions et encaissements : période sélectionnée.</p>
-        <section className="surface grid gap-3" aria-label="Autres indicateurs"><h3 className="flex items-center gap-2 font-medium"><DevelopmentIcon aria-hidden="true" className="size-4" />Inventaire et autres résultats</h3><dl className="grid min-w-0 gap-x-6 sm:grid-cols-2 xl:grid-cols-4">{query.value.metrics.filter(metric => !highlights.some(item => item.key === metric.key)).map(metric => <div key={metric.key} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-t py-1"><dt className="min-w-0 flex-1 wrap-anywhere text-xs text-muted-foreground">{metric.label}</dt><dd><Button variant="link" className="min-w-control tabular-nums" aria-label={`Dossiers : ${metric.label}`} onClick={() => open(metric.key)}>{metric.unit === "MAD" ? formatMAD(metric.value) : metric.value}</Button></dd></div>)}</dl></section>
+        <PipelineOverview />
+        <section className="grid min-w-0 gap-3" aria-label="Activité de l’équipe"><div className="flex flex-wrap items-baseline justify-between gap-2 border-b pb-2"><h2 className="text-section font-semibold">Activité de l’équipe</h2><p className="text-xs text-muted-foreground">Contributions réelles et dossiers attribués</p></div>
+          <div className="grid min-w-0 items-start gap-4 xl:grid-cols-2">{(["activities", "won", "contacts"] as const).map(key => {
+            const metric = query.value?.metrics.find(value => value.key === key);
+            return metric ? <MetricChart key={`${key}:${query.value?.start_on}:${query.value?.end_on}:${query.value?.now}`} metric={metric} open={id => open(metric.key, id)} /> : null;
+          })}</div>
+          <p className="text-xs text-muted-foreground">Les actions sont attribuées à leur auteur réel, pas à des Leads ou affaires uniques travaillés. Actions et gains : période sélectionnée. Contacts : situation actuelle. Pas de séries quotidiennes.</p>
+        </section>
+        <section className="surface grid gap-3" aria-label="Autres indicateurs"><h3 className="flex items-center gap-2 font-medium"><DevelopmentIcon aria-hidden="true" className="size-4" />Inventaire et autres résultats</h3><dl className="grid min-w-0 gap-x-6 sm:grid-cols-2 xl:grid-cols-4">{query.value.metrics.filter(metric => !highlightKeys.includes(metric.key)).map(metric => <div key={metric.key} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-t py-1"><dt className="min-w-0 flex-1 wrap-anywhere text-xs text-muted-foreground">{metric.label}</dt><dd><Button variant="link" className="min-w-control tabular-nums" aria-label={`Dossiers : ${metric.label}`} onClick={() => open(metric.key)}>{metric.unit === "MAD" ? formatMAD(metric.value) : metric.value}</Button></dd></div>)}</dl></section>
         <p className="text-sm text-muted-foreground">Les niveaux d’inventaire ne s’additionnent pas : un programme n’est pas une unité physique, une offre de vente ou de location n’est pas un bien supplémentaire. Les encaissements ne sont ni les prix conclus ni les commissions prévues.</p>
-        <div className="grid min-w-0 items-start gap-4 xl:grid-cols-2">{query.value.metrics.filter(metric => ["contacts", "won", "activities"].includes(metric.key)).map(metric => <MetricChart key={`${metric.key}:${query.value?.start_on}:${query.value?.end_on}:${query.value?.now}`} metric={metric} open={id => open(metric.key, id)} />)}</div>
         <p className="text-sm text-muted-foreground">Activité : actions du journal contact, hors signalements automatiques de stock et propagation des fusions. Les appels ou paiements externes non enregistrés ne sont pas déduits.</p>
       </>}
+      {children}
       {selection ? <DrillDown key={JSON.stringify(selection)} selection={selection} close={() => { setSelection(undefined); lastTrigger.current?.focus(); }} /> : null}
     </section>
     <Exceptions />

@@ -66,7 +66,7 @@ export function OutcomePanel({ deal, writable, busy, busyChanged, saved }: { dea
     {deal.stock_review_required ? <p role="status" className="text-warning">Le stock lié a changé. Faites vérifier cette affaire par un responsable. Elle n’a pas été clôturée automatiquement.</p> : null}
     <p>La commission est facultative. Clôturer ou rouvrir n’enregistre aucun encaissement et n’efface aucune donnée financière.</p>
     {!writable ? <p>Résultats conservés en lecture seule.</p> : <AlertDialog open={open} onOpenChange={next => { if (!lock.current) { setOpen(next); if (next) { setReview(undefined); setError(undefined); setInvalid(""); void refresh(); } } }}>
-      <AlertDialogTrigger asChild><Button type="button" className="justify-self-start" disabled={!hydrated || busy}>{action}</Button></AlertDialogTrigger>
+      <AlertDialogTrigger asChild><Button action={reopening ? "restore" : "outcome"} type="button" className="justify-self-start" disabled={!hydrated || busy}>{action}</Button></AlertDialogTrigger>
       <AlertDialogContent onOpenAutoFocus={event => { event.preventDefault(); titleInput.current?.focus(); }}><AlertDialogTitle ref={titleInput} tabIndex={-1}>{action}</AlertDialogTitle><AlertDialogDescription>{reopening ? "Le résultat d’origine reste conservé. Le serveur vérifie les engagements actuels avant toute restauration du stock. Une ancienne réservation ne renaît pas." : "Confirmez le résultat réel et les effets sur l’offre exacte. Accepter une proposition ne suffit pas ; aucune commission n’est obligatoire."}</AlertDialogDescription>
         {(review ? review.offering : deal.offering) ? <OfferingFacts offering={(review ? review.offering : deal.offering)!} /> : <p>Aucune offre liée : seuls les résultats perdue ou annulée sont possibles.</p>}
         {!review && !error ? <p role="status">Vérification du périmètre et des effets…</p> : null}
@@ -78,7 +78,7 @@ export function OutcomePanel({ deal, writable, busy, busyChanged, saved }: { dea
           </fieldset>
           {invalid ? <p id="outcome-invalid" role="alert" className="text-danger">{invalid}</p> : null}
           {error ? <><RecordError error={error} /><p>Votre saisie reste affichée. Après une réponse interrompue, réessayez sans la modifier. En cas de conflit, actualisez les effets avant une nouvelle confirmation.</p></> : null}
-          <div className="flex flex-wrap gap-2"><Button type="submit" disabled={busy || !review}>{busy ? "Enregistrement…" : action}</Button><Button type="button" variant="outline" disabled={busy} onClick={() => void refresh()}>Actualiser les effets</Button><AlertDialogCancel asChild><Button type="button" variant="outline" disabled={busy}>Retour</Button></AlertDialogCancel></div>
+          <div className="flex flex-wrap gap-2"><Button action={reopening ? "restore" : outcome === "won" ? "complete" : "cancelRecord"} type="submit" disabled={busy || !review}>{busy ? "Enregistrement…" : action}</Button><Button action="refresh" type="button" variant="outline" disabled={busy} onClick={() => void refresh()}>Actualiser les effets</Button><AlertDialogCancel asChild><Button action="back" type="button" variant="outline" disabled={busy}>Retour</Button></AlertDialogCancel></div>
         </form>
       </AlertDialogContent>
     </AlertDialog>}

@@ -1,5 +1,8 @@
 "use client";
 import { PageHeader } from "@/components/shared/page-header";
+import { ListHeaderActions } from "@/components/shared/list-header-actions";
+import { FilterResultsLayout } from "@/components/shared/filter-results-layout";
+import { ScrollableResultsTable } from "@/components/shared/scrollable-results-table";
 import { ExportAction } from "@/features/discovery/export-action";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -36,13 +39,21 @@ export function LeadList({ role, contactId, archived = false }: { role: StaffRol
   const [filters, setFilters] = useState(defaults);
   const [page, setPage] = useState(1);
   const [filterError, setFilterError] = useState("");
+  const [agentLabel, setAgentLabel] = useState("");
   const { visible, change, notice } = useLeadColumns();
   const { value: result, error, refresh } = useQuery(queryPath("enquiries", { ...filters, page, contact_id: contactId, archive: archived ? "archived" : undefined }), enquiriesSchema);
-  function apply(event: React.FormEvent) { event.preventDefault(); if (draft.received_from && draft.received_to && draft.received_from > draft.received_to) { setFilterError("La date de début doit précéder la date de fin."); return; } setFilterError(""); setFilters(draft); setPage(1); }
+  function apply(event: React.FormEvent, close: () => void) { event.preventDefault(); if (draft.received_from && draft.received_to && draft.received_from > draft.received_to) { setFilterError("La date de début doit précéder la date de fin."); return; } setFilterError(""); setFilters(draft); setPage(1); close(); }
   const filtered = Object.entries(filters).some(([key, value]) => value !== defaults[key as keyof Filters]);
   return <div className="grid min-w-0 gap-3">
-    {!contactId ? <PageHeader title="Prospects" description="Les demandes reçues, reliées à une même fiche contact." route="/leads" actions={<div className="flex flex-wrap gap-2"><Button asChild><Link href="/leads/new">Créer un Lead</Link></Button><Button asChild variant="outline"><Link href="/leads?view=contacts">Contacts</Link></Button>{role !== "agent" ? <Button asChild variant="outline"><Link href="/leads?view=import">Importer des contacts</Link></Button> : null}<ColumnChooser visible={visible} change={change} />{role !== "agent" && result ? <ExportAction compact kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}</div>} /> : <h2 className="text-section font-medium">Demandes liées</h2>}
-    <form onSubmit={apply} className="filter-toolbar" aria-label="Recherche et filtres des Leads">
+    {!contactId ? <PageHeader title="Prospects" description="Les demandes reçues, reliées à une même fiche contact." route="/leads" actions={
+      <ListHeaderActions primary={<Button action="create" asChild variant="creation"><Link href="/leads/new">Créer un Lead</Link></Button>}>
+        <Button action="contact" asChild variant="quiet" size="compact"><Link href="/leads?view=contacts">Contacts</Link></Button>
+        {role !== "agent" ? <Button action="upload" asChild variant="quiet" size="compact"><Link href="/leads?view=import">Importer des contacts</Link></Button> : null}
+        <ColumnChooser compact visible={visible} change={change} />
+        {role !== "agent" && result ? <ExportAction compact kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
+      </ListHeaderActions>
+    } /> : <h2 className="text-section font-medium">Demandes liées</h2>}
+    <FilterResultsLayout title="Filtres des Leads" inline={Boolean(contactId)} active={filtered} filters={close => <form onSubmit={event => apply(event, close)} className="filter-toolbar" aria-label="Recherche et filtres des Leads">
       <fieldset disabled={!hydrated} className="grid min-w-0 items-center gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_minmax(8rem,0.65fr)_minmax(8rem,0.65fr)_auto_auto]">
       <div className="contents"><div className="grid gap-2"><Label className="sr-only" htmlFor="lead-search">Rechercher un nom, téléphone ou e-mail</Label><Input placeholder="Nom, téléphone ou e-mail" id="lead-search" value={draft.q} maxLength={160} onChange={event => setDraft({ ...draft, q: event.target.value })} /></div>
         <div className="grid gap-2"><Label className="sr-only" htmlFor="lead-status">Statut</Label><NativeSelect id="lead-status" value={draft.status} onChange={event => setDraft({ ...draft, status: event.target.value })}><option value="">Tous les statuts</option>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
@@ -50,17 +61,19 @@ export function LeadList({ role, contactId, archived = false }: { role: StaffRol
         </div><details className="min-w-0 open:col-span-full"><summary className="flex min-h-control cursor-pointer items-center text-sm font-medium text-link">Filtres avancés</summary><div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2 lg:grid-cols-3"><div className="grid gap-2"><Label htmlFor="lead-from">Reçue à partir du</Label><Input id="lead-from" type="date" value={draft.received_from} onChange={event => setDraft({ ...draft, received_from: event.target.value })} /></div><div className="grid gap-2"><Label htmlFor="lead-to">Reçue jusqu’au</Label><Input id="lead-to" type="date" value={draft.received_to} onChange={event => setDraft({ ...draft, received_to: event.target.value })} /></div>
         <div className="grid gap-2"><Label htmlFor="lead-sort">Trier par</Label><NativeSelect id="lead-sort" value={draft.sort} onChange={event => setDraft({ ...draft, sort: event.target.value })}><option value="-updated_at">Modification récente</option><option value="-received_at">Réception récente</option><option value="name">Nom du contact</option></NativeSelect></div>
       </div>
-      {role !== "agent" && !contactId ? <details className="max-w-reading"><summary className="min-h-control cursor-pointer py-3">Filtrer par agent attribué</summary><AgentPicker optional label="Agent attribué" value={draft.assigned_agent_id} change={id => setDraft({ ...draft, assigned_agent_id: id })} /></details> : null}
-      <div className="flex flex-wrap items-end gap-2"><div className="grid gap-2"><Label htmlFor="lead-page-size">Lignes par page</Label><NativeSelect id="lead-page-size" value={draft.page_size} onChange={event => setDraft({ ...draft, page_size: Number(event.target.value) })}>{[10, 25, 50, 100].map(size => <option value={size} key={size}>{size}</option>)}</NativeSelect></div></div></details><div className="flex flex-wrap gap-2 sm:col-span-2 xl:col-span-1"><Button type="submit" variant="outline">Appliquer</Button><Button type="button" variant="outline" onClick={() => { setDraft(defaults); setFilters(defaults); setPage(1); setFilterError(""); }}>Réinitialiser</Button></div>
+      {role !== "agent" && !contactId ? <details className="max-w-reading"><summary className="min-h-control cursor-pointer py-3">Filtrer par agent attribué</summary><AgentPicker optional selectedLabel={agentLabel} label="Agent attribué" value={draft.assigned_agent_id} change={(id, label) => { setDraft({ ...draft, assigned_agent_id: id }); setAgentLabel(label ?? ""); }} /></details> : null}
+      <div className="flex flex-wrap items-end gap-2"><div className="grid gap-2"><Label htmlFor="lead-page-size">Lignes par page</Label><NativeSelect id="lead-page-size" value={draft.page_size} onChange={event => setDraft({ ...draft, page_size: Number(event.target.value) })}>{[10, 25, 50, 100].map(size => <option value={size} key={size}>{size}</option>)}</NativeSelect></div></div></details>
       {filterError ? <p role="alert" className="text-danger">{filterError}</p> : null}
+      <div className="flex flex-wrap gap-2 sm:col-span-2 xl:col-span-1"><Button action="filter" type="submit" variant="outline">Appliquer</Button><Button action="reset" type="button" variant="outline" onClick={() => { setDraft(defaults); setFilters(defaults); setPage(1); setFilterError(""); setAgentLabel(""); }}>Réinitialiser</Button></div>
       </fieldset>
-    </form>
+    </form>}>
     {notice ? <p role="status">{notice}</p> : null}
     {error ? <RecordError error={error} retry={refresh} /> : !result ? <p role="status">Chargement des Leads…</p> : <>
       {role !== "agent" && contactId ? <ExportAction kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
       <p role="status">{result.total} demande(s) accessible(s).</p>
-      {!result.items.length ? <p>{filtered ? "Aucune demande ne correspond à vos filtres." : "Aucune demande sur cette page. Créez un Lead ou revenez à la première page."}</p> : <><p className="text-sm text-muted-foreground lg:hidden">Faites défiler le tableau horizontalement pour lire les colonnes choisies.</p><div className="min-w-0"><DataTable className="min-w-table" scrollLabel="Tableau des Leads, défilement horizontal" rows={result.items} columns={visible.map(id => ({ ...columnMap[id], header: columnLabels[id] }))} caption="Une ligne par demande, même si le contact est déjà connu." emptyLabel="Aucune demande." /></div></>}
+      {!result.items.length ? <p>{filtered ? "Aucune demande ne correspond à vos filtres." : "Aucune demande sur cette page. Créez un Lead ou revenez à la première page."}</p> : <ScrollableResultsTable><DataTable className="min-w-table" scrollLabel="Tableau des Leads, défilement horizontal" rows={result.items} columns={visible.map(id => ({ ...columnMap[id], header: columnLabels[id] }))} caption="Une ligne par demande, même si le contact est déjà connu." emptyLabel="Aucune demande." /></ScrollableResultsTable>}
       <NumberedPages page={page} total={result.total} size={result.page_size} change={setPage} />
     </>}
+    </FilterResultsLayout>
   </div>;
 }

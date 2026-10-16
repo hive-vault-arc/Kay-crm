@@ -49,13 +49,13 @@ export function UserActions({ user, actorId, changed }: { user: StaffUser; actor
     {user.state === "disabled" ? <p>Pour réactiver ce compte, réinitialisez son mot de passe puis confirmez une nouvelle remise en personne.</p> : null}
     <div className="grid gap-4 sm:flex sm:flex-wrap">
       {actions.map(({ action, label, description }) => <AlertDialog key={action} open={open === action} onOpenChange={(value) => { if (!busy) { setOpen(value ? action : undefined); setPassword(""); setError(""); if (value) setKey(crypto.randomUUID()); } }}>
-        <AlertDialogTrigger asChild><Button variant={action === "disable" ? "destructive" : "outline"} disabled={busy}>{label}</Button></AlertDialogTrigger>
+        <AlertDialogTrigger asChild><Button action={action === "disable" ? "cancelRecord" : action === "reset-password" ? "password" : "confirm"} variant={action === "disable" ? "destructive" : "outline"} disabled={busy}>{label}</Button></AlertDialogTrigger>
         <AlertDialogContent onEscapeKeyDown={(event) => { if (busy) event.preventDefault(); }}>
           <AlertDialogTitle>{label} ?</AlertDialogTitle><AlertDialogDescription>{description}</AlertDialogDescription>
           <p className="wrap-anywhere font-medium">{user.display_name}</p>
           {action === "reset-password" ? <div className="grid gap-2"><Label htmlFor="admin-password">Votre mot de passe administrateur</Label><Input id="admin-password" type="password" autoComplete="current-password" value={password} maxLength={1024} disabled={busy} onChange={(event) => { setPassword(event.target.value); setKey(crypto.randomUUID()); }} /></div> : null}
-          {error ? <div className="grid gap-4"><p role="alert" className="text-danger">{error}</p><Button variant="outline" onClick={() => window.location.reload()}>Recharger la fiche</Button></div> : null}
-          <div className="flex flex-wrap gap-2"><AlertDialogCancel asChild><Button variant="outline" disabled={busy}>Annuler</Button></AlertDialogCancel><Button variant={action === "disable" ? "destructive" : "default"} disabled={busy || (action === "reset-password" && !password)} onClick={() => void execute(action)}>{busy ? "Traitement…" : label}</Button></div>
+          {error ? <div className="grid gap-4"><p role="alert" className="text-danger">{error}</p><Button action="refresh" variant="outline" onClick={() => window.location.reload()}>Recharger la fiche</Button></div> : null}
+          <div className="flex flex-wrap gap-2"><AlertDialogCancel asChild><Button action="cancel" variant="outline" disabled={busy}>Annuler</Button></AlertDialogCancel><Button action={action === "disable" ? "cancelRecord" : action === "reset-password" ? "password" : "confirm"} variant={action === "disable" ? "destructive" : "default"} disabled={busy || (action === "reset-password" && !password)} onClick={() => void execute(action)}>{busy ? "Traitement…" : label}</Button></div>
         </AlertDialogContent>
       </AlertDialog>)}
     </div>

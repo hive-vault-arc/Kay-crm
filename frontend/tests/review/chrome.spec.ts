@@ -19,9 +19,8 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
   });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/dashboard");
-  await expect(page.getByText("Service local disponible", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Vérifier à nouveau" }).click();
-  await expect(page.getByText("Service local disponible", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Connexion au service" })).toHaveCount(0);
   await page.screenshot({ path: path.join(artifactRoot, "sp03-desktop-ready.png"), fullPage: true });
   await page
     .getByRole("navigation", { name: "Navigation principale" })
@@ -49,20 +48,21 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
   await signIn(mobile, actor);
   mobile.on("pageerror", (error) => failures.push(error.message));
   await mobile.goto(`${baseURL}/dashboard`);
-  await expect(mobile.getByText("Service local disponible", { exact: true })).toBeVisible();
+  const mobileReports = mobile.getByRole("region", { name: "Indicateurs CRM", exact: true });
+  await expect(mobileReports.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
   await mobile.screenshot({ path: path.join(artifactRoot, "sp03-mobile-ready.png"), fullPage: true });
   try {
     await apiProcess("stop");
-    await mobile.getByRole("button", { name: "Vérifier à nouveau" }).tap();
-    await expect(mobile.getByText("Service local indisponible", { exact: true })).toBeVisible();
+    await mobileReports.getByRole("button", { name: "Actualiser les indicateurs", exact: true }).tap();
+    await expect(mobileReports.getByRole("alert")).toHaveText("Le service local est indisponible. Vérifiez son démarrage, puis réessayez.");
     await mobile.screenshot({ path: path.join(artifactRoot, "sp03-mobile-unavailable.png"), fullPage: true });
   } finally { await apiProcess("start"); }
   await expect.poll(async () => {
     const response = await page.request.get(`${baseURL}/api/v1/health/ready`);
     return response.status();
   }).toBe(200);
-  await mobile.getByRole("button", { name: "Vérifier à nouveau" }).tap();
-  await expect(mobile.getByText("Service local disponible", { exact: true })).toBeVisible();
+  await mobileReports.getByRole("button", { name: "Réessayer", exact: true }).tap();
+  await expect(mobileReports.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
   await mobile.getByRole("button", { name: "Ouvrir la navigation" }).tap();
   await expect(
     mobile.getByRole("dialog", { name: "Navigation KAY" }),
@@ -87,8 +87,7 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
     path: path.join(artifactRoot, "sp03-mobile-visits.png"),
     fullPage: true,
   });
-  await mobile.getByRole("button", { name: "Ouvrir la navigation" }).tap();
-  await mobile.getByRole("dialog").getByRole("link", { name: "Changer le mot de passe", exact: true }).tap();
+  await mobile.goto(`${baseURL}/change-password`);
   await expect(mobile.getByRole("heading", { level: 1 })).toHaveText("Changer le mot de passe");
   await mobile.getByRole("button", { name: "Se déconnecter", exact: true }).tap();
   await expect.poll(() => mobile.url().includes("/login?signed_out=1")).toBe(true);
@@ -129,10 +128,10 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
   try {
     zoomPage = zoomContext.pages()[0];
     await zoomPage.goto(`${baseURL}/dashboard`);
-    await expect(zoomPage.getByText("Service local disponible", { exact: true })).toBeVisible();
-    await zoomPage.getByRole("button", { name: "Vérifier à nouveau" }).focus();
+    await expect(zoomPage.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
+    await zoomPage.getByRole("button", { name: "Actualiser les indicateurs", exact: true }).focus();
     await zoomPage.keyboard.press("Enter");
-    await expect(zoomPage.getByText("Service local disponible", { exact: true })).toBeVisible();
+    await expect(zoomPage.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
     const measurement = await zoomPage.evaluate(() => ({
       ratio: devicePixelRatio,
       width: innerWidth,
@@ -141,6 +140,29 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
     expect(measurement.ratio / baselineRatio).toBeCloseTo(2, 1);
     expect(measurement.width).toBeLessThan(baselineWidth * 0.6);
     expect(measurement.overflow).toBe(false);
+    async function verifyFilterZoom(name: string, search: string, submit: string) {
+      const trigger = zoomPage.getByRole("button", { name: "Afficher les filtres", exact: true });
+      await trigger.click();
+      const drawer = zoomPage.getByRole("dialog", { name, exact: true });
+      await expect(drawer).toBeVisible();
+      const query = drawer.getByLabel(search, { exact: true });
+      await query.fill("SP06 contrôle synthétique du zoom");
+      expect(await drawer.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+      await drawer.getByRole("button", { name: submit, exact: true }).click();
+      await expect(drawer).toHaveCount(0);
+      await trigger.click();
+      await expect(drawer.getByLabel(search, { exact: true })).toHaveValue("SP06 contrôle synthétique du zoom");
+      await expect(zoomPage.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
+      const session = await zoomContext.newCDPSession(zoomPage);
+      await zoomPage.bringToFront();
+      await zoomPage.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+      const capture = await session.send("Page.captureScreenshot", { format: "png", fromSurface: false });
+      await writeFile(path.join(artifactRoot, `filter-rail-${name.replaceAll(" ", "-")}-zoom-200.png`), Buffer.from(capture.data, "base64"));
+      await session.detach();
+      await zoomPage.keyboard.press("Escape");
+      await expect(trigger).toBeFocused();
+      expect(await zoomPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
     await zoomPage
       .getByRole("button", { name: "Ouvrir la navigation" })
       .click();
@@ -155,6 +177,28 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
       path: path.join(artifactRoot, "sp03-zoom-200-dashboard.png"),
       scale: "css",
     });
+    for (const [route, label, status] of [
+      ["/leads", "Créer un Lead", "0 demande(s) accessible(s)."],
+      ["/deals", "Créer une affaire", "0 affaire(s) accessible(s) dans ces filtres."],
+    ] as const) {
+      await zoomPage.goto(`${baseURL}${route}`);
+      await expect(zoomPage.getByText(status, { exact: true })).toBeVisible();
+      const create = zoomPage.getByRole("link", { name: label, exact: true });
+      await expect(create).toHaveCSS("background-color", "rgb(201, 167, 92)");
+      expect(await zoomPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await zoomPage.screenshot({ path: path.join(artifactRoot, `list-header-${route.slice(1)}-zoom-200.png`), scale: "device" });
+      await verifyFilterZoom(route === "/leads" ? "Filtres des Leads" : "Filtres des affaires", route === "/leads" ? "Rechercher un nom, téléphone ou e-mail" : "Rechercher une affaire, un contact ou une action", "Appliquer");
+      await create.focus();
+      await zoomPage.keyboard.press("Enter");
+      await expect(zoomPage).toHaveURL(new RegExp(`${route}/new$`));
+      await expect(zoomPage.getByRole("heading", { level: 1, name: label, exact: true })).toBeVisible();
+    }
+    await zoomPage.goto(`${baseURL}/projects`);
+    await verifyFilterZoom("Filtres des biens", "Référence, nom ou localisation", "Appliquer les filtres");
+    await zoomPage.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click();
+    await verifyFilterZoom("Filtres des programmes", "Rechercher un programme", "Filtrer les programmes");
+    await zoomPage.goto(`${baseURL}/leads?view=contacts`);
+    await verifyFilterZoom("Filtres des contacts", "Rechercher un nom, téléphone ou e-mail", "Rechercher");
     await zoomPage.goto(`${baseURL}/settings/users/new`);
     await expect(zoomPage.getByRole("button", { name: "Créer le compte", exact: true })).toBeEnabled();
     await zoomPage.getByRole("button", { name: "Créer le compte", exact: true }).click();
@@ -178,6 +222,8 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
     await writeFile(path.join(artifactRoot, "sp05-zoom-200-viewport.png"), pixels);
     console.info("Zoom viewport capture:", JSON.stringify({ ...viewport, pixelWidth: pixels.readUInt32BE(16), pixelHeight: pixels.readUInt32BE(20) }));
     await cdp.detach();
+    const navigationTrigger = zoomPage.getByRole("button", { name: "Ouvrir la navigation", exact: true });
+    if (await navigationTrigger.isVisible()) await navigationTrigger.click();
     await zoomPage.getByRole("button", { name: "Se déconnecter", exact: true }).click();
     await expect.poll(() => zoomPage.url().includes("/login?signed_out=1")).toBe(true);
     await expect(zoomPage.getByLabel("Adresse e-mail", { exact: true })).toBeVisible();
@@ -228,7 +274,7 @@ publicTest("SP-03: visible login, empty-field captures, invalid feedback and mob
   await signIn(page, actor);
   await page.screenshot({ path: path.join(artifactRoot, "sp03-dashboard-mobile.png"), fullPage: true });
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.getByRole("link", { name: "Changer le mot de passe", exact: true }).click();
+  await page.goto("/change-password");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Changer le mot de passe");
   await page.goBack();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Tableau de bord");

@@ -25,7 +25,7 @@
       "canvas": "#F7F7F5",
       "content": "#FFFFFF",
       "warm": "#F6ECDA",
-      "sidebar": "#272727",
+      "sidebar": "#000000",
       "sidebarForeground": "#FFFFFF",
       "overlay": "#FFFFFF"
     },
@@ -45,6 +45,10 @@
       "selectedForeground": "#F1D99F"
     },
     "action": {
+      "creationBackground": "#C9A75C",
+      "creationHover": "#B99A54",
+      "creationPressed": "#AC8C46",
+      "creationForeground": "#272727",
       "primaryBackground": "#272727",
       "primaryHover": "#3A3A3A",
       "primaryPressed": "#171717",
@@ -89,6 +93,7 @@
     "tabletMargin": 24,
     "desktopMargin": 28,
     "desktopSidebar": 224,
+    "filterPanel": 256,
     "contentMaxWidth": 1440,
     "tableMinWidth": 896
   }

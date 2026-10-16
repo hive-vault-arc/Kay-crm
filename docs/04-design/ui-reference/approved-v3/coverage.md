@@ -1,5 +1,55 @@
 # Approved V3 route and surface coverage
 
+The later [app-wide action-button refinement](action-buttons.md) currently covers
+284 Button sites in94 files after the requested dashboard audit-shortcut removal,
+including unpictured forms/dialogs/files/finance/import/admin/calendar/task
+surfaces.275 have explicit shared semantic mappings,5 retain
+existing Iconsax, and4 numeric/chart data controls retain their existing data
+presentation. [Per-file/site inventory](action-buttons-coverage.json) is source
+coverage, not a claim that every permission/state mutation was browser-tested.
+
+The later [Lead/Deal fact-layout refinement](record-facts.md) covers the Contact
+and Demande reçue sections of `/leads/[id]` and Contact et offre liée summary
+of `/deals/[id]`: two desktop columns, inline label/value pairs and decorative
+Iconsax labels, with mobile reflow. Existing assignment/research/operation/
+finance/task/file/history surfaces stay available. This local override does
+not restyle every record or change the historical baseline evidence below.
+
+The later [performance-dashboard refinement](performance-dashboard.md) covers
+`/dashboard`'s period controls, KPI summary, two pipeline distributions and three
+contributor charts. Tasks/inbox/other metrics/alerts/follow-up are preserved.
+This owner-authorized local override and its focused evidence do not replace
+the historical whole-product baseline below.
+
+The requested [dashboard city-header refinement](dashboard-header.md) covers
+only `/dashboard`'s title/photo strip. Audit keeps the ordinary PageHeader;
+existing KPIs, pipelines, tasks and notification surfaces are unchanged.
+The local-service diagnostic status/retry and then the audit shortcut are removed
+from that header. The authorized direct audit view and backend health endpoints
+remain. No empty toolbar or replacement action is added.
+Its focused responsive/state/zoom evidence is separate from baseline coverage.
+This UI refinement stays local and unpublished.
+
+The requested [login icon refinement](login-icons.md) covers `/login` labels,
+submit and supporting copy, plus the shared `/change-password` team footer.
+Its six scoped Chrome cases and native200% zoom are separate from the original
+whole-product coverage below. It remains local and unpublished.
+
+The owner-requested [left filter rail](filter-rail.md) supersedes the old
+horizontal directory toolbar on Leads, Deals, Contacts and both Projects tabs.
+It does not move the global header search or embedded contact-record filters.
+Its five-view checklist and current responsive/state evidence are recorded
+separately below the historical V3 baseline counts.
+
+The owner-requested [list-header action hierarchy](list-header-actions.md) makes
+creation gold and utilities quieter on `/leads`, `/deals` and the existing Leads
+contact-directory view. Its scoped evidence is separate from the V3 baseline.
+
+The later owner-requested [sidebar account footer refinement](account-footer.md)
+applies through `AppShell` to all workspace routes, including unpictured pages.
+It moves account/logout from the header, removes sidebar password-change links,
+and records its own focused Chrome verification separately from the V3 baseline.
+
 2026-10-16. Current read-only AST inventory: **29 route source files and 168
 contextual sites**. Before implementation:29/166. The two added sites are the
 shell's existing inbox displayed in a real notification Sheet, not a new business
@@ -326,7 +376,7 @@ with a visible secret. The dense calendar grid is a named local scroll region.
 
 - [x] Charcoal sidebar, mobile navigation, real search, session controls and real inbox Sheet.
 - [x] Central tokens; shadcn buttons, fields, tables, badges, tabs, Sheet and confirmations; numbered pages.
-- [x] Compact primary filters plus working advanced disclosures; no removed business fields.
+- [x] Existing primary/advanced filters retained; directory rails follow the later owner refinement above, record-scoped filters remain inline.
 - [x] City dashboard, semantic KPIs and real scoped Bklit pipelines/charts; exact drill-downs retained.
 - [x] Faded-villa login/forced password change; no invented recovery/support links.
 - [x] Neutral form/project-card bodies; private authorized image previews or honest fallbacks.

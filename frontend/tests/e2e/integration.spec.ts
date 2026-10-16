@@ -22,24 +22,25 @@ test("SP-02: real HTTPS facade readiness, API stop/restart, keyboard recovery @i
   });
   let release!: () => void;
   const pendingRequest = new Promise<void>((resolve) => { release = resolve; });
-  await page.route("**/api/v1/health/ready", async (route) => {
+  await page.route("**/api/v1/reports/dashboard**", async (route) => {
     await pendingRequest;
     await route.continue(); // Delay only; the real HTTPS facade/API still supplies the result.
   });
   await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
-  await expect(page.getByText("Vérification du service local…", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Vérifier à nouveau" })).toBeDisabled();
-  const readinessResponse = page.waitForResponse(outgoing =>
-    outgoing.url().endsWith("/api/v1/health/ready") && outgoing.request().method() === "GET",
+  const reports = page.getByRole("region", { name: "Indicateurs CRM", exact: true });
+  await expect(reports.getByText("Chargement des indicateurs…", { exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Connexion au service" })).toHaveCount(0);
+  const dashboardResponse = page.waitForResponse(outgoing =>
+    new URL(outgoing.url()).pathname === "/api/v1/reports/dashboard" && outgoing.request().method() === "GET",
   );
   release();
-  expect((await readinessResponse).status()).toBe(200);
-  await expect(page.getByText("Service local disponible", { exact: true })).toBeVisible();
+  expect((await dashboardResponse).status()).toBe(200);
+  await expect(reports.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
   if (process.env.KAY_E2E_PRODUCTION !== "1") {
     await expect.poll(() => developmentSockets.frames).toBeGreaterThan(0);
     expect(developmentSockets.errors).toBe(0);
   }
-  await page.unroute("**/api/v1/health/ready");
+  await page.unroute("**/api/v1/reports/dashboard**");
   const response = await request.get("/api/v1/health/ready");
   expect(response.status()).toBe(200);
   expect(await response.json()).toEqual({ status: "ready" });
@@ -51,18 +52,19 @@ test("SP-02: real HTTPS facade readiness, API stop/restart, keyboard recovery @i
   expect(query.status()).toBe(422);
   try {
     await apiProcess("stop");
-    const retry = page.getByRole("button", { name: "Vérifier à nouveau" });
-    await retry.focus();
+    await reports.getByRole("button", { name: "Actualiser les indicateurs", exact: true }).focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByText("Service local indisponible", { exact: true })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Connexion au service", exact: true }).getByText("Le service local est indisponible. Vérifiez son démarrage, puis réessayez.", { exact: true })).toBeVisible();
+    await expect(reports.getByRole("alert")).toHaveText("Le service local est indisponible. Vérifiez son démarrage, puis réessayez.");
+    await expect(reports.getByRole("button", { name: "Réessayer", exact: true })).toBeEnabled();
     expect((await request.get("/api/v1/health/ready")).status()).toBe(503);
   } finally {
     await apiProcess("start");
   }
   await expect.poll(async () => (await request.get("/api/v1/health/ready")).status()).toBe(200);
-  await page.getByRole("button", { name: "Vérifier à nouveau" }).click();
-  await expect(page.getByText("Service local disponible", { exact: true })).toBeVisible();
+  await reports.getByRole("button", { name: "Réessayer", exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await expect(reports.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
+  await expect(reports.getByRole("alert")).toHaveCount(0);
   for (const width of [320, 360, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

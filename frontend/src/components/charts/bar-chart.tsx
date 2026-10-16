@@ -83,6 +83,8 @@ export interface BarChartProps {
   orientation?: BarOrientation;
   /** Whether to stack bars instead of grouping them. Default: false */
   stacked?: boolean;
+  /** Explicit value bounds for exact-total distribution charts. */
+  valueDomain?: [number, number];
   /** Gap between stacked bar segments in pixels. Default: 0 */
   stackGap?: number;
   /** When set, tooltip Y positions snap to the top square center (shape variant). */
@@ -157,6 +159,7 @@ interface ChartInnerProps {
   barWidthProp?: number;
   orientation: BarOrientation;
   stacked: boolean;
+  valueDomain?: [number, number];
   stackGap: number;
   squareSnap?: { squareGap: number; groupGap?: number; fit?: boolean };
   children: ReactNode;
@@ -187,6 +190,7 @@ const ChartCore = memo(function ChartCore({
   barWidthProp,
   orientation,
   stacked,
+  valueDomain,
   stackGap,
   squareSnap,
   children,
@@ -285,10 +289,10 @@ const ChartCore = memo(function ChartCore({
     const range = isHorizontal ? [0, innerWidth] : [innerHeight, 0];
     return scaleLinear({
       range,
-      domain: [0, maxValue * 1.1],
-      nice: true,
+      domain: valueDomain ?? [0, maxValue * 1.1],
+      nice: !valueDomain,
     });
-  }, [innerWidth, innerHeight, maxValue, isHorizontal]);
+  }, [innerWidth, innerHeight, maxValue, isHorizontal, valueDomain]);
 
   const yScales = useMemo(() => {
     if (isHorizontal) {
@@ -299,6 +303,7 @@ const ChartCore = memo(function ChartCore({
       data,
       innerHeight,
       resolveDomain: (dataKeys) => {
+        if (valueDomain) return valueDomain;
         let max = 0;
         for (const d of data) {
           for (const key of dataKeys) {
@@ -311,7 +316,7 @@ const ChartCore = memo(function ChartCore({
         return [0, (max || 100) * 1.1];
       },
     });
-  }, [data, innerHeight, isHorizontal, lines, valueScale]);
+  }, [data, innerHeight, isHorizontal, lines, valueScale, valueDomain]);
 
   const primaryYScale = getPrimaryYScale(yScales, valueScale);
 
@@ -683,6 +688,7 @@ export function BarChart({
   barWidth,
   orientation = "vertical",
   stacked = false,
+  valueDomain,
   stackGap = 0,
   squareSnap,
   children,
@@ -715,6 +721,7 @@ export function BarChart({
             revealSignature={revealSignature}
             squareSnap={squareSnap}
             stacked={stacked}
+            valueDomain={valueDomain}
             stackGap={stackGap}
             status={status}
             width={width}

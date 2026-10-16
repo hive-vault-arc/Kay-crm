@@ -1,5 +1,201 @@
 # KAY QA command register
 
+## DigitalOcean public PostgreSQL CA (2026-10-16)
+
+Bundled supplied public-only certificate, byte-identical SHA-256, with shared
+pre-settings CA checks in both managed launchers. Backend `./scripts/kay.ps1
+-Task check` passes Ruff/format/mypy178; both Linux probe scripts pass Ruff/
+format. Venv `-m tests.unit_runner`:105 passed,503 deselected,0 skipped,3.58s.
+Two non-root read-only/offline Linux probes resolve the exact intended CA path;
+real API startup/live200/unavailable503/shutdown and worker configuration/engine
+inspection pass, not real queue processing. Both launchers reject an invalid CA
+before settings with exactly the safe variable/code diagnostic. Initial probe
+import-path/HTTPError cleanup failures are corrected and retained in the record.
+Final Linux probe reports no warnings/errors. Public-bundle redacted Gitleaks
+scan0 findings; required-check policy8/8 and repository documentation checks pass.
+No production connection, deployment, hosted CI, commit or push. Live API/worker
+paths **not confirmed** without their console output. Full database/browser
+release tests **not executed/not passed**, still required before customer data.
+[Exact configuration, commands, evidence and limitations](06-delivery-and-operations/digitalocean-postgres-ca.md).
+
+## Dashboard header-control removal (2026-10-16)
+
+Frontend lint/typecheck/build pass with no reported warnings/errors. Compiled
+headed Chrome selection on `dashboard-header.spec.ts` and `discovery.spec.ts`,
+grep `Dashboard header:|SP19 AT22/24/29`, passes4/4,0 skipped,1.5m. Both circled
+controls and empty action wrapper absent;320–1440px/native200% have no overflow.
+Direct audit200, agent403, keyboard/touch Back and search/focus still pass; the
+affected search/export/archive/audit regression passes. Captures inspected.
+Current button inventory284 sites/94 files/0 violations. Test servers stopped;
+no backend/CI edit, production access, commit or push. Separate full database
+integration/release workflow not executed/not passed and still required before
+real customer data. [Exact command and scoped evidence](04-design/ui-reference/approved-v3/dashboard-header.md).
+
+## App-wide semantic action buttons (2026-10-16)
+
+Frontend lint/typecheck/build pass with no reported warnings/errors. New
+`npm.cmd run buttons:check` (also in lint) reports285 Button sites in95 files:
+276 typed action mappings,5 existing icon buttons,4 explicit numeric/chart
+exceptions,0 violations. Icons:43 exports/28 consumers/113 sites/3 chart roots
+excluded/0 violations. Final compiled headed selection passes9/9,0 skipped,
+4.2m.52 route-width checks on26 actual routes, primitive SSR/styled anchors,
+mobile/touch/keyboard/native200%, real creation/proposal/stage/auth lifecycle,
+recovery/denial and all43 glyphs/offline checks pass. Actual minimum normal-text
+contrast5.536:1; controls44px; no horizontal overflow or unexpected main-review
+console/page errors. Prior fixture/selector failures and the real Radix
+composition/width corrections are retained in the evidence, not called passed.
+[Exact commands, complete source coverage and limits](04-design/ui-reference/approved-v3/action-buttons.md).
+
+Final additional import/Next-SSR selection passes2/2,0 skipped,1.0m: actual
+import confirmation return/icon/focus, atomic commit/mapping and role denial;
+real HTML before hydration, JavaScript-disabled rendering and authenticated
+shell. Eleven focused cases pass across the two final selections. Final lint/
+typecheck rerun passes; no runtime or backend change follows the final build.
+
+This is local UI-only validation. The complete manual database integration/
+release workflow is not executed or passed; it remains a pre-customer-data gate.
+No backend/workflow edit, production access, commit, push or deployment.
+
+## Lead/Deal Iconsax fact layout (2026-10-16)
+
+Final frontend lint/typecheck/build pass,0 reported warnings/errors. Initial
+compiled headed selection passes4 existing operation regressions, then fails1
+new broad alert selector and leaves1 not run (1.9m). Main-scoped assertion fixes
+the hidden Next route-announcer ambiguity; focused rerun passes2/2 (1.3m).
+After the single summary-link alignment correction and rebuilt app, final
+`record-facts.spec.ts` plus the exact-offering case from `deals.spec.ts` passes
+3/3,0 skipped (1.7m). Seven distinct focused cases pass across those selections,
+not a claimed complete suite.320–1440px, keyboard/touch, native200%, real
+creation/edit/proposal/stage/retry/conflict and scoped denial are covered.
+Actual normal-text contrast minimum6.045:1,44px controls,0 horizontal overflow
+and0 unexpected page/console errors in the main layout case. Safe captures and
+geometry stay ignored. No backend or CI edit, production test, commit or push.
+[Exact commands, retained failure, coverage and limits](04-design/ui-reference/approved-v3/record-facts.md).
+
+## Performance dashboard: neutral KPIs, funnels and agent stacks (2026-10-16)
+
+Final frontend lint/typecheck/build pass, no reported warnings/errors. Compiled
+headed selection on performance-layout.spec.ts/reports.spec.ts/
+review/reports.chrome.spec.ts/dashboard-header.spec.ts first passes6 with1
+contrast-helper failure,3.6m. CSS Color4/alpha normalization fixes the diagnostic
+without reducing4.5:1; one batched layout correction aligns funnel panels and
+reduces contributor-chart whitespace. Final affected performance-layout.spec.ts
+and review/reports.chrome.spec.ts rerun passes2/2,0 skipped,2.3m. Real API/table/
+funnel/stack parity, eleven-contributor browser pagination, agent/private/finance
+scope, dates and states, keyboard/touch,320–1440px and native200% pass.
+Observed contrast minimum5.536:1,44px controls and0 unexpected page/console errors.
+This is local UI-only evidence, not a full database release workflow result.
+[Commands, retained failure, corrections and limits](04-design/ui-reference/approved-v3/performance-dashboard.md).
+
+## Dashboard local-service widget removal (2026-10-16)
+
+Frontend lint/typecheck/build pass with no reported warnings/errors. Compiled
+headed Chrome selection of dashboard-header.spec.ts/integration.spec.ts/
+review/chrome.spec.ts with grep
+`Dashboard header:|SP-02: real HTTPS|AT-23: visible Chrome` passes5/5,0 skipped,
+1.7m. Status/retry and automatic browser health probe removed; actual health
+endpoint assertions and real API outage/restart/report recovery retained.
+320–1440px, native200% zoom, keyboard/touch and agent/audit checks pass; actual
+desktop/mobile captures opened. This UI change remains local, not pushed or
+deployed, and is not a full release-suite result.
+[Exact command and evidence](04-design/ui-reference/approved-v3/dashboard-header.md#subsequent-owner-request-remove-local-diagnostics).
+
+## Local dashboard city-header refinement (2026-10-16)
+
+Frontend lint/typecheck/build pass with no reported warnings/errors. From
+`frontend/`, `KAY_E2E_PRODUCTION=1 npm.cmd run test:chrome -- tests/e2e/dashboard-header.spec.ts --reporter=list --max-failures=1`
+passes3/3,0 skipped,52.9s. Visible isolated Chrome checks320–1440px, image-edge
+coverage,44px actions, keyboard/touch, audit/agent permissions, synthetic health
+failure/recovery and native200% zoom. Actual captures opened. Final project
+listeners/service processes0; shared PostgreSQL preserved. UI only, local and
+unpublished; not a whole-product or release-suite result.
+[Exact evidence, coverage and scoped gate](04-design/ui-reference/approved-v3/dashboard-header.md).
+
+## Local login Iconsax refinement (2026-10-16)
+
+Frontend lint, typecheck and production build pass. Compiled headed Chrome
+selection on iconsax.chrome.spec.ts/auth.spec.ts/chrome.spec.ts with grep
+`Iconsax:|Iconsax login:|AT-23/39: keyboard|AT-37/38 scoped|SP-03: visible login`
+passes6/6,0 skipped,1.2m; zoom-only evidence correction rerun1/1 passes18.8s.
+Current29-export SSR/no-JS/hydration/offline glyph checks, real auth/retry/password
+change,320–1440 geometry, keyboard and native200% zoom pass. Screenshots opened,
+calculated contrast recorded, test listeners/service processes0. No push,
+deployment, backend changes or newly claimed whole-product verification.
+[Exact commands, scoped gate and limits](04-design/ui-reference/approved-v3/login-icons.md).
+
+## Pinned managed Python startup (2026-10-16)
+
+The supplied import-time venv rejection is reproduced before repair. Final
+explicit-venv runtime/serve/packaging/foundation selection32/32 passes10.33s;
+Ruff check/format five changed Python files and strict mypy177 modules pass.
+Real isolated Linux Uvicorn startup/liveness200/unavailable dependency503/graceful
+shutdown passes locally and in the new required Linux CI job. Existing local
+compiled headed Chrome HTTPS readiness/outage/restart integration passes1/1,
+13.8s case/27.1s total, against the current unpublished UI and repaired backend.
+No UI source change is part of this hotfix. Required PR run38889658338 passes
+repository/frontend/Linux,529 backend tests,79 browser cases and the aggregate.
+The separate push run's first attempt hit the existing Deal helper's5s navigation
+predicate; that failure is retained, not attributed to a proven runtime defect.
+Only its failed browser/aggregate jobs are rerun. GitHub subsequently reports the
+successful PR aggregate as required; a normal protected squash merge publishes
+`656bef6` through [PR9](https://github.com/hive-vault-arc/Kay-crm/pull/9), with no
+admin bypass or policy/test change. Post-merge run38892622183 and the duplicate
+push rerun remain in progress at handoff, not claimed as passes. This is not
+observed DigitalOcean readiness. Local main/UI bases fast-forward to the merged
+fix; uncommitted diff and untracked list compare exactly equal before/after.
+[Published scope, exact commands, security and cloud configuration limits](06-delivery-and-operations/digitalocean-runtime-fix.md).
+This shared register remains local with the unrelated uncommitted UI notes;
+the standalone deployment record is included in the narrow hotfix publication.
+
+## Left directory search/filter rails (2026-10-16)
+
+Final frontend lint/typecheck/build pass, no lint/build warnings. Compiled isolated
+headed Chrome selection passes7/7 in3.0m: two new rail cases plus five existing/
+extended regressions. Five directories at320/360/768/1024/1279/1280/1440px;
+actual filter requests, all existing selectors, drafts, selected-agent remount,
+invalid feedback in view, focus trap/breakpoint transfer, roles, touch, table
+scrolling,51-Lead/11-Deal pages and actual200% zoom. Initial fixture/route races,
+focus correction and interrupted guessed-option test remain disclosed, not
+counted as passes. Native review collects0 unexpected console/page errors.
+Client scan4 roots/352 JS/0 configured-secret/signing-key occurrences. Exact
+commands, five-view coverage, inspected captures, during-work antislop gate and
+limits: [left-filter execution](04-design/ui-reference/approved-v3/filter-rail.md).
+No full backend/browser matrix or deployment is inferred.
+Final project service listeners/processes0; shared PostgreSQL and Codex execution
+helpers preserved. Changes remain local/uncommitted/unpushed.
+
+## Gold creation and compact list-header utilities (2026-10-16)
+
+Final frontend `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`:
+exit0, no warnings. First real compiled headed Chrome selection6/6 pass2.2m:
+two new action/permission/touch cases, actual Lead and Deal creation/list
+regressions, filtered CSV generation/download and native zoom. After the bounded
+8px utility-padding adjustment, fresh affected confirmation3/3 pass1.4m, including
+both list creation links at actual200% Chrome zoom. Counts overlap; this is not
+nine independent cases or a new full backend/browser certification. [Commands,
+surface coverage, captures, antislop gate and limitations](04-design/ui-reference/approved-v3/list-header-actions.md).
+
+## Pure-black sidebar refinement (2026-10-16)
+
+Only the shared sidebar surface token changes from charcoal to `#000000`;
+desktop and mobile receive it together. Frontend lint/typecheck/build pass,
+without warnings. Compiled headed Chrome account-footer cases plus the existing
+native200% zoom review pass4/4 in1.1m. Five widths, long names, short drawer,
+touch/keyboard logout, pending/failure/retry and exact black/retained selection
+colors are verified; six fresh synthetic captures inspected. All other theme
+values match HEAD structurally. [Exact command, contrast and gate report](04-design/ui-reference/approved-v3/account-footer.md#pure-black-sidebar-refinement).
+
+## Sidebar account footer refinement (2026-10-16)
+
+Frontend `npm.cmd run lint`, `npm.cmd run typecheck` and `npm.cmd run build`
+all exit0, without lint/build warnings. The compiled headed Chrome selection
+passes13/13 in3.1m: three new account-footer cases plus ten existing shell/auth,
+logout-race and native review cases, including actual200% zoom. This is focused
+UI evidence, not a rerun of the whole backend/CRM matrix. Exact repeatable
+commands, coverage and screenshots: [account footer execution](04-design/ui-reference/approved-v3/account-footer.md).
+The settled-capture confirmation repeats the three new cases:3/3 pass51.4s;
+subsequent lint/typecheck pass. Project service listeners/processes finish at0.
+
 ## Standard requirements and DigitalOcean detection metadata (2026-10-16)
 
 The full pinned runtime list moves to `backend/requirements.txt` without changing
@@ -690,3 +886,27 @@ disclosed; do not treat those diagnostic runs as passing. Windows CA trust and
 interactive administrator bootstrap are user-controlled, not silently performed.
 The [runbook](06-delivery-and-operations/local-startup.md) recommends compiled
 frontend mode for the complete local workflow. No full-product certification.
+
+## UI refinements publication (2026-10-16)
+
+The [publication record](06-delivery-and-operations/ui-refinements-publication.md)
+records the owner's current push authorization, full scope, existing surface
+coverage and the exact compiled headed Chrome selection. Fresh checks from
+`frontend/`: `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build` and
+`npm.cmd run security:check` pass. Runtime audit has 0 vulnerabilities; the existing
+full-audit dev-only advisory retains its approved expiring exception, not a clean
+full-audit claim. Inventories: 284 buttons / 94 files and 43 Iconsax exports, both
+with 0 violations.
+
+Selected visible Chrome tests pass 7/7 in 4.5 minutes, 0 skipped, on the guarded
+synthetic local stack: account footer/logout recovery, shared semantic actions,
+route-family controls/dialogs, dashboard header/direct audit, populated directory
+filters, neutral KPI/funnel/agent charts and paired Lead/Deal facts. Fresh desktop
+and mobile captures were visually inspected. `git diff --cached --check`, staged
+redacted Gitleaks, repository/index checks and repository-only documentation
+validation pass. Hosted candidate CI must independently pass before main merge.
+
+The complete manual database/backend/browser release workflow is **not executed,
+not passed** by this publication. It remains required before customer-data release
+on isolated synthetic targets, never production. No production database access,
+real account creation or whole-product certification is implied.

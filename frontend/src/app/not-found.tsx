@@ -7,7 +7,7 @@ export default function NotFound() {
       <p className="text-muted-foreground">
         Cette page n’existe pas ou n’est pas encore disponible.
       </p>
-      <Button asChild>
+      <Button action="back" asChild>
         <Link href="/login">Revenir à l’entrée</Link>
       </Button>
     </main>

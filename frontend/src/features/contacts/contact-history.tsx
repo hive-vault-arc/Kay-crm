@@ -43,7 +43,7 @@ function NoteForm({ id, saved }: { id: string; saved: () => void }) {
     <fieldset disabled={!hydrated || busy} className="grid gap-4">
       <div className="grid gap-2"><Label htmlFor={`${control}-kind`}>Type d’entrée</Label><NativeSelect id={`${control}-kind`} value={kind} onChange={event => setKind(event.target.value as keyof typeof kinds)}>{Object.entries(kinds).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
       <div className="grid gap-2"><Label htmlFor={`${control}-body`}>Texte de l’entrée</Label><Textarea id={`${control}-body`} required maxLength={4000} rows={4} value={body} onChange={event => setBody(event.target.value)} /></div>
-      <Button className="justify-self-start" type="submit">{busy ? "Enregistrement…" : "Enregistrer l’entrée"}</Button>
+      <Button action="save" className="justify-self-start" type="submit">{busy ? "Enregistrement…" : "Enregistrer l’entrée"}</Button>
     </fieldset>
     {error ? <RecordError error={error} /> : null}{success ? <p role="status" className="text-success">Entrée enregistrée, avec son auteur.</p> : null}
   </form>;

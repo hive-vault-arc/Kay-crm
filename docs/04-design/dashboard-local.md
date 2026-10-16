@@ -76,11 +76,20 @@ rules remain in the stock command module.
 
 ## UI and implementation
 
-Existing French Dashboard/service status/tasks/inbox/follow-up remain. Flat
+Existing French Dashboard/tasks/inbox/follow-up remain. The owner subsequently
+removed the local-service status/retry widget, not the backend health endpoints.
+Flat
 date/metric/chart/table/exception sections use shadcn controls, Tailwind semantic
 tokens, exact MAD/date formatters and numbered pages. Current vs period basis,
 attribution and lack of rate denominator are explicit. Failed/denied/loading
 reports preserve the shell and period input. Chart code is lazy-loaded.
+
+The later UI-only [performance refinement](ui-reference/approved-v3/performance-dashboard.md)
+uses a neutral grouped KPI strip, current-distribution funnel silhouettes and
+stacked contributions per metric. Current contacts, period actions and period
+wins remain distinct definitions, never one combined total or invented daily
+worked-Lead/Deal series. Existing exact API/table/attribution/drill-down and
+ten-contributor pagination contracts stay authoritative.
 
 The pinned shadcn4.21.5 CLI installs reviewed @bklit/bar-chart and transitive
 registry source locally (56 files plus equivalent cn utility). Bklit MIT and

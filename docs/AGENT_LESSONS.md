@@ -1,5 +1,93 @@
 # KAY agent lessons
 
+## Managed CA probes and HTTP error resources (2026-10-16)
+
+A script executed by filename has its own directory on sys.path, not necessarily
+the subprocess working directory. A managed probe stored under `.github/scripts`
+must explicitly resolve the fixed repository backend root before importing app;
+keep the pinned runtime guard. HTTPError responses also own resources: close
+expected503 responses with their context manager. An exit0 can still emit a
+ResourceWarning during deallocation, so inspect outer-probe diagnostics as well
+as child-server output and fix the resource leak rather than filtering warnings.
+Local emulation of a CA path is not proof of that file in live API/worker
+containers. Obtain separate public-only console readbacks without printing env
+or connecting to the database.
+
+## Icons in Radix Button links and geometry fallbacks (2026-10-16)
+
+Slottable must be a direct child of Slot when adding a leading icon. Wrapping
+the pair in a Fragment clones that Fragment and drops Link styling/attributes.
+Test styled anchor output and actual navigation, not just icon path counts;
+preserve the original single-child path for buttons without a new action.
+
+Default max-width containment belongs below caller utility styles. A base
+`max-w-full` utility can out-rank a custom `max-w-entry` if the class merger
+does not recognize that semantic token, unexpectedly widening global search.
+Use a low-priority base-layer fallback and assert the existing512px search cap.
+Icon danger foreground and destructive button background are separate tokens;
+tests must not assume they share the same RGB value. Iconsax's flat manifest
+also has duplicate names; select and hash the exact intended category asset.
+
+## Scoped record facts and route announcements (2026-10-16)
+
+Opt-in two-column facts must bypass the legacy `record-stack` single-column
+definition-list selector; do not globally restyle unrelated records. Keep link
+hit regions44px while top-aligning their text with read-only labels.
+Next.js adds a route-announcer `role=alert` outside main. Scope record error
+assertions to main so a hidden empty announcer cannot produce a strict-selector
+failure. Wait for nested assignment fields before capturing settled admin UI.
+
+## Chart totals and modern CSS contrast (2026-10-16)
+
+Horizontal stacked bars must measure scale(offset+value)-scale(offset), not
+scale(value)-scale(offset). Check unequal and zero segments plus contiguous
+positions against actual authorized API totals. A decorative funnel silhouette
+does not turn snapshot stage counts into a conversion cohort.
+
+Browser color diagnostics must normalize CSS Color4/color-mix through an sRGB
+canvas and composite transparency over ancestors before computing luminance.
+Parsing the first three numbers of an OKLab or color(srgb) string as0–255 RGB
+can report a false contrast failure. Keep the4.5:1 threshold and record actual
+rendered colors rather than weakening accessibility checks.
+
+## Retiring development diagnostics without weakening health checks (2026-10-16)
+
+Do not make a shared sign-in helper depend on a development status label. When
+removing that widget, wait for the actual authorized dashboard content instead.
+Keep readiness status/body/cache/request-ID and stop/restart assertions through
+the real HTTPS endpoint. Exercise user-visible failure/retry on the real report
+surface, not a hidden or test-only diagnostic widget. No health/API guard needs
+to be removed with its presentation.
+
+## Native Chrome zoom captures (2026-10-16)
+
+At actual browser zoom, a Playwright full-page PNG can be clipped or incorrectly
+scaled even when DOM viewport/overflow assertions pass. Assert the native zoom
+ratio first, settle rendering and use a headed CDP viewport capture with
+`fromSurface:false`. Open the final PNG; a passing geometry test alone does not
+validate its screenshot. The local login refinement records the corrected rerun.
+
+## Brand assets: make simulator checks independent of laptop state
+
+- A clean CI runner has no local website signing/source configuration. A test
+  that starts the simulator must first configure its own synthetic source using
+  the existing isolated fixture, wait for real readiness and clean it afterward.
+  Do not rely on a previous intake test or a persisted ignored signing file.
+- Shared favicon metadata also reaches the separate simulator. Keep advertised
+  icon paths within its existing SVG/static allowlist rather than broadening the
+  backend proxy. Verify each advertised icon through the actual separate origin.
+  See [logo execution and prior failed checks](../branding/kay-logos.md).
+
+## Shell account location: test readiness independently of desktop placement
+
+- Moving logout into a mobile drawer makes the old global visible-logout
+  hydration wait invalid while the drawer is closed. Wait for the actual enabled
+  header notification control on workspace pages, retaining standalone logout
+  readiness on restricted password pages. Verify mobile logout separately by
+  opening the drawer, tapping the real button and checking session revocation.
+- Preserve authentication/race tests rather than changing their security
+  expectations; change only the navigation needed to reach a moved control.
+
 ## GitHub CI: prove clean-runner state instead of copying laptop assumptions
 
 - An open ClamD port/PONG did not prove byte scanning. Use the official native
@@ -736,3 +824,43 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
   keep the canonical requirements file in both the archive and its fingerprint.
 - Promote to AGENTS.md: no; existing security, real-command and serial-writer
   requirements already cover these corrections.
+
+## Responsive filters: preserve selection and capture focus before publishing
+
+- Moving one form between a desktop rail and modal Sheet unmounts its subtree.
+  Keep main drafts and the actual selected agent's display label in the parent;
+  an ID alone cannot label a selected option absent from a newly loaded page.
+  The label is display metadata, not authority or an API field.
+- A separate media listener can run after useSyncExternalStore has removed the
+  focused drawer field. Capture its ID before publishing the breakpoint change,
+  then focus the corresponding rail control or narrow-screen trigger. The real
+  headed resize test first failed and verifies the correction.
+- A tall drawer can put an after-buttons validation alert below the viewport.
+  Put the existing alert before the actions and assert it is actually in view,
+  not merely mounted/visible according to the DOM matcher.
+- The shared createLead test helper assumes an agent actor. An administrator
+  needs an explicitly selected real assignee; do not relax that business rule to
+  repair fixture setup. Await held route handlers with unrouteAll(wait) before
+  resizing/navigating; unroute without waiting produced an already-handled race.
+- Promote to AGENTS.md: no; these are concrete responsive/test lifecycle cases,
+  already covered by the existing preservation and evidence requirements.
+
+## Managed Python startup is distinct from local operator tooling
+
+- A successful buildpack dependency install did not prove runtime compatibility:
+  importing app rejected the managed `.heroku/python` prefix before Uvicorn bound
+  its service port. A focused regression reproduced the exact supplied failure.
+- Separate pinned application-runtime validation from strict local CLI validation.
+  Permit only the verified Linux managed prefix and exact Python patch, not an
+  arbitrary skip flag or every global interpreter. Keep app.cli's venv boundary.
+- Test a real Linux Uvicorn import/lifespan, process liveness and graceful shutdown
+  with synthetic unavailable dependencies; retain503 rather than pretending the
+  database is ready. Add the Linux probe to the required CI aggregate.
+- Interpreter compatibility is not cloud configuration, persistent storage,
+  worker, backup or production acceptance. Do not remove those guards to chase
+  the next health check. See the published managed-runtime repair record.
+- The hotfix's standalone deployment record contains its public evidence; this
+  shared lessons file also has unrelated uncommitted UI work and is not included
+  in that narrowly scoped publication.
+- Promote to AGENTS.md: no; the exception is documented as managed API startup,
+  while the local execution rule remains authoritative for local tools.

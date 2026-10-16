@@ -10,6 +10,25 @@ shadcn/ui distributes component source into the application. It is not a single 
 
 ## Current icon contract: Iconsax (D33)
 
+The subsequent [app-wide action-button refinement](ui-reference/approved-v3/action-buttons.md)
+adds a typed `action` prop to the existing shadcn Button and a shared
+`button-actions.ts` registry. Call sites declare meaning explicitly; rendering
+does not infer behavior from translated labels or API values. Icons remain
+decorative and inherit the existing semantic action palette. Radix Slottable
+preserves real Link children/handlers/refs. Numeric pagination and exact chart/
+metric data controls retain their existing data marks instead of extra glyphs.
+`npm run buttons:check` audits every source Button and rejects unstyled native
+dialog actions or unclassified interface buttons. No business command moves
+into the Button implementation.
+
+The owner-requested [Lead/Deal summary refinement](ui-reference/approved-v3/record-facts.md)
+uses `components/shared/record-facts.tsx`: a semantic definition list with typed
+icon-labelled terms and real React values/links. It owns the two-column desktop
+and mobile label/value anatomy, not data fetching or editing. `data-summary`
+opts out of the legacy record-stack single-column selector. Links keep44px hit
+regions while their text aligns with labels. Existing `SectionHeading` supplies
+the summary heading icons; standard controls remain shadcn/ui.
+
 Import semantic components and `KayIconProps` / `KayIconComponent` only from
 `@/components/icons`. The shared layer embeds 26 verified official Free linear
 SVG assets as 27 semantic components. It is ordinary server-renderable React,

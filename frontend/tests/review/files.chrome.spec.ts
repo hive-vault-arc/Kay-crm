@@ -9,7 +9,7 @@ import { testControl } from "../helpers/api-process";
 import { manage, previewOperation, confirmOperation } from "../helpers/ownership";
 
 async function capture(page: Page, name: string) {
-  await expect(page.getByRole("button", { name: "Se déconnecter", exact: true, includeHidden: true })).toBeAttached();
+  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
   const before = await page.evaluate(() => document.documentElement.clientWidth);
   const cdp = await page.context().newCDPSession(page);
