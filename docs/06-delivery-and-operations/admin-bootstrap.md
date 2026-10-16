@@ -8,6 +8,31 @@ References: [C01 scope](../../core-scope.md), [decisions](../../decisions.md), [
 
 ## Boundary
 
+### DigitalOcean first-user convenience script
+
+The owner's2026-10-16 request adds `backend/create_first_admin.py`, preset to
+`itteam@kayrealestate.ma`. It calls the same guarded bootstrap, always creating
+the `administrator` role, not a direct SQL insert or an existing-user reset.
+The display name is prompted. The password and its confirmation use hidden TTY
+input only, never source, command arguments, environment or deployment logs.
+Use a fresh private password rather than one previously shared in chat.
+
+After the required schema migrations have been approved/applied, open the API
+component's private interactive Console. From `/workspace/backend`, with the
+existing private production configuration and verified database TLS, run:
+
+```sh
+./.heroku/python/bin/python create_first_admin.py
+```
+
+Enter the display name and then the password twice. A terminal that cannot
+disable echo is refused. No automatic startup hook runs this script. It creates
+the user only on an uninitialized installation; `ALREADY_INITIALIZED`,
+`MANUAL_RECOVERY_REQUIRED` and `MIGRATION_REQUIRED` retain their existing meaning.
+It does not run or bypass migrations, create a public registration route or
+connect to production during automated tests. The original generic
+`python -m app.cli.bootstrap_admin` command still prompts for the email too.
+
 The later [production settings support](production-settings-ci.md) permits the
 existing managed Python runtime for bootstrap only with explicit production
 configuration and verified PostgreSQL TLS. It does not run bootstrap, seed an

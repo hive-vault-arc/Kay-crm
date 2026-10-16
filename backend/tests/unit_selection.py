@@ -8,6 +8,7 @@ MODULES = frozenset(
         "test_ci_setup.py",
         "test_supervised_worker.py",
         "test_production_settings.py",
+        "test_first_admin.py",
         "test_isolation_unit.py",
     }
 )

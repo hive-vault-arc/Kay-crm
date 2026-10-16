@@ -22,9 +22,10 @@ def main() -> None:
     ):
         raise RuntimeError("MANAGED_PYTHON_3_14_3_REQUIRED")
     environment = os.environ.copy()
+    certificate = backend / "config" / "ca" / "digitalocean-postgres-ca.crt"
     database = (
         "postgresql://synthetic:synthetic-probe@kay-postgres.synthetic.invalid:25060/kay_runtime_probe"
-        "?sslmode=verify-full&sslrootcert=system"
+        f"?sslmode=verify-full&sslrootcert={certificate}"
     )
     for variable in ("TEST_DATABASE_URL", "BENCHMARK_DATABASE_URL", "RECOVERY_DATABASE_URL"):
         environment.pop(variable, None)
@@ -37,21 +38,40 @@ def main() -> None:
         FRONTEND_ORIGIN="https://kay.synthetic.invalid",
         PYTHONWARNINGS="error",
     )
+    worker = subprocess.run(  # noqa: S603 - fixed isolated probe, pinned managed interpreter.
+        [sys.executable, str(Path(__file__).with_name("worker-ca-smoke.py"))],
+        cwd=backend,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    if worker.returncode != 0 or worker.stderr:
+        raise RuntimeError("WORKER_CA_PROBE_FAILED")
+    print(worker.stdout.strip())
+    bootstrap = subprocess.run(  # noqa: S603 - fixed entry point, no secret input or database call.
+        [sys.executable, str(backend / "create_first_admin.py")],
+        cwd=backend,
+        env=environment,
+        input="",
+        capture_output=True,
+        text=True,
+        timeout=15,
+        check=False,
+    )
+    if (
+        bootstrap.returncode != 2
+        or not bootstrap.stdout.startswith("TTY_REQUIRED:")
+        or bootstrap.stderr
+    ):
+        raise RuntimeError("FIRST_ADMIN_TTY_GUARD_FAILED")
     with socket.socket() as available:
         available.bind(("127.0.0.1", 0))
         port = available.getsockname()[1]
-    command = [
-        sys.executable,
-        "-m",
-        "uvicorn",
-        "app.main:app",
-        "--host",
-        "127.0.0.1",
-        "--port",
-        str(port),
-        "--no-access-log",
-    ]
-    process = subprocess.Popen(  # noqa: S603 - pinned interpreter, fixed args, isolated CI only.
+    environment["PORT"] = str(port)
+    command = ["/bin/sh", str(backend / "scripts" / "start-api.sh")]
+    process = subprocess.Popen(  # noqa: S603 - fixed managed launcher, isolated CI only.
         command,
         cwd=backend,
         env=environment,
@@ -82,8 +102,9 @@ def main() -> None:
             with urlopen(request, timeout=5):  # noqa: S310 - fixed disposable loopback process.
                 raise RuntimeError("UNAVAILABLE_DATABASE_MUST_NOT_REPORT_READY")
         except HTTPError as failure:
-            if failure.code != 503:
-                raise RuntimeError("UNAVAILABLE_DATABASE_DID_NOT_FAIL_CLOSED") from None
+            with failure:
+                if failure.code != 503:
+                    raise RuntimeError("UNAVAILABLE_DATABASE_DID_NOT_FAIL_CLOSED") from None
     finally:
         process.terminate()
         try:
@@ -95,11 +116,14 @@ def main() -> None:
     if (
         process.returncode not in (0, -signal.SIGTERM)
         or "Application shutdown complete." not in output
+        or f"POSTGRES_CA_OK: sslrootcert={certificate}" not in output
         or any(word in output.lower() for word in ("warning", "traceback", "error"))
     ):
         raise RuntimeError("MANAGED_UVICORN_DIAGNOSTICS_FAILED")
     print(
-        "Production-mode Linux Python: startup/live200/shutdown pass; synthetic unavailable DB503."
+        "Production-mode Linux Python: bundled CA/first-admin TTY guard/"
+        "startup/live200/shutdown pass; "
+        "synthetic unavailable DB503."
     )
 
 

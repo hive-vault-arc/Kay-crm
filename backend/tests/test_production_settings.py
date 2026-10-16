@@ -8,6 +8,7 @@ import trustme
 from pydantic import SecretStr, ValidationError
 from sqlalchemy.engine import make_url
 
+from app.runtime import BACKEND_ROOT
 from app.settings import ConfigurationError, Settings, load_settings
 
 HOST = "kay-postgres.synthetic.invalid"
@@ -23,10 +24,15 @@ def configuration_env(monkeypatch):
     monkeypatch.setenv("FACADE_SECRET", secrets.token_hex(32))
 
 
-def production(monkeypatch):
+def production(monkeypatch, root="system"):
     monkeypatch.setenv("APP_ENVIRONMENT", "production")
     monkeypatch.setenv("PRODUCTION_DATABASE_HOST", HOST)
-    monkeypatch.setenv("DATABASE_URL", URL)
+    monkeypatch.setenv(
+        "DATABASE_URL",
+        make_url(URL)
+        .set(query={"sslmode": "verify-full", "sslrootcert": root})
+        .render_as_string(hide_password=False),
+    )
     monkeypatch.setenv("FRONTEND_ORIGIN", "https://kay.synthetic.invalid")
 
 
@@ -243,15 +249,21 @@ def test_secret_values_remain_wrapped():
 
 
 @pytest.mark.anyio
+@pytest.mark.parametrize(
+    "root",
+    ["system", str(BACKEND_ROOT / "config/ca/digitalocean-postgres-ca.crt")],
+    ids=["system", "bundled-ca"],
+)
 async def test_production_api_lifespan_and_engine_keep_tls_without_isolation_catalog_probe(
     monkeypatch,
+    root,
 ):
     from httpx import ASGITransport, AsyncClient
 
     from app.db import isolation
     from app.main import create_app
 
-    production(monkeypatch)
+    production(monkeypatch, root)
     monkeypatch.setattr(
         isolation, "assert_isolated", lambda *args: pytest.fail("TEST_PROBE_ON_PRODUCTION")
     )
@@ -263,7 +275,7 @@ async def test_production_api_lifespan_and_engine_keep_tls_without_isolation_cat
         ) as client:
             assert (await client.get("/api/v1/health/live")).json() == {"status": "live"}
             assert app.state.database.engine.url.query["sslmode"] == "verify-full"
-            assert app.state.database.engine.url.query["sslrootcert"] == "system"
+            assert app.state.database.engine.url.query["sslrootcert"] == root
     assert app.state.database.closed
 
 
@@ -283,7 +295,14 @@ def test_production_migration_keeps_offline_safeguard_without_test_catalog_probe
         runpy.run_path(str(BACKEND_ROOT / "alembic" / "env.py"))
 
 
-def test_production_worker_uses_runtime_target_without_test_catalog_probe(monkeypatch, capsys):
+@pytest.mark.parametrize(
+    "root",
+    ["system", str(BACKEND_ROOT / "config/ca/digitalocean-postgres-ca.crt")],
+    ids=["system", "bundled-ca"],
+)
+def test_production_worker_uses_runtime_target_without_test_catalog_probe(
+    monkeypatch, capsys, root
+):
     import sys
     from types import SimpleNamespace
 
@@ -292,13 +311,14 @@ def test_production_worker_uses_runtime_target_without_test_catalog_probe(monkey
     from app.recovery import maintenance
     from app.work import status
 
-    production(monkeypatch)
+    production(monkeypatch, root)
     monkeypatch.setattr(
         isolation, "assert_isolated", lambda *args: pytest.fail("TEST_PROBE_ON_PRODUCTION")
     )
     closed, selected = [], []
 
     def database(url):
+        assert dict(make_url(url).query) == {"sslmode": "verify-full", "sslrootcert": root}
         selected.append(make_url(url).host)
         return SimpleNamespace(close=lambda: closed.append(True))
 

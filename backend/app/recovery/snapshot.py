@@ -40,6 +40,10 @@ def code_paths() -> list[Path]:
         root / name
         for name in (
             "backend/alembic.ini",
+            "backend/create_first_admin.py",
+            "backend/config/ca/digitalocean-postgres-ca.crt",
+            "backend/scripts/start-api.sh",
+            "backend/scripts/start-worker.sh",
             "frontend/next.config.ts",
             "frontend/postcss.config.mjs",
             "frontend/scripts/start.mjs",

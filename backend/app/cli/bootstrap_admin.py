@@ -13,7 +13,7 @@ from app.identity.security import IdentityError
 from app.settings import ConfigurationError, load_settings
 
 
-def main() -> int:
+def main(*, email: str | None = None) -> int:
     if len(sys.argv) != 1:
         print("ARGUMENTS_NOT_ALLOWED: lancez le module sans argument.")
         return 2
@@ -23,7 +23,7 @@ def main() -> int:
     database: Database | None = None
     try:
         name = input("Nom affiché : ")
-        email = input("Adresse e-mail : ")
+        selected_email = email if email is not None else input("Adresse e-mail : ")
         with warnings.catch_warnings():
             warnings.simplefilter("error", getpass.GetPassWarning)
             password = getpass.getpass("Mot de passe (12 caractères minimum) : ")
@@ -33,7 +33,7 @@ def main() -> int:
         configuration = load_settings()
         assert_runtime_target(configuration)
         database = Database(configuration.selected_database_url())
-        user_id = bootstrap_administrator(database, name, email, password)
+        user_id = bootstrap_administrator(database, name, selected_email, password)
         print(f"BOOTSTRAP_COMPLETED: compte {user_id}. Connectez-vous depuis l’interface KAY.")
         return 0
     except ConfigurationError as error:

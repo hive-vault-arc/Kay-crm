@@ -20,7 +20,9 @@ bearing shell arguments:
 | `FRONTEND_ORIGIN` | Explicit non-loopback HTTPS origin, without credentials, path, query or fragment. |
 
 For DigitalOcean Standard Edition, mount the downloaded cluster CA and reference
-its absolute path. Advanced Edition uses system trust; libpq needs explicit
+its absolute path. The later [public CA packaging procedure](digitalocean-postgres-ca.md)
+bundles the owner's certificate and preflight launchers for both API and worker;
+its live-container confirmation is explicitly pending. Advanced Edition uses system trust; libpq needs explicit
 `sslrootcert=system`. See the provider's
 [verified-TLS guidance](https://docs.digitalocean.com/products/databases/postgresql/how-to/connect/)
 and PostgreSQL's [hostname verification contract](https://www.postgresql.org/docs/18/libpq-ssl.html).
