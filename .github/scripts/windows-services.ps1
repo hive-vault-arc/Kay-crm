@@ -49,7 +49,7 @@ New-Item -ItemType Directory -Path $scanTemp | Out-Null
 [IO.File]::WriteAllText($clamConfig, "DatabaseDirectory $definitions`nCVDCertsDirectory $cvdCertificates`nTemporaryDirectory $scanTemp`nTCPSocket 3310`nTCPAddr 127.0.0.1`nMaxFileSize 32M`nMaxScanSize 64M`nLogFile $(Join-Path $serviceRoot 'clamd.log')`nLogTime yes`n")
 if (Get-Service -Name clamd -ErrorAction SilentlyContinue) { throw 'EXISTING_CLAMAV_SERVICE_REFUSED' }
 $clamd = Join-Path $clamavBin 'clamd.exe'
-& $clamd '--install-service'
+& $clamd "--config-file=$clamConfig" '--install-service'
 if ($LASTEXITCODE -ne 0 -or -not (Get-Service -Name clamd -ErrorAction SilentlyContinue)) { throw 'CLAMAV_SERVICE_INSTALL_FAILED' }
 $serviceCommand = '"' + $clamd + '" --daemon --service-mode --config-file="' + $clamConfig + '"'
 & sc.exe config clamd binPath= $serviceCommand

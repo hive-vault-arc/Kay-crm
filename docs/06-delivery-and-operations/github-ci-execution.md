@@ -79,3 +79,13 @@ resolves the initial loose/temporary-object warnings without deleting source.
   Safe native service logs/status and unconditional owned-service shutdown support
   diagnosis without outputting application credentials or broadening a proxy.
   Hosted verification of this correction remains pending.
+
+- [Run38866375381](https://github.com/hive-vault-arc/Kay-crm/actions/runs/38866375381)
+  caught an installer argument error before tests: native ClamAV reads its config
+  even for `--install-service`; supplying the existing explicit config fixes the
+  missing-default-file failure. Scanner diagnostics prove no scanner process/
+  listener was left running, and owned PostgreSQL shutdown succeeds. Official
+  action releases are upgraded to verified SHA-pinned checkout7.0.1/setup-node7.1.0/
+  setup-python7.0.0 after an old action emitted a punycode deprecation warning.
+  Their official input/runtime contracts were inspected; product runtimes remain
+  Node24.13.1/Python3.14.3, not upgraded with the action runtime.
