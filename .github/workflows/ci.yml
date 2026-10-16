@@ -66,6 +66,8 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      - name: Server-only facade configuration and isolated TLS tests
+        run: npm run test:unit
       - run: npm run build
       - name: Reject runtime and new dependency advisories
         run: npm run security:check

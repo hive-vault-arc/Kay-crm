@@ -10,6 +10,13 @@ private DNS names, not only the database URL. Do not solve deployability by
 disabling verified database TLS, quarantine or failure handling. Unit/smoke probes
 must override ambient dependency hosts and refuse real production connections.
 
+The frontend facade is another independent deployment boundary: production API
+support in the backend does not remove a frontend localhost-only transport guard.
+Exercise both hops' configuration. Remote HTTPS should retain default certificate
+and hostname verification rather than reuse a laptop-only CA file. Keep compiled
+local HTTPS covered too; `NODE_ENV=production` alone does not distinguish Vercel
+from the locally compiled acceptance workflow.
+
 ## Managed CA probes and HTTP error resources (2026-10-16)
 
 A script executed by filename has its own directory on sys.path, not necessarily

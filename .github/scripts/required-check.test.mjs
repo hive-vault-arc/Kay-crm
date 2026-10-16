@@ -37,6 +37,7 @@ test("only manual workflow contains database services, migrations and integratio
   assert.match(automatic, /node \.github\/scripts\/required-check\.mjs/);
   assert.match(automatic, /python\.exe -m tests\.unit_runner/);
   assert.match(automatic, /buildpack-smoke\.py/);
+  assert.match(automatic, /npm run test:unit/);
   assert.doesNotMatch(automatic, /windows-services|tests\.ci_setup|alembic upgrade|test:e2e|playwright install|continue-on-error/);
   const triggers = manual.split("permissions:")[0];
   assert.match(triggers, /^  workflow_dispatch:/m);

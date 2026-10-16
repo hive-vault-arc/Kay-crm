@@ -11,6 +11,7 @@
     "icons:check": "node scripts/icon-inventory.mjs --check",
     "typecheck": "next typegen && tsc --noEmit",
     "security:check": "node ../.github/scripts/dependency-audit.mjs",
+    "test:unit": "node scripts/test-facade.mjs",
     "test:e2e": "playwright test",
     "test:chrome": "playwright test --config=playwright.chrome.config.ts --headed --workers=1"
   },

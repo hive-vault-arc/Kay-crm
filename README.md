@@ -5,6 +5,10 @@ Production configuration and the automatic/manual CI split are documented in
 Automatic CI does not execute database/browser integration; those preserved
 manual suites remain mandatory before real-customer release.
 
+The [Vercel → DigitalOcean API facade](docs/06-delivery-and-operations/production-api-facade.md)
+accepts the configured remote HTTPS origin with normal certificate verification;
+the local HTTPS workflow still requires its private local CA file.
+
 Approved V3 is now implemented across the existing frontend, including unpictured
 workflows. The [route/surface checklist](docs/04-design/ui-reference/approved-v3/coverage.md)
 maps29 route files and168 contextual sites; the
