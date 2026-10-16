@@ -1,0 +1,66 @@
+# Local database credentials supplied by Khalid; never commit this note.
+/docs/03-planning/local-database-credentials.md
+
+# Local runtimes, configuration and private data.
+node_modules/
+.next/
+.next-e2e/
+**/output/playwright/
+out/
+.env*
+!.env.example
+.venv/
+.local-data/
+certificates/
+*.pem
+*.key
+*.p12
+*.pfx
+*.log
+*.tsbuildinfo
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+build/
+
+# Generated browser/test evidence (retain the written execution record).
+test-results/
+playwright-report/
+playwright/.cache/
+coverage/
+artifacts/
+.DS_Store
+Thumbs.db
+/.impeccable/review/
+
+# Disposable tooling, generated evidence and editor state, never shipping source.
+/.local-data/
+/output/
+.cache/
+.vercel/
+.turbo/
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.orig
+*.rej
+.coverage.*
+coverage.xml
+junit.xml
+
+# Database exports/backups and operator passfiles are private even outside runtime roots.
+*.dump
+*.backup
+*.pgpass
+.pgpass
+pgpass.conf
+
+# The reference snapshot excludes Studio already; do not accidentally redistribute it.
+/docs/reference/bklit-ui/*/packages/studio/

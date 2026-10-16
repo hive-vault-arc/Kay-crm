@@ -1,0 +1,64 @@
+---
+title: Y Axis
+description: Value labels for the vertical axis in line and area charts
+---
+
+import { LineChart, Line, Grid, XAxis, YAxis, ChartTooltip } from "@bklitui/ui/charts";
+import { AxisBothDemo } from "@/components/docs/axis-demo";
+
+<ComponentPreview registryName="y-axis">
+  <AxisBothDemo />
+</ComponentPreview>
+
+## Installation
+
+<InstallationTabs name="y-axis" />
+
+## Usage
+
+The YAxis component displays value labels along the left or right side of time-series charts (`LineChart`, `AreaChart`, `ComposedChart`, `ScatterChart`, and vertical `BarChart`). It must be used inside the chart shell. Ensure your chart has sufficient margin for the labels.
+
+```tsx
+import { LineChart, Line, XAxis, YAxis, ChartTooltip } from "@bklitui/ui/charts";
+
+<LineChart data={data} margin={{ left: 50 }}>
+  <Line dataKey="value" />
+  <YAxis />
+  <XAxis />
+  <ChartTooltip />
+</LineChart>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `yAxisId` | `string \| number` | `"left"` | Scale group (pair with `yAxisId` on `Line` / `Area`) |
+| `orientation` | `"left" \| "right"` | `"left"` | Which side of the chart renders tick labels |
+| `numTicks` | `number` | `5` | Approximate tick count hint for d3 `scale.ticks()` (actual labels may differ). Valid range: 1–10 |
+| `formatLargeNumbers` | `boolean` | `true` | Format values ≥1000 as "1k", "2k", etc. |
+| `formatValue` | `(value: number) => string` | — | Custom tick formatter (overrides `formatLargeNumbers`) |
+
+In **Studio** (`/studio`), open a time-series chart (line, area, composed, scatter, vertical bar, or profit/loss line) and select **YAxis · left** or **YAxis · right** in the components tree to edit `numTicks` and `formatLargeNumbers` per axis. Each series exposes a **Y axis** control (left / right) except horizontal bar charts (categorical `BarYAxis` only).
+
+## Multiple Y axes (biaxial)
+
+Assign each series and axis the same `yAxisId`, and use `orientation="right"` on the secondary `YAxis`. Increase `margin.right` (and `margin.left` if needed) so labels fit.
+
+```tsx
+<LineChart data={data} margin={{ left: 56, right: 56 }}>
+  <Line dataKey="uv" yAxisId="left" />
+  <Line dataKey="pv" yAxisId="right" stroke="var(--chart-2)" />
+  <YAxis yAxisId="left" />
+  <YAxis yAxisId="right" orientation="right" />
+  <XAxis />
+</LineChart>
+```
+
+## Margin
+
+YAxis renders labels in the chart's left margin. Use `margin={{ left: 50 }}` (or more) on your chart to leave space for the labels.
+
+## Theming
+
+Labels use the `text-chart-label` class, which inherits from your theme's muted foreground color.

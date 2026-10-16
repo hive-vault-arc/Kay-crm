@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant M as Manager
+    participant A as API
+    participant P as PostgreSQL
+    M->>A: Upload CSV and request preview
+    A->>P: Record batch and row errors
+    A-->>M: Valid, skipped, invalid rows
+    M->>A: Corrected file then approve with preview_hash
+    A->>P: BEGIN and lock phones
+    A->>P: Recheck agents, duplicates, permissions
+    alt Data changed or row invalid
+        P-->>A: ROLLBACK
+        A-->>M: IMPORT_REPREVIEW_REQUIRED
+    else All new rows valid
+        A->>P: Insert contacts, history, result and COMMIT
+        A-->>M: Durable result and retry key
+    end

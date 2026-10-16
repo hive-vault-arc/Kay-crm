@@ -1,0 +1,7 @@
+flowchart LR
+    Staff[KAY team] --> Browser[Web browser]
+    Browser --> Front[KEPVY on Vercel]
+    Front --> API[KEPVY API on DigitalOcean]
+    Site[Existing website form] --> API
+    API --> DB[(Managed PostgreSQL)]
+    API --> Files[(Private Spaces)]

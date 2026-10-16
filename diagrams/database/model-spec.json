@@ -1,0 +1,3728 @@
+{
+  "title": "KAY CRM database models",
+  "date": "2026-10-14",
+  "scope": "Complete documented target CRM; not live database introspection.",
+  "sources": [
+    "docs/04-design/data-model.md",
+    "diagrams/data-conceptual.mmd",
+    "diagrams/data-logical.mmd",
+    "backend/app/identity/models.py",
+    "backend/app/contacts/models.py",
+    "branding/kay-ui-tokens.json"
+  ],
+  "mcd": [
+    {
+      "title": "Contacts and commercial relationships",
+      "subtitle": "A single protected client identity can generate several enquiries and deals.",
+      "notes": [
+        "Primary responsibility is singular; collaborators are an explicit many-to-many relation.",
+        "Roles such as buyer, tenant, owner and developer belong to the contact."
+      ],
+      "entities": [
+        {
+          "name": "Staff user",
+          "attrs": [
+            "Named staff member",
+            "Administrator / manager / agent"
+          ],
+          "slot": 1,
+          "focal": false
+        },
+        {
+          "name": "Contact",
+          "attrs": [
+            "Name, person or organization",
+            "Multiple roles and current owner",
+            "Recoverable archival"
+          ],
+          "slot": 4,
+          "focal": true
+        },
+        {
+          "name": "Phone",
+          "attrs": [
+            "Normalized international phone",
+            "Label and primary flag"
+          ],
+          "slot": 3,
+          "focal": false
+        },
+        {
+          "name": "Email",
+          "attrs": [
+            "Normalized address",
+            "Label and primary flag"
+          ],
+          "slot": 5,
+          "focal": false
+        },
+        {
+          "name": "Enquiry",
+          "attrs": [
+            "Source, message, received time",
+            "Optional assigned agent"
+          ],
+          "slot": 7,
+          "focal": false
+        },
+        {
+          "name": "Requirement",
+          "attrs": [
+            "Sale or rental intent",
+            "Budget and search criteria"
+          ],
+          "slot": 6,
+          "focal": false
+        },
+        {
+          "name": "Deal",
+          "attrs": [
+            "Pipeline and next action",
+            "Commercial outcome history"
+          ],
+          "slot": 8,
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "Staff user",
+          "child": "Contact",
+          "label": "RESPONSIBLE",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": -1
+        },
+        {
+          "parent": "Staff user",
+          "child": "Contact",
+          "label": "COLLABORATES",
+          "ac": "0..N",
+          "bc": "0..N",
+          "lane": 1
+        },
+        {
+          "parent": "Contact",
+          "child": "Phone",
+          "label": "HAS PHONES",
+          "ac": "1..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Contact",
+          "child": "Email",
+          "label": "HAS EMAILS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Contact",
+          "child": "Enquiry",
+          "label": "RECEIVES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Contact",
+          "child": "Requirement",
+          "label": "DEFINES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Contact",
+          "child": "Deal",
+          "label": "PARTICIPATES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Development hierarchy and reusable types",
+      "subtitle": "Villa, house, apartment and land can be standalone assets or actual units.",
+      "notes": [
+        "Block/floor are optional outside apartment developments; a type is never stock.",
+        "Each unit is distinct. Reusing a type never shares its price or reservation."
+      ],
+      "entities": [
+        {
+          "name": "Development",
+          "attrs": [
+            "Project reference and location",
+            "Optional briefing and developer"
+          ],
+          "slot": 1,
+          "focal": false
+        },
+        {
+          "name": "Block",
+          "attrs": [
+            "Project-scoped code",
+            "Display order"
+          ],
+          "slot": 0,
+          "focal": false
+        },
+        {
+          "name": "Floor",
+          "attrs": [
+            "Block-scoped level",
+            "Display order"
+          ],
+          "slot": 3,
+          "focal": false
+        },
+        {
+          "name": "Unit type",
+          "attrs": [
+            "Reusable layout template",
+            "Category, optional area/rooms"
+          ],
+          "slot": 2,
+          "focal": false
+        },
+        {
+          "name": "Property / unit",
+          "attrs": [
+            "One identifiable physical asset",
+            "Category and reconfirmed facts"
+          ],
+          "slot": 4,
+          "focal": true
+        },
+        {
+          "name": "Contact",
+          "attrs": [
+            "Protected developer identity",
+            "Owners may be multiple"
+          ],
+          "slot": 6,
+          "focal": false
+        },
+        {
+          "name": "Offering",
+          "attrs": [
+            "Sale or rental campaign",
+            "Price, period and availability"
+          ],
+          "slot": 8,
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "Development",
+          "child": "Block",
+          "label": "DIVIDES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Block",
+          "child": "Floor",
+          "label": "HAS FLOORS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Floor",
+          "child": "Property / unit",
+          "label": "LOCATES",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Development",
+          "child": "Property / unit",
+          "label": "CONTAINS",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Development",
+          "child": "Unit type",
+          "label": "DEFINES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Unit type",
+          "child": "Property / unit",
+          "label": "DESCRIBES",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Contact",
+          "child": "Development",
+          "label": "DEVELOPS",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": -1
+        },
+        {
+          "parent": "Contact",
+          "child": "Development",
+          "label": "OWNS",
+          "ac": "0..N",
+          "bc": "0..N",
+          "lane": 1
+        },
+        {
+          "parent": "Contact",
+          "child": "Property / unit",
+          "label": "OWNS",
+          "ac": "0..N",
+          "bc": "0..N",
+          "lane": 0
+        },
+        {
+          "parent": "Property / unit",
+          "child": "Offering",
+          "label": "MARKETS XOR",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Development",
+          "child": "Offering",
+          "label": "WHOLE XOR",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Deals, holds and optional finance",
+      "subtitle": "Customer proposals, reservation, closing and collection are different facts.",
+      "notes": [
+        "Offering target is a physical property OR an entire development, never both.",
+        "Only one active hold per offering; full reservation history may contain many."
+      ],
+      "entities": [
+        {
+          "name": "Contact",
+          "attrs": [
+            "Client identity",
+            "Current responsibility"
+          ],
+          "slot": 0,
+          "focal": false
+        },
+        {
+          "name": "Deal",
+          "attrs": [
+            "Fixed but skippable pipeline",
+            "Amount, date and closing reason"
+          ],
+          "slot": 4,
+          "focal": false
+        },
+        {
+          "name": "Offering",
+          "attrs": [
+            "Target and sale/rental kind",
+            "Original price and terms"
+          ],
+          "slot": 2,
+          "focal": false
+        },
+        {
+          "name": "Customer offer",
+          "attrs": [
+            "Customer amount and conditions",
+            "Acceptance is not a deal close"
+          ],
+          "slot": 3,
+          "focal": false
+        },
+        {
+          "name": "Reservation",
+          "attrs": [
+            "Offering held for a deal",
+            "Released explicitly; no expiry"
+          ],
+          "slot": 5,
+          "focal": false
+        },
+        {
+          "name": "Commission",
+          "attrs": [
+            "Optional fixed or proportional fee",
+            "Manager-controlled recognition"
+          ],
+          "slot": 7,
+          "focal": false
+        },
+        {
+          "name": "Receipt",
+          "attrs": [
+            "Partial or full collection",
+            "Corrections preserve originals"
+          ],
+          "slot": 8,
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "Contact",
+          "child": "Deal",
+          "label": "CLIENT",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Offering",
+          "child": "Deal",
+          "label": "TARGETS",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Deal",
+          "child": "Customer offer",
+          "label": "RECEIVES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Deal",
+          "child": "Reservation",
+          "label": "HOLDS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Offering",
+          "child": "Reservation",
+          "label": "RESERVED",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Deal",
+          "child": "Commission",
+          "label": "MAY HAVE",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Commission",
+          "child": "Receipt",
+          "label": "COLLECTS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Requirements, matching and activity",
+      "subtitle": "Independent searches, exact offerings and actions attributed to their real author.",
+      "notes": [
+        "Required and preferred criteria are distinct; unknown is not zero.",
+        "Shortlists are many-to-many associations resolved into a link table in the MLD."
+      ],
+      "entities": [
+        {
+          "name": "Contact",
+          "attrs": [
+            "Protected client identity"
+          ],
+          "slot": 0,
+          "focal": false
+        },
+        {
+          "name": "Requirement",
+          "attrs": [
+            "Intent and exact budget",
+            "Original month/year period"
+          ],
+          "slot": 1,
+          "focal": false
+        },
+        {
+          "name": "Criterion",
+          "attrs": [
+            "Typed value or unknown",
+            "Required / preferred"
+          ],
+          "slot": 2,
+          "focal": false
+        },
+        {
+          "name": "Offering",
+          "attrs": [
+            "Actual sale/rental campaign"
+          ],
+          "slot": 4,
+          "focal": false
+        },
+        {
+          "name": "Task",
+          "attrs": [
+            "Responsible staff, due time",
+            "State and linked CRM context"
+          ],
+          "slot": 3,
+          "focal": false
+        },
+        {
+          "name": "Staff user",
+          "attrs": [
+            "Actual contributor / owner"
+          ],
+          "slot": 6,
+          "focal": false
+        },
+        {
+          "name": "Timeline event",
+          "attrs": [
+            "Action, author, time and reason",
+            "Append-only business history"
+          ],
+          "slot": 7,
+          "focal": false
+        },
+        {
+          "name": "Notification",
+          "attrs": [
+            "Recipient and event identity",
+            "Read / unread internal state"
+          ],
+          "slot": 8,
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "Contact",
+          "child": "Requirement",
+          "label": "DEFINES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Requirement",
+          "child": "Criterion",
+          "label": "USES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Requirement",
+          "child": "Offering",
+          "label": "SHORTLISTS",
+          "ac": "0..N",
+          "bc": "0..N",
+          "lane": 0
+        },
+        {
+          "parent": "Contact",
+          "child": "Task",
+          "label": "CONTEXT",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Staff user",
+          "child": "Task",
+          "label": "OWNS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Staff user",
+          "child": "Timeline event",
+          "label": "AUTHORS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Contact",
+          "child": "Timeline event",
+          "label": "HISTORY",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Staff user",
+          "child": "Notification",
+          "label": "RECEIVES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Visits and administrator-controlled schedule",
+      "subtitle": "Three visit types share a calendar; only company-car visits consume capacity.",
+      "notes": [
+        "Office visits bypass working windows and capacity. Both off-site types follow hours.",
+        "Policy is versioned; company-car capacity starts at two agency-wide per local hour."
+      ],
+      "entities": [
+        {
+          "name": "Agency",
+          "attrs": [
+            "One KAY team"
+          ],
+          "slot": 0,
+          "focal": false
+        },
+        {
+          "name": "Schedule policy",
+          "attrs": [
+            "Administrator-owned settings",
+            "Company-car hourly capacity"
+          ],
+          "slot": 1,
+          "focal": false
+        },
+        {
+          "name": "Working window",
+          "attrs": [
+            "Local weekday and start/end",
+            "Enabled working periods"
+          ],
+          "slot": 2,
+          "focal": false
+        },
+        {
+          "name": "Break window",
+          "attrs": [
+            "Lunch or other local break",
+            "Inside a working window"
+          ],
+          "slot": 5,
+          "focal": false
+        },
+        {
+          "name": "Visit",
+          "attrs": [
+            "Company car / no company car / office",
+            "Start/end and conflict reason"
+          ],
+          "slot": 4,
+          "focal": false
+        },
+        {
+          "name": "Staff user",
+          "attrs": [
+            "Organizer or participant",
+            "Colleagues see free/busy only"
+          ],
+          "slot": 6,
+          "focal": false
+        },
+        {
+          "name": "Participation",
+          "attrs": [
+            "Explicit attendance link"
+          ],
+          "slot": 7,
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "Agency",
+          "child": "Schedule policy",
+          "label": "CONFIGURES",
+          "ac": "1..1",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Schedule policy",
+          "child": "Working window",
+          "label": "OPENS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Schedule policy",
+          "child": "Break window",
+          "label": "PAUSES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Agency",
+          "child": "Visit",
+          "label": "HOSTS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Staff user",
+          "child": "Visit",
+          "label": "ORGANIZES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Visit",
+          "child": "Participation",
+          "label": "HAS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Staff user",
+          "child": "Participation",
+          "label": "ATTENDS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Protected documents and scoped file access",
+      "subtitle": "Shared inventory documents and private owner evidence must remain separate.",
+      "notes": [
+        "Document belongs to exactly one of four typed parents; each parent link is optional.",
+        "A permit is tied to a session, action and real resource; no public file URLs."
+      ],
+      "entities": [
+        {
+          "name": "Contact",
+          "attrs": [
+            "Private owner/developer evidence"
+          ],
+          "slot": 0,
+          "focal": false
+        },
+        {
+          "name": "Development",
+          "attrs": [
+            "Shared project attachments"
+          ],
+          "slot": 1,
+          "focal": false
+        },
+        {
+          "name": "Property",
+          "attrs": [
+            "Shared physical-asset attachments"
+          ],
+          "slot": 2,
+          "focal": false
+        },
+        {
+          "name": "Deal",
+          "attrs": [
+            "Contact-scoped deal evidence"
+          ],
+          "slot": 3,
+          "focal": false
+        },
+        {
+          "name": "Document",
+          "attrs": [
+            "Exactly one actual parent",
+            "Inherited access permissions"
+          ],
+          "slot": 4,
+          "focal": false
+        },
+        {
+          "name": "Document version",
+          "attrs": [
+            "Private object, hash, MIME and size",
+            "Quarantine, clean or rejected"
+          ],
+          "slot": 5,
+          "focal": false
+        },
+        {
+          "name": "Session",
+          "attrs": [
+            "Revocable authentication",
+            "Absolute seven-day maximum"
+          ],
+          "slot": 6,
+          "focal": false
+        },
+        {
+          "name": "File permit",
+          "attrs": [
+            "Temporary, action/resource-scoped",
+            "Expiry and consumption"
+          ],
+          "slot": 7,
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "Contact",
+          "child": "Document",
+          "label": "PARENT XOR",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Development",
+          "child": "Document",
+          "label": "PARENT XOR",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Property",
+          "child": "Document",
+          "label": "PARENT XOR",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Deal",
+          "child": "Document",
+          "label": "PARENT XOR",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Document",
+          "child": "Document version",
+          "label": "VERSIONS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Session",
+          "child": "File permit",
+          "label": "AUTHORIZES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Import and website-form intake",
+      "subtitle": "Validate first, commit all eligible contacts atomically and protect retries.",
+      "notes": [
+        "Existing phone identities are skipped and reported; no partial accepted batch.",
+        "Website receipts create enquiries, never expose contact existence to the form."
+      ],
+      "entities": [
+        {
+          "name": "Staff user",
+          "attrs": [
+            "Manager/administrator importer"
+          ],
+          "slot": 0,
+          "focal": false
+        },
+        {
+          "name": "Import batch",
+          "attrs": [
+            "File identity, preview and approval",
+            "Atomic commit result"
+          ],
+          "slot": 1,
+          "focal": false
+        },
+        {
+          "name": "Import row",
+          "attrs": [
+            "Agent per row and validation errors",
+            "Corrected before approval"
+          ],
+          "slot": 2,
+          "focal": false
+        },
+        {
+          "name": "Contact",
+          "attrs": [
+            "Existing or newly accepted identity"
+          ],
+          "slot": 5,
+          "focal": false
+        },
+        {
+          "name": "Enquiry",
+          "attrs": [
+            "Incoming website message",
+            "Canonical contact link"
+          ],
+          "slot": 4,
+          "focal": false
+        },
+        {
+          "name": "Website receipt",
+          "attrs": [
+            "Source and submission identity",
+            "Durable replay-safe delivery"
+          ],
+          "slot": 7,
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "Staff user",
+          "child": "Import batch",
+          "label": "APPROVES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Import batch",
+          "child": "Import row",
+          "label": "CONTAINS",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Contact",
+          "child": "Import row",
+          "label": "MATCHED ROW",
+          "ac": "0..N",
+          "bc": "0..1",
+          "lane": 0
+        },
+        {
+          "parent": "Contact",
+          "child": "Enquiry",
+          "label": "RECEIVES",
+          "ac": "0..N",
+          "bc": "1..1",
+          "lane": 0
+        },
+        {
+          "parent": "Enquiry",
+          "child": "Website receipt",
+          "label": "PROCESSED",
+          "ac": "0..1",
+          "bc": "0..1",
+          "lane": 0
+        }
+      ]
+    }
+  ],
+  "mld": [
+    {
+      "title": "Identity and access",
+      "subtitle": "One agency, named staff, revocable sessions and safe command receipts.",
+      "notes": [
+        "Existing ORM/migration tables are solid. Planned tables are dashed.",
+        "Rate limiting uses an HMAC key; it has no direct user foreign key."
+      ],
+      "tables": [
+        {
+          "name": "agency",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "bootstrap_completed_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 1,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "user",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "agency_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "agency.id"
+            },
+            {
+              "name": "display_name",
+              "type": "varchar",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "email",
+              "type": "unique",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "role / state",
+              "type": "checked",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "version",
+              "type": "bigint",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 4,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "credential",
+          "fields": [
+            {
+              "name": "user_id",
+              "type": "uuid",
+              "key": "PKFK",
+              "target": "user.id"
+            },
+            {
+              "name": "password_hash",
+              "type": "Argon2id",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "must_change_password",
+              "type": "bool",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "temporary_expires_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "handoff_confirmed_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 3,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "session",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "token_hash",
+              "type": "unique",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "expires_at",
+              "type": "timestamptz",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "revoked_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "credential_version",
+              "type": "bigint",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 5,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "user_command_receipt",
+          "fields": [
+            {
+              "name": "actor_user_id",
+              "type": "uuid",
+              "key": "PKFK",
+              "target": "user.id"
+            },
+            {
+              "name": "key",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "operation",
+              "type": "varchar",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "request_digest",
+              "type": "HMAC",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "result",
+              "type": "safe jsonb",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "secret_issued",
+              "type": "bool",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 6,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "audit_event",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "actor_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "target_user_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "contact_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "enquiry_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "enquiry.id"
+            },
+            {
+              "name": "action",
+              "type": "varchar",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "created_at",
+              "type": "timestamptz",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 7,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "login_rate_bucket",
+          "fields": [
+            {
+              "name": "key",
+              "type": "HMAC",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "window_started_at",
+              "type": "timestamptz",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "attempts",
+              "type": "int",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 0,
+          "status": "implemented",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "agency",
+          "child": "user",
+          "label": "agency",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "credential",
+          "label": "credential",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "session",
+          "label": "sessions",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "user_command_receipt",
+          "label": "commands",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "audit_event",
+          "label": "actor",
+          "optional": false,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Contact identity and responsibility",
+      "subtitle": "A lead is an enquiry, not a second copy of the contact.",
+      "notes": [
+        "Active E.164 phone is unique; one primary per non-empty collection.",
+        "Contact roles do not grant staff permissions. Transfer keeps true authorship."
+      ],
+      "tables": [
+        {
+          "name": "contact",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "primary_agent_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "created_by_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "name / type",
+              "type": "checked",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "source",
+              "type": "varchar",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "archived_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "version",
+              "type": "bigint",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 4,
+          "status": "implemented",
+          "focal": true
+        },
+        {
+          "name": "contact_phone",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "normalized",
+              "type": "E.164",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "is_primary",
+              "type": "bool",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "archived_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 3,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "contact_email",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "normalized",
+              "type": "email",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "is_primary",
+              "type": "bool",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "archived_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 5,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "contact_role",
+          "fields": [
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "PKFK",
+              "target": "contact.id"
+            },
+            {
+              "name": "role",
+              "type": "checked",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 0,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "contact_collaborator",
+          "fields": [
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "PKFK",
+              "target": "contact.id"
+            },
+            {
+              "name": "user_id",
+              "type": "uuid",
+              "key": "PKFK",
+              "target": "user.id"
+            },
+            {
+              "name": "revoked_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 1,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "assignment_event",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "previous_agent_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "new_agent_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "actor_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "reason / occurred_at",
+              "type": "history",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 6,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "enquiry",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "assigned_agent_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "source_submission_id",
+              "type": "uuid?",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "message / source",
+              "type": "text",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "status / received_at",
+              "type": "state + UTC",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 7,
+          "status": "implemented",
+          "focal": false
+        },
+        {
+          "name": "user",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "role / state",
+              "type": "checked",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 2,
+          "status": "reference",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "contact",
+          "child": "contact_phone",
+          "label": "phones",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "contact_email",
+          "label": "emails",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "contact_role",
+          "label": "roles",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "contact_collaborator",
+          "label": "access",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "contact_collaborator",
+          "label": "staff",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "contact",
+          "label": "responsible",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "assignment_event",
+          "label": "history",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "enquiry",
+          "label": "enquiries",
+          "optional": false,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Developments and physical inventory",
+      "subtitle": "Reusable types describe units; only actual properties count as stock.",
+      "notes": [
+        "Standalone property: development/floor/type links are all NULL.",
+        "Apartment unit: same-development floor and type required. Mixed projects allowed."
+      ],
+      "tables": [
+        {
+          "name": "development",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "developer_contact_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "reference",
+              "type": "unique",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "name / location",
+              "type": "facts",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "briefing_text",
+              "type": "text?",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "availability_confirmed_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 1,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "block",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "development_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "development.id"
+            },
+            {
+              "name": "code / display_order",
+              "type": "scoped unique",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 0,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "floor",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "block_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "block.id"
+            },
+            {
+              "name": "code / display_order",
+              "type": "scoped unique",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 3,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "unit_type",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "development_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "development.id"
+            },
+            {
+              "name": "code / name",
+              "type": "scoped unique",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "category / area / rooms",
+              "type": "template",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 2,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "property",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "development_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "development.id"
+            },
+            {
+              "name": "floor_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "floor.id"
+            },
+            {
+              "name": "unit_type_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "unit_type.id"
+            },
+            {
+              "name": "reference",
+              "type": "unique",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "category",
+              "type": "checked",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "availability_confirmed_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 4,
+          "status": "planned",
+          "focal": true
+        }
+      ],
+      "edges": [
+        {
+          "parent": "development",
+          "child": "block",
+          "label": "blocks",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "block",
+          "child": "floor",
+          "label": "floors",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "development",
+          "child": "unit_type",
+          "label": "types",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "development",
+          "child": "property",
+          "label": "units",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "floor",
+          "child": "property",
+          "label": "location",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "unit_type",
+          "child": "property",
+          "label": "template",
+          "optional": true,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Legal owners and sale/rental offerings",
+      "subtitle": "Separate commercial campaigns for one property or a whole development.",
+      "notes": [
+        "Offering target XOR: exactly one of property_id or development_id.",
+        "One current sale and one current rental per target. Multiple owners allowed."
+      ],
+      "tables": [
+        {
+          "name": "contact",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "name / type",
+              "type": "private identity",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 0,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "property_owner",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "property_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "property.id"
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            }
+          ],
+          "slot": 3,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "development_owner",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "development_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "development.id"
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            }
+          ],
+          "slot": 1,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "property",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "category",
+              "type": "physical asset",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 6,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "development",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "reference",
+              "type": "whole project",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 2,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "offering",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "property_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "property.id"
+            },
+            {
+              "name": "development_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "development.id"
+            },
+            {
+              "name": "kind",
+              "type": "sale / rental",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "price_mad",
+              "type": "numeric(18,2)",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "price_period",
+              "type": "month/year?",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "state / version",
+              "type": "checked",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 7,
+          "status": "planned",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "contact",
+          "child": "property_owner",
+          "label": "owners",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "property",
+          "child": "property_owner",
+          "label": "asset",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "development_owner",
+          "label": "owners",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "development",
+          "child": "development_owner",
+          "label": "project",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "property",
+          "child": "offering",
+          "label": "target XOR",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "development",
+          "child": "offering",
+          "label": "target XOR",
+          "optional": true,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Requirements and shortlists",
+      "subtitle": "Independent needs, explicit criteria and exact offering matches.",
+      "notes": [
+        "Criterion importance: required or preferred. Unknown values remain NULL.",
+        "Monthly rental annual equivalent = amount × 12; original terms are retained."
+      ],
+      "tables": [
+        {
+          "name": "contact",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "primary_agent_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            }
+          ],
+          "slot": 0,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "requirement",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "intent",
+              "type": "sale / rental",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "budget_mad",
+              "type": "numeric(18,2)?",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "budget_period",
+              "type": "month/year?",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "areas / rooms",
+              "type": "criteria",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 1,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "requirement_criterion",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "requirement_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "requirement.id"
+            },
+            {
+              "name": "name / value",
+              "type": "typed / NULL",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "importance",
+              "type": "required/preferred",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 2,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "shortlist_entry",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "requirement_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "requirement.id"
+            },
+            {
+              "name": "offering_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "offering.id"
+            },
+            {
+              "name": "feedback",
+              "type": "text?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 4,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "offering",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "kind / price_mad",
+              "type": "original terms",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 5,
+          "status": "reference",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "contact",
+          "child": "requirement",
+          "label": "needs",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "requirement",
+          "child": "requirement_criterion",
+          "label": "criteria",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "requirement",
+          "child": "shortlist_entry",
+          "label": "selects",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "offering",
+          "child": "shortlist_entry",
+          "label": "matches",
+          "optional": false,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Deals, reservations and outcomes",
+      "subtitle": "Fixed pipeline, explicit holds and append-only close/reopen history.",
+      "notes": [
+        "One active reservation per offering; no automatic reservation expiry.",
+        "Project/unit overlap is checked under locks. Closing effects are transactional."
+      ],
+      "tables": [
+        {
+          "name": "contact",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "primary_agent_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            }
+          ],
+          "slot": 0,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "deal",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "offering_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "offering.id"
+            },
+            {
+              "name": "requirement_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "requirement.id"
+            },
+            {
+              "name": "stage / next_action",
+              "type": "pipeline",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "primary_agent_at_close_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            }
+          ],
+          "slot": 4,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "offering",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "state / version",
+              "type": "stock",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 2,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "reservation",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "offering_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "offering.id"
+            },
+            {
+              "name": "deal_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "deal.id"
+            },
+            {
+              "name": "released_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 5,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "customer_offer",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "deal_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "deal.id"
+            },
+            {
+              "name": "amount_mad",
+              "type": "numeric(18,2)",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "conditions / expires_at",
+              "type": "proposal",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "outcome",
+              "type": "state",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 3,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "deal_stage_event",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "deal_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "deal.id"
+            },
+            {
+              "name": "actor_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "before / after / reason",
+              "type": "history",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "occurred_at",
+              "type": "timestamptz",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 6,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "deal_outcome",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "deal_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "deal.id"
+            },
+            {
+              "name": "amount_mad",
+              "type": "numeric(18,2)",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "outcome_date",
+              "type": "date",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "reason / stock_effect",
+              "type": "history",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 7,
+          "status": "planned",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "contact",
+          "child": "deal",
+          "label": "deals",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "offering",
+          "child": "deal",
+          "label": "selected",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "deal",
+          "child": "reservation",
+          "label": "hold",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "offering",
+          "child": "reservation",
+          "label": "reserves",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "deal",
+          "child": "customer_offer",
+          "label": "proposals",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "deal",
+          "child": "deal_stage_event",
+          "label": "stages",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "deal",
+          "child": "deal_outcome",
+          "label": "outcomes",
+          "optional": false,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Visit calendar and dynamic working times",
+      "subtitle": "Office anytime; off-site within working windows; company-car capacity only.",
+      "notes": [
+        "Policy belongs to the agency; only an administrator may edit it.",
+        "Capacity counts every local hour intersected by [start,end), end excluded."
+      ],
+      "tables": [
+        {
+          "name": "agency",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 0,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "visit_schedule_policy",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "agency_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "agency.id"
+            },
+            {
+              "name": "company_car_capacity_per_hour",
+              "type": "positive int",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "version / edited_at",
+              "type": "audit",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 1,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "visit_working_window",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "policy_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "visit_schedule_policy.id"
+            },
+            {
+              "name": "weekday",
+              "type": "1..7",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "start_time / end_time",
+              "type": "local time",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 2,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "visit_break_window",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "policy_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "visit_schedule_policy.id"
+            },
+            {
+              "name": "weekday",
+              "type": "1..7",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "start_time / end_time",
+              "type": "local time",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 5,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "visit",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "agency_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "agency.id"
+            },
+            {
+              "name": "organizer_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "contact_id / deal_id?",
+              "type": "typed FKs",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "property_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "property.id"
+            },
+            {
+              "name": "type",
+              "type": "3 checked values",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "start_at / end_at",
+              "type": "UTC instants",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "status / conflict_reason",
+              "type": "state",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 4,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "visit_participant",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "visit_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "visit.id"
+            },
+            {
+              "name": "user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            }
+          ],
+          "slot": 7,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "user",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "role / state",
+              "type": "staff",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 6,
+          "status": "reference",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "agency",
+          "child": "visit_schedule_policy",
+          "label": "one policy",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "visit_schedule_policy",
+          "child": "visit_working_window",
+          "label": "opens",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "visit_schedule_policy",
+          "child": "visit_break_window",
+          "label": "pauses",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "agency",
+          "child": "visit",
+          "label": "hosts",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "visit",
+          "label": "organizes",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "visit",
+          "child": "visit_participant",
+          "label": "participants",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "visit_participant",
+          "label": "attends",
+          "optional": false,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Activity, tasks and durable background work",
+      "subtitle": "True actors, internal notifications and retriable PostgreSQL jobs/outbox.",
+      "notes": [
+        "Typed context FKs preserve contact/deal/property integrity; no generic IDs.",
+        "Business effect + history + outbox commit together; dedupe keys prevent repeats."
+      ],
+      "tables": [
+        {
+          "name": "user",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 0,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "task",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "owner_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "contact_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "deal_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "deal.id"
+            },
+            {
+              "name": "due_at / status",
+              "type": "UTC / state",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 1,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "timeline_event",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "actor_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "contact_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "deal_id / property_id?",
+              "type": "typed FKs",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "occurred_at / reason",
+              "type": "history",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 3,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "notification",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "event_key",
+              "type": "dedupe key",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "read_at / due_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 6,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "outbox_event",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "dedupe_key",
+              "type": "unique",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "event_type / payload",
+              "type": "safe event",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "created_at / status",
+              "type": "delivery",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 4,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "job",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "dedupe_key",
+              "type": "unique",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "run_at / attempts",
+              "type": "retry",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "lease_until / status",
+              "type": "worker state",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 5,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "contact",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 2,
+          "status": "reference",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "user",
+          "child": "task",
+          "label": "owns",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "task",
+          "label": "context",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "timeline_event",
+          "label": "true actor",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "timeline_event",
+          "label": "timeline",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "notification",
+          "label": "receives",
+          "optional": false,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Private documents and temporary file access",
+      "subtitle": "Exactly one real parent; quarantine precedes every protected download.",
+      "notes": [
+        "Document parent XOR: contact, development, property or deal.",
+        "Owner/developer private evidence stays on contact; permits bind session/resource."
+      ],
+      "tables": [
+        {
+          "name": "contact",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 0,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "development",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 1,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "property",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 2,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "deal",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 3,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "document",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "contact_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "development_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "development.id"
+            },
+            {
+              "name": "property_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "property.id"
+            },
+            {
+              "name": "deal_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "deal.id"
+            },
+            {
+              "name": "visibility / version",
+              "type": "inherited",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 4,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "document_version",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "document_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "document.id"
+            },
+            {
+              "name": "object_key / hash",
+              "type": "private store",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "size_bytes / MIME",
+              "type": "validated",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "scan_state",
+              "type": "quarantine/clean",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 5,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "session",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "revoked_at / expires_at",
+              "type": "UTC",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 6,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "file_permit",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "session_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "session.id"
+            },
+            {
+              "name": "resource context",
+              "type": "typed FKs",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "token_hash",
+              "type": "unique",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "action / expires_at",
+              "type": "one action",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "consumed_at",
+              "type": "timestamptz?",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 7,
+          "status": "planned",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "contact",
+          "child": "document",
+          "label": "parent XOR",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "development",
+          "child": "document",
+          "label": "parent XOR",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "property",
+          "child": "document",
+          "label": "parent XOR",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "deal",
+          "child": "document",
+          "label": "parent XOR",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "document",
+          "child": "document_version",
+          "label": "versions",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "session",
+          "child": "file_permit",
+          "label": "permits",
+          "optional": false,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Optional commissions and collection ledger",
+      "subtitle": "Manager-controlled recognition, receipts and linked corrections.",
+      "notes": [
+        "Commission is optional. Balance is derived, never directly editable.",
+        "Reject over-collection. Original records remain; final MAD rounding is once."
+      ],
+      "tables": [
+        {
+          "name": "deal",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 0,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "commission",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "deal_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "deal.id"
+            },
+            {
+              "name": "mode",
+              "type": "fixed/percentage",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "base_mad / amount_mad",
+              "type": "numeric(18,2)",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "rate",
+              "type": "numeric(9,6)?",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "state / due_date",
+              "type": "recognition",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 1,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "commission_revision",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "original_commission_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "commission.id"
+            },
+            {
+              "name": "replacement_commission_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "commission.id"
+            },
+            {
+              "name": "actor_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "reason / occurred_at",
+              "type": "correction",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 2,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "receipt",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "commission_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "commission.id"
+            },
+            {
+              "name": "amount_mad",
+              "type": "numeric(18,2)",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "received_at",
+              "type": "timestamptz",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "actor_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            }
+          ],
+          "slot": 4,
+          "status": "planned",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "deal",
+          "child": "commission",
+          "label": "optional",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "commission",
+          "child": "commission_revision",
+          "label": "corrections",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "commission",
+          "child": "receipt",
+          "label": "collections",
+          "optional": false,
+          "lane": 0
+        }
+      ]
+    },
+    {
+      "title": "Atomic import, website intake and retry safety",
+      "subtitle": "Preview/correction before one commit; replay-safe website receipts.",
+      "notes": [
+        "Existing phone rows are skipped and reported; invalid rows block approval.",
+        "No partial batch. Retry records preserve request identity and original result."
+      ],
+      "tables": [
+        {
+          "name": "user",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 0,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "import_batch",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "author_user_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            },
+            {
+              "name": "file_hash",
+              "type": "digest",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "approved_at / status",
+              "type": "workflow",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 1,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "import_row",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "batch_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "import_batch.id"
+            },
+            {
+              "name": "contact_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "row_number / errors",
+              "type": "preview",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "agent_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "user.id"
+            }
+          ],
+          "slot": 2,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "contact",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            }
+          ],
+          "slot": 5,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "website_receipt",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "source_key / submission_id",
+              "type": "unique pair",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "enquiry_id?",
+              "type": "uuid",
+              "key": "FK",
+              "target": "enquiry.id"
+            },
+            {
+              "name": "delivery_state",
+              "type": "durable",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 6,
+          "status": "planned",
+          "focal": false
+        },
+        {
+          "name": "enquiry",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            }
+          ],
+          "slot": 3,
+          "status": "reference",
+          "focal": false
+        },
+        {
+          "name": "idempotency_record",
+          "fields": [
+            {
+              "name": "actor_id",
+              "type": "uuid",
+              "key": "PKFK",
+              "target": "user.id"
+            },
+            {
+              "name": "route",
+              "type": "varchar",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "key",
+              "type": "uuid",
+              "key": "PK",
+              "target": null
+            },
+            {
+              "name": "contact_id",
+              "type": "uuid",
+              "key": "FK",
+              "target": "contact.id"
+            },
+            {
+              "name": "request_hash",
+              "type": "HMAC",
+              "key": "",
+              "target": null
+            },
+            {
+              "name": "response / created_at",
+              "type": "safe / UTC",
+              "key": "",
+              "target": null
+            }
+          ],
+          "slot": 4,
+          "status": "implemented",
+          "focal": false
+        }
+      ],
+      "edges": [
+        {
+          "parent": "user",
+          "child": "import_batch",
+          "label": "author",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "import_batch",
+          "child": "import_row",
+          "label": "rows",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "import_row",
+          "label": "result",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "enquiry",
+          "child": "website_receipt",
+          "label": "processed",
+          "optional": true,
+          "lane": 0
+        },
+        {
+          "parent": "user",
+          "child": "idempotency_record",
+          "label": "actor",
+          "optional": false,
+          "lane": 0
+        },
+        {
+          "parent": "contact",
+          "child": "idempotency_record",
+          "label": "scope",
+          "optional": false,
+          "lane": 0
+        }
+      ]
+    }
+  ]
+}

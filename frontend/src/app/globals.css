@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Semantic geometry and theme mapping; values originate in branding/kay-ui-tokens.json. */
+@theme inline {
+  --font-sans:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --color-background: var(--surface-canvas);
+  --color-foreground: var(--content-primary);
+  --color-card: var(--surface-content);
+  --color-card-foreground: var(--content-primary);
+  --color-popover: var(--surface-overlay);
+  --color-popover-foreground: var(--content-primary);
+  --color-primary: var(--action-primary-background);
+  --color-primary-foreground: var(--action-primary-foreground);
+  --color-primary-hover: var(--action-primary-hover);
+  --color-primary-pressed: var(--action-primary-pressed);
+  --color-secondary: var(--action-secondary-background);
+  --color-secondary-foreground: var(--action-secondary-foreground);
+  --color-muted: var(--neutral-surface-muted);
+  --color-muted-foreground: var(--content-secondary);
+  --color-accent: var(--selection-background);
+  --color-accent-foreground: var(--selection-foreground);
+  --color-destructive: var(--action-destructive-background);
+  --color-destructive-foreground: var(--action-destructive-foreground);
+  --color-border: var(--neutral-border-subtle);
+  --color-input: var(--neutral-border-strong);
+  --color-ring: var(--action-focus-ring);
+  --color-link: var(--content-link);
+  --color-sidebar: var(--surface-sidebar);
+  --color-sidebar-foreground: var(--surface-sidebar-foreground);
+  --color-sidebar-accent: var(--navigation-selected-background);
+  --color-sidebar-accent-foreground: var(--navigation-selected-foreground);
+  --color-sidebar-ring: var(--brand-gold);
+  --color-info: var(--status-info-foreground);
+  --color-info-background: var(--status-info-background);
+  --color-info-border: var(--status-info-border);
+  --color-danger: var(--status-danger-foreground);
+  --color-danger-background: var(--status-danger-background);
+  --color-warning: var(--status-warning-foreground);
+  --color-warning-background: var(--status-warning-background);
+  --color-success: var(--status-success-foreground);
+  --color-success-background: var(--status-success-background);
+  --color-neutral: var(--status-neutral-foreground);
+  --color-neutral-background: var(--status-neutral-background);
+  --color-purple: var(--status-purple-foreground);
+  --color-purple-background: var(--status-purple-background);
+  --color-teal: var(--status-teal-foreground);
+  --color-teal-background: var(--status-teal-background);
+  --color-chart-1: var(--chart-series1);
+  --color-chart-2: var(--chart-series2);
+  --color-chart-3: var(--chart-series3);
+  --color-chart-4: var(--chart-series4);
+  --color-chart-5: var(--chart-series5);
+  --radius-sm: var(--radius-small);
+  --radius-md: var(--radius-medium);
+  --radius-lg: var(--radius-large);
+  --spacing-navigation: var(--layout-desktop-sidebar);
+  --spacing-control: var(--control-touch-target);
+  --spacing-field: var(--control-input-touch);
+  --spacing-row: var(--control-table-row);
+  --spacing-table: var(--layout-table-min-width);
+  --container-workspace: var(--layout-content-max-width);
+  --container-reading: 52rem;
+  --container-entry: 32rem;
+  --text-page: clamp(1.75rem, 1.5rem + 1vw, 2.375rem);
+  --text-page--line-height: 1.2;
+  --text-section: 1.125rem;
+  --text-section--line-height: 1.5;
+  --spacing-chart: 16rem;
+}
+
+:root {
+  color-scheme: light;
+  --page-margin: 1rem;
+  --chart-1: var(--chart-series1);
+  --chart-2: var(--chart-series2);
+  --chart-3: var(--chart-series3);
+  --chart-4: var(--chart-series4);
+  --chart-5: var(--chart-series5);
+  --chart-background: var(--surface-canvas);
+  --chart-foreground: var(--content-primary);
+  --chart-foreground-muted: var(--content-secondary);
+  --chart-line-primary: var(--chart-series1);
+  --chart-line-secondary: var(--chart-series2);
+  --chart-crosshair: var(--content-secondary);
+  --chart-grid: var(--neutral-border-subtle);
+  --chart-label: var(--content-secondary);
+  --chart-tooltip-background: var(--surface-overlay);
+  --chart-tooltip-foreground: var(--content-primary);
+  --chart-tooltip-muted: var(--content-secondary);
+
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    margin: 0;
+    @apply text-sm leading-relaxed;
+  }
+  ::selection {
+    background: var(--selection-background);
+    color: var(--selection-foreground);
+  }
+  button,
+  a,
+  input,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Shared V3 anatomy: used explicitly by record/form families, never private-data selectors. */
+@utility surface {
+  @apply min-w-0 rounded-md border bg-card p-4 md:p-5;
+}
+@utility filter-surface {
+  @apply min-w-0 rounded-md border bg-card p-3;
+}
+@utility filter-toolbar {
+  @apply min-w-0 rounded-md border bg-card p-3;
+  & [data-slot="input"], & [data-slot="native-select"] {
+    @apply h-control;
+  }
+  & details:not([open]) > :not(summary) {
+    @apply hidden;
+  }
+}
+@utility record-stack {
+  @apply min-w-0 gap-5;
+  & > section, & > [data-slot="tabs"] > [data-slot="tabs-content"] > section {
+    @apply rounded-md border bg-card p-4 md:p-5;
+  }
+  & dl:not([data-summary]) {
+    @apply grid-cols-1 gap-4;
+  }
+  & dl:not([data-summary]) > div {
+    @apply col-span-1;
+  }
+  & dt {
+    @apply mb-1 text-xs font-medium text-muted-foreground;
+  }
+  & dd {
+    @apply text-sm;
+  }
+}
+@utility form-surface {
+  @apply min-w-0 rounded-md border bg-card p-4 md:p-6;
+}
+
+/* Keep the approved outline above utility-layer outline-none on shadcn controls. */
+:focus-visible {
+  outline: 2px solid var(--action-focus-ring);
+  outline-offset: 4px;
+}
+[data-sidebar] :focus-visible {
+  outline-color: var(--brand-gold);
+}
+
+/* The shell owns safe-area insets once, rather than each individual feature. */
+@utility page-gutter {
+  padding-inline: max(var(--page-margin), env(safe-area-inset-left))
+    max(var(--page-margin), env(safe-area-inset-right));
+}
+@media (min-width: 48rem) {
+  :root {
+    --page-margin: 1.5rem;
+  }
+}
+@media (min-width: 64rem) {
+  :root {
+    --page-margin: 1.75rem;
+    --control-input-touch: 2.75rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
+

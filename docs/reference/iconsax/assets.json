@@ -1,0 +1,459 @@
+{
+  "package": "iconsax",
+  "version": "0.1.1",
+  "tarball": "https://registry.npmjs.org/iconsax/-/iconsax-0.1.1.tgz",
+  "integrity": "sha512-/HXomG+SuhytKH/Yw4ZdunDGyWP02Osuk/pjony1k9CCMOsg7dUpnomu7HZUOHNu0yK0b3phErjH2IgUTJFjPA==",
+  "license": "Iconsax Free proprietary asset terms; not the npm metadata MIT software license",
+  "references": [
+    "https://docs.iconsax.io/license-and-terms/license",
+    "https://docs.iconsax.io/license-and-terms/usage-manifesto",
+    "https://docs.iconsax.io/license-and-terms/atribution-guide"
+  ],
+  "normalization": [
+    "White strokes become currentColor.",
+    "Full-canvas 24×24 clipping wrappers are replaced by root viewport clipping; no IDs or external references.",
+    "Path coordinates, stroke widths, line caps and joins retained.",
+    "Only the selected free linear assets are embedded in functional React code; no web-component loader or standalone SVG pack."
+  ],
+  "icons": [
+    {
+      "export": "AlertIcon",
+      "semanticName": "alert",
+      "asset": "info-circle",
+      "style": "linear",
+      "source": "package/dist/data/essential.json",
+      "originalSvgSha256": "85a7f5caa2c26c2fe4534e686aaa2f58ff907ef59bd5fdfd6041f21fa632ac66",
+      "pathCount": 3,
+      "originalPathIndices": [
+        0,
+        1,
+        2
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "EmptyFolderIcon",
+      "semanticName": "empty-folder",
+      "asset": "folder-open",
+      "style": "linear",
+      "source": "package/dist/data/files.json",
+      "originalSvgSha256": "75851b60d1b4ec88ffe3936baaeaee884eda8274dd894de11dbc9ff30b61ccf5",
+      "pathCount": 3,
+      "originalPathIndices": [
+        0,
+        1,
+        2
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "CheckIcon",
+      "semanticName": "check",
+      "asset": "tick-circle",
+      "style": "linear",
+      "source": "package/dist/data/essential.json",
+      "originalSvgSha256": "4c84364107bf32eec1145d015eeb60107a745793885e065d135f6454058d312a",
+      "pathCount": 1,
+      "originalPathIndices": [
+        1
+      ],
+      "viewBox": "6 6 12 12",
+      "adaptation": "Control mark only; enclosing outline omitted because the native control supplies it."
+    },
+    {
+      "export": "ChevronDownIcon",
+      "semanticName": "chevron-down",
+      "asset": "arrow-down-02",
+      "style": "linear",
+      "source": "package/dist/data/arrow.json",
+      "originalSvgSha256": "78ac71b8d93b9595a6719e2fa30b702bc4bdc9e9afbaeb2ede17c84825969314",
+      "pathCount": 1,
+      "originalPathIndices": [
+        0
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "CloseIcon",
+      "semanticName": "close",
+      "asset": "close-square",
+      "style": "linear",
+      "source": "package/dist/data/essential.json",
+      "originalSvgSha256": "0c5f29eedff4e1a3b87841e5ce9b99fbccf10f472dbb9a4f6504b0e0742ce65b",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "6 6 12 12",
+      "adaptation": "Control mark only; enclosing outline omitted because the native control supplies it."
+    },
+    {
+      "export": "RadioIndicatorIcon",
+      "semanticName": "radio-indicator",
+      "asset": "record",
+      "style": "linear",
+      "source": "package/dist/data/video-audio-image.json",
+      "originalSvgSha256": "595d1f06add046ada62cbb5f5b38dd809df797b9f16e2ee03c04ad9fc1e147b8",
+      "pathCount": 1,
+      "originalPathIndices": [
+        0
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "ShowPasswordIcon",
+      "semanticName": "show-password",
+      "asset": "eye",
+      "style": "linear",
+      "source": "package/dist/data/security.json",
+      "originalSvgSha256": "7de1f7b6bf8f478a30d6cf2ff3b6e248082289e201a99c69ba43317361f80eb4",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "HidePasswordIcon",
+      "semanticName": "hide-password",
+      "asset": "eye-slash",
+      "style": "linear",
+      "source": "package/dist/data/security.json",
+      "originalSvgSha256": "7a95483919ff2cf1c7cc378d37079502f02ba09d7b1fc89a30e45b8477a85118",
+      "pathCount": 6,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "PhoneIcon",
+      "semanticName": "phone",
+      "asset": "call",
+      "style": "linear",
+      "source": "package/dist/data/call.json",
+      "originalSvgSha256": "8733d22a75c7f1182ef8179cc94e94aaf96b2d376ac8956d23883c7d3e95b100",
+      "pathCount": 1,
+      "originalPathIndices": [
+        0
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "EmailIcon",
+      "semanticName": "email",
+      "asset": "sms",
+      "style": "linear",
+      "source": "package/dist/data/emails-messages.json",
+      "originalSvgSha256": "009106180980fd1b7c718d969c4828dd69eb11e43910adf654bb07f127d4264f",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "ContactIcon",
+      "semanticName": "contact",
+      "asset": "user",
+      "style": "linear",
+      "source": "package/dist/data/users.json",
+      "originalSvgSha256": "0ba0e7a29169533b1076d605516f5206b86bfe3ab5b90c826caa66199d4a5f76",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "TaskIcon",
+      "semanticName": "task",
+      "asset": "task-square",
+      "style": "linear",
+      "source": "package/dist/data/content-edit.json",
+      "originalSvgSha256": "07506b0d179bc8635bafb0011d34fb5ecaebf98ba00db3411033867f03f729b7",
+      "pathCount": 5,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "EnquiryIcon",
+      "semanticName": "enquiry",
+      "asset": "message-text",
+      "style": "linear",
+      "source": "package/dist/data/emails-messages.json",
+      "originalSvgSha256": "78a0a79662bd50cf7bbb1319984661050b18e5388118f276789f28c37ef91de2",
+      "pathCount": 3,
+      "originalPathIndices": [
+        0,
+        1,
+        2
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "DealIcon",
+      "semanticName": "deal",
+      "asset": "briefcase",
+      "style": "linear",
+      "source": "package/dist/data/school-learning.json",
+      "originalSvgSha256": "2ee8aad2430a51d4762b642669413b03dbe575adeb1459bfa5f7a993eb76ce4e",
+      "pathCount": 5,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "FinanceIcon",
+      "semanticName": "finance",
+      "asset": "wallet",
+      "style": "linear",
+      "source": "package/dist/data/money.json",
+      "originalSvgSha256": "88553dfbd6c4ba7039639cf4fea06a0239a570345950ec92be2d4b27623a0e0d",
+      "pathCount": 3,
+      "originalPathIndices": [
+        0,
+        1,
+        2
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "DevelopmentIcon",
+      "semanticName": "development",
+      "asset": "building-3",
+      "style": "linear",
+      "source": "package/dist/data/building.json",
+      "originalSvgSha256": "93d636a5f86153e40ead3e1692a55223804dcf12c79ecf33d958356220cf7f5e",
+      "pathCount": 7,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "PropertyIcon",
+      "semanticName": "property",
+      "asset": "home",
+      "style": "linear",
+      "source": "package/dist/data/essential.json",
+      "originalSvgSha256": "bb92a0c28ea5d9aca1db64a9284883c4bdd747da2b87e7f40d77f3d25c5a9b1a",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "LocationIcon",
+      "semanticName": "location",
+      "asset": "location",
+      "style": "linear",
+      "source": "package/dist/data/location.json",
+      "originalSvgSha256": "83b5e9ce10d650cc5a4eaf05f41ef586f4845d9d05a8eea60cda4a4c1757f83a",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "CompletedIcon",
+      "semanticName": "completed",
+      "asset": "tick-circle",
+      "style": "linear",
+      "source": "package/dist/data/essential.json",
+      "originalSvgSha256": "4c84364107bf32eec1145d015eeb60107a745793885e065d135f6454058d312a",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "InboxIcon",
+      "semanticName": "inbox",
+      "asset": "direct-inbox",
+      "style": "linear",
+      "source": "package/dist/data/emails-messages.json",
+      "originalSvgSha256": "64bc0d603905ccbfb4d428c3ccc9e1aa362ff3a1636ea200bca9418ad8906a84",
+      "pathCount": 4,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "ContactsIcon",
+      "semanticName": "contacts",
+      "asset": "people",
+      "style": "linear",
+      "source": "package/dist/data/users.json",
+      "originalSvgSha256": "1a06b27b345592039fd3f53163d3859d2771439e8b7fec4fa104ecb1216399ad",
+      "pathCount": 6,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "NotificationIcon",
+      "semanticName": "notification",
+      "asset": "notification",
+      "style": "linear",
+      "source": "package/dist/data/notifications.json",
+      "originalSvgSha256": "dd29b5ad0955dd85ee2c99ae0bc002b050152ca54dc1296b4749542d734cc88d",
+      "pathCount": 3,
+      "originalPathIndices": [
+        0,
+        1,
+        2
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "NavigationMenuIcon",
+      "semanticName": "navigation-menu",
+      "asset": "menu",
+      "style": "linear",
+      "source": "package/dist/data/settings.json",
+      "originalSvgSha256": "ee31fc431c04022fd2b3ba4e2b191fdc25f018b5f9b93ba53947dbfa4d87cb46",
+      "pathCount": 4,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "CalendarIcon",
+      "semanticName": "calendar",
+      "asset": "calendar",
+      "style": "linear",
+      "source": "package/dist/data/time.json",
+      "originalSvgSha256": "642314ffa015badb302357bcd345d31758ed16e1fc8a0469121c99e921462429",
+      "pathCount": 10,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "DashboardIcon",
+      "semanticName": "dashboard",
+      "asset": "category",
+      "style": "linear",
+      "source": "package/dist/data/settings.json",
+      "originalSvgSha256": "44ecadcf2f6cb5c9b8596598eeee7941d4e268e45a45dc1f5c83221a6ee71962",
+      "pathCount": 4,
+      "originalPathIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "SettingsIcon",
+      "semanticName": "settings",
+      "asset": "setting-2",
+      "style": "linear",
+      "source": "package/dist/data/settings.json",
+      "originalSvgSha256": "87f5a410a728cc131653564e082cf03493202ac67bf92403eb2154945e5594e8",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    },
+    {
+      "export": "SearchIcon",
+      "semanticName": "search",
+      "asset": "search",
+      "style": "linear",
+      "source": "package/dist/data/search.json",
+      "originalSvgSha256": "d526281d7d7b9f90f3057dd8da210d8b283678f10581cb965ca00d70b5768e03",
+      "pathCount": 2,
+      "originalPathIndices": [
+        0,
+        1
+      ],
+      "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained."
+    }
+  ]
+}

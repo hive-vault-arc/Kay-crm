@@ -1,0 +1,625 @@
+# KAY QA command register
+
+## Iconsax UI-only migration (2026-10-16)
+
+[Coverage/license](reference/iconsax/migration.md) and
+[actual execution ledger](reference/iconsax/execution.md). Final lint (including
+`npm run icons:check`), typecheck and production build pass.18 unique headed
+Chrome cases have passing evidence across corrected commands:initial16/17,
+corrected3/3 (including2 overlapping icon tests), development1/1. Not a fresh
+full cross-browser matrix.55 composition captures plus glyph fixture and2
+development-state captures;0 unexpected composition errors/external icon
+requests. SSR/no-JS/offline vector checks pass. The ledger retains the initial
+false-positive assertion and exact reproducible commands, scope and cleanup.
+
+## Approved V3 UI-only verification (2026-10-16)
+
+These are fresh redesign checks, distinct from historical SP-22 results below.
+Run npm from frontend/. Compiled checks temporarily set KAY_E2E_PRODUCTION=1,
+restore the previous value and propagate the real exit code. The development-only
+foundation case explicitly unsets that flag. Test writers remain serial under
+the isolated test lease. Freeze frontend/src, public assets and manifests as
+well as backend sources throughout backup/recovery checks.
+
+| Boundary | Actual command | Result |
+|---|---|---|
+| Final frontend | npm run lint; npm run typecheck; npm run build | exit0; build n1_H8AryVi9k9f4trftmy |
+| Route/context inventory | node scripts/ui-coverage.mjs |29 route files/168 form-tab-dialog-panel sites plus111 overlapping regions/disclosures in71 files; all mapped in coverage |
+| Compiled native V3/deals/discovery | npm run test:chrome -- tests/review/v3.chrome.spec.ts tests/review/deals.chrome.spec.ts tests/review/discovery.chrome.spec.ts --max-failures=2 |4/4 pass3.4m on preceding geometry-identical build; later aria descriptions recaptured below |
+| Remaining native workflows | npm run test:chrome -- tests/review/reports.chrome.spec.ts tests/review/schedule.chrome.spec.ts tests/review/finance.chrome.spec.ts tests/review/imports.chrome.spec.ts tests/review/intake.chrome.spec.ts tests/review/leads.chrome.spec.ts tests/review/inventory.chrome.spec.ts tests/e2e/integration.spec.ts --max-failures=2 |7/8 pass4.9m; obsolete inventory table assertion corrected, failure retained |
+| Final V3/inventory rerun | npm run test:chrome -- tests/review/v3.chrome.spec.ts tests/review/inventory.chrome.spec.ts --grep 'nine compositions\|SP07 visible Chrome' --max-failures=1 |2/2 pass2.1m; all55 settled final frames,0 unexpected browser errors |
+| Development-only shared/error boundary | npm run test:chrome -- tests/e2e/foundation.spec.ts --grep 'live shadcn' --max-failures=1 |1/1 pass23.5s; separate .next-e2e output |
+| Corrected Chrome and shell | npm run test:e2e -- tests/e2e/leads.spec.ts tests/e2e/users.spec.ts tests/e2e/shell.spec.ts --config=playwright.acceptance.config.ts --project=chrome-final --grep 'international identities\|create, pending denial\|@shell' --max-failures=2 |5/6 pass1.3m; staff pending-read/reload race retained, then corrected below |
+| Final staff lifecycle | npm run test:e2e -- tests/e2e/users.spec.ts --config=playwright.acceptance.config.ts --project=chrome-final --grep 'create, pending denial' --max-failures=1 |1/1 pass27.3s; original401/reload assertions retained |
+| Remaining selected variants | npm run test:e2e -- --config=playwright.acceptance.config.ts --project=edge-final --project=mobile-chromium-final --project=mobile-webkit-final --grep $v3Remaining --max-failures=2 |47/47 pass18.3m; exact regex/list/reproduction in execution |
+| Client privacy | node scripts/scan-client-secrets.mjs |4 roots/313 browser JS/0 configured facade/signing-secret occurrences |
+| Report privacy | powershell -NoProfile -File scripts/audit-report.ps1 |20 JSON/47 empty step arrays/0 detailed input-bearing arrays |
+
+13 unique native/integration/foundation cases pass across corrected commands,
+not one clean invocation. Desktop/mobile touch, keyboard, actual200% zoom,
+reduced motion and six widths are exercised. Lowest measured native text contrast
+5.4997:1; controls at least44px; intentional named grid/table scroll does not
+create page overflow. All9 reference PNG hashes and272 backend source hashes
+match baseline;17 original forms retain87 field-site signatures.
+
+The earlier full134-case attempt is50 passed/3 failed/81 not run and remains a
+failed attempt. A focused77-case Chrome/Edge/mobile Chromium/mobile WebKit
+selection plus corrected affected checks passes across commands:28 retained
+passes, corrected Chrome Lead/staff,47 remaining variants, plus4 shell cases =81
+unique passing variants. The failed selected attempt was28/3/46 not run; the
+actual outcomes and exact regex are in [execution](04-design/ui-reference/approved-v3/execution.md).
+No pending result is counted as passed. Native Chrome is155.0.8059.79; no physical device, actual
+Safari, fresh backend/load suite, production or human acceptance is claimed.
+Nonfatal inherited Windows Proactor10054 shutdown warnings remain disclosed.
+See [coverage](04-design/ui-reference/approved-v3/coverage.md) and
+[implemented system](04-design/ui-reference/approved-v3/implemented-system.md).
+
+## SP-22 final local verified commands (2026-10-16)
+
+[Live results and corrected attempts](03-planning/sprints/sp-22-execution.md),
+[repeatable procedure](06-delivery-and-operations/local-final-acceptance.md).
+Backend commands below run from backend/ with its explicit venv; npm from frontend/.
+No pending browser/load result is included as passed.
+
+Final result supersedes the initial records below without erasing failures.
+All486 distinct backend cases and134 compiled browser variants have passing
+evidence across complete/corrected/affected commands, not one clean invocation.
+The explicit4-process100-user configuration passes; default1 did not.
+
+| Final boundary | Actual command | Result |
+|---|---|---|
+| Affected permissions/current merge/reporting | .venv/Scripts/python.exe -m pytest -q --tb=line --maxfail=2 -k 'scope or private or transfer or merge or revok or collaborator or permission or attribution or role or current or denial or denied or test_report' |124 passed/358 deselected244.90s |
+| Final aggregate correctness | .venv/Scripts/python.exe -m pytest tests/test_reports.py tests/test_report_edges.py -q --tb=line --maxfail=1 |14 passed21.22s |
+| Bounded ordinary CLI workers | .venv/Scripts/python.exe -m pytest tests/test_serve.py -q --tb=line --maxfail=1 |4 passed1.91s; current collection486 |
+| Final Python quality | .venv/Scripts/python.exe -m ruff check .; -m ruff format --check .; -m mypy app | exit0;281 files/177 modules |
+| Final frontend | npm run lint; npm run typecheck; npm run build | exit0;h1B7-HZDzQ3xLkUBgLSC1 |
+| Complete compiled matrix | KAY_E2E_PRODUCTION=1; npm run test:e2e -- --config=playwright.acceptance.config.ts --max-failures=3 |130 original business+4 focus variants pass across original/corrected commands; retained failures/stop counts in ledger |
+| Final intake fix | npm run test:e2e -- tests/e2e/intake.spec.ts --config=playwright.acceptance.config.ts --project=chrome-final --project=mobile-webkit-final --max-failures=1 |2/2 pass1.4m on compiled app |
+| Native review | npm run test:chrome -- tests/review/acceptance.chrome.spec.ts tests/review/chrome.spec.ts tests/review/intake.chrome.spec.ts --max-failures=2 |5/5 pass3.2m |
+| Rebuilt shell/navigation | npm run test:chrome -- tests/review/acceptance.chrome.spec.ts tests/e2e/shell.spec.ts --grep 'SP22 visible final families\|French entry\|sheet keyboard' --max-failures=1 |3/3 pass1.1m |
+| Development-only component | npm run test:e2e -- --project=chrome --grep 'live shadcn/RHF/Zod/table' --max-failures=1 |1/1 pass27.6s; KAY_E2E_PRODUCTION unset |
+| Final-source restored native | npm run test:chrome -- tests/review/acceptance.chrome.spec.ts --grep 'visible recovered record' --max-failures=1 |1/1 pass1.2m; RPO3.774s/restore3.795s/incident→verified35.976s |
+| Formal full-volume load | APP_ENVIRONMENT=benchmark; .venv/Scripts/python.exe -m benchmarks.run |4 API processes/100 users/6285 completed/0 errors/60.261s; ordinary p95max630.064ms/dashboard1314.907ms, exit0; two prior failures retained |
+| Privacy | node scripts/scan-client-secrets.mjs; powershell -NoProfile -File scripts/audit-report.ps1 |4 roots/285 JS/0 configured-secret matches; final2JSON/1 empty step array/0 detailed arrays |
+
+All compiled/native commands set KAY_E2E_PRODUCTION=1 temporarily except the
+explicit development case, restore its previous value and propagate the real
+exit code. No physical iOS/Android/actual website/production approval. AFTER022
+records inherited LOW1 visual-fidelity choice unselected; product review pending.
+Development unchanged; isolated synthetic cleanup/shutdown and exact source
+fingerprint are recorded in the execution ledger. No new lock/dependency version.
+
+| Boundary | Actual command | Observed result |
+|---|---|---|
+| Complete backend | .venv/Scripts/python.exe -m pytest -q --tb=line --maxfail=3 --cov=app --cov-report=term:skip-covered | Initial479 passed/2 failed/1 teardown error in1003.47s; corrected below, not one clean complete invocation |
+| Corrected migration, cumulative merge, current recovery | .venv/Scripts/python.exe -m pytest tests/test_discovery_http_migration.py tests/test_work_process_migration.py tests/test_final_acceptance.py tests/test_recovery.py -q --tb=line --maxfail=2 --cov=app --cov-append --cov-report=term:skip-covered | 23 passed/183.83s; zero skipped; then-current482 inventory passes across corrected runs; strengthened final merge/unknown-FK rerun2/2 in6.28s;4 later CLI cases recorded above |
+| Python quality | .venv/Scripts/python.exe -m ruff check .; .venv/Scripts/python.exe -m ruff format --check .; .venv/Scripts/python.exe -m mypy app | Exit0;280 formatted files/177 typed modules |
+| Frontend locked install/build | npm ci; npm run lint; npm run typecheck; npm run build | Exit0;715 added/716 audited; build rbxR11v57oBt-naHtoypJ;9 inherited HIGH dev-tool entries |
+| Fresh backend install | Fresh-copy .venv hashed requirements-dev.lock install, --no-deps --no-build-isolation editable install; pip check; .venv/Scripts/python.exe -m benchmarks.freshcheck | Exit0; no broken requirements; real fresh lifespan/live200/database ready200/anonymous ready403; no .env copied |
+| Actual OpenAPI inventory | .venv/Scripts/python.exe -m benchmarks.catalog | Exit0;OpenAPI3.1.0/123 paths/153 operations; exact SHA256 and full catalogue linked in ledger |
+| Documentation preclosure | powershell -NoProfile -File docs/03-planning/validate-sprints.ps1 (root) | Exit0;22 sprints/1204 links/41 AT mappings/13 Mermaid pairs/10 JSON examples; final rerun follows final documentation |
+
+## SP-21 focused verified commands (2026-10-16)
+
+Backend cwd backend/, explicit .venv; frontend cwd frontend/. Exact environment,
+corrected attempts, timings and limits: [execution](03-planning/sprints/sp-21-execution.md).
+Browser commands temporarily set KAY_E2E_PRODUCTION=1 and propagate npm exit codes.
+
+| Boundary | Actual command | Final result |
+|---|---|---|
+| Recovery/foundation | .venv/Scripts/python.exe -m pytest tests/test_recovery.py tests/test_foundation.py -q --tb=line -x -s | 22 passed / 99.70s / zero skipped |
+| Added real drain race | .venv/Scripts/python.exe -m pytest tests/test_recovery.py -k concurrent_pause -q --tb=line -x | 1 passed / 4.61s / 15 deliberately deselected; 23 distinct cases across commands |
+| Python quality | .venv/Scripts/python.exe -m ruff check .; .venv/Scripts/python.exe -m ruff format --check .; .venv/Scripts/python.exe -m mypy app | Exit0; 272 formatted files / 177 typed modules |
+| Schema | .venv/Scripts/python.exe -m alembic check | No new operations; head0022 unchanged, no migration added |
+| Frontend | npm run lint; npm run typecheck; npm run build | Exit0; build v91FEgd-yN7dS7wBB9-Hm, shipping UI unchanged |
+| Compiled restored Chrome | npm run test:e2e -- tests/e2e/recovery.spec.ts --project=chrome --max-failures=1 | Final1/1, 1.1m case / 1.3m total |
+| Visible native Chrome | npm run test:chrome -- tests/review/recovery.chrome.spec.ts --max-failures=1 | Final1/1, 1.1m case / 1.3m total; 11 inspected captures |
+| Privacy | node scripts/scan-client-secrets.mjs; powershell -NoProfile -File scripts/audit-report.ps1 | 4 roots / 285 JS / 0 configured-secret matches; 2 JSON / 0 detailed arrays |
+
+Real PostgreSQL18.2 dump/restore, all69 table digests, files/scan states, old
+sessions/permits/bootstrap denial, worker replay, current-authority and target
+guards, maintenance interruption/concurrency and controlled-clock30-day expiry
+pass. Final native point age4.072028s / incident-to-browser verification43.133s
+at stated synthetic volume, not intended-volume/production/offsite certification.
+Six widths320–1440, keyboard/native touch, min6.113:1, ≥44px controls, no overflow
+or unexpected page/console errors. AFTER021 has0 new aesthetic findings; no UI
+source edits/detector. Preserve prior valid unchanged zoom/motion evidence.
+No new dependencies/audit/coverage/full-suite/five-browser claim. Windows teardown
+WinError10054 callbacks remain disclosed. [Operator runbook](06-delivery-and-operations/local-backup-recovery.md).
+
+## SP-20 focused verified commands
+
+Cwd backend/ for explicit venv commands; frontend/ for npm/scripts. Versions:
+Python3.14.3/FastAPI0.143.1/SQLAlchemy2.1.4/Alembic1.20.0/Ruff0.17.0/mypy1.20.2/
+pytest9.1.1; Node24.13.1/npm11.8.0/Next16.4.0/React19.3.1/Playwright1.64.1,
+native Chrome155.0.8059.79. [Execution/limits](03-planning/sprints/sp-20-execution.md).
+
+| Boundary | Actual command | Result |
+|---|---|---|
+| Focused backend/API/PG/affected ownership | .venv/Scripts/python.exe -m pytest tests/test_intake.py tests/test_intake_process.py tests/test_intake_migration.py tests/test_ownership.py -k 'intake or same_scope_merge or collaboration_transfer or history_immutable' -q --tb=line -x |19 pass/10 deselected/0 skipped56.21s |
+| Backend quality | .venv/Scripts/python.exe -m ruff check .; .venv/Scripts/python.exe -m ruff format --check .; .venv/Scripts/python.exe -m mypy app |exit0;262 files/169 modules |
+| Frontend full baseline | npm run lint; npm run typecheck; npm run build |exit0 |
+| Final narrow F1 patch | npx eslint src/features/intake/website-form.tsx tests/review/intake-body.chrome.spec.ts --max-warnings=0; npm run typecheck; npm run build |exit0; shipping build pFQv5uidqUuJVIgkip1ty |
+| Final compiled Chrome | npm run test:e2e -- tests/e2e/intake.spec.ts --project=chrome --max-failures=1 |1/1 pass28.8s/42.4total,0 skipped |
+| Full native Chrome | npm run test:chrome -- tests/review/intake.chrome.spec.ts --max-failures=1 |1/1 pass45.5s/59.2total,0 skipped |
+| Zoom evidence only | npm run test:chrome -- tests/review/intake-zoom.chrome.spec.ts --max-failures=1 |1/1 pass5.9s/18.5total; validated full frame |
+| Real413 recovery | npm run test:chrome -- tests/review/intake-body.chrome.spec.ts --max-failures=1 |final1/1 pass24.5s/37.8total; named mobile evidence repaired and reopened |
+| Development additive migration | .venv/Scripts/python.exe -m alembic upgrade head; .venv/Scripts/python.exe -m alembic check |guarded0021->0022/no drift, no reset;66 record tables0 rows/bootstrap unset |
+| Privacy | node scripts/scan-client-secrets.mjs; powershell -NoProfile -File scripts/audit-report.ps1 |4 roots/285JS,0 facade/signing matches;2JSON/1step array/0 detailed arrays |
+| Ignore | guarded git check-ignore/git ls-files twelve exact paths |12 ignored/0 tracked |
+
+Browser invocations temporarily set KAY_E2E_PRODUCTION=1 and restore it.
+Current pytest selection includes populated migration, separate-connection races,
+real worker kill/restart, signature/time/body/rate/replay and source provenance.
+Full native covers six widths320–1440, actual200%,44px targets, minimum6.113:1,
+keyboard/touch/states/denied; new F1 scenario uses actual413, not a mocked response.
+No full CRM/five-browser/load/backup/coverage claim. No dependency/lock changes;
+retain prior valid dependency-audit limits. Historical SP19 section below is
+not a current claim that SP20 remains pending.
+
+## SP-19 focused verified commands
+
+Cwd backend/ for explicit .venv commands; cwd frontend/ for npm/scripts.
+No dependency/lock change; versions actually read: Python3.14.3, FastAPI0.143.1,
+SQLAlchemy2.1.4, Alembic1.20.0, Ruff0.17.0, mypy1.20.2, pytest9.1.1;
+Node24.13.1/npm11.8.0, Next16.4.0/React19.3.1/Playwright1.64.1.
+Native Chrome155.0.8059.79. Results are scoped SP-19, not fullCRM.
+
+| Boundary | Actual command | Actual result |
+|---|---|---|
+| Focused backend/affected cases | .venv/Scripts/python.exe -m pytest tests/test_discovery.py tests/test_discovery_http_migration.py tests/test_discovery_plans.py tests/test_contacts.py tests/test_ownership.py tests/test_developments.py -k 'discovery or scoped_filters or archive_restore or restore_repairs' -q --tb=short -x -s |27 passed37.76s/51 deliberately deselected/0 skipped |
+| Positive deal/document scope | .venv/Scripts/python.exe -m pytest tests/test_discovery.py -k deal_and_deal_document -q --tb=short -x |1 passed2.03s/20 deselected |
+| Closed-input retention guard | .venv/Scripts/python.exe -m pytest tests/test_discovery_http_migration.py -k retention_cli -q --tb=short -x |1 passed3.48s/2 deselected; no purge opened/no traceback |
+| Backend quality | .venv/Scripts/python.exe -m ruff check .; .venv/Scripts/python.exe -m ruff format --check .; .venv/Scripts/python.exe -m mypy app |all exit0;246 formatted files/157 typed modules |
+| Frontend | npm run lint; npm run typecheck; npm run build |all exit0; build dmDV0B-5rTHNPUklvY25E |
+| Final compiled Chrome | npm run test:e2e -- tests/e2e/discovery.spec.ts --project=chrome --max-failures=1 |2/2 passed44.7s,0 skipped; same-key loss retry and later explicit fresh export |
+| Final visible Chrome | npm run test:chrome -- tests/review/discovery.chrome.spec.ts --max-failures=1 |1/1 passed29.0s/39.6s total,0 skipped; interrupted download actual retry, scopes/lifecycle/audit/states/keyboard/touch/zoom |
+| Isolated migration | .venv/Scripts/python.exe -m alembic upgrade head; .venv/Scripts/python.exe -m alembic check |populated0019 preservation/downgrade refusal tests; final0021/no drift |
+| Development migration | same Alembic commands after exact identity/head guard |additive0019→0021, OID109060, no reset;67 tables/64 record tables0 rows/bootstrap unset/default schedule |
+| Client/report privacy | node scripts/scan-client-secrets.mjs; powershell -NoProfile -File scripts/audit-report.ps1 |4 roots/284 JS/0 configured-secret matches;2 JSON/2 step arrays/0 detailed arrays |
+| Ignore boundary | guarded git check-ignore/git ls-files ten-path probe |10 ignored/0 tracked |
+
+29 distinct backend cases are established across the27+1+1 commands, not claimed
+as a single29-case invocation. Built browser commands temporarily set
+KAY_E2E_PRODUCTION=1 and restore its prior value. Two main visual batches,
+16 final original+2 canonical images individually opened/valid; native200%
+DPR2→4,width1427→713, six widths320–1440,44px controls/no overflow, minimum6.113:1.
+Exact injected two network aborts/one403 separated from unexpected errors0;
+nonfatal Windows10054 teardown callbacks disclosed. Earlier queued deadline
+failure and other corrections remain in [execution](03-planning/sprints/sp-19-execution.md).
+No sleep/assertion relaxation or fabricated diagnosis.
+
+One detector exit0/[], [AFTER019](../anti-slop/audit-019-2026-10-15.md)0 new
+findings, fresh independent finish ship and documenter preserve incumbent
+DESIGN; only shared Sheet closeLabel note added. Inherited missing metadata,
+broader V3/human acceptance, SP-20–22, real-device/five-browser/full-load/recovery
+and protected-history retention remain separate. No real-data export/purge.
+Retain SP-17 runtime audit0/full9 inherited HIGH dev-toolchain findings and latest
+valid Python lock evidence; no new audit/dependency upgrade claim.
+
+Guarded testOID109061 cleanup removed1 synthetic residual row/27 orphan objects;
+final repeat0/0 leaves64 record tables0 rows/bootstrap unset. Project listeners
+3000/8000/3100/8100/8101/3310 and identified project service processes0; shared
+PostgreSQL5432 preserved. Final app/migration fingerprint431 files SHA256
+2AD224E52DE375C6867D645AB1B1C5C297E53FA487025A2E3F542AA1F47B1F44.
+
+
+Status: SP-01–SP-20 scoped technical gates verified; product reviews/full-product gates pending
+Date: 2026-10-16  
+Confirmed context: Next.js, FastAPI/PostgreSQL, Alembic, Ruff/mypy/pytest and full-stack Playwright exist; Locust is installed but no load scenario/run exists yet.  
+Execution evidence: [SP-01](03-planning/sprints/sp-01-evidence.md), [SP-02](03-planning/sprints/sp-02-evidence.md), [SP-03](03-planning/sprints/sp-03-evidence.md), [SP-04](03-planning/sprints/sp-04-evidence.md), [SP-05](03-planning/sprints/sp-05-evidence.md), [SP-06](03-planning/sprints/sp-06-evidence.md), [SP-07](03-planning/sprints/sp-07-evidence.md), [SP-08](03-planning/sprints/sp-08-evidence.md), [SP-09](03-planning/sprints/sp-09-evidence.md) and [SP-10](03-planning/sprints/sp-10-evidence.md),2026-10-14–15 UTC. Product/design approval is independent.
+References: [agent instructions](../AGENTS.md), [harness](HARNESS.md), [acceptance tests](05-quality/acceptance-tests.md), [release procedure](06-delivery-and-operations/release-and-recovery.md), KV `Agentic Coding/Templates/Project QA Command List Template.md`.
+
+Frontend commands run from `frontend/`; Python commands run from `backend/` with
+its explicit `.venv/Scripts/python.exe`. Windows, Node 24.13.1/npm 11.8.0,
+Playwright 1.64.1, Python 3.14.3 and PostgreSQL 18.2 were verified. See the backend
+README/locks for package versions. CI, later business/load/recovery workflows remain
+unconfigured; local bootstrap/authentication now exist in SP-03. Unimplemented
+scenarios are not passing results.
+
+| Check | Current exact command | Last verified result / boundary |
+|---|---|---|
+| Historical SP-09 failed Docker preflight | `docker version`; `docker desktop start`; `docker desktop stop --timeout 20`; `docker desktop start --detach --timeout 30` | 2026-10-15: blocked,not accepted. CLI29.7.2/Desktop4.89.0 start acknowledges but Ingest runtime socket rename fails; Linux engine pipe remains absent. No image/scanner/scan run. No Docker reset, state deletion, upgrade or elevated repair. See [SP-09 preflight](03-planning/sprints/sp-09-evidence.md). |
+| Frontend install and dev | `npm ci`; `npm run dev` | Locked reinstall verified in SP-01 (674 packages); unchanged dependency tree. SP-02 dev wrapper serves HTTPS localhost:3000 with the shared ignored certificate. Configure/start the backend first for real readiness. |
+| Frontend lint and typecheck | `npm run lint`; `npm run typecheck` | 2026-10-15 SP-08: both exit0; zero lint warnings, generated Next routes and strict TypeScript after record-keyed editor correction and explicit rejection-boundary test synchronization. |
+| Frontend build and production start | `npm run build`; `npm run start` | 2026-10-15 SP-08: optimized build exit0,ID 0mZyw9I1IbVqz57TCdg3n;23 displayed routes,24 app-path entries including global-error. Built HTTPS3100 smoke21/21,zero skipped,3.6m. Ordinary dev HTTPS3000 restored; explicit-CA login200,anonymous developments401/no-store and streamed protected programme login redirect checked. Isolated dev tests use .next-e2e. |
+| Backend venv/install | `py -3.14 -m venv .venv`; `.venv/Scripts/python.exe -m pip install --require-hashes -r requirements-dev.lock`; `.venv/Scripts/python.exe -m pip install --no-deps --no-build-isolation -e .` | 2026-10-14: exit 0, Python 3.14.3 .venv; runtime and dev hash locks installed. `-m pip check` exit 0. Only venv creation uses base Python. |
+| Backend lint/format/types | `.venv/Scripts/python.exe -m ruff check .`; `-m ruff format --check .`; `-m mypy app` (or `scripts/kay.ps1 -Task check`) | 2026-10-15 SP-08: all exit0;91 Python files formatted,57 app modules strict mypy. |
+| Backend unit and PostgreSQL integration | `.venv/Scripts/python.exe -m pytest --cov=app -q --tb=short -x` | 2026-10-15 SP-08:163/163 passed,zero skipped,203.09s,96% coverage. All earlier workflows plus mixed hierarchy, scoped unit pages, type independence, whole sale/rental terms/withdrawal/replacement, target identity/ownership/availability, private links/briefing, separate-connection races/current-role denial, versions/retry/rollback, merge provenance and populated0008→0009 preservation. Failed intermediate attempts/corrected reruns remain in evidence. |
+| Private setup/inspection | `scripts/kay.ps1 -Task setup`; `-Task inspect -Environment development` (also test/benchmark/recovery) | 2026-10-14: exit 0. Read supplied secret privately, verified installation/connection, created only missing separate targets. Identities and unchanged unrelated development catalog recorded in SP-02 evidence; no reset. |
+| Alembic migration check | `scripts/kay.ps1 -Task migrate -Environment test`; same for development; `$env:APP_ENVIRONMENT='test'; .venv/Scripts/python.exe -m alembic check` (also development); restore prior environment | 2026-10-15 SP-08: reviewed0009_development_hierarchy; both targets head0009,27 tables. Development OID109060,test109061,cluster7607060034405909976 and unrelated catalog hash unchanged. Isolated empty down/base/up, populated0008→0009 standalone/campaign/history preservation, direct SQL target/hierarchy constraints and nonempty/development downgrade refusal pass. No new metadata operations on either target; development never reset. |
+| HTTPS API startup/smoke | `.venv/Scripts/python.exe -m app.cli.serve`; in another terminal `-m app.cli.smoke` | 2026-10-15 SP-08: final development API restarted on localhost:8000 HTTPS; explicit CA, live/ready, missing-authority403, no-store and untrusted-CA refusal pass. No global TLS bypass/system trust change. |
+| First-administrator bootstrap and initial handoff | `scripts/kay.ps1 -Task bootstrap` or `.venv/Scripts/python.exe -m app.cli.bootstrap_admin`, from an interactive terminal in backend/ | 2026-10-14 SP-03/SP-04: real hidden TTY success/weak/mismatch/interrupt/repeat; non-TTY/argument/echo-fallback refusal and real PostgreSQL atomicity/races pass. Staff creation/handoff/reset/restricted change/fresh login verified synthetically. Actual administrator chooses their own password; no real/default account created. Actual staff delivery remains a human operation. |
+| Playwright browser installation | `npx playwright install chromium firefox webkit` | 2026-10-14: exit 0; Chromium 156.0.8078.4/rev 1248, Firefox 157/rev 1555, WebKit 27.2/rev 2370 installed. Chrome/Edge channels use installed browsers. |
+| Playwright E2E | `npm run test:e2e -- --grep 'SP08\|SP07\|SP06\|@shell' --max-failures=1`; corrected remaining targets `--project=firefox --project=webkit` with the same grep | 2026-10-15 SP-08:105 distinct affected cases verified across five targets. Original command:66 passed/1 Firefox validation-message failure/38 not run,14.2m,not clean. Its63 completed Chromium/Chrome/Edge cases plus the corrected complete Firefox/WebKit42/42,zero skipped,15.3m cover21 per target,including25 new SP08 cases. Application source unchanged by the explicit POST422-before-message synchronization. Earlier interrupted100-case command and genuine record-key fix are retained in evidence; no mock business success. |
+| Visible isolated Chrome sprint review | `npm run test:chrome -- --grep 'SP08 visible\|SP07 visible\|SP08 AT-23' --max-failures=1` | 2026-10-15 SP-08: refreshed5/5 pass,zero skipped,1.7m; actual hierarchy/units/template/briefing, prior standalone inventory, outage/invalid/record-switch checks.320/360/768/1024/1440,keyboard/touch,long labels and applicable states; actual200% edit,DPR2→4,width1427→713,overflowfalse,2854x1702 viewport. Main-agent inspection16 refreshed SP08 captures; AFTER008:0 HIGH/0 MEDIUM/1 optional LOW pending Khalid's selection. No audit-only fix; product/design review pending. |
+| Built-server browser smoke | After `npm run build`, temporarily set KAY_E2E_PRODUCTION=1; `npm run test:e2e -- --project=chrome --grep 'SP08\|SP07\|SP06\|@shell' --max-failures=1`; restore previous variable | 2026-10-15 SP-08:21/21 passed,zero skipped,3.6m. Build 0mZyw9I1IbVqz57TCdg3n on HTTPS3100 with isolated API/PostgreSQL and synthetic actors. All five SP08 cases plus seven inventory,five ownership and four shell regressions. Local optimized build quality,not deployment. |
+| Locust load run | Not configured | Record dataset, users, duration, p95 result, and environment. |
+| Runtime dependency audit | `npm audit --omit=dev` | 2026-10-15 SP-08: exit0,zero runtime vulnerabilities. Full audit still nine HIGH inherited development-only entries; no new dependency or forced incompatible downgrade. |
+| Python dependency audits | `.venv/Scripts/python.exe -m pip_audit --no-deps --disable-pip -r requirements.lock`; repeat for requirements-dev.lock | 2026-10-15 SP-08: both exit0,no known vulnerabilities; pip check exit0. Hash locks unchanged; no dependency added. |
+| Full dependency audit | `npm audit` (also JSON metadata inspection) | 2026-10-15 SP-08: **not clean**,exit1,nine inherited HIGH development-tree entries;0 critical/moderate/low. GHSA-vfj7-8cjw-p6xm in shadcn/Next ESLint tooling remains. Unsafe forced downgrades not applied; trusted-local-input exposure/residual risk retained in evidence. No dependency added. |
+| Repeatable private client scan | `node scripts/scan-client-secrets.mjs` from frontend/ | 2026-10-15 SP-08 final output:4 static roots,246 JS files,zero configured facade-secret occurrences; value never printed. |
+| Repeatable report privacy check | `powershell -NoProfile -File scripts/audit-report.ps1` from frontend/ | 2026-10-15 SP-08 final built report:5 JSON entries,21 result step arrays,0 detailed arrays. Corrected Firefox/WebKit report5/42/0; failed original5/67/0. Unknown/no-result or detailed input-bearing report shapes fail closed; only counts emitted. |
+| Secret exclusion and scoped security review | git check-ignore/git ls-files for private paths; SECURITY_CHECK.md; private client scan and report audit; identity/lease-guarded synthetic cleanup | 2026-10-15 SP-08: private configs/note/venv/local data/captures/reports ignored,0 private tracked files.246 browser JS/0 configured secret; final report21 arrays/0 detailed. Only.last-run.json in test-results,no failure/profile/trace/video. Test ports closed before exclusive lease and guarded isolated cleanup;25 test record tables empty/bootstrapunset. Development's25 record tables inspected read-only,empty/bootstrapunset; never reset. Synthetic fixtures can be recreated by tests. |
+| Documentation links and traceability | `powershell -NoProfile -File docs/03-planning/validate-sprints.ps1` | 2026-10-15 SP-10 final closure: exit0;22 sprints,41 AT mappings,13 synchronized Mermaid pairs,9 valid JSON examples; final link count in SP-10 evidence. SP-10 has22 checked/0 unchecked criteria; product review pending. Documentation validation does not itself run application tests. Historical preflight counts/blocker remain in execution records. |
+
+Update a result only after inspecting the manifest or CI config and running the real command. Record failures as failures. Run focused checks after relevant changes, then the [local sprint technical gate](03-planning/local-roadmap.md#required-technical-exit-gate) and complete SP-22 local regression. Future deployment is outside these sprints. The [acceptance scenarios](05-quality/acceptance-tests.md) define what to test; this register says how to run implemented checks.
+
+SP-01 remains frontend-only historically; SP-02 adds foundation integration, not
+business data, backup/restore or load-test acceptance. SP-03 verifies scoped
+authentication; remaining business/restore/load gates are unconfigured. WebKit/touch is not actual iPhone/Safari support.
+Product reviews remain pending Khalid.
+
+## SP-09 current verification (2026-10-15 UTC)
+
+The earlier Docker failure row is historical. Khalid's resumed Docker-ready
+request established a real Linux engine and scanner; do not infer that its old
+blocked state describes the implemented files now. [SP-09 evidence](03-planning/sprints/sp-09-evidence.md)
+retains failed attempts and the final acceptance boundary.
+
+| Check | Exact command/directory | Actual current result |
+|---|---|---|
+| Real antivirus | backend: `docker compose -f compose.clamav.yaml up -d`; `docker compose -f compose.clamav.yaml ps` | Scoped healthy loopback3310, ClamAV1.5.4, pinned digest/signature cache; real clean/controlled rejection, no application fake verdict |
+| File worker | backend: `.venv/Scripts/python.exe -m app.cli.worker` (`--once` for one bounded run) | Separate actual worker exercised by browser supervisor; outage/restart/durable claim/fence/retry tests. Ordinary development launch instructions in backend README |
+| Orphan reconciliation | backend: `.venv/Scripts/python.exe -m app.cli.file_maintenance` | One-hour grace, active-permit/committed-state guard; at most100 removals, never committed evidence; isolated regression includes100 retained prefix objects |
+| Backend quality | backend venv: `-m ruff check .`; `-m ruff format --check .`; `-m mypy app` | All exit0;110 formatted Python files,70 strict app modules |
+| Backend full suite | backend venv: `-m pytest --cov=app -q --tb=short -x` |192/192 passed255.91s, zero skipped,94% coverage; real PostgreSQL and ClamAV |
+| Migrations/drift | backend: `scripts/kay.ps1 -Task migrate -Environment development`; corresponding test command; venv `-m alembic check` in each selected environment, restoring prior value | Both34 tables/head0011_file_session_binding, no new upgrade operations; additive only, identity/catalog unchanged, development never reset/seeded |
+| Frontend quality/build | frontend: `npm run lint`; `npm run typecheck`; `npm run build` | Exit0 after final archived-contact correction; final application build `CBCln6jwbn_knc5PpdqMY` |
+| Focused actual files | frontend: `npm run test:e2e -- --project=chrome --grep SP09 --max-failures=1` | Initial2/2 passed1.2m; later matrix reruns current source on all configured projects |
+| Headed file review | frontend: `npm run test:chrome -- --grep 'SP09 visible Chrome' --max-failures=1` | Final1/1 passed (1.2m test/1.4m total reported),15 refreshed native captures; archived-contact copy/retained clean read, keyboard/native picker/progress/interruption/roles/touch/320–1440px/actual200% |
+| Cumulative regression | frontend: `npm run test:e2e -- --grep 'SP09\|SP08\|SP07\|SP06\|@shell' --max-failures=1` | Final115/115 passed43.2m,zero skipped;23 cases each Chromium/Chrome/Edge/Firefox/WebKit. Earlier failed attempts retained in evidence. Full report6 JSON/115 result arrays/0 detailed arrays |
+| Optimized-build regression smoke | frontend: temporarily set `KAY_E2E_PRODUCTION=1`, run `npm run test:e2e -- --project=chrome --grep 'SP09\|SP08\|SP07\|SP06\|@shell' --max-failures=1`, restore prior environment |23/23 passed,zero skipped,5.7m; final compiled HTTPS frontend3100 and actual isolated API/PostgreSQL/ClamAV/worker.203 source fingerprints unchanged; local build check, not deployment/load/recovery |
+| Python audits/install health | backend venv: `-m pip_audit --no-deps --disable-pip -r requirements.lock`; repeat dev lock; `-m pip check` | Both0 known vulnerabilities/exit0; pip check exit0; Pillow12.3.0/pypdf6.20.1 exact hash locks |
+| Frontend audits | frontend: `npm audit --omit=dev`; `npm audit --json` | Runtime0; full audit retains9 inherited HIGH development-only entries, GHSA-vfj7-8cjw-p6xm, no forced incompatible downgrade |
+| UI skills/AFTER | one `impeccable.cmd detect --json` on six changed UI files; manual/pixel/contrast review | Detector `[]`; AFTER009:0 HIGH/0 MEDIUM/0 LOW, no aesthetic-only fix; independent finish reviewer ship, required documenter no changes, DESIGN/tokens preserved |
+| Privacy and artifacts | Configured-secret-only scan of browser output; inspect safe HTML-report metadata, ignored/tracked paths and test-results |253 browser JS/4 roots/0 facade-secret matches; final built report6 JSON/23 step arrays/0 detailed arrays; only `.last-run.json` in test-results, no temporary profiles/traces/videos/error contexts; private paths ignored/0 tracked |
+| Guarded cleanup and shutdown | Verified test-target advisory lease and existing fixture helper/maintenance; `docker compose -f compose.clamav.yaml stop`; listener/process count checks |32 test record tables empty/bootstrap unset; development read-only empty inspection;1 transient test login-rate counter and17 old synthetic orphan objects removed. Project processes/ports0, ClamAV exited/cache retained, shared PostgreSQL and unrelated Docker resources preserved |
+
+The final matrix, built-server smoke, post-run privacy/cleanup and documentation
+gates pass for this local slice; the [execution record](03-planning/sprints/sp-09-evidence.md)
+retains actual attempts, corrected failures and limitations. At that SP-09
+checkpoint, SP-10–SP-22 remained pending; the SP-10 results below supersede that
+scope. Full-product/load/recovery and Khalid's product/design acceptance remain pending.
+
+## SP-10 final verification (2026-10-15 UTC)
+
+Implementation is technically accepted within its recorded local scope.
+[SP-10 evidence](03-planning/sprints/sp-10-evidence.md) retains failed attempts
+and final gates/limits. No new package/lock dependency or chart is added.
+
+| Check | Exact command/directory | Actual current result |
+|---|---|---|
+| Backend quality | backend explicit venv: `-m ruff check .`; `-m ruff format --check .`; `-m mypy app` | Exit0;121 formatted Python files,78 strict app modules |
+| Backend full suite | backend venv: `-m pytest --cov=app -q --tb=short -x` |223/223 passed357.56s,zero skipped,94% coverage; actual PostgreSQL/ClamAV, all earlier modules and new requirement/shortlist/merge/migration/race cases |
+| Focused backend | backend venv: `-m pytest tests/test_requirements.py tests/test_inventory_edges.py tests/test_development_edges.py -q --tb=short -x` |39/39 passed66.25s,zero skipped; earlier failed assertions/corrected runs retained |
+| Migration/identity | backend: `scripts/kay.ps1 -Task inspect -Environment development`; `-Task migrate -Environment development`; explicit-venv `-m alembic check` and `-m app.cli.inspect_database` in development/test, restore prior environment and preserve exit | Dev34→38 tables/head0011→0012; both final38/head0012/no drift. OIDs109060/109061,cluster7607060034405909976,catalog SHA unchanged. Additive only; no dev reset/seed |
+| Frontend quality/build | frontend: `npm run lint`; `npm run typecheck`; `npm run build` | Exit0, final optimized build `eCCqBWaV9DSQJZnhOZPD-`,23 displayed routes/24 app-path entries;219 source fingerprints recorded |
+| Focused browser | frontend: `npm run test:e2e -- --grep SP10 --max-failures=1` | Final10/10 pass3.8m,zero skipped, two cases each across all five projects; persistent one-search selection after pointer movement included |
+| Visible Chrome | frontend: `npm run test:chrome -- --grep 'SP10 visible Chrome' --max-failures=1` | Final1/1 pass54.4s test/1.1m total;16 refreshed/inspected native captures,2 independent searches/actual unit target,current409/outage/keyboard/touch/320–1440/actual200%/denied/archive; settled removal focus and native-touch selected-state switching pass |
+| Five-browser regression | frontend: `npm run test:e2e -- --grep 'SP10\|SP09\|SP08\|SP07\|SP06\|SP05\|@shell' --max-failures=1`; affected same command with `--project=webkit` |160 distinct cases verified:128 in four complete projects,plus32/32 WebKit rerun12.2m,zero skipped. First command stopped134 pass/1 SP09 scanner-wait timeout/25 not run45.8m; unchanged focused1/1 and full WebKit pass. Root unproven, retained test-stability risk; no product/assertion/timeout loosened |
+| Optimized-build smoke | frontend: temporary `KAY_E2E_PRODUCTION=1`, same grep with `--project=chrome`, restore prior environment and preserve inner exit status | Final32/32 pass7.8m,zero skipped,exit0; actual final built HTTPS frontend and isolated API/PostgreSQL/ClamAV/worker.219 application/migration source fingerprints unchanged after run; local smoke, not deployment/load/recovery |
+| Python audits | backend venv: `-m pip_audit --no-deps --disable-pip -r requirements.lock`; same dev lock; `-m pip check` | All exit0,0 known vulnerabilities/no broken requirements; exact hash locks unchanged |
+| Frontend audits | frontend: `npm audit --omit=dev --json`; `npm audit --json` | Runtimeexit0/0 findings; fullexit1/9 inherited HIGH development-tool entries, no forced incompatible change |
+| UI skill/AFTER | installed `impeccable.cmd detect --json` on actual changed targets; manual/native/contrast check |[]; AFTER010 has0 new aesthetic findings, no audit-only fix; initial wrong Lead path corrected separately. Full review's one P2 persistent-selection finding fixed; same reviewer verdict ship/resolved, all16 captures valid. Documenter adds one narrow component fact; DESIGN/tokens preserved |
+| Privacy | frontend: `node scripts/scan-client-secrets.mjs`; `powershell -NoProfile -File scripts/audit-report.ps1`; ignored/tracked artifact check |4 roots/260 browser JS/0 configured facade-secret occurrences; final report8 JSON/32 result arrays/0 detailed arrays.8 private paths ignored/0 tracked; only .last-run.json in test-results, no temporary profiles/traces/videos/error contexts |
+| Guarded cleanup/shutdown | Explicit-venv test identity/exclusive advisory lease; count-only inspections, existing `tests.identity_support.clear_identity`/`app.files.reconcile.reconcile`; `docker compose -f compose.clamav.yaml stop`; listener/process counts | Both38 tables/head0012; test36 record tables empty/bootstrap unset after removing1 transient rate bucket and17 old uncommitted synthetic orphan objects; one-hour grace retained. Development read-only empty/unset, no reset/seed. Project listeners/processes/supervisors0; ClamAV stopped/cache retained; shared PostgreSQL and unrelated resources preserved |
+| Documentation | root: `powershell -NoProfile -File docs/03-planning/validate-sprints.ps1` | Exit0;1050 local links/anchors including70 approved skill links;22 sprints/41 AT mappings/13 synchronized Mermaid pairs/9 JSON examples. SP-10 22 checked/0 unchecked; source contracts and traceability updated, product review pending |
+
+At the SP-10 handoff, SP-11–SP-22, full-product/load/recovery, actual Safari/devices and Khalid's
+product/design acceptance remain separate and pending.
+
+## SP-11 execution (2026-10-15, technically accepted locally)
+
+| Boundary | Actual command | Observed result |
+|---|---|---|
+| Backend quality | backend explicit venv: `-m ruff format --check app tests alembic`; `-m ruff check app tests alembic`; `-m mypy app` | Exit0;137 formatted files/90 app modules, reviewed frozen0013 migration |
+| Backend full regression | backend: `.venv/Scripts/python.exe -m pytest --cov=app -q --tb=short -x` | Final263/263 passed424.85s,zero skipped,95% coverage; real PostgreSQL/ClamAV. New research-intent preflight covers both directions without freezing uncommitted deals |
+| Frontend quality/build | frontend: `npm run lint`; `npm run typecheck`; `npm run build` | All exit0 after selected punctuation and research-conflict copy corrections; Next16.4.0 compile1.218s/TypeScript2.8s; final test-only correction lint/types pass |
+| Isolated migration and development upgrade | backend: venv Alembic upgrade/check; `scripts/kay.ps1 -Task inspect/migrate -Environment development` |0013;38→42 tables; no drift, same development OID/cluster/unrelated catalogue; final read-only40 record tables empty/bootstrap unset; no seed/reset |
+| Five browsers | frontend: `npm run test:e2e -- tests/e2e/deals.spec.ts --workers=1 --max-failures=1` | Post-copy20/20 pass7.1m,zero skipped/exit0 after punctuation/token/actual401 corrections; new upstream-conflict branch receives final five-target rerun below |
+| Expanded optimized Chrome regression | frontend: temporary `KAY_E2E_PRODUCTION=1`; `npm run test:e2e -- --project=chrome --grep 'SP11\|SP10\|SP09\|SP08\|SP07\|SP06\|SP05\|@shell' --workers=1 --max-failures=1` |32 pass/1 obsolete shell-placeholder failure/3 unrun8.9m; test corrected. All36 selected cases verified through32 unchanged passes plus4 corrected shell Chrome passes below, not one clean36 invocation. Earlier10-pass/1 scanner-recovery deadline failure retained |
+| Final affected five-target compiled rerun | frontend: temporary `KAY_E2E_PRODUCTION=1`; `npm run test:e2e -- --grep 'SP11: permitted requirement\|@shell' --workers=1 --max-failures=1`; restore prior environment/preserve inner exit |25/25 pass4.9m,zero skipped/exit0: updated research intent-conflict and4 shell cases on each target. Final build qbGMKlVgwNIMmIwh04jfr and246 source fingerprints unchanged |
+| Headed Chrome | frontend: `npm run test:chrome -- tests/review/deals.chrome.spec.ts --max-failures=1` | Final post-copy1/1 pass1.4m;16 valid final native captures. Earlier timing/width evidence defects corrected; actual keyboard/touch/200%/roles/states/private clean bytes pass |
+| Dependencies | Python venv pip_audit both locks/pip check; frontend npm audit runtime/full | Python/runtime0; full frontend retains9 inherited HIGH dev-tool entries/exit1 |
+| UI finish / AFTER | native capture inspection, fresh Impeccable finish review/documenter, one detector run |16 valid native captures; finish ship including targeted final-copy confirmation; documenter No changes; AFTER011 finding1 explicitly selected and verified; no new system/asset |
+| Privacy | frontend: `node scripts/scan-client-secrets.mjs`; `powershell -NoProfile -File scripts/audit-report.ps1`; ignored/tracked check |4 roots/275 browser JS/0 configured secret occurrences; final report3 JSON/25 result arrays/0 detailed arrays; only .last-run.json/0 temporary profiles;8 private paths ignored/0 tracked |
+| Guarded cleanup/shutdown | backend explicit-venv exclusive_test_run/clear_identity/reconcile; inspect/Alembic check; `docker compose -f compose.clamav.yaml stop`; listener/process counts |1 residual synthetic row removed/0 old orphan objects removed,40 record tables empty/bootstrap unset. Dev read-only preserved. Distinct OIDs109060/109061,42 tables/head0013/no drift/same catalogue.6 project ports/owned process tree/backend CLI counts0; ClamAV stopped/cache retained, shared PostgreSQL preserved |
+| Documentation validation | root: `powershell -NoProfile -File docs/03-planning/validate-sprints.ps1` | Exit0;1058 links including70 approved skill links,22 sprints/41 AT mappings/13 Mermaid pairs/9 JSON examples; SP-11 22 checked/0 unchecked |
+
+[Execution ledger](03-planning/sprints/sp-11-evidence.md) retains failed selectors,
+corrections and remaining risks. SP-11 is technically accepted; product review and SP-12–SP-22 remain pending.
+
+## SP-12 final verification (2026-10-15 UTC)
+
+[Execution ledger](03-planning/sprints/sp-12-execution.md) retains corrected
+attempts, original/final build fingerprints and scoped acceptance. All Python
+commands use `backend/.venv/Scripts/python.exe`; all DB-writing suites run
+serially under the verified isolated-target lease. Browser commands below use
+the actual HTTPS frontend/API/PostgreSQL/ClamAV stack and synthetic fixtures.
+
+| Boundary | Actual command or repeatable manifest selection | Observed result |
+|---|---|---|
+| Backend quality | backend venv: `-m ruff check .`; `-m ruff format --check .`; `-m mypy app` | Exit0;145 formatted files/92 app modules |
+| Full backend | backend venv: `-m pytest --cov=app --cov-report=term-missing -q --tb=short` |284 passed446.16s,95% coverage,0 failed/0 skipped |
+| Final SP-12 backend | backend venv: `-m pytest tests/test_reservations.py tests/test_reservation_migration.py tests/test_reservation_http.py -q --tb=short` |23 passed46.66s,0 skipped; full284 plus focused23 cover286 current cases, not one286 invocation |
+| Migration/identity | backend venv: `-m alembic check`; `-m app.cli.inspect_database` in development/test, restore prior APP_ENVIRONMENT | Both43 tables/head0014/no drift; OIDs109060/109061/same cluster/catalogue. Development additive42→43, never seeded/reset |
+| Frontend quality/build | frontend: `npm run lint`; `npm run typecheck`; `npm run build` | Exit0 on final copy; build vdAiKy5eJbtZ70GZWIiJ0 and250 app/migration fingerprints unchanged through final tests |
+| Five-target expanded | frontend `npm run test:e2e`, select deals.spec.ts and reservations.spec.ts, one worker |35/35 passed10.5m,0 skipped on initial candidate |
+| Broader optimized Chrome | frontend `npm run test:e2e`, Chrome programme/files/inventory/requirements/four shell selection |8/8 passed2.8m,0 skipped; one non-fatal Windows pipe10054 warning retained |
+| Final affected matrix | frontend `npm run test:e2e`, SP12 selection on all five projects, one worker; temporary KAY_E2E_PRODUCTION=1 restored with inner exit |15/15 passed5.6m,0 skipped/exit0; final compiled build |
+| Visible Chrome | frontend: `npm run test:chrome -- tests/review/reservations.chrome.spec.ts --max-failures=1` | Final1/1 passed44.7s,12 valid final native captures; keyboard/touch/focus/320–1440/actual200%/contrast/no horizontal overflow/denied/conflict/error/retry |
+| Dependencies | backend venv pip_audit runtime/dev locks and pip check; frontend npm audit runtime/full | Python32/102 dependencies0 known vulnerabilities, pip check clean; npm runtime0, full9 inherited HIGH dev-tool entries; no package change |
+| UI finish | Single detector on10 changed targets, AFTER012, fresh finish reviewer and documenter |Detector[];0 new aesthetic findings; ship/no material fixes in scoped interface; documenter No changes, existing DESIGN/tokens retained |
+| Privacy | frontend: `node scripts/scan-client-secrets.mjs`; `powershell -NoProfile -File scripts/audit-report.ps1`; representative per-path git check-ignore/ls-files |4 roots/275 browser JS/0 configured-secret matches; report2 JSON/15 result arrays/0 detailed arrays;8 paths ignored/0 tracked; only .last-run.json,0 temporary profiles/traces/videos |
+| Guarded cleanup/shutdown | backend venv assert_isolated/exclusive_test_run/clear_identity/reconcile; `docker compose -f compose.clamav.yaml stop`; read-only listener/process checks |1 residual synthetic row/0 old orphan objects removed; both41 record tables empty/bootstrap unset.6 project ports/owned project processes0; ClamAV stopped/cache retained; shared PostgreSQL preserved |
+| Documentation | root: `powershell -NoProfile -File docs/03-planning/validate-sprints.ps1`; `git diff --check` | Exit0;1067 links/anchors including70 skill links,22 sprints/41 mappings/13 synchronized Mermaid pairs/9 JSON examples. SP-12 22 checked/0 unchecked; untracked repository contents preserved, no stage/commit |
+
+Runtime: Node24.13.1/npm11.8.0/Python3.14.3/Playwright1.64.1; actual targets
+Chromium156.0.8078.4, Chrome155.0.8059.79, Edge155.0.4283.45, Firefox157.0,
+WebKit27.2. Actual200% browser zoom is not CSS emulation; WebKit/touch is not
+real-device Safari. Product review, SP-13–SP-22 and whole-product/load/recovery/
+production acceptance remain pending. Earlier section statuses are historical.
+
+## SP-14 final verification (2026-10-15 UTC)
+
+Use [the execution ledger](03-planning/sprints/sp-14-execution.md) for attempts,
+final gate status and limits. All Python commands use `backend/.venv/Scripts/python.exe`;
+all database-writing suites remain serial under the verified isolated lease.
+Browser commands temporarily set `KAY_E2E_PRODUCTION=1`, restore its prior value
+and preserve the inner exit status; these are local compiled-stack checks.
+
+| Boundary | Actual command / working directory | Current observed result |
+|---|---|---|
+| Backend quality | backend venv `-m ruff format --check .`; `-m ruff check .`; `-m mypy app`; `-m pip check` | Exit0:179 formatted files,113 strict app modules, no broken requirements |
+| Expanded scheduling | backend venv `-m pytest tests/test_schedule.py tests/test_schedule_edges.py tests/test_schedule_http.py tests/test_schedule_migration.py -q --tb=short -x` |31/31 passed57.98s, real PostgreSQL/strict HTTP/rollback/replay/races/migration; included in final full suite |
+| Initial full backend | backend venv `-m pytest --cov=app --cov-report=term-missing -q --tb=short -x` |348/348 passed770.84s,94% coverage,0 skipped before lifecycle correction/new race; not called final-source full acceptance |
+| Final full backend | backend venv `-m pytest --cov=app --cov-report=term-missing -q --tb=short -x` |349/349 passed685.01s,94% coverage,0 failed/0 skipped/exit0; current lifecycle correction and policy/booking race included, real PostgreSQL/ClamAV |
+| Frontend quality/build | frontend `npm run lint`; `npm run typecheck`; `npm run build` | Exit0; current application build0leBHja-rs4ZKz21C7tSq; post-harness lint/types also pass |
+| Headed native workflow | frontend `npm run test:chrome -- tests/review/schedule.chrome.spec.ts --max-failures=1` | Final1/1 passed48.3s test/1.1m total,0 skipped;23 native captures independently valid, two main inspection batches, real touch/keyboard/200%/settings/retained outage/version recovery |
+| Inherited restart correction | frontend `npm run test:e2e -- tests/e2e/ownership.spec.ts --project=chrome --grep 'note lost acknowledgement' --repeat-each=3 --max-failures=1` |3/3 passed59.5s after supervisor waits for real CA-verified TLS liveness and exact owned-tree stop; original readiness assertion unchanged. Initial matrix14 pass/1 fail/50 unrun retained |
+| Clean five-target matrix | frontend `npm run test:e2e -- tests/e2e/schedule.spec.ts tests/e2e/ownership.spec.ts tests/e2e/shell.spec.ts --max-failures=1` |65/65 passed21.7m,0 failed/0 skipped/exit0; original recovery and new scheduling on every target;291 application hashes unchanged |
+| Broader compiled Chrome | frontend `npm run test:e2e -- --project=chrome --grep 'SP11\|SP12\|SP13\|SP08: mixed hierarchy\|SP09 AT-06/26/35\|SP07 AT-06/08/27/31\|SP10 AT-07/08/36' --max-failures=1` |14/14 passed5.3m,0 failed/0 skipped/exit0; pipeline/reservations/outcomes/hierarchy/real protected files/inventory/requirements. One non-fatal Windows10054 callback warning retained |
+| Final schemas | backend venv `-m app.cli.inspect_database`; `-m alembic check` with development then test environment/restoration |Both56 tables/head0016/no drift; distinct OIDs109060/109061, same cluster/unrelated catalogue. Development additive48→56/no seed/reset; isolated populated migration/retained-history downgrade refusal pass |
+| Dependencies | backend venv pip_audit both hash locks/pip check; frontend npm audit runtime/full | Python0 known/pip check clean; npm runtime0, full9 inherited HIGH dev-tool entries/exit1, no forced update |
+| UI finish | one detector on19 changed targets; AFTER014; fresh finish reviewer/documenter |Detector[];0 new aesthetic findings; ship at inspected UI scope/all23 captures valid; one factual component-guide addition, DESIGN/tokens preserved; inherited PRODUCT/design.json drift remains |
+| Final privacy | frontend `node scripts/scan-client-secrets.mjs`; root per-path git check-ignore/ls-files |4 roots/283 browser JS/0 configured-secret matches;10 checked private/generated paths ignored/0 tracked |
+| Report privacy | frontend `powershell -NoProfile -File scripts/audit-report.ps1` |Post-matrix4 JSON/65 result arrays/0 detailed; final broader report8 JSON/14 result arrays/0 detailed. Only.last-run.json in test-results |
+| Development HTTPS smoke | explicit-venv owned temporary `-m app.cli.serve`, then `-m app.cli.smoke`; exact owned tree stopped in finally |Exit0: explicit CA/live/ready/direct denial/no-store/untrusted CA refused; port8000 returns to0 listeners, no record writes |
+| Final cleanup/shutdown | Explicit-venv isolated identity/lease/root guards, existing clear_identity/reconcile helpers; root `docker compose -f backend/compose.clamav.yaml stop`; Get-NetTCPConnection/root-identified service process checks |0 residual synthetic rows/0 old orphan objects removed;53 test record tables empty/bootstrap unset, policy version1/capacity2/editor unset/no hours. Six project ports/service processes0, ClamAV exited143 on stop/cache retained, shared PostgreSQL5432 and unrelated resources preserved |
+| Final documentation | root `powershell -NoProfile -File docs/03-planning/validate-sprints.ps1`; `git diff --check`; count SP-14 criteria | Exit0:22 sprints,1090 local links/anchors including70 installed-skill links,41 acceptance mappings,13 synchronized Mermaid pairs,9 valid JSON examples;25 checked/0 unchecked. Git has17 untracked entries/0 tracked changes; diff check is not a tracked application diff review |
+
+SP-14 is technically accepted within this verified local slice. The execution
+ledger preserves failed attempts and fixes; no required failed/skipped check is
+called passed. Human product/design review, SP-15–SP-22, full-product, real-device,
+load, backup/recovery and production gates remain pending. The full npm audit is
+not clean; no forced dependency downgrade or generic metadata repair was made.
+
+## SP-13 current scoped verification (2026-10-15 UTC)
+
+Read [the execution record](03-planning/sprints/sp-13-execution.md) for retained
+failed/interrupted attempts and remaining limits. Nothing in this section claims
+whole-product or Khalid's product acceptance.
+
+| Gate | Actual command/directory | Actual final result |
+|---|---|---|
+| Backend quality | backend venv `-m ruff check .`; `-m ruff format --check .`; `-m mypy app` | Ruff/check pass;162 Python files/102 strict application modules |
+| Backend full | backend `.venv/Scripts/python.exe -m pytest --cov=app --cov-report=term-missing -q --tb=short` |318/318 pass681.74s,94% coverage,0 failed/0 skipped |
+| Affected backend | backend venv `-m pytest tests/test_outcomes.py tests/test_outcome_edges.py tests/test_outcome_hierarchy.py tests/test_outcome_sql.py tests/test_outcome_migration.py tests/test_outcome_http.py tests/test_deal_edges.py -q --tb=short -x` |51/51 pass127.65s,0 skipped; included in the clean full318 run |
+| Additive migration | backend venv `-m app.cli.inspect_database`; `-m alembic upgrade head`; `-m alembic check` with explicit development environment/restoration |0015 applied,43→48 tables, no drift; OID109060/cluster/unrelated catalogue unchanged; no seed/reset. Isolated populated migration and retained-history downgrade refusal pass |
+| Frontend quality | frontend `npm run lint`; `npm run typecheck`; `npm run build` | All exit0 after closed-deal attachment-message correction; optimized build `7M8Dzh4lJCpDJgX2UM3FC` |
+| Dependencies | backend venv pip check and both pip_audit hash locks; frontend npm audit runtime/full | Python0 known vulnerabilities/pip check clean; npm runtime0/full9 inherited HIGH development-tool advisories, no package change |
+| Five-target compiled workflow | Temporarily KAY_E2E_PRODUCTION=1; frontend `npm run test:e2e -- tests/e2e/deals.spec.ts tests/e2e/reservations.spec.ts tests/e2e/outcomes.spec.ts --max-failures=1`; restore previous value/inner exit |50/50 passed17.4m,0 skipped:10 each Chromium/Chrome/Edge/Firefox/WebKit, including15 SP-13 and35 prior cases |
+| Broader compiled Chrome | Same temporary environment; frontend `npm run test:e2e -- --project=chrome --grep 'SP08: mixed hierarchy\|SP09 AT-06/26/35\|SP07 AT-06/08/27/31\|SP10 AT-07/08/36\|@shell' --max-failures=1` |8/8 passed2.8m,0 skipped; real files/ClamAV, inventory/hierarchy/requirements/four shell cases. Non-fatal Windows Proactor10054 retained |
+| Visible Chrome | Same compiled environment; frontend `npm run test:chrome -- tests/review/outcomes.chrome.spec.ts --grep 'SP13 visible Chrome' --max-failures=1`; separately grep 'SP13 settled desktop context evidence' | Final full1/1 pass1.5m; settled/refresh1/1 pass33.0s.16 valid native captures, keyboard/touch/320–1440/actual200%/retained input/roles;0 unexpected page/console errors |
+| UI finish | Required skills, two main batched inspections and one evidence-only context repair, one detector/AFTER013, fresh independent reviewer/documenter | Detector[]/zero new aesthetic findings; fresh UI reviewer ship, documenter No system changes; inherited metadata drift retained |
+| Privacy | frontend scan-client-secrets.mjs/audit-report.ps1; per-path ignored/tracked and test-results inspection |4 roots/277 browser JS/0 configured-secret matches; matrix report4 JSON/50 arrays/0 detailed; broader report6 JSON/8 arrays/0 detailed.10 paths ignored/0 tracked; only.last-run.json, no profiles/traces/videos |
+| Final isolation/shutdown | backend venv assert_isolated/exclusive_test_run/clear_identity/reconcile, Alembic check and inspect_database; Compose stop; listener/process counts |0 residual synthetic rows/0 old orphan objects removed;46 test record tables empty/bootstrap unset. Both48 tables/head0015/no drift, unchanged distinct database identities/catalogue.6 project ports/root-identified processes0; ClamAV stopped/cache retained; shared PostgreSQL5432 preserved |
+| Documentation | root validate-sprints.ps1 and git diff --check |1078 links/22 sprints/41 AT mappings/13 synchronized Mermaid pairs/9 JSON examples pass; SP-13 23 checked/0 unchecked; no stage/commit |
+
+Final build7M8Dzh4lJCpDJgX2UM3FC;266 app/migration files retain SHA256
+`10C6FFBD1A1BA5939DA42F586970521F493B03DA2D2DDF2CF91393FE84E605A1`
+through final tests/cleanup. Product review and SP-14–SP-22 remain pending. Full
+npm audit is not clean (9 inherited HIGH development-only advisories); generic
+design metadata persistence fails on pre-existing missing PRODUCT/design.json,
+reported outside this extension's repair scope. These are not claimed fixed.
+
+## SP-15 verification (2026-10-15 UTC)
+
+Technical acceptance is complete locally in [execution](03-planning/sprints/sp-15-execution.md).
+Commands below are real manifests/venv commands, not presumed successes.
+From frontend, temporarily set KAY_E2E_PRODUCTION=1 for compiled browser commands;
+restore its previous value and preserve the command exit status. All writing
+fixtures are serial under the isolated lease; never run them on development.
+
+| Boundary | Reproducible command / working directory | Final observed result |
+|---|---|---|
+| Backend quality | backend explicit venv: -m ruff check app tests alembic; -m ruff format --check app tests alembic; -m mypy app | Exit0,196 formatted files/125 strict app modules |
+| Focused backend | backend explicit venv: -m pytest tests/test_work.py tests/test_work_edges.py tests/test_work_http.py tests/test_work_process_migration.py tests/test_schedule_migration.py -q --tb=short -x |23/23 passed68.16s before extra delivery parameter; stronger synchronized claim/delivery selection3/3 in4.09s; all latest variants included in full suite, not added again |
+| Full backend | backend explicit venv: -m pytest --cov=app --cov-report=term-missing -q --tb=short -x |372/372 passed727.34s(12:07),94% coverage,0 failed/0 skipped/exit0; real PostgreSQL/ClamAV, worker crash/restart, races, strict HTTP and populated migration |
+| Frontend quality | frontend npm run lint; npm run typecheck; npm run build | Exit0; final build S5SnyXhT5J3phRg8k_fNM; post-test-source lint/types also pass |
+| Native Chrome | frontend npm run test:chrome -- review/work.chrome.spec.ts --max-failures=1 | Final2/2 passed1.2m,0 skipped;23 refreshed valid captures, two main inspection rounds, actual200%, native touch/keyboard and retained failure/version states |
+| Initial five-target attempt | frontend npm run test:e2e -- tests/e2e/work.spec.ts tests/e2e/schedule.spec.ts tests/e2e/ownership.spec.ts tests/e2e/shell.spec.ts --max-failures=1 |79 passed/1 WebKit responsive failure/5 unrun24.9m; original error assertion retained. This was85 collected before the new fifth work case, not a clean pass |
+| Responsive correction | frontend npm run test:e2e -- tests/e2e/shell.spec.ts --project=webkit --grep 'responsive widths' --repeat-each=3 --max-failures=1 |3/3 passed49.5s after awaiting actual loaded calendar/dashboard reads; no app/CORS change, sleep, retry or console suppression. Earlier reproduction1 pass/1 fail/1 unrun retained |
+| Final affected five-target checks | frontend npm run test:e2e -- tests/e2e/work.spec.ts tests/e2e/shell.spec.ts --max-failures=1 |45/45 passed10.3m,0 failed/0 skipped, including new deal-context task edit/cancel and previously unrun WebKit cases |
+| Staff role regression | frontend npm run test:e2e -- tests/e2e/auth.spec.ts --grep 'AT-39' --max-failures=1 |5/5 passed1.6m,0 skipped, all five targets;95 distinct affected five-target variants covered across corrected commands, not one clean95 invocation |
+| Broader compiled Chrome | frontend npm run test:e2e -- --project=chrome --grep 'SP11\|SP12\|SP13\|SP08: mixed hierarchy\|SP09 AT-06/26/35\|SP07 AT-06/08/27/31\|SP10 AT-07/08/36' --max-failures=1 |14/14 passed5.2m,0 skipped;109 distinct browser variants across commands. One non-fatal Windows10054 callback warning retained |
+| Operator worker | backend .venv/Scripts/python.exe -m app.cli.worker --once or --status | Actual --once/process restart/status assertions pass in isolated focused tests; status exposes aggregate counts only |
+| Python dependencies | backend explicit venv: -m pip check; -m pip_audit --no-deps --disable-pip -r requirements.lock; same dev lock | All exit0/no known vulnerabilities; no lock change |
+| Frontend audit | frontend npm audit --omit=dev; npm audit --json | Runtime0/exit0; full9 inherited HIGH development-tool entries/exit1, no forced update |
+| UI finish | Required UI skills/references, one detector across19 targets, AFTER015, fresh reviewer/documenter | Detector[];0 new aesthetic findings; French-copy scored fix resolved, all25 refreshed originals/canonical captures valid. Factual component section only, incumbent DESIGN/tokens preserved; inherited generic metadata drift remains |
+| Client/private-path privacy | frontend node scripts/scan-client-secrets.mjs; root per-path git check-ignore/ls-files |4 roots/281 browser JS/0 configured-secret matches;10 private/generated paths ignored/0 tracked |
+| Report privacy | frontend powershell -NoProfile -File scripts/audit-report.ps1 | Final affected report3 JSON/45 result arrays/0 detailed; final broader8 JSON/14 arrays/0 detailed. Only.last-run.json remains in test-results |
+| Final schemas | backend explicit venv: -m app.cli.inspect_database; development -m alembic upgrade head; -m alembic check for development/test with environment restoration | Both59 tables/head0017/no drift; additive development56→59/no seed/reset; distinct verified OIDs109060/109061, same cluster/unrelated catalogue retained |
+| Development HTTPS smoke | backend explicit-venv owned temporary -m app.cli.serve, CA-verified liveness then -m app.cli.smoke; exact owned tree stopped in finally | Exit0: explicit CA, live/ready, direct403, no-store/untrusted CA refused; port8000 released. Development worker --status exits0 with aggregate empty jobs/undispatched0 |
+| Final isolation/shutdown | backend explicit-venv isolated identity/lease/test-root/synthetic guards, clear_identity/reconcile and read-only development counts; root docker compose -f backend/compose.clamav.yaml stop; listener/process metadata checks |0 residual rows/0 old orphan files; both56 record tables empty/bootstrap unset; intrinsic policy version1/capacity2/editor unset/no hours. Six project ports/service processes0, ClamAV exited143/cache retained; shared PostgreSQL5432/unrelated resources preserved |
+| Final documentation | root powershell -NoProfile -File docs/03-planning/validate-sprints.ps1; git diff --check; sprint criterion/status counts | Exit0:22 sprints/1102 local links including70 installed-skill links/41 AT mappings/13 synchronized Mermaid pairs/9 valid JSON examples; SP-15:23 checked/0 unchecked. Git has17 untracked entries/0 tracked changes, so diff check is not tracked application diff-review evidence |
+
+Final build S5SnyXhT5J3phRg8k_fNM and311 app/migration files retain SHA256
+52723F0DA8A7CC238F2217457A4EA63D0642B603F0948192828A95EE2508D7F2 through
+the serial tests/migration/smoke/cleanup. SP-15 is technically accepted locally;
+Khalid's product/design review remains pending. The full npm audit is not clean,
+generic metadata drift is not repaired, and no real-device/load/recovery/
+production/full-product acceptance is inferred. SP-16–SP-22 remain unstarted.
+
+## SP-16 focused verification (2026-10-15 UTC)
+
+Khalid requests necessary-only testing. The shared gate permits relevant suites
+and retained recent evidence for untouched boundaries. Do not interpret this
+section as a fresh full372-test baseline, full browser matrix or SP-22 acceptance.
+Current closure and corrected attempts: [SP-16 execution](03-planning/sprints/sp-16-execution.md).
+Use frontend/ for npm commands, backend/ for explicit venv commands. Temporarily
+set KAY_E2E_PRODUCTION=1 for compiled browser commands, restore its prior value
+and preserve exit status. DB writers remain serial under the isolated lease.
+
+| Boundary | Actual command | Verified result |
+|---|---|---|
+| Backend quality | .venv/Scripts/python.exe -m ruff check .; -m ruff format --check .; -m mypy app | All exit0;211 formatted files/132 strict app modules |
+| Focused finance plus affected outcomes | .venv/Scripts/python.exe -m pytest tests/test_finance.py tests/test_finance_edges.py tests/test_finance_http.py tests/test_finance_migration.py tests/test_outcomes.py tests/test_outcome_edges.py tests/test_outcome_sql.py -q --tb=short -x |46/46 passed79.77s,0 failed/0 skipped;23 new finance and23 affected existing variants |
+| Frontend quality | npm run lint; npm run typecheck; npm run build | Exit0; optimized build; no dependency/token/style-system change |
+| Five-target finance | npm run test:e2e -- tests/e2e/finance.spec.ts --max-failures=1 |10/10 passed3.5m,0 skipped; exact terms/recognition/partial/excess/corrections/reopen/agent denial, committed response loss and stale-version recovery |
+| Final affected Chrome after copy/validation batch | npm run test:e2e -- tests/e2e/finance.spec.ts --project=chrome --max-failures=1 |2/2 passed44.7s; retained five-target flow evidence, not another final10-case invocation |
+| Visible Chrome | npm run test:chrome -- review/finance.chrome.spec.ts --max-failures=1 |1/1 passed38.2s before final independent-review copy finding; native14 captures/keyboard/touch/invalid-field focus, six widths/actual200%,0 unexpected errors. Final one-sentence correction rerun recorded in execution |
+| Schema migration/drift | Explicit venv -m alembic upgrade head; -m alembic check; -m app.cli.inspect_database on each verified target with environment restoration | Both63 tables/head0018/no new operations. Development additive59→63/no seed/reset; distinct OIDs109060/109061, same verified cluster/unrelated catalogue |
+| Development HTTPS | Explicit-venv owned temporary app.cli.serve then app.cli.smoke, explicit local CA; owned tree stopped in finally | Exit0: live/ready/direct403/no-store/untrusted CA refused |
+| Isolation cleanup | Explicit venv isolated identity/cluster/private-root/advisory/synthetic guards, clear_identity/reconcile; read-only development counts | Test1 residual synthetic row removed,0 orphan objects; both60 record tables/0 rows/bootstrap unset. Development policy1/capacity2/no editor/hours/lunch |
+| Client/report/private paths | node scripts/scan-client-secrets.mjs; powershell -NoProfile -File scripts/audit-report.ps1; per-path git check-ignore/ls-files |4 roots/282 JS/0 secret matches;2 report JSON/1 result array/0 detailed;10 paths ignored/0 tracked. Final refreshed report check follows closure |
+| UI skills | Required complete reads/references, one detector12 targets, AFTER016, fresh finish review/documenter | Detector[]; AFTER0 new aesthetic findings. Independent functional-copy finding is corrected/scored separately; no second detector or audit-only aesthetic change |
+
+Actual runtime: Node24.13.1/npm11.8.0, Python3.14.3, FastAPI0.143.1,
+SQLAlchemy2.1.4, pytest9.1.1, Ruff0.17.0, mypy1.20.2, headed Chrome155.0.8059.79;
+existing Playwright1.64.1/PostgreSQL18.2 installation retained. No packages added.
+Recent unchanged-lock SP-15 audit evidence is retained: npm runtime0/full9
+inherited HIGH dev-tool entries, Python locks0 known findings. Not rerun or fixed
+by this sprint. Real antivirus/file paths are untouched; the finance proof test
+uses labelled metadata, not a new scan. Product/device/load/recovery/production
+and full-product acceptance remain separate and pending.
+
+Final SP-16 review correction: build2sQCC1Lb3eIrWjWd7hTMQ,327 app/migration
+files SHA256 D5122B15B9E8E6C4CE5C77E1A3D022A5D8D629166A7046C7016EF3C57BAA16CB.
+Only one stale pipeline guidance sentence changed after the full UI review.
+Frontend lint/types/build pass, corrected headed1/1 passes39.0s/0 skipped/
+0 unexpected errors. All14 originals+2 canonical images refreshed/valid;
+reviewer scores its single fix resolved and returns ship at that limited scope.
+Two failed measurement-only attempts counted the hidden file input instead of
+its actual chooser hit target; the final test measures the explicit proxy and
+retains44px/contrast/overflow/console assertions. No second detector or full
+backend/browser rerun after this copy-only change. Latest client/report privacy
+still4 roots/282 JS/0 secret matches and2 JSON/1 result array/0 detailed arrays.
+Final guarded cleanup again removes1 synthetic row and leaves60 test record
+tables empty; development read-only counts60/0/bootstrap unset. Earlier schema/
+backend/behavior results remain valid for their unchanged boundaries.
+
+Closure: fresh documenter completes its factual SP-16 component section and
+outcome without changing DESIGN/tokens/source. Final documentation command
+powershell -NoProfile -File docs/03-planning/validate-sprints.ps1 exits0:
+22 sprints/1110 local links (70 installed-skill links)/41 AT mappings/13 Mermaid
+pairs/10 valid JSON examples. SP-16 has23 checked/0 unchecked criteria; technical
+acceptance complete locally, product review pending. git diff --check exits0,
+but17 untracked entries/0 tracked changes are not a tracked diff-review claim.
+Six project ports and identified service processes0; ClamAV exited/cache retained,
+shared PostgreSQL5432 preserved. SP-17–SP-22 remain unstarted.
+
+## SP-17 focused reporting verification (2026-10-15 UTC)
+
+The user requests necessary-only tests. Retain valid recent untouched-boundary
+evidence; the complete final CRM/load/recovery suite remains SP-22. See
+[SP-17 execution](03-planning/sprints/sp-17-execution.md) for corrected attempts,
+final review/source/capture status and privacy/isolation closure.
+
+Run npm in frontend/, Python in backend/ via .venv/Scripts/python.exe. Compiled
+browser commands temporarily set KAY_E2E_PRODUCTION=1, restore its previous value
+and propagate the real exit code. All DB writers remain serial under the lease.
+
+| Boundary | Actual command | Result |
+|---|---|---|
+| Python quality | .venv/Scripts/python.exe -m ruff check .; -m ruff format --check .; -m mypy app | exit0;218 formatted files/137 strict modules |
+| Focused new reports/affected outcomes/finance HTTP | .venv/Scripts/python.exe -m pytest tests/test_reports.py tests/test_report_edges.py tests/test_outcomes.py tests/test_finance_http.py -q --tb=short -x -s |22/22 passed33.65s,0 skipped;14 new+8 affected variants |
+| Query/index probe | Synthetic1000 timeline actions in test_report_edges; EXPLAIN ANALYZE BUFFERS FORMAT JSON |1000 returned/Nested Loop/2.534ms final run; not full load/p95 |
+| Frontend quality | npm run lint; npm run typecheck; npm run build | exit0, final built version and review fix in execution |
+| Five-target compiled reporting | npm run test:e2e -- tests/e2e/reports.spec.ts --max-failures=1 |10/10 passed3.2m before scoped accessibility corrections; no final full matrix rerun claim |
+| Affected compiled Chrome | npm run test:e2e -- tests/e2e/reports.spec.ts --project=chrome --max-failures=1 |Final F1 2/2 passed47.3s,0 skipped |
+| Visible Chrome | npm run test:chrome -- review/reports.chrome.spec.ts --max-failures=1 | Final F1 workflow1/1 passed41.0s (53.1s with startup),0 skipped;11 native captures plus2 canonical copies |
+| Schema | .venv/Scripts/python.exe -m alembic check/current, both verified environments | no new operations;both head0018; no migration created |
+| Dependencies/privacy | npm audit --omit=dev --json; npm audit --json; node scripts/scan-client-secrets.mjs; powershell -NoProfile -File scripts/audit-report.ps1 | runtime0/full9 inherited HIGH dev-tool chain;4 roots/285 JS/0 secret matches; detailed report arrays0 |
+| UI gate | Required skills, bounded visual batches, one detector, AFTER017 and independent F1 verdict/documenter | detector[]; F1 resolved/ship; documenter recorded; AFTER017 optional LOW1 unselected |
+
+Pinned runtime remains Node24.13.1/npm11.8.0, Python3.14.3/FastAPI0.143.1/
+SQLAlchemy2.1.4, Playwright1.64.1, headed Chrome155.0.8059.79/PostgreSQL18.2.
+Registry-required exact dependencies: visx4.0.0, motion14.3.0, d3-array3.2.4,
+@number-flow/react0.6.2. Local Bklit MIT source retained; scoped registry-only lint
+exceptions documented, application rules unchanged. Python locks unchanged.
+No product approval, actual-device/Safari, whole-product, production, deployment
+or SP-22 performance/recovery acceptance is inferred.
+
+Final SP-17 closure: guarded cleanup removes1 synthetic row/0 orphan objects,
+leaving60 test record tables empty/bootstrap unset. Read-only development stays
+60/0/bootstrap unset, policy1/capacity2/no editor/hours/lunch. Six project ports
+and root-identified service processes0; ClamAV exited143/cache retained/shared
+PostgreSQL5432 preserved. Source393-file SHA256 remains
+7E3ABF9F418883B31B2A2A173E90C51D59A3E823C801C2C7FB5F2B9F1CAB0AED.
+Root validate-sprints.ps1 exits0:22 sprints/1123 local links/41 AT mappings/
+13 Mermaid pairs/10 JSON examples;23 checked/0 unchecked SP-17 criteria.
+git diff --check exits0, but17 untracked entries/0 tracked changes are not a
+tracked application-diff review. SP-18–SP-22 and human product review remain.
+
+## SP-18 necessary-only contact import checks (2026-10-15 UTC)
+
+Commands below are actual results, not fullCRM/SP-22 acceptance. Backend cwd
+backend/, explicit .venv interpreter; frontend cwd frontend/, compiled browser
+commands temporarily set KAY_E2E_PRODUCTION=1 and restore its prior value.
+
+| Boundary | Actual command | Result |
+|---|---|---|
+| Focused backend + affected identity/history | .venv/Scripts/python.exe -m pytest tests/test_imports.py tests/test_import_http_migration.py tests/test_contacts.py tests/test_ownership.py -q --tb=short -x -s |61/61 passed110.43s,0 skipped:16 new+45 affected existing cases |
+| Strengthened interruption/guards | .venv/Scripts/python.exe -m pytest tests/test_imports.py tests/test_import_http_migration.py -q --tb=short -x -s |16/16 passed42.05s, including501-contact multi-chunk pre/postcommit recovery |
+| Final uniform permit denial | .venv/Scripts/python.exe -m pytest tests/test_import_http_migration.py -q --tb=short -x -s |3/3 passed23.02s; overlaps previous counts |
+| Backend quality | .venv/Scripts/python.exe -m ruff check .; .venv/Scripts/python.exe -m ruff format --check .; .venv/Scripts/python.exe -m mypy app |all exit0;231 formatted files/147 typed modules |
+| Frontend | npm run lint; npm run typecheck; npm run build |all exit0, final build KDcVSGWqFB2pc9tcjQcfF |
+| Compiled import + affected ordinary contact | npm run test:e2e -- tests/e2e/imports.spec.ts tests/e2e/leads.spec.ts --project=chrome --grep 'SP18\|SP05 AT-03/23/39' --max-failures=1 |4/4 passed1.3m,0 skipped before final refresh-only fix |
+| Final affected compiled import | npm run test:e2e -- tests/e2e/imports.spec.ts --project=chrome --max-failures=1 |2/2 passed59.1s,0 skipped, same-key committed-loss recovery/phone claim/repreview |
+| Final visible Chrome | npm run test:chrome -- tests/review/imports.chrome.spec.ts --max-failures=1 |1/1 passed30.1s (42.5s total),0 skipped; native cancellation/retry, correction, approval, roles, states, keyboard/touch/zoom |
+| Migration | .venv/Scripts/python.exe -m alembic upgrade head; .venv/Scripts/python.exe -m alembic check |populated0018 preservation and downgrade refusal isolated tests pass; additive development0019, no drift; both66 tables/63 record tables |
+| Client privacy | node scripts/scan-client-secrets.mjs; powershell -NoProfile -File scripts/audit-report.ps1 |4 roots/285 JS/0 configured-secret matches;2 JSON/2 step arrays/0 detailed arrays |
+| Ignored artifacts | git check-ignore and git ls-files via guarded10-path probe |10 ignored/0 tracked |
+
+Chrome155.0.8059.79; six widths320/360/390/768/1024/1440; actual200% zoom
+DPR2→4,width1427→713; visible controls≥44px, no horizontal overflow, measured
+final minimum contrast5.814:1. Unexpected page/console errors0; exact injected
+GET abort/403 separated. Nonfatal Windows Proactor10054 connection-close callbacks
+remain disclosed.12 original+2 canonical captures individually opened/validated.
+One detector exit0/[] and [AFTER018](../anti-slop/audit-018-2026-10-15.md) records
+0 new aesthetic-only findings. Fresh finish/documenter results in
+[execution](03-planning/sprints/sp-18-execution.md), not inferred from filenames.
+
+No dependency/lock changes. Retain SP-17 runtime audit0/full9 inherited HIGH
+dev-toolchain results and latest valid Python lock audit, not fresh scans.
+50,000-row parser0.138/0.278s boundaries are not50,000-contact commit throughput
+or load acceptance. No actual phone/Safari/five-browser/full-suite rerun.
+Read-only development remains0 records/bootstrap unset/default schedule policy.
+Guarded cleanup testOID109061 removes1 synthetic residual row/28 orphan objects,
+leaves63 record tables0 rows/bootstrap unset. Six project ports/service processes0,
+shared PostgreSQL5432 preserved. Fingerprint410 app/migration files SHA256
+0C3FADAFE00C22194998B60806B4833F6AB47EC90685CB14325EA82244E3FCF3.
+
+Final SP-18 closure: fresh full finish review ship/no material fixes, factual
+documenter complete; inherited missing metadata and broader V3 acceptance remain
+outside this extension. Root validate-sprints.ps1 exit0:22 sprints/1169 links/
+41 AT mappings/13 Mermaid pairs/10 API JSON examples. SP-18 checklist23 checked/
+0 unchecked; git diff --check exit0 with17 untracked roots/0 tracked changes.
+Project listeners/service processes0, shared PostgreSQL preserved. Technical
+acceptance is scoped to SP-18, not human review or completeCRM acceptance.
+
+## Local startup repair checks (2026-10-16)
+
+[Startup execution](06-delivery-and-operations/local-startup-execution.md) records
+the exact commands and scope: lint/typecheck/build pass, six-path Ruff checks,
+four-module mypy and11/11 focused runtime/static-proxy tests pass. Manual dev
+and compiled HTTPS startup produced no terminal warnings/errors; CA-verified
+health checks and30 aborted connections passed. Final compiled headed Chrome
+integration/intake2/2 pass; earlier shell/file/Iconsax selections and normal CRM
+development/HMR pass. Separate simulator development hydration fails and remains
+disclosed; do not treat those diagnostic runs as passing. Windows CA trust and
+interactive administrator bootstrap are user-controlled, not silently performed.
+The [runbook](06-delivery-and-operations/local-startup.md) recommends compiled
+frontend mode for the complete local workflow. No full-product certification.

@@ -1,0 +1,24 @@
+stateDiagram-v2
+    [*] --> draft
+    draft --> available: manager validation
+    available --> reserved: authorized deal
+    reserved --> available: explicit release
+    available --> withdrawn: manager withdrawal
+    reserved --> withdrawn: overlapping sale releases hold first
+    reserved --> sold: won sale
+    reserved --> rented: won rental
+    available --> sold: won or external sale
+    available --> rented: won or external rental
+    available --> review: child outcome flags whole campaign
+    draft --> review: child outcome flags whole campaign
+    sold --> available: linked won reopen if unchanged
+    rented --> available: linked won reopen if unchanged
+    withdrawn --> available: linked effect reversal if originally available
+    withdrawn --> draft: linked effect reversal if originally draft
+    review --> available: linked effect reversal if originally available
+    review --> draft: linked effect reversal if originally draft
+    note right of review
+        No remaining-unit or manual commitment override.
+        Review conflicts leave stock unchanged.
+        A reversal never restores an old reservation.
+    end note

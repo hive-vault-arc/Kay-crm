@@ -1,0 +1,253 @@
+import { randomUUID } from "node:crypto";
+import { clearActorContext, test as base, expect, signIn, createActor, removeActor } from "../helpers/auth";
+import { apiProcess, testControl } from "../helpers/api-process";
+import { createLead, staffCommand } from "../helpers/leads";
+
+const test = base.extend({ actor: async ({}, run) => { const actor = await createActor("agent"); try { await run(actor); } finally { await removeActor(actor); } } });
+
+test("SP05 AT-03/23/39: international identities, primary choices, contact and Lead edits", async ({ page, actor }) => {
+  await signIn(page, actor);
+  await page.goto("/leads/new");
+  await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
+  await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+  await expect(page.getByText("Saisissez le nom du contact.", { exact: true })).toBeVisible();
+  await page.getByLabel("Nom du contact", { exact: true }).fill("SP05 organisation synthétique");
+  await page.getByLabel("Type de contact", { exact: true }).selectOption("organization");
+  await page.getByLabel("Téléphone international 1", { exact: true }).fill("+212 600-000-001");
+  await page.getByRole("button", { name: "Ajouter un téléphone", exact: true }).click();
+  await page.getByLabel("Téléphone international 2", { exact: true }).fill("+33 6 00 00 00 02");
+  await page.getByRole("radiogroup", { name: "Téléphone principal", exact: true }).getByLabel("Principal 2", { exact: true }).check();
+  await page.getByRole("button", { name: "Ajouter un e-mail", exact: true }).click();
+  await page.getByLabel("E-mail 1", { exact: true }).fill("one@example.com");
+  await page.getByRole("button", { name: "Ajouter un e-mail", exact: true }).click();
+  await page.getByLabel("E-mail 2", { exact: true }).fill("two@example.com");
+  await page.getByRole("radiogroup", { name: "E-mail principal", exact: true }).getByLabel("Principal 2", { exact: true }).check();
+  for (const role of ["Acheteur", "Vendeur", "Propriétaire", "Locataire", "Promoteur"]) await page.getByRole("checkbox", { name: role, exact: true }).check();
+  await page.getByLabel("Source", { exact: true }).selectOption("referral");
+  await page.getByLabel("Message de la demande (facultatif)", { exact: true }).fill("SP05 première demande synthétique");
+  await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+  await expect.poll(() => /^\/leads\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
+  const leadId = new URL(page.url()).pathname.split("/")[2];
+  await expect(page.getByText("+33600000002", { exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "SP05 organisation synthétique", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Contact : SP05 organisation synthétique", exact: true })).toBeVisible();
+  await expect(page.getByText("Acheteur, Promoteur, Propriétaire, Vendeur, Locataire", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Modifier le contact", exact: true }).click();
+  await page.getByLabel("Nom du contact", { exact: true }).fill("SP05 identité modifiée synthétique");
+  await page.getByRole("button", { name: "Enregistrer le contact", exact: true }).click();
+  await expect(page.getByText("Contact enregistré.", { exact: true })).toBeVisible();
+  await page.goto(`/leads/${leadId}/edit`);
+  await expect(page.getByLabel("Message de la demande", { exact: true })).toBeEnabled();
+  await page.getByLabel("Message de la demande", { exact: true }).fill("SP05 demande modifiée synthétique");
+  await page.getByLabel("Statut", { exact: true }).selectOption("in_progress");
+  await page.getByRole("button", { name: "Enregistrer la demande", exact: true }).click();
+  await expect(page.getByText("Demande enregistrée.", { exact: true })).toBeVisible();
+  await page.goto("/leads");
+  await page.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true }).fill("SP05 identité");
+  await page.getByLabel("Statut", { exact: true }).selectOption("in_progress");
+  await page.getByLabel("Source", { exact: true }).selectOption("referral");
+  await page.getByRole("button", { name: "Appliquer", exact: true }).click();
+  await expect(page.getByText("1 demande(s) accessible(s).", { exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "SP05 identité modifiée synthétique", exact: true }).click();
+  await expect(page.getByText("SP05 demande modifiée synthétique", { exact: true })).toBeVisible();
+  expect((await page.request.get("/api/v1/users")).status()).toBe(403);
+});
+
+test("SP05 AT-04/39: explicit accessible reuse, private-phone denial and copied IDs", async ({ page, actor, browser, baseURL }) => {
+  const other = await createActor("agent");
+  const context = await browser.newContext({ baseURL, ignoreHTTPSErrors: true });
+  const privatePage = await context.newPage();
+  try {
+    await signIn(page, actor);
+    const firstId = await createLead(page);
+    await page.goto("/leads/new");
+    await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
+    await page.getByLabel("Nom du contact", { exact: true }).fill("SP05 saisie à conserver");
+    await page.getByLabel("Téléphone international 1", { exact: true }).fill("00212 600000001");
+    await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+    const dialog = page.getByRole("alertdialog");
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByLabel("Nom du contact", { exact: true })).toHaveValue("SP05 saisie à conserver");
+    await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+    const original = (await (await page.request.get(`/api/v1/enquiries/${firstId}`)).json()).contact;
+    let release = () => {};
+    const selectedRead = new Promise<void>(resolve => { release = resolve; });
+    await page.route(`**/api/v1/contacts/${original.id}`, async route => {
+      const response = await route.fetch(); await selectedRead; await route.fulfill({ response });
+    }, { times: 1 });
+    await dialog.getByRole("button", { name: "Réutiliser SP05 contact synthétique", exact: true }).click();
+    try {
+      await expect(page.getByText("Chargement du contact choisi…", { exact: true })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Chargement du contact…", exact: true })).toBeDisabled();
+      expect((await (await page.request.get("/api/v1/enquiries")).json()).total).toBe(1);
+    } finally { release(); }
+    await expect(page.getByText("Contact choisi : SP05 contact synthétique", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toBeFocused();
+    await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+    await expect.poll(() => /^\/leads\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
+    expect(new URL(page.url()).pathname !== `/leads/${firstId}`).toBe(true);
+    expect((await (await page.request.get("/api/v1/contacts")).json()).total).toBe(1);
+    expect((await (await page.request.get("/api/v1/enquiries")).json()).total).toBe(2);
+    await page.goto("/leads/new");
+    await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
+    await page.getByLabel("Contact de la demande", { exact: true }).selectOption("existing");
+    await page.getByLabel("Rechercher un contact accessible", { exact: true }).fill("SP05 contact");
+    await page.getByRole("button", { name: "Rechercher le contact", exact: true }).click();
+    await page.getByRole("button", { name: "Choisir SP05 contact synthétique", exact: true }).click();
+    await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+    await expect.poll(() => /^\/leads\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
+    expect((await (await page.request.get("/api/v1/contacts")).json()).total).toBe(1);
+    await signIn(privatePage, other);
+    const privateId = await createLead(privatePage, "SP05 identité privée synthétique", "+33600000002");
+    const privateRecord = await (await privatePage.request.get(`/api/v1/enquiries/${privateId}`)).json();
+    await page.goto("/leads/new");
+    await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
+    await page.getByLabel("Nom du contact", { exact: true }).fill("SP05 tentative synthétique");
+    await page.getByLabel("Téléphone international 1", { exact: true }).fill("+33 600000002");
+    await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+    await expect(page.getByText("Aucun accès ni doublon n’a été créé.", { exact: false })).toBeVisible();
+    expect(await page.getByText("SP05 identité privée synthétique", { exact: true }).count()).toBe(0);
+    await expect(page.getByLabel("Nom du contact", { exact: true })).toHaveValue("SP05 tentative synthétique");
+    const response = await staffCommand(page, "contacts/resolve-phone", { phone: "+33600000002" });
+    const body = await response.json();
+    expect(response.status()).toBe(409); expect(Object.keys(body).sort()).toEqual(["error", "responsible_agent"]);
+    expect(Object.keys(body.responsible_agent)).toEqual(["display_name"]);
+    expect((await page.request.get(`/api/v1/contacts/${privateRecord.contact.id}`)).status()).toBe(404);
+    await page.goto(`/leads/${privateId}/edit`);
+    await expect(page.getByText("Cette fiche est introuvable ou vous n’y avez plus accès.", { exact: true })).toBeVisible();
+    const hidden = await page.request.get("/api/v1/enquiries?q=%2B33600000002");
+    expect((await hidden.json()).total).toBe(0);
+  } finally { await context.close(); await removeActor(other); }
+});
+
+test("SP05 AT-22/23/39: numbered pages, scoped filters and column IDs/order only", async ({ page, actor }) => {
+  await testControl("fixture", { action: "bulk-enquiries", id: actor.id, count: 51 });
+  await signIn(page, actor);
+  await page.goto("/leads");
+  await expect(page.getByText("51 demande(s) accessible(s).", { exact: true })).toBeVisible();
+  await expect(page.getByRole("table").getByRole("row")).toHaveCount(51);
+  await page.getByRole("button", { name: "Suivant", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Page 2", exact: true })).toBeDisabled();
+  await expect(page.getByRole("table").getByRole("row")).toHaveCount(2);
+  await page.getByRole("button", { name: "Page 1", exact: true }).click();
+  await page.getByRole("button", { name: "Colonnes", exact: true }).click();
+  const chooser = page.getByRole("dialog");
+  await chooser.getByRole("checkbox", { name: "Source", exact: true }).uncheck();
+  await chooser.getByRole("checkbox", { name: "Demande", exact: true }).check();
+  await chooser.getByRole("button", { name: "Monter Demande", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("columnheader", { name: "Source", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("columnheader", { name: "Demande", exact: true })).toBeVisible();
+  const before = await page.getByRole("columnheader").allTextContents();
+  await page.reload();
+  await expect(page.getByRole("columnheader", { name: "Demande", exact: true })).toBeVisible();
+  expect(await page.getByRole("columnheader").allTextContents()).toEqual(before);
+  const preference = await page.evaluate(() => JSON.parse(localStorage.getItem("kay:enquiries:columns:v1") ?? "null"));
+  expect(Object.keys(preference).sort()).toEqual(["list", "version", "visibleColumns"]);
+  expect(preference.visibleColumns).toEqual(["name", "status", "responsibleAgent", "message", "receivedAt"]);
+  await page.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true }).fill("SP05 absent");
+  await page.getByRole("button", { name: "Appliquer", exact: true }).click();
+  await expect(page.getByText("Aucune demande ne correspond à vos filtres.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Réinitialiser", exact: true }).click();
+  await expect(page.getByText("51 demande(s) accessible(s).", { exact: true })).toBeVisible();
+  await page.getByText("Filtres avancés", { exact: true }).click();
+  await page.getByLabel("Reçue à partir du", { exact: true }).fill("2026-11-01");
+  await page.getByLabel("Reçue jusqu’au", { exact: true }).fill("2026-10-01");
+  await page.getByRole("button", { name: "Appliquer", exact: true }).click();
+  await expect(page.getByText("La date de début doit précéder la date de fin.", { exact: true })).toBeVisible();
+});
+
+test("SP05 AT-23: outage retry and optimistic conflict retain valid unsaved input", async ({ page, actor, context }) => {
+  test.setTimeout(120_000);
+  await signIn(page, actor);
+  const id = await createLead(page);
+  await page.goto(`/leads/${id}/edit`);
+  await expect(page.getByLabel("Message de la demande", { exact: true })).toBeEnabled();
+  await page.getByLabel("Message de la demande", { exact: true }).fill("SP05 saisie conservée pendant panne");
+  try {
+    await apiProcess("stop");
+    await page.getByRole("button", { name: "Enregistrer la demande", exact: true }).click();
+    await expect(page.getByRole("alert").filter({ hasText: "indisponible" })).toBeVisible();
+    await expect(page.getByLabel("Message de la demande", { exact: true })).toHaveValue("SP05 saisie conservée pendant panne");
+  } finally { await apiProcess("start"); }
+  await expect.poll(async () => (await page.request.get("/api/v1/health/ready")).status()).toBe(200);
+  await page.getByRole("button", { name: "Enregistrer la demande", exact: true }).click();
+  await expect(page.getByText("Demande enregistrée.", { exact: true })).toBeVisible();
+  const parallel = await context.newPage();
+  try {
+    await parallel.goto(`/leads/${id}/edit`);
+    await expect(parallel.getByLabel("Message de la demande", { exact: true })).toBeEnabled();
+    await page.getByLabel("Message de la demande", { exact: true }).fill("SP05 modification concurrente");
+    await page.getByRole("button", { name: "Enregistrer la demande", exact: true }).click();
+    await expect(page.getByText("Demande enregistrée.", { exact: true })).toBeVisible();
+    await parallel.getByLabel("Message de la demande", { exact: true }).fill("SP05 intention locale conservée");
+    await parallel.getByRole("button", { name: "Enregistrer la demande", exact: true }).click();
+    await expect(parallel.getByRole("region", { name: "Comparaison de la demande", exact: true })).toBeVisible();
+    await expect(parallel.getByLabel("Message de la demande", { exact: true })).toHaveValue("SP05 intention locale conservée");
+    await parallel.getByRole("button", { name: "Conserver ma saisie pour remplacer cette version", exact: true }).click();
+    await parallel.getByRole("button", { name: "Enregistrer la demande", exact: true }).click();
+    await expect(parallel.getByText("Demande enregistrée.", { exact: true })).toBeVisible();
+    const record = await (await page.request.get(`/api/v1/enquiries/${id}`)).json();
+    const contactPath = `/contacts/${record.contact.id}`;
+    await parallel.goto(contactPath);
+    await parallel.getByRole("button", { name: "Modifier le contact", exact: true }).click();
+    await page.goto(contactPath);
+    await page.getByRole("button", { name: "Modifier le contact", exact: true }).click();
+    await page.getByRole("button", { name: "Ajouter un e-mail", exact: true }).click();
+    await page.getByLabel("E-mail 1", { exact: true }).fill("concurrent@example.com");
+    await page.getByRole("button", { name: "Enregistrer le contact", exact: true }).click();
+    await expect(page.getByText("Contact enregistré.", { exact: true })).toBeVisible();
+    await parallel.getByLabel("Nom du contact", { exact: true }).fill("SP05 identité locale conservée");
+    await parallel.getByRole("button", { name: "Enregistrer le contact", exact: true }).click();
+    const comparison = parallel.getByRole("region", { name: "Comparaison du contact", exact: true });
+    await expect(comparison).toContainText("concurrent@example.com");
+    await expect(parallel.getByLabel("Nom du contact", { exact: true })).toHaveValue("SP05 identité locale conservée");
+    await parallel.getByRole("button", { name: "Charger la version actuelle", exact: true }).click();
+    await expect(parallel.getByLabel("E-mail 1", { exact: true })).toHaveValue("concurrent@example.com");
+  } finally { await parallel.close(); }
+});
+
+for (const role of ["manager", "administrator"]) test(`SP05 AT-03/39: ${role} selects active responsible agent and preserves manager queue`, async ({ page, actor }) => {
+  const manager = await createActor(role);
+  try {
+    await signIn(page, manager);
+    await page.goto("/leads/new");
+    await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
+    await page.getByLabel("Nom du contact", { exact: true }).fill("SP05 affectation synthétique");
+    await page.getByLabel("Téléphone international 1", { exact: true }).fill("+212600000001");
+    await expect(page.getByLabel("Agent responsable", { exact: true })).toBeEnabled();
+    await page.getByLabel("Agent responsable", { exact: true }).selectOption(actor.id);
+    await page.getByLabel("Attribution de la demande", { exact: true }).selectOption("queue");
+    await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+    await expect.poll(() => /^\/leads\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
+    await expect(page.getByText("Non attribuée, file du responsable", { exact: true })).toBeVisible();
+    await clearActorContext(page);
+    await signIn(page, actor);
+    expect((await (await page.request.get("/api/v1/enquiries")).json()).total).toBe(0);
+    expect((await page.request.get("/api/v1/contacts/assignment-options")).status()).toBe(403);
+  } finally { await removeActor(manager); }
+});
+
+test("SP05 AT-03/23/39: invalid phone, strict fields, same-key retry and revoked session", async ({ page, actor }) => {
+  await signIn(page, actor);
+  await page.goto("/leads/new");
+  await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
+  await page.getByLabel("Nom du contact", { exact: true }).fill("SP05 saisie valide conservée");
+  await page.getByLabel("Téléphone international 1", { exact: true }).fill("+999600000001");
+  await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "numéro international valide" })).toBeVisible();
+  await expect(page.getByLabel("Nom du contact", { exact: true })).toHaveValue("SP05 saisie valide conservée");
+  const body = { new_contact: { name: "SP05 reprise synthétique", type: "person", phones: [{ number: "+212600000001", is_primary: true, label: "" }], emails: [], roles: [] }, source: "manual", message: "Demande synthétique" };
+  const key = randomUUID();
+  const first = await staffCommand(page, "enquiries", body, "POST", key);
+  const second = await staffCommand(page, "enquiries", body, "POST", key);
+  expect(first.status()).toBe(200); expect(second.status()).toBe(200);
+  expect((await first.json()).id === (await second.json()).id).toBe(true);
+  expect((await staffCommand(page, "enquiries", { ...body, hidden_permission: "administrator" })).status()).toBe(422);
+  expect((await page.request.get("/api/v1/enquiries?page=1&page=2")).status()).toBe(422);
+  expect((await page.request.post("/api/v1/contacts/resolve-phone", { data: { phone: "+212600000001" } })).status()).toBe(403);
+  await testControl("fixture", { action: "revoke", id: actor.id });
+  expect((await page.request.get("/api/v1/enquiries")).status()).toBe(401);
+});

@@ -1,0 +1,46 @@
+[
+  {
+    "path": "docs/reference/python/3.14.3/python-3.14.3-docs-html.zip",
+    "sha256": "ad0b302de05fbbcd34303505d1ee27b3b94be8d2b610d9fb4710d0b82d341fe1"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/astro-app.tar.gz",
+    "sha256": "f556755ca863ed47e4de8c3c2f586e357c5a1f633dc0c1f2a9feb9f40c8aa4ab"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/astro-monorepo.tar.gz",
+    "sha256": "4b18d6c24c8f58060e74825c9086d10dfdddebc81a30fd6f3b72cad1214d386b"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/next-app.tar.gz",
+    "sha256": "c40aad790d8c2c28e8aa8b96c0887a8a2320fabf3e88784342ccab93f6c8fa81"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/next-monorepo.tar.gz",
+    "sha256": "ade3e4927f641cb455abc360cd641ca8bd542abad4013c901f20d7c748ce262e"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/react-router-app.tar.gz",
+    "sha256": "e5d290d2c0b0c1034f8396fe222d2ee512399cbf9504eb5f14c3d78183a1b93e"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/react-router-monorepo.tar.gz",
+    "sha256": "d34947b10a4e1d100122852f62fbbff17be31cc994578bcb1187e8f6386c5e8c"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/start-app.tar.gz",
+    "sha256": "9439fff60a3bf2b3a83f7bb888fae28b0e987b703d91a412c5a139e41de1052e"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/start-monorepo.tar.gz",
+    "sha256": "eab6969e1d16e6b3f4a74957306fa0764d957806ea952e770640660474567619"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/vite-app.tar.gz",
+    "sha256": "b0ce97e2ca05b1a883b4bfbd9f1612e47a79b94527b1a8fff076d2744965602d"
+  },
+  {
+    "path": "docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/public/r/templates/vite-monorepo.tar.gz",
+    "sha256": "ba9b831148db4ca6346faefb25a988b7ceb56388da192a044ee0a899da7928fd"
+  }
+]

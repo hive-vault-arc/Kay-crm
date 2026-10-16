@@ -1,0 +1,14 @@
+"use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { formatInstant } from "@/lib/format";
+import { kindLabels, type InventoryTarget, type Offering } from "./contracts";
+import { Availability, OfferingEditor } from "./offering-editor";
+import { InventoryStatus, Price } from "./states";
+import { ExternalOutcome } from "./external-outcome";
+
+export function Campaign({ property, kind, writable, saved }: { property: InventoryTarget; kind: Offering["kind"]; writable: boolean; saved: () => void }) {
+  const [editing, setEditing] = useState(false);
+  const offering = property.offerings.find(item => item.kind === kind);
+  return <section aria-label={kindLabels[kind]} className="grid min-w-0 gap-4 border-b pb-8"><h2 className="text-section font-medium">{kindLabels[kind]}</h2>{editing && writable ? <OfferingEditor property={property} kind={kind} offering={offering} saved={() => { setEditing(false); saved(); }} cancel={() => setEditing(false)} /> : <>{offering ? <><InventoryStatus state={offering.state} conflict={offering.reservation_conflict} occupied={offering.occupied} /><Price offering={offering} /><p className="whitespace-pre-wrap wrap-anywhere">{offering.conditions || "Conditions non renseignées"}</p><p className="text-sm text-muted-foreground">Dernière confirmation : {formatInstant(offering.availability_confirmed_at)}</p></> : <p>Aucune campagne actuelle. Les anciennes campagnes restent dans l’historique.</p>}{offering?.state === "reserved" ? <p>Réservation active : une libération explicite depuis l’affaire autorisée est nécessaire avant de modifier cette campagne.</p> : null}{offering?.reservation_conflict === "DEVELOPMENT_OVERLAP" ? <p className="text-warning">Un programme ou une unité du même type est réservé. Faites vérifier le chevauchement par un responsable.</p> : null}{writable && offering && ["available", "reserved"].includes(offering.state) ? <ExternalOutcome target={property} offering={offering} saved={saved} /> : null}{offering && ["sold", "rented", "review"].includes(offering.state) ? <p>Résultat ou revue de stock conservé : une modification ordinaire ne peut pas le remplacer.</p> : null}{writable && (!offering || ["draft", "available"].includes(offering.state)) ? <><Button className="justify-self-start" onClick={() => setEditing(true)}>{offering ? `Modifier la campagne ${kindLabels[kind].toLowerCase()}` : `Créer une campagne ${kindLabels[kind].toLowerCase()}`}</Button>{offering ? <Availability key={offering.version} property={property} offering={offering} saved={saved} /> : null}</> : null}</>}</section>;
+}

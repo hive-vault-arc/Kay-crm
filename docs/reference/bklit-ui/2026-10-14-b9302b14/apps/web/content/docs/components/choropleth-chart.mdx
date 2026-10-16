@@ -1,0 +1,140 @@
+---
+title: Choropleth Chart
+description: A composable geographic map chart for visualizing data across regions with interactive tooltips, zoom controls, and pattern support
+---
+
+import { ChoroplethChart, ChoroplethFeatureComponent, ChoroplethGraticule, ChoroplethTooltip } from "@bklitui/ui/charts";
+import { ChoroplethDemo } from "@/components/docs/choropleth-demo";
+
+<ComponentPreview registryName="choropleth-chart">
+  <div className="w-full">
+    <ChoroplethDemo />
+  </div>
+</ComponentPreview>
+
+## Installation
+
+<InstallationTabs name="choropleth-chart" dependencies={["@visx/geo", "@visx/responsive", "@visx/zoom", "d3-geo", "topojson-client", "motion"]} />
+
+## Usage
+
+The Choropleth Chart uses a composable API similar to other charts. Build maps by combining components:
+
+```tsx
+import { ChoroplethChart, ChoroplethFeatureComponent, ChoroplethGraticule, ChoroplethTooltip } from "@bklitui/ui/charts";
+import * as topojson from "topojson-client";
+
+// Load your GeoJSON data (from TopoJSON or direct GeoJSON)
+const geojson = topojson.feature(topology, topology.objects.countries);
+
+export default function WorldMap() {
+  return (
+    <ChoroplethChart data={geojson} aspectRatio="16 / 9">
+      <ChoroplethGraticule />
+      <ChoroplethFeatureComponent fill="var(--chart-scale-03)" />
+      <ChoroplethTooltip />
+    </ChoroplethChart>
+  );
+}
+```
+
+## Components
+
+### ChoroplethChart
+
+The root component that sets up the Mercator projection and provides context to children.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `data` | `FeatureCollection` | required | GeoJSON FeatureCollection with geographic features |
+| `margin` | `Partial<Margin>` | `{ top: 0, right: 0, bottom: 0, left: 0 }` | Chart margins |
+| `animationDuration` | `number` | `800` | Animation duration in ms |
+| `aspectRatio` | `string` | `"16 / 9"` | CSS aspect ratio |
+| `scale` | `number` | auto | Projection scale (auto-calculated from width if not set) |
+| `center` | `[number, number]` | `[0, 20]` | Center coordinates [longitude, latitude] |
+| `translate` | `[number, number]` | auto | Translate offset [x, y] |
+| `zoomEnabled` | `boolean` | `false` | Enable zoom and pan interactions |
+| `zoomMin` | `number` | `0.5` | Minimum zoom scale |
+| `zoomMax` | `number` | `4` | Maximum zoom scale |
+| `initialZoom` | `TransformMatrix` | identity | Initial zoom transform |
+| `className` | `string` | `""` | Additional CSS class |
+
+### ChoroplethFeatureComponent
+
+Renders the geographic feature paths with hover states and optional patterns.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `fill` | `string` | - | Fill color for all features (overrides getFeatureColor) |
+| `stroke` | `string` | `"var(--chart-grid)"` | Stroke color for borders |
+| `strokeWidth` | `number` | `0.5` | Border stroke width |
+| `fadedOpacity` | `number` | `0.4` | Opacity when another feature is hovered |
+| `getFeatureColor` | `(feature, index) => string` | - | Custom color function |
+| `patterns` | `ReactNode` | - | Pattern definitions, e.g. `PatternLines` from the `@bklit/patterns` registry item |
+| `getFeaturePattern` | `(feature, index) => string \| null` | - | Return pattern ID for a feature |
+
+### ChoroplethGraticule
+
+Renders optional graticule (latitude/longitude grid lines).
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `stroke` | `string` | `"rgba(255,255,255,0.1)"` | Line color |
+| `strokeWidth` | `number` | `0.5` | Line width |
+| `step` | `[number, number]` | `[10, 10]` | Grid step intervals [longitude, latitude] in degrees |
+
+### ChoroplethTooltip
+
+Displays tooltips for features on hover, following the mouse position.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `content` | `(props) => ReactNode` | - | Custom tooltip renderer |
+| `formatValue` | `(value) => string` | `toLocaleString` | Value formatter |
+| `getFeatureName` | `(feature, index) => string` | - | Custom name getter |
+| `getFeatureValue` | `(feature, index) => number` | - | Value getter for display |
+| `valueLabel` | `string` | `"Value"` | Label for the value row |
+| `className` | `string` | `""` | Additional CSS class |
+
+## Data Format
+
+The choropleth expects a GeoJSON FeatureCollection:
+
+```typescript
+interface FeatureCollection {
+  type: "FeatureCollection";
+  features: Array<{
+    type: "Feature";
+    geometry: Geometry; // Polygon, MultiPolygon, etc.
+    properties: {
+      name?: string;
+      id?: string | number;
+      [key: string]: unknown;
+    };
+  }>;
+}
+```
+
+For TopoJSON data, convert it using `topojson-client`:
+
+```typescript
+import * as topojson from "topojson-client";
+
+const geojson = topojson.feature(topology, topology.objects.countries);
+```
+
+See the [charts gallery](/charts/choropleth-chart) for analytics color scales, zoom controls, and pattern fills.
+
+## Theming
+
+For categorical maps, `defaultChoroplethColors` cycles through **`--chart-scale-01`** … **`--chart-scale-05`**. Pass `getFeatureColor` for custom bins (see gallery analytics demo). Empty / no-data regions typically use `var(--muted)`.
+
+See [Theming](/docs/theming) for the full sequential scale reference.
+
+## Dependencies
+
+This component requires:
+
+```bash
+pnpm add @visx/geo @visx/responsive @visx/zoom topojson-client motion react-use-measure
+```

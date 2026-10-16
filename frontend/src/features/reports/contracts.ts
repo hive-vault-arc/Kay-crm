@@ -1,0 +1,17 @@
+import { z } from "zod";
+export const metricKey = z.enum(["contacts", "enquiries", "active_deals", "won", "lost", "cancelled", "activities", "developments", "standalone", "units", "property_offerings", "development_offerings", "collections"]);
+export type MetricKey = z.infer<typeof metricKey>;
+export const periodQuery = z.object({ start_on: z.iso.date().optional(), end_on: z.iso.date().optional() }).strict().refine(v => (!v.start_on && !v.end_on) || (!!v.start_on && !!v.end_on && v.start_on <= v.end_on && (Date.parse(v.end_on) - Date.parse(v.start_on)) / 86400000 <= 365));
+const point = z.object({ id: z.uuid(), label: z.string().max(160), value: z.number().int().nonnegative() }).strict();
+export const metric = z.object({ key: metricKey, label: z.string(), total: z.number().int().nonnegative(), value: z.string().regex(/^[0-9]+(?:\.[0-9]{2})?$/), unit: z.enum(["count", "MAD"]), basis: z.enum(["current", "period"]), denominator: z.literal("none"), series: z.array(point) }).strict();
+export type Metric = z.infer<typeof metric>;
+const meta = { now: z.iso.datetime({ offset: true }), today: z.iso.date(), time_zone: z.literal("Africa/Casablanca"), start_on: z.iso.date(), end_on: z.iso.date(), scope: z.enum(["agency", "assigned_or_shared"]) };
+const pages = { total: z.number().int().nonnegative(), page: z.number().int().positive(), page_size: z.number().int().positive(), has_next: z.boolean(), has_previous: z.boolean() };
+export const dashboardSchema = z.object({ ...meta, metrics: z.array(metric) }).strict();
+const href = z.string().regex(/^\/(?:contacts|leads|deals|projects(?:\/properties)?)\/[a-f0-9-]{36}(?:\?tab=finance)?$/);
+export const drillSchema = z.object({ ...meta, ...pages, metric, items: z.array(z.object({ id: z.uuid(), label: z.string(), kind: z.string(), href, attribution_label: z.string().nullable(), value: z.string() }).strict()) }).strict();
+export const exceptionsSchema = z.object({ now: meta.now, today: meta.today, time_zone: meta.time_zone, scope: meta.scope, ...pages, kind: z.enum(["stale_inventory", "inactive_deals"]), threshold_days: z.union([z.literal(14), z.literal(30)]), items: z.array(z.object({ id: z.uuid(), label: z.string(), kind: z.string(), href, last_at: meta.now, age_days: z.number().int().nonnegative() }).strict()) }).strict();
+export const pageQuery = { page: z.coerce.number().int().min(1).max(1000000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional() };
+export const drillQuery = periodQuery.safeExtend({ ...pageQuery, metric: metricKey, attribution_id: z.uuid().optional() });
+export const activityQuery = periodQuery.safeExtend({ ...pageQuery, attribution_id: z.uuid().optional() });
+export const exceptionQuery = z.object({ ...pageQuery, kind: z.enum(["stale_inventory", "inactive_deals"]).optional() }).strict();

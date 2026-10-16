@@ -1,0 +1,195 @@
+---
+title: Grid
+description: A customizable grid component for charts with horizontal and vertical lines, edge fade, edge line hiding, and dashed styling
+---
+
+import { studioChartHref } from "@bklitui/studio";
+import { LineChart, Line, Grid, ChartTooltip, XAxis } from "@bklitui/ui/charts";
+import { GridHorizontalDemo, GridVerticalDemo, GridBothDemo, GridSolidDemo, GridNoFadeDemo, GridDenseDemo, GridHideEdgeLinesDemo } from "@/components/docs/grid-demo";
+import { OpenInStudioButton } from "@/components/docs/open-in-studio-button";
+
+<ComponentPreview registryName="grid">
+  <GridBothDemo />
+</ComponentPreview>
+
+## Installation
+
+<InstallationTabs name="grid" dependencies={["@visx/grid"]} />
+
+## Usage
+
+The Grid component adds visual reference lines to charts. It must be used inside a chart component (`LineChart`, `AreaChart`, `BarChart`, `ScatterChart`, `CandlestickChart`, `LiveLineChart`, and other cartesian charts).
+
+```tsx
+import { LineChart, Line, Grid, ChartTooltip } from "@bklitui/ui/charts";
+
+<LineChart data={data}>
+  <Grid horizontal />
+  <Line dataKey="value" />
+  <ChartTooltip />
+</LineChart>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `horizontal` | `boolean` | `true` | Show horizontal grid lines |
+| `vertical` | `boolean` | `false` | Show vertical grid lines |
+| `numTicksRows` | `number` | `5` | Number of horizontal lines |
+| `numTicksColumns` | `number` | `10` | Number of vertical lines |
+| `rowTickValues` | `number[]` | - | Explicit tick values for horizontal grid lines. When set, overrides `numTicksRows`. Use with Live Line Chart so grid rows align with `LiveYAxis` labels. |
+| `stroke` | `string` | `var(--chart-grid)` | Line color |
+| `strokeOpacity` | `number` | `1` | Line opacity |
+| `strokeWidth` | `number` | `1` | Line width |
+| `strokeDasharray` | `string` | `"4,4"` | Dash pattern (empty string for solid) |
+| `highlightRowValues` | `number[]` | — | Emphasize horizontal lines at specific y values (e.g. `[0]` for break-even) |
+| `highlightRowStroke` | `string` | `var(--chart-foreground-muted)` | Stroke for highlighted rows |
+| `highlightRowStrokeOpacity` | `number` | `1` | Opacity for highlighted rows |
+| `highlightRowStrokeWidth` | `number` | `1` | Width for highlighted rows |
+| `highlightRowStrokeDasharray` | `string` | `"0"` | Dash pattern for highlighted rows |
+| `fadeHorizontal` | `boolean` | `true` | Fade horizontal lines at left/right edges |
+| `fadeVertical` | `boolean` | `false` | Fade vertical lines at top/bottom edges |
+| `hideHorizontalEdgeLines` | `boolean` | `false` | Omit the first and last horizontal grid lines |
+| `hideVerticalEdgeLines` | `boolean` | `false` | Omit the first and last vertical grid lines |
+
+## Studio
+
+<div className="not-prose mb-3 flex items-center justify-between gap-4">
+  <h3 className="m-0 font-semibold text-foreground text-base tracking-tight">
+    Edit in Studio
+  </h3>
+  <OpenInStudioButton
+    href={studioChartHref("line-chart")}
+    slug="line-chart"
+  />
+</div>
+
+Open [Studio with the line chart](/studio?chart=line-chart), select **Grid** in the components tree, and tune lines, stroke, and edge options in the properties panel. The same controls are available on area, bar, candlestick, live line, line, and scatter charts.
+
+For a pattern fill instead of grid lines, hide **Grid** and use [`Background`](/docs/utility/background) in Studio or in code.
+
+## Examples
+
+### Horizontal Only (Default)
+
+The most common configuration with horizontal reference lines.
+
+<ComponentShowcase code={`<LineChart data={data}>
+  <Grid horizontal />
+  <Line dataKey="value" />
+  <XAxis />
+  <ChartTooltip />
+</LineChart>`}>
+  <GridHorizontalDemo />
+</ComponentShowcase>
+
+### Vertical Only
+
+Use vertical grid lines to emphasize time intervals.
+
+<ComponentShowcase code={`<LineChart data={data}>
+  <Grid horizontal={false} vertical />
+  <Line dataKey="value" />
+  <XAxis />
+  <ChartTooltip />
+</LineChart>`}>
+  <GridVerticalDemo />
+</ComponentShowcase>
+
+### Both Horizontal and Vertical
+
+Display a full grid for detailed reference.
+
+<ComponentShowcase code={`<LineChart data={data}>
+  <Grid horizontal vertical />
+  <Line dataKey="value" />
+  <XAxis />
+  <ChartTooltip />
+</LineChart>`}>
+  <GridBothDemo />
+</ComponentShowcase>
+
+### Solid Lines
+
+Remove the dash pattern for solid grid lines.
+
+<ComponentShowcase code={`<LineChart data={data}>
+  <Grid horizontal strokeDasharray="" />
+  <Line dataKey="value" />
+  <XAxis />
+  <ChartTooltip />
+</LineChart>`}>
+  <GridSolidDemo />
+</ComponentShowcase>
+
+### Without Edge Fade
+
+Disable the edge fade effect for sharp line endings.
+
+<ComponentShowcase code={`<LineChart data={data}>
+  <Grid horizontal fadeHorizontal={false} />
+  <Line dataKey="value" />
+  <XAxis />
+  <ChartTooltip />
+</LineChart>`}>
+  <GridNoFadeDemo />
+</ComponentShowcase>
+
+### Hide edge lines
+
+Omit the outermost horizontal or vertical grid lines — useful when the chart border already provides a frame.
+
+<ComponentShowcase code={`<LineChart data={data}>
+  <Grid horizontal hideHorizontalEdgeLines />
+  <Line dataKey="value" />
+  <XAxis />
+  <ChartTooltip />
+</LineChart>`}>
+  <GridHideEdgeLinesDemo />
+</ComponentShowcase>
+
+### Dense Grid
+
+Increase the number of grid lines for more granular reference.
+
+<ComponentShowcase code={`<LineChart data={data}>
+  <Grid horizontal vertical numTicksRows={10} numTicksColumns={15} />
+  <Line dataKey="value" />
+  <XAxis />
+  <ChartTooltip />
+</LineChart>`}>
+  <GridDenseDemo />
+</ComponentShowcase>
+
+### Custom Styling
+
+```tsx
+<LineChart data={data}>
+  <Grid
+    horizontal
+    vertical
+    stroke="var(--border)"
+    strokeOpacity={0.5}
+    strokeWidth={0.5}
+    strokeDasharray=""
+    fadeHorizontal={false}
+    fadeVertical={false}
+  />
+  <Line dataKey="value" />
+</LineChart>
+```
+
+## Theming
+
+The Grid uses CSS variables for theming:
+
+```css
+:root {
+  --chart-grid: oklch(0.9 0 0);
+}
+
+.dark {
+  --chart-grid: oklch(0.25 0 0);
+}
+```

@@ -1,0 +1,16 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "launchOptions": {
+      "channel": "chrome"
+    },
+    "contextOptions": {
+      "viewport": {
+        "width": 2688,
+        "height": 1440
+      },
+      "deviceScaleFactor": 2
+    }
+  },
+  "outputDir": "C:/Users/khali/Desktop/HVA/03 - PROJECTS/CUSTOM PROJECTS/Kayrealestate/output/playwright/kay-diagrams"
+}

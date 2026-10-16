@@ -1,0 +1,80 @@
+---
+title: Skills
+description: Give AI agents project-aware context for Bklit charts in your application.
+---
+
+Skills give AI assistants project-aware context about Bklit UI. When installed, your agent knows how to install, compose, theme, and animate charts using the correct APIs and patterns for your project.
+
+For example, you can ask your AI assistant to:
+
+- "Add an area chart with tooltips to my dashboard."
+- "Install and theme a gauge chart for this KPI card."
+- "Build a stats page with bar and line charts using the @bklit registry."
+- "Fix the crosshair color on my candlestick chart tooltip."
+
+The skill reads your project's `components.json` and provides the assistant with your framework, aliases, installed components, and resolved paths so it can generate correct chart code on the first try.
+
+## Install
+
+```bash
+npx skills add bklit/bklit-ui
+```
+
+This installs the **bklit-ui** skill into your project. Once installed, your AI assistant automatically loads it when working with Bklit charts and data visualization.
+
+Learn more about skills at [skills.sh](https://skills.sh/docs/).
+
+## What's Included
+
+The skill provides your AI assistant with the following knowledge:
+
+### Project Context
+
+On every interaction, the skill runs `shadcn info --json` to get your project's configuration: framework, Tailwind version, aliases, installed components, and resolved file paths — including which `@bklit` charts are already installed.
+
+### Registry Installation
+
+How to configure the `@bklit` namespace and install charts with the shadcn CLI:
+
+```bash
+npx shadcn@latest add @bklit/line-chart
+```
+
+### Composition and Theming
+
+How to compose charts (`LineChart` → `Grid` → `Line` → `XAxis` → `ChartTooltip`), use `chartCssVars` for type-safe theming, and apply series palette tokens (`--chart-1` … `--chart-5`) plus sequential scale tokens (`--chart-scale-01` … `--chart-scale-05`) for heatmaps and choropleths.
+
+### Animation and Tooltips
+
+Enter animation defaults, replay patterns via `revealSignature`, custom tooltip content, `indicatorColor` for candlesticks, and the `useChart` hook for custom indicators.
+
+### Chart Catalog
+
+A decision guide for all 15 chart types with doc URLs, gallery links, and install commands — area, bar, line, live line, composed, scatter, candlestick, pie, ring, radar, gauge, heatmap, funnel, sankey, and choropleth.
+
+## How It Works
+
+1. **Project detection** — The skill activates when working with `@bklit` registry components, `@bklitui/ui/charts`, or chart/data-visualization tasks.
+2. **Context injection** — It runs `shadcn info --json` to read your project configuration and injects the result into the assistant's context.
+3. **Pattern enforcement** — The assistant follows Bklit composition rules: root chart + children, semantic chart CSS variables, and correct tooltip/crosshair patterns.
+4. **Doc discovery** — The assistant references [ui.bklit.com](https://ui.bklit.com/docs/components) documentation and the [charts gallery](https://ui.bklit.com/charts/area-chart) before generating code.
+
+## Learn More
+
+- [Installation](/docs/installation) — Set up the `@bklit` registry in your project
+- [Theming](/docs/theming) — CSS variables and `chartCssVars`
+- [Components](/docs/components) — Chart API reference
+- [Charts gallery](/charts/area-chart) — Interactive examples
+- [Studio](/studio) — Tune props and copy generated code
+- [skills.sh](https://skills.sh/docs/) — Learn more about AI skills
+
+## Contributing to bklit-ui
+
+If you cloned the [bklit-ui repository](https://github.com/bklit/bklit-ui) to contribute new charts, additional contributor-only skills live in `.agents/skills/`:
+
+| Skill | Purpose |
+|-------|---------|
+| **bklit-studio** | Auto-trigger when building/editing charts. Prototype in `/studio`; edit `packages/studio` + `packages/ui`. See `AGENTS.md`. |
+| **bklit-ship** | Ship a chart from Studio prototype to docs, gallery, and shadcn registry |
+
+These skills are **not** published to skills.sh — they are for monorepo development only.

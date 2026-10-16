@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant B as Browser
+    participant N as Vercel facade
+    participant A as FastAPI
+    participant P as PostgreSQL
+    B->>N: POST /api/v1/auth/login
+    N->>A: Credentials through server channel
+    A->>P: Verify hash and create 7-day session
+    A-->>N: Opaque token
+    N-->>B: HttpOnly Secure cookie
+    B->>N: Mutation with cookie and CSRF
+    N->>A: Session and facade secret
+    A->>P: Current session, role and scope
+    P-->>A: Current authorization
+    A-->>B: Result via N

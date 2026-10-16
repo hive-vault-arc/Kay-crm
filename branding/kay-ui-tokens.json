@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "name": "KAY UI design tokens",
+    "status": "approved-v3-implementation",
+    "date": "2026-10-16",
+    "note": "Shared application tokens translating the user-approved V3 references. System sans remains in use pending licensed brand font/artwork."
+  },
+  "color": {
+    "brand": {
+      "white": "#FFFFFF",
+      "ivory": "#FAF8F4",
+      "beige": "#F6ECDA",
+      "charcoal": "#272727",
+      "gold": "#C9A75C",
+      "goldText": "#795821",
+      "logoBlack": "#000000"
+    },
+    "neutral": {
+      "textSecondary": "#5E5E5E",
+      "borderStrong": "#767676",
+      "borderSubtle": "#D8D4CC",
+      "surfaceMuted": "#F4F2ED"
+    },
+    "surface": {
+      "canvas": "#F7F7F5",
+      "content": "#FFFFFF",
+      "warm": "#F6ECDA",
+      "sidebar": "#272727",
+      "sidebarForeground": "#FFFFFF",
+      "overlay": "#FFFFFF"
+    },
+    "content": {
+      "primary": "#272727",
+      "secondary": "#5E5E5E",
+      "inverse": "#FFFFFF",
+      "link": "#795821"
+    },
+    "selection": {
+      "background": "#F6ECDA",
+      "foreground": "#272727",
+      "indicator": "#795821"
+    },
+    "navigation": {
+      "selectedBackground": "#413A2D",
+      "selectedForeground": "#F1D99F"
+    },
+    "action": {
+      "primaryBackground": "#272727",
+      "primaryHover": "#3A3A3A",
+      "primaryPressed": "#171717",
+      "primaryForeground": "#FFFFFF",
+      "secondaryBackground": "#FFFFFF",
+      "secondaryHover": "#F4F2ED",
+      "secondaryForeground": "#272727",
+      "destructiveBackground": "#B4232F",
+      "destructiveHover": "#921E29",
+      "destructiveForeground": "#FFFFFF",
+      "focusRing": "#795821"
+    },
+    "status": {
+      "success": { "background": "#E8F5EE", "foreground": "#216E4E", "border": "#2E7D58" },
+      "warning": { "background": "#FFF4D9", "foreground": "#8C5400", "border": "#A56400" },
+      "danger": { "background": "#FDEBEC", "foreground": "#A11D22", "border": "#C7313C" },
+      "info": { "background": "#EDF4FF", "foreground": "#1E5AA8", "border": "#2B64B1" },
+      "neutral": { "background": "#F2F3F5", "foreground": "#4B5563", "border": "#767676" },
+      "purple": { "background": "#F1EDFA", "foreground": "#62439A", "border": "#9477C1" },
+      "teal": { "background": "#E8F4F2", "foreground": "#23695F", "border": "#4B8E82" }
+    },
+    "chart": {
+      "series1": "#272727",
+      "series2": "#795821",
+      "series3": "#1E5AA8",
+      "series4": "#6A4EA1",
+      "series5": "#237561"
+    }
+  },
+  "typography": {
+    "family": "Satoshi, Arial, sans-serif",
+    "licenseStatus": "verify-before-installation",
+    "weights": { "regular": 400, "medium": 500, "bold": 700 },
+    "sizesPx": { "display": 48, "pageTitle": 32, "sectionTitle": 20, "body": 16, "label": 14, "caption": 12 },
+    "lineHeightsPx": { "display": 56, "pageTitle": 40, "sectionTitle": 28, "body": 24, "label": 20, "caption": 16 }
+  },
+  "spacePx": { "0": 0, "1": 4, "2": 8, "3": 12, "4": 16, "5": 20, "6": 24, "8": 32, "10": 40, "12": 48, "16": 64 },
+  "radiusPx": { "small": 6, "medium": 6, "large": 10 },
+  "controlPx": { "buttonDesktop": 40, "inputDesktop": 40, "touchTarget": 44, "inputTouch": 48, "tableRow": 48 },
+  "layoutPx": {
+    "mobileMargin": 16,
+    "tabletMargin": 24,
+    "desktopMargin": 28,
+    "desktopSidebar": 224,
+    "contentMaxWidth": 1440,
+    "tableMinWidth": 896
+  }
+}

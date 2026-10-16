@@ -1,0 +1,179 @@
+---
+title: Live Line Chart
+description: Real-time streaming line chart with smooth scrolling, crosshair, and animated axes
+---
+
+import { LiveLineChart, LiveLine, ChartTooltip, LiveXAxis, LiveYAxis } from "@bklitui/ui/charts";
+import { LiveLineChartDemo } from "@/components/docs/live-line-chart-demo";
+
+<ComponentPreview registryName="live-line-chart">
+  <LiveLineChartDemo />
+</ComponentPreview>
+
+## Installation
+
+<InstallationTabs name="live-line-chart" dependencies={["@visx/curve", "@visx/scale", "@visx/shape", "@visx/responsive", "@visx/event", "d3-array", "motion"]} />
+
+## Usage
+
+The Live Line Chart is built for **streaming time-series data**: a sliding time window, smooth interpolation, a live dot at the current value, and an interactive crosshair. Use it for stock tickers, crypto micro-prices, or any real-time metric.
+
+Data is an array of `{ time: number, value: number }` where `time` is Unix seconds. You push new points as they arrive and pass the **latest value** so the chart can smoothly interpolate the display.
+
+### Basic Example
+
+```tsx
+import {
+  LiveLineChart,
+  LiveLine,
+  ChartTooltip,
+  LiveXAxis,
+  LiveYAxis,
+} from "@bklitui/ui/charts";
+
+const [data, setData] = useState([]);
+const [value, setValue] = useState(100);
+
+// Append new points (e.g. from WebSocket or polling)
+useEffect(() => {
+  const id = setInterval(() => {
+    const point = { time: Date.now() / 1000, value: fetchLatest() };
+    setData((prev) => [...prev.slice(-500), point]);
+    setValue(point.value);
+  }, 1000);
+  return () => clearInterval(id);
+}, []);
+
+<LiveLineChart data={data} value={value} window={30}>
+  <LiveLine dataKey="value" stroke="var(--chart-line-primary)" formatValue={(v) => `$${v.toFixed(2)}`} />
+  <ChartTooltip showDatePill={false} content={MyTooltipContent} />
+  <LiveXAxis />
+  <LiveYAxis position="left" formatValue={(v) => `$${v.toFixed(2)}`} />
+</LiveLineChart>
+```
+
+### Data Shape
+
+Each point must have:
+
+| Field  | Type     | Description        |
+|--------|----------|--------------------|
+| `time` | `number` | Unix time in seconds |
+| `value`| `number` | Y-axis value       |
+
+Use `dataKey` on `LiveLineChart` if your value field has a different name (default is `"value"`).
+
+### Time Window and Now Offset
+
+- **`window`** (default `30`): Visible time window in seconds. Older points scroll off the left.
+- **`nowOffsetUnits`** (default `0`): How many X-tick units to leave between the live dot and the right edge. Use `1` to get a short leading gap and a visible fade on the line/area at the right.
+
+```tsx
+<LiveLineChart data={data} value={value} window={20} nowOffsetUnits={1}>
+  <LiveLine dataKey="value" />
+  {/* ... */}
+</LiveLineChart>
+```
+
+### Pause Scrolling
+
+Set **`paused`** to freeze the chart (e.g. while the user inspects). The "now" marker and domain stop advancing; new data can still be appended.
+
+```tsx
+const [paused, setPaused] = useState(false);
+
+<LiveLineChart data={data} value={value} paused={paused}>
+  {/* ... */}
+</LiveLineChart>
+```
+
+### Momentum Colors
+
+Pass **`momentumColors`** to `LiveLine` to color the line, fill, and dot by short-term trend (up / down / flat).
+
+```tsx
+const momentumColors = {
+  up: "var(--color-emerald-500)",
+  down: "var(--color-red-500)",
+  flat: "var(--color-zinc-400)",
+};
+
+<LiveLine
+  dataKey="value"
+  momentumColors={momentumColors}
+  formatValue={(v) => `$${v.toFixed(2)}`}
+/>
+```
+
+### Live Line Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `dataKey` | `string` | required | Key in data for y values |
+| `stroke` | `string` | `var(--chart-line-primary)` | Line color (ignored if `momentumColors` set) |
+| `strokeWidth` | `number` | `2` | Line width |
+| `fill` | `boolean` | `true` | Show gradient fill under curve |
+| `pulse` | `boolean` | `true` | Show pulsing live dot |
+| `dotSize` | `number` | `4` | Radius of the live dot |
+| `badge` | `boolean` | `true` | Show value badge at live tip |
+| `formatValue` | `(v: number) => string` | - | Formatter for badge (and optional tooltip) |
+| `momentumColors` | `MomentumColors` | - | `{ up, down, flat }` colors by trend |
+
+### LiveLineChart Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `data` | `LiveLinePoint[]` | required | Streaming points `{ time, value }` |
+| `value` | `number` | required | Latest value (for smooth interpolation) |
+| `dataKey` | `string` | `"value"` | Key for value field in context |
+| `window` | `number` | `30` | Visible time window (seconds) |
+| `numXTicks` | `number` | `5` | Number of X-axis ticks |
+| `nowOffsetUnits` | `number` | `0` | Leading offset in X-tick units |
+| `exaggerate` | `boolean` | `false` | Tighter Y-axis range |
+| `lerpSpeed` | `number` | `0.08` | Y-range interpolation speed (0–1) |
+| `margin` | `Partial<Margin>` | - | Chart margins |
+| `paused` | `boolean` | `false` | Freeze chart scrolling |
+
+### LiveXAxis / LiveYAxis
+
+- **LiveXAxis**: Time labels and a time pill that follows the crosshair. No required props.
+- **LiveYAxis**: Animated value labels. Use **`position`** `"left"` or `"right"` and **`formatValue`** for display.
+
+### Tooltip
+
+Use **`ChartTooltip`** with **`showDatePill={false}`** and a custom **`content`** renderer so the time and value match the live chart. The crosshair and time pill stay in sync via shared context.
+
+### Grid with Live Charts
+
+If you use **Grid** inside `LiveLineChart`, you can pass **`rowTickValues`** (from context or derived from the same scale as `LiveYAxis`) so horizontal grid lines align with the Y-axis labels. See the [Grid](/docs/utility/grid) docs for `rowTickValues`.
+
+### Background
+
+Use [`Background`](/docs/utility/background) instead of `Grid` for a pattern fill behind the live line. See **Pattern Background** examples on the [live line chart gallery](/charts/live-line-chart).
+
+## Loading state
+
+`LiveLineChart` has no loading status of its own. A live chart's loading state is just a line, so render a [`LineChartLoading`](/docs/components/line-chart) while the stream connects, then swap in `LiveLineChart` once data starts arriving:
+
+```tsx
+import { LineChartLoading, LiveLineChart } from "@bklitui/ui/charts";
+
+function LiveRevenue({ connected, points }) {
+  if (!connected) {
+    return <LineChartLoading loadingStyle="sweep" />;
+  }
+  return <LiveLineChart data={points} /* … */ />;
+}
+```
+
+`loadingStyle="sweep"` gives the diagonal shimmer; omit it for the default traveling pulse. See the [Line Chart loading docs](/docs/components/line-chart#loading-state) for the full set of loading props.
+
+## Theming
+
+Uses the same chart CSS variables as the Line Chart (`--chart-line-primary`, `--chart-grid`, `--chart-tooltip-*`, etc.). The live dot and badge use the line color or `momentumColors` when provided.
+
+## Dependencies
+
+```bash
+pnpm add @visx/shape @visx/curve @visx/scale @visx/responsive @visx/event d3-array motion
+```

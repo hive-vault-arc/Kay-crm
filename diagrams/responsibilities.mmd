@@ -1,0 +1,9 @@
+flowchart LR
+    M[Manager or administrator] -->|assigns| C[Contact]
+    A[Primary agent] -->|owns portfolio| C
+    B[Authorized collaborator] -->|works on contact records| C
+    A --> H[Action history]
+    B --> H
+    M --> H
+    H -->|true actor_user_id| K[Activity KPI]
+    C -->|current primary_agent_id| P[Portfolio KPI]

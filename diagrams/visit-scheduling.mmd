@@ -1,0 +1,6 @@
+erDiagram
+    AGENCY ||--|| VISIT_SCHEDULE_POLICY : configures
+    VISIT_SCHEDULE_POLICY ||--o{ VISIT_WORKING_WINDOW : opens
+    VISIT_SCHEDULE_POLICY ||--o{ VISIT_BREAK_WINDOW : pauses
+    AGENCY ||--o{ VISIT : hosts
+    USER ||--o{ VISIT : organizes

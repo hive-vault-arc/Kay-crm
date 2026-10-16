@@ -1,0 +1,10 @@
+flowchart TB
+    B[Browser] --> N[Next.js and Vercel same-origin facade]
+    N --> A[FastAPI DigitalOcean Frankfurt]
+    B -->|Short-lived transfer permit| A
+    W[Worker] --> A
+    A --> M[Contacts inventory deals visits finance imports modules]
+    M --> PG[(PostgreSQL and outbox)]
+    A --> SP[(Private Spaces Frankfurt)]
+    W --> PG
+    W --> SP

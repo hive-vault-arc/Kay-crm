@@ -1,0 +1,15 @@
+* text=auto eol=lf
+# Preserve byte-for-byte upstream snapshots and their published provenance hashes.
+docs/reference/** -text
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.zip binary
+*.pdf binary

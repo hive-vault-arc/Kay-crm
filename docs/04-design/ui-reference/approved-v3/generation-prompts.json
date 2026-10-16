@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-15",
+  "method": "Built-in image generation, three separate static edits",
+  "status": "complete-static-mockups-for-review",
+  "scope": "Login footer only; neutral Create Lead surfaces; thinner Lead Details status navigation and single vertical information flow",
+  "commonPrompt": "Use case: precise-object-edit / ui-mockup. Create ONE KAY CRM static screen picture for Try Number Three using the specified reference(s). Follow the user's scoped corrections rather than inventing a redesign.\nKAY identity stays ivory#FAF8F4,white#FFFFFF,charcoal#272727,gold#C9A75C,deepgold#795821,beige#F6ECDA, system sans-serif, French labels and MAD values. Keep source logos, icons, content and recognizable shell. Neutral WHITE OR SOFT BEIGE large surfaces. Color lives in small meaningful icons, status cues and selected details, not broad blue/purple card fills. Dark readable text, no neon, heavy shadows, new imagery or invented app features.\nAll data remains synthetic and labelled as a mockup. No support phone/email, fake certifications, audited-security promises or compliance badges. These pictures are not application code. One image per requested screen, never a collage. Overall output opaque. Save only the requested screen, not another page.",
+  "screens": [
+    {
+      "id": "01",
+      "file": "01-login.png",
+      "name": "Login with compact footer",
+      "refs": [
+        "C:\\Users\\khali\\Desktop\\Fixing the UI\\Try Number Two\\01-login.png"
+      ],
+      "prompt": "LOGIN: this source is explicitly APPROVED and loved by the user. ADD A SMALL FOOTER ONLY. Preserve EVERYTHING else: complete unboxed KAY logo at upper left, the exact villa photograph and its soft ivory fade, olive foliage, crop/light/colors, current form panel position/size, heading \"Ravi de vous retrouver\", labels/placeholders, button \"Se connecter\", help line, margins and type sizes. No restyling, recentering, moving logo/form, new dark rail, changes to photograph, extra form fields or altered headline.\nThe only permitted edited region is the narrow bottom~50px of the picture. Add one refined compact footer across the bottom with a very subtle ivory translucent backing or hairline separator, not three large cards. It must not cover/move/resize the form or existing content. Place three small understated icon/text items in a single aligned line: headset \"Contacter le support\", lock \"Sécurité du CRM\", shield \"Confidentialité\". Use12–13px-equivalent readable charcoal/deepgold text and small simple icons, light spacing/dividers. These are support/security/privacy information labels, not claims of certification or measured security. No invented contact address or phone. Preserve the existing small \"Maquette • Données de démonstration\" marker at the lower left, perhaps on the same footer line if space allows. The photo behind the footer should still be apparent. NO other changes anywhere above this small footer region.\nReturn the SAME landscape framing/aspect as input. This must look like the identical approved login plus a discreet bottom support/security footer."
+    },
+    {
+      "id": "04",
+      "file": "04-create-or-edit-lead.png",
+      "name": "Create Lead with neutral section surfaces",
+      "refs": [
+        "C:\\Users\\khali\\Desktop\\Fixing the UI\\Try Number Two\\04-create-or-edit-lead.png"
+      ],
+      "prompt": "CREATE LEAD: exact same page and arrangement as reference, but neutralize broad colored card/header fills. Preserve topbar, sidebar, architectural header, title, fields, entered synthetic values, form layout, right preview and all actions.\nMANDATORY: the wide background area containing \"1. Contact\", its blue person icon, \"Nouveau contact\" and \"Contact existant\" must become WHITE or very pale warm BEIGE, NOT BLUE. Keep the SMALL person icon/tile blue. The selected Nouveaucontact option becomes neutral beige/white with a restrained deepgold outline/selection cue instead of a large blue fill; icon can remain blue. Labels remain charcoal.\nThe wide background area containing \"2. La demande\" must become WHITE or very pale warm BEIGE, NOT PURPLE. Keep the SMALL enquiry icon/tile violet. Do not remove color from the icons; the user's correction is about large background areas only.\nKeep the rest of each form group white; no blue/purple washes anywhere across the width of a section. Neutralize the right preview's \"Après la création\" broad teal fill to white/beige too, retaining its tiny teal idea icon. The main preview backing may stay warm beige, with its existing small violet SB initials and blue Nouveau badge. Small colored statuses/icons are welcome; large colored cards are not.\nRetain SalmaBenali, phone+212600000001, salma@example.test, SourceSiteweb, ResponsableAgentdémoA, message, collapsed Informationscomplémentaires, Annuler/Créerlelead and demo footer. No new fields, steps, duplicate-check alert or different page. Keep geometry/content the same, only refine these targeted neutral surfaces. Same landscape aspect/framing as the input."
+    },
+    {
+      "id": "05",
+      "file": "05-lead-details.png",
+      "name": "Lead Details with thin status strip and one vertical information flow",
+      "refs": [
+        "C:\\Users\\khali\\Desktop\\Fixing the UI\\Try Number Two\\05-lead-details.png",
+        "C:\\Users\\khali\\Desktop\\Fixing the UI\\inspiration\\lead or deal detail 1.png",
+        "C:\\Users\\khali\\Desktop\\Fixing the UI\\inspiration\\lead or deal detail 2.png"
+      ],
+      "prompt": "LEAD DETAILS: Image1=KAY TryTwo page to revise. Images2/3=inspiration for compact status lines and a long vertical record flow; do NOT copy its navy/yellow brand or its side-by-side field columns. User explicitly asks EVERYTHING IN THE INFORMATION BODY to be VERTICAL.\nKeep recognizable KAY sidebar/topbar, SalmaBenali record header, L-001/AppartementàTanger, currentQualifié, sourceSiteweb, AgentdémoA, Modifier/CreateDeal actions, warm header architecture, fonts and small colored section icons. Do not turn this into DealDetails. Primary CTA remains \"Créer une affaire\".\nCORRECTION1, THINNER STATUS: replace the giant filled six-color chevron tiles with a low-profile horizontal status strip like inspiration. Six thin6–8px colored line segments with14px labels underneath, total visual region about44px, no oversized icons, broad colored rectangles, filled arrows or huge white enclosing card. Stages remain Nouveau(blue),Contacté(teal),Àrelancer(amber),Qualifié(violet,selected and check/bold cue),Converti(green),Clôturé(grey). It stays directly under record header, above main information. This is navigation, not a chart or a mandatory sequential wizard.\nCORRECTION2, ALL INFORMATION SECTIONS VERTICALLY STACKED: REMOVE ENTIRELY the right-hand contact/responsibility sidebar. NO left/right split, no two information columns, no side-by-side panels. Use ONE continuous main content column with full-width neutral WHITE/BEIGE sections stacked ONE BELOW THE OTHER. Within each section, each field's label is ABOVE its value, and each field group stacks BELOW the previous field. Not a two-up facts grid or label/value columns spanning side by side. Navigation/sidebar/header actions can remain normal; the information flow must be strictly vertical.\nThe order down the page must visibly be:\n1 Contact, full width: Nomcomplet/SalmaBenali; Téléphoneprincipal/masked+2126••••••••; E-mail/salma@example.test; Responsable/AgentdémoA; Collaborateurs/Nonrenseigné or existing add-collaborator control. No duplicated giant avatar inside Contact.\n2 La demande, full width BELOW Contact: Source/Siteweb; Reçuele/15oct2026à14:32; Message/the two short source enquiry sentences. Neutral white/beige message surface, not blue.\n3 Recherche principale, full width BELOW La demande: Typedetransaction/Achat; Typedebien/Appartement; Ville/Zone/Tanger; Budget/1200000–1600000MAD; Nombredechambres/2; Surface/Nonrenseignée. Every label above its value, fields stacked vertically, not six facts in columns.\n4 Prochaine action, full width BELOW research: \"Confirmer la visite · 16 oct. 2026,10:00\" and modest Planifier action on a neutral beige surface. No separate right-hand agenda.\n5 Activité récente, full width BELOW next action: two compact source activity entries stacked, retaining author attribution. No new stats, property gallery or giant marketing quote block. Remove the old right-bottom quote with the obsolete right pane.\nUse thin separators and sane16–24px vertical spacing instead of excessive cards; blue/violet/amber remain only small icons or thin cues. Neutral backgrounds everywhere. Keep at least14–16px-equivalent body labels/data, never shrink text to squeeze the new structure into the old short viewport.\nOUTPUT: ONE FULL-PAGE DESKTOP SCROLL CAPTURE, wider desktop work area plus left sidebar, but tall enough to show this single vertical stack clearly, around1600x2304 or equivalent. This may be taller than the source because of the user's requested vertical layout. Do NOT interpret tall canvas as mobile; keep the normal desktop sidebar and ample main-column width. Do NOT recreate a side panel to fit the content, do NOT make a collage or omit research/contact. One genuine long desktop page, complete and readable, footer demo marker at bottom."
+    }
+  ],
+  "protectedTryTwoImages": [
+    {
+      "File": "01-login.png",
+      "SHA256": "F4E46508BA92EFA91D775579BDA9C33ECEEE51B0FFEA2651A1849E4B9BE8788D"
+    },
+    {
+      "File": "02-dashboard.png",
+      "SHA256": "ED16BD11DC45DECDB745F88F1BDD391C6ED44306080D1CCCB8CFDBFF50E6E857"
+    },
+    {
+      "File": "03-leads-and-deals-list.png",
+      "SHA256": "6733C962503418AFBC4660B218F38D2B1B270CF5CE80585851C64B99C49E9622"
+    },
+    {
+      "File": "04-create-or-edit-lead.png",
+      "SHA256": "3AB6570C92504135ED6A2CEA9F0B07C871E147CFA2DC8129CEAB6C3033EEDA3E"
+    },
+    {
+      "File": "05-lead-details.png",
+      "SHA256": "5AFE0F7F9F971314FF0FD0399C6180FB3E5CB617E603E0D5162EBD8B49B114FB"
+    },
+    {
+      "File": "06-visits-calendar.png",
+      "SHA256": "F77897792E28AE884C0CA4D43DC9ED01DE1B1D9CB9C0FEB770310C403F039F07"
+    },
+    {
+      "File": "07-projects.png",
+      "SHA256": "31660C42CAA6AA6B31156E6A8726E603B06AEA05451DCA4AA846FA8B0FF2BA47"
+    },
+    {
+      "File": "08-project-details.png",
+      "SHA256": "E8065B36822D0428E448184EFE62AD8318C855E6ACB305B4DB213713571C8214"
+    },
+    {
+      "File": "09-all-users.png",
+      "SHA256": "505D0175CEEE17BA6CD60ADBE7EEFC395F0AADC8A9824A56803921DC5A9DE4CA"
+    }
+  ]
+}

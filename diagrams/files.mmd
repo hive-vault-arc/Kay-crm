@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant B as Browser
+    participant N as Vercel facade
+    participant A as FastAPI
+    participant P as PostgreSQL
+    participant S as Private Spaces
+    participant W as Antivirus worker
+    B->>N: POST /api/v1/files/permits
+    N->>A: Session and resource
+    A->>P: Check right and issue short permit
+    A-->>B: Permit via N
+    B->>A: Direct PUT with permit header
+    A->>P: Consume permit and recheck session
+    A->>S: Quarantined object
+    A->>P: Document pending_scan and outbox
+    W->>S: Scan object
+    W->>P: clean or rejected verdict
+    B->>A: Direct GET with fresh permit
+    A->>P: Recheck right and clean verdict
+    A->>S: Read private object
+    A-->>B: Protected stream

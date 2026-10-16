@@ -1,0 +1,305 @@
+{
+  "scope": "SP22 generated evidence; representative frames opened, not every pixel certified",
+  "files": [
+    {
+      "path": "frontend/output/playwright/sp22-calendar-empty-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "97ff181345fe58e0e2cc778d06b473f269ddec888fe0d4f9793ea001f7df1e5a"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-calendar-empty-mobile.png",
+      "width": 780,
+      "height": 3664,
+      "sha256": "f22877f06907364bfc600820c70e6cbdf790bc56cf70393a2f5e29ffd506b39f"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-dashboard-empty-desktop.png",
+      "width": 2880,
+      "height": 6524,
+      "sha256": "6b0b5e0e79b7268afe1168649913ddd55a7f205af37453a09194f3aadd210a2c"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-deal-detail-desktop.png",
+      "width": 2880,
+      "height": 7142,
+      "sha256": "1d406dd9fde7c31fcefa36250d29d91c0b98b2af11290ac5ff9fab5d05dc8e04"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-deal-form-desktop.png",
+      "width": 2880,
+      "height": 2494,
+      "sha256": "ff33a4f9321016dbe1ea1df70cfa91ce5a93389e1818b63664ecc465e885ca6a"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-deals-list-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "78390f47ccbc885eddacc60f1f9ad20a961789b336c38fb333307f0bfa28d2dd"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-focus-chrome-final.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "58f67dc7ca649f93dbf0f74ec0495f6f1f9a7ed072f902491837aeaa028faee4"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-focus-edge-final.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "bd2d2485e94f211dce7724b7112332654ec71677978fe697b900a70b246ed0a5"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-focus-mobile-chromium-final.png",
+      "width": 412,
+      "height": 839,
+      "sha256": "0fb3067a8388cd0762b59c8cde518986dcb929a546f4d3fec6f1243cf655ce75"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-focus-mobile-webkit-final.png",
+      "width": 390,
+      "height": 664,
+      "sha256": "ae62d336521cb0f0c6bdeeeac468bc51a2e905ae0de244e5b5ab9bf5ccc6b170"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-lead-detail-desktop.png",
+      "width": 2880,
+      "height": 2562,
+      "sha256": "527f3ac1558a22b920e19d5f8043f28432b905729b328108a7b7d4e7ebaab814"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-lead-detail-mobile.png",
+      "width": 780,
+      "height": 3978,
+      "sha256": "85417368b53eb93852bbbf828d1a0706b573a5ce7a7a62966a2b8c451997ec64"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-lead-form-desktop.png",
+      "width": 2880,
+      "height": 2948,
+      "sha256": "01fb9b3937bf0cee8c6934b39bd80d91a973dd7b01c59a515822c98bba68003b"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-lead-form-mobile.png",
+      "width": 780,
+      "height": 3684,
+      "sha256": "bfd153d2806fd5e33fef9d52ba565a904d2c2c73a2f220f286c774d78405d3e3"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-leads-list-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "9dd92cc8e04e3516f7c9be27e693727ab73381549a7feab54933a9dbe56df224"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-login-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "9ac1e7e773137d54402b9cac8a87837b3ae3d3569b32e473eface5d88b3c3b5d"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-navigation-mobile.png",
+      "width": 780,
+      "height": 3684,
+      "sha256": "7be81ef5e28183e2acf0dad86c6014ea61c974f3c40855d17b7f98ec6dc6bfa8"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-project-detail-desktop.png",
+      "width": 2880,
+      "height": 3118,
+      "sha256": "5bbd7e8ea55f0c7f5db40c349e2ed33bcfbf31a4bf3ef38266d8ac0ddcd68c72"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-projects-list-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "d0a3a0afe2af6a7222aa525f7b24b8d5a1daf524b84d3c76f3c15f5906e0f47d"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-calendar-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "84d05b7c2fed5827108c72e7f0e4bb4cb20313301dd85a39f8fcb9238f451eb2"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-contact-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "31994e323f41295600be38915ba4e09cd28b05f3af9ed38d58c89c83763b5c0a"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-dashboard-desktop.png",
+      "width": 2880,
+      "height": 8206,
+      "sha256": "9c9ea23f39ca01810d14f770dee503770188092a9d9dcea98f3dce77358b4ea9"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-deal-desktop.png",
+      "width": 2880,
+      "height": 7822,
+      "sha256": "60e7e0d2083445533cf4256934c0c082ad76094164cc879d76848ec47a2fc84e"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-denied-mobile.png",
+      "width": 780,
+      "height": 1688,
+      "sha256": "ef1b42336e1ac237a0be9566f3fe1e9f676f07b543fee9af32d7aac17de978a6"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-empty-dashboard-mobile.png",
+      "width": 780,
+      "height": 9078,
+      "sha256": "c0892c0d255a4b2247b61d8fa4d06c952e8b14964796a4c87fd642659ba67be0"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-files-desktop.png",
+      "width": 2880,
+      "height": 2254,
+      "sha256": "a86a6ba91569cfda8e9e7e87d04693e5885f1eb7de3caaf80a40a1a26f3fe246"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-finance-desktop.png",
+      "width": 2880,
+      "height": 2774,
+      "sha256": "4558a8abaebf6252b930805255355378e386fc860a65153e93388af1b7291795"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-invalidated-login-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "472e2136492becc0106cd0d099487d6efda28c0279735827d2aca6f1abcccdf2"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-project-desktop.png",
+      "width": 2880,
+      "height": 2896,
+      "sha256": "2c633f2188f9553eec1ee9fb0e598bf7ddf8c7e42f74fbe0a4fd4aea58b192d0"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-restored-visit-desktop.png",
+      "width": 2880,
+      "height": 2222,
+      "sha256": "3df62d2b59ca1315258a5d2980bd15b912dcf2c4b5ec301f5650dfaaab277f67"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-staff-form-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "84ff24ce28758a52820cf22ffad21e14edf1829a7472409c17fe28f36779823b"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-unit-detail-desktop.png",
+      "width": 2880,
+      "height": 2894,
+      "sha256": "8bca885a988d2278ab7b9acfbcc6ee8f5d56ca0c1bbca5d37020291a32a180fc"
+    },
+    {
+      "path": "frontend/output/playwright/sp22-users-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "3746dcf9c44223c3a69770174f8b351a05dc37d1cef9f3b3bf91c646224267ff"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-body-corrected-mobile.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "d8b569af320f7712dca80ec614ec9fa49c94b541de67a064d860973767276862"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-body-error-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "5cd704cd1391559b592f47c0af913ef1183a569753fd64dc3f206ec33d96bcd8"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-body-error-mobile.png",
+      "width": 780,
+      "height": 1712,
+      "sha256": "8e1610d3f0e3f39dd023391742bc5a45f120ef04dbc40b6a96898b3184c7b078"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-denied-mobile.png",
+      "width": 780,
+      "height": 1688,
+      "sha256": "fa4cfb682af0351ca4f6424eb3130232ceffe9c07b7fb06b5d62e1042faec396"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-failed-mobile.png",
+      "width": 780,
+      "height": 1688,
+      "sha256": "5f7d7f295fee7f57cd77d05f39f21e7ef46e384f389c37896d720d6b29d13f2b"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-follow-error-mobile.png",
+      "width": 780,
+      "height": 1688,
+      "sha256": "0e449f7f1800501f5e9b5d599f71191c224b7c0ec190612bbce4083662f99788"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-form-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "87f9c7cf00d2446e4cf14adcd6c7aa8883a02e2291fe087764e0a1b75e23f7fb"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-form-mobile.png",
+      "width": 780,
+      "height": 1688,
+      "sha256": "31ebf2afe834228a79944fde5336260cd490b7d93737806ccc512856810e57e2"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-history-desktop.png",
+      "width": 2850,
+      "height": 3184,
+      "sha256": "4d377591e4bdd12fc3ba8b6c4e31c4fac934b020980fc8ed344b8afd6ea40b6c"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-lead-desktop.png",
+      "width": 2850,
+      "height": 2410,
+      "sha256": "ca76aec1f84f002bb03febc19a38aed8f9e92320b91fcd2271e3a800e2a9c86e"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-loading-mobile.png",
+      "width": 780,
+      "height": 1688,
+      "sha256": "f0304ea2e5e640a750c455c2a33744a21b0d8ec280bfd2c8f61123531165cf0d"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-processed-mobile.png",
+      "width": 780,
+      "height": 1688,
+      "sha256": "4f341bea9efaad4a9d587d9d3b1a7ffadd49d64bcc90c45b26ad45450331110d"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-queued-desktop.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "5a98051abfe57c26ebdd82cf6555462369a5e50d8394b9478315bfbde9e110c8"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-queued-mobile.png",
+      "width": 780,
+      "height": 1688,
+      "sha256": "26eaf507ed5503c8a32070dbe8aa46217cd6bb58a0b37c2b4be9a8624962b6c4"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-received-desktop.png",
+      "width": 2850,
+      "height": 2060,
+      "sha256": "d32c428a17d2e8cec2fb8c230814ff9211622320d9c4435a8da0f0888468e7a1"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-validation-mobile.png",
+      "width": 780,
+      "height": 1688,
+      "sha256": "6cede5779dcbfbbcc3fd288b2690bf2c9e0871084bd37aad4470cdcbac25c4a1"
+    },
+    {
+      "path": "frontend/output/playwright/sp20-zoom-200.png",
+      "width": 2824,
+      "height": 2768,
+      "sha256": "a56d8e5db3973050f06b4e58625d7b5e0f925c3b5605db75942b93fe2c265a7d"
+    }
+  ]
+}

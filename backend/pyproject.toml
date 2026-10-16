@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kay-backend"
+version = "0.1.0"
+description = "KAY local FastAPI foundation"
+requires-python = "==3.14.3"
+dependencies = [
+  "fastapi==0.143.1",
+  "pydantic>=2.12,<3",
+  "pydantic-settings>=2.12,<3",
+  "python-dotenv>=1.2,<2",
+  "email-validator>=2.3,<3",
+  "uvicorn>=0.40,<1",
+  "SQLAlchemy==2.1.4",
+  "alembic>=1.18,<2",
+  "psycopg[binary]>=3.3,<4",
+  "argon2-cffi==25.1.0",
+  "phonenumbers==9.0.41",
+  "Pillow==12.3.0",
+  "pypdf==6.20.1",
+  "tzdata==2026.5",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pip-tools>=7.5,<8",
+  "setuptools>=80",
+  "ruff>=0.14,<1",
+  "mypy>=1.19,<2",
+  "pytest>=9,<10",
+  "pytest-cov>=7,<8",
+  "httpx>=0.28,<1",
+  "locust>=2.43,<3",
+  "trustme>=1.2,<2",
+  "pip-audit>=2.10,<3",
+  "pywinpty>=2,<4; sys_platform == 'win32'",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+exclude = [".venv", ".local-data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+filterwarnings = ["error"]
+markers = ["postgres: requires the guarded real PostgreSQL test database"]
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/cli/*"]
+
+[tool.coverage.report]
+show_missing = true

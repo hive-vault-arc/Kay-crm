@@ -1,0 +1,98 @@
+[
+  {
+    "path": "frontend/output/playwright/sp20-denied-mobile.png",
+    "width": 780,
+    "height": 1688,
+    "sha256": "fa4cfb682af0351ca4f6424eb3130232ceffe9c07b7fb06b5d62e1042faec396"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-failed-mobile.png",
+    "width": 780,
+    "height": 1688,
+    "sha256": "fae4a8ccc2cf2c4d8d1fe92449ad613eb37e3b97a2ff310e7381b99233dca4be"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-follow-error-mobile.png",
+    "width": 780,
+    "height": 1688,
+    "sha256": "bb38a6331a97339b266b0c6fac11878bbdedb859b5070287b72562adcb010bcc"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-form-desktop.png",
+    "width": 2880,
+    "height": 2000,
+    "sha256": "87f9c7cf00d2446e4cf14adcd6c7aa8883a02e2291fe087764e0a1b75e23f7fb"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-form-mobile.png",
+    "width": 780,
+    "height": 1688,
+    "sha256": "31ebf2afe834228a79944fde5336260cd490b7d93737806ccc512856810e57e2"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-history-desktop.png",
+    "width": 2850,
+    "height": 3184,
+    "sha256": "fc531b0e93cc0497567d1896b3809843557fadf6684ea6a21de90fa199753d64"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-lead-desktop.png",
+    "width": 2850,
+    "height": 2640,
+    "sha256": "083403de816c41251b8d66900bacff6a338cfd2d74ff56a4366efc16d57955cf"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-loading-mobile.png",
+    "width": 780,
+    "height": 1688,
+    "sha256": "f0304ea2e5e640a750c455c2a33744a21b0d8ec280bfd2c8f61123531165cf0d"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-processed-mobile.png",
+    "width": 780,
+    "height": 1688,
+    "sha256": "5815642a88d6394ffb03617269ae9a07c5ea1ba096d1bdd6043a45b077751df3"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-queued-desktop.png",
+    "width": 2880,
+    "height": 2000,
+    "sha256": "41964124c92d9864c3a4ac0b154b948284a94c527e24a24cfbef91390bdc99dc"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-queued-mobile.png",
+    "width": 780,
+    "height": 1688,
+    "sha256": "63fa43f5137a165e2949bd6d8428b720f20c1e410af2dee3936b408c0ce69f8b"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-received-desktop.png",
+    "width": 2850,
+    "height": 2060,
+    "sha256": "e913290fbed1d377ef86f1c05fc9754c05c6dfdb037429b1ae497fa5bce19e62"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-validation-mobile.png",
+    "width": 780,
+    "height": 1688,
+    "sha256": "6cede5779dcbfbbcc3fd288b2690bf2c9e0871084bd37aad4470cdcbac25c4a1"
+  },
+  {
+    "path": "frontend/output/playwright/sp20-zoom-200.png",
+    "width": 2824,
+    "height": 2768,
+    "sha256": "a56d8e5db3973050f06b4e58625d7b5e0f925c3b5605db75942b93fe2c265a7d"
+  },
+  {
+    "path": ".impeccable/review/desktop.png",
+    "width": 2880,
+    "height": 2000,
+    "sha256": "87f9c7cf00d2446e4cf14adcd6c7aa8883a02e2291fe087764e0a1b75e23f7fb"
+  },
+  {
+    "path": ".impeccable/review/mobile.png",
+    "width": 780,
+    "height": 1688,
+    "sha256": "31ebf2afe834228a79944fde5336260cd490b7d93737806ccc512856810e57e2"
+  }
+]

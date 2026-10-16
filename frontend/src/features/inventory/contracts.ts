@@ -1,0 +1,50 @@
+import { z } from "zod";
+import { numberedPage } from "@/features/contacts/contracts";
+
+export const categoryLabels = { villa: "Villa", house: "Maison", apartment: "Appartement", land: "Terrain" } as const;
+export const kindLabels = { sale: "Vente", rental: "Location" } as const;
+export const stateLabels = { draft: "Brouillon", available: "Disponible", reserved: "Réservée", withdrawn: "Retirée", sold: "Vendue", rented: "Louée", review: "Revue nécessaire" } as const;
+export const categorySchema = z.enum(["villa", "house", "apartment", "land"]);
+const amount = z.string().regex(/^[0-9]{1,16}(\.[0-9]{1,2})?$/).refine(value => /[1-9]/.test(value));
+const version = z.number().int().positive();
+const date = z.iso.datetime({ offset: true });
+export const offeringTargetSchema = z.object({ id: z.uuid(), version, development_version: version.nullable(), level: z.enum(["standalone", "unit", "development"]), reference: z.string().max(80), label: z.string().max(160).nullable(), location: z.string().max(500).nullable(), category: categorySchema.nullable(), area_sqm: amount.nullable(), rooms: z.number().int().min(1).max(1000).nullable(), development_reference: z.string().max(80).nullable(), block_code: z.string().max(80).nullable(), floor_code: z.string().max(80).nullable(), unit_type_code: z.string().max(80).nullable(), archived: z.boolean() }).strict();
+export const propertyFieldsSchema = z.object({ reference: z.string().trim().min(1).max(80), category: categorySchema, marketing_name: z.string().trim().min(1).max(160).nullable(), location: z.string().trim().min(1).max(500).nullable(), area_sqm: amount.nullable(), development_id: z.uuid().nullable().optional(), floor_id: z.uuid().nullable().optional(), unit_type_id: z.uuid().nullable().optional(), rooms: z.number().int().min(1).max(1000).nullable().optional() }).strict();
+export const editPropertySchema = propertyFieldsSchema.extend({ expected_version: version });
+export const ownersSchema = z.object({ expected_version: version, owners: z.array(z.object({ contact_id: z.uuid(), marketing_display: z.string().trim().min(1).max(160).nullable() }).strict()).max(100) }).strict().refine(value => new Set(value.owners.map(owner => owner.contact_id)).size === value.owners.length);
+const offeringFields = { price_mad: amount.nullable(), currency: z.literal("MAD"), price_period: z.enum(["month", "year"]).nullable(), conditions: z.string().trim().max(2000) };
+export const newOfferingSchema = z.object({ ...offeringFields, property_id: z.uuid().nullable().optional(), development_id: z.uuid().nullable().optional(), expected_property_version: version.optional(), expected_development_version: version.optional(), kind: z.enum(["sale", "rental"]) }).strict().refine(value => (value.kind === "sale") === (value.price_period === null)).refine(value => Boolean(value.property_id) !== Boolean(value.development_id));
+export const editOfferingSchema = z.object({ ...offeringFields, expected_property_version: version.optional(), expected_development_version: version.optional(), expected_version: version, state: z.enum(["draft", "available", "withdrawn"]), reason: z.string().trim().min(1).max(1000) }).strict();
+export const confirmSchema = z.object({ expected_version: version, offering_id: z.uuid(), expected_offering_version: version, reason: z.string().trim().min(1).max(1000) }).strict();
+export const stockConflictSchema = z.enum(["RESERVATION_CONFLICT", "DEVELOPMENT_OVERLAP"]);
+export const offeringSchema = z.object({ id: z.uuid(), property_id: z.uuid().nullable(), development_id: z.uuid().optional(), target_level: z.enum(["property", "development"]), kind: z.enum(["sale", "rental"]), state: z.enum(["draft", "available", "reserved", "withdrawn", "sold", "rented", "review"]), occupied: z.boolean(), is_current: z.boolean(), version, price_mad: amount.nullable(), currency: z.literal("MAD"), price_period: z.enum(["month", "year"]).nullable(), annual_equivalent_mad: z.string().regex(/^[0-9]{1,18}\.[0-9]{2}$/).nullable(), conditions: z.string().max(2000), availability_confirmed_at: date.nullable(), created_at: date, target: offeringTargetSchema.optional(), reservation_conflict: stockConflictSchema.nullable().optional() }).strict();
+const scopeLabel = z.object({ id: z.uuid(), code: z.string().max(40), label: z.string().max(160) }).strict();
+const hierarchySchema = z.object({ development: z.object({ id: z.uuid(), reference: z.string().max(80), name: z.string().max(160) }).strict(), block: scopeLabel.nullable(), floor: scopeLabel.nullable(), unit_type: scopeLabel.nullable() }).strict();
+const propertyShape = { ...propertyFieldsSchema.shape, archived_at: date.nullable(), hierarchy: hierarchySchema.optional(), id: z.uuid(), version, created_at: date, updated_at: date, offerings: z.array(offeringSchema).max(2) };
+export const propertySummarySchema = z.object(propertyShape).strict();
+export const propertySchema = z.object({ ...propertyShape, owners: z.array(z.object({ marketing_display: z.string().max(160).nullable(), contact: z.object({ id: z.uuid(), name: z.string().max(160) }).strict().nullable() }).strict()).max(100) }).strict();
+export const propertiesSchema = numberedPage(propertySummarySchema);
+export const offeringsSchema = numberedPage(offeringSchema);
+export const resultSchema = z.union([z.object({ property_id: z.uuid(), offering_id: z.uuid().nullable(), version, event_id: z.uuid() }).strict(), z.object({ development_id: z.uuid(), offering_id: z.uuid().nullable(), version, event_id: z.uuid() }).strict()]);
+export const historySchema = numberedPage(z.object({ id: z.uuid(), offering_id: z.uuid().nullable(), actor: z.object({ id: z.uuid(), display_name: z.string().max(160) }).strict(), action: z.string().max(40), property_version: version, offering_version: version.nullable(), state: z.enum(["draft", "available", "reserved", "withdrawn", "sold", "rented", "review"]).nullable(), price_mad: amount.nullable(), price_period: z.enum(["month", "year"]).nullable(), conditions: z.string().max(2000).nullable(), completed_on: z.iso.date().nullable(), external_outcome: z.boolean().nullable(), reason: z.string().max(1000), occurred_at: date }).strict());
+export const inventoryQuerySchema = z.object({ archive: z.enum(["active", "archived", "all"]).optional(), page: z.coerce.number().int().min(1).max(1_000_000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional(), q: z.string().max(160).optional(), category: categorySchema.optional(), kind: z.enum(["sale", "rental"]).optional(), offering_kind: z.enum(["sale", "rental"]).optional(), target_level: z.enum(["property", "development", "standalone", "unit"]).optional(), state: z.enum(["draft", "available", "reserved", "withdrawn", "sold", "rented", "review", "all"]).optional(), property_id: z.uuid().optional(), development_id: z.uuid().optional(), block_id: z.uuid().optional(), floor_id: z.uuid().optional(), unit_type_id: z.uuid().optional(), sort: z.enum(["reference", "-updated_at"]).optional(), min_comparison_mad: z.string().regex(/^[0-9]{1,18}(\.[0-9]{1,2})?$/).optional(), max_comparison_mad: z.string().regex(/^[0-9]{1,18}(\.[0-9]{1,2})?$/).optional(), min_area_sqm: amount.optional(), min_rooms: z.coerce.number().int().min(1).max(1000).optional() }).strict();
+export type Property = z.infer<typeof propertySchema>;
+export type PropertySummary = z.infer<typeof propertySummarySchema>;
+export type Offering = z.infer<typeof offeringSchema>;
+export type InventoryTarget = Pick<Property, "id" | "version" | "owners" | "offerings"> & { inventoryLevel?: "development" };
+
+export function inventoryRoute(key: string, method: string) {
+  const id = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}";
+  if (["properties", "offerings", "developments"].includes(key)) return ["GET", "POST"].includes(method);
+  if (new RegExp(`^(properties|developments)/${id}$`).test(key)) return ["GET", "PATCH"].includes(method);
+  if (new RegExp(`^properties/${id}/owners$`).test(key)) return method === "PUT";
+  if (new RegExp(`^developments/${id}/owners$`).test(key)) return ["GET", "PUT"].includes(method);
+  if (new RegExp(`^(properties|developments)/${id}/stock-review$`).test(key)) return method === "GET";
+  if (new RegExp(`^(properties|developments)/${id}/(external-outcome|confirm-availability|archive|restore)$`).test(key)) return method === "POST";
+  if (new RegExp(`^(properties|developments)/${id}/history$`).test(key)) return method === "GET";
+  if (new RegExp(`^developments/${id}/inventory$`).test(key)) return method === "GET";
+  if (new RegExp(`^developments/${id}/(blocks|unit-types)$`).test(key)) return ["GET", "POST"].includes(method);
+  if (new RegExp(`^blocks/${id}/floors$`).test(key)) return ["GET", "POST"].includes(method);
+  if (new RegExp(`^(blocks|floors|unit-types|offerings)/${id}$`).test(key)) return method === "PATCH";
+  return false;
+}

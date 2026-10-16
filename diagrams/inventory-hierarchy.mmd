@@ -1,0 +1,13 @@
+flowchart TB
+    I[Shared inventory] --> S[Standalone property]
+    I --> D[Development]
+    D --> B[Block optional outside apartments]
+    B --> F[Floor]
+    F --> U[Physical property or unit]
+    D --> U
+    D --> T[Reusable unit type]
+    T -.->|describes many units| U
+    S --> SO[Sale and rental offerings]
+    U --> UO[Sale and rental offerings]
+    D --> DO[Whole-development sale and rental offerings]
+    DO -.->|overlap checks| UO

@@ -1,0 +1,96 @@
+---
+title: Composed Chart
+description: Mix SeriesBar, Line, and Area on one shared time axis (Recharts ComposedChart–style)
+---
+
+import { ComposedChartDocsPreview } from "@/components/docs/composed-chart-docs-preview";
+
+<ComponentPreview registryName="composed-chart">
+  <ComposedChartDocsPreview />
+</ComponentPreview>
+
+## Installation
+
+<InstallationTabs
+  name="composed-chart"
+  dependencies={[
+    "@visx/curve",
+    "@visx/scale",
+    "@visx/shape",
+    "@visx/responsive",
+    "d3-array",
+    "motion",
+  ]}
+/>
+
+## Usage
+
+`ComposedChart` is the time-series shell for **mixing marks** on one `data` array and one pair of scales. Use **`SeriesBar`** for vertical columns aligned to dates (not the categorical `<Bar />` from `BarChart`, which uses a band scale).
+
+- **`aspectRatio`** — wide charts (e.g. `4 / 1`) work for full-width heroes; in **narrow cards** use **`3 / 2`** or **`2 / 1`** so the plot stays tall enough to read.
+- **`barSize`**, **`maxBarSize`**, **`barGap`** — parent-level layout for `SeriesBar` groups (similar to Recharts `ComposedChart` props). Use **`barGap={0}`** and a higher **`maxBarSize`** for dense daily data so columns read like the [90 days of data](/docs/components/bar-chart#90-days-of-data) bar example.
+- **`stacked`** / **`stackGap`** — stack `SeriesBar` segments in child order at each x (lines and areas are not stacked).
+- **`SeriesBar`** — default **`radius` is 0** (square tops). Pass **`radius={4}`** (or similar) for rounded corners.
+- **`Line`** / **`Area`** — pass a **`curve`** from `@visx/curve` (e.g. **`curveCatmullRom.alpha(0.42)`**) to soften paths when you have many daily points (preview + hero use the same curve for `revenue` and `runRate`).
+- **`Line`** / **`Area`** — use **`showMarkers`** for scatter-style ring markers at each point; pass **`markers={{ radius, ringGap, strokeWidth }}`** to tune styling.
+- **`Line`** / **`Area`** — use **`dashFromIndex`** and **`dashArray`** for a dashed tail on incomplete periods (the dashed segment follows the same curve and edge fade).
+- **`XAxis`** — default ticks snap to data rows so the crosshair aligns. Tune **`numTicks`** for dense series (e.g. daily). Use **`tickMode="domain"`** only when you want calendar-even spacing instead of data alignment.
+- **`ChartTooltip`** — for bar-heavy layouts, **`showCrosshair={false}`** often looks cleaner because the hover band is already vertical columns.
+- **`YAxis`** / **`yAxisId`** — `Line` and `Area` support independent left/right scales (see [Y Axis](/docs/utility/axis/y-axis)). `SeriesBar` uses the primary scale.
+- **Hover dimming** — `SeriesBar` fades non-hovered columns using `tooltipData.index`, like grouped bars in `BarChart`. Tune with **`fadedOpacity`** on each `SeriesBar`.
+
+### Basic example
+
+```tsx
+import {
+  Area,
+  ComposedChart,
+  Grid,
+  Line,
+  SeriesBar,
+  XAxis,
+  ChartTooltip,
+} from "@bklitui/ui/charts";
+import { curveCatmullRom } from "@visx/curve";
+import { composedDemoData } from "@/lib/composed-demo-data";
+
+const smooth = curveCatmullRom.alpha(0.42);
+
+export default function Example() {
+  return (
+    <ComposedChart
+      aspectRatio="2 / 1"
+      barGap={0}
+      data={composedDemoData}
+      maxBarSize={32}
+      xDataKey="date"
+    >
+      <Grid horizontal />
+      <Area
+        curve={smooth}
+        dataKey="runRate"
+        fill="var(--chart-4)"
+        fillOpacity={0.32}
+      />
+      <SeriesBar dataKey="units" fill="var(--chart-3)" radius={4} />
+      <Line curve={smooth} dataKey="revenue" stroke="var(--chart-1)" />
+      <ChartTooltip showCrosshair={false} />
+      <XAxis numTicks={8} />
+    </ComposedChart>
+  );
+}
+```
+
+`composedDemoData` is 30 daily rows with ISO `date` strings, one slow wave across the month plus light ripples (kept readable next to dense bars). Outside this monorepo, copy the helpers from `apps/web/lib/composed-demo-data.ts` into your app.
+
+See the [charts gallery](/charts/composed-chart) for stacked bars, pattern fills, rounded bars, and more compositions.
+
+### Background
+
+Use [`Background`](/docs/utility/background) instead of `Grid` for a pattern fill behind bars and lines. See **Pattern Background** examples on the [composed chart gallery](/charts/composed-chart).
+
+## See also
+
+- [Line Chart](/docs/components/line-chart) — lines only
+- [Area Chart](/docs/components/area-chart) — areas only
+- [Bar Chart](/docs/components/bar-chart) — categorical bars with `<Bar />`

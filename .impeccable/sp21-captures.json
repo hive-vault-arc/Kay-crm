@@ -1,0 +1,20 @@
+{
+  "sprint": "SP-21",
+  "date": "2026-10-16",
+  "scope": "Restored stack verification only; no shipping UI edits",
+  "build": "v91FEgd-yN7dS7wBB9-Hm",
+  "main_inspected_all": true,
+  "captures": [
+    {"file":"frontend/output/playwright/sp21-calendar-desktop.png","width":2880,"height":2000,"sha256":"379fea959271405663675c89c7ebd7bb087535d07fae5610d6b8e401c9da11f8"},
+    {"file":"frontend/output/playwright/sp21-contact-desktop.png","width":2880,"height":2000,"sha256":"4b23d3cf3b9229e17db9856d39953791518fc9fd22ffe576fff50259f83838a2"},
+    {"file":"frontend/output/playwright/sp21-dashboard-desktop.png","width":2880,"height":8310,"sha256":"5ed3ed738a2eea9dde33b4f2e3e8040c796484d558d8226d417de30b856f4ee0"},
+    {"file":"frontend/output/playwright/sp21-deal-desktop.png","width":2880,"height":7926,"sha256":"774ed40b0b7121dee3a67b3be2c8a17669b5c006860c93d6161673944d681762"},
+    {"file":"frontend/output/playwright/sp21-denied-mobile.png","width":780,"height":1688,"sha256":"15702362c904e6e6f9baa1012991e598f0c6a08328a9467f0a34302081031f64"},
+    {"file":"frontend/output/playwright/sp21-empty-dashboard-mobile.png","width":780,"height":9222,"sha256":"d856a25b575740fa15e9d18feeee66dea4fb510c36d9653079ff4685175484ab"},
+    {"file":"frontend/output/playwright/sp21-files-desktop.png","width":2880,"height":2358,"sha256":"c6530c591e8a0ff320af0b1e3ad3157829632e0f99e8df11a8aa40c87547c6f5"},
+    {"file":"frontend/output/playwright/sp21-finance-desktop.png","width":2880,"height":2878,"sha256":"f2a6a4d52ad7fe656fe9436016cc133f2d660ff96624ce5870a618f7e181e6a2"},
+    {"file":"frontend/output/playwright/sp21-invalidated-login-desktop.png","width":2880,"height":2000,"sha256":"18e89cf14ae40754053c5a6db41c24a6cd152846f8c5e693c24b554d4984ef04"},
+    {"file":"frontend/output/playwright/sp21-project-desktop.png","width":2880,"height":3000,"sha256":"33e63a55dec1d05adeb15934360a0fca3c90b3a0aa88f24301c939cc15b72c6c"},
+    {"file":"frontend/output/playwright/sp21-visit-desktop.png","width":2880,"height":2326,"sha256":"1262ba01275df687fee2938d9d46a9367a616cb43cfe45c45581d391c36f3a80"}
+  ]
+}

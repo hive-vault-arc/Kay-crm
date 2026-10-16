@@ -1,0 +1,21 @@
+stateDiagram-v2
+    [*] --> new
+    new --> visit
+    new --> negotiation
+    visit --> negotiation
+    negotiation --> reserved
+    negotiation --> documents
+    reserved --> documents
+    documents --> won
+    new --> lost
+    visit --> lost
+    negotiation --> lost
+    reserved --> cancelled
+    won --> negotiation: explicit guarded reopen with reason
+    lost --> negotiation: explicit reopen with reason
+    cancelled --> negotiation: explicit reopen with reason
+    note right of new
+        Ordinary stages may be skipped.
+        Close is explicit from any active stage.
+        Ordinary progress does not release a hold.
+    end note

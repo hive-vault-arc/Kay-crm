@@ -1,0 +1,8 @@
+flowchart LR
+    I[Incident detected] --> F[Stop writes and preserve evidence]
+    F --> B[Select consistent database and file point]
+    B --> R[Restore in isolated environment]
+    R --> V[Verify schema FKs hashes and permissions]
+    V --> S[Revoke sessions and permits]
+    S --> Q[Reconcile jobs imports finance and submissions]
+    Q --> O[Measure RPO RTO then reopen]

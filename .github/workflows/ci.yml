@@ -1,0 +1,147 @@
+name: KAY CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kay-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+  PYTHONUTF8: '1'
+  PIP_DISABLE_PIP_VERSION_CHECK: '1'
+
+jobs:
+  repository:
+    name: Repository safety
+    runs-on: windows-2025
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+      - name: Check tracked paths, sizes, licenses and ignore rules
+        run: node .github/scripts/repository-check.mjs
+      - name: Scan full Git history for secrets (redacted)
+        run: node .github/scripts/check-tools.mjs gitleaks
+      - name: Validate workflow syntax
+        run: node .github/scripts/check-tools.mjs actionlint
+      - name: Validate repository documentation without private workstation files
+        shell: pwsh
+        run: ./docs/03-planning/validate-sprints.ps1 -RepositoryOnly
+
+  frontend:
+    name: Frontend quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Audit runtime dependencies
+        run: npm audit --omit=dev --audit-level=low
+
+  integration:
+    name: Backend and browser tests
+    runs-on: windows-2025
+    timeout-minutes: 55
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version-file: .python-version
+      - name: Create the project venv (only base-interpreter operation)
+        run: python -m venv backend/.venv
+      - name: Install hash-locked Python packages
+        working-directory: backend
+        run: |
+          ./.venv/Scripts/python.exe -m pip install --require-hashes -r requirements-dev.lock
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./.venv/Scripts/python.exe -m pip install --no-deps --no-build-isolation -e .
+      - name: Python lint, formatting and strict types
+        working-directory: backend
+        run: ./scripts/kay.ps1 -Task check
+      - name: Audit locked Python runtime dependencies
+        working-directory: backend
+        run: ./.venv/Scripts/python.exe -m pip_audit -r requirements.lock --require-hashes --disable-pip
+      - name: Start disposable loopback PostgreSQL18 and real ClamAV
+        run: ./.github/scripts/windows-services.ps1
+      - name: Configure fresh synthetic targets and HTTPS without workstation secrets
+        working-directory: backend
+        run: ./.venv/Scripts/python.exe -m tests.ci_setup
+      - name: Migrate disposable development and isolated test targets
+        working-directory: backend
+        run: |
+          foreach ($environment in 'development','test','benchmark') {
+            $env:APP_ENVIRONMENT = $environment
+            ./.venv/Scripts/python.exe -m alembic upgrade head
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+      - name: Full real-PostgreSQL backend regression (serial)
+        working-directory: backend
+        env:
+          APP_ENVIRONMENT: test
+        run: ./.venv/Scripts/python.exe -m pytest -q --tb=short --maxfail=1
+      - name: Install and compile the actual frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npx playwright install chromium
+      - name: Full compiled Chromium end-to-end regression (serial)
+        working-directory: frontend
+        env:
+          KAY_E2E_PRODUCTION: '1'
+        run: npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=1
+      - name: Check browser bundles for configured secrets
+        working-directory: frontend
+        run: node scripts/scan-client-secrets.mjs
+
+  required:
+    name: CI required
+    if: ${{ always() }}
+    needs: [repository, frontend, integration]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Reject failed, cancelled or skipped prerequisite jobs
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          node -e 'const jobs = Object.values(JSON.parse(process.env.RESULTS)); if (jobs.length !== 3 || jobs.some(job => job.result !== "success")) process.exit(1); console.log("All required KAY checks passed.");'

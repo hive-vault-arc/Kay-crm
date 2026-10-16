@@ -1,0 +1,45 @@
+---
+title: Installation
+description: How to install and configure Bklit UI in your project
+---
+
+Bklit UI is a trusted registry for shadcn/ui. Follow the steps below to get started.
+
+## Prerequisites
+
+Before installing Bklit UI components, make sure you have shadcn/ui set up in your project. If you haven't already, run:
+
+```bash
+npx shadcn@latest init
+```
+
+## Registry namespace
+
+Bklit is published on the shadcn registry index as `@bklit`. Add it to your `components.json` if it is not already configured:
+
+```json
+{
+  "registries": {
+    "@bklit": "https://ui.bklit.com/r/{name}.json"
+  }
+}
+```
+
+Then install components with the namespace, for example `npx shadcn@latest add @bklit/area-chart`.
+
+Chart loading labels use `@bklit/shimmering-text`, included automatically when you install `@bklit/line-chart`, `@bklit/area-chart`, or `@bklit/heatmap-chart`.
+
+## Install Components
+
+Install any Bklit UI component using the CLI:
+
+<PackageManagerTabs name="area-chart" />
+
+The `@bklit` namespace is configured automatically for new projects — no manual setup needed. This will:
+- Download the component source code
+- Install any required dependencies
+- Place files in your configured component directory
+
+## Next Steps
+
+You're all set! Browse the [Components](/docs/components) section to start adding charts and visualizations to your project.

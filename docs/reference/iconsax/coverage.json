@@ -1,0 +1,722 @@
+{
+  "date": "2026-10-16",
+  "decision": "D33",
+  "counts": {
+    "routes": 29,
+    "contextualSites": 168,
+    "regionSites": 111,
+    "consumerFiles": 21,
+    "iconSites": 40,
+    "semanticExports": 27,
+    "uniqueOfficialAssets": 26
+  },
+  "semanticIcons": 27,
+  "consumers": [
+    {
+      "file": "src/components/shared/data-state.tsx",
+      "imports": [
+        {
+          "imported": "AlertIcon",
+          "local": "AlertIcon"
+        },
+        {
+          "imported": "EmptyFolderIcon",
+          "local": "EmptyFolderIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "AlertIcon",
+          "line": 34
+        },
+        {
+          "component": "EmptyFolderIcon",
+          "line": 44
+        }
+      ]
+    },
+    {
+      "file": "src/components/shared/section-heading.tsx",
+      "imports": [],
+      "sites": [
+        {
+          "component": "Icon",
+          "line": 17
+        }
+      ]
+    },
+    {
+      "file": "src/components/ui/checkbox.tsx",
+      "imports": [
+        {
+          "imported": "CheckIcon",
+          "local": "CheckIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "CheckIcon",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "file": "src/components/ui/native-select.tsx",
+      "imports": [
+        {
+          "imported": "ChevronDownIcon",
+          "local": "ChevronDownIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "ChevronDownIcon",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "file": "src/components/ui/radio-group.tsx",
+      "imports": [
+        {
+          "imported": "RadioIndicatorIcon",
+          "local": "RadioIndicatorIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "RadioIndicatorIcon",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "file": "src/components/ui/sheet.tsx",
+      "imports": [
+        {
+          "imported": "CloseIcon",
+          "local": "CloseIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "CloseIcon",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "file": "src/features/auth/login-form.tsx",
+      "imports": [
+        {
+          "imported": "ShowPasswordIcon",
+          "local": "ShowPasswordIcon"
+        },
+        {
+          "imported": "HidePasswordIcon",
+          "local": "HidePasswordIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "HidePasswordIcon",
+          "line": 39
+        },
+        {
+          "component": "ShowPasswordIcon",
+          "line": 39
+        }
+      ]
+    },
+    {
+      "file": "src/features/contacts/contact-fields.tsx",
+      "imports": [
+        {
+          "imported": "PhoneIcon",
+          "local": "PhoneIcon"
+        },
+        {
+          "imported": "EmailIcon",
+          "local": "EmailIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "PhoneIcon",
+          "line": 35,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "EmailIcon",
+          "line": 47,
+          "kind": "composed-icon"
+        }
+      ]
+    },
+    {
+      "file": "src/features/contacts/lead-create.tsx",
+      "imports": [
+        {
+          "imported": "TaskIcon",
+          "local": "TaskIcon"
+        },
+        {
+          "imported": "ContactIcon",
+          "local": "ContactIcon"
+        },
+        {
+          "imported": "EnquiryIcon",
+          "local": "EnquiryIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "ContactIcon",
+          "line": 69,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "EnquiryIcon",
+          "line": 72,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "TaskIcon",
+          "line": 88
+        }
+      ]
+    },
+    {
+      "file": "src/features/deals/deal-form.tsx",
+      "imports": [
+        {
+          "imported": "ContactIcon",
+          "local": "ContactIcon"
+        },
+        {
+          "imported": "DealIcon",
+          "local": "DealIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "ContactIcon",
+          "line": 39,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "DealIcon",
+          "line": 40,
+          "kind": "composed-icon"
+        }
+      ]
+    },
+    {
+      "file": "src/features/discovery/search-trigger.tsx",
+      "imports": [
+        {
+          "imported": "SearchIcon",
+          "local": "SearchIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "SearchIcon",
+          "line": 19
+        }
+      ]
+    },
+    {
+      "file": "src/features/files/inventory-thumbnail.tsx",
+      "imports": [
+        {
+          "imported": "DevelopmentIcon",
+          "local": "DevelopmentIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "DevelopmentIcon",
+          "line": 38
+        }
+      ]
+    },
+    {
+      "file": "src/features/finance/terms-form.tsx",
+      "imports": [
+        {
+          "imported": "FinanceIcon",
+          "local": "FinanceIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "FinanceIcon",
+          "line": 24,
+          "kind": "composed-icon"
+        }
+      ]
+    },
+    {
+      "file": "src/features/inventory/development-editor.tsx",
+      "imports": [
+        {
+          "imported": "DevelopmentIcon",
+          "local": "DevelopmentIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "DevelopmentIcon",
+          "line": 34,
+          "kind": "composed-icon"
+        }
+      ]
+    },
+    {
+      "file": "src/features/inventory/inventory-card.tsx",
+      "imports": [
+        {
+          "imported": "LocationIcon",
+          "local": "LocationIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "LocationIcon",
+          "line": 19
+        }
+      ]
+    },
+    {
+      "file": "src/features/inventory/property-editor.tsx",
+      "imports": [
+        {
+          "imported": "PropertyIcon",
+          "local": "PropertyIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "PropertyIcon",
+          "line": 35,
+          "kind": "composed-icon"
+        }
+      ]
+    },
+    {
+      "file": "src/features/reports/report-dashboard.tsx",
+      "imports": [
+        {
+          "imported": "DevelopmentIcon",
+          "local": "DevelopmentIcon"
+        },
+        {
+          "imported": "CompletedIcon",
+          "local": "CompletedIcon"
+        },
+        {
+          "imported": "DealIcon",
+          "local": "DealIcon"
+        },
+        {
+          "imported": "InboxIcon",
+          "local": "InboxIcon"
+        },
+        {
+          "imported": "ContactsIcon",
+          "local": "ContactsIcon"
+        },
+        {
+          "imported": "FinanceIcon",
+          "local": "FinanceIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "ContactsIcon",
+          "line": 16,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "InboxIcon",
+          "line": 17,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "DealIcon",
+          "line": 18,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "CompletedIcon",
+          "line": 19,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "FinanceIcon",
+          "line": 20,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "Icon",
+          "line": 42
+        },
+        {
+          "component": "DevelopmentIcon",
+          "line": 59
+        }
+      ]
+    },
+    {
+      "file": "src/features/requirements/requirement-panel.tsx",
+      "imports": [
+        {
+          "imported": "CheckIcon",
+          "local": "CheckIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "CheckIcon",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "file": "src/features/shell/app-shell.tsx",
+      "imports": [
+        {
+          "imported": "NotificationIcon",
+          "local": "NotificationIcon"
+        },
+        {
+          "imported": "NavigationMenuIcon",
+          "local": "NavigationMenuIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "NavigationMenuIcon",
+          "line": 100
+        },
+        {
+          "component": "NotificationIcon",
+          "line": 148
+        }
+      ]
+    },
+    {
+      "file": "src/features/shell/navigation.tsx",
+      "imports": [
+        {
+          "imported": "CalendarIcon",
+          "local": "CalendarIcon"
+        },
+        {
+          "imported": "DealIcon",
+          "local": "DealIcon"
+        },
+        {
+          "imported": "PropertyIcon",
+          "local": "PropertyIcon"
+        },
+        {
+          "imported": "DashboardIcon",
+          "local": "DashboardIcon"
+        },
+        {
+          "imported": "SettingsIcon",
+          "local": "SettingsIcon"
+        },
+        {
+          "imported": "ContactsIcon",
+          "local": "ContactsIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "DashboardIcon",
+          "line": 16,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "ContactsIcon",
+          "line": 17,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "DealIcon",
+          "line": 18,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "CalendarIcon",
+          "line": 19,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "PropertyIcon",
+          "line": 20,
+          "kind": "composed-icon"
+        },
+        {
+          "component": "Icon",
+          "line": 47
+        },
+        {
+          "component": "SettingsIcon",
+          "line": 53
+        }
+      ]
+    },
+    {
+      "file": "src/features/work/task-form.tsx",
+      "imports": [
+        {
+          "imported": "TaskIcon",
+          "local": "TaskIcon"
+        }
+      ],
+      "sites": [
+        {
+          "component": "TaskIcon",
+          "line": 61,
+          "kind": "composed-icon"
+        }
+      ]
+    }
+  ],
+  "chartGeometryExcluded": [
+    {
+      "file": "src/components/charts/bar-chart.tsx",
+      "lines": [
+        625
+      ]
+    },
+    {
+      "file": "src/components/charts/tooltip/chart-tooltip.tsx",
+      "lines": [
+        274,
+        303
+      ]
+    }
+  ],
+  "violations": [],
+  "routes": [
+    {
+      "file": "src/app/(workspace)/[section]/page.tsx",
+      "route": "/[section]",
+      "family": "02-dashboard"
+    },
+    {
+      "file": "src/app/(workspace)/contacts/[id]/page.tsx",
+      "route": "/contacts/[id]",
+      "family": "05-lead-details"
+    },
+    {
+      "file": "src/app/(workspace)/deals/[id]/page.tsx",
+      "route": "/deals/[id]",
+      "family": "05-lead-details"
+    },
+    {
+      "file": "src/app/(workspace)/deals/new/page.tsx",
+      "route": "/deals/new",
+      "family": "04-create-or-edit-lead"
+    },
+    {
+      "file": "src/app/(workspace)/deals/page.tsx",
+      "route": "/deals",
+      "family": "03-leads-and-deals-list"
+    },
+    {
+      "file": "src/app/(workspace)/leads/[id]/edit/page.tsx",
+      "route": "/leads/[id]/edit",
+      "family": "04-create-or-edit-lead"
+    },
+    {
+      "file": "src/app/(workspace)/leads/[id]/page.tsx",
+      "route": "/leads/[id]",
+      "family": "05-lead-details"
+    },
+    {
+      "file": "src/app/(workspace)/leads/new/page.tsx",
+      "route": "/leads/new",
+      "family": "04-create-or-edit-lead"
+    },
+    {
+      "file": "src/app/(workspace)/leads/page.tsx",
+      "route": "/leads",
+      "family": "03-leads-and-deals-list"
+    },
+    {
+      "file": "src/app/(workspace)/projects/[id]/edit/page.tsx",
+      "route": "/projects/[id]/edit",
+      "family": "04-create-or-edit-lead"
+    },
+    {
+      "file": "src/app/(workspace)/projects/[id]/page.tsx",
+      "route": "/projects/[id]",
+      "family": "08-project-details"
+    },
+    {
+      "file": "src/app/(workspace)/projects/new/page.tsx",
+      "route": "/projects/new",
+      "family": "04-create-or-edit-lead"
+    },
+    {
+      "file": "src/app/(workspace)/projects/page.tsx",
+      "route": "/projects",
+      "family": "07-projects"
+    },
+    {
+      "file": "src/app/(workspace)/projects/properties/[id]/edit/page.tsx",
+      "route": "/projects/properties/[id]/edit",
+      "family": "04-create-or-edit-lead"
+    },
+    {
+      "file": "src/app/(workspace)/projects/properties/[id]/page.tsx",
+      "route": "/projects/properties/[id]",
+      "family": "08-project-details"
+    },
+    {
+      "file": "src/app/(workspace)/projects/properties/new/page.tsx",
+      "route": "/projects/properties/new",
+      "family": "04-create-or-edit-lead"
+    },
+    {
+      "file": "src/app/(workspace)/settings/page.tsx",
+      "route": "/settings",
+      "family": "09-all-users"
+    },
+    {
+      "file": "src/app/(workspace)/settings/users/[id]/edit/page.tsx",
+      "route": "/settings/users/[id]/edit",
+      "family": "09-all-users"
+    },
+    {
+      "file": "src/app/(workspace)/settings/users/new/page.tsx",
+      "route": "/settings/users/new",
+      "family": "09-all-users"
+    },
+    {
+      "file": "src/app/(workspace)/settings/users/page.tsx",
+      "route": "/settings/users",
+      "family": "09-all-users"
+    },
+    {
+      "file": "src/app/(workspace)/settings/working-hours/page.tsx",
+      "route": "/settings/working-hours",
+      "family": "09-all-users"
+    },
+    {
+      "file": "src/app/(workspace)/ui-checks/page.tsx",
+      "route": "/ui-checks",
+      "family": "02-dashboard"
+    },
+    {
+      "file": "src/app/(workspace)/visits/[id]/page.tsx",
+      "route": "/visits/[id]",
+      "family": "04-create-or-edit-lead"
+    },
+    {
+      "file": "src/app/(workspace)/visits/new/page.tsx",
+      "route": "/visits/new",
+      "family": "04-create-or-edit-lead"
+    },
+    {
+      "file": "src/app/(workspace)/visits/page.tsx",
+      "route": "/visits",
+      "family": "06-visits-calendar"
+    },
+    {
+      "file": "src/app/change-password/page.tsx",
+      "route": "/change-password",
+      "family": "01-login"
+    },
+    {
+      "file": "src/app/login/page.tsx",
+      "route": "/login",
+      "family": "01-login"
+    },
+    {
+      "file": "src/app/page.tsx",
+      "route": "/",
+      "family": "02-dashboard"
+    },
+    {
+      "file": "src/app/website-simulator/page.tsx",
+      "route": "/website-simulator",
+      "family": "04-create-or-edit-lead"
+    }
+  ],
+  "preservation": {
+    "checks": [
+      {
+        "kind": "backend",
+        "checked": 279,
+        "changed": []
+      },
+      {
+        "kind": "preserved",
+        "checked": 71,
+        "changed": []
+      }
+    ],
+    "consumerOnlyIconEdits": true,
+    "chartFiles": 58,
+    "existingPublicFiles": 4,
+    "brandingFiles": 9
+  },
+  "compiledBuild": "RwDP2Y1QOEhxHVxEwM5Zg",
+  "verification": {
+    "initialProduction": {
+      "passed": 16,
+      "failed": 1,
+      "skipped": 0,
+      "minutes": 8.8,
+      "reason": "New icon-count assertion incorrectly rejected the intentionally icon-free restricted password-change page."
+    },
+    "correctedProduction": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "minutes": 1.5,
+      "includes": "The failed V3 case plus both icon-specific SSR/asset tests."
+    },
+    "development": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 26.1
+    },
+    "uniquePassingCases": 18,
+    "compositionFrames": 55,
+    "additionalGlyphAndDevelopmentFrames": 3,
+    "unexpectedCompositionErrors": 0,
+    "externalIconRequests": 0,
+    "all27GlyphsServerRendered": true,
+    "offlineAssetRequests": 0
+  },
+  "cleanup": {
+    "database": "kayrealestate_test",
+    "database_oid": 109061,
+    "record_tables": 66,
+    "synthetic_rows_removed": 1,
+    "synthetic_orphan_objects_removed": 1,
+    "remaining_record_rows": 0,
+    "bootstrap_unset": true
+  },
+  "developmentReadOnly": {
+    "database": "kayrealestate",
+    "database_oid": 109060,
+    "record_tables": 66,
+    "remaining_record_rows": 0,
+    "bootstrap_unset": true,
+    "policy_version": 1,
+    "car_capacity": 2,
+    "policy_editor_unset": true,
+    "working_windows": 0,
+    "lunch_breaks": 0
+  }
+}

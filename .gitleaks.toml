@@ -1,0 +1,41 @@
+title = "KAY secret scan: defaults plus reviewed public documentation samples"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "AT-26 prose is not a credential: copied/consumed/revoked permit"
+condition = "AND"
+targetRules = ["generic-api-key"]
+paths = ['''^docs/05-quality/acceptance-tests\.md$''']
+regexTarget = "match"
+regexes = ['''access, copied/consumed/revoked ''']
+
+[[allowlists]]
+description = "Pinned upstream FastAPI security tutorial's published sample signing key"
+condition = "AND"
+targetRules = ["generic-api-key"]
+paths = ['''^docs/reference/fastapi/0\.143\.1/docs_src/security/tutorial00[45](?:_an)?_py310\.py$''']
+regexTarget = "match"
+regexes = ['''SECRET_KEY = "[a-f0-9]{64}"''']
+
+[[allowlists]]
+description = "Published JWT in the pinned upstream FastAPI tutorial, not a KAY session"
+targetRules = ["jwt"]
+paths = ['''^docs/reference/fastapi/0\.143\.1/docs/en/docs/tutorial/security/oauth2-jwt\.md$''']
+
+[[allowlists]]
+description = "Upstream PEM-format placeholders, not actual keys; no application exemption"
+targetRules = ["private-key"]
+paths = [
+  '''^docs/reference/nextjs/16\.4\.0/docs/01-app/02-guides/environment-variables\.md$''',
+  '''^docs/reference/python/3\.14\.3/html/_sources/library/ssl\.rst\.txt$'''
+]
+
+[[allowlists]]
+description = "Pinned shadcn documentation's literal your_token curl placeholder"
+condition = "AND"
+targetRules = ["curl-auth-header"]
+paths = ['''^docs/reference/shadcn-ui/2026-10-14-954ce953/apps/v4/content/docs/registry/authentication\.mdx$''']
+regexTarget = "match"
+regexes = ['''Authorization: Bearer your_token''']
