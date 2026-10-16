@@ -41,8 +41,33 @@ class Settings(BaseSettings):
     facade_secret: SecretStr
     frontend_origin: str = Field(default="https://localhost:3000", validate_default=True)
     postgres_bin: Path = Path("C:/Program Files/PostgreSQL/18/bin")
-    antivirus_host: Literal["127.0.0.1"] = "127.0.0.1"
+    antivirus_host: str = Field(default="127.0.0.1", validate_default=True)
     antivirus_port: int = Field(default=3310, ge=1, le=65535)
+
+    @field_validator("antivirus_host")
+    @classmethod
+    def validate_antivirus_host(cls, value: str, info: ValidationInfo) -> str:
+        if info.data.get("app_environment") != "production":
+            if value != "127.0.0.1":
+                raise PydanticCustomError("LOCAL_ANTIVIRUS_REQUIRED", "LOCAL_ANTIVIRUS_REQUIRED")
+            return value
+        try:
+            address = ip_address(value)
+        except ValueError:
+            host = value.lower()
+            if (
+                not host
+                or len(host) > 253
+                or any(
+                    not re.fullmatch(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?", label)
+                    for label in host.removesuffix(".").split(".")
+                )
+            ):
+                raise PydanticCustomError("HOST_INVALID", "HOST_INVALID") from None
+            return host
+        if "%" in value:
+            raise PydanticCustomError("HOST_INVALID", "HOST_INVALID")
+        return str(address)
 
     @field_validator("production_database_host")
     @classmethod

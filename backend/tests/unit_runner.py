@@ -21,6 +21,8 @@ def main() -> int:
         DATABASE_URL="postgresql+psycopg://synthetic@127.0.0.1:1/kay_unit_unavailable",
         FACADE_SECRET=secrets.token_hex(32),
         FRONTEND_ORIGIN="https://localhost:3000",
+        ANTIVIRUS_HOST="127.0.0.1",
+        ANTIVIRUS_PORT="3310",
     )
     from app.settings import Settings
 

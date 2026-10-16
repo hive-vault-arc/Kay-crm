@@ -18,6 +18,14 @@ bearing shell arguments:
 | URL `sslrootcert` | `system` with libpq16+, or an absolute readable PEM CA path supplied by the deployment and parsed before startup. |
 | `FACADE_SECRET` | Private, minimum32 characters; coordinate with the frontend facade. |
 | `FRONTEND_ORIGIN` | Explicit non-loopback HTTPS origin, without credentials, path, query or fragment. |
+| `ANTIVIRUS_HOST` | Production accepts a configured DNS name (including a single-label private service name) or IP address. Bare host only; no scheme, credentials, port or path. Local default stays `127.0.0.1`. |
+| `ANTIVIRUS_PORT` | Configured ClamD TCP port, 1–65535; default `3310`. Use the same private endpoint for API and worker. |
+
+The [production antivirus fix](production-antivirus.md) removes the accidental
+production loopback-only type constraint. Scanning still uses the existing ClamD
+VERSION/INSTREAM protocol, not an HTTP endpoint or a clean-on-failure fallback.
+Keep ClamD accessible only on the trusted private network; this protocol does not
+add transport encryption or authentication. Do not expose the scanner publicly.
 
 For DigitalOcean Standard Edition, mount the downloaded cluster CA and reference
 its absolute path. The later [public CA packaging procedure](digitalocean-postgres-ca.md)

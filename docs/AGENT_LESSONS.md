@@ -1,5 +1,15 @@
 # KAY agent lessons
 
+## Local defaults are not production endpoint constraints (2026-10-16)
+
+An unconditional `Literal["127.0.0.1"]` made ClamAV configuration fail even after
+the application gained explicit production mode. Keep local defaults and isolated
+test restrictions separate from production endpoint validation. Exercise every
+shared dependency setting in both API and worker configuration using synthetic
+private DNS names, not only the database URL. Do not solve deployability by
+disabling verified database TLS, quarantine or failure handling. Unit/smoke probes
+must override ambient dependency hosts and refuse real production connections.
+
 ## Managed CA probes and HTTP error resources (2026-10-16)
 
 A script executed by filename has its own directory on sys.path, not necessarily

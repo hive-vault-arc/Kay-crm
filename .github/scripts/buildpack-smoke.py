@@ -36,6 +36,8 @@ def main() -> None:
         DATABASE_URL=database,
         FACADE_SECRET=facade,
         FRONTEND_ORIGIN="https://kay.synthetic.invalid",
+        ANTIVIRUS_HOST="kay-clamav.synthetic.invalid",
+        ANTIVIRUS_PORT="3310",
         PYTHONWARNINGS="error",
     )
     worker = subprocess.run(  # noqa: S603 - fixed isolated probe, pinned managed interpreter.

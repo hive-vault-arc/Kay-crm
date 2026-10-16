@@ -1,4 +1,4 @@
-"""ClamD INSTREAM over loopback; no shell, filename or fake-success fallback."""
+"""ClamD INSTREAM at the configured endpoint; no shell or fake-success fallback."""
 
 import socket
 import struct

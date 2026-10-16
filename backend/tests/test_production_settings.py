@@ -12,6 +12,7 @@ from app.runtime import BACKEND_ROOT
 from app.settings import ConfigurationError, Settings, load_settings
 
 HOST = "kay-postgres.synthetic.invalid"
+SCANNER_HOST = "kay-clamav.synthetic.invalid"
 URL = f"postgresql://synthetic:synthetic-value@{HOST}:25060/kay_crm?sslmode=verify-full&sslrootcert=system"
 
 
@@ -34,6 +35,7 @@ def production(monkeypatch, root="system"):
         .render_as_string(hide_password=False),
     )
     monkeypatch.setenv("FRONTEND_ORIGIN", "https://kay.synthetic.invalid")
+    monkeypatch.setenv("ANTIVIRUS_HOST", SCANNER_HOST)
 
 
 def test_production_accepts_managed_host_with_verified_tls_without_other_environment_urls(
@@ -269,6 +271,8 @@ async def test_production_api_lifespan_and_engine_keep_tls_without_isolation_cat
     )
     settings = load_settings()
     app = create_app(settings)
+    assert app.state.settings.antivirus_host == SCANNER_HOST
+    assert app.state.settings.antivirus_port == 3310
     async with app.router.lifespan_context(app):
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="https://unit.invalid"
@@ -315,7 +319,7 @@ def test_production_worker_uses_runtime_target_without_test_catalog_probe(
     monkeypatch.setattr(
         isolation, "assert_isolated", lambda *args: pytest.fail("TEST_PROBE_ON_PRODUCTION")
     )
-    closed, selected = [], []
+    closed, selected, configured = [], [], []
 
     def database(url):
         assert dict(make_url(url).query) == {"sslmode": "verify-full", "sslrootcert": root}
@@ -323,11 +327,13 @@ def test_production_worker_uses_runtime_target_without_test_catalog_probe(
         return SimpleNamespace(close=lambda: closed.append(True))
 
     monkeypatch.setattr(session, "Database", database)
-    monkeypatch.setattr(maintenance, "Admission", lambda settings: object())
+    monkeypatch.setattr(maintenance, "Admission", lambda settings: configured.append(settings))
     monkeypatch.setattr(status, "queue_status", lambda db: {"synthetic": True})
     monkeypatch.setattr(sys, "argv", ["worker", "--status"])
     worker.main()
     assert selected == [HOST] and closed == [True]
+    assert len(configured) == 1 and configured[0].antivirus_host == SCANNER_HOST
+    assert configured[0].antivirus_port == 3310
     assert capsys.readouterr().out == '{"synthetic": true}\n'
 
 
