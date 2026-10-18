@@ -65,7 +65,7 @@ test("SP08 visible Chrome: development explorer, reusable types, responsive stat
     await mobile.getByRole("button", { name: "Annuler", exact: true }).tap();
     await clearActorContext(mobile); await signIn(mobile, agent); await openDevelopment(mobile, development.id, "Présentation");
     await expect(mobile.getByText("Présentation synthétique sûre.\nUnités et programme sont distincts.", { exact: true })).toBeVisible(); await mobile.getByText("Présentation synthétique sûre.\nUnités et programme sont distincts.", { exact: true }).scrollIntoViewIfNeeded(); await capture(mobile, "agent-briefing-mobile");
-    await mobile.goto(`${development.path}/edit`); await expect(mobile.getByRole("alert").filter({ hasText: "Accès non autorisé" })).toBeVisible(); await capture(mobile, "agent-denied-mobile");
+    await mobile.goto(`${development.path}/edit`); await expect(mobile.getByRole("form", { name: "Modifier le programme", exact: true })).toBeVisible(); await capture(mobile, "agent-edit-mobile");
     await openDevelopment(page, development.id);
     await page.getByRole("tab", { name: "Aperçu", exact: true }).focus(); await page.keyboard.press("ArrowRight"); await expect(page.getByRole("tab", { name: "Unités", exact: true })).toBeFocused();
     let release = () => {}; const gate = new Promise<void>(resolve => { release = resolve; });

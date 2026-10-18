@@ -8,7 +8,7 @@ References: [scope](core-scope.md), [permissions](permissions.md), [tests](docs/
 
 ## W01: set up the team (C01)
 
-After migrations but before opening staff access, the intended first administrator runs the one-time interactive script on the deployed server, enters their own final password through a hidden prompt, and verifies normal sign-in. The script has no public endpoint and cannot be rerun to add or recover an administrator. That administrator creates later named accounts. For each later staff member, the backend generates a temporary password shown once to the administrator and leaves the account pending. The administrator verifies the recipient, hands the credential over in person, and confirms the non-secret handoff to activate the account; no system email or remote chat is used. The first temporary-password session can only view the user's own profile, change the password, or log out, and normal CRM access requires a new sign-in after that change. An administrator who resets another user's password confirms with their own current password; the target's sessions then stop working and the replacement credential follows the same pending handoff. Normal sessions last at most seven days. See the [bootstrap and handoff runbook](docs/06-delivery-and-operations/admin-bootstrap.md).
+After migrations, the intended first administrator uses the guarded interactive bootstrap and their own final password; no public bootstrap/signup exists. Under D37, the administrator creates later named accounts with an initial password they choose and privately distribute. The account is active immediately, without an activation button. Its first session is restricted to own profile/password change/logout; a different own password and fresh sign-in are required before CRM access. Initial passwords expire after24 hours. Reset requires the administrator's current password plus a chosen replacement, revokes target sessions and repeats restricted setup without handoff confirmation. Existing staff are not bulk-reset. Delete hides an account and revokes access while retaining authored CRM history. Normal sessions last at most seven days. See the [current runbook](docs/06-delivery-and-operations/admin-bootstrap.md).
 
 ## W02: receive and assign an enquiry (C02, C12)
 
@@ -21,13 +21,39 @@ agent. Exhausted/revoked work retains its receipt for explicit local-operator
 repair/retry. No deal is automatically created.
 [Implementation/runbook](docs/04-design/website-intake-local.md).
 
-A manual enquiry (shown as a **Lead** in the interface) or a submission from the authenticated website form arrives with its source and submission ID. The normalized phone links to an existing contact or creates one if the number is new and the action is authorized. An agent who encounters another agent's private contact sees the primary agent's name and requests access or transfer. A manager handles unassigned enquiries. A second enquiry from the same contact remains distinct; retrying the same form submission does not duplicate it. From a permitted lead detail, the user may open a separate deal-creation form with that contact prefilled; the enquiry does not automatically become a deal.
+A manual enquiry (shown as a **Lead** in the interface) or a submission from the authenticated website form arrives with its source and submission ID. The normalized phone links to an existing contact or creates one if the number is new and the action is authorized. An agent who encounters another agent's private contact sees the primary agent's name and requests access or transfer. A manager handles unassigned enquiries. A second enquiry from the same contact remains distinct; retrying the same form submission does not duplicate it.
+
+The owner's 2026-10-17 IMMO World alignment replaces the earlier separate,
+free-title deal form from a Lead. Staff explicitly convert an accessible Lead by
+reviewing its version and supplying a project (catalogue or external), budget
+and buying intent. The operation reuses the canonical client, inherits source
+and qualification, records both histories, and marks that Lead converted in one
+transaction. No separately typed deal title, duplicated client or automatic
+inventory reservation is involved. Converted Leads leave the default prospect
+list and remain available through the converted filter and linked deal.
+
+Manual creation from Affaires remains a separate qualified workflow, for an
+existing scoped client or a new client committed atomically. It requires client
+languages, budget, buying intent and one to three project interests; it does not
+convert or silently link an enquiry. Lead/deal editing can update canonical
+client facts and qualification atomically with both reviewed versions. Existing
+stock, proposal, outcome and permission commands retain their separate effects.
+[Current contract](docs/04-design/deal-pipeline-local.md),
+[verification and open acceptance](docs/03-planning/leads-deals-immoworld-alignment.md).
 
 ## W03: qualify and shortlist (C03)
 
 The agent records the requirement, including unknown, required, and preferred criteria, a MAD budget, and its period. They filter whole-development or physical-unit offerings and build a shortlist against the exact offering, not a unit type. A separate search becomes a second requirement. Rent comparisons retain the original price and period and use an exact twelve-month equivalent.
 
 ## W04: manage inventory (C04)
+
+D34 (Khalid, 2026-10-16) extends the create/edit parts of this workflow to all
+active agents: shared development facts/briefing, blocks/floors/reusable types,
+standalone properties and physical units. Agents can select only accessible
+developer contacts; an unchanged hidden developer link is preserved. Manager-only
+legal-owner/file/campaign/availability/external-outcome/archive/restore actions
+and all stock constraints remain. This supersedes the original read-only-agent
+sentence in the historical workflow description below.
 
 A manager either creates a standalone villa, house, apartment, or land parcel, or creates a development with a protected developer contact and individual physical units. An apartment unit in a development is placed on a floor in a block; other categories may omit those levels. The manager defines reusable unit types within the development (for example T2/80 m²) and assigns a type to multiple actual units on different floors. A type has no stock or reservation; each unit does. A mixed-category development is allowed. The manager may add an optional shared project briefing; it contains no private developer/owner contact facts. The manager links owners to physical units, adds shared inventory attachments, and confirms price and availability under the accepted local H-01/H-02 price/owner defaults. Private owner/developer evidence stays on protected contact records. The whole development and each unit may have independent sale and rental offerings, but overlap conflicts are checked before reservation or closing. Availability not reconfirmed for 30 days appears on an exception list. An agent may read inventory and report a correction but cannot edit inventory directly.
 

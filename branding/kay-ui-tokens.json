@@ -1,9 +1,9 @@
 {
   "meta": {
-    "name": "KAY UI design tokens",
-    "status": "approved-v3-implementation",
-    "date": "2026-10-16",
-    "note": "Shared application tokens translating the user-approved V3 references. System sans remains in use pending licensed brand font/artwork."
+    "name": "KAY Riviera application role mapping",
+    "status": "riviera-implementation",
+    "date": "2026-10-18",
+    "note": "Compatibility roles resolve against riviera/kay-riviera.tokens.json. Riviera supersedes V3 colors and typography; existing workflows, layouts and Iconsax remain."
   },
   "color": {
     "brand": {
@@ -11,90 +11,112 @@
       "ivory": "#FAF8F4",
       "beige": "#F6ECDA",
       "charcoal": "#272727",
-      "gold": "#C9A75C",
-      "goldText": "#795821",
+      "gold": "{tokens.color.brand.default}",
+      "goldText": "{tokens.color.goldText}",
       "logoBlack": "#000000"
     },
     "neutral": {
-      "textSecondary": "#5E5E5E",
-      "borderStrong": "#767676",
-      "borderSubtle": "#D8D4CC",
-      "surfaceMuted": "#F4F2ED"
+      "textSecondary": "{tokens.color.muted}",
+      "borderStrong": "{tokens.color.controlBorder}",
+      "borderSubtle": "{tokens.color.divider}",
+      "surfaceMuted": "{tokens.color.surfaceBeige}"
     },
     "surface": {
-      "canvas": "#F7F7F5",
-      "content": "#FFFFFF",
+      "canvas": "{tokens.color.canvas}",
+      "content": "{tokens.color.surface}",
       "warm": "#F6ECDA",
-      "sidebar": "#000000",
-      "sidebarForeground": "#FFFFFF",
-      "overlay": "#FFFFFF"
+      "sidebar": "{tokens.color.sidebar.background}",
+      "sidebarForeground": "{tokens.color.sidebar.label}",
+      "overlay": "{tokens.color.surface}"
     },
     "content": {
       "primary": "#272727",
-      "secondary": "#5E5E5E",
+      "secondary": "{tokens.color.muted}",
       "inverse": "#FFFFFF",
-      "link": "#795821"
+      "link": "{tokens.color.goldText}"
     },
     "selection": {
-      "background": "#F6ECDA",
+      "background": "{tokens.color.interactive.selectionBackground}",
       "foreground": "#272727",
-      "indicator": "#795821"
+      "indicator": "{tokens.color.focusLight}"
     },
     "navigation": {
-      "selectedBackground": "#413A2D",
-      "selectedForeground": "#F1D99F"
+      "selectedBackground": "{tokens.color.sidebar.active}",
+      "selectedForeground": "{tokens.color.sidebar.activeLabel}"
     },
     "action": {
-      "creationBackground": "#C9A75C",
-      "creationHover": "#B99A54",
-      "creationPressed": "#AC8C46",
+      "creationBackground": "{tokens.color.brand.default}",
+      "creationHover": "{tokens.color.brand.hover}",
+      "creationPressed": "{tokens.color.brand.pressed}",
       "creationForeground": "#272727",
-      "primaryBackground": "#272727",
-      "primaryHover": "#3A3A3A",
-      "primaryPressed": "#171717",
-      "primaryForeground": "#FFFFFF",
-      "secondaryBackground": "#FFFFFF",
-      "secondaryHover": "#F4F2ED",
+      "primaryBackground": "{tokens.color.brand.default}",
+      "primaryHover": "{tokens.color.brand.hover}",
+      "primaryPressed": "{tokens.color.brand.pressed}",
+      "primaryForeground": "{tokens.color.ink}",
+      "secondaryBackground": "{tokens.color.interactive.secondaryDefault}",
+      "secondaryHover": "{tokens.color.interactive.secondaryHover}",
       "secondaryForeground": "#272727",
-      "destructiveBackground": "#B4232F",
-      "destructiveHover": "#921E29",
+      "destructiveBackground": "{tokens.color.semantic.danger.foreground}",
+      "destructiveHover": "{tokens.color.semantic.danger.foreground}",
       "destructiveForeground": "#FFFFFF",
-      "focusRing": "#795821"
+      "focusRing": "{tokens.color.focusLight}"
     },
     "status": {
-      "success": { "background": "#E8F5EE", "foreground": "#216E4E", "border": "#2E7D58" },
-      "warning": { "background": "#FFF4D9", "foreground": "#8C5400", "border": "#A56400" },
-      "danger": { "background": "#FDEBEC", "foreground": "#A11D22", "border": "#C7313C" },
-      "info": { "background": "#EDF4FF", "foreground": "#1E5AA8", "border": "#2B64B1" },
-      "neutral": { "background": "#F2F3F5", "foreground": "#4B5563", "border": "#767676" },
-      "purple": { "background": "#F1EDFA", "foreground": "#62439A", "border": "#9477C1" },
-      "teal": { "background": "#E8F4F2", "foreground": "#23695F", "border": "#4B8E82" }
+      "success": { "background": "{tokens.color.semantic.success.background}", "foreground": "{tokens.color.semantic.success.foreground}", "border": "{tokens.color.semantic.success.foreground}" },
+      "warning": { "background": "{tokens.color.semantic.warning.background}", "foreground": "{tokens.color.semantic.warning.foreground}", "border": "{tokens.color.semantic.warning.foreground}" },
+      "danger": { "background": "{tokens.color.semantic.danger.background}", "foreground": "{tokens.color.semantic.danger.foreground}", "border": "{tokens.color.semantic.danger.foreground}" },
+      "info": { "background": "{tokens.color.semantic.info.background}", "foreground": "{tokens.color.semantic.info.foreground}", "border": "{tokens.color.semantic.info.foreground}" },
+      "neutral": { "background": "{tokens.color.semantic.neutral.background}", "foreground": "{tokens.color.semantic.neutral.foreground}", "border": "{tokens.color.semantic.neutral.foreground}" },
+      "purple": { "background": "{tokens.color.kpi.requests.badge}", "foreground": "{tokens.color.kpi.requests.foreground}", "border": "{tokens.color.kpi.requests.foreground}" },
+      "teal": { "background": "{tokens.color.semantic.info.background}", "foreground": "{tokens.color.semantic.info.foreground}", "border": "{tokens.color.semantic.info.foreground}" }
     },
     "chart": {
-      "series1": "#272727",
-      "series2": "#795821",
-      "series3": "#1E5AA8",
-      "series4": "#6A4EA1",
-      "series5": "#237561"
+      "series1": "{tokens.color.stage.cyan.fill}",
+      "series2": "{tokens.color.stage.orange.fill}",
+      "series3": "{tokens.color.stage.blue.fill}",
+      "series4": "{tokens.color.stage.purple.fill}",
+      "series5": "{tokens.color.stage.green.fill}"
     }
   },
   "typography": {
-    "family": "Satoshi, Arial, sans-serif",
-    "licenseStatus": "verify-before-installation",
+    "family": "Manrope, Arial, sans-serif",
+    "displayFamily": "Fraunces",
+    "metadataFamily": "DM Sans",
+    "licenseStatus": "SIL-OFL-1.1-self-hosted-version-verified",
     "weights": { "regular": 400, "medium": 500, "bold": 700 },
-    "sizesPx": { "display": 48, "pageTitle": 32, "sectionTitle": 20, "body": 16, "label": 14, "caption": 12 },
-    "lineHeightsPx": { "display": 56, "pageTitle": 40, "sectionTitle": 28, "body": 24, "label": 20, "caption": 16 }
+    "sizesPx": { "display": 44, "pageTitle": 44, "sectionTitle": 24, "body": 15, "label": 14, "caption": 13 },
+    "lineHeightsPx": { "display": 48, "pageTitle": 48, "sectionTitle": 30, "body": 22.5, "label": 20, "caption": 18 }
   },
   "spacePx": { "0": 0, "1": 4, "2": 8, "3": 12, "4": 16, "5": 20, "6": 24, "8": 32, "10": 40, "12": 48, "16": 64 },
-  "radiusPx": { "small": 6, "medium": 6, "large": 10 },
-  "controlPx": { "buttonDesktop": 40, "inputDesktop": 40, "touchTarget": 44, "inputTouch": 48, "tableRow": 48 },
+  "radiusPx": { "small": 8, "medium": 10, "large": 12 },
+  "controlPx": { "buttonDesktop": 44, "inputDesktop": 44, "touchTarget": 44, "inputTouch": 48, "tableRow": 48 },
   "layoutPx": {
     "mobileMargin": 16,
     "tabletMargin": 24,
-    "desktopMargin": 28,
+    "desktopMargin": 24,
     "desktopSidebar": 224,
     "filterPanel": 256,
+    "calendarRail": 288,
+    "calendarHour": 64,
+    "calendarHeader": 88,
+    "calendarTimeRail": 56,
+    "calendarDayMin": 96,
+    "calendarLaneMin": 52,
+    "calendarInset": 4,
+    "calendarViewportOffset": 240,
+    "calendarMinHeight": 608,
+    "crmFilterPanel": 314,
+    "projectFilterPanel": 314,
+    "projectCover": 148,
+    "projectSort": 176,
+    "projectCardMin": 240,
+    "projectFilterMinHeight": 728,
+    "crmRecordContact": 346,
+    "crmDirectoryHero": 140,
+    "crmRecordAvatar": 84,
+    "crmTableAvatar": 32,
     "contentMaxWidth": 1440,
-    "tableMinWidth": 896
+    "tableMinWidth": 896,
+    "tableTextColumnMinWidth": 160
   }
 }

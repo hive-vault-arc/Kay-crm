@@ -1,12 +1,28 @@
 import { randomUUID } from "node:crypto";
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import { expect } from "./auth";
+
+export async function changeLeadFilters(page: Page, change: (panel: Locator) => Promise<void>) {
+  const trigger = page.getByRole("button", { name: "Afficher les filtres", exact: true });
+  const desktop = page.locator('[data-filter-panel="desktop"]');
+  const mobile = await page.evaluate(() => !matchMedia("(min-width: 80rem)").matches);
+  if (mobile) { await expect(trigger).toBeVisible(); await trigger.click(); }
+  const panel = mobile ? page.getByRole("dialog", { name: "Filtres des Leads", exact: true }) : desktop;
+  await expect(panel).toBeVisible();
+  await change(panel);
+  if (mobile) {
+    await panel.getByRole("button", { name: "Appliquer", exact: true }).click();
+    await expect(panel).toHaveCount(0);
+  }
+}
 
 export async function createLead(page: Page, name = "SP05 contact synthétique", phone = "+212600000001") {
   await page.goto("/leads/new");
   await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
   await page.getByLabel("Nom du contact", { exact: true }).fill(name);
-  await page.getByLabel("Téléphone international 1", { exact: true }).fill(phone);
+  await page.getByLabel("Téléphone 1 *", { exact: true }).fill(phone);
+  await page.getByLabel("Langues parlées *", { exact: true }).selectOption("french");
+  await page.getByLabel("Budget *", { exact: true }).selectOption("500.000 DH - 1.000.000 DH");
   await page.getByLabel("Message de la demande (facultatif)", { exact: true }).fill("SP05 demande synthétique de contrôle");
   await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
   await expect.poll(() => /^\/leads\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);

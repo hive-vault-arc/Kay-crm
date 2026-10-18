@@ -8,12 +8,14 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.contacts.access import ContactConflict, readable_contact
+from app.contacts.commands import apply_command as contact_command
+from app.contacts.commands import create_contact
 from app.db.session import Database
 from app.deals.access import authorized, check_links, check_period, context_kind, writable
 from app.deals.contracts import (
     ORDINARY_STAGES,
     CloseDeal,
-    DealFields,
+    ConvertLead,
     EditCustomerOffer,
     EditDeal,
     NewCustomerOffer,
@@ -25,6 +27,7 @@ from app.deals.contracts import (
 )
 from app.deals.history import append_event
 from app.deals.models import CustomerOffer, Deal, DealReceipt
+from app.deals.qualification import set_fields
 from app.identity.models import AGENCY_ID, Agency, User
 from app.identity.security import IdentityError, keyed_digest
 from app.identity.sessions import CurrentIdentity, current_identity
@@ -32,6 +35,7 @@ from app.inventory import reservations
 
 Body = (
     NewDeal
+    | ConvertLead
     | EditDeal
     | Transition
     | NewCustomerOffer
@@ -41,11 +45,6 @@ Body = (
     | CloseDeal
     | ReopenDeal
 )
-
-
-def set_fields(row: Deal, body: DealFields) -> None:
-    for name in ("title", "requirement_id", "offering_id", "next_action"):
-        setattr(row, name, getattr(body, name))
 
 
 def result(row: Deal, offer: CustomerOffer | None) -> dict[str, object]:
@@ -66,22 +65,35 @@ def apply(
 ) -> tuple[Deal, CustomerOffer | None]:
     offer = None
     now = datetime.now(UTC)
+    if isinstance(body, ConvertLead):
+        from app.deals.conversion import convert
+
+        if did is None:
+            raise IdentityError("NOT_FOUND", 404)
+        return convert(session, identity, did, body), None
     if isinstance(body, NewDeal):
-        contact = readable_contact(session, identity, body.contact_id)
+        contact = (
+            create_contact(session, identity, body.new_contact, "manual", None)
+            if body.new_contact is not None
+            else readable_contact(session, identity, body.contact_id)
+            if body.contact_id is not None
+            else None
+        )
+        if contact is None:
+            raise IdentityError("VALIDATION_ERROR", 422)
         if contact.archived_at is not None:
             raise IdentityError("CONTACT_ARCHIVED", 409)
-        check_links(session, identity, contact, body, enquiry_id=body.enquiry_id)
+        check_links(session, identity, contact, body)
         row = Deal(
             id=uuid4(),
             contact_id=contact.id,
             origin_contact_id=contact.id,
-            enquiry_id=body.enquiry_id,
             stage=body.stage,
             version=1,
             created_by_user_id=identity.user.id,
             updated_by_user_id=identity.user.id,
         )
-        set_fields(row, body)
+        set_fields(session, contact, row, body)
         session.add(row)
         session.flush()
         previous, action, reason = None, "created", ""
@@ -117,7 +129,14 @@ def apply(
             if row.offering_id != body.offering_id and reservations.active_hold(session, row.id):
                 raise IdentityError("RESERVATION_RELEASE_REQUIRED", 409)
             check_links(session, identity, contact, body, did=row.id)
-            set_fields(row, body)
+            if body.contact_fields is not None:
+                try:
+                    contact_command(session, identity, "contacts", body.contact_fields, contact.id)
+                except ContactConflict:
+                    raise ContactConflict(
+                        "DEAL_VERSION_CONFLICT", {"current": {"version": row.version}}
+                    ) from None
+            set_fields(session, contact, row, body)
             action = "updated"
         elif isinstance(body, Transition):
             if row.stage == body.stage:
@@ -184,6 +203,12 @@ def command(
         )
         receipt = session.get(DealReceipt, (identity.user.id, route, key))
         if receipt:
+            if isinstance(body, ConvertLead):
+                from app.contacts.queries import enquiry_in_scope
+
+                if did is None:
+                    raise IdentityError("NOT_FOUND", 404)
+                enquiry_in_scope(session, identity, did)
             row = authorized(session, identity, receipt.deal_id)
             writable(session, identity, row)
             if receipt.request_hash != digest:

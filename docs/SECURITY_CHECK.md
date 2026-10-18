@@ -1,5 +1,467 @@
 # KAY security check for changes
 
+## Combined CRM regression/publication (2026-10-18)
+
+[Execution and retained failures](03-planning/full-regression-publication-2026-10-18.md)
+cover the combined qualification, scoped histories, staff onboarding/deletion and
+Riviera/Projects/calendar candidate. Real isolated PostgreSQL, ClamAV, recovery,
+permission, concurrent/retry and session-revocation cases are exercised. Final
+Lead totals sum the same complete scoped status aggregation in repeatable read;
+no authorization predicate, timeout, pool limit or business rule is weakened.
+
+Benchmark tooling accepts only independently counted exact old/new synthetic
+distributions, retains failed logins/requests and the100-user/60s/p95 gates.
+Its initial load gate fails latency; the owner-directed read-only SQL repair
+subsequently passes unchanged100-user/60s/p95 limits (latest322.455ms ordinary/
+574.745ms dashboard,7026 completed/0 failures). Agent scopes materialize only
+inside one current-identity-validated read-only repeatable-read statement; no
+cross-request authority/count cache, schema, pool or timeout change. Populated
+three-role drill parity, private counts, decimal corrections and concurrent
+transfer pass. Unexpected benchmark-user errors now explicitly fail the gate;
+startup diagnostics expose phase counts/error classes, never raw tracebacks or
+credential inputs. Intermediate setup failures remain disclosed. Final exact-
+head functional/security gates are still required before merge. Only the guarded local
+synthetic benchmark was migrated0022→0026; no development/remote DB migration,
+real account/password change, retention CLI, real import/export or external
+message occurred. Main's automatic demo deployment is owner-approved only after
+tests pass; no remote data authority is inferred.
+
+Test-supervisor diagnostics expose only whitelisted process codes/role/status/
+numeric state, not raw stderr, credentials, tokens or records. Auth traces,
+videos, automatic screenshots and AI snapshots remain off; explicit captures
+use empty credentials or safe post-login synthetic UI. Browser profiles, reports,
+private notes/runtime settings and raw output remain ignored. Public fixture
+copies are unchanged generated synthetic test images, outside runtime assets.
+Final local index/private-value/pattern/bundle/report checks are recorded below;
+exact-head hosted aggregates still require execution. A functional pass does not erase the load
+failure or imply production certification. Final local checks find0 known-value
+matches across8404 indexed blobs/7 private values, no staged/history Gitleaks
+leaks,0 configured secrets in586 browser JS files and0 detailed report steps.
+Port8000 remains untouched.
+
+## Projects categories/facets and photo directory (2026-10-18)
+
+D39 is a read-only inventory projection/filter extension, not a new authority or
+stock command. Only properties accepts bounded exact unique CSV categories;
+explicit-none, legacy single category and ambiguous/duplicate/unknown rejection
+are tested. Existing non-category filters precede whole-result facets, category
+selection and numbered pages in one repeatable-read snapshot. Canonical counts
+contain no private owners. Other routes reject the new selection parameter.
+
+Current-session and strict no-store facade/response validation remain. Literal
+multiword search uses%20 rather than weakening the existing API target allowlist.
+Category controls wait for current facets during requests, preventing a hidden
+zero-count category from surviving rapid clearing. Current errors and retries
+remain visible. No TLS/cookie/CSRF/origin/session/permission guard was weakened.
+
+Existing protected clean-file thumbnails retain real permits/object URLs and
+cleanup. Eight generated PNGs are synthetic isolated fixtures with exact prompt/
+hash provenance, uploaded through real metadata/binary transfer/ClamAV flows;
+they are not public assets or development inventory covers. No migration, real
+seed/import/export, production access, external message or retention CLI ran.
+
+51 focused PostgreSQL and66 frontend unit checks pass, with Ruff/mypy/lint/types/
+build. Real headed Chrome covers owner privacy, role/version denial, prices,
+House/pages, actual outage/retry, interrupted acknowledgements, late logout and
+revoked sessions. The ledger retains early failures and final confirmation.
+Captures are explicit synthetic post-login UI; no traces/videos/input-bearing
+diagnostics are enabled. Final bundle/report/cleanup evidence is in the
+[ledger](03-planning/projects-reference-refresh.md). No commit/push, full-release
+or all-browser security certification is implied.
+
+Final Projects confirmation2/2 passes1.4m after the in-flight selection fix.
+Client scan4 roots/577 JS/0 configured secret matches; HTML report2 JSON/2 empty
+result-step arrays/0 detailed. Read-only isolated checks find0 user/contact/
+enquiry/property/offering/document/job/notification rows. The test worker and
+temporarily started ClamAV are stopped, original assets/signatures preserved;
+frontend/test API remain CA-verified200. Port8000 untouched. No development
+cleanup, real import/export, commit or push. See ledger for retained failures.
+
+## Calendar selection/facets and reference (2026-10-18)
+
+D38 adds read-only bounded type/status filters and scoped facets, not a new
+authority or data store. Details retain contact/participant/current-session
+scope before facets; type/status filters run before numbered paging. Facets and
+items share a repeatable-read snapshot. Empty selection is explicit; unknown,
+duplicate, whitespace and ambiguous queries fail. Outsider facets are zero.
+Metadata-free colleague busy rejects all type/status selections and returns no
+counts, titles, contacts or locations. Existing timezone, booking capacity,
+lunch, overlap, optimistic versions and interrupted-retry guards remain tested.
+
+No identity/TLS/CSRF/cookie/command guard was weakened. The existing private
+facade still forwards only current authority. Strict response validation fails
+closed without complete facets. No migration, real record import/seed/export,
+fleet assignment, external message, retention CLI or production operation.
+Verified selected Free Iconsax assets are inline functional glyphs; no new
+runtime/dependency/remote asset request. Temporary source archive was removed.
+
+40 focused PostgreSQL tests and61 frontend units pass. Serial real-stack headed
+checks cover roles/copied IDs/free-busy plus actual outage/retry, mobile touch,
+keyboard/native200%, type/status filters and reference images. All fixtures are
+isolated synthetic; captures contain no source client data or secret fields.
+Final build scan:4 browser roots/561 JS/0 configured facade/signing-secret matches.
+No trace/video/input-bearing diagnostic capture is enabled. Final report/cleanup
+evidence is in the [ledger](03-planning/calendar-reference-refresh.md).
+This scoped check is not full-release, all-browser or production certification.
+
+## Staff setup/deletion (2026-10-18)
+
+D37 changes only later-account setup/reset/deletion. Initial passwords enter as
+SecretStr, persist only as Argon2id hashes and participate only in keyed receipt
+fingerprints; API/GET/receipt results contain no plaintext. Immediate active
+accounts still have24-hour restricted credentials and must choose a different
+own password then sign in freshly. Current-admin-password reset remains required.
+Existing staff credentials/flags/sessions are not bulk-changed. Legacy pending/
+disabled accounts require explicit reset; deleted accounts deny login/session/
+detail/edit/reset. Removed handoff/disable routes fail404.
+
+DELETE uses ordered agency/user locks, fresh authority after waits, optimistic
+version, last-final-admin protection and atomic marker/revocation/audit/receipt.
+No physical identity/history deletion, restore, email reuse or automatic external
+delivery is added. The security audit family includes users.delete while keeping
+historical actions. No retention CLI ran. Approved local0025/0026 upgrades each
+preserve original-column fingerprints across69 tables;0 real accounts deleted.
+
+51 focused and46 related PostgreSQL checks pass.56 frontend units, lint/types/
+build and7 visible Chrome cases pass; the final two-case confirmation follows
+copy/capture corrections. Client scan4 roots/549 JS finds0 configured facade/
+signing-secret matches. Initial seven-case HTML report has3 JSON/7 empty step
+arrays/0 detailed arrays; no trace/video/raw credential diagnostics. Dependency
+check reports0 runtime vulnerabilities and9 inherited dev-only findings covered
+by the existing approved exception through2026-11-15, not a clean full audit.
+Final privacy evidence and commands are in the
+[ledger](03-planning/staff-onboarding-deletion.md). Human product review and
+full-release/all-browser/production security verification remain outside scope.
+
+## Lead/Deal activities (2026-10-18)
+
+The [activity ledger](03-planning/lead-deal-activities.md) records an additive
+history extension, not a replacement permission model. Every target/history/
+origin/count/replay checks the current session and parent scope; origin uses
+only the explicitly linked Lead, not contact-wide notes. Global identity lock,
+one immutable event, audit and same-key receipt commit atomically. No caller
+actor/time/context, HTML rendering, backdating, edit/delete, external message,
+visit scheduling or inventory mutation is exposed. Schema0025 bounds metadata
+and validates manual parent/contact context; existing history triggers remain.
+The strict no-store facade retains verified HTTPS, secure cookie, exact origin,
+CSRF, query/payload allowlists and bounded4MiB responses. NUL is rejected.
+
+Final22 new PostgreSQL and55 scoped regressions pass, covering privacy/current
+authority, transfer/replay, archive, merge, guards, concurrent/retried/rolled-back
+intent, immutable rows and populated migration preservation/refused downgrade.
+Final4/4 visible Chrome cases include actual committed-but-lost-response retry
+without duplicate entry, literal script-text rendering,403/404 boundaries,
+loading/error recovery and read-only archive.53 frontend units, types/lint/build,
+scoped Ruff/mypy pass. These are necessary scoped checks, not a new full-backend,
+all-browser, production penetration or human acceptance claim.
+
+Privacy scan:4 browser roots/540 JS,0 configured facade-secret or signing-key
+matches. Final report3 JSON/4 empty result-step arrays/0 detailed arrays. Explicit
+captures are guarded post-login synthetic UI; no raw credentials/client examples
+from the supplied images were imported. No dependency or shipping raster added.
+The initial test lease refusal was respected; owner-approved exact KAY supervisor
+shutdown enabled serial checks, then8100/8101 were restarted. Port8000 was never
+stopped. The later explicit approval applied0025 locally with unchanged original
+row fingerprints across69 tables; the separate staff change then applied0026.
+no real-data rewrite, production operation, deployment or publication occurred.
+
+## CRM screenshot fidelity correction (2026-10-18)
+
+The current [reference ledger](03-planning/crm-reference-fidelity.md) separates
+visual correction from prior qualification/backend work in this dirty tree.
+The new UI composes existing scoped metadata/list/detail/task/assignment APIs;
+it does not change authorization, sessions, HTTPS, command identity or schema.
+Read-only status tiles do not bypass transitions. Filter counts remain backend
+projections; selection is current-page presentation, not a bulk mutation.
+The compact follow-up uses the existing eligible-owner list and Casablanca
+resolver, preserving versioned/retry behavior. `tel:`/`mailto:` actions require
+the user's external application; no external message is sent by this task.
+Initial guarded Chrome checks create synthetic records and a real internal task,
+then use existing test cleanup. No development database reset, real staff/client
+capture, credentials in screenshots or production access. Final broad browser
+checks pass24/25; the remaining hidden-checkbox hit-area measurement is corrected
+and the full filter suite rerun passes2/2. All25 distinct selected cases have
+passing final-source evidence, including denial, revoked session, outage/retry
+and stale-version cases. Client privacy:4 roots/531 JS/0 configured secret
+matches; report2 JSON/2 empty result arrays/0 detailed arrays. Three interrupted
+synthetic fixture actors are removed individually through the guarded supervisor;
+read-only verification finds0 of those IDs remaining. These checks are not
+full-product security certification.
+
+## Lead/Deal interface-only refinement (2026-10-17)
+
+Scope: eight list/detail/create/edit surfaces, explicitly confirmed by the owner.
+Only presentation, affected existing tests and scoped documentation are changed
+for this request. No backend/auth/session/CSRF/TLS/file-quarantine rule, request
+contract, environment, database configuration or permission check is changed.
+Deal email is rendered from the existing authorized contact projection; no new
+lookup or private-data cache is introduced. Non-target routes keep their shell
+width and default shared component behavior.
+
+Current lint/direct types/production build and45 units pass. The20-case compiled
+headed Chrome run passes6.6m, covering actual create/edit/conversion, scoped
+reuse/private denial/copied IDs, agent/manager/admin authority, immutable retry
+identity, validation, outage/conflict drafts and recovery. Actual200% zoom,
+keyboard/touch and narrow layouts retain the guards. Six additional qualification
+journeys pass across Edge/Firefox/WebKit in1.9m. These are scoped frontend
+regressions, not a newly executed backend aggregate or broad security penetration
+test. No check or failure handler is removed to obtain a pass.
+
+Client scan4 roots/416 JS has0 configured facade/signing-secret occurrences.
+The20-case report has9 JSON/20 empty step arrays/0 input-bearing detailed arrays.
+The final6-case report has3 JSON/6 empty arrays/0 detailed arrays, with only
+`.last-run.json` retained and0 temporary profiles/zoom directories or isolated
+test listeners on3100/8100/8101/8001.
+Captures are opt-in post-login synthetic UI with password/private-field guards,
+ignored along with reports/configs;0 such generated/config paths are tracked.
+No new shipping raster/dependency. A fresh read-only full finish reviewer opens
+all36 exact capture files and returns `ship` for this slice. Fresh documentation
+comparison and final report/artifact inspection are complete and recorded in
+the linked ledger; no global design metadata drift was repaired as a side effect.
+
+No real staff/client records, production access, publication or deployment.
+The populated local database's earlier owner-requested migration is separate
+completed work, not rerun or changed by this frontend task.
+[Current evidence](03-planning/leads-deals-interface-refresh.md).
+
+## Lead/deal qualification replacement (2026-10-17, local verification complete)
+
+Final complete isolated backend command exits0:775 passed975.95s,94% configured
+application coverage. Current request/authority/history/stock/migration rules join
+the132 distinct broad Chrome cases,12 cross-browser core journeys, dev-only and
+stronger installed-Chrome checks through the recorded passing commands and retained
+failures. No test/CI/permission/TLS/quarantine guard is removed to obtain a pass.
+
+Post-run READ ONLY inspection under the normal isolated lease confirms revision
+0024_deal_qualification_history and0 users, contacts, leads, deals, jobs and outbox
+rows. Client scan4 roots/395 JS has0 matches for either configured facade or signing
+secret; latest report2 JSON entries/1 empty step array/0 detailed arrays. No retained
+zoom/profile directory or listener on3100/8100/8101/8001. Runtime/config/certificate/
+capture/report/coverage paths remain ignored. No dependency/lockfile changes.
+Final lint/direct types/45 frontend units, Ruff317/mypy182/pip and dependency audit
+pass; the audit retains9 dev-only findings under the approved exception through
+2026-11-15, with0 runtime vulnerabilities, not a clean full audit. Source/layout
+requirements are checked individually. No real-data migration, publication or
+deployment; no new full-volume performance or human product-approval claim.
+
+### Retained verification checkpoints (historical)
+
+Final visible Chrome stronger Lead confirmation passes1/1 in27.8s. Planned
+browser scope now has passing evidence:132 distinct broad Chrome,12 cross-browser
+core journeys and dev-only component check, through the recorded commands and
+retained prior failures. Latest report2 JSON/1 empty step array/0 detailed arrays;
+no retained zoom/profile directories. The complete guarded isolated backend suite
+with coverage is now live, with no concurrent browser writer. Its terminal result
+and final requirement/privacy/artifact audit remain required before completion.
+
+Strong current Lead journeys pass3/3 Chromium/Edge/Firefox1.1m and3 WebKit
+repetitions1.1m, with page errors still fatal. Earlier unchanged manual/catalogue
+cases pass all4 profiles, completing12 distinct cross-browser journeys through
+recorded commands, not a claimed clean initial12-case run. Dev-only component
+loading/empty/invalid/error/recovery passes1/1 in45.9s. Both reports have2 JSON
+entries/3 or1 empty step arrays/0 detailed arrays. Final native Chrome stronger
+Lead confirmation is live; full backend aggregate and final audit remain open.
+
+Current strengthened WebKit Lead journey passes3 serial repetitions1.1m,0 page
+errors. It waits for actual visible record/profile/dialog/deal readiness instead
+of abandoning initial background loads; every page-error event still fails. The
+safe classifier uses allowlisted kinds and URL-path extraction only (UUIDs redacted,
+no query/body/message). Transport failures correlated with cancelled background
+requests, but standalone HTTP/HTTPS/partial-body abort probes did not reproduce;
+no claimed general CORS/root-cause fix. No app code change. Report2 JSON/3 arrays/
+0 detailed arrays, lint/direct types pass. Other3 current Lead profiles are live;
+prior manual/catalogue evidence is unchanged. Remaining final gates stay open.
+
+Cross-browser12-case command is terminal11 passed/1 opaque WebKit Lead page-error
+failure3.4m, after its full business assertions passed. A safe classifier retains
+all page errors but records only exception name/React number/ID-redacted route;
+no raw error message, password, URL query or session. No app change/exception
+suppression. Single corrected-diagnostic rerun passes1/1 in32.8s;3 repetitions
+remain live. Report privacy4 JSON/12 arrays/0 detailed and2 JSON/1 array/0 detailed.
+The original error's cause is not established by a passing rerun.
+
+Final native File/Work rerun passes2/2 in2.8m, closing all132 distinct broad
+Chrome cases through the documented continuation chain. No single all-green
+invocation is claimed. Real quarantine/recovery/verdict/bytes and private denial,
+task/inbox authority, native touch/keyboard/200% and4.5:1 remain asserted. Report
+privacy3 JSON/2 step arrays/0 detailed arrays; no retained zoom/profile directory.
+Actual manual1/2/3 project commits, replay and ordered history pass3/3 in3.63s.
+The12 cross-browser core journeys are live; dev-only/full backend/final audit
+remain pending. No production data, publication or app-security bypass.
+
+Latest4-case rerun is terminal2 passed/2 failed4.0m. Extra dashboard-profile
+cleanup and exact private-derived-title denial pass. File's actual fenced scan
+recovery/byte/EICAR checks progress to the modal capture, where an accessibility
+role query incorrectly excluded the hidden background shell. The guard now uses
+includeHidden while keeping password/private-field absence. Work's safe diagnostic
+identifies OKLab/alpha misparsed as RGB, not a proven UI colour defect. Canvas
+sRGB resolution/ancestor alpha composition retains4.5:1 and all geometry/control
+assertions. No app or modal-isolation change. Fresh lint/direct types pass;
+report5 JSON/4 step arrays/0 detailed arrays. The corrected2-case run is active.
+
+The15-case continuation is terminal13 passed/2 failed12.4m. Native outcome API403,
+ownership, restore, reporting, qualifications, reservations, scheduling, user
+administration and V3 clean-image authority pass. Report13 JSON/15 step arrays/
+0 detailed arrays. Both remaining native File/Work failures are retained in a
+4-case run with the extra dashboard cleanup and exact private-label cases; both
+extras pass. Work contrast remains4.5:1 with safe tag/action/computed-colour
+diagnostics, no record text. Actual1/2/3 project persistence/replay assertions
+are added to the backend manual-deal test, not yet executed; no app code changes.
+
+Live15-case update: exact login SSR/no-JavaScript and strengthened native outcome
+denial pass, along with ownership/restore/reporting. The retained File retry
+failure persists at30s because forced termination can leave the90-second fenced
+lease. Native verification now follows the existing E2e200-or409 retry response
+and120-second recovery bound; no lease/scanner/fencing code changes. Its corrected
+rerun is pending. Fresh client audit4 roots/391 JS has0 configured facade-secret
+matches and0 signing-secret matches (one distinct configured value of each).
+
+Latest23-case continuation is terminal8 passed/3 failed/12 not run7.7m. Its
+report has20 JSON entries/11 step arrays/0 detailed arrays; no disposable zoom
+profile remains after the passing login-zoom case. The next test-only corrections
+retain actual scanner completion within30 seconds, the page-level Contact glyph,
+and current D34 facts-edit rights. Native external-stock denial is strengthened:
+the agent sees the permitted edit link, no external-outcome control in Offres,
+and gets403 replaying the real manager-reviewed body with fresh actor protection.
+Lint/direct types pass; all15 remaining cases are selected in a guarded run.
+Fresh runtime dependency audit is0 vulnerabilities;9 existing dev-only findings
+use the approved exception through2026-11-15. CI-policy units16/16 pass.
+
+Current56-case continuation is terminal33 passed/3 failed/20 not run15.5m;
+its report has33 JSON entries/36 step arrays/0 detailed arrays. Native Deal and
+File tests now start their required worker explicitly, preserving real scanner
+verdicts, quarantine/denial and byte assertions. The login test follows the
+owner-approved glyph inventory without changing auth or the shipping login.
+Fresh lint/direct types pass. All3 failures plus20 unexecuted cases are selected
+in a fresh guarded23-case compiled continuation; its results remain pending.
+
+Latest75-case writer is terminal19 passed/3 failed/53 not run10.5m; its report
+has42 JSON/22 step arrays/0 detailed arrays. Those three stale title/icon test
+expectations are corrected and all pass in the live56-case continuation. Actual
+restored session/permit denial and current scoped data/worker reconciliation pass
+with exact budget/profile/project assertions. The native200% record test passes
+with zero retained record-facts profile directories. No application permission,
+stock, history or authentication rule is weakened. Remaining56-case results,
+extra current cleanup/private-label reruns and final artifact audit are pending.
+
+Current broad command is terminal:57 passed/3 failed/72 not run17.9m. All three
+test-only corrections pass at the start of the75 remaining-case continuation,
+which is still active. The132-case report contains61 JSON entries/60 step arrays/
+0 detailed arrays. Four persistent-context tests now close and remove only their
+validated disposable test profiles in finally, including first-launch failures.
+A manual deletion attempt was blocked and not retried. Read-only inspection
+after normal harness startup finds the former disposable profile absent. New
+cleanup branches still need their actual zoom-case execution; no user profile
+or development/production record is a cleanup target. Lint/direct types pass.
+
+Latest functional regression correction: the enquiries list adds complete status
+counts after current-contact/assignment authority, archive and all ordinary
+filters, before pagination in its existing read-only repeatable-read transaction.
+No new operation, role, private projection, grant, stock mutation or authentication
+bypass.43 affected backend cases pass44.47s, including private counts, filtered
+pages and converted exclusion.45 frontend units/lint/direct types pass; the
+facade requires every bounded nonnegative status key. Restored technical
+Provenance remains distinct from marketing campaign attribution. Prior full
+Chrome terminated39 passed/5 failed/88 not run; corrected browser verification
+is pending, not a release claim.
+
+Corrected focused rerun:3/3 compiled native Chrome cases pass2.0m after8 other
+focused passes. Signed intake, exact source attribution, worker restarts,
+private/actor denials, nine-state counters and stop/restart recovery remain.
+The added archived/all count assertions pass1/1 in2.25s. Report privacy is
+4 JSON/3 step arrays/0 detailed arrays, current client scan391 JS/0 configured
+secret matches. Full132-case compiled Chrome is running; no full pass inferred.
+
+Owner-authorized IMMO World alignment replaces free-title manual creation and
+enquiry linking with explicit qualified creation/conversion. Existing canonical
+phone uniqueness, current contact/collaborator scope, archive restrictions,
+agency→identity lock order, Origin/CSRF/facade/TLS, version checks and hashed
+idempotency receipts remain. New contact plus deal, or profile edit plus deal
+edit, commits in one transaction. A private duplicate returns only the existing
+approved responsible-agent disclosure; the facade validates its bounded shape.
+No new unauthenticated endpoint, ownership grant or stock mutation is introduced.
+
+The additive0023 client/qualification/project migration preserves legacy rows.
+Additive0024 binds budget/source/rating/buying-intent/client snapshot/notes/
+financing/rooms and ordered project interests to the immutable latest deal
+revision. New rows require qualified facts; untouched legacy defaults and empty
+historical snapshots are retained without fabrication. Ordinary SQL changes to
+qualification or project sets fail without matching history. Case-insensitive
+trimmed duplicate external projects are refused at the database boundary.
+Existing stock, outcome, proposal, merge-origin and actor guards remain separate.
+
+Observed:32 real PostgreSQL cases pass across new history guards, populated
+legacy upgrade, manual workflow and conversion;93 broader reservations/outcomes/
+finance/reporting/deal-edge/merge/private-file cases pass after0024.196 pure
+backend units pass with565 integration cases deselected, not
+passed. Fresh pure backend selection passes196 cases4.06s; mypy passes182
+source files. Frontend44 units, lint/typecheck and the production build pass.
+The final compiled visible Chrome selection passes8/8 in4.7m: new qualified
+manual creation/edit/history, real lead conversion, current inline filters and
+retained contact/project rails, shared actions, native Lead/Deal states, private
+duplicates/files, interrupted service recovery, conflict reload, touch and real
+200% zoom. The first broad attempt retained one test-helper load-timing failure
+(5 passed/1 failed); the corrected complete selection passes without dropping
+the check. The earlier6-case deal selection also covers exact offering context,
+proposal/stage behavior, scoped counts/pages and committed-response retry.
+
+Client scan checks391 browser JavaScript files across4 build roots:0 configured
+facade-secret matches and0 matches for the1 configured signing key. The private
+report audit finds4 JSON entries/4 step arrays/0 detailed step arrays. Synthetic
+post-login captures contain no credential inputs. Fresh generic-subagent finish
+review scored its3 material fixes resolved; that ship verdict covers the scored
+fixes, not whole-product or release acceptance. Catalogue-project positive
+browser verification passes1/1 in29.2s. Ordinary-extension documentation and
+AFTER024 are complete; pre-existing global design format drift is preserved.
+
+Full backend attempts retained39 passes/1 overly specific scanner-send assertion
+and171 passes/1 stale D34 test denial. Corrections preserve exact wire bytes,
+endpoint/signature/verdict guards and the already-approved project operation
+allowlist; no application scanner or permission behavior changed. Focused
+development-edge/manual qualification verification passes11/11 in28.41s.
+The reviewed-unit selector now parses module paths before slash-containing
+parameters; its explicit allowlist/DB-connection refusal remain. Current pure
+selection passes217/552 deselected in3.53s, including6 new selector cases. Earlier
+196/565 counts are historical, not proof all deselections were database tests.
+The complete backend attempt next stopped213 passed/3 stale title/migration
+fixture failures; the corrected three cases pass3/3 in26.14s. Historical
+migration cases now insert explicit legacy facts after an empty isolated schema
+downgrade, then prove upgrade preservation and current downgrade refusal.
+Qualification/history constraints, triggers, authority and lease are unchanged.
+A broader migration-focused run passes13/14; its sole phone comparison omitted
+the later nullable website-source column on one side and is corrected. The full
+769-case run collected that test before its final correction and remains live;
+its terminal result and corrected affected rerun are required. Fresh Ruff315
+files/mypy182 modules and frontend lint/typecheck/44 units pass. Client/report
+privacy scans remain391 JS/0 configured-secret matches and4 JSON/4 arrays/0
+detailed arrays; runtime/capture/report paths are ignored and untracked.
+The complete backend run terminated768 passed/1 stale import comparison failure
+in957.68s. The corrected affected run passes30/30 in75.08s, including the rebuilt
+draft migration, both bounded generator SQL branches, conversion/history, import
+and actual70-table restore. The conversion cleanup exception is now test-DB-only;
+a restored converted Lead cannot be detached in the distinct recovery DB even
+with the synthetic flag set. No trigger, retention or authority guard was disabled.
+Fresh pure units217/554 deselected, Ruff316 files/mypy182 modules and the production
+frontend build pass. Generator samples prove qualification compatibility, not a
+renewed full-volume load claim. Complete compiled Chrome is running serially;
+the separate development-only component case and final browser/privacy audit
+remain open.
+Only the guarded isolated test database was migrated. No development/production
+migration, credentials, real records, push or deployment are included.
+
+## D34: agent project creation/editing (2026-10-17)
+
+Explicit operation allowlist grants only project facts/briefing, hierarchy/types
+and property/unit create/edit. Current identity after locks and before receipt
+replay, strict bodies, CSRF/Origin/facade, stock constraints and true-actor audit
+remain. Owner/file/offering/availability/external-outcome/archive/restore commands
+remain M/A-only. Agent developer changes require current contact scope; missing/
+private IDs share NOT_FOUND. Omitted IDs preserve hidden links; retry hashes
+distinguish omission from explicit removal. No schema or production data change.
+Final isolated53 backend cases and4 compiled visible Chrome cases pass; full
+release matrix is not executed/not passed for this change. [Actual commands,
+retained fixture failure and boundaries](06-delivery-and-operations/agent-project-permissions.md).
+
 ## Production server-only frontend facade (2026-10-16)
 
 Owner-authorized remote HTTPS support replaces only the unconditional localhost/

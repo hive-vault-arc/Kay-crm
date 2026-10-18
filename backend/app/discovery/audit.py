@@ -19,6 +19,7 @@ SECURITY_ACTIONS = (
     "users.create",
     "users.edit",
     "users.disable",
+    "users.delete",
     "users.reset-password",
     "users.confirm-handoff",
 )

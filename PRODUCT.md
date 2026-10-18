@@ -1,7 +1,7 @@
 # KAY product context
 
 Status: index of existing approved contracts, not a new product specification.
-Updated: 2026-10-16 for the Approved V3 UI implementation.
+Updated: 2026-10-17 for the owner-requested Lead/Deal alignment.
 
 KAY is an existing one-team real-estate CRM with a French web interface, MAD
 amounts and backend-authoritative Africa/Casablanca dates. Product scope,
@@ -29,11 +29,18 @@ core; other future options are not authorized by this pointer.
 
 [Approved V3](docs/04-design/ui-reference/approved-v3/README.md) supplies nine
 selected compositions and the extension rules for every existing surface.
-[DESIGN.md](DESIGN.md) is the existing visual entry point. The current task
-authorizes a UI-only implementation with working actions and real scoped API
-data, not new backend behavior, deployment, a new product workshop, a new font
-license or mockup-only features. Its explicit antislop timing is DURING;
-separate AFTER-only audit findings still require user selection.
+[DESIGN.md](DESIGN.md) is the existing visual entry point. The current explicit
+Lead/Deal request extends both workflow and UI to the IMMO World reference:
+canonical client qualification, selectable calling codes, rich source choices,
+project/budget/intent conversion and matching manual deal forms/tables/details.
+It authorizes the required backend/API/additive migration work, while preserving
+KAY permissions, stock and business history. It does not authorize deployment,
+production/development migrations, a brand replacement, a new font license or
+editing the reference repository. Antislop retains the owner's AFTER timing;
+aesthetic-only audit findings require user selection. The
+[alignment record](docs/03-planning/leads-deals-immoworld-alignment.md) tracks
+actual implementation, verification and remaining acceptance separately from
+the earlier V3-only evidence below.
 
 Implementation coverage and actual results are recorded in the
 [route/surface checklist](docs/04-design/ui-reference/approved-v3/coverage.md)

@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { test, expect, clearActorContext, removeActor, signIn, type TestActor } from "../helpers/auth";
 import { discoveryFixture, lifecycle, searchFor } from "../helpers/discovery";
 import { testControl } from "../helpers/api-process";
+import { changeLeadFilters } from "../helpers/leads";
 
 test("SP19 AT22/24/29: scoped cross-domain search, filtered export, archive/restore and privileged audit", async ({ page }) => {
   test.setTimeout(120000); const actors: TestActor[] = [];
@@ -12,9 +13,8 @@ test("SP19 AT22/24/29: scoped cross-domain search, filtered export, archive/rest
     await expect(page.getByRole("link", { name: "SP19 privé synthétique", exact: true }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "SP19-SHARED : SP19 bien synthétique", exact: true })).toBeVisible();
     await page.keyboard.press("Escape");
-    await page.goto("/leads"); await page.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true }).fill("SP19 visible");
-    await page.getByRole("button", { name: "Appliquer", exact: true }).click();
-    await expect(page.getByText("1 demande(s) accessible(s).", { exact: true })).toBeVisible();
+    await page.goto("/leads"); await changeLeadFilters(page, async panel => { await panel.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true }).fill("SP19 visible"); });
+    await expect(page.getByText("1 demande", { exact: true }).and(page.getByRole("status"))).toBeVisible();
     await page.getByRole("button", { name: "Exporter les résultats filtrés", exact: true }).click();
     await page.getByRole("button", { name: "Confirmer l’export CSV", exact: true }).click();
     await expect(page.getByText(/Export demandé/)).toBeVisible();
@@ -37,7 +37,10 @@ test("SP19 AT22/24/29: scoped cross-domain search, filtered export, archive/rest
     await page.keyboard.press("Escape"); await page.goto("/leads"); await expect(page.getByRole("button", { name: "Exporter les résultats filtrés", exact: true })).toHaveCount(0);
     expect((await page.request.get("/api/v1/exports")).status()).toBe(403); expect((await page.request.get("/api/v1/audit/events")).status()).toBe(403);
     await page.goto("/dashboard?view=audit"); await expect(page.getByRole("alert").filter({ hasText: "Accès non autorisé" })).toContainText("Accès non autorisé");
-  } finally { await testControl("worker-stop"); await clearActorContext(page); for (const actor of [...actors].reverse()) await removeActor(actor); }
+  } finally {
+    try { await testControl("worker-stop"); await clearActorContext(page); }
+    finally { for (const actor of [...actors].reverse()) await removeActor(actor); }
+  }
 });
 
 test("SP19: lost export acknowledgement reuses the original request key", async ({ page }) => {

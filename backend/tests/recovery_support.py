@@ -77,7 +77,9 @@ def build(settings, database):
         at,
         NewDeal(
             contact_id=contact,
-            title="SP21 affaire synthétique restaurée",
+            initial_budget="1000000",
+            purchase_reasons=["residence"],
+            projects=[{"development_id": str(did)}],
             next_action="Vérifier la restauration",
             offering_id=offid,
             expected_offering_version=offering_version,

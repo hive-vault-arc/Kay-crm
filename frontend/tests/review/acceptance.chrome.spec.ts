@@ -18,7 +18,7 @@ test("SP22 visible final families: real French controls, touch, keyboard and red
   page.on("console", message => { if (message.type() === "error") errors.push("CONSOLE_ERROR"); });
   async function capture(name: string) {
     await expect(page.getByText(/à venir|sera ajoutée|seront disponibles/)).toHaveCount(0);
-    await expect(page.getByRole("status").filter({ hasText: /Chargement|Vérification/ })).toHaveCount(0);
+    await expect(page.getByRole("status").filter({ hasText: /Chargement|Vérification|Résolution de la semaine/ })).toHaveCount(0);
     expect(await page.locator('input[type="password"], [data-private-credential]').evaluateAll(fields => fields.every(field => !(field as HTMLInputElement).value))).toBe(true);
     const cdp = await page.context().newCDPSession(page);
     try {
@@ -53,12 +53,13 @@ test("SP22 visible final families: real French controls, touch, keyboard and red
   await page.setViewportSize({ width: 1440, height: 1000 });
   const lead = await createLead(page, "SP22 revue synthétique");
   await capture("lead-detail-desktop");
-  await page.getByRole("link", { name: "Créer une affaire", exact: true }).click();
+  const clientId = (await (await page.request.get(`/api/v1/enquiries/${lead}`)).json()).contact.id;
+  await page.goto(`/deals/new?contact_id=${clientId}`);
   await expect(page.getByRole("form", { name: "Nouvelle affaire", exact: true })).toBeVisible();
   await capture("deal-form-desktop");
   await fillDeal(page, "SP22 affaire de revue synthétique"); await saveDeal(page);
   await capture("deal-detail-desktop");
-  await page.goto("/deals"); await expect(page.getByRole("link", { name: "SP22 affaire de revue synthétique", exact: true })).toBeVisible();
+  await page.goto("/deals"); await expect(page.getByRole("link", { name: "SP22 revue synthétique", exact: true })).toBeVisible();
   await capture("deals-list-desktop");
   await page.goto("/leads"); await expect(page.getByRole("link", { name: "SP22 revue synthétique", exact: true })).toBeVisible();
   await capture("leads-list-desktop");

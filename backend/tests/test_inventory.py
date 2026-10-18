@@ -265,12 +265,6 @@ def test_versions_retries_denial_and_rollback(settings, database):
             key=key,
         )
     for operation, command_body, target in [
-        ("create-property", body, None),
-        (
-            "edit-property",
-            EditProperty(reference="SP07-unique", category="land", expected_version=1),
-            pid,
-        ),
         ("owners", Owners(expected_version=1, owners=[]), pid),
         (
             "create-offering",

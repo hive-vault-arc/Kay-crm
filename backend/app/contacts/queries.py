@@ -1,6 +1,7 @@
 """Scope precedes query filters, count and stable numbered pagination."""
 
 from datetime import UTC, datetime, time, timedelta
+from typing import get_args
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
@@ -8,9 +9,10 @@ from sqlalchemy import func, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.contacts.access import check_phones, contact_scope, readable_contact
-from app.contacts.contracts import ListQuery
+from app.contacts.contracts import EnquiryStatus, ListQuery
 from app.contacts.models import Contact, ContactEmail, ContactPhone, Enquiry
 from app.contacts.projections import contact_views, enquiry_views
+from app.contacts.qualification import qualification_catalogue
 from app.db.session import Database
 from app.identity.models import Credential, User
 from app.identity.security import IdentityError
@@ -46,6 +48,12 @@ def read_detail(database: Database, token: str, kind: str, target: UUID) -> dict
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
         return detail_in_session(session, current_identity(session, token), kind, target)
+
+
+def metadata(database: Database, token: str) -> dict[str, object]:
+    with database.session() as session:
+        current_identity(session, token)
+        return qualification_catalogue()
 
 
 def read_list(database: Database, token: str, kind: str, query: ListQuery) -> dict[str, object]:
@@ -96,9 +104,15 @@ def list_in_session(
         )
     if query.contact_id:
         contacts = contacts.where(Contact.id == query.contact_id)
+    if query.country:
+        contacts = contacts.where(Contact.country == query.country)
+    if query.language:
+        contacts = contacts.where(Contact.languages.contains([query.language]))
     if kind == "contacts":
         if (
             query.status
+            or query.campaign_source
+            or query.rating
             or query.source
             or query.assigned_agent_id
             or query.received_from
@@ -119,15 +133,21 @@ def list_in_session(
         ).all()
         items = list(contact_views(session, records).values())
     else:
-        enquiries = (
-            select(Enquiry)
-            .join(Contact, Contact.id == Enquiry.contact_id)
-            .where(Contact.id.in_(contacts.with_only_columns(Contact.id)))
+        enquiries = select(Enquiry).where(
+            Enquiry.contact_id.in_(contacts.with_only_columns(Contact.id))
         )
+        if query.sort == "name":
+            enquiries = enquiries.join(Contact, Contact.id == Enquiry.contact_id)
         if identity.user.role == "agent":
             enquiries = enquiries.where(Enquiry.assigned_agent_id.is_not(None))
         if query.status:
             enquiries = enquiries.where(Enquiry.status == query.status)
+        else:
+            enquiries = enquiries.where(Enquiry.status != "converted")
+        if query.campaign_source:
+            enquiries = enquiries.where(Enquiry.campaign_source == query.campaign_source)
+        if query.rating:
+            enquiries = enquiries.where(Enquiry.rating == query.rating)
         if query.source:
             enquiries = enquiries.where(Enquiry.source == query.source)
         if query.assigned_agent_id:
@@ -142,7 +162,13 @@ def list_in_session(
                 enquiries = enquiries.where(
                     Enquiry.received_at < bound if end else Enquiry.received_at >= bound
                 )
-        count = session.scalar(select(func.count()).select_from(enquiries.subquery())) or 0
+        filtered = enquiries.subquery()
+        counts: dict[str, int] = dict(
+            session.execute(
+                select(filtered.c.status, func.count()).group_by(filtered.c.status)
+            ).all()
+        )
+        count = sum(counts.values())
         ordering = (
             (Contact.name.asc(), Enquiry.id)
             if query.sort == "name"
@@ -171,6 +197,16 @@ def list_in_session(
         "total": count,
         "has_next": query.page * query.page_size < count,
         "has_previous": query.page > 1,
+        **(
+            {
+                "status_counts": {
+                    status: counts.get(status, 0)
+                    for status in (*get_args(EnquiryStatus), "converted")
+                }
+            }
+            if kind == "enquiries"
+            else {}
+        ),
     }
 
 

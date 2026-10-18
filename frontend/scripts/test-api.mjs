@@ -14,6 +14,9 @@ const port = 8100;
 let child;
 let worker;
 let simulator;
+let simulatorExit;
+let simulatorFailure = "";
+let simulatorStarted = 0;
 let workerExit;
 let workerFailure = "";
 let workerReady = false;
@@ -92,12 +95,16 @@ async function stopWorker() {
 }
 async function startSimulator() {
   if (simulator) return;
-  simulator = spawn(path.join(backend, ".venv/Scripts/python.exe"), ["-m", "app.cli.website_simulator", "--environment", "test", "--port", "8102", "--api-port", "8100", "--frontend-port", "3100"], {
-    cwd: backend, windowsHide: true, stdio: ["ignore", "ignore", "ignore"],
+  simulatorExit = undefined; simulatorFailure = "";
+  simulatorStarted = performance.now();
+  const running = spawn(path.join(backend, ".venv/Scripts/python.exe"), ["-m", "app.cli.website_simulator", "--environment", "test", "--port", "8102", "--api-port", "8100", "--frontend-port", "3100"], {
+    cwd: backend, windowsHide: true, stdio: ["ignore", "ignore", "pipe"],
     env: { ...process.env, APP_ENVIRONMENT: "test" },
   });
-  simulator.once("exit", () => { simulator = undefined; });
-  simulator.on("error", () => { process.exitCode = 1; });
+  simulator = running;
+  running.stderr.on("data", chunk => { if (chunk.toString().includes("SIMULATOR_START_FAILED:")) simulatorFailure = "SIMULATOR_START_FAILED"; });
+  running.once("exit", code => { if (simulator === running) { simulatorExit = code; simulator = undefined; } });
+  running.on("error", () => { process.exitCode = 1; });
 }
 async function stopSimulator() {
   const running = simulator;
@@ -111,7 +118,8 @@ async function waitForLive(running) {
   const ca = await readFile(path.join(backend, ".local-data/certificates/ca.pem"));
   const deadline = performance.now() + 10_000;
   while (performance.now() < deadline) {
-    if (child !== running || running.exitCode !== null) throw new Error("TEST_API_START_FAILED");
+    if (running.exitCode !== null || running.signalCode !== null) throw new Error("TEST_API_PROCESS_EXITED");
+    if (child !== running) throw new Error("TEST_API_PROCESS_REPLACED");
     const live = await new Promise(resolve => {
       const probe = httpsRequest("https://localhost:8100/api/v1/health/live", { ca, rejectUnauthorized: true, family: 4 }, response => {
         const chunks = []; let size = 0;
@@ -129,7 +137,7 @@ async function waitForLive(running) {
     if (live && child === running && running.exitCode === null) return;
     await pause(100);
   }
-  throw new Error("TEST_API_START_FAILED");
+  throw new Error("TEST_API_READINESS_TIMEOUT");
 }
 async function start() {
   child = spawn(path.join(backend, ".venv/Scripts/python.exe"), [
@@ -156,7 +164,7 @@ const server = createServer(async (request, response) => {
     response.writeHead(404).end();
     return;
   }
-  if (changing || request.method !== "POST" || !["/start", "/stop", "/fixture", "/worker-start", "/worker-stop", "/worker-unavailable", "/worker-status", "/simulator-start", "/simulator-stop", "/recovery-start", "/recovery-stop"].includes(request.url)) {
+  if (changing || request.method !== "POST" || !["/start", "/stop", "/fixture", "/worker-start", "/worker-stop", "/worker-unavailable", "/worker-status", "/simulator-start", "/simulator-stop", "/simulator-status", "/recovery-start", "/recovery-stop"].includes(request.url)) {
     response.writeHead(409).end();
     return;
   }
@@ -179,6 +187,7 @@ const server = createServer(async (request, response) => {
     } else if (request.url === "/worker-status") result = { running: Boolean(worker), ready: workerReady, cycles: workerCycles, exit: workerExit ?? null, failure: workerFailure, exports: await fixture({ action: "queue-status" }) };
     else if (request.url === "/simulator-start") await startSimulator();
     else if (request.url === "/simulator-stop") await stopSimulator();
+    else if (request.url === "/simulator-status") result = { running: Boolean(simulator), exit: simulatorExit ?? null, failure: simulatorFailure, elapsedMs: Math.round(performance.now() - simulatorStarted) };
     else if (request.url === "/worker-stop") await stopWorker();
     else if (request.url === "/worker-start" || request.url === "/worker-unavailable") { await stopWorker(); await startWorker(request.url === "/worker-unavailable"); }
     else if (request.url === "/stop") await stop();
@@ -186,8 +195,9 @@ const server = createServer(async (request, response) => {
     else await waitForLive(child);
     response.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
     response.end(JSON.stringify(result));
-  } catch {
-    response.writeHead(500).end();
+  } catch (error) {
+    const code = error instanceof Error && ["TEST_API_PROCESS_REPLACED", "TEST_API_PROCESS_EXITED", "TEST_API_READINESS_TIMEOUT"].includes(error.message) ? error.message : "TEST_CONTROL_FAILED";
+    response.writeHead(500, { "Content-Type": "application/json", "Cache-Control": "no-store" }).end(JSON.stringify({ code }));
   } finally { changing = false; }
 });
 try { await acquireLease(); }

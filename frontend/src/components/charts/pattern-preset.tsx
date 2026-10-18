@@ -176,7 +176,7 @@ export function renderPatternPreset(
         <PatternLines
           {...common}
           orientation={["diagonal"]}
-          stroke="#e879f9"
+          stroke="var(--riviera-color-stage-pink-fill)"
           strokeWidth={strokeWidth}
         />
       );

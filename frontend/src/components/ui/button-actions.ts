@@ -5,7 +5,7 @@ import {
   DeleteIcon, DownloadIcon, EditIcon, EmptyFolderIcon, EnquiryIcon, FinanceIcon,
   FilterIcon, ForwardIcon, HidePasswordIcon, PasswordIcon, PropertyIcon,
   RefreshIcon, RestoreIcon, SearchIcon, SettingsIcon, ShowPasswordIcon,
-  SignOutIcon, TaskIcon, UploadIcon,
+  SignOutIcon, TaskIcon, UploadIcon, PhoneIcon, EmailIcon,
 } from "@/components/icons";
 
 export type ActionDefinition = {
@@ -55,6 +55,8 @@ export const buttonActions = {
   hide: { icon: HidePasswordIcon, tone: "info", variant: "outline" },
   settings: { icon: SettingsIcon, tone: "neutral", variant: "outline" },
   contact: { icon: ContactIcon, tone: "info", variant: "outline" },
+  phone: { icon: PhoneIcon, tone: "neutral", variant: "outline" },
+  email: { icon: EmailIcon, tone: "neutral", variant: "outline" },
   enquiry: { icon: EnquiryIcon, tone: "purple", variant: "outline" },
   task: { icon: TaskIcon, tone: "info", variant: "outline" },
   deal: { icon: DealIcon, tone: "warning", variant: "outline" },

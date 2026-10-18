@@ -15,6 +15,7 @@ from app.contacts.models import (
     ContactRole,
     Enquiry,
 )
+from app.contacts.qualification import calling_code
 from app.identity.models import User
 
 
@@ -38,6 +39,10 @@ def contact_views(
             "version": contact.version,
             "primary_phone": None,
             "primary_email": None,
+            "country": contact.country,
+            "nationality": contact.nationality,
+            "languages": list(contact.languages),
+            "calling_code": None,
             "archived_at": contact.archived_at.isoformat() if contact.archived_at else None,
         }
         if detail:
@@ -71,6 +76,8 @@ def contact_views(
             view = result[value.contact_id]
             if value.is_primary:
                 view[primary] = value.normalized
+                if model is ContactPhone:
+                    view["calling_code"] = calling_code(value.normalized)
             if detail:
                 values = cast(list[dict[str, object]], view[collection])
                 values.append(
@@ -138,6 +145,13 @@ def enquiry_views(
             "origin_contact_id": str(enquiry.origin_contact_id),
             "status": enquiry.status,
             "version": enquiry.version,
+            "initial_budget": enquiry.initial_budget,
+            "campaign_source": enquiry.campaign_source,
+            "rating": enquiry.rating,
+            "converted_deal_id": str(enquiry.converted_deal_id)
+            if enquiry.converted_deal_id
+            else None,
+            "converted_at": enquiry.converted_at.isoformat() if enquiry.converted_at else None,
         }
         for enquiry in enquiries
     ]

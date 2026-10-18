@@ -8,11 +8,28 @@ from uuid import UUID
 import phonenumbers
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.contacts.qualification import (
+    CampaignSource,
+    LeadRating,
+    normalize_budget,
+    normalize_country,
+    normalize_languages,
+)
 from app.identity.security import IdentityError, normalize_email
 
 ContactRoleCode = Literal["buyer", "seller", "owner", "tenant", "developer"]
 ManualSource = Literal["manual", "phone", "email", "in_person", "referral"]
-EnquiryStatus = Literal["new", "in_progress", "closed"]
+EnquiryStatus = Literal[
+    "new",
+    "in_progress",
+    "follow_up",
+    "analysis",
+    "qualified",
+    "not_qualified",
+    "lost",
+    "junk_lead",
+    "closed",
+]
 
 
 def normalize_phone(value: str) -> str:
@@ -62,6 +79,19 @@ class ContactFields(StrictBody):
     phones: list[Phone] = Field(min_length=1, max_length=10)
     emails: list[Email] = Field(default_factory=list, max_length=10)
     roles: list[ContactRoleCode] = Field(default_factory=list, max_length=5)
+    country: str = Field(default="", max_length=2)
+    nationality: str = Field(default="", max_length=2)
+    languages: list[str] = Field(default_factory=list, max_length=30)
+
+    @field_validator("country", "nationality")
+    @classmethod
+    def country_code(cls, value: str) -> str:
+        return normalize_country(value)
+
+    @field_validator("languages")
+    @classmethod
+    def language_codes(cls, value: list[str]) -> list[str]:
+        return normalize_languages(value)
 
     @model_validator(mode="after")
     def collections(self) -> Self:
@@ -93,18 +123,38 @@ class NewEnquiry(StrictBody):
     source: ManualSource = "manual"
     source_submission_id: UUID | None = None
     assigned_agent_id: UUID | None = None
+    initial_budget: str = Field(min_length=1, max_length=160)
+    campaign_source: CampaignSource = "unknown"
+    rating: LeadRating = "cold"
+    status: EnquiryStatus = "new"
+
+    @field_validator("initial_budget")
+    @classmethod
+    def budget(cls, value: str) -> str:
+        return normalize_budget(value)
 
     @model_validator(mode="after")
     def identity_mode(self) -> Self:
         if (self.contact_id is None) == (self.new_contact is None):
             raise ValueError("CONTACT_ID_XOR_NEW_CONTACT_REQUIRED")
+        if self.new_contact is not None and not self.new_contact.languages:
+            raise ValueError("LANGUAGES_REQUIRED")
         return self
 
 
 class EditEnquiry(StrictBody):
     expected_version: int = Field(strict=True, ge=1)
+    contact_fields: EditContact | None = None
     message: str = Field(max_length=4000)
     status: EnquiryStatus
+    initial_budget: str = Field(min_length=1, max_length=160)
+    campaign_source: CampaignSource
+    rating: LeadRating
+
+    @field_validator("initial_budget")
+    @classmethod
+    def budget(cls, value: str) -> str:
+        return normalize_budget(value)
 
 
 class ResolvePhone(StrictBody):
@@ -121,13 +171,27 @@ class ListQuery(StrictBody):
     page_size: int = Field(default=50, ge=1, le=100)
     sort: Literal["-updated_at", "-received_at", "name"] = "-updated_at"
     q: str = Field(default="", max_length=160)
-    status: EnquiryStatus | None = None
+    status: EnquiryStatus | Literal["converted"] | None = None
     source: ManualSource | Literal["website"] | None = None
     assigned_agent_id: UUID | None = None
     received_from: date | None = None
     received_to: date | None = None
     contact_id: UUID | None = None
     archive: Literal["active", "archived", "all"] = "active"
+    campaign_source: CampaignSource | None = None
+    rating: LeadRating | None = None
+    country: str | None = Field(default=None, min_length=2, max_length=2)
+    language: str | None = Field(default=None, min_length=1, max_length=60)
+
+    @field_validator("country")
+    @classmethod
+    def country_code(cls, value: str | None) -> str | None:
+        return normalize_country(value) if value is not None else None
+
+    @field_validator("language")
+    @classmethod
+    def language_code(cls, value: str | None) -> str | None:
+        return normalize_languages([value])[0] if value is not None else None
 
     @model_validator(mode="after")
     def date_range(self) -> Self:

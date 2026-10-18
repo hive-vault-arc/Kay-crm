@@ -6,7 +6,7 @@ import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
 import { frenchApiError } from "@/lib/api/errors";
 import { externalSchema, stockReviewSchema } from "./outcome-contracts";
-import { confirmSchema, editOfferingSchema, editPropertySchema, historySchema, inventoryQuerySchema, inventoryRoute, newOfferingSchema, offeringsSchema, ownersSchema, propertiesSchema, propertyFieldsSchema, propertySchema, resultSchema } from "./contracts";
+import { confirmSchema, editOfferingSchema, editPropertySchema, historySchema, inventoryQuerySchema, inventoryRoute, newOfferingSchema, offeringsSchema, ownersSchema, propertiesSchema, propertiesQuerySchema, propertyFieldsSchema, propertySchema, resultSchema } from "./contracts";
 import { archiveDevelopmentSchema, blocksSchema, developmentFieldsSchema, developmentSchema, developmentsSchema, editDevelopmentSchema, floorsSchema, inventoryPageSchema, safeLinkSchema, structureFieldsSchema, typeFieldsSchema, unitTypesSchema } from "./development-contracts";
 
 const known = new Set(["STOCK_REVIEW_CHANGED", "PARTIAL_DEVELOPMENT_REVIEW_REQUIRED", "DEVELOPMENT_OVERLAP", "DEAL_TARGET_CHANGED", "RESERVATION_RELEASE_REQUIRED", "UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "INVENTORY_VERSION_CONFLICT", "AVAILABILITY_PRICE_REQUIRED", "AVAILABILITY_OWNER_REQUIRED", "INVALID_LEGAL_OWNER", "CURRENT_OFFERING_EXISTS", "PROPERTY_REFERENCE_EXISTS", "OFFERING_WITHDRAWN", "CONFIRM_AVAILABILITY_REQUIRED", "IDEMPOTENCY_CONFLICT", "INVALID_HIERARCHY", "STOCK_REVIEW_REQUIRED", "DEVELOPMENT_UNITS_REQUIRED", "DEVELOPMENT_REFERENCE_EXISTS", "HIERARCHY_CODE_EXISTS"]);
@@ -18,10 +18,11 @@ export async function relayInventory(key: string, request: Request, requestId: s
   const suffix = key.split("/")[2];
   const list = ["properties", "offerings", "developments"].includes(key) || ["history", "inventory", "blocks", "floors", "unit-types", "stock-review"].includes(suffix);
   const params = [...url.searchParams];
-  const parsedQuery = suffix === "stock-review" ? z.object({ offering_id: z.uuid() }).strict() : key === "offerings" ? inventoryQuerySchema.extend({ offering_id: z.uuid().optional() }) : inventoryQuerySchema;
+  const parsedQuery = suffix === "stock-review" ? z.object({ offering_id: z.uuid() }).strict() : key === "properties" ? propertiesQuerySchema : key === "offerings" ? inventoryQuerySchema.extend({ offering_id: z.uuid().optional() }) : inventoryQuerySchema;
   if ((url.search && (!list || mutation)) || new Set(params.map(([name]) => name)).size !== params.length || !parsedQuery.safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
   const allowed = suffix === "stock-review" ? ["offering_id"] : ["history", "blocks", "floors", "unit-types"].includes(suffix) ? ["page", "page_size"] : suffix === "inventory" ? ["page", "page_size", "q", "category", "block_id", "floor_id", "unit_type_id", "offering_kind", "state"] : key === "offerings" ? ["page", "page_size", "property_id", "development_id", "kind", "state", "target_level", "q", "category", "block_id", "floor_id", "unit_type_id", "min_comparison_mad", "max_comparison_mad", "min_area_sqm", "min_rooms"] : key === "properties" ? ["page", "page_size", "q", "category", "offering_kind", "state", "sort", "development_id", "block_id", "floor_id", "unit_type_id", "target_level"] : key === "developments" ? ["page", "page_size", "q", "category", "offering_kind", "state", "sort"] : [];
   if (key === "offerings") allowed.push("offering_id");
+  if (key === "properties") allowed.push("categories");
   if (["properties", "developments"].includes(key) || suffix === "inventory") allowed.push("archive");
   if (allowed && params.some(([name]) => !allowed.includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (key === "offerings" && url.searchParams.has("target_level") && !["property", "development", "standalone", "unit"].includes(url.searchParams.get("target_level")!)) return facadeError(422, "VALIDATION_ERROR", requestId);

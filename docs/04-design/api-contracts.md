@@ -1,10 +1,105 @@
 # HTTP contracts for `/api/v1`
 
-SP-22 generated the [implemented local catalogue](api-catalogue-local.md) from
-the actual OpenAPI3.1 schema:123 paths/153 operations. It records every method
+## Property category selection and facets (2026-10-18)
+
+D39 extends only `GET /properties` with optional `categories`, a≤40-character
+unique exact CSV of land/apartment/villa/house. Omitted means all; explicit empty
+means none. Legacy single `category` remains, but providing both is invalid.
+Whitespace, unknown/duplicate/trailing values and repeated parameters fail422.
+Other resource queries do not gain this field. Existing q/target/hierarchy/
+offering/archive/sort/page bounds and current staff authority apply.
+
+Response adds zero-inclusive `category_counts` and `unfiltered_total` for all
+matching shared physical properties after those existing non-category filters,
+before either category selection and before numbered pagination. Counts/items
+share a repeatable-read snapshot. No private owner/contact expansion is added;
+property facts remain shared, developer/unit totals remain distinct. The facade
+requires complete canonical facets and preserves explicit empty selection.
+[Implementation and actual evidence](../03-planning/projects-reference-refresh.md).
+
+## Calendar selection and facets (2026-10-18)
+
+D38 extends `GET /visits` with exact unique CSV `types`/`statuses`, explicit-empty
+selection, pre-page filtering and scoped full-range counts. Busy intervals never
+return those counts and reject all type/status filters. Existing current-session,
+range, page bounds and authorization apply. The
+[scheduling contract](visit-scheduling-local.md) defines exact vocabulary and
+snapshot semantics; [evidence](../03-planning/calendar-reference-refresh.md)
+separates this local extension from full-product acceptance.
+
+## Lead/Deal activities (2026-10-18)
+
+`GET/POST /enquiries/{id}/activities` and `GET/POST /deals/{id}/activities`
+read/append explicit record-scoped immutable interactions. POST requires the
+existing facade/session/origin/CSRF guards and UUID `Idempotency-Key`; accepts
+only `kind` (note/call/message/email/meeting/visit/other), required trimmed
+`body` (1–4000), optional integer `duration_minutes` (1–1440), optional
+`direction` (inbound/outbound) and up to3 distinct trimmed `projects` text labels
+(1–160 each). NUL is rejected. No actor, timestamp, record ID, transition or
+external send/scheduling input is accepted. Returns `{id}`. Same body/key
+replays after current authority checks; changed body is409. A fresh append to
+an archived contact is409 CONTACT_ARCHIVED; unauthorized IDs remain404.
+
+GET accepts only unique `page` (1–1000000), `page_size` (1–100, default25) and
+optional `kind` (manual kinds above or `system`). POST accepts no query.
+The numbered response adds `last_activity_at` and nullable `origin_enquiry_id`;
+each item has `id`, `action`, `body`, `reason`, `occurred_at`, captured `actor`,
+`duration_minutes`, `direction`, `projects`. Counts/latest refer to the selected
+filter under one read snapshot. No-store, bounded facade responses and existing
+current contact/Lead authority apply to every read, count and replay.
+
+`GET /deals/{id}/origin-activities` uses only the Deal's explicit `enquiry_id`,
+rechecking origin authority. It returns the original entries/IDs/authors/times,
+not copies or all Leads for a contact. An authorized manual Deal without origin
+returns an empty page with null origin. There is no origin write/edit/delete
+route. Conversion's immutable linking event appears in both relevant histories;
+manual Lead and Deal entries each have exactly one context. Contact-only legacy
+notes are not inferred into either history. Existing version/outcome histories
+and authorization remain unchanged.
+[Implementation, proposals and evidence](../03-planning/lead-deal-activities.md).
+
+## Current lead/deal qualification contract (2026-10-17)
+
+The owner-requested [IMMO World alignment](../03-planning/leads-deals-immoworld-alignment.md)
+supersedes earlier free-title/no-conversion request examples for these routes.
+Authenticated `GET /contacts/metadata` returns the bounded calling-code,
+country, language, campaign, budget and purchase-intent catalogue. Rating uses
+the bounded cold/warm/hot contract and shared client labels.
+Manual Lead creation requires budget and client languages; contact identity and
+technical source/submission remain canonical. Lead PATCH may include versioned
+canonical `contact_fields` with its qualification update.
+
+`POST /enquiries/{id}/convert` accepts only `expected_version`, `project`,
+`initial_budget` and `purchase_reasons`. The explicit project choice is exactly
+one development, standalone property or external name. Conversion is atomic,
+scoped, versioned and idempotent; it derives the display title and never accepts
+a free `title` or creates a second client. `status=converted` exposes retained
+converted Leads; the default prospect list excludes them.
+
+`GET /enquiries` also returns `status_counts` for all nine writable states and
+`converted`. Counts use the exact authorized, archived/active and filtered rowset
+before numbered pagination, in the same read-only repeatable-read snapshot as
+the page and total. Missing states return zero; default prospect queries have
+zero converted rows. Contact-directory pages do not gain this field.
+The Leads toolbar keeps marketing campaign Source separate from immutable
+technical Provenance (including signed website intake).
+
+Manual `POST /deals` chooses `contact_id` XOR `new_contact`, requires budget,
+purchase reasons and one to three project interests, and refuses `enquiry_id`
+or writable `title`. Deal PATCH supports the same qualification and optional
+versioned canonical `contact_fields`. Existing stage, stock, proposal and
+outcome commands remain separate. Full field bounds, filter vocabulary,
+history snapshots, current-scope replay and error behavior are in the
+[implemented deal contract](deal-pipeline-local.md).
+
+The [implemented local catalogue](api-catalogue-local.md) was regenerated from
+the actual OpenAPI3.1 schema on2026-10-17:125 paths/155 operations. SP-22's earlier
+123 paths/153 operations are historical; this extension adds metadata and explicit
+conversion. No bootstrap, generic proxy or public fault-control endpoint is
+introduced. The catalogue records every method
 and path plus the hand-maintained Zod client/facade boundary; this is not a
 claim that generic OpenAPI dictionary responses generate complete DTOs.
-No new public operation, bootstrap or recovery route was added.
+No unauthenticated bootstrap or recovery endpoint is introduced.
 
 SP-21 has no public backup/restore endpoint. During an owned maintenance pause,
 ordinary API requests return 503 with no-store and Retry-After: 30; liveness
@@ -62,8 +157,9 @@ enquiries below. File permits and other business modules remain later work.
 ### SP-07 standalone inventory wire contract
 
 All inventory routes reuse the current staff session/facade proof. All active
-staff read shared facts; POST/PATCH/PUT require manager or administrator plus
-Origin/CSRF and UUID `Idempotency-Key`. Agency → current actor → property locks
+staff read shared facts. Under D34, all active staff may POST/PATCH property
+facts; owner/offering/availability/lifecycle commands remain M/A-only. Every
+mutation requires Origin/CSRF and UUID `Idempotency-Key`. Agency → current actor → property locks
 serialize mutations, rechecking authority after waits. Receipt replay requires
 current write authority; the 24-hour HMAC-bound receipt returns only
 `{property_id,offering_id:null|uuid,version,event_id}`, never cached owner identity.
@@ -128,7 +224,8 @@ See [execution evidence](../03-planning/sprints/sp-07-evidence.md) for actual ga
 ### SP-08 development wire contract
 
 SP-08 extends the existing inventory module/facade, sessions and strict JSON
-schemas. All active staff read safe inventory; M/A alone write with current
+schemas. All active staff read safe inventory and, under D34, create/edit shared
+development facts, briefing and hierarchy/types. Other commands remain M/A-only, with current
 session, Origin/CSRF, UUID Idempotency-Key and expected aggregate version.
 Locks follow agency → current actor → development → physical property where
 applicable. A development command receipt returns
@@ -143,6 +240,9 @@ compatible. Replays recheck current authority and return no cached contact data.
 - `POST /developments` and `PATCH /developments/{id}`: reference80/name160,
   category=mixed|villa|house|apartment|land, nullable location500/briefing_text/
   developer_contact_id/developer_marketing_display160; PATCH adds expected_version.
+  Omitted developer_contact_id on PATCH preserves the association; explicit null
+  requests removal. An agent must have scope for any changed current/new developer.
+  Receipt fingerprints distinguish omission from explicit null.
   Reference is normalized uppercase and unique in the development namespace.
   Proposed classification `mixed` is the local default; mixed unit categories
   remain allowed. Blank briefing normalizes to null; proposed bound10,000 Unicode
@@ -402,7 +502,8 @@ cumulative SP-22 regression; no such module is claimed implemented here.
 
 Every users route requires facade authority, a current full administrator session,
 and exact Origin plus session-bound CSRF for mutations. Restricted sessions,
-managers and agents cannot read or administer accounts. There is no DELETE route.
+managers and agents cannot read or administer accounts. D37 replaces the earlier
+generated-password/handoff/disable commands; existing staff are not bulk-reset.
 
 - `GET /users?page=1&page_size=50`: safe `items`, numbered page metadata and total.
   Maximum 100; fixed `-updated_at,id` ordering. Backend also accepts the explicit
@@ -410,34 +511,35 @@ managers and agents cannot read or administer accounts. There is no DELETE route
   page come from one PostgreSQL statement/snapshot. `GET /users/{id}` returns the
   same safe account shape: id, display_name, email, role, state, version,
   must_change_password, temporary_expires_at and handoff_confirmed_at. Neither
-  returns a hash or temporary plaintext.
-- `POST /users`: strict `{display_name,email,role}`. Server-generated random
-  192-bit temporary password, Argon2id hash only, 24-hour expiry, pending_handoff.
-  Success `{user,temporary_password}` is an authorized one-time no-store result.
+  returns a hash or temporary plaintext. Deleted accounts are excluded from count
+  and page, and their detail returns404. Handoff metadata remains nullable legacy
+  compatibility data, not an activation requirement.
+- `POST /users`: strict `{display_name,email,role,temporary_password}`. Admin
+  chooses12–1024 nonblank characters; only Argon2id persists. Active immediately,
+ 24-hour initial expiry, mandatory own-password change. Success is only `{user}`.
 - `PATCH /users/{id}`: strict named fields plus integer `expected_version`.
   No generic state/credential patch. All saves invalidate target sessions, even
   a name/email edit, because the user version changes. Self-save needs fresh login.
-- `POST /users/{id}/confirm-handoff`: `{expected_version}`; only pending and
-  unexpired temporary state. Records actor/recipient/time, activates and increments
-  user version. The administrator must actually verify an in-person handoff.
-- `POST /users/{id}/reset-password`: `{expected_version,admin_password}`. Another
+- `POST /users/{id}/confirm-handoff` and `/disable` are removed (404).
+- `POST /users/{id}/reset-password`: `{expected_version,admin_password,temporary_password}`. Another
   user only; correct current administrator password required. Replaces the hash,
-  revokes target sessions, increments versions, returns to pending_handoff and
-  returns a fresh one-time password. This is also the disabled-account reactivation
-  path, followed by handoff, change and fresh login. Self-reset returns 409
+  revokes target sessions, increments versions and enables immediate restricted
+  login using the chosen password. Only `{user}` is returned. Nondeleted legacy
+  disabled/pending accounts can explicitly reset; deleted targets return404.
+  Self-reset returns409
   USE_OWN_PASSWORD_CHANGE; use the existing own-password screen.
-- `POST /users/{id}/disable`: `{expected_version}`; deactivation, never deletion.
-  Returns `{user}`, as do edit and handoff. Historical UUIDs remain attributed.
+- `DELETE /users/{id}`: `{expected_version}`; marks disabled/deleted_at, revokes
+  sessions and hides the account from staff administration. Returns `{user}`.
+  Retains identity, unique email and authored CRM FKs; no physical purge/restore.
 
 Every mutation requires a UUID `Idempotency-Key`. Receipts are actor-scoped,
 retain an HMAC request fingerprint and non-secret result, and are cleaned after
 24 hours on successful commands. A changed body/route with the same key returns
 409 IDEMPOTENCY_CONFLICT. Non-secret results replay without another change.
-Security-specific exception to the general replay convention: create/reset
-replay returns 409 ONE_TIME_RESULT_UNAVAILABLE, never stores/replays plaintext.
-After a lost create response, locate the account by its entered email in All Users;
-after a lost reset display, reopen that account and reset with a new key/current
-password. Never issue an automatic second account or a hidden credential retry.
+New create/reset/delete commands replay safe metadata without repeating changes.
+Passwords participate only in the keyed HMAC fingerprint, never stored results.
+Historical secret-issued receipts still return409 ONE_TIME_RESULT_UNAVAILABLE.
+Current actor authority is rechecked before replay.
 
 Safe conflicts: VERSION_CONFLICT (stale version), EMAIL_IN_USE, INVALID_STATE,
 TEMPORARY_EXPIRED and LAST_ADMIN_REQUIRED. The latter protects the last active
@@ -451,9 +553,10 @@ Commands lock agency first, actor/target users in UUID order, re-read authorizat
 after waiting, then commit account/credential/session/audit/receipt together.
 Invalid, interrupted or losing writes do not partially change access. Request
 bodies stay bounded at 8 KiB; upstream response bound is 256 KiB for a maximum
-100-row account page. The browser holds one-time plaintext only in transient
-component memory, masks it initially, offers deliberate reveal, and clears it on
-close/navigation/background/blur/restore. No automatic copy, persistent storage,
+100-row account page. The browser holds entered passwords only in transient
+form memory, masks initially and offers deliberate reveal (hidden on field blur).
+Success/dismissal clears secret state; unchanged uncertain attempts retain their
+key for safe retry. No automatic copy, persistent storage,
 public URL, export or external delivery is added. See [SP-04 evidence](../03-planning/sprints/sp-04-evidence.md).
 
 `A` = administrator, `M` = manager, `S` = primary agent or collaborator for the relevant contact, and `R` = any authenticated team member for shared inventory. For any action on a contact, `S` requires a current database check of that contact. A development or property read never includes its developer's or owner's private contact details.
@@ -463,15 +566,17 @@ public URL, export or external delivery is added. See [SP-04 evidence](../03-pla
 | C14 | `GET /health/live`, `GET /health/ready` | Local SP-02 foundation: safe status only; readiness checks the real database and returns 503 when unavailable. Never expose connection strings, file paths or secrets. |
 | C01 | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`, `POST /auth/change-password` | Active account; sign-in through facade; own password change requires old password. A temporary-password session is restricted to `/auth/me`, `/auth/change-password`, and logout until the change succeeds, then must sign in again. |
 | C01 | `GET /users`, `GET /users/{id}` | A only; numbered pages and safe account/role/state fields. No credential hash or temporary plaintext is returned. |
-| C01 | `POST /users`, `POST /users/{id}/confirm-handoff`, `PATCH /users/{id}`, `POST /users/{id}/reset-password`, `POST /users/{id}/disable` | A; subsequent user creation returns a generated temporary credential once and leaves the account `pending_handoff`. After verified in-person delivery, `confirm-handoff` records non-secret evidence and activates it. Reset requires `admin_password`, issues a replacement temporary credential, returns to `pending_handoff`, and revokes target sessions; role change/disable revokes or recalculates sessions. |
+| C01 | `POST /users`, `PATCH /users/{id}`, `POST /users/{id}/reset-password`, `DELETE /users/{id}` | A; create/reset accept an admin-chosen initial password, return safe user metadata and enable immediate restricted login. Own-password change/fresh login required. Reset also requires `admin_password`. Delete revokes/hides access and retains attribution; no handoff/disable route. |
 | C02 | `GET/POST /contacts`, `GET/PATCH /contacts/{id}`, `POST /contacts/{id}/archive`, `POST /contacts/{id}/restore` | M/A or S; archive/restore M/A; name and phone required. |
 | C02 | `POST /contacts/resolve-phone`, `POST /contacts/{id}/merge`, `POST /contacts/{id}/assign`, `PUT /contacts/{id}/collaborators` | Explained resolution within scope; assignment and collaboration M/A; cross-portfolio merge M/A. |
 | C02 | `GET/POST /enquiries`, `GET/PATCH /enquiries/{id}`, `POST /enquiries/{id}/assign` | These are the UI Leads operations. M/A or S; unassigned queue M/A; assignment M/A and assignee must have current contact scope. A contact transfer clears/reassigns invalid enquiry assignments. A new lead links or creates a contact under the same phone/scope rules; no separate `lead` table. |
 | C03 | `GET/POST /requirements`, `GET/PATCH /requirements/{id}`, `POST /requirements/{id}/shortlist`, `DELETE /requirements/{id}/shortlist/{offering_id}` | M/A or S for contact; inventory read under R. |
 | C04 | `GET /developments`, `GET /developments/{id}`, `GET /developments/{id}/inventory`, `GET /properties`, `GET /properties/{id}`, `GET /offerings` | R; shared project/physical inventory facts and allowed attachments. Development inventory groups blocks/floors/types/units and separates physical-unit counts from whole-development offerings. |
-| C04 | `POST /developments`, `PATCH /developments/{id}`, `POST /developments/{id}/archive`, `POST /developments/{id}/restore`, `POST /developments/{id}/confirm-availability`, `POST /developments/{id}/external-outcome`, `PUT /developments/{id}/owners` | M/A; whole-development actions check child commitments and version. Developer/owner contact links never expand an agent's private contact scope. |
-| C04 | `GET/POST /developments/{id}/blocks`, `GET/POST /blocks/{id}/floors`, `GET/POST /developments/{id}/unit-types`, `PATCH /blocks/{id}`, `PATCH /floors/{id}`, `PATCH /unit-types/{id}` | R for GET, M/A for writes; prevent moving a referenced level/type to another development and validate category/floor consistency. |
-| C04 | `POST /properties`, `PATCH /properties/{id}`, `POST /properties/{id}/archive`, `POST /properties/{id}/restore`, `POST /properties/{id}/confirm-availability`, `POST /properties/{id}/external-outcome`, `PUT /properties/{id}/owners`, `POST /offerings`, `PATCH /offerings/{id}` | M/A; a property is standalone or a physical development unit. Offering target is exactly one `property_id` or `development_id`; stock confirmation requires version and reason. Local H-01/H-02 require positive known price/legal owner; later real-data validation remains separate. |
+| C04 | `POST /developments`, `PATCH /developments/{id}` | R under D34 for shared facts/briefing. Developer changes require current contact scope for agents; omitted `developer_contact_id` on PATCH preserves the existing association, explicit null requests removal. Hidden links cannot be removed/replaced by an unrelated agent. |
+| C04 | `POST /developments/{id}/archive`, `POST /developments/{id}/restore`, `POST /developments/{id}/confirm-availability`, `POST /developments/{id}/external-outcome`, `PUT /developments/{id}/owners` | M/A; whole-development actions check child commitments and version. Developer/owner contact links never expand private contact scope. |
+| C04 | `GET/POST /developments/{id}/blocks`, `GET/POST /blocks/{id}/floors`, `GET/POST /developments/{id}/unit-types`, `PATCH /blocks/{id}`, `PATCH /floors/{id}`, `PATCH /unit-types/{id}` | R under D34; prevent moving a referenced level/type to another development and validate category/floor consistency. |
+| C04 | `POST /properties`, `PATCH /properties/{id}` | R under D34; standalone or physical unit facts only, versioned and subject to unchanged hierarchy/committed-stock guards. |
+| C04 | `POST /properties/{id}/archive`, `POST /properties/{id}/restore`, `POST /properties/{id}/confirm-availability`, `POST /properties/{id}/external-outcome`, `PUT /properties/{id}/owners`, `POST /offerings`, `PATCH /offerings/{id}` | M/A; offering target is exactly one `property_id` or `development_id`; stock confirmation requires version and reason. Local H-01/H-02 require positive known price/legal owner; later real-data validation remains separate. |
 | C05 | `GET /contacts/{id}/timeline`, `POST /contacts/{id}/notes`, `GET /contacts/{id}/assignment-events` | M/A or S; current scope filtering, immutable true actor. |
 | C06 | `GET/POST /tasks`, `GET/PATCH /tasks/{id}`, `POST /tasks/{id}/complete`, `POST /tasks/{id}/cancel`, `GET /notifications` | M/A or S according to contact and task; inaccessible private details omitted from notifications. |
 | C07 | `GET/POST /visits`, `GET/PATCH /visits/{id}`, `POST /visits/{id}/confirm`, `POST /visits/{id}/reschedule`, `POST /visits/{id}/complete`, `POST /visits/{id}/cancel`, `GET /calendar/free-busy`, `GET /calendar/availability` | M/A or S; three visit types. Ordinary conflict confirmation requires a reason; colleague free/busy excludes private metadata. Off-site working-time and company-car capacity are hard server checks. |
@@ -489,15 +594,41 @@ public URL, export or external delivery is added. See [SP-04 evidence](../03-pla
 
 Command `POST` routes accept documented JSON bodies, not a general `PATCH` that could change roles, commissions, or stock states. `GET /enquiries` backs the Leads list with scoped `q`, `status`, `source`, `assigned_agent_id` where authorized, received-date filters, stable sort, and numbered pages; `GET /deals` uses similarly scoped `q`, `stage`, `assigned_agent_id`, offering-kind and updated-date filters. A configurable UI column set never changes field authorization. `GET /properties` accepts `category`, `development_id`, `block_id`, `floor_id`, `unit_type_id`, `offering_kind`, and availability filters; `GET /offerings` accepts `target_level=property|development`. `GET /developments/{id}/inventory` returns block/floor/type summaries and a numbered unit page, not an unbounded tree. Filters and paginated totals distinguish a whole project from its physical units. `GET /search` can return separate `development` and `property` result kinds; a unit-type match navigates to its real units, not a fictitious stock item. Search routes exclude private records before aggregation. For a colleague, `GET /calendar/free-busy` returns only start/end pairs and busy status; a manager obtains full details through ordinary visit routes. Opaque IDs do not replace authorization.
 
-There is no HTTP route for first-administrator bootstrap. The SP-03 implemented server-local script follows the [runbook](../06-delivery-and-operations/admin-bootstrap.md). `POST /users` is rejected until bootstrap is complete and the caller is an active administrator. Its one-time temporary credential response, and a reset response, use `Cache-Control: no-store`, are visible only to the authorized administrator, and are excluded from logs and later `GET` responses. `POST /users/{id}/confirm-handoff` requires an administrator and a pending account, records recipient/actor/time without a password, and activates it. The proposed temporary credential expires after 24 hours. `POST /auth/login` rejects `pending_handoff` or an expired temporary credential; a valid activated temporary credential creates a restricted session with `must_change_password=true`. `POST /auth/change-password` clears that flag, invalidates the restricted sessions, and requires fresh login. An ordinary session never bypasses the current credential state merely because its cookie has not expired; expiry is rechecked on every restricted request.
+First-administrator bootstrap remains server-local with no HTTP route. `POST /users` requires completed bootstrap and a current full administrator. Under D37, creation/reset accept a chosen initial password and return no-store user metadata only. New accounts are active without handoff; expired initial passwords and legacy pending/disabled/deleted accounts cannot sign in. A valid initial credential creates a restricted session. Own-password change clears the flag, revokes sessions and requires fresh login; temporary expiry is checked on every restricted request. Existing staff credentials/sessions are not bulk-changed. See the [runbook](../06-delivery-and-operations/admin-bootstrap.md).
 
 An offering's target (`property_id` versus `development_id`) is immutable once referenced by a deal or reservation. `PATCH /offerings/{id}` cannot turn a unit offer into a whole-development offer. Reparenting a committed unit or archiving a development with active child commitments returns `409 STOCK_REVIEW_REQUIRED`; history and child records never disappear through a parent command.
 
 ## Lead, project briefing, and visit-schedule additions
 
-The [screen map](screen-map.md) calls an `enquiry` a lead. The approved local SP-05 uses atomic `POST /enquiries`: provide exactly one non-null `contact_id` or `new_contact`. `new_contact` follows the contact create schema (required name/phones, optional emails and permitted primary-agent selection); the command validates phone identity and creates contact plus enquiry in one transaction. The enquiry includes its message, source and permitted assignment. An existing accessible phone returns the duplicate-resolution response; retry with the explicitly selected `contact_id` after confirmation. An inaccessible phone returns only the approved responsible-agent disclosure. Source provenance is server-validated; the website receipt path remains separate. An idempotency key prevents duplicate creates and a failed transaction leaves neither partial contact nor enquiry. A lead detail may prefill `POST /deals` with its permitted contact, but deal creation is a distinct action. Both lists apply scope before search, filtering, counts, and pagination.
+The [screen map](screen-map.md) calls an `enquiry` a lead. Atomic `POST /enquiries`
+requires exactly one non-null `contact_id` or `new_contact`, a positive/reference
+budget and known client languages. A new contact includes name/phones and may
+include residence, nationality, emails and permitted primary-agent selection.
+Technical source/submission provenance remains distinct from marketing campaign
+source and rating. The command creates contact plus enquiry in one transaction.
+An accessible duplicate phone requires explicit contact reuse; an inaccessible
+phone returns only the approved responsible-agent disclosure. Retry preserves
+identity and a failed transaction leaves no partial contact or enquiry. Signed
+website receipt processing remains separate and does not invent qualification.
+Lead conversion uses `POST /enquiries/{id}/convert`, not manual deal creation
+with a copied enquiry ID. Both lists scope search, filters, counts and pages.
 
-`GET /developments/{id}` includes nullable `briefing_text` as shared, non-secret project information; `POST /developments` and `PATCH /developments/{id}` accept it only from managers/administrators. `null` or an empty value is valid and does not prevent availability. A safe developer/owner marketing display may be included, but protected contact IDs, phones, files and private notes are never expanded merely because the development is readable by all staff.
+Synthetic human Lead example (replace contact facts through the real form):
+
+<!-- qualification-example:NewEnquiry -->
+```json
+{"new_contact":{"name":"Client synthétique","phones":[{"number":"+212600000001","is_primary":true}],"country":"MA","nationality":"FR","languages":["french","darija"],"roles":["buyer"]},"initial_budget":"500000","campaign_source":"instagram_ads","rating":"warm","source":"phone","message":"Recherche synthétique"}
+```
+
+Conversion requires the current Lead version and an accessible project (synthetic
+ID below), together with budget and buying intent. It has no writable title:
+
+<!-- qualification-example:ConvertLead -->
+```json
+{"expected_version":1,"project":{"development_id":"dddddddd-dddd-4ddd-8ddd-dddddddddddd"},"initial_budget":"1000000","purchase_reasons":["residence"]}
+```
+
+`GET /developments/{id}` includes nullable `briefing_text` as shared, non-secret project information; `POST /developments` and `PATCH /developments/{id}` accept it from all active staff under D34. `null` or an empty value is valid and does not prevent availability. A safe developer/owner marketing display may be included, but protected contact IDs, phones, files and private notes are never expanded merely because the development is readable/editable by all staff.
 
 `visit.type` accepts exactly `company_car`, `without_company_car`, or `office`. The backend stores UTC instants and evaluates work windows in `Africa/Casablanca`. Both off-site types must fit working periods without lunch overlap; office is exempt. Only company-car visits consume the agency-wide cap, initially 2. Under accepted local Q-07, count each clock-hour interval intersected by `[start_at,end_at)`; an exact end boundary excludes the next hour, and repeated DST hours are distinct offset/UTC intervals. Active scheduled/confirmed bookings count; cancelled/completed visits and drafts do not hold future capacity. Create/confirm/reschedule recheck policy and capacity in one transaction. Availability is a preview, not a booking; ordinary conflict reasons never override work-time/capacity errors.
 
@@ -523,7 +654,7 @@ Creating a reusable apartment type and a physical unit in a development (C04). T
 {"reference":"ATLAS-B1-F02-07","category":"apartment","development_id":"dddddddd-dddd-4ddd-8ddd-dddddddddddd","floor_id":"ffffffff-ffff-4fff-8fff-ffffffffffff","unit_type_id":"eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee","area_sqm":"80.00"}
 ```
 
-The first body targets `POST /developments/{id}/unit-types` (the `development_id` must match the path); the second targets `POST /properties`. A standalone land parcel instead has `category:"land"` and null development/floor/type fields. The API rejects an apartment unit whose floor or type belongs to a different development with `INVALID_HIERARCHY`. Only manager/administrator write these records; agents may read the safe inventory projection.
+The first body targets `POST /developments/{id}/unit-types` (the `development_id` must match the path); the second targets `POST /properties`. A standalone land parcel instead has `category:"land"` and null development/floor/type fields. The API rejects an apartment unit whose floor or type belongs to a different development with `INVALID_HIERARCHY`. All active staff can create/edit these records under D34; offering/availability commands remain M/A-only.
 
 Creating a whole-development sale offering uses `POST /offerings` and its own price; a unit sale/rental offering instead uses `property_id` and `development_id:null`:
 
@@ -533,10 +664,14 @@ Creating a whole-development sale offering uses `POST /offerings` and its own pr
 
 Before `POST /deals/{id}/reserve` or `/close`, the API locks the development and relevant unit offerings, rechecks versions and active commitments, and returns `DEVELOPMENT_OVERLAP` for a same-kind overlapping reservation. An already sold/leased child unit makes an entire-development close return `PARTIAL_DEVELOPMENT_REVIEW_REQUIRED` until Q-06 is resolved. A conflict response never includes protected developer/owner data.
 
-Creating a deal (C08): the current responsible agent is derived from the contact, never written independently on a deal. The property may still be unknown.
+Creating a manual deal (C08): the current responsible agent is derived from the
+contact. The exact stock offering may remain unknown, but a project interest,
+budget and buying intent are required. The server derives its display title;
+an enquiry cannot bypass the dedicated conversion command.
 
+<!-- qualification-example:NewDeal -->
 ```json
-{"contact_id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","enquiry_id":null,"title":"Recherche synthétique à suivre","requirement_id":null,"offering_id":null,"expected_offering_version":null,"stage":"new","next_action":"Rappeler jeudi"}
+{"contact_id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","projects":[{"external_name":"Projet synthétique"}],"initial_budget":"1000000","purchase_reasons":["residence"],"campaign_source":"facebook","rating":"warm","requirement_id":null,"offering_id":null,"expected_offering_version":null,"stage":"new","next_action":"Rappeler jeudi"}
 ```
 
 Closing (C08) requires `Idempotency-Key` and `expected_version`:

@@ -13,6 +13,7 @@ from app.deals.access import authorized
 from app.deals.contracts import STAGES, ChildQuery, DealQuery
 from app.deals.history_models import DealStageEvent
 from app.deals.models import CustomerOffer, Deal
+from app.deals.project_models import DealProject
 from app.deals.projections import customer_offer_view, deal_views, event_views
 from app.identity.security import IdentityError
 from app.identity.sessions import current_identity
@@ -69,15 +70,32 @@ def read_list(database: Database, token: str, query: DealQuery) -> dict[str, obj
                     Deal.title.ilike(needle, escape="\\"),
                     Contact.name.ilike(needle, escape="\\"),
                     Deal.next_action.ilike(needle, escape="\\"),
+                    Deal.id.in_(
+                        select(DealProject.deal_id).where(
+                            DealProject.name.ilike(needle, escape="\\")
+                        )
+                    ),
                 )
             )
         for value, column in (
             (query.stage, Deal.stage),
             (query.assigned_agent_id, Contact.primary_agent_id),
             (query.offering_kind, Offering.kind),
+            (query.campaign_source, Deal.campaign_source),
+            (query.rating, Deal.rating),
+            (query.country, Contact.country),
         ):
             if value is not None:
                 base = base.where(column == value)
+        if query.language is not None:
+            base = base.where(Contact.languages.contains([query.language]))
+        if query.development_id is not None or query.property_id is not None:
+            projects = select(DealProject.deal_id)
+            if query.development_id is not None:
+                projects = projects.where(DealProject.development_id == query.development_id)
+            if query.property_id is not None:
+                projects = projects.where(DealProject.property_id == query.property_id)
+            base = base.where(Deal.id.in_(projects))
         zone = ZoneInfo("Africa/Casablanca")
         if query.updated_from:
             base = base.where(

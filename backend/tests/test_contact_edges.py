@@ -188,7 +188,7 @@ async def test_every_contact_http_route_and_immutable_provenance(
         lead = await client.post(
             "/api/v1/enquiries",
             headers=proof(token),
-            json=NewEnquiry(contact_id=cid).model_dump(mode="json"),
+            json=NewEnquiry(initial_budget="500000", contact_id=cid).model_dump(mode="json"),
         )
         assert lead.status_code == 200
         eid = lead.json()["id"]
@@ -196,7 +196,14 @@ async def test_every_contact_http_route_and_immutable_provenance(
         patched = await client.patch(
             f"/api/v1/enquiries/{eid}",
             headers=proof(token),
-            json={"expected_version": 1, "message": "SP05 mise à jour", "status": "closed"},
+            json={
+                "expected_version": 1,
+                "message": "SP05 mise à jour",
+                "status": "closed",
+                "initial_budget": "500000",
+                "campaign_source": "unknown",
+                "rating": "cold",
+            },
         )
         assert patched.status_code == 200
         for extra in (
@@ -208,7 +215,15 @@ async def test_every_contact_http_route_and_immutable_provenance(
             denied = await client.patch(
                 f"/api/v1/enquiries/{eid}",
                 headers=proof(token),
-                json={"expected_version": 2, "message": "SP05", "status": "closed", **extra},
+                json={
+                    "expected_version": 2,
+                    "message": "SP05",
+                    "status": "closed",
+                    "initial_budget": "500000",
+                    "campaign_source": "unknown",
+                    "rating": "cold",
+                    **extra,
+                },
             )
             assert denied.status_code == 422
         available = await client.post(

@@ -23,6 +23,7 @@ from app.db.session import Database
 from app.deals.history_models import DealStageEvent
 from app.deals.models import CustomerOffer, Deal, DealReceipt
 from app.deals.outcome_models import DealOutcome, DealReopening
+from app.deals.project_models import DealProject
 from app.discovery.models import ExportJob
 from app.files.models import (
     Document,
@@ -106,6 +107,11 @@ def clear_identity(settings: Settings, database: Database) -> None:
             raise RuntimeError("NON_SYNTHETIC_TEST_ACCOUNT_REFUSED")
         session.execute(text("SET LOCAL kay.synthetic_cleanup='on'"))
         session.execute(
+            update(Enquiry)
+            .where(Enquiry.converted_deal_id.is_not(None))
+            .values(converted_deal_id=None, converted_at=None, status="closed")
+        )
+        session.execute(
             update(SchedulePolicy).values(
                 version=1, company_car_capacity_per_hour=2, updated_by_user_id=None
             )
@@ -148,6 +154,7 @@ def clear_identity(settings: Settings, database: Database) -> None:
             Reservation,
             DealStageEvent,
             CustomerOffer,
+            DealProject,
             Deal,
             RequirementReceipt,
             ShortlistEntry,

@@ -8,6 +8,17 @@ References: [scope](../../core-scope.md), [decisions](../../decisions.md), [perm
 
 Every BR has expected evidence in the [traceability matrix](../05-quality/traceability.md). A user's confirmation is a recorded act; it does not grant an otherwise forbidden role permission.
 
+Current owner decision D35 extends BR-03/04/08 and their C02/C03/C08/C13
+surfaces with the [qualified Lead/Deal contract](../04-design/deal-pipeline-local.md).
+Calling codes are selected, client profile facts remain canonical, and manual
+Leads/deals require known languages and budget. A conversion reviews exactly
+one project plus budget/buying intent, derives the display title, reuses the
+client and records the converted relationship/history atomically. Manual deal
+creation remains separate with one to three interests. Editable campaign
+source never rewrites received provenance; project interest never reserves
+inventory. Current scope, version/retry guards, true actors and retained legacy
+facts remain authoritative. [Actual evidence and open acceptance](../03-planning/leads-deals-immoworld-alignment.md).
+
 | ID | C | Confirmed rule |
 |---|---|---|
 | BR-01 | C01,C14 | One KAY team. The first administrator is created once by a script run locally on the deployed server by the intended administrator; later named accounts are created manually by an administrator. Roles are `administrator`, `manager`, and `agent`; administrators inherit managers' business rights. Passwords have at least 12 characters. No MFA, SMTP, email verification, or public sign-up. Q-04's proposed in-person initial-credential policy is detailed in the bootstrap runbook. |
@@ -15,7 +26,7 @@ Every BR has expected evidence in the [traceability matrix](../05-quality/tracea
 | BR-03 | C02 | Name and phone are required. Multiple phones and emails are allowed, with one primary value for each non-empty collection. Valid international calling codes are accepted; the normalized canonical phone identifies the contact. |
 | BR-04 | C02 | A phone belonging to an accessible contact triggers an explained warning and an explicit choice to reuse or merge within authorized scope. Name alone never merges contacts. An agent encountering another agent's private contact cannot create a duplicate; they see only the primary agent's name and request access or transfer. |
 | BR-05 | C02,C05,C10 | Each contact has a primary agent and may have collaborators. They work on the accessible CRM records for that contact; each action records its true actor. Transfers preserve the former agent, new agent, actor, and history. |
-| BR-06 | C02,C04,C08 | Managers have full business access; administrators also manage accounts. Agents work on contacts they own or collaborate on. All staff read developments, blocks, floors, unit types, physical units, offerings, and shared inventory attachments; only managers/administrators edit inventory directly. Private owner/developer contact details and documents stay on protected contact records. |
+| BR-06 | C02,C04,C08 | Managers have full business access; administrators also manage accounts. Agents work on contacts they own or collaborate on. All active staff read shared inventory and may create/edit project facts, hierarchy, reusable types and physical properties/units under D34. Legal-owner changes, inventory-file writes, offerings, availability, external outcomes and inventory archive/restore remain M/A-only. Private owner/developer contact details and documents stay on protected contact records; project edits do not grant access. |
 | BR-07 | C03 | A contact may have several independent requirements. Required criteria and preferences are separate. Unknown differs from zero or false. Manual shortlist entries link to the correct property offering. |
 | BR-08 | C03,C04 | For monthly rent, annual equivalent = amount × 12; for yearly rent, annual equivalent = amount. Compare on that exact basis and retain the original price, period, and conditions. MAD only. |
 | BR-09 | C04,C08 | One physical `property` or whole `development` has at most one current offering of each `sale` and `rental` type. Each offering has at most one active reservation, with no automatic expiry. Project/unit overlap is also checked under BR-27/28. Competing deals are flagged for review. |
@@ -40,7 +51,7 @@ Every BR has expected evidence in the [traceability matrix](../05-quality/tracea
 | BR-28 | C04,C08,C10 | Whole-development and unit outcomes must not silently invalidate one another. A whole-development close with a previously sold or leased child unit cannot claim the entire development without an explicit manager-reviewed scope resolution. A unit sale makes a still-advertised whole-development sale require review; neither deal history nor committed stock is erased. Any project-level stock effect flags affected open deals and preserves actor/history. The precise partial-development commercial policy remains Q-06. |
 | BR-29 | C01,C02,C08,C10,C13 | Login opens a role-scoped dashboard. Managers/administrators see agency-wide permitted KPIs and drill-downs; an agent's dashboard shows only work assigned to or shared with them, not agency-wide inventory totals merely because inventory is readable elsewhere. A UI `lead` is an `enquiry` linked to a `contact`; a lead detail must not expose a private contact outside the caller's scope. Lead and deal lists offer search, filters, numbered pages, and configurable visible columns; project lists offer scoped search/filter and numbered pages. Column visibility never changes server authorization. |
 | BR-30 | C01,C07 | An administrator controls working days/hours, lunch breaks and company-car hourly capacity in the database. Both off-site types fit working periods and avoid lunch; office visits are allowed at any time. Company-car capacity starts at two agency-wide and is adjustable only by an administrator. The accepted local Q-07 rule counts each hourly interval touched by [start,end), with the exact end excluded and DST offset/UTC intervals distinguished. Policy changes preserve existing visits and report conflicts. |
-| BR-31 | C04,C13 | A development may have an optional project briefing visible as shared inventory information. It is never required for draft creation or availability. Managers/administrators may create and edit it; agents read it with other safe development facts. Private developer/owner contact details and documents must not be copied into the shared briefing. |
+| BR-31 | C04,C13 | A development may have an optional project briefing visible as shared inventory information. It is never required for draft creation or availability. All active staff may create/edit it under D34. Private developer/owner contact details and documents must not be copied into the shared briefing. |
 
 ## Assumptions H-01 through H-03
 

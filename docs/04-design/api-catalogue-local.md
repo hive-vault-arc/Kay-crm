@@ -1,8 +1,8 @@
-# Executable local API catalogue (SP-22)
+# Executable local API catalogue
 
-Generated from `create_app().openapi()` on2026-10-16, not a proposed route list.
-OpenAPI3.1.0: **123 paths / 153 operations**. Schema SHA256:
-`5dedb3ebe6348ddae246d0182d735856a9676841ab916de0ab5b596468805147`.
+Generated from `create_app().openapi()` on2026-10-18, not a proposed route list.
+OpenAPI3.1.0: **126 paths / 159 operations**. Schema SHA256:
+`b1cab90854453267473593c9524f9d3409a797c380da3a80fecdb102905fbd89`.
 Reproduce from backend/ with `.venv/Scripts/python.exe -m benchmarks.catalog`;
 the protected ignored result is `.local-data/acceptance/openapi.json`.
 No public documentation/bootstrap/backup endpoint is exposed.
@@ -45,6 +45,7 @@ equivalence. Do not replace the narrow facade with a catch-all proxy.
 | GET | `/api/v1/commissions/{cid}/revisions` |
 | GET, POST | `/api/v1/contacts` |
 | GET | `/api/v1/contacts/assignment-options` |
+| GET | `/api/v1/contacts/metadata` |
 | POST | `/api/v1/contacts/resolve-phone` |
 | GET, PATCH | `/api/v1/contacts/{target}` |
 | POST | `/api/v1/contacts/{target}/archive` |
@@ -59,6 +60,8 @@ equivalence. Do not replace the narrow facade with a catch-all proxy.
 | PATCH | `/api/v1/customer-offers/{oid}` |
 | GET, POST | `/api/v1/deals` |
 | GET, PATCH | `/api/v1/deals/{did}` |
+| GET, POST | `/api/v1/deals/{target}/activities` |
+| GET | `/api/v1/deals/{target}/origin-activities` |
 | POST | `/api/v1/deals/{did}/close` |
 | GET, POST | `/api/v1/deals/{did}/commissions` |
 | GET, POST | `/api/v1/deals/{did}/customer-offers` |
@@ -86,7 +89,9 @@ equivalence. Do not replace the narrow facade with a catch-all proxy.
 | POST | `/api/v1/documents/{did}/archive` |
 | POST | `/api/v1/documents/{did}/retry-scan` |
 | GET, POST | `/api/v1/enquiries` |
+| POST | `/api/v1/enquiries/{eid}/convert` |
 | GET, PATCH | `/api/v1/enquiries/{target}` |
+| GET, POST | `/api/v1/enquiries/{target}/activities` |
 | POST | `/api/v1/enquiries/{target}/assign` |
 | GET, POST | `/api/v1/exports` |
 | GET | `/api/v1/exports/{eid}` |
@@ -134,9 +139,7 @@ equivalence. Do not replace the narrow facade with a catch-all proxy.
 | GET, PUT | `/api/v1/transfers/{pid}` |
 | PATCH | `/api/v1/unit-types/{tid}` |
 | GET, POST | `/api/v1/users` |
-| GET, PATCH | `/api/v1/users/{target}` |
-| POST | `/api/v1/users/{target}/confirm-handoff` |
-| POST | `/api/v1/users/{target}/disable` |
+| GET, PATCH, DELETE | `/api/v1/users/{target}` |
 | POST | `/api/v1/users/{target}/reset-password` |
 | GET, PUT | `/api/v1/visit-schedule/policy` |
 | POST | `/api/v1/visit-schedule/policy/preview` |

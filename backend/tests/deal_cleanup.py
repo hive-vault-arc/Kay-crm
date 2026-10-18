@@ -2,13 +2,15 @@
 
 from uuid import UUID
 
-from sqlalchemy import delete, or_, select
+from sqlalchemy import delete, or_, select, update
 from sqlalchemy.orm import Session
 
 from app.contacts.history_models import TimelineEvent
+from app.contacts.models import Enquiry
 from app.deals.history_models import DealStageEvent
 from app.deals.models import CustomerOffer, Deal, DealReceipt
 from app.deals.outcome_models import DealOutcome, DealReopening
+from app.deals.project_models import DealProject
 from app.files.models import OutboxEvent
 from app.identity.models import AuditEvent
 from app.inventory.models import Offering
@@ -98,4 +100,10 @@ def delete_actor_deals(
     )
     session.execute(delete(DealStageEvent).where(DealStageEvent.deal_id.in_(ids)))
     session.execute(delete(CustomerOffer).where(CustomerOffer.deal_id.in_(ids)))
+    session.execute(
+        update(Enquiry)
+        .where(Enquiry.converted_deal_id.in_(ids))
+        .values(converted_deal_id=None, converted_at=None, status="closed")
+    )
+    session.execute(delete(DealProject).where(DealProject.deal_id.in_(ids)))
     session.execute(delete(Deal).where(Deal.id.in_(ids)))

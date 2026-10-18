@@ -108,7 +108,7 @@ test("SP06 AT-24: archive/restore keeps relationships and historical authors", a
     await managerPage.getByLabel("État des contacts", { exact: true }).selectOption("archived");
     await managerPage.getByRole("link", { name: "SP06 contact à conserver", exact: true }).click();
     await managerPage.getByRole("tab", { name: "Demandes", exact: true }).click();
-    await expect(managerPage.getByText("1 demande(s) accessible(s).", { exact: true })).toBeVisible();
+    await expect(managerPage.getByText("1 demande", { exact: true }).and(managerPage.getByRole("status"))).toBeVisible();
     await managerPage.getByRole("tab", { name: "Historique", exact: true }).click();
     await expect(managerPage.getByText("SP06 note antérieure à l’archivage", { exact: true })).toBeVisible();
     await expect(managerPage.getByText("Auteur : SP06 Auteur synthétique", { exact: true }).first()).toBeVisible();
@@ -174,7 +174,7 @@ test("SP06 AT-04/05: manager cross-portfolio merge, stale preview recovery and r
     await page.getByRole("button", { name: "Choisir SP06 portefeuille conservé", exact: true }).click();
     await previewOperation(page);
     // Add a real linked enquiry while confirmation is open: no mock success.
-    const newLink = await staffCommand(other, "enquiries", { contact_id: survivor.id, message: "SP06 lien ajouté après aperçu", source: "manual" }, "POST", randomUUID());
+    const newLink = await staffCommand(other, "enquiries", { contact_id: survivor.id, initial_budget: "500000", message: "SP06 lien ajouté après aperçu", source: "manual" }, "POST", randomUUID());
     expect(newLink.status()).toBe(200);
     await page.getByRole("button", { name: "Confirmer l’opération", exact: true }).click();
     await expect(page.getByText(/Les liens ou les droits ont changé depuis l’aperçu/)).toBeVisible();

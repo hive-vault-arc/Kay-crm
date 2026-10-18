@@ -242,9 +242,9 @@ async def test_inventory_http_authority_and_strict_routes(settings, database):
             await client.post(
                 "/api/v1/properties",
                 headers=proof(at),
-                json={"reference": "SP07-denied", "category": "land"},
+                json={"reference": "SP07-agent", "category": "land"},
             )
-        ).status_code == 403
+        ).status_code == 200
         assert (
             await client.post(
                 "/api/v1/properties",

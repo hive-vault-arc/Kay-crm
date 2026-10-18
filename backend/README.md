@@ -150,17 +150,17 @@ No real administrator was created by this sprint's synthetic checks. See the
 
 ## Named staff administration
 
-After migration 0003, use the administrator-only Settings UI. There is no staff
-seed, public signup or DELETE endpoint. Create generates a random 192-bit
-temporary password once, stores only its Argon2id hash and blocks login until
-confirmed in-person handoff. Temporary credentials last 24 hours and require
-change/fresh login. Reset requires the current administrator password and revokes
-target sessions; disabled-account recovery follows that same handoff flow.
-The last active final-password administrator cannot be disabled/demoted.
+After migration0026, use administrator-only Settings. No staff seed or public
+signup exists. Admin chooses the initial password; create/reset return only user
+metadata and permit immediate restricted login without activation/handoff.
+Initial credentials last24 hours and require own-password change/fresh login.
+Reset additionally requires the administrator's current password and revokes
+target sessions. DELETE hides/removes access, retaining authored CRM history.
+The last active final-password administrator cannot be deleted/demoted.
 
 User commands require current versions and actor-scoped UUID idempotency keys.
-No plaintext result is persisted for retries: repeated create/reset returns a
-safe conflict; locate/reset the existing account after a lost display. Reads
+No plaintext result is persisted for retries: new commands replay safe metadata
+without another mutation; old secret-issued receipts retain their safe conflict. Reads
 never retrieve credentials. Agency and ordered user locks serialize authorization
 and last-admin decisions. Account, credential, revocations, audit and non-secret
 receipt commit together. See [SP-04 evidence](../docs/03-planning/sprints/sp-04-evidence.md)

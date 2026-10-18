@@ -8,9 +8,9 @@ import { queryPath, useQuery } from "@/features/contacts/use-query";
 import { localTimeSchema } from "./contracts";
 import { localLabel } from "./time";
 
-export function LocalTimeField({ label, local, changeLocal, instant, choose }: { label: string; local: string; changeLocal: (value: string) => void; instant: string; choose: (value: string) => void }) {
+export function LocalTimeField({ label, local, changeLocal, instant, choose, compact = false }: { label: string; local: string; changeLocal: (value: string) => void; instant: string; choose: (value: string) => void; compact?: boolean }) {
   const id = useId();
-  return <div className="grid min-w-0 gap-2"><Label htmlFor={id}>{label} (heure de Casablanca)</Label><Input id={id} type="datetime-local" min="2000-01-01T00:00" max="2100-12-31T23:59" value={local} onChange={e => { choose(""); changeLocal(e.target.value); }} aria-describedby={`${id}-help`} /><p id={`${id}-help`} className="text-sm text-muted-foreground">Date et heure interprétées par le serveur de l’agence.</p>{/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local) ? <Resolved key={local} local={local} instant={instant} choose={choose} label={label} /> : null}</div>;
+  return <div className="grid min-w-0 gap-2"><Label htmlFor={id}>{label}{compact ? "" : " (heure de Casablanca)"}</Label><Input id={id} type="datetime-local" min="2000-01-01T00:00" max="2100-12-31T23:59" value={local} onChange={e => { choose(""); changeLocal(e.target.value); }} aria-describedby={`${id}-help`} /><p id={`${id}-help`} className={compact ? "sr-only" : "text-sm text-muted-foreground"}>Date et heure interprétées par le serveur de l’agence, à Casablanca.</p>{/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local) ? <Resolved key={local} local={local} instant={instant} choose={choose} label={label} /> : null}</div>;
 }
 function Resolved({ local, instant, choose, label }: { local: string; instant: string; choose: (value: string) => void; label: string }) {
   const query = useQuery(queryPath("calendar/local-time", { local }), localTimeSchema), id = useId();

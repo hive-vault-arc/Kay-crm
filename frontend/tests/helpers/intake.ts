@@ -13,9 +13,15 @@ export async function intakeFixture(page: Page) {
   await signIn(page, agent);
   const eid = await createLead(page, "SP20 identité privée synthétique");
   await testControl("simulator-start");
-  await expect.poll(async () => {
-    try { return (await page.request.get(simulatorOrigin)).status(); } catch { return 0; }
-  }, { timeout: 10000 }).toBe(200);
+  try {
+    await expect.poll(async () => {
+      try { return (await page.request.get(simulatorOrigin)).status(); } catch { return 0; }
+    }, { timeout: 10000 }).toBe(200);
+  } catch (failure) {
+    const diagnostic = await testControl("simulator-status").catch(() => ({ available: false }));
+    console.info("TEST_SIMULATOR_START_DIAGNOSTIC", JSON.stringify(diagnostic));
+    throw failure;
+  }
   return { agent, other, manager, eid };
 }
 export async function fillWebsite(page: Page, phone = "+212600000001") {

@@ -66,14 +66,14 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
         .getByRole("link", { name: label, exact: true }),
     ).toHaveAttribute("aria-current", "page");
     if (path === "leads") {
-      await expect(page.getByRole("link", { name: "Créer un Lead", exact: true })).toBeVisible();
-      await expect(page.getByText("0 demande(s) accessible(s).", { exact: true })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Nouveau prospect", exact: true })).toBeVisible();
+      await expect(page.getByText("0 demande", { exact: true }).and(page.getByRole("status"))).toBeVisible();
     } else if (path === "deals") {
       await expect(page.getByRole("link", { name: "Créer une affaire", exact: true })).toBeVisible();
-      await expect(page.getByText("0 affaire(s) accessible(s) dans ces filtres.", { exact: true })).toBeVisible();
+      await expect(page.getByText("0 affaire", { exact: true }).and(page.getByRole("status"))).toBeVisible();
     } else if (path === "projects") {
       await expect(page.getByRole("tab", { name: "Biens indépendants", exact: true })).toBeVisible();
-      await expect(page.getByText("0 bien(s) correspondant(s).", { exact: true })).toBeVisible();
+      await expect(page.getByText("0 bien correspondant", { exact: true }).and(page.getByRole("status"))).toBeVisible();
     } else if (path === "visits") {
       await expect(page.getByRole("link", { name: "Planifier une visite", exact: true })).toBeVisible();
       await expect(page.getByText("0 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
@@ -95,6 +95,34 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
     .click();
   await expect(page).toHaveURL(/\/dashboard$/);
   expect(failures).toEqual([]);
+});
+
+test("Riviera desktop rail collapses without hiding destinations or search @shell", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/dashboard");
+  const sidebar = page.locator("aside[data-sidebar]");
+  const navigation = sidebar.getByRole("navigation", { name: "Navigation principale" });
+  const collapse = sidebar.getByRole("button", { name: "Réduire la navigation", exact: true });
+  await expect(collapse).toHaveAttribute("aria-expanded", "true");
+  await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(224);
+  await collapse.focus();
+  await page.keyboard.press("Enter");
+  const reopen = sidebar.getByRole("button", { name: "Développer la navigation", exact: true });
+  await expect(reopen).toHaveAttribute("aria-expanded", "false");
+  await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(72);
+  for (const label of ["Tableau de bord", "Prospects", "Affaires", "Calendrier des visites", "Projets"]) {
+    await expect(navigation.getByRole("link", { name: label, exact: true })).toBeVisible();
+  }
+  const search = sidebar.getByRole("button", { name: "Rechercher", exact: true });
+  await expect(search).toBeVisible();
+  await search.click();
+  await expect(page.getByRole("dialog", { name: "Recherche globale" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await reopen.focus();
+  await page.keyboard.press("Space");
+  await expect(sidebar.getByRole("button", { name: "Réduire la navigation", exact: true })).toHaveAttribute("aria-expanded", "true");
+  await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(224);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
 test("AT-23: sheet keyboard, containment, Escape and focus return @shell", async ({
@@ -140,8 +168,14 @@ test("AT-23: responsive widths, long French labels and touch geometry @shell", a
     await page.goto("/visits");
     await (await colleagues).finished();
     await expect(page.getByRole("button", { name: "Actualiser les visites", exact: true })).toBeEnabled();
-    await page.getByText("Règles et disponibilités", { exact: true }).click();
-    await expect(page.getByText(/^Politique version/)).toBeVisible();
+    const rulesTrigger = page.getByRole("button", { name: "Règles et disponibilités", exact: true }).and(page.locator(".calendar-rules-trigger"));
+    await rulesTrigger.click();
+    const rules = page.getByRole("dialog", { name: "Règles et disponibilités", exact: true });
+    await expect(rules.getByText(/^Politique version/)).toBeVisible();
+    expect(await rules.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(rules).toHaveCount(0);
+    await expect(rulesTrigger).toBeFocused();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,

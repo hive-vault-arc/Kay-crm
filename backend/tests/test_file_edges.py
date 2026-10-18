@@ -22,6 +22,7 @@ from app.identity.security import IdentityError, csrf_token
 from app.main import create_app
 from tests.contact_support import actor
 from tests.file_support import grant, image_bytes, new_document
+from tests.legacy_support import contact as legacy_contact
 from tests.test_files import headers, setup_contact
 from tests.test_foundation import client_for
 from tests.test_isolation_migrations import migrate
@@ -280,14 +281,17 @@ async def test_retry_exhaustion_explicit_retry_and_immutable_clean_version(setti
 
 
 def test_populated_prior_revision_upgrade_and_history_downgrade_refusal(settings, database):
-    _, token, contact = setup_contact(settings, database)
+    uid, token = actor(settings, database)
     assert migrate("downgrade", "0009_development_hierarchy").returncode == 0
     try:
+        contact = legacy_contact(database, uid)
         with database.session() as session:
             assert session.scalar(text("SELECT count(*) FROM contact")) == 1
         assert migrate("upgrade", "head").returncode == 0
         document = new_document(settings, database, token, "contact", contact, image_bytes())
-        assert migrate("downgrade", "0009_development_hierarchy").returncode != 0
+        refused = migrate("downgrade", "0009_development_hierarchy")
+        assert refused.returncode != 0
+        assert "QUALIFICATION_HISTORY_DOWNGRADE_REFUSED" in refused.stderr
         assert read_document(database, token, UUID(document["id"]))["filename"] == "Synthétique.png"
     finally:
         assert migrate("upgrade", "head").returncode == 0

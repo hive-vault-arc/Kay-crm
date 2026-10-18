@@ -37,7 +37,7 @@ test("SP07 visible Chrome: inventory, owner privacy, keyboard, touch, responsive
     await createLead(mobile, `SP07 ${"Propriétaire".repeat(11)}`);
     await signIn(page, manager); await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/projects");
-    await expect(page.getByText("0 bien(s) correspondant(s).", { exact: true })).toBeVisible();
+    await expect(page.getByText("0 bien correspondant", { exact: true })).toBeVisible();
     await capture(page, path.join(root, "sp07-empty-desktop.png"));
     await page.getByRole("tab", { name: "Biens indépendants", exact: true }).focus();
     await page.keyboard.press("ArrowRight");
@@ -95,8 +95,8 @@ test("SP07 visible Chrome: inventory, owner privacy, keyboard, touch, responsive
     await expect(mobile.getByText("Identité privée protégée par les droits Contacts.", { exact: true })).toBeVisible();
     await capture(mobile, path.join(root, "sp07-private-owner-mobile.png"));
     await mobile.goto(`/projects/properties/${id}/edit`);
-    await expect(mobile.getByRole("alert").filter({ hasText: "Accès non autorisé" })).toBeVisible();
-    await capture(mobile, path.join(root, "sp07-agent-denied-mobile.png"));
+    await expect(mobile.getByRole("form", { name: "Modifier le bien", exact: true })).toBeVisible();
+    await capture(mobile, path.join(root, "sp07-agent-edit-mobile.png"));
     let release!: () => void;
     const gate = new Promise<void>(resolve => { release = resolve; });
     const loading = async (route: Route) => { await gate; await route.continue(); };

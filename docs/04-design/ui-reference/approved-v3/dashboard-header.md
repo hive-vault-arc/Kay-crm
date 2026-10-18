@@ -3,7 +3,36 @@
 2026-10-16. Owner-requested local UI refinement, not a deployment or approval of
 unselected AFTER-audit findings. Pending UI work must not be pushed.
 
-## Current owner request: remove both header controls
+## Current screenshot override (2026-10-18)
+
+The owner's newer supplied CRM dashboard screenshot supersedes the earlier
+two-column title/photo composition. `/dashboard` uses a single full-width
+panoramic banner with the heading on a solid-ivory left fade, a compact scope/date
+toolbar with the existing new-Lead destination, grouped live current/period KPIs,
+and the existing Bklit pipeline funnels. Desktop banner controls open the real
+notification and account/logout sheets; mobile keeps the ordinary global
+notification/search/navigation bar and hides the duplicated hero controls.
+The existing dashboard-city photo asset is retained because no clean separate
+hero photograph was supplied. Illustration numbers, dates and agents remain
+reference-only; API scope, current values, date bounds and French labels remain
+authoritative. The previously removed health/status and audit shortcut controls
+stay removed; these new account/notification actions are distinct.
+
+The final isolated headed-Chrome dashboard run passes3/3, including320–1440px
+overflow/hero checks, agent scope/audit denial and native200% zoom. The
+1448×1086 owner-reference-size capture was visually reopened; a 768px tablet
+capture confirmed the scope/date/apply/create toolbar remains ordered, and the
+360px capture confirmed mobile stacking. Build, lint, typecheck, the synthetic
+performance funnel test and the synthetic agent/manager scope test pass. See
+the [Riviera execution record](../../riviera-execution.md#dashboard-reference-correction-2026-10-18)
+for commands and the explicit photograph limitation.
+
+The sidebar reuses the login villa/palm drawing, with the administrator Settings
+link below the illustration on desktop. Mobile navigation retains its existing
+single drawer and Settings link. All routes keep the shared Riviera token mapping,
+existing Iconsax, responsive KAY shell and real workflows.
+
+## Earlier owner request: remove the status and audit header controls
 
 The supplied outline identifies `Vérifier à nouveau` and `Journal d’audit`.
 The first was already removed with the local diagnostic widget. Remove the

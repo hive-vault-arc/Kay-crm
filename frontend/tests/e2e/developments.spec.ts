@@ -26,11 +26,11 @@ test("SP08: mixed hierarchy, reused template, independent units and safe optiona
     await expect(page.getByText("0 unité(s) correspondante(s).", { exact: true })).toBeVisible();
     await clearActorContext(page); await signIn(page, agent); await page.goto(path);
     await expect(page.getByRole("heading", { name: reference, exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Modifier le programme", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Modifier le programme", exact: true })).toBeVisible();
     await page.getByRole("tab", { name: "Présentation", exact: true }).click();
     await expect(page.getByText("Aucune présentation renseignée.", { exact: true })).toBeVisible();
     await page.goto(`${path}/edit`);
-    await expect(page.getByRole("alert").filter({ hasText: "Accès non autorisé" })).toBeVisible();
+    await expect(page.getByRole("form", { name: "Modifier le programme", exact: true })).toBeVisible();
   } finally { await removeActor(manager); await removeActor(agent); }
 });
 
@@ -104,7 +104,10 @@ test("SP08 AT-31/32/35/36/41: actual mixed units, template edit, filters, whole 
     const safe = await (await page.request.get(`/api/v1/developments/${development.id}`)).json();
     expect(safe.developer.contact).toBeNull(); expect(safe.owners[0].contact).toBeNull(); expect(JSON.stringify(safe).includes(contact.id)).toBe(false);
     expect((await page.request.get(`/api/v1/contacts/${contact.id}`)).status()).toBe(404);
-    expect((await staffCommand(page, `developments/${development.id}/blocks`, { expected_version: safe.version, code: "DENIED", label: "Synthétique", display_order: 0 })).status()).toBe(403);
+    expect((await staffCommand(page, `developments/${development.id}/blocks`, { expected_version: safe.version, code: "SP08-AGENT", label: "Bloc synthétique ajouté par l’agent", display_order: 0 })).status()).toBe(200);
+    const afterBlock = await (await page.request.get(`/api/v1/developments/${development.id}`)).json();
+    expect(afterBlock.developer.contact).toBeNull(); expect(afterBlock.owners[0].contact).toBeNull(); expect(JSON.stringify(afterBlock).includes(contact.id)).toBe(false);
+    expect((await staffCommand(page, `developments/${development.id}/owners`, { expected_version: afterBlock.version, owners: [] }, "PUT")).status()).toBe(403);
     await openDevelopment(page, development.id, "Unités"); await expect(page.getByRole("link", { name: first.reference, exact: true })).toBeVisible();
     await page.getByRole("link", { name: first.reference, exact: true }).click();
     await expect(page.getByRole("navigation", { name: "Fil d’Ariane de l’unité", exact: true })).toContainText(development.reference);

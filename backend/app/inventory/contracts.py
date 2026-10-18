@@ -155,3 +155,32 @@ class InventoryQuery(BaseModel):
             if Decimal(self.min_comparison_mad) > Decimal(self.max_comparison_mad):
                 raise ValueError("INVALID_COMPARISON_RANGE")
         return self
+
+
+class PropertiesQuery(InventoryQuery):
+    categories: str | None = Field(default=None, max_length=40)
+
+    @field_validator("categories", mode="before")
+    @classmethod
+    def category_selection(cls, value: object) -> str | None:
+        if value is None:
+            return None
+        if not isinstance(value, str):
+            raise ValueError("INVALID_CATEGORY_SELECTION")
+        if value == "":
+            return value
+        parts = value.split(",")
+        if len(parts) != len(set(parts)) or not set(parts) <= {
+            "land",
+            "apartment",
+            "villa",
+            "house",
+        }:
+            raise ValueError("INVALID_CATEGORY_SELECTION")
+        return value
+
+    @model_validator(mode="after")
+    def unambiguous_category(self) -> PropertiesQuery:
+        if self.category is not None and self.categories is not None:
+            raise ValueError("AMBIGUOUS_CATEGORY_SELECTION")
+        return self

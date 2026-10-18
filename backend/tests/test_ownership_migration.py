@@ -87,6 +87,8 @@ def test_backfill_true_actor_origin_and_legacy_retry_snapshot(
             assert contact_receipt and contact_receipt.response["collaborators"] == []
             assert contact_receipt.response["archived_at"] is None
         refused = migrate("downgrade", "0004_contacts_enquiries")
-        assert refused.returncode != 0 and "BUSINESS_HISTORY_DOWNGRADE_REFUSED" in refused.stderr
+        assert (
+            refused.returncode != 0 and "QUALIFICATION_HISTORY_DOWNGRADE_REFUSED" in refused.stderr
+        )
     finally:
         assert migrate("upgrade", "head").returncode == 0

@@ -1,5 +1,12 @@
 export function frenchApiError(code: string): string {
   const messages: Record<string, string> = {
+    LANGUAGES_REQUIRED: "Renseignez au moins une langue dans la fiche du contact.",
+    LEAD_CONVERTED: "Ce prospect est déjà converti. Ouvrez son affaire pour poursuivre.",
+    LEAD_ALREADY_CONVERTED: "Ce prospect possède déjà une affaire active. Actualisez sa fiche.",
+    LEAD_CONVERSION_REQUIRED: "Convertissez le prospect en choisissant son projet, son budget et son motif d’achat.",
+    PROJECT_UNAVAILABLE: "Ce projet n’est plus disponible. Actualisez les projets proposés.",
+    PROJECT_DEVELOPMENT_REQUIRED: "Choisissez le programme de cette unité.",
+    PROJECT_REQUIRED: "Choisissez un projet ou renseignez un projet externe.",
     IMPORT_FILE_INVALID: "Choisissez un fichier .csv non vide de 20 Mo maximum.",
     IMPORT_HEADER_INVALID: "Les colonnes du CSV ne correspondent pas au modèle exact. Corrigez l’en-tête puis envoyez un nouveau fichier.",
     IMPORT_CSV_INVALID: "Le fichier n’est pas un CSV UTF-8 valide à huit colonnes. Vérifiez l’encodage, les virgules et les guillemets puis corrigez le fichier.",
@@ -89,7 +96,7 @@ export function frenchApiError(code: string): string {
     SOURCE_SUBMISSION_CONFLICT: "Cette référence de demande existe déjà. Retrouvez le Lead avant de réessayer.",
     LAST_ADMIN_REQUIRED: "Conservez au moins un administrateur actif avec un mot de passe définitif.",
     ADMIN_PASSWORD_INVALID: "Votre mot de passe administrateur est incorrect. Aucun changement effectué.",
-    TEMPORARY_EXPIRED: "Le mot de passe temporaire a expiré. Réinitialisez-le avant la remise.",
+    TEMPORARY_EXPIRED: "Le mot de passe initial a expiré. Réinitialisez-le pour permettre la connexion.",
     INVALID_STATE: "Cette action ne correspond plus à l’état du compte. Rechargez la fiche.",
     IDEMPOTENCY_CONFLICT: "Cette tentative ne correspond plus à la demande initiale. Rechargez la fiche.",
     ONE_TIME_RESULT_UNAVAILABLE: "La demande a déjà abouti. Le mot de passe ne peut pas être réaffiché. Ouvrez le compte et réinitialisez-le si nécessaire.",

@@ -1,5 +1,64 @@
 # Data model: dictionary, conceptual, logical, and physical views
 
+## Staff deletion (2026-10-18)
+
+Revision0026 adds nullable `user.deleted_at` and a disabled-state check. No existing
+staff, credential, session or CRM fact is rewritten. Identity/email uniqueness
+and restrictive author/owner FKs remain. Administration excludes deleted accounts;
+auth checks marker/state. No physical purge or restore is added. Isolated
+downgrade refuses deletion history; development downgrade is disabled.
+[Current evidence](../03-planning/staff-onboarding-deletion.md).
+
+## Record-scoped activities (2026-10-18)
+
+Additive revision `0025_scoped_activities` extends `timeline_event`, rather than
+creating duplicate note histories: nullable bounded duration/direction and
+`activity_projects` JSONB (default empty bounded string array). Existing rows
+receive no invented context, author, date or text. Existing immutable UPDATE/
+DELETE protection remains. Lead/time and Deal/time indexes support numbered
+history reads. A BEFORE INSERT guard requires exactly one matching parent
+contact for contextual manual entries, a nonblank body, and manual context for
+the new metadata. System conversion events may retain both explicit IDs.
+
+The existing `enquiry_id`/`deal_id` lineage and contact merge policy preserve
+original events after reparenting. New appends use the current parent contact;
+reads authorize the current parent before selecting historical context. The
+existing receipt and audit tables provide atomic intent replay and true-actor
+attribution. No project FK, inventory write, new contact link or broker is added.
+Downgrade is isolated-only and refuses any new activity history/metadata rather
+than discard it. Local rollout and verification are recorded in the
+[activity ledger](../03-planning/lead-deal-activities.md), separately from the
+historical qualification rollout notes below.
+
+## Current lead/deal qualification extension (2026-10-17)
+
+Locally validated additive revisions `0023_lead_deal_qualification` and
+`0024_deal_qualification_history` extend the existing canonical records; they
+do not replace contacts, rewrite original actors, or reserve stock. Contacts
+gain bounded ISO-country residence/nationality and language codes. Enquiries
+gain budget, campaign source, rating and an explicitly guarded converted-deal
+relationship/time. Technical received provenance remains independent of the
+editable campaign source.
+
+Deals retain their canonical contact FK and gain qualification, a client-profile
+snapshot and ordered `deal_project` interests (one to three for new qualified
+deals). Each interest chooses exactly one development, standalone property or
+external name. Its position is distinct from any exact inventory offering or
+reservation. A case-insensitive external-name index prevents duplicate interests.
+Each new deal-history revision captures the complete qualification and ordered
+projects; deferred SQL guards compare it to current facts and reject unrecorded
+updates. Untouched legacy rows may retain unknown qualification and historical
+empty snapshots without invented facts. Populated downgrades refuse retained
+business history.
+
+Only the isolated synthetic test database has been upgraded by this task.
+Development/production rollout is not authorized or performed. See the
+[current wire/workflow contract](deal-pipeline-local.md) and
+[migration evidence and acceptance limits](../03-planning/leads-deals-immoworld-alignment.md).
+
+The SP-21 counts and model snapshots below describe the earlier revision0022
+baseline, not the new qualification extension.
+
 SP-21 introduces no migration or business table. The local manifest binds all
 69 public tables at revision 0022_website_intake by row count/SHA256, source
 cluster/OID, LSN, schema/code/locks and private object size/hash. Isolated restore

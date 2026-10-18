@@ -42,7 +42,10 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
     expect(old.status()).toBe(403);
     await clearActorContext(page); await signIn(page, data.agent);
     await expect(page.getByRole("heading", { name: "Tableau de bord", exact: true })).toBeVisible();
-    await expect(page.getByText("Périmètre : dossiers attribués ou partagés. Inventaire lié uniquement aux affaires et sélections accessibles.", { exact: true })).toBeVisible();
+    await expect(page.getByText("Mes dossiers accessibles", { exact: true })).toBeVisible();
+    const dashboard = await page.request.get("/api/v1/reports/dashboard");
+    expect(dashboard.status()).toBe(200);
+    expect((await dashboard.json()).scope).toBe("assigned_or_shared");
     await capture("dashboard-desktop");
     await page.goto(`/contacts/${data.contact_id}`);
     await expect(page.getByText("Contact : SP05 contact synthétique", { exact: true })).toBeVisible();
@@ -58,7 +61,14 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
     expect((await downloadEvent).suggestedFilename()).toBe("SP21 preuve synthétique.png");
     await capture("files-desktop");
     await page.goto(`/deals/${data.deal_id}`);
-    await expect(page.getByText("SP21 affaire synthétique restaurée", { exact: true })).toBeVisible();
+    const restoredResponse = await page.request.get(`/api/v1/deals/${data.deal_id}`);
+    expect(restoredResponse.status()).toBe(200);
+    const restoredDeal = await restoredResponse.json();
+    expect(restoredDeal.title).toBe("SP05 contact synthétique · Programme synthétique");
+    expect(restoredDeal.initial_budget).toBe("1000000.00 MAD");
+    expect(restoredDeal.client_snapshot.languages).toEqual(["french", "darija"]);
+    expect(restoredDeal.projects[0].development_id).toBe(data.development_id);
+    await expect(page.getByRole("heading", { name: restoredDeal.title, exact: true })).toBeVisible();
     await capture("deal-desktop");
     await page.goto(`/projects/${data.development_id}`);
     await expect(page.getByText("Programme synthétique", { exact: true }).first()).toBeVisible();

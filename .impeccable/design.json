@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-18T01:56:50Z",
+  "title": "Design System: KAY Riviera",
+  "extensions": {
+    "typographyMeta": {
+      "display": { "displayName": "Riviera page title", "purpose": "Implemented responsive page-heading role; Fraunces 1.000, explicit opsz40/SOFT0/WONK0." },
+      "title": { "displayName": "Section title", "purpose": "Existing shared section-heading role." },
+      "body": { "displayName": "Working text", "purpose": "Manrope 4.505, loaded from the verified local TTF." },
+      "label": { "displayName": "Control label", "purpose": "Manrope interface labels; individual semantic variants retain their existing weights." },
+      "metadata": { "displayName": "Compact metadata", "purpose": "DM Sans 4.004, loaded from the verified local WOFF2." }
+    },
+    "shadows": [
+      { "name": "panel", "value": "0 1px 3px rgb(32 38 32 / 4%)", "purpose": "Restrained separation of warm-white panels from the canvas; not a required control boundary." }
+    ],
+    "motion": [
+      { "name": "fast", "value": "120ms", "purpose": "Existing short control and shell state transitions." },
+      { "name": "reduced", "value": "0ms", "purpose": "Supplied reduced-motion duration; existing reduced-motion CSS remains authoritative." }
+    ],
+    "breakpoints": [
+      { "name": "dashboard-stack", "value": "35rem" },
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "2xl", "value": "1536px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Creation button",
+      "kind": "button",
+      "refersTo": "button-creation",
+      "description": "Existing shadcn creation variant with honey fill, dark text and a 44px minimum target.",
+      "html": "<button type=\"button\" class=\"ds-create\">Nouveau prospect</button>",
+      "css": ".ds-create { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:8px 16px; border:1px solid var(--riviera-color-gold-text); border-radius:var(--riviera-radius-control); background:var(--riviera-color-brand-default); color:var(--riviera-color-brand-foreground); font-family:var(--font-manrope),Arial,sans-serif; font-size:14px; line-height:20px; font-weight:600; transition:background-color var(--riviera-motion-fast); } .ds-create:hover { background:var(--riviera-color-brand-hover); } .ds-create:active { background:var(--riviera-color-brand-pressed); } .ds-create:focus-visible { outline:var(--riviera-focus-width) solid var(--riviera-color-focus-light); outline-offset:var(--riviera-focus-offset); } .ds-create:disabled { background:var(--riviera-color-interactive-disabled-background); color:var(--riviera-color-interactive-disabled-foreground); border-color:var(--riviera-color-interactive-disabled-border); }"
+    },
+    {
+      "name": "Outlined alternative",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Existing outlined shadcn alternative with a strong visible boundary.",
+      "html": "<button type=\"button\" class=\"ds-outline\">Annuler</button>",
+      "css": ".ds-outline { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:8px 16px; border:1px solid var(--riviera-color-control-border); border-radius:var(--riviera-radius-control); background:var(--riviera-color-surface); color:var(--riviera-color-ink); font-family:var(--font-manrope),Arial,sans-serif; font-size:14px; line-height:20px; font-weight:500; transition:background-color var(--riviera-motion-fast); } .ds-outline:hover { background:var(--riviera-color-interactive-selection-background); } .ds-outline:active { background:var(--riviera-color-interactive-selection-background); } .ds-outline:focus-visible { outline:var(--riviera-focus-width) solid var(--riviera-color-focus-light); outline-offset:var(--riviera-focus-offset); } .ds-outline:disabled { background:var(--riviera-color-interactive-disabled-background); color:var(--riviera-color-interactive-disabled-foreground); border-color:var(--riviera-color-interactive-disabled-border); }"
+    },
+    {
+      "name": "Text field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Existing 48px shadcn field, with responsive type and associated visible label.",
+      "html": "<label class=\"ds-field\">Nom<input class=\"ds-input\" type=\"text\" placeholder=\"Nom\" /></label>",
+      "css": ".ds-field { display:grid; gap:8px; color:var(--riviera-color-ink); font-family:var(--font-manrope),Arial,sans-serif; font-size:14px; font-weight:500; } .ds-input { width:100%; min-width:0; height:48px; padding:8px 12px; border:1px solid var(--riviera-color-control-border); border-radius:var(--riviera-radius-control); background:var(--riviera-color-surface); color:var(--riviera-color-ink); font-family:var(--font-manrope),Arial,sans-serif; font-size:16px; } .ds-input::placeholder { color:var(--riviera-color-muted); } .ds-input:focus-visible { border-color:var(--riviera-color-focus-light); outline:var(--riviera-focus-width) solid var(--riviera-color-focus-light); outline-offset:var(--riviera-focus-offset); } .ds-input[aria-invalid=true] { border-color:var(--riviera-color-semantic-danger-foreground); } .ds-input:disabled { background:var(--riviera-color-interactive-disabled-background); color:var(--riviera-color-interactive-disabled-foreground); border-color:var(--riviera-color-interactive-disabled-border); } @media(min-width:768px) { .ds-input { font-size:14px; } }"
+    },
+    {
+      "name": "Current navigation destination",
+      "kind": "nav",
+      "refersTo": "navigation-current",
+      "description": "Current sidebar destination with the retained Iconsax dashboard and chevron paths; original notices remain applicable.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Navigation KAY\"><a class=\"ds-nav-current\" href=\"/dashboard\" aria-current=\"page\"><span class=\"ds-nav-tile\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 10H7C9 10 10 9 10 7V5C10 3 9 2 7 2H5C3 2 2 3 2 5V7C2 9 3 10 5 10Z\"/><path d=\"M17 10H19C21 10 22 9 22 7V5C22 3 21 2 19 2H17C15 2 14 3 14 5V7C14 9 15 10 17 10Z\"/><path d=\"M17 22H19C21 22 22 21 22 19V17C22 15 21 14 19 14H17C15 14 14 15 14 17V19C14 21 15 22 17 22Z\"/><path d=\"M5 22H7C9 22 10 21 10 19V17C10 15 9 14 7 14H5C3 14 2 15 2 17V19C2 21 3 22 5 22Z\"/></g></svg></span><span>Tableau de bord</span><svg class=\"ds-nav-chevron\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M19.9201 8.9502L13.4001 15.4702C12.6301 16.2402 11.3701 16.2402 10.6001 15.4702L4.08008 8.9502\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a></nav>",
+      "css": ".ds-nav { padding:12px; background:var(--riviera-color-sidebar-background); } .ds-nav-current { display:grid; grid-template-columns:32px minmax(0,1fr) 16px; align-items:center; gap:12px; min-height:48px; padding:8px 12px; border-radius:var(--riviera-radius-icon-tile); background:var(--riviera-color-sidebar-active); color:var(--riviera-color-sidebar-active-label); font-family:var(--font-manrope),Arial,sans-serif; font-size:14px; line-height:20px; font-weight:500; text-decoration:none; } .ds-nav-current:hover { background:var(--riviera-color-sidebar-active-hover); } .ds-nav-current:focus-visible { outline:var(--riviera-focus-width) solid var(--riviera-color-focus-dark); outline-offset:var(--riviera-focus-offset); } .ds-nav-tile { display:grid; place-items:center; width:32px; height:32px; border-radius:var(--riviera-radius-icon-tile); background:var(--riviera-color-brand-default); color:var(--riviera-color-sidebar-tile-icon); } .ds-nav-chevron { color:var(--riviera-color-brand-default); transform:rotate(-90deg); }"
+    },
+    {
+      "name": "Success badge",
+      "kind": "chip",
+      "refersTo": "badge-success",
+      "description": "Existing written semantic feedback, distinct from pipeline category fills.",
+      "html": "<span class=\"ds-badge-success\">Gagnée</span>",
+      "css": ".ds-badge-success { display:inline-flex; align-items:center; max-width:100%; padding:4px 8px; border:1px solid color-mix(in srgb,var(--riviera-color-semantic-success-foreground) 15%,transparent); border-radius:var(--riviera-radius-icon-tile); background:var(--riviera-color-semantic-success-background); color:var(--riviera-color-semantic-success-foreground); font-family:var(--font-dm-sans),Arial,sans-serif; font-size:13px; line-height:16px; font-weight:500; }"
+    },
+    {
+      "name": "Quiet record panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Existing shared surface recipe; panel shadow supplies tonal separation, not a control boundary.",
+      "html": "<section class=\"ds-panel\"><h2 class=\"ds-panel-title\">Informations</h2><p class=\"ds-panel-copy\">Dossier accessible</p></section>",
+      "css": ".ds-panel { min-width:0; padding:16px; border:0; border-radius:var(--riviera-radius-panel); background:var(--riviera-color-surface); color:var(--riviera-color-ink); box-shadow:var(--riviera-shadow-panel); } .ds-panel-title { margin:0 0 8px; font-family:var(--font-fraunces),Georgia,serif; font-size:24px; line-height:30px; font-weight:550; font-optical-sizing:none; font-variation-settings:'opsz' 40,'SOFT' 0,'WONK' 0; letter-spacing:-0.01em; } .ds-panel-copy { margin:0; color:var(--riviera-color-muted); font-family:var(--font-manrope),Arial,sans-serif; font-size:15px; line-height:22.5px; } @media(min-width:768px) { .ds-panel { padding:20px; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Riviera",
+    "overview": "Khalid explicitly selected the supplied Riviera 1.1.0 handoff and confirmed app-wide colors, fonts and shared component styling with existing layouts, wording, Iconsax and real metrics retained. [Riviera source and implementation mapping](branding/riviera/README.md) supersede conflicting older palette, font, pure-black-sidebar and panel-border statements below. Warm ivory canvas, warm-white surfaces, honey actions and olive-charcoal navigation carry the brand. Fraunces550 titles, Manrope UI and DM Sans metadata are self-hosted OFL fonts. The exact191 tokens are exported centrally; old application roles resolve to them rather than maintaining independent palettes. Panels are quiet/borderless; controls, focus and essential dividers keep visible boundaries. Approved V3 and later owner-requested geometry remain the layout family, not the old colors. The desktop rail collapses to a 72px implementation proposal, keeps every destination accessibly named, and reuses the login villa/palm line art; global search remains available in the rail and responsive header. No sample chart allocations, icon-family switch, business copy or backend change is authorized. ENERGY1 / RHYTHM1 / MOTION1. Human visual review is separate.",
+    "keyCharacteristics": [
+      "Supplied Riviera palette and licensed local fonts on existing CRM compositions.",
+      "Quiet panels, visible control boundaries and explicit keyboard focus.",
+      "French labels, semantic Iconsax and live authorized values."
+    ],
+    "rules": [],
+    "dos": [
+      "Do consume shared Riviera semantic roles through Tailwind and existing components.",
+      "Do preserve French labels, Iconsax, live scoped values and accessible states.",
+      "Do keep the exact verified runtime font versions and original OFL notices."
+    ],
+    "donts": [
+      "Don't convert reference sample people, allocations or counts into application data.",
+      "Don't use categorical pipeline fills as semantic feedback colors.",
+      "Don't infer human product acceptance from technical or finish-review evidence."
+    ]
+  }
+}

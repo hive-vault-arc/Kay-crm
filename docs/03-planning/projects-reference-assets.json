@@ -1,0 +1,16 @@
+{
+  "scope": "Isolated synthetic Projects browser fixtures only; no shipping or real listing photos",
+  "generator": "Built-in image_gen; eight separate generation calls, no CLI or reference editing",
+  "directory": "frontend/tests/fixtures/projects-reference",
+  "sharedPrompt": "Use case: photorealistic-natural. Asset type: synthetic property photograph for isolated CRM UI tests, not a real listing. Scene: SCENE. A single photorealistic wide landscape photograph, no collage. Natural colors and realistic materials, polished real-estate photography, suitable for a 260 by 150 pixel card crop. No people, text, logos, signs, badges, interface or watermark.",
+  "assets": [
+    { "name": "oliviers.png", "scene": "an olive grove on dry rocky buildable land, turquoise Mediterranean sea in the background, a low viewpoint through olive trees, clear natural daylight", "sha256": "768ac68351605169e62f1f5d1a030ad8232dc6a64f8509a34e695a2b92f685d8" },
+    { "name": "azur.png", "scene": "a contemporary white coastal apartment building with rounded balconies, palms and a garden, sunny blue sky, low eye-level architectural view", "sha256": "499f129c428651415f0adef04aef54c7d4519dc8459b1f52d86ef7ddccae12a5" },
+    { "name": "sable.png", "scene": "a warm stone Mediterranean villa beside a turquoise swimming pool, cypresses and an established garden, clear daylight", "sha256": "500122fa3923be9a3fa6200fe682eafdcbde411e4824938d199441ad692837ad" },
+    { "name": "patio.png", "scene": "a white apartment residence arranged around a planted courtyard, balconies and palm trees, low viewpoint through the courtyard", "sha256": "6c49a8e38f25f6157c5ea2500c03df43d47b6a5fefda882c3cff51290778310d" },
+    { "name": "solea.png", "scene": "a small cream Mediterranean villa with pale terracotta roof and a mature pine tree framing its front garden, afternoon daylight", "sha256": "a1645b88f3779823fd189ae3a7bd1283684c7ab98762e25cd4f6b8ea0a19a0e3" },
+    { "name": "cap.png", "scene": "undeveloped Mediterranean hillside land with scrub vegetation overlooking a broad blue sea bay and distant headland, clear sunny day", "sha256": "7c00f15b353c40a8e7fbcd93536b16f15f0b09400f7d282a8c18254437914a55" },
+    { "name": "lumiere.png", "scene": "a bright warm-white apartment living room with natural furniture, open balcony doors and a blue sea view, subtle indoor textures", "sha256": "c817c3320d4525070e603b8074e23363d068ea371c20fbf7357c976add200b72" },
+    { "name": "horizon.png", "scene": "a cream villa with terracotta roof behind a lush garden with palms and flowering shrubs, bright Mediterranean daylight", "sha256": "0b5da65baf122fcb08ed0bdc5bbb99027574c063fb08c50612e5347cf7aec46a" }
+  ]
+}

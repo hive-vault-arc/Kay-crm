@@ -18,6 +18,11 @@ export async function capture(page: Page, name: string, full = false) {
 }
 
 export async function geometry(page: Page) {
+  // Let responsive SVGs finish their ResizeObserver debounce after a viewport change.
+  await page.evaluate(async () => {
+    await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+    await new Promise<void>(resolve => setTimeout(resolve, 20));
+  });
   const result = await page.evaluate(() => {
     const root = document.querySelector('[role="alertdialog"]') ?? document.querySelector("main") ?? document.body;
     const visible = (el: Element) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };

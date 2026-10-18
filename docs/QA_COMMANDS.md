@@ -1,5 +1,490 @@
 # KAY QA command register
 
+## Combined CRM regression/publication (2026-10-18)
+
+The [complete chronological ledger](03-planning/full-regression-publication-2026-10-18.md)
+retains failed attempts, corrections and actual boundaries. Initial latency
+failures are preserved below; the owner-directed repair subsequently passes the
+unchanged load gate. Final source still requires full exact-head regressions;
+actual hosted outcomes are recorded in [PR15](https://github.com/hive-vault-arc/Kay-crm/pull/15).
+
+| Location | Actual command/check | Result |
+|---|---|---|
+| backend | `.venv/Scripts/python.exe -m pytest -q --tb=short --maxfail=3 --cov=app --cov-report=term:skip-covered` |820 passed18m11s,94% coverage before final count-query optimization; real PostgreSQL/ClamAV/recovery, serial lease |
+| backend | `.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_lead_counts.py tests/test_contacts.py tests/test_lead_conversion.py tests/test_benchmark_qualification.py tests/test_benchmark_totals.py tests/test_unit_selection.py --maxfail=2` |67 passed60.64s after optimization; scoped total/status/filter/conversion and exact legacy/current benchmark distributions |
+| backend | explicit venv `-m ruff check .`, `-m ruff format --check .`, `-m mypy app`, `-m tests.unit_runner` |Pass;328 formatted files/186 typed application files;234 units,602 DB-gated tests deliberately deselected; unit subset is not additive to full-suite counts |
+| frontend | `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run test:unit`, `npm.cmd run build` |Pass;71 units; production build after filter-hook fix;45 semantic icons/319 buttons,0 guard violations |
+| frontend | compiled `playwright.acceptance.config.ts`, complete batches and affected reruns |169 distinct passing variants:112 Chrome and19 each Edge/mobile Chromium/mobile WebKit; initial matrix was not green, intermittent startup/WebKit observations remain disclosed |
+| frontend | compiled `playwright.final-chrome.config.ts`, affected rerun; supplemental `tests/review/iconsax.chrome.spec.ts` |4 native final cases and3 Iconsax cases pass; actual200% zoom, touch, keyboard, synthetic recovery and visual inspection |
+| frontend | `npm.cmd run test:e2e -- --project=chrome --grep 'live shadcn/RHF/Zod/table' --max-failures=1` |Development-only component case1/1 pass48.6s |
+| backend | Initial guarded benchmark `APP_ENVIRONMENT=benchmark`; explicit venv `-m alembic upgrade head`, `-m benchmarks.plans`, `-m benchmarks.run` |Benchmark-only upgrade0022→0026, unchanged100/200000/20000 counts;18 plans; pre-repair3924 completed/0 failures/62.553s but p95 ordinary max2117.471ms/dashboard3340.722ms: FAIL retained, limits1000/2000ms unchanged |
+| backend | Owner-directed repair: `.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_reports.py tests/test_report_edges.py tests/test_lead_counts.py tests/test_contacts.py --maxfail=2` |49 passed61.80s; includes3 new populated/private role cases requiring one metric SQL statement and exact dashboard/drill parity, decimal correction and concurrent transfer |
+| backend | Repaired `APP_ENVIRONMENT=benchmark`; `.venv/Scripts/python.exe -m benchmarks.run`, independent full-volume runs |6964/6575/7026 completed,0 measured failures,100 users/4 workers/>60s; latest p95 ordinary max322.455ms/dashboard574.745ms PASS. Intermediate97-user setup failure retained with new diagnostics, never counted as a measured pass; no retries/target/timeout/pool relaxation |
+| frontend | compiled acceptance config, Chrome `project-permissions.spec.ts --repeat-each=3 --max-failures=2` |6/6 pass2.9m; actual PATCH200/persisted name/briefing added after baseline hosted programme-label failure; cause not claimed fixed, full exact-head hosted browser pass still required |
+| root/frontend | repository/index/private-value checks, redacted staged/full-history Gitleaks, actionlint, repository-only sprint validator; bundle scanner and sanitized report audit |8404 indexed/0 forbidden/7 known private values/0 matches;1195 links/22 sprints/41 AT/13 Mermaid/12 JSON valid;586 JS/0 configured secrets;0 detailed input-bearing report steps |
+
+Baselinebc686c1 automatic CI passes; manual backend836 passed737.60s but browser
+75 passed/1 failed/39 not run17.8m. Complete local839-test regression is running
+after the performance repair. New automatic CI and manual disposable database/
+browser integration must run on the final published head; their eventual results
+belong in the live PR. No main merge or remote migration is claimed by this
+checkpoint. Existing npm
+runtime audit is clean;9 inherited development-only findings retain the approved
+expiring exception, not a clean full audit. No physical-device/human approval.
+
+## Projects photo directory reference (2026-10-18)
+
+D39's [scoped ledger](03-planning/projects-reference-refresh.md) records the
+supplied-image comparison, test-only generated assets, actual failures and
+completion audit. No migration, real inventory seed, commit or push.
+
+| Location | Actual command/check | Result |
+|---|---|---|
+| backend | `.venv/Scripts/python.exe -m pytest tests/test_property_facets.py tests/test_inventory.py tests/test_inventory_edges.py tests/test_project_permissions.py -q --tb=short` |51 passed66.51s; serial exclusive isolated lease |
+| backend | scoped Ruff on inventory contracts/queries/router and new facet test; `.venv/Scripts/python.exe -m mypy app/inventory` |Pass;24 typed files |
+| frontend | `npm.cmd run test:unit`; `npm.cmd run lint`; `KAY_UI_CHECKS=1 npm.cmd run build` |66 units; lint/types/build pass; separate.next-e2e preserves live.next |
+| frontend | `PLAYWRIGHT_BASE_URL=https://localhost:3100 npm.cmd run test:chrome -- tests/e2e/projects-reference.spec.ts tests/e2e/inventory.spec.ts --workers=1 --max-failures=1` |9 passed3.3m;7 existing inventory cases and2 Projects cases, including actual uploads/ClamAV/permits, owner privacy, campaigns, touch/native200%, outage/retry and expired authority |
+| frontend | `npm.cmd run test:chrome -- tests/e2e/projects-reference.spec.ts tests/e2e/filter-rail.spec.ts --grep 'projects reference\|projects campaigns\|directory filters:' --workers=1 --max-failures=1` |Shared directory rail case passes; new all-categories-clear case exposed a loading race, fixed and rerun separately; failed attempt retained in ledger |
+| root | one `impeccable.cmd detect --json` over five changed UI targets |[]; AFTER032 and main-agent source/visual review, no human approval implied |
+| backend | `.venv/Scripts/python.exe -m benchmarks.catalog` |126 paths/159 operations; API catalogue schema hash updated |
+
+The SP08 mixed-hierarchy/reused-template Chrome case also passes17.4s. Final
+post-correction confirmation, privacy and cleanup results follow in the ledger;
+these scoped checks do not claim full-product or all-browser certification.
+
+Final `tests/e2e/projects-reference.spec.ts --workers=1 --max-failures=1`
+passes2/2 in1.4m after the category loading correction and independent photo
+capture session.11 distinct cases pass across the recorded runs, not one final
+11-case invocation. Final bundle scan4 roots/577 JS/0 configured secret matches;
+report2 JSON/2 empty result arrays/0 detailed. Guarded isolated users/business/
+file/job/notification counts0; worker stopped, temporary ClamAV stopped with its
+volume preserved. CA-verified3100/8100 return200. No push.
+
+## Calendar reference and Iconsax visit types (2026-10-18)
+
+D38's [scoped ledger](03-planning/calendar-reference-refresh.md) records the
+reference comparison, exact facets, synthetic cleanup and retained failures.
+No schema migration, real development seed, commit or push.
+
+| Location | Actual command/check | Result |
+|---|---|---|
+| backend | `.venv/Scripts/python.exe -m pytest tests/test_calendar_filters.py tests/test_schedule.py tests/test_schedule_edges.py tests/test_schedule_http.py -q --tb=short` |40 passed51.52s; serial exclusive isolated lease |
+| backend | `.venv/Scripts/python.exe -m ruff check app/schedule tests/test_calendar_filters.py`; `.venv/Scripts/python.exe -m mypy app/schedule` |Pass;11 typed files |
+| frontend | `npm.cmd run test:unit`; lint; typecheck; `KAY_UI_CHECKS=1 npm.cmd run build` |61 units/all gates pass; build uses separate.next-e2e |
+| frontend | `PLAYWRIGHT_BASE_URL=https://localhost:3100 npm.cmd run test:chrome -- tests/e2e/calendar-reference.spec.ts tests/e2e/schedule.spec.ts --workers=1 --max-failures=1` |6 passed3.1m; real facets/views, all booking lifecycles, capacity/lunch/overlap, copied-ID/role denial, metadata-free busy, interrupted retry |
+| frontend | `npm.cmd run test:chrome -- tests/e2e/calendar-reference.spec.ts tests/e2e/filter-rail.spec.ts --grep 'calendar\|lead filter rail' --workers=1 --max-failures=1` |4 passed1.6m; reference/touch/native200%, outage/retry, overlap/overnight, incumbent filter validation/focus/agent privacy |
+| root | `impeccable.cmd detect --json` on seven changed calendar/shared/shell/CSS files |[]; one invocation, AFTER031 |
+| backend | `.venv/Scripts/python.exe -m benchmarks.catalog` |126 paths/159 operations, schema hash refreshed in API catalogue |
+
+Final lint/build after the optional-status focus correction pass. The client
+scan checks4 roots/561 JS with0 configured facade/signing-secret occurrences.
+Final confirmation/privacy/cleanup are recorded in the ledger; human visual
+review and full-product/all-browser certification remain separate.
+
+Final `tests/e2e/calendar-reference.spec.ts --workers=1 --max-failures=1` passes
+3/3 in1.3m, including optional-status keyboard focus and every added toolbar
+action. Together with four booking and one incumbent rail case,8 distinct headed
+checks pass. The prior route-heading expectation failure is retained in the
+ledger. Final privacy report2 JSON/3 empty result arrays/0 detailed; isolated
+rows0 after cleanup, only.last-run.json, no profiles/traces/videos. CA-verified
+3100/8100 return200;8000 remains untouched. Dependency check0 runtime/9 inherited
+dev-only findings under the existing expiring exception. No push.
+
+## Staff setup and deletion (2026-10-18)
+
+The [scoped ledger](03-planning/staff-onboarding-deletion.md) records D37 and
+preserved early failures. No commit/push. Both owner-approved local migrations
+0025 and0026 preserve original-row fingerprints across69 tables; no real user
+was deleted. Port8000 remains unrelated and untouched.
+
+| Location | Actual command/check | Result |
+|---|---|---|
+| backend | `.venv/Scripts/python.exe -m pytest tests/test_staff_deletion.py tests/test_users.py tests/test_auth.py tests/test_first_admin.py -q --tb=short` |51 passed55.37s |
+| backend | `.venv/Scripts/python.exe -m pytest tests/test_scoped_activities.py tests/test_ownership.py tests/test_isolation_migrations.py tests/test_discovery_http_migration.py -q --tb=short` |46 passed96.43s |
+| backend | scoped Ruff; mypy app/identity app/discovery/audit.py | Pass;12 typed files |
+| frontend | `npm.cmd run test:unit`; lint; typecheck; `KAY_UI_CHECKS=1 npm.cmd run build` |56 units and all gates pass; separate.next-e2e preserves running dev.next |
+| frontend | `PLAYWRIGHT_BASE_URL=https://localhost:3100 npm.cmd run test:chrome -- tests/e2e/users.spec.ts tests/review/users.chrome.spec.ts --workers=1 --max-failures=2` |7/7 headed Chrome in3.0m; serial isolated stack |
+| frontend | `npm.cmd run security:check` |0 runtime vulnerabilities;9 inherited dev-only findings under approved exception, not a clean full audit |
+| frontend | `node scripts/scan-client-secrets.mjs`; `powershell -NoProfile -File scripts/audit-report.ps1` | Initial final-stack scan4 roots/549 JS/0 matches; seven-case report3 JSON/7 empty arrays/0 detailed |
+| root | `impeccable.cmd detect --json` on four changed user components |[]; one invocation |
+
+Final `tests/review/users.chrome.spec.ts --workers=1 --max-failures=1` confirmation
+passes2/2 in52.3s after stale-copy/capture corrections. Lint/separate build pass;
+final privacy scan remains549 JS/0 matches and report2 JSON/2 empty step arrays/
+0 detailed arrays. Root validator passes1286 local links and diff whitespace
+checks pass. Isolated synthetic rows are cleaned; CA-verified3100/8100 return200.
+AFTER030 has no new aesthetic-only finding. This is scoped technical acceptance,
+not a full-product aggregate or human design approval.
+
+## Scoped Lead/Deal activities (2026-10-18)
+
+[Scope, complete commands, failures and limits](03-planning/lead-deal-activities.md).
+From backend, explicit `.venv/Scripts/python.exe`, test environment and serial
+isolated lease: `-m pytest tests/test_scoped_activities.py -q --tb=short` passes
+22/22 in35.41s. The conversion/qualification-history/ownership/isolation-migration/
+reports command in the ledger passes55/55 in94.40s.77 distinct scoped PostgreSQL
+cases, not a complete backend aggregate. Scoped Ruff and mypy7 files pass.
+
+Frontend `npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run test:unit`
+(53/53) and `KAY_UI_CHECKS=1 npm.cmd run build` pass. On the real running3100/
+8100 stack, `PLAYWRIGHT_BASE_URL=https://localhost:3100 npm.cmd run test:chrome --
+tests/e2e/scoped-activities.spec.ts tests/e2e/record-facts.spec.ts --grep
+'activities:|native 200%'` passes4/4 in1.2m. Literal PowerShell environment
+assignments must be separate commands, not prefixed shell-style syntax.
+Six320–1600px settled geometries give minimum sampled contrast5.6407:1,44px
+measured controls, no page overflow; native200% zoom, touch/keyboard/scroll pass.
+
+Corrected four-target detector exits0 with[]; first wrong-prefix path invocation
+inspected nothing and is not counted. Client scan4 roots/540 JS/0 secret matches;
+report3 JSON/4 empty result arrays/0 detailed arrays. Existing user frontend
+and restarted isolated supervisor remain;8000 untouched. Local development
+revision0024 has not been upgraded without the pending explicit approval.
+
+Final `docs/03-planning/validate-sprints.ps1` exits0:22 sprints/1284 local links/
+41 acceptance mappings/13 diagrams/12 valid API examples. Scoped diff checks
+pass. Read-only ORM-mapped isolated counts confirm0 users/contacts/enquiries/
+deals/timeline entries after normal fixture teardown. No full-suite or human
+acceptance claim is inferred from these scoped results.
+
+## CRM reference fidelity correction (2026-10-18)
+
+The owner rejected the preceding visual refinement; its technical checks are
+historical, not screenshot acceptance. [Current ledger](03-planning/crm-reference-fidelity.md).
+The latest production build passes, lint passes (43 icons/42 consumers/153 sites;
+309 buttons/99 files;0 violations), and unit tests pass49/49. The client scan
+passes:4 roots/503 browser JS/0 configured facade or signing-key occurrences.
+The documentation validator passes22 sprints/1283 links/41 acceptance mappings/
+13 diagrams/12 API examples. One bounded14-target detector run exits0 with `[]`.
+The latest compiled headed Chrome reference case passes1/1 (33.0s); all four
+1600px surfaces and all six mobile surface/filter captures were opened. Real
+filters, current-page selection, follow-up creation and320–1600px geometry/
+contrast pass. The broad final25-case run passes24/25 in9.8m; the lone failure
+measures Radix's hidden16px checkbox input instead of its clickable44px label.
+The assertion now measures both through that label, without removing containment
+or44px checks; the full filter suite rerun passes2/2 in1.5m. All25 distinct
+selected cases have passing final-source evidence, not one all-green25-case run.
+Both record tests pass, including native200% zoom, and all5 shell cases pass.
+Final build uses the existing separate `.next-e2e` output with `KAY_UI_CHECKS=1`
+while the owner runs development mode on3100. Final privacy:4 roots/531 JS/0
+configured secret matches;2 report JSON/2 empty result arrays/0 detailed arrays;
+only `.last-run.json` remains in test-results. [AFTER028](../anti-slop/audit-028-2026-10-18.md)
+has0 new aesthetic-only findings. No full-product or human acceptance claim.
+
+## Lead/Deal screenshot refinement (2026-10-18)
+
+[Scoped evidence and retained first-run failure](03-planning/leads-deals-interface-refresh.md#owner-screenshot-refinement-2026-10-18).
+`npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build` and
+`npm.cmd run test:unit` pass (49/49). Visible installed Chrome, serial on the
+isolated lease: `tests/e2e/record-facts.spec.ts` 2/2, including actual200% zoom
+and geometry through1600px; `tests/e2e/filter-rail.spec.ts` 2/2 on the final
+rerun, including scoped requests, mobile/keyboard/touch and314px Lead/Deal rails
+at1600px. The first full filter run had one breakpoint focus failure; the
+isolated rerun and subsequent full rerun passed. One seven-target Impeccable
+detector invocation exits0 with `[]`; [AFTER027](../anti-slop/audit-027-2026-10-18.md)
+records0 new aesthetic-only findings. This is scoped browser evidence, not the
+complete CRM, cross-browser or product-acceptance gate. Sprint/documentation
+validation passes (22 sprints,1280 local links/anchors,41 mappings,13 diagrams,
+12 API examples). The scoped diff check is clean; whole-tree `git diff --check`
+still flags two trailing-space lines in `decisions.md`, outside this refinement.
+
+## Riviera shared branding (2026-10-18)
+
+[Scope and current verification ledger](04-design/riviera-execution.md).
+Frontend `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run test:unit`
+(49/49) and `npm.cmd run build` pass. Headed Chrome Riviera route verification
+passes1/1 across17 routes at1440/360; shell verification passes5/5, including
+keyboard sidebar collapse/reopen and mobile navigation. One detector run exits0
+with `[]`; AFTER026 has0 new numbered findings. The first route run exposed a
+measurement race before the chart ResizeObserver settled; the helper was corrected
+and the full route check passed. See the ledger for screenshots, scope and limits.
+
+Additional isolated compiled-Chrome reruns give passing evidence for12 distinct
+targeted Riviera/action/performance/account/list/header cases, including actual
+200% zoom. These are scoped successful reruns, not one all-green full-CRM suite.
+Final normal build, lint, typecheck and49 units passed; client scan checked500
+browser JS files with0 configured secret matches. The ledger retains earlier
+failures, test synchronization/profile-path repairs and unexecuted suite limits.
+
+## Lead/Deal frontend interface refinement (2026-10-17)
+
+[Eight-surface scope and current evidence](03-planning/leads-deals-interface-refresh.md).
+New frontend-only request, with explicit create/edit scope. Earlier backend/
+qualification results below are historical, not rerun or claimed for this slice.
+
+- Frontend `npm.cmd run lint`, direct `tsc.cmd --noEmit --incremental false`,
+  `npm.cmd run build`, and `npm.cmd run test:unit`: pass,45/45 units. Icons:
+  43 exports/37 consumers/151 sites/0 violations. Buttons:296/96 files/0 violations.
+- With scoped/restored `KAY_E2E_PRODUCTION=1`, visible installed Chrome runs
+  existing qualification, filter-rail, record-facts, leads, deals,
+  list-header-actions and project-interest specs:20/20 passed in6.6m. It retains
+  actual200% zoom, touch/keyboard,320–1920 geometry, scoped denial, draft/conflict
+  recovery and exact real commands. Opt-in captures use interface group/round2.
+- Same production-style two qualification specs on `edge`, `firefox`, `webkit`,
+  serial with capture disabled:6/6 passed in1.9m. This is a cross-browser spot
+  check, not a claim of the complete20-case matrix on every browser.
+- Final opened evidence:36 files, all eight surfaces at390/1440/1920, plus
+  desktop/mobile full-page companions for records/forms. Builder used two visual
+  rounds and one nested-container correction batch. One15-target Impeccable
+  detector run exits0 with `[]`. Fresh no-history role-equivalent review: `ship`
+  for the full eight-surface scope; a fresh role-equivalent documenter completes
+  the incumbent-system comparison, sampling12 final frames across all eight
+  surfaces and3 V3 originals. Both handoffs are recorded in the scoped ledger.
+- Client privacy scan:4 roots/416 JS/0 configured facade or signing-secret
+  matches.20-case report audit:9 JSON/20 empty step arrays/0 detailed arrays.
+  Final6-case report:3 JSON/6 empty step arrays/0 detailed arrays; only
+  `.last-run.json`,0 retained profile/zoom directories and0 isolated-test
+  listeners on3100/8100/8101/8001.
+  Repository check:8250 indexed/0 forbidden or oversized/14 ignore probes.
+  Docs check:22 specs/1266 links/41 mappings/13 Mermaid pairs/12 JSON,pass.
+
+No populated-development database write/reset, backend source change, dependency,
+commit, push or deployment is performed for this interface request. Synthetic
+tests use the existing exclusive isolated lease and explicit backend/.venv.
+
+## Lead/Deal reference alignment (2026-10-17, local verification complete)
+
+[Current requirements, retained failures and evidence](03-planning/leads-deals-immoworld-alignment.md).
+Only synthetic isolated data; backend commands use backend/.venv explicitly.
+
+Final full backend command is terminal, exit0:775 passed975.95s (16:15),94%
+configured application coverage (9115 statements/592 missed; CLI modules remain
+excluded by the existing coverage configuration). All132 distinct broad Chrome
+cases and12 cross-browser core journeys have passing evidence through the retained
+runs, plus the separate dev-only1/1 and current stronger installed-Chrome1/1.
+No single all-green broad-browser invocation is fabricated.
+
+Final static checks pass:Ruff317 files, mypy182 modules, pip check, frontend
+lint/direct TypeScript and45 units. Dependency audit:0 runtime vulnerabilities;
+9 existing dev-only findings use the approved exception expiring2026-11-15.
+Post-run privacy:4 client roots/395 JS/0 configured facade or signing-secret
+matches; latest report2 JSON/1 empty step array/0 detailed arrays;0 retained
+zoom/profile directories and0 listeners on3100/8100/8101/8001. A guarded READ ONLY
+test-target inspection finds head0024 and0 users/contacts/leads/deals/jobs/outbox.
+Reference comparison and the requirement-by-requirement source/layout audit are
+complete. No real-data migration, publication, deployment or new load claim.
+
+### Retained execution checkpoints (historical)
+
+Browser verification is now closed for this task's planned scope. Final installed
+visible Chrome stronger Lead case passes1/1 in27.8s, in addition to132 distinct
+broad Chrome cases,12 distinct cross-browser core journeys and the separate
+development-only check through the documented runs. Latest report2 JSON/1 empty
+step array/0 detailed arrays; no retained zoom/profile directories. The current
+complete backend command is running serially:
+`backend/.venv/Scripts/python.exe -m pytest -q --tb=short --maxfail=3 --cov=app
+--cov-report=term:skip-covered` (from backend/, executable `.venv/Scripts/python.exe`).
+Its result and final requirement/security/artifact audit are still open.
+
+Current browser closure:stronger Lead case passes3/3 Chromium/Edge/Firefox in1.1m
+and3/3 repeated WebKit in1.1m; unchanged manual/catalogue cases passed on all4
+profiles in the earlier12-case command. Thus all12 distinct cross-browser cases
+have current passing evidence, not a clean first invocation. Dev-only shadcn/RHF/
+Zod/table loading/empty/invalid/error/recovery passes1/1 in45.9s. Both reports
+audit2 JSON entries,3/1 step arrays respectively,0 detailed arrays. A final native
+Chrome run of the strengthened Lead case is live before the full backend aggregate.
+Docs22 specs/1167 links/41 mappings/13 Mermaid pairs/12 JSON, repository8250/0/14
+and diff checks pass. Final backend and requirement/artifact audit remain open.
+
+Current WebKit Lead case passes3 serial repetitions in1.1m after strengthening
+visible readiness:loaded record/profile, enabled programme chooser before Escape/
+mode change, and exact derived deal heading/settled panels before leaving. Every
+page error remains a failure. Diagnostics correlated transport events with cancelled
+background requests; simple caught HTTP/HTTPS/stream abort probes did not reproduce,
+so no general browser root-cause/CORS claim. No app change. Latest report2 JSON/
+3 step arrays/0 detailed arrays; fresh lint/direct types pass. The stronger Lead
+case is running on Chromium/Edge/Firefox; dev-only/backend aggregate/final audit
+remain. Earlier one-off successful rerun was not accepted as an established fix.
+
+Cross-browser command is terminal11 passed/1 failed3.4m. All business assertions
+pass, but WebKit Lead reports one opaque page error. Its handler now records
+only safe exception name/React code/ID-redacted route, still failing on every
+page error. No app change or ignored-error filter. The isolated WebKit rerun
+passes1/1 in32.8s; a3-repeat serial diagnostic is live. Initial report4 JSON/
+12 step arrays/0 detailed arrays; single rerun2 JSON/1 array/0 detailed arrays.
+Do not claim a known root cause or a clean first12-case invocation.
+
+Current broad Chrome coverage is complete across the recorded continuation chain:
+57+19+33+8+13+2 distinct cases=132, not a single all-green invocation. The final
+2-case native File/Work command passes2/2 in2.8m. It retains real scan/recovery/
+EICAR/bytes/private denial and task/inbox/retry/roles/touch/200% with corrected
+modal/colour measurement helpers. Report3 JSON/2 step arrays/0 detailed arrays;
+zero retained zoom/profile directories. Expanded actual1/2/3 project persistence/
+replay/order/history test passes3/3 in3.63s. The12 compiled core journeys across
+Chromium/Edge/Firefox/WebKit are now running serially. Development-only, current
+full backend aggregate and final audit remain open; no deployment is claimed.
+
+Latest4-case command is terminal2 passed/2 failed4.0m. Both extra cases pass.
+Real scanner lease recovery now completes; the File case instead reaches its
+archive-modal capture, whose guard incorrectly demanded an unhidden background
+notification button. It now includes the hidden shell marker without changing
+Radix isolation or password guards. Work diagnostics prove the1.404 result came
+from parsing OKLab/alpha as RGB; its sampler now resolves actual sRGB pixels and
+composites ancestor backgrounds, retaining4.5:1. No app style changes. Lint/direct
+types pass; report5 JSON/4 step arrays/0 detailed arrays. A normal2-case corrected
+native run is active;130/132 broad cases remain proved until it succeeds.
+
+Current terminal coverage: the15-case continuation ended13 passed/2 failed in
+12.4m. Across the57+19+33+8+13 separately recorded passes,130 of132 broad cases
+have passing evidence; native File retry and Work remain. Report audit13 JSON/
+15 step arrays/0 detailed arrays. A normal4-case rerun includes both failures
+and the extra current dashboard-zoom/private-derived-title cases. The two extras
+pass; scanner's90-second lease recovery and Work element-level contrast diagnosis
+are pending. Work retains4.5:1 and adds only non-text-bearing colour diagnostics.
+The backend manual-deal persistence test now covers actual1/2/3 project commits
+and replay/order/history; Ruff passes, but these expanded cases need execution.
+
+Live15-case update: corrected login and native outcome (including API403) pass;
+ownership, restored stack and reporting also pass. File retry still failed at30s.
+Actual worker source explains its90-second fenced lease; the native test now
+uses the existing E2e retry200-or409 protocol and120-second recovery bound,
+without changing worker/fencing code. That correction needs a separate rerun.
+Latest lint/direct types pass. Current client audit:4 roots/391 JS/1 configured
+facade secret/0 matches/1 signing secret/0 matches. The current writer is live.
+
+Latest23-case continuation is terminal8 passed/3 failed/12 not run7.7m, exit1.
+Deal native scan, Lead native lists/privacy and real200% login cleanup pass.
+The retained failures now identify a5-second scanner-retry expectation, the
+login page's additional Contact glyph, and the retired pre-D34 inventory banner.
+Retry now allows the existing30-second real-scan bound; the icon inventory also
+covers that page-level note. The outcome test proves the permitted agent edit
+link while checking absent stock actions and a real403 for the manager-reviewed
+external-outcome body. No application source/authority changes. Fresh lint/direct
+types pass; report20 JSON/11 step arrays/0 detailed arrays. All3 failures plus12
+never-run cases are selected in the normal15-case compiled continuation.
+
+Fresh independent checks:45 frontend units pass; Ruff317 files, mypy182 modules,
+pip check, docs22 specs/1167 links/41 mappings/13 Mermaid pairs/12 JSON samples,
+repository8250 indexed files/0 forbidden/14 ignore probes and16 CI-policy units
+pass. Dependency audit:0 runtime,9 existing dev-only findings under the approved
+exception expiring2026-11-15; this is not a clean full audit.
+
+Current continuation: the56-case process is terminal, exit1 with33 passed,
+3 failed and20 not run in15.5m. Its report audit finds33 JSON entries/36 step
+arrays/0 detailed arrays. Two native upload cases now explicitly start their
+required worker after earlier recovery/discovery cases stop it; quarantine,
+real scan verdict and byte checks remain. The login SSR/no-JavaScript inventory
+now expects the owner-approved forward/development glyphs and checks every
+rendered duplicate. Fresh lint/direct TypeScript passes. Read-only discovery
+proves23 remaining cases (all3 failures plus20 never run); their normal guarded
+compiled Chrome continuation is running. Earlier passes remain separate evidence.
+
+Latest continuation:75-case command is terminal19 passed/3 failed/53 not run
+10.5m; report privacy42 JSON/22 step arrays/0 detailed arrays. Its restored/report
+title and semantic-selected-icon test corrections all pass in the live56-case
+continuation (all3 failed plus53 never run), now5 passed/51 pending. Actual200%
+Lead/Deal record facts passed17.5s and left zero disposable record-facts profiles;
+the new mobile nine-state prospect capture is opened/inspected. The strengthened
+private-derived-title case and dashboard zoom cleanup need extra reruns, followed
+by cross-browser12 cases, the dev-only case and the current backend aggregate.
+
+Current broad writer update: the132-case compiled command is terminal with
+57 passed/3 failed/72 not run in17.9m. Its three test corrections (responsive
+image-load wait, Provenance inventory mapping and actual rich-column defaults)
+now all pass at the start of the75-case continuation. Read-only discovery proved
+that continuation includes every collected failure and every never-run case.
+It is still running;57 plus75 is coverage accounting, not a claimed single green
+command. Test-owned persistent zoom profiles gain validated finally cleanup;
+lint/direct TypeScript passes. The blocked manual cleanup was not retried, and
+the old disposable profile is no longer present after normal harness startup.
+
+Latest continuation: the full compiled Chrome process is terminal, exit1 with
+39 passed/5 failed/88 not run in15.0m. Its corrected fixtures, restored technical
+Provenance filter and bounded reflow assertion still require fresh browser runs.
+The completion audit also corrects the prospect chart's old three-state omission
+with exact pre-pagination `status_counts` for all states. Affected backend contact,
+conversion and count tests pass43/43 in44.47s; fresh frontend lint/direct TypeScript
+and45 unit tests pass. Build and browser results below are historical until the
+new run is recorded; no complete browser pass is claimed.
+
+Corrected focused compiled Chrome: the first11-case selection retained8 passes,
+2 failures and1 not run; the corrected remaining3 cases pass3/3 in2.0m. This
+covers service stop/restart+320–1440 reflow, actual nine-state pipeline counts,
+and native signed intake with the390px mobile Provenance filter. Archive-count
+extension passes1/1 in2.25s. Pure units217/555 deselected3.25s; Ruff317 files and
+mypy182 modules pass. Report privacy4 JSON/3 step arrays/0 detailed arrays.
+The full132-case compiled Chrome command is freshly running with max-failures3;
+its result and separate development-only case remain pending.
+
+- Backend `-m pytest --unit-only -q --tb=short --maxfail=1`:217 passed3.35s,
+  554 cases deselected, not passed. `mypy.exe app`:182 source files pass.
+- Frontend lint/typecheck,44 unit tests and production build pass after the
+  reviewer correction batch; inventories43 icons/30 consumers/138 sites and
+  296 buttons/96 files,0 violations.
+- Compiled visible Chrome8-case qualification/lead/deal/native/filter/action
+  selection:8 passed4.7m,0 skipped. Includes real200% DPR2→4/1427→713px,
+  native touch/states/denied/private files and retained old/new profile history.
+  The first broad attempt had5 passes/1 helper load-timing failure, then the
+  complete corrected selection passed; no assertion was dropped.
+- `npm.cmd run test:chrome -- e2e/project-interest.spec.ts --reporter=list
+  --max-failures=1`, temporary `KAY_E2E_PRODUCTION=1`:1 passed29.2s. Real
+  catalogue programme+standalone manual interests and standalone Lead conversion
+  reuse exact parents/client and leave offering/reservation unset.
+- Client scan:4 roots/391 JS/0 configured facade-secret matches/1 signing key/
+  0 signing matches. Private report audit:4 JSON entries/4 step arrays/0 detailed
+  arrays. Captures are opt-in, post-login synthetic and ignored.
+- One Impeccable detector:exit0/JSON `[]`; fresh generic reviewer substitute
+  scored3 specified fixes resolved, `ship` at that fix-list scope. Documentation
+  handoff is complete. No second detector or unapproved aesthetic-only fix.
+
+The documenter comparison is complete in
+[the scoped system check](../.impeccable/leads-deals-system-check.md), with
+pre-existing global DESIGN format/sidecar drift preserved. AFTER024 reports0
+new numbered aesthetic-only findings and no audit-only source fix.
+
+The complete backend run first stopped39 passed/1 scanner write-boundary
+assertion failure, then171 passed/1 stale D34 hierarchy-permission expectation.
+Exact protocol bytes/verdict guards and the already-approved project authority
+are now tested without changing application permission or scanner code. The
+focused development-edge/manual-deal command passes11/11 in28.41s. A pure
+selector correction prevents slash-containing parameter values from hiding
+reviewed units; current `-m pytest --unit-only -q --tb=short --maxfail=1` passes
+217 in3.53s with552 deselected. Earlier196/565 is historical and does not mean
+all565 deselections were integration tests. Six new selector regressions pass.
+
+The next complete run stopped213 passed/3 failed in242.01s: a retired title
+fixture and two populated-downgrade fixture assumptions. The corrected three
+cases pass3/3 in26.14s. Historical migration fixtures now seed their old schema
+before upgrade, preserving original fact/history and later workflow assertions.
+A broader focused command passes13/14 in134.80s; its additive phone provenance
+comparison is corrected on both snapshots. The complete769-case backend run is
+executing and collected that test before the final comparison correction, so a
+corrected affected rerun remains required. Backend Ruff315 files/mypy182 modules,
+fresh frontend lint/typecheck/44 units and client/report privacy scans pass.
+The generated API catalogue is125 paths/155 operations. Repository-only docs
+validation passes22 specs/1167 links/41 mappings/13 Mermaid pairs/10 JSON examples;
+git diff --check passes. Full acceptance remains open. No development/production
+migration, reference modification, commit, push or hosted rollout.
+
+Final backend result for the command above:768 passed/1 failed957.68s. The sole
+failure was the import comparison collected before its final correction. The
+corrected affected command (qualification migration, two new bounded generator
+cases, conversion, qualification history, the failed import case and strengthened
+real restore) passes30/30 in75.08s. Actual70-table recovery preserves the converted
+Lead and refuses cleanup-flag detachment outside the test DB. Fresh pure units:
+217 passed/554 deselected3.35s; Ruff/check/format316 files/mypy182 modules pass.
+Fresh production build passes. The full-size benchmark was not rerun/reset.
+
+Native Chrome discovery is now explicitly scoped to E2E/review specs, preventing
+Node TLS units from being collected as browser tests. --list succeeds133 tests/
+60 files. The complete compiled run is executing with132 selected, excluding only
+the separately required development-only `live shadcn` case. Normal private/list/
+HTML reporters remain enabled. No complete browser result is claimed yet.
+
+## Agent project creation/editing (2026-10-17)
+
+Backend explicit-venv `-m pytest tests/test_project_permissions.py
+tests/test_inventory.py tests/test_inventory_edges.py tests/test_developments.py
+-q --tb=short -x`: final53/53 passed,0 skipped,73.11s, isolated synthetic PG.
+Ruff/check+format268 files and mypy178 modules pass; database-independent runner
+154 passed/533 deselected/3.98s. Frontend lint/typecheck/build pass. Compiled
+visible Chrome selection on project-permissions.spec.ts/inventory.spec.ts/
+developments.spec.ts, grep `Project permissions:|SP08: mixed hierarchy|SP07
+AT-06/08/27/31:`, passes4/4,0 skipped,2.3m. Initial3-pass/1-fixture422 run is
+retained; fixture corrected without relaxing schemas.1440/390px screenshots
+opened, no horizontal page overflow. No production connection, deployment or
+push; full release integration matrix not executed/not passed for this change.
+[Commands, permissions, security and limitations](06-delivery-and-operations/agent-project-permissions.md).
+
 ## Production server-only frontend facade (2026-10-16)
 
 From `frontend/`: `npm.cmd run test:unit` passes 39/39, 0 skipped, 857.52ms final
@@ -947,3 +1432,51 @@ The complete manual database/backend/browser release workflow is **not executed,
 not passed** by this publication. It remains required before customer-data release
 on isolated synthetic targets, never production. No production database access,
 real account creation or whole-product certification is implied.
+
+## Login composition preview (2026-10-16)
+
+The [login implementation note](04-design/ui-reference/approved-v3/login-layout.md)
+records the local `/login` reference alignment. From `frontend/`,
+`npm.cmd run lint`, `.\node_modules\.bin\tsc.cmd --noEmit --incremental false`
+and `npm.cmd run security:check` pass. From the repository root,
+`powershell -NoProfile -File docs/03-planning/validate-sprints.ps1` and
+`git diff --check` pass. Runtime dependency audit: 0 vulnerabilities; 9 existing
+dev-only findings use the approved expiring exception. Production build was not
+run while the user's Next.js dev server was active on the shared `.next` directory.
+
+Visible Playwright on local HTTPS: desktop 1672px, tablet 1024px and mobile 375px
+captures saved under ignored `frontend/output/playwright/` and visually opened.
+At 320/375/768/1024/1440/1672px, document scroll width equals client width.
+Tab reaches the email field; password visibility toggles both ways; empty
+submission shows French client validation and issues no auth API request. Mailto
+target is `contact@hivevaultarc.com`; console has 0 errors/0 warnings. No
+credentials, backend changes, test actors or database writes. Product/design
+acceptance is pending; this is not whole-product or production-release acceptance.
+
+## Login compact-frame follow-up (2026-10-17)
+
+The compact-frame refinement supersedes the earlier 98rem desktop screenshot.
+The current [`login implementation note`](04-design/ui-reference/approved-v3/login-layout.md)
+records 2048 × 1152 and 375px full-page captures in ignored
+`frontend/output/playwright/`. At 2048 × 1152, 1440 × 900, 1024 × 900 and
+768 × 900, the page fits the viewport; widths 320/375/768/1024/1280/1440/2048
+have no horizontal overflow. The 1280 × 720 viewport scrolls vertically to keep
+all content reachable. Inputs are 48px, visibility control 44px, and submit
+56px. Keyboard Space toggles password visibility in both directions; empty
+submission shows client-side French validation with no auth POST. Browser
+console: 0 errors and 0 warnings. Existing focused visible-Chrome test
+`npm.cmd run test:chrome -- tests/review/chrome.spec.ts --grep "SP-03: visible login" --max-failures=1 --reporter=list`
+passes 1/1 in 48.4s on the isolated synthetic test target; it covers responsive
+login geometry, keyboard, invalid feedback, synthetic sign-in and cleanup.
+
+From `frontend/`, lint passes: 43 semantic icons / 28 consumers / 118 sites and
+284 buttons checked, 0 violations. Direct TypeScript check
+`node_modules/.bin/tsc.cmd --noEmit --incremental false` exits 0. Security check:
+0 runtime vulnerabilities; 9 full-tree dev-only findings remain under the
+approved `GHSA-vfj7-8cjw-p6xm` exception through 2026-11-15; this is not a clean
+full audit. From the repository root, sprint validation passes with 1260 local
+links/anchors, 22 sprint specs, 41 acceptance mappings, 13 synchronized Mermaid
+pairs and 10 valid API examples; `git diff --check` exits 0. Production build was
+not run while local Next.js development used the shared `.next` directory. No
+credential entry, database write, test actor, backend/API/session change or
+publication; product/design review remains pending.

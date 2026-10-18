@@ -27,7 +27,7 @@ export function loadServer(relative, { env = {}, modules = {} } = {}) {
   }
   runInNewContext(compiled, {
     exports: loadedModule.exports, module: loadedModule, require: scopedRequire,
-    process: { env }, Buffer, URL, Response, setTimeout, clearTimeout,
+    process: { env }, Buffer, URL, URLSearchParams, Response, setTimeout, clearTimeout,
   }, { filename });
   return loadedModule.exports;
 }

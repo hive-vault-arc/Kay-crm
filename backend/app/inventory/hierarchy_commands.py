@@ -1,4 +1,4 @@
-"""Manager-only hierarchy changes share existing locks, history and receipts."""
+"""Authorized hierarchy changes share existing locks, history and receipts."""
 
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -7,6 +7,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.contacts.access import scoped_contact
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity
 from app.inventory.commands import Body, available, bump, check_version, set_owners
@@ -28,6 +29,8 @@ def execute_hierarchy(
     session: Session, identity: CurrentIdentity, operation: str, target: UUID | None, body: Body
 ) -> tuple[Development, Offering | None, UUID]:
     if isinstance(body, DevelopmentFields) and not isinstance(body, EditDevelopment):
+        if identity.user.role == "agent" and body.developer_contact_id is not None:
+            scoped_contact(session, identity, body.developer_contact_id)
         active_contact(session, body.developer_contact_id)
         item = Development(**body.model_dump(), created_by_user_id=identity.user.id)
         session.add(item)
@@ -70,9 +73,18 @@ def execute_hierarchy(
     offering = None
     action = "developments.updated"
     if isinstance(body, EditDevelopment):
-        if body.developer_contact_id != item.developer_contact_id:
-            active_contact(session, body.developer_contact_id)
-        for key, value in body.model_dump(exclude={"expected_version"}).items():
+        if "developer_contact_id" in body.model_fields_set:
+            if body.developer_contact_id != item.developer_contact_id:
+                if identity.user.role == "agent":
+                    if item.developer_contact_id is not None:
+                        scoped_contact(session, identity, item.developer_contact_id)
+                    if body.developer_contact_id is not None:
+                        scoped_contact(session, identity, body.developer_contact_id)
+                active_contact(session, body.developer_contact_id)
+            item.developer_contact_id = body.developer_contact_id
+        for key, value in body.model_dump(
+            exclude={"expected_version", "developer_contact_id"}
+        ).items():
             setattr(item, key, value)
         if session.scalar(
             select(Offering.id)

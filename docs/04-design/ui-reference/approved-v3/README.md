@@ -1,5 +1,18 @@
 # Approved V3: KAY UI implementation reference
 
+2026-10-18 owner-selected [Riviera branding](../../../../branding/riviera/README.md)
+supersedes the original images' colors, fonts, sidebar selection and panel-border
+treatment. Existing V3 and subsequent owner-approved layouts, Iconsax, fields,
+French labels and real workflows remain. Do not copy Riviera's sample metrics,
+illustrative agent charts or Lucide identifiers into the application.
+
+D39's subsequent owner-supplied Projects image supersedes the older Projects
+composition: standalone photo cards, warm left category/offer filters, automatic
+application and Cards/List/sort. Keep protected clean previews, true campaigns,
+Maison and numbered pages. The [current scope/evidence](../../../03-planning/projects-reference-refresh.md)
+records the new reference, intentional accessibility/shell differences and actual
+verification; neither historical V3 evidence nor mock content is new acceptance.
+
 Status: visual direction approved by Khalid; implemented frontend and scoped verification recorded separately; human acceptance pending  
 Date: 2026-10-15  
 Confirmed decisions: Try Number Three is the approved visual target; apply its shared patterns to all CRM pages, including pages without a dedicated picture. Standard controls/tables use shadcn/ui, styling uses Tailwind CSS, and charts use Bklit UI.  
@@ -32,6 +45,17 @@ login controls. The [dashboard city-header refinement](dashboard-header.md)
 removes only that strip's outer border and enlarges the full-height photo.
 Its subsequent local-service status/retry removal keeps operational health
 endpoints and normal application error/retry handling intact.
+The newer 2026-10-18 owner-supplied dashboard screenshot overrides its former
+split title/photo composition: use a full-width panorama, solid-ivory title fade,
+live notification/account actions on desktop, and the existing responsive shell
+on narrow screens. Keep the removed diagnostic and audit-header controls absent.
+The later [login composition and support-footer refinement](login-layout.md)
+applies Khalid's supplied three-panel login picture, requested house/tree line
+art, secure-workspace strip and email support address to `/login`. It reuses the
+existing villa photo and KAY logo and does not change authentication behavior.
+The subsequent compact-space request removes the oversized outer frame gutters
+and compresses the footer while preserving the three-panel layout and responsive
+breakpoints; see the same implementation note for current geometry and evidence.
 All other V3 and functional constraints below still apply.
 
 The later [performance-dashboard reference](performance-dashboard.md) explicitly
@@ -57,7 +81,7 @@ Routes below follow the existing screen map; they are not new routing requiremen
 | Approved picture | Screen identifiers and route family | Treatment to preserve |
 |---|---|---|
 | [01-login.png](01-login.png) | S01: `/login`; visual family for SC01 `/change-password` | Faded villa scene, light overlay, uncropped KAY identity, login composition and discreet support/security/privacy footer. |
-| [02-dashboard.png](02-dashboard.png) | S02: `/dashboard` | City header, first-row KPIs with distinct meaningful colors, multicolored lead/deal pipelines and compact follow-up rows. |
+| [02-dashboard.png](02-dashboard.png) | S02: `/dashboard` | Full-width city banner with protected title, compact live filters/actions, current/period KPI groups, distinct category colors, paired lead/deal funnels and compact follow-up rows. The newer supplied dashboard screenshot controls banner composition. |
 | [03-leads-and-deals-list.png](03-leads-and-deals-list.png) | S03 `/leads`, S06 `/deals`; shared contact/list patterns | Compact title/actions, search/filter/column controls directly above the table, colored semantic badges, numbered pagination. No extra Tous/Nouveaux/À relancer/Qualifiés shortcut row. |
 | [04-create-or-edit-lead.png](04-create-or-edit-lead.png) | S04 `/leads/new`, `/leads/[id]/edit`; related form pattern for S07 `/deals/new` | White/beige section surfaces, small colored icons, structured fields and a restrained summary. No full blue/purple section backgrounds. Lead and deal forms remain separate workflows. |
 | [05-lead-details.png](05-lead-details.png) | S05 `/leads/[id]`; related pattern for S08 `/deals/[id]` and SC02 `/contacts/[id]` | Thin colored status navigation beneath the record header; vertically stacked detail sections with labels above values, not a two-up fact grid or private-contact side panel. |

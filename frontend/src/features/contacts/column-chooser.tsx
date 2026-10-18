@@ -7,9 +7,9 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { parseColumnPreference } from "@/lib/table/column-preferences";
 import { useHydrated } from "@/hooks/use-hydrated";
 
-export const columnLabels = { name: "Contact", status: "Statut", responsibleAgent: "Agent responsable", source: "Source", receivedAt: "Réception", message: "Demande", updatedAt: "Modification" } as const;
+export const columnLabels = { name: "Contact", status: "Statut", budget: "Budget", rating: "Qualification", country: "Pays", languages: "Langues", email: "E-mail", responsibleAgent: "Agent responsable", source: "Source", provenance: "Provenance", receivedAt: "Réception", message: "Demande", updatedAt: "Modification" } as const;
 export type ColumnId = keyof typeof columnLabels;
-const defaults: ColumnId[] = ["name", "status", "responsibleAgent", "source", "receivedAt"];
+const defaults: ColumnId[] = ["name", "status", "budget", "rating", "source", "responsibleAgent", "updatedAt"];
 const storageKey = "kay:enquiries:columns:v1";
 function subscribe(change: () => void) { window.addEventListener("storage", change); window.addEventListener("kay:columns-changed", change); return () => { window.removeEventListener("storage", change); window.removeEventListener("kay:columns-changed", change); }; }
 function readPreference() { try { return localStorage.getItem(storageKey); } catch { return null; } }

@@ -12,6 +12,7 @@ from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import ClientDisconnect
 
+from app.activities.router import router as activities_router
 from app.contacts.access import ContactConflict
 from app.contacts.ownership_router import router as ownership_router
 from app.contacts.router import router as contacts_router
@@ -77,6 +78,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(files_router)
     application.include_router(requirements_router)
     application.include_router(deals_router)
+    application.include_router(activities_router)
     application.include_router(finance_router)
     application.include_router(work_router)
     application.include_router(reports_router)

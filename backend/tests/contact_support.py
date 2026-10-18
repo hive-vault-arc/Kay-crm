@@ -17,15 +17,25 @@ def actor(settings: Settings, database: Database, role: str = "agent") -> tuple[
 
 
 def new_lead(phone: str = "+212600000001", **values: object) -> NewEnquiry:
+    if isinstance(values.get("new_contact"), dict):
+        values["new_contact"] = {
+            "country": "MA",
+            "languages": ["french", "darija"],
+            **values["new_contact"],
+        }
     return NewEnquiry.model_validate(
         {
             "new_contact": {
                 "name": "SP05 contact synthétique",
                 "phones": [{"number": phone, "is_primary": True}],
                 "roles": ["buyer", "owner"],
+                "country": "MA",
+                "languages": ["french", "darija"],
             },
             "message": "Demande synthétique uniquement",
             "source": "phone",
+            "initial_budget": "500000",
+            "campaign_source": "facebook",
             **values,
         }
     )

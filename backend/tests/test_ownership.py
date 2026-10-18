@@ -308,7 +308,7 @@ def test_stale_impact_link_and_both_versions_leave_originals(
         source,
         intent("merge", survivor_id=str(survivor), survivor_expected_version=1),
     )
-    create_lead(settings, database, at, NewEnquiry(contact_id=source))
+    create_lead(settings, database, at, NewEnquiry(initial_budget="500000", contact_id=source))
     with pytest.raises(IdentityError, match="IMPACT_CHANGED"):
         mutate(
             database, at, settings.facade_secret.get_secret_value(), uuid4(), source, body, "merge"

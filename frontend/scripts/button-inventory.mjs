@@ -7,6 +7,7 @@ const root = path.resolve(import.meta.dirname, "..");
 const manifest = JSON.parse(await readFile(path.join(root, "../docs/reference/iconsax/assets.json"), "utf8"));
 const icons = new Set(manifest.icons.map(icon => icon.export));
 const dataControls = new Map([
+  ["src/features/schedule/calendar-sidebar.tsx", "Mini-month week buttons show actual date values; month arrows use shared directional actions."],
   ["src/features/contacts/numbered-pages.tsx", "Numbered page identity; previous/next carry directional icons."],
   ["src/features/reports/kpi-summary.tsx", "Exact KPI value; its metric label already has a semantic icon."],
   ["src/features/reports/metric-chart.tsx", "Contributor label with chart series marker, not an extra action glyph."],
@@ -39,7 +40,8 @@ for (const file of (await walk(path.join(root, "src"))).filter(file => file.ends
         const numericPage = relative.endsWith("contacts/numbered-pages.tsx") && body === "{value}" && attribute("aria-current");
         const metricValue = ["src/features/reports/kpi-summary.tsx", "src/features/reports/report-dashboard.tsx"].includes(relative) && body.startsWith("{metric.unit ===") && attribute("variant")?.initializer?.getText(ast) === '"link"';
         const seriesMarker = relative.endsWith("reports/metric-chart.tsx") && body.startsWith('<span aria-hidden="true" className="size-3');
-        const exception = !action && !existingIcon && (numericPage || metricValue || seriesMarker) && dataControls.get(relative);
+        const calendarWeek = relative === "src/features/schedule/calendar-sidebar.tsx" && attribute("aria-pressed") && attribute("className")?.initializer?.getText(ast).includes("calendar-month-choice");
+        const exception = !action && !existingIcon && (numericPage || metricValue || seriesMarker || calendarWeek) && dataControls.get(relative);
         if (!action && !existingIcon && !exception) violations.push({ file: relative, line, reason: "Action needs an explicit semantic icon mapping." });
         sites.push({ file: relative, line, action: action ?? null, existingIcon, exception: exception || null });
       }

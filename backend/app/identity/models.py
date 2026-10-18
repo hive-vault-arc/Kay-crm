@@ -34,6 +34,7 @@ class User(Base):
     __table_args__ = (
         CheckConstraint("role IN ('administrator', 'manager', 'agent')", name="user_role"),
         CheckConstraint("state IN ('active', 'disabled', 'pending_handoff')", name="user_state"),
+        CheckConstraint("deleted_at IS NULL OR state = 'disabled'", name="user_deleted_state"),
         CheckConstraint("email = lower(btrim(email))", name="user_normalized_email"),
         Index("ix_user_role_state", "role", "state"),
         Index("ix_user_updated_id", "updated_at", "id"),
@@ -44,6 +45,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(254), unique=True)
     role: Mapped[str] = mapped_column(String(24))
     state: Mapped[str] = mapped_column(String(24))
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     version: Mapped[int] = mapped_column(BigInteger, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

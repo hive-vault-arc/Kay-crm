@@ -1,5 +1,31 @@
 # KEPVY for KAY: specification index
 
+The 2026-10-18 [full regression/publication record](docs/03-planning/full-regression-publication-2026-10-18.md)
+tracks the combined CRM candidate, retained failures and the owner-directed load
+repair. The request authorizes feature-branch publication and a tested PR, unlike
+the earlier local-only task records below. Main promotion requires genuine
+functional/security and full-volume load gates; actual final hosted results are
+recorded in [PR15](https://github.com/hive-vault-arc/Kay-crm/pull/15). The owner
+confirmed the automatic Vercel target is a demo; no remote database operation
+is inferred from that approval.
+
+The owner-provided [12 blank real-estate document models](docs/reference/real-estate-document-templates/README.md)
+are now stored in the project for the next PDF-generation task. The originals
+and their provenance/readme are preserved; filing them does not implement PDF
+generation or establish legal approval for real use.
+
+The owner-requested [Lead/Deal qualification alignment](docs/03-planning/leads-deals-immoworld-alignment.md)
+is implemented and verified locally. It adds selectable calling
+codes, client countries/languages, budget and campaign sources, rich compact
+directories, and explicit project/budget/intent conversion without a free-title
+step. Local verification records775 backend passes,132 distinct Chrome cases,
+12 cross-browser core journeys and the separate development-only check through
+the documented commands and corrected reruns. The [current wire contract](docs/04-design/deal-pipeline-local.md)
+supersedes the old creation flow. Migrations0023/0024 are included but have not
+been applied to real data; no commit, push or deployment was performed.
+Earlier SP-22 acceptance and benchmark figures below
+describe that earlier baseline, not certification of this extension or deployment.
+
 Production configuration and the automatic/manual CI split are documented in
 [production settings and release gates](docs/06-delivery-and-operations/production-settings-ci.md).
 Automatic CI does not execute database/browser integration; those preserved
@@ -126,7 +152,9 @@ from an interactive terminal in `backend/` with `scripts/kay.ps1 -Task bootstrap
 Choose your own password at the hidden prompts; do not send it in chat or pass it
 in arguments/environment/files. No account is seeded by installation or tests.
 Sign in at `https://localhost:3000`; administrators can open Paramètres → Tous les
-utilisateurs to manage staff and their one-time credential handoff. Prospects now
+utilisateurs to manage staff. D37 uses administrator-chosen initial passwords,
+immediate restricted login/own-password setup and confirmed access deletion,
+without activation/handoff or changing existing staff. Prospects now
 supports scoped Leads, contact identity, duplicate confirmation, editing, filters,
 pages and columns. Contact tabs now include authored history/assignments, with
 manager collaboration/transfer, archive/restore and authorized merge previews.

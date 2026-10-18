@@ -1,5 +1,6 @@
 import { test, expect, clearActorContext } from "../helpers/auth";
 import { testControl } from "../helpers/api-process";
+import { changeLeadFilters } from "../helpers/leads";
 import { clearIntake, fillWebsite, intakeFixture, simulatorOrigin, staffLogin } from "../helpers/intake";
 
 test("SP20 AT22/30: separate signed form, durable retry, worker restart and scoped received Lead", async ({ page, baseURL }) => {
@@ -35,16 +36,20 @@ test("SP20 AT22/30: separate signed form, durable retry, worker restart and scop
     await page.getByRole("button", { name: "Envoyer la demande", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Reçu de la demande", exact: true })).toBeVisible();
     await staffLogin(page, data.agent, baseURL!); await page.goto("/leads");
-    await page.getByLabel("Source", { exact: true }).selectOption("website"); await page.getByRole("button", { name: "Appliquer", exact: true }).click();
-    await expect(page.getByRole("status").filter({ hasText: "2 demande(s) accessible(s)." })).toBeVisible();
+    await changeLeadFilters(page, async panel => {
+      await panel.getByText("Filtres avancés", { exact: true }).click();
+      await panel.getByText("Provenance", { exact: true }).first().click();
+      await panel.getByLabel("Provenance", { exact: true }).selectOption("website");
+    });
+    await expect(page.getByRole("status").filter({ hasText: "2 demandes" })).toBeVisible();
     await expect(page.getByRole("link", { name: "SP20 identité privée synthétique", exact: true })).toHaveCount(2);
     const rows = (await (await page.request.get("/api/v1/enquiries?source=website")).json()).items;
     expect(rows[0].contact.id).toBe(rows[1].contact.id); expect(rows[0].contact.name).toBe("SP20 identité privée synthétique"); expect(rows.every((r: { created_by_user_id: unknown }) => r.created_by_user_id === null)).toBe(true);
     await page.goto(`/contacts/${rows[0].contact.id}?tab=timeline`);
     await clearActorContext(page); await staffLogin(page, data.other, baseURL!); await page.goto("/leads");
-    await expect(page.getByText("0 demande(s) accessible(s).", { exact: true })).toBeVisible();
+    await expect(page.getByText("0 demande", { exact: true }).and(page.getByRole("status"))).toBeVisible();
     expect((await page.request.get(`/api/v1/enquiries/${rows[0].id}`)).status()).toBe(404);
     await clearActorContext(page); await staffLogin(page, data.manager, baseURL!); await page.goto(`/leads/${rows[0].id}`);
     await expect(page.getByText("SP20 nouvelle demande web synthétique", { exact: true })).toBeVisible();
-  } finally { await clearActorContext(page); await clearIntake(); }
+  } finally { try { await clearActorContext(page); } finally { await clearIntake(); } }
 });

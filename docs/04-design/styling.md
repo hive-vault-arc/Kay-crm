@@ -1,5 +1,16 @@
 # KAY styling with Tailwind CSS
 
+## Riviera implementation (2026-10-18)
+
+[Riviera tokens](../../branding/riviera/kay-riviera.tokens.json) are the current
+color/type authority. `branding/kay-ui-tokens.json` maps incumbent roles to token
+references; `theme.ts` resolves aliases and exports all191 namespaced variables.
+Shared Tailwind/shadcn and Bklit roles consume them. `next/font/local` self-hosts
+the verified Fraunces1.000, Manrope4.505 and DM Sans4.004 OFL files. No remote font
+CSS or raw handoff component stylesheet is loaded. Existing geometry and behavior
+remain; quiet panels, focus/disabled states, sidebar tiles and KPI badges use
+documented shared recipes. This supersedes older palette/font statements below.
+
 Status: SP-01 Tailwind 4.3.3 and light token mapping implemented; later feature checks pending  
 Date: 2026-10-14  
 Confirmed decision: Tailwind CSS is KAY's mandatory primary styling system. Custom CSS is allowed only for a specific, justified need that utilities do not cover well; no substitute CSS framework or parallel default styling system.  
@@ -13,6 +24,18 @@ Use Tailwind utility classes for ordinary layout, spacing, sizing, typography, c
 Custom CSS remains appropriate for the Tailwind import and theme variables, shadcn/ui semantic tokens, Bklit's `--chart-*` variables, a small global base rule, or a narrowly scoped integration/style that is awkward or impossible to express clearly with utilities. Add a short reason next to each non-obvious exception and keep it owned by the relevant component or theme layer. Do not introduce Sass, CSS Modules, CSS-in-JS, another CSS framework, or a broad collection of hand-written component selectors as another default styling system. This is a KAY project rule, not a limitation of Tailwind itself.
 
 The approved local roadmap selects the existing [design-system](design-system.md) light tokens for implementation. Use semantic surface, foreground, border, focus and status roles; preserve focus/contrast and non-color labels. Default Tailwind/shadcn/chart demo colors do not replace those tokens. Final brand/font validation remains a separate real-use review.
+
+## Use the available viewport
+
+Do not give a full-page frame an arbitrary `max-w-* mx-auto` cap or oversized
+top/bottom padding when it leaves conspicuous unused bands. Let the frame use its
+available shell width, with only the safe edge inset it needs. Keep `max-w-*` on
+reading text and forms when it protects legibility, and keep intentional gaps
+between related controls. The compact login wrapper is a route-specific example;
+the shared authenticated shell should be reviewed against its own V3 screens
+before changing its established gutter tokens. Preserve safe areas, 44px touch
+targets, keyboard focus, and dialog clearance. This rule targets dead space, not
+all whitespace.
 
 ## Installed foundation and installation reference
 

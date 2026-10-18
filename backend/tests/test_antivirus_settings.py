@@ -171,7 +171,8 @@ def test_private_endpoint_keeps_stream_protocol_and_verdicts(
         result, signature = scan(settings, b"synthetic bytes")
         assert result == expected and signature.startswith("ClamAV ")
         assert len(attempted) == 2
-        assert sent == [b"zVERSION\0", b"zINSTREAM\0", b"\0\0\0\x0f", b"synthetic bytes", b"\0" * 4]
+        assert sent[:2] == [b"zVERSION\0", b"zINSTREAM\0"]
+        assert b"".join(sent[2:]) == b"\0\0\0\x0fsynthetic bytes" + b"\0" * 4
     else:
         with pytest.raises(IdentityError, match="ANTIVIRUS_UNAVAILABLE") as error:
             scan(settings, b"synthetic bytes")

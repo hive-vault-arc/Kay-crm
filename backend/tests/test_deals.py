@@ -26,16 +26,16 @@ from tests.test_ownership import change, cid, intent
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
 
-def test_explicit_creation_preserves_enquiry_and_derives_current_owner(settings, database):
+def test_manual_creation_preserves_enquiry_and_derives_current_owner(settings, database):
     uid, token, contact, enquiry = setup(settings, database)
     assert read_list(database, token, DealQuery())["total"] == 0
     before = contact_read(database, token, "enquiries", enquiry)
-    did = UUID(run(settings, database, token, new(contact, enquiry_id=str(enquiry)))["id"])
+    did = UUID(run(settings, database, token, new(contact))["id"])
     row = read_detail(database, token, did)
     assert row["contact"]["primary_agent"]["id"] == str(uid)
-    assert row["enquiry_id"] == str(enquiry) and row["offering"] is None
+    assert row["enquiry_id"] is None and row["offering"] is None
     assert contact_read(database, token, "enquiries", enquiry) == before
-    run(settings, database, token, new(contact, title="Deuxième affaire indépendante"))
+    run(settings, database, token, new(contact, projects=[{"external_name": "Deuxième projet"}]))
     assert read_list(database, token, DealQuery(contact_id=contact))["total"] == 2
     history = read_children(database, token, did, "history", ChildQuery())
     assert history["total"] == 1 and history["items"][0]["actor"]["id"] == str(uid)
@@ -97,7 +97,7 @@ def test_stage_skips_and_accepted_offer_never_close_or_change_stock(settings, da
 @pytest.mark.parametrize("stage", ["reserved", "won", "lost", "cancelled", "arbitrary"])
 def test_no_ordinary_command_can_invent_reserved_or_outcome_stage(stage):
     for schema, values in (
-        (NewDeal, {"contact_id": uuid4(), "title": "Synthétique"}),
+        (NewDeal, new(uuid4()).model_dump(exclude={"stage"})),
         (Transition, {"expected_version": 1, "reason": "Synthétique"}),
     ):
         with pytest.raises(ValidationError):
@@ -108,9 +108,15 @@ def test_scope_before_filters_counts_pages_and_summaries(settings, database):
     _, owner, contact, _ = setup(settings, database)
     outsider_id, outsider = actor(settings, database)
     other = cid(create_lead(settings, database, outsider, new_lead("+212600000002")))
-    private = UUID(run(settings, database, outsider, new(other, title="Titre privé SP11"))["id"])
+    private = UUID(
+        run(settings, database, outsider, new(other, projects=[{"external_name": "Projet privé"}]))[
+            "id"
+        ]
+    )
     for index in range(3):
-        run(settings, database, owner, new(contact, title=f"Public à son agent {index}"))
+        run(
+            settings, database, owner, new(contact, projects=[{"external_name": f"Projet {index}"}])
+        )
     first = read_list(database, owner, DealQuery(page_size=2))
     assert first["total"] == 3 and len(first["items"]) == 2 and first["has_next"]
     assert sum(first["stage_counts"].values()) == 3
@@ -118,7 +124,7 @@ def test_scope_before_filters_counts_pages_and_summaries(settings, database):
     assert len(second["items"]) == 1 and second["has_previous"]
     assert not ({r["id"] for r in first["items"]} & {r["id"] for r in second["items"]})
     for query in (
-        DealQuery(q="Titre privé"),
+        DealQuery(q="Projet privé"),
         DealQuery(assigned_agent_id=outsider_id),
         DealQuery(q="%_"),
     ):
@@ -160,7 +166,7 @@ def test_actual_version_race_and_same_key_create_have_one_effect(settings, datab
         assert session.scalar(select(func.count()).select_from(Deal)) == 1
         assert session.scalar(select(func.count()).select_from(DealStageEvent)) == 2
     with pytest.raises(IdentityError, match="IDEMPOTENCY_CONFLICT"):
-        run(settings, database, token, new(contact, title="Autre contenu"), key=key)
+        run(settings, database, token, new(contact, initial_budget="2000000"), key=key)
 
 
 def test_revocation_after_real_lock_wait_and_current_scope_replay(settings, database):

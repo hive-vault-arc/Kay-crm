@@ -181,7 +181,10 @@ def test_contact_collections_edit_provenance_and_separate_enquiries(
             == 2
         )
     second = create_lead(
-        settings, database, token, NewEnquiry(contact_id=cid, message="Deuxième demande")
+        settings,
+        database,
+        token,
+        NewEnquiry(initial_budget="500000", contact_id=cid, message="Deuxième demande"),
     )
     assert lead["id"] != second["id"]
     assert read_list(database, token, "contacts", ListQuery())["total"] == 1
@@ -277,6 +280,7 @@ def test_owner_assignment_options_and_unassigned_queue(
             database,
             tm,
             NewEnquiry(
+                initial_budget="500000",
                 contact_id=UUID(cast(dict[str, str], lead["contact"])["id"]),
                 assigned_agent_id=other,
             ),
@@ -285,7 +289,9 @@ def test_owner_assignment_options_and_unassigned_queue(
         settings,
         database,
         tm,
-        NewEnquiry(contact_id=UUID(cast(dict[str, str], lead["contact"])["id"])),
+        NewEnquiry(
+            initial_budget="500000", contact_id=UUID(cast(dict[str, str], lead["contact"])["id"])
+        ),
     )
     assert queue["assigned_agent"] is None
     assert read_list(database, ta, "enquiries", ListQuery())["total"] == 1
@@ -306,7 +312,14 @@ def test_versions_retry_source_uniqueness_and_current_scope(
     with pytest.raises(IdentityError, match="SOURCE_SUBMISSION_CONFLICT"):
         create_lead(settings, database, token, body)
     target = UUID(str(lead["id"]))
-    patch = EditEnquiry(expected_version=1, message="Mise à jour", status="in_progress")
+    patch = EditEnquiry(
+        expected_version=1,
+        message="Mise à jour",
+        status="in_progress",
+        initial_budget="500000",
+        campaign_source="facebook",
+        rating="warm",
+    )
     edited = command(database, token, "synthetic-secret", uuid4(), "enquiries", patch, target)
     assert edited["version"] == 2 and edited["source_submission_id"] == str(submission)
     with pytest.raises(ContactConflict) as stale:
@@ -412,7 +425,12 @@ def test_scoped_filters_stable_pages_dates_and_literal_search(
     lead = create_lead(settings, database, token)
     cid = UUID(cast(dict[str, str], lead["contact"])["id"])
     for _ in range(5):
-        create_lead(settings, database, token, NewEnquiry(contact_id=cid, source="email"))
+        create_lead(
+            settings,
+            database,
+            token,
+            NewEnquiry(initial_budget="500000", contact_id=cid, source="email"),
+        )
     first = read_list(database, token, "enquiries", ListQuery(page_size=2, sort="name"))
     second = read_list(database, token, "enquiries", ListQuery(page=2, page_size=2, sort="name"))
     assert first == read_list(database, token, "enquiries", ListQuery(page_size=2, sort="name"))
@@ -430,7 +448,7 @@ def test_scoped_filters_stable_pages_dates_and_literal_search(
         session.execute(
             update(IdempotencyRecord).values(created_at=datetime.now(UTC) - timedelta(days=2))
         )
-    create_lead(settings, database, token, NewEnquiry(contact_id=cid))
+    create_lead(settings, database, token, NewEnquiry(initial_budget="500000", contact_id=cid))
     with database.session() as session:
         assert session.scalar(select(func.count()).select_from(IdempotencyRecord)) == 1
 

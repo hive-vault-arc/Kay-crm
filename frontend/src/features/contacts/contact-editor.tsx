@@ -10,11 +10,19 @@ import { apiCommand } from "@/lib/api/command";
 import { contactFieldsSchema, contactSchema, roleLabels, type Contact, type ContactFields as Values } from "./contracts";
 import { ContactFields } from "./contact-fields";
 import { CommandError } from "./record-states";
+import { RecordError } from "./record-states";
+import { useQuery } from "./use-query";
+import { qualificationMetadataSchema, type QualificationMetadata } from "./qualification-contracts";
 
 function editable(contact: Contact): Values {
-  return { name: contact.name, type: contact.type, phones: contact.phones, emails: contact.emails, roles: contact.roles };
+  return { name: contact.name, type: contact.type, phones: contact.phones, emails: contact.emails, roles: contact.roles, country: contact.country, nationality: contact.nationality, languages: contact.languages };
 }
 export function ContactEditor({ contact, saved, cancel }: { contact: Contact; saved: (contact: Contact) => void; cancel: () => void }) {
+  const query = useQuery("/api/v1/contacts/metadata", qualificationMetadataSchema);
+  if (query.error) return <RecordError error={query.error} retry={query.refresh} />;
+  return query.value ? <ContactEditorForm contact={contact} saved={saved} cancel={cancel} metadata={query.value} /> : <p role="status">Chargement des pays et langues…</p>;
+}
+function ContactEditorForm({ contact, saved, cancel, metadata }: { contact: Contact; saved: (contact: Contact) => void; cancel: () => void; metadata: QualificationMetadata }) {
   const hydrated = useHydrated();
   const form = useForm<Values>({ resolver: zodResolver(contactFieldsSchema), defaultValues: editable(contact) });
   const [version, setVersion] = useState(contact.version);
@@ -29,8 +37,8 @@ export function ContactEditor({ contact, saved, cancel }: { contact: Contact; sa
     try { saved(await apiCommand(`/api/v1/contacts/${contact.id}`, body, contactSchema, attempt.current.key, "PATCH")); }
     catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
   }
-  return <Form {...form}><form noValidate onSubmit={event => void form.handleSubmit(submit)(event)} className="form-surface grid max-w-reading gap-6" aria-busy={form.formState.isSubmitting}>
-    <fieldset className="grid min-w-0 gap-4" disabled={!hydrated || form.formState.isSubmitting}><ContactFields form={form} /></fieldset>
+  return <Form {...form}><form noValidate onSubmit={event => void form.handleSubmit(submit)(event)} className="form-surface grid min-w-0 gap-6" aria-busy={form.formState.isSubmitting}>
+    <fieldset className="grid min-w-0 gap-4" disabled={!hydrated || form.formState.isSubmitting}><ContactFields form={form} metadata={metadata} /></fieldset>
     <CommandError error={error} dismiss={() => setError(undefined)} />
     {current.success ? <section className="grid gap-4 rounded-md border border-warning bg-warning-background p-4" aria-label="Comparaison du contact"><h3 className="font-medium">Version actuelle {current.data.version}</h3><p className="wrap-anywhere">{current.data.name}</p><p>{current.data.type === "person" ? "Personne" : "Organisation"}</p><div className="grid gap-2"><h4 className="font-medium">Téléphones actuels</h4>{current.data.phones.map(phone => <p className="wrap-anywhere" key={phone.number}>{phone.number}{phone.label ? `, ${phone.label}` : ""}{phone.is_primary ? " (principal)" : ""}</p>)}</div><div className="grid gap-2"><h4 className="font-medium">E-mails actuels</h4>{current.data.emails.length ? current.data.emails.map(email => <p className="wrap-anywhere" key={email.email}>{email.email}{email.label ? `, ${email.label}` : ""}{email.is_primary ? " (principal)" : ""}</p>) : <p>Non renseignés.</p>}</div><p>Rôles actuels : {current.data.roles.map(value => roleLabels[value]).join(", ") || "non renseignés"}</p><p>Votre saisie reste dans le formulaire. Comparez-la avant de remplacer la version actuelle.</p><div className="flex flex-wrap gap-2"><Button action="refresh" type="button" variant="outline" onClick={() => { form.reset(editable(current.data)); setVersion(current.data.version); setError(undefined); form.setFocus("name"); }}>Charger la version actuelle</Button><Button action="compare" type="button" variant="outline" className="h-auto min-h-control whitespace-normal" onClick={() => { setVersion(current.data.version); setError(undefined); form.setFocus("name"); }}>Conserver ma saisie pour remplacer cette version</Button></div></section> : null}
     <p className="text-sm text-muted-foreground">La source initiale et l’agent responsable ne changent pas ici. Toutes les demandes de ce contact utiliseront cette identité.</p>

@@ -3,12 +3,15 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, String, Text, func
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, Integer, String, Text, func
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
 
 TIMELINE_ACTIONS = (
+    "message",
+    "visit",
     "tasks.created",
     "tasks.updated",
     "tasks.completed",
@@ -40,6 +43,7 @@ TIMELINE_ACTIONS = (
     "contacts.updated",
     "enquiries.created",
     "enquiries.updated",
+    "enquiries.converted",
     "contacts.assign",
     "contacts.collaborators",
     "contacts.archive",
@@ -66,6 +70,18 @@ class TimelineEvent(Base):
             name="timeline_action",
         ),
         Index("ix_timeline_contact_time", "contact_id", "occurred_at", "id"),
+        Index("ix_timeline_enquiry_time", "enquiry_id", "occurred_at", "id"),
+        Index("ix_timeline_deal_time", "deal_id", "occurred_at", "id"),
+        CheckConstraint(
+            "duration_minutes IS NULL OR duration_minutes BETWEEN 1 AND 1440",
+            name="timeline_duration",
+        ),
+        CheckConstraint(
+            "direction IS NULL OR direction IN ('inbound','outbound')", name="timeline_direction"
+        ),
+        CheckConstraint(
+            "kay_activity_projects_valid(activity_projects)", name="timeline_activity_projects"
+        ),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     contact_id: Mapped[UUID] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
@@ -77,6 +93,9 @@ class TimelineEvent(Base):
     action: Mapped[str] = mapped_column(String(40))
     body: Mapped[str] = mapped_column(Text, default="")
     reason: Mapped[str] = mapped_column(String(1000), default="")
+    duration_minutes: Mapped[int | None] = mapped_column(Integer)
+    direction: Mapped[str | None] = mapped_column(String(8))
+    activity_projects: Mapped[list[str]] = mapped_column(JSONB, default=list, server_default="[]")
     enquiry_id: Mapped[UUID | None] = mapped_column(ForeignKey("enquiry.id", ondelete="RESTRICT"))
     related_contact_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("contact.id", ondelete="RESTRICT")

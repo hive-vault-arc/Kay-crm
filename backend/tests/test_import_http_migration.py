@@ -139,36 +139,43 @@ def test_import_origin_survives_authorized_merge(settings, database):
 
 
 def test_populated_0018_facts_preserved_and_import_evidence_refuses_downgrade(settings, database):
-    _, token = actor(settings, database)
-    lead = create_lead(settings, database, token)
-    cid = UUID(lead["contact"]["id"])
-    with database.engine.connect() as connection:
-        before = connection.execute(
-            text("SELECT to_jsonb(c) FROM contact c WHERE id=:id"), {"id": cid}
-        ).scalar_one()
-        phones = (
-            connection.execute(
-                text("SELECT to_jsonb(p) FROM contact_phone p WHERE contact_id=:id ORDER BY id"),
-                {"id": cid},
-            )
-            .scalars()
-            .all()
-        )
+    from tests.legacy_support import contact as legacy_contact
+
+    uid, _ = actor(settings, database)
     assert migrate("downgrade", "0018_commissions_collections").returncode == 0
     try:
+        cid = legacy_contact(database, uid)
+        with database.engine.connect() as connection:
+            before = connection.execute(
+                text("SELECT to_jsonb(c) FROM contact c WHERE id=:id"), {"id": cid}
+            ).scalar_one()
+            phones = (
+                connection.execute(
+                    text(
+                        "SELECT to_jsonb(p)-'website_source_id' FROM contact_phone p "
+                        "WHERE contact_id=:id ORDER BY id"
+                    ),
+                    {"id": cid},
+                )
+                .scalars()
+                .all()
+            )
         assert migrate("upgrade", "head").returncode == 0
         assert migrate("check").returncode == 0
         with database.engine.connect() as connection:
             assert (
                 connection.execute(
                     text("SELECT to_jsonb(c) FROM contact c WHERE id=:id"), {"id": cid}
-                ).scalar_one()
-                == before
+                )
+                .scalar_one()
+                .items()
+                >= before.items()
             )
             assert (
                 connection.execute(
                     text(
-                        "SELECT to_jsonb(p) FROM contact_phone p WHERE contact_id=:id ORDER BY id"
+                        "SELECT to_jsonb(p)-'website_source_id' FROM contact_phone p "
+                        "WHERE contact_id=:id ORDER BY id"
                     ),
                     {"id": cid},
                 )

@@ -61,7 +61,14 @@ automatic screenshots and AI failure snapshots, strip matcher input contexts and
 capture only empty fields or safe post-login synthetic UI. Never preserve raw
 password/cookie/token diagnostics, including generated test failure artifacts.
 
-SP-04 adds administrator-only Settings/user administration, one-time temporary
+Current D37 (2026-10-18) supersedes SP-04's generated-password/handoff flow:
+admin chooses an initial password, new accounts are active, and first login
+requires a different own password followed by fresh login. Reset additionally
+requires the admin's current password. Confirmed Delete hides/revokes access
+while retaining identity/CRM history. No existing staff are bulk-changed; no
+automatic external credential delivery. See [current evidence](docs/03-planning/staff-onboarding-deletion.md).
+
+Historical SP-04 adds administrator-only Settings/user administration, one-time temporary
 credential display, confirmed in-person handoff and current-password-protected
 reset. No real staff are seeded. Follow the account API/runbook and current
 SP-04 evidence for versions, safe retry conflicts, last-administrator protection
@@ -79,6 +86,7 @@ review remain human operations, not inferred from synthetic tests.
 - Backend execution always uses `backend/.venv`: launches, workers, migrations, installs, pytest, Ruff, mypy, Locust, seed/backup/certificate utilities, and Python subprocesses. Use its explicit interpreter/executable and `sys.executable`; do not rely on global Python or an assumed activated shell. Only creation of the venv uses the base Python 3.14.3 interpreter.
 - Preserve the confirmed stack and contracts. Do not replace revocable PostgreSQL sessions with generic JWT advice, numbered pages with cursor pagination, FastAPI-mediated private file transfer with public URLs, or the PostgreSQL outbox with a new broker merely because a reference note describes those options.
 - Mandatory frontend stack for every UI slice: use shadcn/ui as the source of standard components, Tailwind CSS as the styling system, and Bklit UI for every chart. Build KAY-specific components when needed, reusing shadcn/ui primitives where applicable; narrowly scoped custom CSS is allowed when Tailwind utilities are inadequate. Do not silently substitute another component kit, CSS framework, or chart library. If a required chart cannot be built by composing or extending Bklit, ask KAY for a decision before changing libraries. See [coding standards](docs/01-working-agreements/coding-standards.md), [component guide](docs/04-design/ui-components.md), [styling guide](docs/04-design/styling.md), and [chart guide](docs/04-design/charts.md).
+- Owner-requested compact-space rule (2026-10-16): avoid oversized page-frame gutters, arbitrary max-width caps, and large top/bottom offsets that leave broad unused viewport areas. Let full-page surfaces use the available content width; keep reading/form widths only where they aid legibility. Preserve purposeful internal spacing, safe-area/dialog clearance, clear hierarchy, and 44 px touch targets. “No empty space” means no unexplained dead area, not zero spacing or removal of readable Markdown structure. Apply the rule to the requested surface and future UI work; do not mass-rewrite historical documents or unreviewed routes.
 - Mark any new assumption or trade-off as a proposal. Do not silently turn it into a confirmed business rule.
 
 ## Work loop

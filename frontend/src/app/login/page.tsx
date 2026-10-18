@@ -12,7 +12,7 @@ export default async function LoginEntry({ searchParams }: { searchParams: Promi
   const [identity, query] = await Promise.all([getIdentity(), searchParams]);
   const returnTo = safeReturnPath(query.return_to);
   if (identity.state === "authenticated") redirect(identity.profile.must_change_password ? "/change-password" : returnTo);
-  return <AuthFrame title="Votre espace KAY" description="Connectez-vous avec votre compte KAY.">
+  return <AuthFrame variant="login" title="Votre espace KAY" description="Connectez-vous avec votre compte KAY.">
     {identity.state === "unavailable" ? <AuthUnavailable /> : null}
     {query.changed === "1" ? <p role="status" className="text-success">Mot de passe modifié. Connectez-vous à nouveau.</p> : null}
     {query.signed_out === "1" ? <p role="status">Vous êtes déconnecté.</p> : null}

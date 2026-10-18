@@ -13,6 +13,7 @@ import { relayWork } from "@/features/work/facade";
 import { relayFinance } from "@/features/finance/facade";
 import { relayReports } from "@/features/reports/facade";
 import { relayImports } from "@/features/imports/facade";
+import { relayActivities } from "@/features/activities/facade";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,7 +23,10 @@ const healthPaths = new Set(["health/live", "health/ready"]);
 
 export async function DELETE(request: Request, context: { params: Promise<{ path: string[] }> }) {
   const { path } = await context.params;
-  return relayRequirements(path.join("/"), request, randomUUID());
+  const key = path.join("/");
+  const requestId = randomUUID();
+  if (key === "users" || key.startsWith("users/")) return relayUsers(key, request, requestId);
+  return relayRequirements(key, request, requestId);
 }
 
 export async function GET(
@@ -32,6 +36,7 @@ export async function GET(
   const requestId = randomUUID();
   const { path } = await context.params;
   const key = path.join("/");
+  if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
   if (/^(search|exports|audit)(\/|$)/.test(key)) return relayDiscovery(key, request, requestId);
   if (/^imports(\/|$)/.test(key)) return relayImports(key, request, requestId);
   if (/^reports(\/|$)/.test(key)) return relayReports(key, request, requestId);
@@ -54,6 +59,8 @@ export async function POST(request: Request, context: { params: Promise<{ path: 
   const requestId = randomUUID();
   const { path } = await context.params;
   const key = path.join("/");
+  if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
+  if (/^enquiries\/[a-f0-9-]{36}\/convert$/.test(key)) return relayDeals(key, request, requestId);
   if (/^(search|exports|audit)(\/|$)/.test(key)) return relayDiscovery(key, request, requestId);
   if (/^imports(\/|$)/.test(key)) return relayImports(key, request, requestId);
   if (/^commissions(\/|$)/.test(key) || /^deals\/[^/]+\/commissions$/.test(key)) return relayFinance(key, request, requestId);

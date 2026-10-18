@@ -49,7 +49,7 @@ export function SessionMonitor({ expiresAt, restricted = false }: { expiresAt: s
   return null;
 }
 
-export function LogoutButton({ buttonClassName, errorClassName }: { buttonClassName?: string; errorClassName?: string } = {}) {
+export function LogoutButton({ buttonClassName, errorClassName, compact = false }: { buttonClassName?: string; errorClassName?: string; compact?: boolean } = {}) {
   const hydrated = useHydrated();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -68,7 +68,7 @@ export function LogoutButton({ buttonClassName, errorClassName }: { buttonClassN
     }
   }
   return <div className="grid min-w-0 gap-2">
-    <Button action="signout" variant="outline" className={buttonClassName} onClick={signOut} disabled={!hydrated || pending}>{pending ? "Déconnexion en cours…" : "Se déconnecter"}</Button>
+    <Button action="signout" variant="outline" size={compact ? "icon" : "default"} aria-label={pending ? "Déconnexion en cours" : "Se déconnecter"} title={compact ? (pending ? "Déconnexion en cours" : "Se déconnecter") : undefined} className={`${compact ? "[&>span:last-child]:sr-only" : ""} ${buttonClassName ?? ""}`} onClick={signOut} disabled={!hydrated || pending}>{pending ? "Déconnexion en cours…" : "Se déconnecter"}</Button>
     {error ? <p role="alert" className={cn("max-w-reading text-sm text-danger", errorClassName)}>{error}</p> : null}
   </div>;
 }

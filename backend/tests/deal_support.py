@@ -24,7 +24,9 @@ def new(contact, **values):
     return NewDeal.model_validate(
         {
             "contact_id": str(contact),
-            "title": "Affaire synthétique SP11",
+            "initial_budget": "1000000",
+            "purchase_reasons": ["residence"],
+            "projects": [{"external_name": "Projet synthétique SP11"}],
             "next_action": "Rappeler le contact",
             **values,
         }
@@ -34,7 +36,9 @@ def new(contact, **values):
 def edit(version=1, **values):
     return EditDeal.model_validate(
         {
-            "title": "Affaire actualisée",
+            "initial_budget": "1500000",
+            "purchase_reasons": ["residence", "investment"],
+            "projects": [{"external_name": "Projet actualisé"}],
             "next_action": "Confirmer le rendez-vous",
             "expected_version": version,
             **values,

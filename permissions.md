@@ -1,5 +1,15 @@
 # KEPVY: roles and permissions
 
+D35 Lead/Deal qualification introduces no new role grant. Accessible Lead
+conversion, manual deal creation and canonical profile edits use the current
+contact responsible/collaborator scope and active identity. Assignment remains
+manager-controlled. Missing, private or archived records cannot acquire a deal
+or new scope through a project selection, receipt replay or copied identifier.
+Snapshots remain private to the currently authorized parent. Existing manager
+finance, shared inventory and exact stock/outcome/file permissions are retained.
+[Current contract](docs/04-design/deal-pipeline-local.md),
+[verification](docs/03-planning/leads-deals-immoworld-alignment.md).
+
 SP-20 local implementation: a configured website source has no staff role or
 session. Its signed intake/status responses contain only receipt identity/state.
 A submitted phone never grants CRM access. Known contacts keep current primary/
@@ -14,16 +24,17 @@ Confirmed decisions: managers have full business access and administrators inher
 Technical proposals: capability checks and typed-parent authorization on every operation.  
 References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs/04-design/api-contracts.md), [security](docs/04-design/security-and-privacy.md), and [tests](docs/05-quality/acceptance-tests.md).
 
-`S` means a contact for whom the agent is the current primary agent or an active collaborator. `All` means every active KAY team member. Contact access grants non-financial CRM work on that contact but no direct right to edit inventory. Administrators inherit all managers' business rights.
+`S` means a contact for whom the agent is the current primary agent or an active collaborator. `All` means every active KAY team member. Under D34 (Khalid, 2026-10-16), active agents may create/edit shared project facts, hierarchy, reusable types and physical properties/units. This grants no private-contact access or other manager-only inventory command. Administrators inherit all managers' business rights.
 
 | Action | Administrator | Manager | Agent |
 |---|---|---|---|
-| Create/activate/disable later accounts, change roles, reset another user's password | Yes; reset requires their own current password. The first administrator is created only by the one-time server-local script. | No | No |
+| Create/delete later accounts, change roles, reset another user's password | Yes; chooses initial password; reset also requires their own current password. First login requires own-password change. Delete revokes/hides access, retaining CRM attribution. Existing credentials remain unchanged. First administrator still uses the guarded server-local script. | No | No |
 | Read/edit contacts, enquiries, requirements, notes, and deals | All | All | S |
 | Assign the primary agent or collaborators; merge across portfolios | Yes | Yes | No |
 | Merge duplicates within the same writable scope after confirmation | Yes | Yes | Yes, within S only |
 | Read developments, blocks, floors, unit types, properties/units, their offerings, and shared inventory attachments | All | All | All |
-| Create/edit/archive any development, hierarchy, unit type, property/unit, offering, or directly confirm availability | Yes | Yes | No |
+| Create/edit development facts and shared briefing, hierarchy, unit types, properties/units | Yes | Yes | Yes; developer selection requires current contact scope |
+| Change legal owners, inventory files, offerings, availability, external outcomes or archive/restore inventory | Yes | Yes | No |
 | Read an owner/developer's private contact details/documents | All | All | Only if S for that contact |
 | Create/edit a contact's visits, tasks, and deals | All | All | S |
 | Reserve, close, and reopen a contact's deal | All | All | S, subject to stock invariants |

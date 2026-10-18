@@ -16,6 +16,7 @@ from sqlalchemy import (
     UniqueConstraint,
     func,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -70,6 +71,9 @@ class DealStageEvent(Base):
     before_version: Mapped[int] = mapped_column(BigInteger)
     after_version: Mapped[int] = mapped_column(BigInteger)
     title: Mapped[str] = mapped_column(String(160))
+    qualification: Mapped[dict[str, object]] = mapped_column(
+        JSONB, default=dict, server_default="{}"
+    )
     next_action: Mapped[str] = mapped_column(String(1000))
     stock_review_required: Mapped[bool] = mapped_column(server_default="false")
     offering_id: Mapped[UUID | None] = mapped_column(ForeignKey("offering.id", ondelete="RESTRICT"))

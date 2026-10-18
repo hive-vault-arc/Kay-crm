@@ -1,16 +1,17 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
+import { DevelopmentIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RecordError } from "@/features/contacts/record-states";
 import { queryPath, useQuery } from "@/features/contacts/use-query";
-import { formatBusinessDate, formatMAD } from "@/lib/format";
+import { formatMAD } from "@/lib/format";
 import { dashboardSchema, periodQuery, type MetricKey } from "./contracts";
 import { DrillDown, type Selection } from "./drill-down";
 import { Exceptions } from "./exceptions";
-import { DevelopmentIcon } from "@/components/icons";
 import { KpiSummary } from "./kpi-summary";
 
 const highlightKeys: MetricKey[] = ["contacts", "enquiries", "active_deals", "won", "collections"];
@@ -30,22 +31,26 @@ export function ReportDashboard({ children }: { children?: ReactNode }) {
     lastTrigger.current = document.activeElement as HTMLElement;
     setSelection({ metric, attribution_id, start_on: query.value.start_on, end_on: query.value.end_on });
   }
-  return <div className="grid min-w-0 gap-4">
-    <section className="grid min-w-0 gap-4" aria-label="Indicateurs CRM"><h2 className="sr-only">Indicateurs CRM</h2>
-      <form className="filter-surface flex flex-wrap items-end gap-3" aria-label="Période des indicateurs" onSubmit={e => {
+  return <div className="grid min-w-0 gap-3">
+    <section className="grid min-w-0 gap-3" aria-label="Indicateurs CRM"><h2 className="sr-only">Indicateurs CRM</h2>
+      <div className="dashboard-controls">
+        <p className="dashboard-scope"><DevelopmentIcon aria-hidden="true" className="size-5 shrink-0" /><span>{query.value?.scope === "agency" ? "Toute l’agence" : query.value?.scope === "assigned_or_shared" ? "Mes dossiers accessibles" : "Périmètre autorisé"}</span></p>
+        <form className="dashboard-filters" aria-label="Période des indicateurs" onSubmit={e => {
         e.preventDefault(); const draft = { start_on: start.current?.value, end_on: end.current?.value };
         if (!periodQuery.safeParse(draft).success || !draft.start_on || !draft.end_on) { setValidation(true); start.current?.focus(); return; }
         setValidation(false); setSelection(undefined); setPeriod(draft); query.refresh();
       }}>
-        <div className="grid gap-2"><Label htmlFor="report-start">Du (inclus)</Label><Input ref={start} id="report-start" type="date" min="1900-01-01" max="2100-12-31" required defaultValue={period.start_on ?? query.value?.start_on} aria-describedby={validation ? "report-period-error" : undefined} /></div>
-        <div className="grid gap-2"><Label htmlFor="report-end">Au (inclus)</Label><Input ref={end} id="report-end" type="date" min="1900-01-01" max="2100-12-31" required defaultValue={period.end_on ?? query.value?.end_on} aria-describedby={validation ? "report-period-error" : undefined} /></div>
-        <Button action="filter" type="submit">Appliquer la période</Button><Button action="refresh" variant="outline" type="button" onClick={() => { setSelection(undefined); query.refresh(); }}>Actualiser les indicateurs</Button>
-      </form>
+        <Label className="sr-only" htmlFor="report-start">Du (inclus)</Label><Input ref={start} id="report-start" type="date" min="1900-01-01" max="2100-12-31" required defaultValue={period.start_on ?? query.value?.start_on} aria-describedby={validation ? "report-period-error" : undefined} />
+        <span className="dashboard-period-separator" aria-hidden="true">–</span>
+        <Label className="sr-only" htmlFor="report-end">Au (inclus)</Label><Input ref={end} id="report-end" type="date" min="1900-01-01" max="2100-12-31" required defaultValue={period.end_on ?? query.value?.end_on} aria-describedby={validation ? "report-period-error" : undefined} />
+        <Button action="filter" type="submit">Appliquer la période</Button>
+        </form>
+        <Button className="dashboard-new-lead" action="create" asChild><Link href="/leads/new">Nouveau prospect</Link></Button>
+      </div>
       {validation ? <p role="alert" id="report-period-error" className="text-danger">Choisissez deux dates dans l’ordre, sur 366 jours maximum.</p> : null}
       {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des indicateurs…</p> : <>
-        <KpiSummary metrics={query.value.metrics} open={open} />
-        <p className="text-sm text-muted-foreground">{query.value.scope === "agency" ? "Périmètre : agence." : "Périmètre : dossiers attribués ou partagés. Inventaire lié uniquement aux affaires et sélections accessibles."}</p>
-        <p className="text-sm text-muted-foreground">Du {formatBusinessDate(query.value.start_on)} au {formatBusinessDate(query.value.end_on)}, Africa/Casablanca. Contacts, affaires actives et inventaire : situation actuelle. Résultats, demandes, actions et encaissements : période sélectionnée.</p>
+        <KpiSummary metrics={query.value.metrics} startOn={query.value.start_on} endOn={query.value.end_on} open={open} />
+        <p id="dashboard-period-description" className="sr-only">Contacts, affaires actives et inventaire : situation actuelle. Résultats, demandes, actions et encaissements : période sélectionnée. Les dates sont inclusives et calculées selon l’heure de Casablanca.</p>
         <PipelineOverview />
         <section className="grid min-w-0 gap-3" aria-label="Activité de l’équipe"><div className="flex flex-wrap items-baseline justify-between gap-2 border-b pb-2"><h2 className="text-section font-semibold">Activité de l’équipe</h2><p className="text-xs text-muted-foreground">Contributions réelles et dossiers attribués</p></div>
           <div className="grid min-w-0 items-start gap-4 xl:grid-cols-2">{(["activities", "won", "contacts"] as const).map(key => {

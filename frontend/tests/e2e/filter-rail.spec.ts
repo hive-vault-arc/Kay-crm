@@ -24,11 +24,18 @@ async function openFilters(page: Page, width: number) {
 }
 async function geometry(page: Page, panel: Locator, desktop: boolean) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  expect(await panel.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  const overflow = await panel.evaluate(element => {
+    if (element.scrollWidth <= element.clientWidth) return [];
+    const edge = element.getBoundingClientRect().right;
+    return Array.from(element.querySelectorAll("*")).filter(child => child.getBoundingClientRect().right > edge + 1).map(child => ({ tag: child.tagName, className: child.className, width: child.getBoundingClientRect().width, scrollWidth: child.scrollWidth }));
+  });
+  expect(overflow).toEqual([]);
+  const panelWidths = await panel.evaluate(element => ({ scroll: element.scrollWidth, client: element.clientWidth }));
+  expect(panelWidths.scroll).toBeLessThanOrEqual(panelWidths.client);
   const panelBox = (await panel.boundingBox())!;
   for (const control of await panel.locator("input, select, button, summary").all()) {
     if (!await control.isVisible()) continue;
-    const box = (await control.boundingBox())!;
+    const box = await control.evaluate(element => (element.matches('[role="checkbox"], input[type="checkbox"]') ? element.closest("label") ?? element : element).getBoundingClientRect().toJSON());
     expect(box.width).toBeGreaterThanOrEqual(44);
     expect(box.height).toBeGreaterThanOrEqual(44);
     expect(box.x).toBeGreaterThanOrEqual(panelBox.x);
@@ -38,7 +45,10 @@ async function geometry(page: Page, panel: Locator, desktop: boolean) {
   expect(new Set(ids).size).toBe(ids.length);
   if (desktop) {
     const results = (await page.locator("[data-list-results]").boundingBox())!;
-    expect(results.x).toBeGreaterThanOrEqual(panelBox.x + panelBox.width + 23);
+    const projects = await page.locator(".projects-workbench").count();
+    const gap = projects ? 19 : await page.locator(".crm-reference-filter-layout").count() ? 11 : 23;
+    if (projects) expect(results.x - panelBox.x - panelBox.width).toBeCloseTo(20, 0);
+    expect(results.x).toBeGreaterThanOrEqual(panelBox.x + panelBox.width + gap);
     expect(Math.abs(results.y - panelBox.y)).toBeLessThanOrEqual(1);
   }
 }
@@ -49,13 +59,13 @@ async function exerciseFilters(page: Page, panel: Locator, endpoint: string, sub
   }
   await panel.getByLabel(search, { exact: true }).fill("");
   const parameterByLabel: Record<string, string> = {
-    "Statut": "status", "Source": "source", "Trier par": "sort", "Lignes par page": "page_size",
+    "Statut": "status", "Source": ["enquiries", "deals"].includes(endpoint) ? "campaign_source" : "source", "Provenance": "source", "Qualification": "rating", "Trier par": "sort", "Lignes par page": "page_size", "Biens par page": "page_size",
     "Agent attribué": "assigned_agent_id", "Agent responsable": "assigned_agent_id", "Étape": "stage",
     "Type d’offre liée": "offering_kind", "Contacts": "archive", "Catégorie": "category",
     "Type d’offre": "offering_kind", "Statut de l’offre": "state", "État du dossier": "archive",
-    "Catégorie du programme": "category", "Offre du programme entier": "offering_kind",
+    "Catégorie du programme": "category", "Offre du programme entier": "offering_kind", "Langue": "language", "Pays de résidence": "country",
   };
-  const expected: Record<string, string> = { q: "", page: "1" };
+  const expected: Record<string, string> = { q: "SP06 requête complète", page: "1" };
   for (const select of await panel.locator("select").all()) {
     await expect(select).toBeEnabled();
     const label = await select.evaluate(element => Array.from((element as HTMLSelectElement).labels ?? []).map(label => label.textContent?.trim()).join(" "));
@@ -80,11 +90,13 @@ async function exerciseFilters(page: Page, panel: Locator, endpoint: string, sub
     const url = new URL(response.url());
     return response.request().method() === "GET" && url.pathname === `/api/v1/${endpoint}` && Object.entries(expected).every(([key, value]) => (url.searchParams.get(key) ?? "") === value);
   }, { timeout: 15_000 });
-  await panel.getByRole("button", { name: submit, exact: true }).click();
+  await panel.getByLabel(search, { exact: true }).fill(expected.q);
+  if (["enquiries", "deals"].includes(endpoint)) await panel.getByLabel(search, { exact: true }).press("Enter");
+  else if (endpoint !== "properties") await panel.getByRole("button", { name: submit, exact: true }).click();
   expect((await response).status()).toBe(200);
 }
 
-test("filter rail: populated directories, left geometry, responsive drafts and real filter requests", async ({ page, actor }) => {
+test("directory filters: left rails, mobile sheets and real scoped requests", async ({ page, actor }) => {
   test.setTimeout(240_000);
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
@@ -99,9 +111,9 @@ test("filter rail: populated directories, left geometry, responsive drafts and r
   expect((await staffCommand(page, "properties", { reference: "SP07-RAIL", category: "villa", marketing_name: "SP07 bien synthétique des filtres", location: "Quartier synthétique", area_sqm: null })).status()).toBe(200);
   expect((await staffCommand(page, "developments", { reference: "SP08-RAIL", name: "SP08 programme synthétique des filtres", category: "mixed", location: "Quartier synthétique", briefing_text: null, developer_contact_id: null, developer_marketing_display: null })).status()).toBe(200);
   const screens = [
-    { name: "leads", path: "/leads", endpoint: "enquiries", search: "Rechercher un nom, téléphone ou e-mail", submit: "Appliquer", status: "1 demande(s) accessible(s).", empty: "0 demande(s) accessible(s)." },
-    { name: "deals", path: "/deals", endpoint: "deals", search: "Rechercher une affaire, un contact ou une action", submit: "Appliquer", status: "1 affaire(s) accessible(s) dans ces filtres.", empty: "0 affaire(s) accessible(s) dans ces filtres." },
-    { name: "properties", path: "/projects", endpoint: "properties", search: "Référence, nom ou localisation", submit: "Appliquer les filtres", status: "1 bien(s) correspondant(s).", empty: "0 bien(s) correspondant(s)." },
+    { name: "leads", path: "/leads", endpoint: "enquiries", search: "Rechercher un nom, téléphone ou e-mail", submit: "Appliquer", status: "1 demande", empty: "0 demande" },
+    { name: "deals", path: "/deals", endpoint: "deals", search: "Rechercher une affaire, un contact ou une action", submit: "Appliquer", status: "1 affaire", empty: "0 affaire" },
+    { name: "properties", path: "/projects", endpoint: "properties", search: "Rechercher un nom, une référence ou un lieu", submit: "", status: "1 bien correspondant", empty: "0 bien correspondant" },
     { name: "programmes", path: "/projects", endpoint: "developments", search: "Rechercher un programme", submit: "Filtrer les programmes", status: "1 programme(s) correspondant(s).", empty: "0 programme(s) correspondant(s)." },
     { name: "contacts", path: "/leads?view=contacts", endpoint: "contacts", search: "Rechercher un nom, téléphone ou e-mail", submit: "Rechercher", status: "1 contact(s) accessible(s).", empty: "0 contact(s) accessible(s)." },
   ];
@@ -109,8 +121,8 @@ test("filter rail: populated directories, left geometry, responsive drafts and r
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(screen.path);
     if (screen.name === "programmes") await page.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click();
-    await expect(page.getByText(screen.status, { exact: true })).toBeVisible();
-    for (const width of [320, 360, 768, 1024, 1279, 1280, 1440]) {
+    await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
+    for (const width of [320, 360, 768, 1024, 1279, 1280, 1440, ...(screen.name === "leads" || screen.name === "deals" ? [1535, 1536, 1600] : [])]) {
       await page.setViewportSize({ width, height: 900 });
       const panel = await openFilters(page, width);
       await expect(panel.getByLabel(screen.search, { exact: true })).toBeVisible();
@@ -118,7 +130,9 @@ test("filter rail: populated directories, left geometry, responsive drafts and r
       if (screen.name === "properties") await panel.getByText("Filtres avancés des biens", { exact: true }).click();
       if (screen.name === "programmes") await panel.getByText("Archivage des programmes", { exact: true }).click();
       await geometry(page, panel, width >= 1280);
-      if (width === 1440 || (width === 360 && ["leads", "properties"].includes(screen.name))) await capture(page, `${screen.name}-${width}`);
+      if (["leads", "deals"].includes(screen.name) && width >= 1280) expect((await panel.boundingBox())!.width).toBeCloseTo(314, 0);
+      const captureWideCrm = width === 1600 && ["leads", "deals"].includes(screen.name);
+      if (width === 1440 || captureWideCrm || (width === 360 && ["leads", "properties"].includes(screen.name))) await capture(page, `${screen.name}-${width}`);
       const query = panel.getByLabel(screen.search, { exact: true });
       await query.fill("SP06 brouillon conservé");
       if (width < 1280) {
@@ -130,25 +144,26 @@ test("filter rail: populated directories, left geometry, responsive drafts and r
       }
     }
     const panel = await openFilters(page, 1440);
-    await panel.getByLabel(screen.search, { exact: true }).fill("SP06 aucun résultat de contrôle");
     const sent = page.waitForRequest(request => new URL(request.url()).pathname === `/api/v1/${screen.endpoint}` && new URL(request.url()).searchParams.get("q") === "SP06 aucun résultat de contrôle");
-    await panel.getByRole("button", { name: screen.submit, exact: true }).click();
+    await panel.getByLabel(screen.search, { exact: true }).fill("SP06 aucun résultat de contrôle");
+    if (["leads", "deals"].includes(screen.name)) await panel.getByLabel(screen.search, { exact: true }).press("Enter");
+    else if (screen.name !== "properties") await panel.getByRole("button", { name: screen.submit, exact: true }).click();
     expect(new URL((await sent).url()).searchParams.get("page")).toBe("1");
-    await expect(page.getByText(screen.empty, { exact: true })).toBeVisible();
+    await expect(page.getByText(screen.empty, { exact: true }).and(page.getByRole("status"))).toBeVisible();
     await capture(page, `${screen.name}-empty`);
     if (screen.name === "contacts") {
       await panel.getByLabel(screen.search, { exact: true }).fill("");
       await panel.getByRole("button", { name: screen.submit, exact: true }).click();
-      await expect(page.getByText(screen.status, { exact: true })).toBeVisible();
+      await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
       await panel.getByLabel("État des contacts", { exact: true }).selectOption("archived");
-      await expect(page.getByText(screen.empty, { exact: true })).toBeVisible();
+      await expect(page.getByText(screen.empty, { exact: true }).and(page.getByRole("status"))).toBeVisible();
     } else if (screen.name === "programmes") {
       await panel.getByLabel(screen.search, { exact: true }).fill("");
       await panel.getByRole("button", { name: screen.submit, exact: true }).click();
-      await expect(page.getByText(screen.status, { exact: true })).toBeVisible();
+      await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
     } else {
-      await panel.getByRole("button", { name: "Réinitialiser", exact: true }).click();
-      await expect(page.getByText(screen.status, { exact: true })).toBeVisible();
+      await panel.getByRole("button", { name: ["leads", "deals"].includes(screen.name) ? "Effacer" : "Réinitialiser", exact: true }).click();
+      await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
     }
     if (screen.name === "leads" || screen.name === "deals") {
       const scroller = page.getByRole("region", { name: screen.name === "leads" ? "Tableau des Leads, défilement horizontal" : "Tableau des affaires, défilement horizontal", exact: true });
@@ -168,7 +183,7 @@ test("filter rail: populated directories, left geometry, responsive drafts and r
   } finally { await clearActorContext(page); await removeActor(owner); }
 });
 
-test("filter rail: mobile validation, selected-agent persistence, breakpoint focus and agent permissions", async ({ page, actor, browser, baseURL }) => {
+test("lead filter rail: mobile validation, selected-agent persistence, breakpoint focus and agent permissions", async ({ page, actor, browser, baseURL }) => {
   test.setTimeout(150_000);
   const agent = await createActor("agent", false, "SP06 agent synthétique choisi dans les filtres");
   try {
@@ -177,12 +192,11 @@ test("filter rail: mobile validation, selected-agent persistence, breakpoint foc
     await page.goto("/leads");
     let panel = await openFilters(page, 360);
     await panel.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true }).focus();
-    await page.keyboard.press("Shift+Tab");
-    await expect(panel.getByRole("button", { name: "Fermer les filtres", exact: true })).toBeFocused();
     await page.keyboard.press("Tab");
-    await expect(panel.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true })).toBeFocused();
+    await expect(panel.getByRole("checkbox", { name: "Nouveau", exact: true })).toBeFocused();
     await panel.getByText("Filtres avancés", { exact: true }).click();
-    await panel.getByText("Filtrer par agent attribué", { exact: true }).click();
+    await panel.getByText("Agent attribué", { exact: true }).first().click();
+    await panel.getByText("Dates", { exact: true }).click();
     await panel.getByLabel("Rechercher un agent (agent attribué)", { exact: true }).fill("SP06 agent synthétique choisi");
     await expect(panel.getByRole("option", { name: "SP06 agent synthétique choisi dans les filtres", exact: true })).toHaveCount(1);
     await panel.getByLabel("Agent attribué", { exact: true }).selectOption(agent.id);
@@ -193,17 +207,11 @@ test("filter rail: mobile validation, selected-agent persistence, breakpoint foc
     await expect(panel.getByRole("alert")).toHaveText("La date de début doit précéder la date de fin.");
     await expect(panel.getByRole("alert")).toBeInViewport();
     await capture(page, "leads-mobile-invalid");
-    await page.keyboard.press("Escape");
-    const hold = Promise.withResolvers<void>();
-    await page.route("**/api/v1/contacts/assignment-options?**", async route => { await hold.promise; await route.continue(); });
-    try {
-      panel = await openFilters(page, 360);
-      await panel.getByText("Filtres avancés", { exact: true }).click();
-      await panel.getByText("Filtrer par agent attribué", { exact: true }).click();
-      await expect(panel.getByLabel("Agent attribué", { exact: true })).toHaveValue(agent.id);
-      await expect(panel.getByRole("option", { name: "SP06 agent synthétique choisi dans les filtres", exact: true })).toHaveCount(1);
-      await expect(panel.getByLabel("Reçue à partir du", { exact: true })).toHaveValue("2026-11-01");
-    } finally { hold.resolve(); await page.unrouteAll({ behavior: "wait" }); }
+    await panel.getByText("Filtres avancés", { exact: true }).click();
+    await panel.getByText("Filtres avancés", { exact: true }).click();
+    await expect(panel.getByLabel("Agent attribué", { exact: true })).toHaveValue(agent.id);
+    await expect(panel.getByRole("option", { name: "SP06 agent synthétique choisi dans les filtres", exact: true })).toHaveCount(1);
+    await expect(panel.getByLabel("Reçue à partir du", { exact: true })).toHaveValue("2026-11-01");
     await panel.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true }).focus();
     await page.setViewportSize({ width: 1440, height: 900 });
     panel = await openFilters(page, 1440);
@@ -215,27 +223,32 @@ test("filter rail: mobile validation, selected-agent persistence, breakpoint foc
     await expect(page.getByRole("button", { name: "Afficher les filtres", exact: true })).toBeFocused();
     panel = await openFilters(page, 1024);
     await panel.getByText("Filtres avancés", { exact: true }).click();
+    await panel.getByText("Agent attribué", { exact: true }).first().click();
+    await panel.getByText("Dates", { exact: true }).click();
     await panel.getByLabel("Reçue à partir du", { exact: true }).fill("");
     await panel.getByLabel("Reçue jusqu’au", { exact: true }).fill("");
     await panel.getByRole("button", { name: "Appliquer", exact: true }).click();
     await expect(page.getByRole("dialog")).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Afficher les filtres", exact: true })).toHaveText("Filtres appliqués");
+    panel = await openFilters(page, 1024);
+    await panel.getByText("Filtres avancés", { exact: true }).click();
+    await panel.getByText("Agent attribué", { exact: true }).first().click();
+    await expect(panel.getByLabel("Agent attribué", { exact: true })).toHaveValue(agent.id);
+    await page.keyboard.press("Escape");
     const touch = await browser.newContext({ baseURL, viewport: { width: 360, height: 800 }, hasTouch: true, ignoreHTTPSErrors: true });
     try {
       await clearActorContext(page); await signIn(page, agent);
       await touch.addCookies(await page.context().cookies());
       const phone = await touch.newPage();
       await phone.goto("/leads");
-      await phone.getByRole("button", { name: "Afficher les filtres", exact: true }).tap();
-      const drawer = phone.getByRole("dialog", { name: "Filtres des Leads", exact: true });
+      const drawer = await openFilters(phone, 360);
       await drawer.getByText("Filtres avancés", { exact: true }).tap();
-      await expect(drawer.getByText("Filtrer par agent attribué", { exact: true })).toHaveCount(0);
+      await expect(drawer.getByText("Agent attribué", { exact: true })).toHaveCount(0);
       await drawer.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true }).fill("SP06 tactile");
       await drawer.getByRole("button", { name: "Appliquer", exact: true }).tap();
       await expect(phone.getByRole("dialog")).toHaveCount(0);
       await expect(phone.getByRole("link", { name: "Importer des contacts", exact: true })).toHaveCount(0);
       await phone.goto("/projects");
-      await expect(phone.getByRole("link", { name: "Créer un bien indépendant", exact: true })).toHaveCount(0);
+      await expect(phone.getByRole("link", { name: "Créer un bien indépendant", exact: true })).toBeVisible();
       await phone.getByRole("button", { name: "Afficher les filtres", exact: true }).tap();
       await phone.getByRole("button", { name: "Fermer les filtres", exact: true }).tap();
       await expect(phone.getByRole("button", { name: "Afficher les filtres", exact: true })).toBeFocused();

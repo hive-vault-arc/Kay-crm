@@ -1,13 +1,17 @@
 import type { Page } from "@playwright/test";
 import { expect, createActor, signIn, clearActorContext, type TestActor } from "./auth";
-import { createLead, staffCommand } from "./leads";
+import { staffCommand } from "./leads";
 
 export async function scheduleFixture(page: Page, actors: TestActor[]) {
   const admin = await createActor("administrator",false,"SP06 SP14 administration synthétique"); actors.push(admin);
   const agent = await createActor("agent",false,"SP06 SP14 agent synthétique"); actors.push(agent);
   await signIn(page,admin); await configureSchedule(page);
   await clearActorContext(page); await signIn(page,agent);
-  const lid = await createLead(page,"SP14 contact synthétique");
+  const created = await staffCommand(page, "enquiries", {
+    new_contact: { name: "SP14 contact synthétique", type: "person", phones: [{ number: "+212600000001", label: "Principal", is_primary: true }], emails: [], roles: ["buyer"], country: "MA", languages: ["french"] },
+    message: "Demande synthétique de contrôle", source: "phone", initial_budget: "500000", campaign_source: "facebook",
+  });
+  expect(created.status()).toBe(200); const lid = (await created.json()).id;
   const lead = await (await page.request.get(`/api/v1/enquiries/${lid}`)).json();
   return { admin, agent, contactId: lead.contact.id as string };
 }

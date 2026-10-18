@@ -82,11 +82,20 @@ conflict. Current authority is checked before returning an old acknowledgement.
   accepts draft. Terminal records cannot be reopened or rewritten by this slice.
 - GET `/visits`: bounded offset-aware range, optional contact_id/user_id and
   numbered page/page_size(max100); stable start_at/id order after scope filtering.
+  D38 adds optional `types` and `statuses`, unique comma-separated exact values.
+  Types are office/company_car/without_company_car; statuses are
+  draft/scheduled/confirmed/completed/cancelled. Omitted means all; explicit empty
+  string means none. Unknown/duplicate/whitespace values are rejected. Filters
+  combine before pagination. Response adds canonical zero-inclusive `type_counts`,
+  `status_counts` and `unfiltered_total` for the complete authorized range after
+  contact/user scope, before type/status selection. Counts and items use the same
+  repeatable-read snapshot, never just the current page or unauthorized visits.
 - GET `/visits/{id}`: scoped record, authoritative local strings, current review
   code and read-only archived-contact indication. GET `/visits/{id}/history`
   returns the last100 immutable typed events, original snapshots and actors.
 - GET `/calendar/free-busy`: same bounded range/pages, optional user_id; returns
-  only start_at/end_at/busy per interval. contact_id filters are rejected.
+  only start_at/end_at/busy per interval. contact_id, types and statuses filters
+  are rejected, including explicit empty selections. No facets are returned.
 - GET `/calendar/availability`: type, range and optional authorized exclude_visit_id.
   Returns safe policy version, hard-rule result and company-car hourly numeric
   used/capacity/remaining; no private record IDs or descriptions. Preview only.
@@ -130,3 +139,18 @@ Confirmation/result/cancellation uses the existing bounded shadcn AlertDialog.
 No fleet assignment, external message, reminder consumer or automatic cancellation
 is added. SP-15 owns reminders/overdue delivery. No production/real-data acceptance
 or Khalid product/design approval is implied by this contract.
+
+## D38 calendar composition (2026-10-18)
+
+The supplied calendar reference extends S09 only: compact toolbar, mini-month,
+type/status checkboxes, actual lunch disclosure, seven-day hour grid and working
+Agenda/Par type views. Mobile collapses the existing filter rail into its shadcn
+Sheet and uses the chronological agenda. Building/people/car Iconsax identify
+office/no-car/company-car; real status remains separate and textual. Backend
+local strings determine event position; the browser does only Gregorian date
+arithmetic. Overlap clusters get distinct lanes, short visits retain44px targets,
+and overnight visits continue on the next day. Dynamic hours and local scrolling
+retain early/late events; server pagination remains explicit. Calendar geometry
+is centralized in `branding/kay-ui-tokens.json`, not a new library or chart.
+No schema migration or development-data seed. See the
+[implementation and verification](../03-planning/calendar-reference-refresh.md).

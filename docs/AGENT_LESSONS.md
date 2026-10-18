@@ -1,5 +1,180 @@
 # KAY agent lessons
 
+## Do not normalize selection using unknown loading facets (2026-10-18)
+
+useQuery intentionally hides a previous-path value while a request is pending.
+Rapidly clearing visible categories therefore cannot assume its now-undefined
+facet count means a hidden category exists. Wait for current facets before
+changing a dependent category selection; do not reuse stale authority snapshots.
+Exercise quick clear-all and held-request states in the real browser. Bound an
+expected-response wait independently so failures do not exhaust cleanup time.
+If a timed-out fixture leaves rows, prove isolation and use the guarded synthetic
+supervisor cleanup before rerunning; never widen cleanup to development data.
+
+## Exercise multiword search through the actual API client (2026-10-18)
+
+URLSearchParams serializes spaces as plus signs. KAY's strict client target
+allowlist intentionally rejects plus signs; canonicalize them to%20 as the
+shared queryPath does. A URL round-trip unit test alone missed this. The actual
+revoked-session/multiword-search browser regression exposed it; the fix belongs
+in the feature path builder, not a wider security allowlist. Assert both decoded
+query semantics and an accepted production-client path.
+
+For image evidence, wait for visible lazy thumbnails after scrolling, then reset
+the actual page scroll before full-page capture. A passing geometry test can
+still produce a loading-state photo capture or displaced sticky sidebar. Inspect
+the final image itself; do not claim loaded photos from uploaded/clean state alone.
+
+## Validate calendar selections before normalization (2026-10-18)
+
+Pydantic's shared string trimming can silently accept leading whitespace before
+an exact CSV validator runs. Use a before-validator when the contract rejects
+whitespace, and test duplicate/unknown/empty selections across backend and facade.
+Do not derive facet counts from a numbered page. When laying out overlapping
+visits, verify44px after lane insets, not just the raw lane token; four real
+overlapping links exposed why48px lanes were insufficient with8px insets.
+
+## Recheck surrounding copy when retiring an action (2026-10-18)
+
+Removing a flow's button/service is insufficient: scan its route heading,
+settings entry, shared error messages, runbook, API catalogue and existing browser
+tests for retired language. The staff task's first safe capture exposed a stale
+in-person-handoff subtitle; it was corrected within the requested flow, then
+the visible checks were rerun. Native Chrome zoom captures use CDP fromSurface=false
+after foregrounding the page; a passing geometry check cannot validate a broken
+screenshot artifact. Never retain filled-password snapshots while checking copy.
+
+## Acquire the shared test lease before migration work (2026-10-18)
+
+A lingering preview supervisor can own the isolated database even when its chat
+is idle. Check listeners/process ancestry and acquire the shared exclusive lease
+before migrations as well as fixture cleanup/tests. In this activity task an
+additive upgrade preceded the check; pytest then correctly refused all fixtures.
+Do not bypass or steal the lock. Coordinate stopping the exact KAY supervisor
+with the owner, run serial guarded suites, then restart the agreed preview.
+Never stop another project's occupied8000 port. An idle chat does not mean its
+services are unused. No root-rule promotion from this single correction.
+
+## Compare populated components, not only proportions (2026-10-18)
+
+- A passing functional suite and corrected rail widths do not prove screenshot
+  fidelity. Compare populated screens at matching viewport sizes against a
+  component ledger: banner, toolbar, filter controls, row density, identity,
+  contact rail, status board and first-view work regions.
+- If the owner rejects the result, preserve the earlier test evidence but mark
+  its visual-acceptance claim superseded. Inspect actual reference images and
+  replace the mismatched composition, not just its outer grid.
+- Retain real fields, scoped filters and commands. Do not copy fake reference
+  records or invent unsupported endpoints to make a screenshot appear complete.
+- Promote to AGENTS.md: no; existing source-of-truth and evidence rules apply.
+
+## Verify the requested local server before a browser run (2026-10-18)
+
+- A reply of “ready” can refer to an older copied command. Confirm the expected
+  port, CA-verified login response and intended development/compiled process
+  before creating browser fixtures. Do not count connection-refused runs as
+  application regressions or keep rerunning against an absent service.
+- PowerShell assignments need line breaks or semicolons. When an input UI may
+  flatten multiline commands, provide an explicit semicolon-separated line and
+  the correct working directory. Keep compiled builds separate from a live dev
+  output directory; do not overwrite a running server's chunks.
+- Promote to AGENTS.md: no; existing runtime isolation rules cover this correction.
+
+## Isolate a compiled browser run from concurrent builds (2026-10-18)
+
+A separate Next build replaced `.next/static` while Chrome was using the prior
+BUILD_ID, producing missing scripts/styles rather than an application regression.
+Do not record the affected run as passed or relax assertions. Coordinate editors
+and use the existing `KAY_UI_CHECKS=1` `.next-e2e` output for an isolated build
+and matching start process when necessary. Keep the database fixture lease serial.
+Any temporary Playwright config must retain private reporting and cleanup guards;
+profile cleanup validates its actual configured output root, not a hardcoded path.
+
+## Nested form grids follow their panel, not the viewport (2026-10-17)
+
+Pairing major Lead/Deal form sections at1536px exposed nested viewport grids:
+a1920px viewport still gave each panel only about800px, so splitting that panel
+twice truncated selected names and budgets. Compact sections now use their own
+container's existing64rem breakpoint for the inner split, while noncompact
+contact forms retain their layout. Verify mobile,1440px and1920px together;
+the opt-in synthetic capture asserts at least240px for name/budget controls at
+desktop widths. Do not solve narrow controls by hiding fields or truncating
+the selected budget text. The corrected20-case visible Chrome run passes.
+
+## Validate active examples and declare worker prerequisites (2026-10-17)
+
+A top-level contract warning did not make a later free-title deal example valid.
+Keep copyable qualification examples aligned with their real request models;
+JSON syntax alone does not prove a usable API body. The three marked current
+Lead/conversion/manual-Deal examples are now checked by the reviewed pure suite.
+
+Recovery target switches deliberately stop the supervisor worker and restart
+only the API. A browser case expecting immediate antivirus processing must start
+that worker explicitly. Do not globally auto-start it inside the upload helper:
+other cases intentionally verify quarantine while scanning is unavailable.
+Retain real scan verdict, blocked-download and exact-byte assertions.
+
+Killing the scanner worker can leave a fenced job lease active for90 seconds
+(`files/worker.py`). A native retry check must observe the actual retry response:
+200 or409 with FILE_SCAN_IN_PROGRESS, then restart the worker and allow the
+existing120-second bounded recovery used by the E2e case. A30-second wait cannot
+prove recovery across that lease. Do not shorten leases, bypass fencing or report
+scan success merely because retry was accepted.
+
+## Measure painted colours and respect modal hiding (2026-10-17)
+
+Computed CSS colours can be OKLab with alpha, not only rgb(). A regex treating
+their numbers as0–255 RGB reported1.404 contrast for charcoal text on the pale
+`bg-muted/40` headings. Resolve colours through the browser's canvas sRGB pixels
+and composite transparent backgrounds through their ancestors before calculating
+WCAG luminance. Keep the4.5:1 assertion and safe element/colour diagnostics; do
+not change valid UI colours to satisfy a broken sampler.
+
+An open Radix modal correctly hides its background from role queries. A screenshot
+guard may check an includeHidden authenticated-shell marker plus absent password/
+private-credential fields; it must not demand that a background notification
+button remain in the active accessibility tree. Do not remove modal isolation.
+
+## Browser journeys must inspect ready screens (2026-10-17)
+
+A URL/API response alone does not prove that the new record's visible panels have
+loaded. Check its exact derived heading and settled loading states before leaving;
+wait for the actual conversion programme chooser before testing Escape or changing
+project mode. The stronger WebKit journey passes repeated runs without filtering
+page errors; prior rapid full-page transitions produced fetch-transport events
+while metadata/history/file requests were cancelled. Standalone caught abort
+probes did not reproduce, so do not invent a general CORS/browser root cause.
+
+For diagnostics, an error name is not automatically safe: Playwright's WebKit
+adapter splits console text at the first colon, including URL schemes. Use
+allowlisted kinds, numeric React codes and ID-redacted paths, never raw message,
+query, input, cookie or credential values.
+
+UI controls for three projects followed by saving only two do not prove the
+three-project database boundary. Exercise actual1/2/3 commits, ordered projections,
+same-key replay and immutable history; separately reject four/duplicates.
+
+## Responsive checks must allow scrollbar gutters (2026-10-17)
+
+A document can be narrower than innerWidth when its vertical scrollbar reserves
+space. Test the actual no-overflow requirement (`scrollWidth <= innerWidth`), not
+equality. After viewport changes, use a short bounded poll for ResizeObserver
+and chart reflow; persistent overflow must still fail. Do not hide it with shell
+overflow clipping. A focused first poll used equality and rejected a valid305px
+document in a320px viewport; the corrected real service-restart/resize case passes.
+
+A responsive chart can still report its previous desktop SVG width immediately
+after Playwright changes the viewport. The dashboard's `ParentSize` observer is
+debounced, so the shared geometry helper now waits two animation frames plus20ms
+before sampling. The repeated headed Chrome check then passed at360px across17
+routes. Keep the overflow assertion; settle the real observer instead of hiding it.
+
+When a business vocabulary expands, audit reporting as well as forms and lists.
+The nine-state Lead workflow exposed a chart still querying only the old three
+states. Use explicit authorized pre-pagination aggregates, preserve converted/
+archived exclusions, and verify all states with real records rather than updating
+only labels or fabricating grouped counts from one page.
+
 ## Local defaults are not production endpoint constraints (2026-10-16)
 
 An unconditional `Literal["127.0.0.1"]` made ClamAV configuration fail even after
@@ -881,3 +1056,125 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
   in that narrowly scoped publication.
 - Promote to AGENTS.md: no; the exception is documented as managed API startup,
   while the local execution rule remains authoritative for local tools.
+
+## 2026-10-16: validate reserved demo numbers with the installed phone metadata
+
+- A reserved UK drama-number range failed the application's unchanged
+  `phonenumbers` validator during a rollback-only demo-seed rehearsal.
+- Use the reserved North American 202-555-0100 through 202-555-0199 fictional
+  range, which the pinned validator accepts; never substitute arbitrary real
+  mobile numbers or weaken validation for synthetic data.
+- Rehearse the complete seed in one transaction, force deferred constraints,
+  roll back and verify unchanged counts before the explicit additive commit.
+  Preserve the interactive first-admin bootstrap and existing schema guards.
+- Promote to AGENTS.md: no; this is a synthetic-data preparation correction.
+
+## 2026-10-16: shared edit rights must preserve masked associations
+
+- When enabling an agent to edit shared facts, a hidden private-contact link is
+  not an empty association. Omit its ID unless deliberately changed, preserve it
+  on the backend, and check both current and replacement contact scope for changes.
+- If omission means preserve and null means remove, the retry fingerprint must
+  distinguish those intents. A model dump that inserts defaults erases that
+  distinction; test same-key omission versus explicit null before publication.
+- Expand permissions through explicit operations, not a generic agent grant on
+  the inventory command entry point. Leave stock, owner, file and lifecycle
+  commands manager-only unless separately requested.
+- Promote to AGENTS.md: no; current-scope, privacy and retry rules already apply.
+
+## 2026-10-17: qualification is separate from received provenance
+
+- A reference CRM's campaign/source selector is editable business qualification,
+  not permission to rewrite the source/submission that originally created a
+  Lead. Persist and project both concepts separately; map list filters to the
+  intended field rather than silently reusing an old technical-source parameter.
+- Replacing title-based deal creation requires updating strict facade schemas,
+  canonical-client transactions, fixture creators and immutable SQL snapshots
+  together. New UI fields alone do not establish a real conversion workflow.
+- Retain denied, stale, interrupted and replay assertions when adapting old
+  tests. A test that expects the retired free-title or drawer UI must exercise
+  the replacement action, not delete its business/security coverage.
+- Promote to AGENTS.md: no; the existing vertical-slice and current-authority
+  rules cover this correction.
+
+## 2026-10-17: parse pytest module paths before parameter text
+
+- Reviewed-unit selection previously split the entire node ID on `/`. A ClamAV
+  version or HTTPS URL inside a parameter value was then mistaken for the module
+  path, silently deselecting reviewed units. Partition on `::` first and resolve
+  separators only inside the module path. Keep the explicit module/node allowlist
+  and connection-refusal fixture; unreviewed database tests must still fail closed.
+- Regression cases include slash-bearing parameter values, Windows paths and
+  unreviewed tests whose parameter text resembles an allowed module. The corrected
+  selection runs217 units; its552 deselections are not passing evidence.
+- Protocol tests must assert exact transmitted bytes and verdicts, not whether a
+  length prefix and payload happen to share one `sendall` call. Preserve endpoint,
+  timeout, signature, rejection and incomplete-response assertions.
+- Promote to AGENTS.md: no; this is a test-selector/protocol assertion correction.
+
+## 2026-10-17: populate the historical schema before testing its upgrade
+
+- New qualification/history retention guards correctly refuse downgrading current
+  populated contacts/deals. Do not disable those guards to satisfy an older test.
+  Downgrade the empty, lease-guarded isolated target first, insert explicit columns
+  valid in that old revision, then upgrade and compare every original fact. Restore
+  head in finally, including when legacy fixture insertion or assertions fail.
+- Compare historical JSON projections without only the specifically identified
+  additive columns. Preserve IDs, values, actor/origin/history and later workflow
+  assertions; a populated downgrade refusal is not evidence of a populated upgrade.
+- Command receipts are not detail DTOs. Read the authorized detail/model when
+  asserting a derived deal title rather than assuming the command returns it.
+- Promote to AGENTS.md: no; existing isolated-target and evidence rules already apply.
+
+## 2026-10-18: filter debounce must not undo an applied numbered page
+
+- Do not schedule a filter-application timer for an unchanged initial draft.
+  Explicit Apply must cancel a still-pending debounce; otherwise a later timer
+  can silently reset page2 to1. Test both races and preserve real draft debounce,
+  invalid-date/incomplete-country handling and numbered page behavior.
+- Browser clock setup belongs after real hydration/data settle. Avoid pauseAt
+  using the caller's current timestamp across IPC (it can already be in the
+  past). Exercise Apply through the actual mobile Sheet, not a button hidden
+  by the desktop automatic-filter layout. Model-based unit tests do not replace
+  the real browser regression.
+- Test fixtures cannot depend on ignored workstation output. Version unchanged
+  synthetic fixture bytes outside public/runtime assets, retain provenance and
+  hashes, and verify the same case from a clean hosted checkout.
+- Promote to AGENTS.md: no; the existing inspected-source, repeatable-verification
+  and truthful-evidence rules cover these corrections.
+
+## 2026-10-18: full regression must expose fixture and load failures
+
+- Discover actual representative browser selections: renamed test titles can
+  silently disappear from a cumulative regex. Protect required journeys with a
+  real discovery-only unit, not assumed arithmetic.
+- Responsive test helpers must await the panel matching the application's media
+  query, not infer desktop from a transient hidden mobile trigger. Synthetic
+  actor cleanup belongs in finally even if browser cleanup itself throws.
+- Additive migrations preserve legacy benchmark records. Validate exact known
+  distributions independently rather than reseeding, rewriting or asserting a
+  newer fixture's totals against preserved old data. Unknown counts fail closed.
+- Establish all benchmark sessions before the documented workload warm-up; keep
+  failed setup/request samples and original users/duration/p95 limits. Zero
+  errors is not a latency pass. Publish a draft with the blocker, never merge
+  solely because functional CI is green while the load gate fails.
+- Promote to AGENTS.md: no; existing scoped execution/evidence/merge rules apply.
+- Integrity-pinned checker wrappers can share an extraction cache. Run the same
+  tool's staged/history invocations serially; parallel extraction can collide
+  even when both scans eventually succeed. Do not suppress installation errors.
+
+## 2026-10-18: aggregate load needs scoped SQL reuse, not weaker limits
+
+- Profile actual SQL before changing pools or timeouts. Repeated contact/stock
+  membership work across metrics can dominate a small team's dashboard under
+  concurrent load. Query-local shared scopes must preserve current identity,
+  repeatable-read isolation, private counts, stock levels and every drill-down.
+  Test populated parity for all roles and a concurrent ownership change.
+- In a PostgreSQL UNION, driver bind-type hints alone do not reliably type NULL
+  branches before a later numeric branch. Use an explicit SQL numeric cast and
+  verify empty collections, nonempty decimal corrections and ordered chart rows.
+- A low-load profile is not a p95 pass. Retain failed setup/request windows and
+  require the original measured users/duration/sample/latency gates. Diagnostic
+  counters may expose phases and exception classes, never raw credential-bearing
+  startup errors; unexpected user errors must fail the load result.
+- Promote to AGENTS.md: no; existing isolation/security/evidence rules apply.

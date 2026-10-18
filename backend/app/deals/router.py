@@ -10,6 +10,7 @@ from app.deals.commands import Body, command
 from app.deals.contracts import (
     ChildQuery,
     CloseDeal,
+    ConvertLead,
     DealQuery,
     EditCustomerOffer,
     EditDeal,
@@ -54,6 +55,13 @@ def deals(
 @router.post("/deals")
 def create(request: Request, token: Proof, key: RetryKey, body: NewDeal) -> dict[str, object]:
     return mutate(request, token, key, body)
+
+
+@router.post("/enquiries/{eid}/convert")
+def convert_lead(
+    request: Request, token: Proof, key: RetryKey, eid: UUID, body: ConvertLead
+) -> dict[str, object]:
+    return mutate(request, token, key, body, eid)
 
 
 @router.get("/deals/{did}")

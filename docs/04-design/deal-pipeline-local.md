@@ -4,6 +4,13 @@ Status: implementation present; actual acceptance belongs to
 [SP-11 evidence](../03-planning/sprints/sp-11-evidence.md). This supplements the
 future-facing API, model and architecture; it does not implement SP-12 onward.
 
+2026-10-17 owner-requested IMMO World alignment replaces the earlier free-title/
+no-conversion creation contract. The workflow below describes current source;
+its new full-page workflow and local technical verification are complete in the
+[alignment record](../03-planning/leads-deals-immoworld-alignment.md). Human product
+acceptance and hosted deployment remain separate. Historical SP-11 verification
+does not certify this replacement or a hosted deployment.
+
 ## Authority and wire contract
 
 The current responsible agent is derived through `deal.contact_id`. Managers/
@@ -20,11 +27,40 @@ session/facade authority applies. Commands require Origin, CSRF and UUID
 Idempotency-Key. Next validates the exact route/method/query/body/response,
 uses server-only verified HTTPS and no-store responses, not a generic proxy.
 
-Create fields: contact_id, nullable enquiry_id, title, nullable requirement_id,
-nullable offering_id paired with nullable expected_offering_version, next_action,
-ordinary stage (default new). PATCH accepts title, requirement/offering pair,
-next_action and expected_version only, never contact/origin/enquiry/stage/owner.
-Creating an affaire leaves the enquiry intact.
+Manual create requires exactly one of accessible contact_id or new_contact.
+New contacts reuse the canonical contact/profile/phone/ownership command inside
+the same transaction, including scoped duplicate handling. Required qualification:
+positive/reference-band initial_budget, one to eight distinct purchase_reasons,
+and one to three distinct projects. A project chooses exactly one development_id,
+standalone property_id or external_name (1–160 characters). Archived/missing
+catalogue targets fail; units are selected through their development. Projects
+express client interest, not a reservation or committed inventory target.
+
+Shared create/edit fields include campaign_source (the20-channel catalogue),
+rating=cold|warm|hot, nullable payment_method=cash|mortgage|installments|mixed|
+bank_finance|developer_finance, nullable strict number_of_rooms0–50, notes≤4000,
+nullable requirement_id, offering_id paired with expected_offering_version, and
+next_action≤1000. Languages are required on the canonical contact. The server
+derives the display title from client and first project; input title is refused.
+Manual creation has no enquiry_id and does not alter a lead. Default stage=new;
+other ordinary active initial stages remain permitted.
+
+PATCH accepts these fields plus expected_version and optional contact_fields
+(canonical profile plus its own expected_version). A profile edit and deal
+qualification edit commit together or neither commits. No generic PATCH can
+change contact identity, origin, enquiry, stage, ownership or stock. A stale
+contact also yields DEAL_VERSION_CONFLICT without private profile disclosure.
+Client/profile and project qualification snapshots are appended to each new
+history revision; prior history and legacy facts are not invented or rewritten.
+
+`POST /api/v1/enquiries/{id}/convert` is the only lead-conversion command. It
+requires expected_version, exactly one project, initial_budget and distinct
+purchase_reasons. It reuses the contact and current ownership, inherits source,
+rating and notes, creates the qualified deal, marks the lead converted and
+records both histories atomically. Converted leads leave the default prospect
+list and remain available through status=converted. Conflicting active conversion,
+stale/private/archived requests cannot create another deal. Retry reauthorizes
+current lead/contact scope before returning its existing result.
 
 Fixed codes: new,visit,negotiation,reserved,documents,won,lost,cancelled. Ordinary
 SP-11 create/transition permits only new,visit,negotiation,documents. A transition
@@ -46,8 +82,9 @@ original amounts/periods.
 Technical proposals: title160, next-action/reason1000, conditions4000 characters;
 numeric(18,2) positive money,16 integer digits/2 decimals;32KiB command body,
 2MiB facade response; page1–1,000,000/size1–100, list50/history-proposals20 defaults.
-List filters: contact_id,q (literal escaped text160),stage,assigned_agent_id
-(current contact responsible),offering_kind,updated_from/to (inclusive Casablanca
+List filters: contact_id,q (literal escaped text160, including project names),
+stage,assigned_agent_id (current contact responsible),offering_kind,campaign_source,
+rating,country,language,development_id,property_id,updated_from/to (inclusive Casablanca
 dates),archive active/archived/all,sort -updated_at/-created_at/title/contact_name.
 All eight stage_counts describe exactly the authorized filtered set. Children
 accept only page/page_size. Unknown/duplicate parameters fail422.

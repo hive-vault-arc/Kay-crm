@@ -33,6 +33,8 @@ build/
 test-results/
 playwright-report/
 playwright/.cache/
+/frontend/.playwright-cli/
+/tmp/
 coverage/
 artifacts/
 .DS_Store

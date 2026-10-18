@@ -1,6 +1,47 @@
 # Mandatory UI skill rules for KAY sprints
 
+Current visual-brand override,2026-10-18: Khalid selected
+[Riviera](../../branding/riviera/README.md) for shared colors, typography and
+component styling. Existing CRM layouts, Iconsax, shadcn/Tailwind/Bklit and
+functional contracts remain. Riviera supersedes older palette, system/Satoshi
+font and sidebar-color guidance in historical entries below. It does not select
+unrelated AFTER findings or authorize illustrative functionality/data.
+
+## Owner-requested Riviera rebrand: explicit current-task override (2026-10-18)
+
+Under [D36](../../decisions.md), Khalid replaced the app-wide palette and
+typography with the supplied [Riviera pack](../../branding/riviera/README.md),
+dashboard image and CRM UX guides. Riviera now owns colors, fonts, panel/control
+styling and dashboard composition. Existing route layouts and business copy,
+Iconsax, shadcn/Tailwind/Bklit, responsive behavior and all API/permission/data
+contracts remain binding. Reference sample values are illustrative and never
+become live dashboard data. The desktop rail gains an accessible collapse
+control and reuses the existing login line art; 72px is a documented geometry
+proposal pending visual verification. This branding request supersedes older
+visual colors/type and the pure-black-rail choice, not Approved V3 layout
+patterns or the project's AFTER-only timing for aesthetic audit findings.
+
+Final evidence: headed Chrome checks17 routes at1440px/360px and all5 shell
+cases, with the 224px/72px collapse keyboard-operable and no measured overflow,
+contrast or touch-target failures. The one detector returns `[]`;
+[AFTER026](../../anti-slop/audit-026-2026-10-18.md) has0 new numbered findings.
+The shared execution ledger records commands, captures and limits. The72px
+collapsed width remains a proposal pending Khalid's product/design review.
+
 ## Approved V3 redesign: explicit current-task override (2026-10-16)
+
+### Owner-requested compact-space rule (2026-10-16)
+
+Khalid explicitly requested removing the broad unused gutters and top/bottom
+space shown on `/login`. Apply the compact-space rule in [DESIGN.md](../../DESIGN.md)
+and the [design system](../04-design/design-system.md): full-page frames use the
+available width, outer padding stays small, and max-widths remain only when they
+protect reading/form usability. Preserve meaningful internal spacing, touch
+targets, safe areas and dialog clearance. This does not mean stripping every gap
+or rewriting historical Markdown whitespace. The present source change is
+limited to login; other routes keep their approved V3 geometry until they are
+individually reviewed. The user's explicit request authorizes this login fix;
+no unrelated AFTER-only finding is being applied.
 
 The user's redesign request explicitly requires antislop **during** implementation,
 not only afterward. It was applied alongside design-system-ops, responsive,

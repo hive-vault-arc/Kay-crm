@@ -454,9 +454,12 @@ async def test_http_auth_strict_queries_bodies_and_delete(settings, database):
 
 
 def test_populated_migration_preservation_and_nonempty_downgrade_refusal(settings, database):
-    _, token, contact = setup(settings, database)
+    from tests.legacy_support import contact as legacy_contact
+
+    uid, token = actor(settings, database)
     assert migrate("downgrade", "0011_file_session_binding").returncode == 0
     try:
+        contact = legacy_contact(database, uid)
         assert migrate("upgrade", "head").returncode == 0
         rid = UUID(run(settings, database, token, new(contact))["id"])
         assert migrate("downgrade", "0011_file_session_binding").returncode != 0

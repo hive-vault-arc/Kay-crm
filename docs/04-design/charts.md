@@ -1,5 +1,17 @@
 # KAY charts with Bklit UI
 
+## Riviera colors (2026-10-18)
+
+Use the [Riviera stage/category tokens](../../branding/riviera/README.md) through
+`--riviera-color-stage-*-fill`. Prospects: blue new, cyan contacted/in-progress,
+yellow follow-up, purple analysis, green qualified, orange not-qualified, red
+lost, pink junk and slate closed. Deals: blue new, cyan visit, orange negotiation,
+yellow reserved, purple documents, green won, red lost and slate cancelled.
+Contributor bars retain stable agent-index colors, not invented stage/period
+allocations. Semantic feedback colors are distinct from these categorical fills.
+Keep Bklit geometry, live scoped counts, zero legends, exact data alternatives,
+MAD and Casablanca handling. The guide's agent allocations are illustrative only.
+
 Status: SP-17 local Bklit bar source installed; scoped verification in execution ledger  
 Date: 2026-10-14  
 Confirmed decision: use Bklit UI for every KAY frontend chart; no substitute chart library without a new KAY decision.  
