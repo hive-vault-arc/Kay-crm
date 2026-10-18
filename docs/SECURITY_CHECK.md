@@ -11,7 +11,16 @@ no authorization predicate, timeout, pool limit or business rule is weakened.
 
 Benchmark tooling accepts only independently counted exact old/new synthetic
 distributions, retains failed logins/requests and the100-user/60s/p95 gates.
-Its load gate currently fails latency and blocks merge. Only the guarded local
+Its initial load gate fails latency; the owner-directed read-only SQL repair
+subsequently passes unchanged100-user/60s/p95 limits (latest322.455ms ordinary/
+574.745ms dashboard,7026 completed/0 failures). Agent scopes materialize only
+inside one current-identity-validated read-only repeatable-read statement; no
+cross-request authority/count cache, schema, pool or timeout change. Populated
+three-role drill parity, private counts, decimal corrections and concurrent
+transfer pass. Unexpected benchmark-user errors now explicitly fail the gate;
+startup diagnostics expose phase counts/error classes, never raw tracebacks or
+credential inputs. Intermediate setup failures remain disclosed. Final exact-
+head functional/security gates are still required before merge. Only the guarded local
 synthetic benchmark was migrated0022→0026; no development/remote DB migration,
 real account/password change, retention CLI, real import/export or external
 message occurred. Main's automatic demo deployment is owner-approved only after

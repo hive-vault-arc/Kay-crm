@@ -1,12 +1,13 @@
 # KEPVY for KAY: specification index
 
 The 2026-10-18 [full regression/publication record](docs/03-planning/full-regression-publication-2026-10-18.md)
-tracks the current combined CRM candidate, corrected failures and actual release
-gates. This request authorizes feature-branch publication and a tested PR, unlike
-the earlier local-only task records below. Main promotion still requires genuine
-checks and the full-volume load gate, which currently fails latency limits.
-Main therefore remains on hold. The owner confirmed the automatic Vercel target
-is a demo; no remote database operation is inferred from that approval.
+tracks the combined CRM candidate, retained failures and the owner-directed load
+repair. The request authorizes feature-branch publication and a tested PR, unlike
+the earlier local-only task records below. Main promotion requires genuine
+functional/security and full-volume load gates; actual final hosted results are
+recorded in [PR15](https://github.com/hive-vault-arc/Kay-crm/pull/15). The owner
+confirmed the automatic Vercel target is a demo; no remote database operation
+is inferred from that approval.
 
 The owner-provided [12 blank real-estate document models](docs/reference/real-estate-document-templates/README.md)
 are now stored in the project for the next PDF-generation task. The originals

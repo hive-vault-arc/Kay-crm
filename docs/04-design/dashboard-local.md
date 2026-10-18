@@ -16,6 +16,19 @@ resolves activity UTC bounds, not browser or PostgreSQL's differing timezone dat
 Each response identifies now/today/time_zone/scope; period reports also carry
 start_on/end_on. READ ONLY REPEATABLE READ preserves one request snapshot.
 
+The owner-directed2026-10-18 load repair combines dashboard aggregates into one
+SQL statement while retaining each metric's canonical dataset and the exact
+drill-down projection. Agent contact/offering-ID sets are materialized only
+inside that statement and reused across metrics; no IDs, authority or totals
+are cached across requests. Agency queries retain their ordinary scope. Current
+identity is still validated first in the same read-only snapshot. Ordered chart
+groups, zero metrics and exact decimal collections use the shared projection.
+Three-role populated/private drill parity, concurrent transfer and one-metric-
+statement checks supplement the existing tests. See the
+[regression ledger](../03-planning/full-regression-publication-2026-10-18.md)
+for actual full-volume measurements and retained failures; no pool/query timeout
+or permission limit is increased.
+
 Dashboard metrics have key/label/total/value/unit/basis/denominator/series.
 Numbers are absolute, denominator=none. Money is an exact decimal string, MAD;
 count values are integer strings. The three Bklit chart series group contacts by

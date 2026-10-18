@@ -386,3 +386,70 @@ documentation validation pass (1195 links/22 sprints/41 acceptance mappings/
 Parallel invocations briefly collide while extracting their shared tool cache;
 both scans are rerun serially rather than treating that noisy invocation as the
 final tool-installation evidence. No application/source result changes.
+
+## Owner-directed load-performance repair
+
+After reviewing the load failure, Khalid explicitly chooses “Keep it draft and
+fix load performance before merging.” No demo load exception is granted.
+The published baselinebc686c1 passes actual automatic `CI required` (both push
+and PR runs), Vercel preview build, and hosted full backend job; its manual browser
+job is still running. New performance edits require a new exact-head gate.
+
+Read-only parameter-free SQL profiles identify repeated authorized contact/stock
+sets across dashboard metrics and an unnecessary default Lead outer contact join.
+The proposed repair reuses agent contact/stock sets as query-local materialized
+CTEs and combines exact per-metric aggregates into one SQL statement inside the
+existing read-only repeatable-read request. Agency metrics retain their original
+unmaterialized scope; no cross-request cache, new table/index, timeout, pool or
+authorization change. Dashboard and drill-down use one shared response projection;
+series ordering and exact decimal collections remain. Lead name sort retains its
+necessary contact join; other sorts use the same authorized contact-ID subquery.
+
+The first combined-query probe exposes PostgreSQL's unknown-NULL union type
+resolution; numeric placeholders are explicitly SQL-cast rather than relying on
+driver bind hints. Agency and agent probes then succeed. Sampled agent dashboard
+SQL is139.485ms/one metric statement (98.844ms EXPLAIN), agency384.808ms; these
+low-load probes are not a full-volume pass. Three new PostgreSQL role cases
+require exactly one metric query after current-identity validation and complete
+populated/private dashboard-to-drill parity. All reporting/count/contact focused
+tests pass49/49 in61.80s, including decimal correction and concurrent transfer.
+Ruff/format/mypy pass. A fresh unchanged100-user benchmark follows after pausing
+only the exact restored preview process trees; port8000 remains untouched.
+
+The first repaired full-volume run **passes**:100 sessions/all logins200,
+4 API processes, minimum100 steady users,60.323s,6964 started/completed requests,
+0 failures. Exact p95ms: detail157.685, contacts245.007, enquiries370.982,
+notes189.430, properties199.253, dashboard673.635. Every route has≥708 samples;
+limits remain1000ms ordinary/2000ms dashboard. No target, rate, think time,
+duration, pool, timeout or authorization reduction. The prior load failures
+remain above. A second independent full-volume run verifies repeatability before
+final candidate publication and complete exact-head regression.
+
+The next repeat fails before measurement:97 responses/ready users (all observed
+responses200), no measured traffic. This is not silently counted as another
+latency pass. Setup phase/user-error-type counters are added; startup exceptions
+retain only their class, stop that synthetic user without credential-bearing
+tracebacks, and still fail the full100-user gate. Unexpected user errors now also
+explicitly fail the result. No retries, deadline increases or reduced targets.
+The following run passes100 assigned/requested/responded/ready,0 error types,
+60.208s,6575 started/completed/0 failures. P95ms: detail255.590, contacts379.716,
+enquiries549.801, notes302.876, properties313.336, dashboard869.072.
+
+The baseline manual workflow finishes with backend836/836 passed737.60s, but
+browser75 passed/1 failed/39 not run in17.8m. The failure is a missing renamed
+programme label after agent save, not a permission-denial result. Its test now
+also requires the actual PATCH200 and persisted name/briefing, without increasing
+timeouts. Both Projects permission journeys pass three repetitions:6/6 in2.9m;
+the failed journey19.3/20.5/18.1s. Original hosted cause remains unconfirmed; a
+complete clean exact-head hosted browser run remains mandatory before merge.
+
+The final guarded load confirmation passes:100 assigned/requested/responded/
+ready, all login200, no unexpected user errors,4 workers, minimum100 steady
+users,60.244s,7026 started/completed requests,0 failures. P95ms: detail141.896,
+contacts232.695, enquiries322.455, notes157.212, properties189.665,
+dashboard574.745. All six routes pass unchanged sample/latency limits.
+The original setup/latency failures stay retained; no production/network-global
+setting is changed or unique cause invented for the intermittent missing setup
+responses. Complete local839-case regression now runs serially with real ClamAV;
+final browser/hosted checks follow on the new source. Live PR results avoid an
+evidence-only commit invalidating an already tested candidate SHA.

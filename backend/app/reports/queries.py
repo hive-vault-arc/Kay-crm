@@ -4,13 +4,14 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any, cast
 
-from sqlalchemy import Select, func, select, text
+from sqlalchemy import Numeric, Select, String, func, literal, select, text, union_all
+from sqlalchemy import cast as sql_cast
 from sqlalchemy.orm import Session
 
 from app.db.session import Database
-from app.identity.sessions import current_identity
+from app.identity.sessions import CurrentIdentity, current_identity
 from app.reports.contracts import DrillQuery, ExceptionQuery, PeriodQuery
-from app.reports.datasets import dataset, exceptions
+from app.reports.datasets import dataset, exceptions, snapshot_scope
 from app.work.queries import clock_context, page
 
 LABELS = {
@@ -32,10 +33,25 @@ PERIOD_METRICS = {"enquiries", "won", "lost", "cancelled", "activities", "collec
 CHART_METRICS = {"contacts", "won", "activities"}
 
 
+def metric_view(
+    metric: str, total: int, value: object, series: list[dict[str, object]]
+) -> dict[str, object]:
+    return {
+        "key": metric,
+        "label": LABELS[metric],
+        "total": total,
+        "value": format(Decimal(str(value)), ".2f") if metric == "collections" else str(total),
+        "unit": "MAD" if metric == "collections" else "count",
+        "basis": "period" if metric in PERIOD_METRICS else "current",
+        "denominator": "none",
+        "series": series,
+    }
+
+
 def aggregate(session: Session, statement: Select[Any], metric: str) -> dict[str, object]:
     source = statement.subquery()
     value = None
-    series = []
+    series: list[dict[str, object]] = []
     if metric in CHART_METRICS:
         groups = session.execute(
             select(source.c.attribution_id, source.c.attribution_label, func.count())
@@ -51,16 +67,47 @@ def aggregate(session: Session, statement: Select[Any], metric: str) -> dict[str
         total = cast(int, count_value)
     else:
         total = session.scalar(select(func.count()).select_from(source)) or 0
-    return {
-        "key": metric,
-        "label": LABELS[metric],
-        "total": total,
-        "value": format(Decimal(str(value)), ".2f") if metric == "collections" else str(total),
-        "unit": "MAD" if metric == "collections" else "count",
-        "basis": "period" if metric in PERIOD_METRICS else "current",
-        "denominator": "none",
-        "series": series,
-    }
+    return metric_view(metric, total, value, series)
+
+
+def grouped_statement(statement: Select[Any], metric: str) -> Select[Any]:
+    source = statement.subquery()
+    chart = metric in CHART_METRICS
+    result = select(
+        literal(metric).label("metric"),
+        source.c.attribution_id if chart else literal(None, String),
+        source.c.attribution_label if chart else literal(None, String),
+        func.count().label("total"),
+        func.coalesce(func.sum(source.c.value), 0)
+        if metric == "collections"
+        else sql_cast(literal(None), Numeric),
+    ).select_from(source)
+    return result.group_by(source.c.attribution_id, source.c.attribution_label) if chart else result
+
+
+def dashboard_metrics(
+    session: Session, identity: CurrentIdentity, query: PeriodQuery, clock: datetime
+) -> list[dict[str, object]]:
+    keys = [metric for metric in LABELS if metric != "collections" or identity.user.role != "agent"]
+    scope = snapshot_scope(identity) if identity.user.role == "agent" else None
+    statements = [
+        grouped_statement(dataset(identity, metric, query, clock, scope), metric) for metric in keys
+    ]
+    groups: dict[str, list[Any]] = {key: [] for key in keys}
+    combined = union_all(*statements).order_by("metric", "attribution_label", "attribution_id")
+    for row in session.execute(combined):
+        groups[row[0]].append(row)
+    return [
+        metric_view(
+            metric,
+            sum(row[3] for row in groups[metric]),
+            groups[metric][0][4] if metric == "collections" else None,
+            [{"id": row[1], "label": row[2], "value": row[3]} for row in groups[metric]]
+            if metric in CHART_METRICS
+            else [],
+        )
+        for metric in keys
+    ]
 
 
 def metadata(query: PeriodQuery, now: datetime, role: str) -> dict[str, object]:
@@ -80,12 +127,9 @@ def dashboard(
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
         identity = current_identity(session, token)
-        metrics = [
-            aggregate(session, dataset(identity, metric, query, clock), metric)
-            for metric in LABELS
-            if metric != "collections" or identity.user.role != "agent"
-        ]
-        return metadata(query, clock, identity.user.role) | {"metrics": metrics}
+        return metadata(query, clock, identity.user.role) | {
+            "metrics": dashboard_metrics(session, identity, query, clock)
+        }
 
 
 def href(kind: str, target: str) -> str:

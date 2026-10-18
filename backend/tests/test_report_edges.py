@@ -15,7 +15,7 @@ from app.main import create_app
 from app.reports.contracts import DrillQuery, ExceptionQuery, PeriodQuery
 from app.reports.datasets import dataset
 from app.reports.queries import dashboard, drill_down, exception_list
-from tests.contact_support import actor
+from tests.contact_support import actor, create_lead, new_lead
 from tests.deal_support import setup
 from tests.test_finance import create, execute, fixture, receipt
 from tests.test_foundation import client_for
@@ -24,6 +24,33 @@ from tests.test_reports import PERIOD, metrics
 from tests.test_reservations import project_fixture
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
+
+
+@pytest.mark.parametrize("role", ["agent", "manager", "administrator"])
+def test_one_metric_statement_preserves_populated_scoped_drill_parity(settings, database, role):
+    _, agent, _, _ = setup(settings, database)
+    _, outsider = actor(settings, database)
+    create_lead(settings, database, outsider, new_lead("+212600000002"))
+    token = agent if role == "agent" else actor(settings, database, role)[1]
+    reads = []
+
+    def observe(connection, cursor, statement, parameters, context, many):
+        if statement.lstrip().upper().startswith(("SELECT", "WITH")):
+            reads.append("report" if "count(" in statement else "identity")
+
+    event.listen(database.engine, "before_cursor_execute", observe)
+    try:
+        report = dashboard(database, token, PERIOD)
+    finally:
+        event.remove(database.engine, "before_cursor_execute", observe)
+    assert reads == ["identity", "report"]
+    contact_metric = next(item for item in report["metrics"] if item["key"] == "contacts")
+    assert contact_metric["total"] == (1 if role == "agent" else 2)
+    for metric in report["metrics"]:
+        detail = drill_down(
+            database, token, DrillQuery(metric=metric["key"], **PERIOD.model_dump())
+        )
+        assert detail["metric"] == metric
 
 
 def test_collections_decimal_leaf_correction_period_and_reopen_independence(settings, database):

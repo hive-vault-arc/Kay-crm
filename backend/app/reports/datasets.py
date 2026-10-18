@@ -1,10 +1,12 @@
 """One SQL rowset per metric, reused verbatim by totals, chart groups and pages."""
 
+from dataclasses import dataclass
 from datetime import UTC, datetime, time, timedelta
 from typing import Any
 
 from sqlalchemy import Select, String, and_, cast, func, literal, or_, select, true, union_all
 from sqlalchemy.orm import aliased
+from sqlalchemy.sql.selectable import CTE
 
 from app.contacts.access import contact_scope
 from app.contacts.history_models import TimelineEvent
@@ -35,10 +37,10 @@ def contacts(identity: CurrentIdentity) -> Select[Any]:
     return select(Contact).where(contact_scope(identity), Contact.archived_at.is_(None))
 
 
-def offering_scope(identity: CurrentIdentity) -> Any:
+def offering_scope(identity: CurrentIdentity, contact_ids: Select[Any] | None = None) -> Any:
     if identity.user.role != "agent":
         return true()
-    cids = contacts(identity).with_only_columns(Contact.id)
+    cids = contacts(identity).with_only_columns(Contact.id) if contact_ids is None else contact_ids
     deals = select(Deal.offering_id).where(Deal.contact_id.in_(cids))
     shortlists = (
         select(ShortlistEntry.offering_id).join(Requirement).where(Requirement.contact_id.in_(cids))
@@ -46,28 +48,62 @@ def offering_scope(identity: CurrentIdentity) -> Any:
     return or_(Offering.id.in_(deals), Offering.id.in_(shortlists))
 
 
-def stock_scope(identity: CurrentIdentity, kind: str) -> Any:
-    scoped = select(Offering).where(offering_scope(identity))
+@dataclass(frozen=True)
+class ReportScope:
+    contacts: CTE
+    offerings: CTE
+
+
+def snapshot_scope(identity: CurrentIdentity) -> ReportScope:
+    cids = (
+        contacts(identity)
+        .with_only_columns(Contact.id)
+        .cte("report_contacts")
+        .prefix_with("MATERIALIZED", dialect="postgresql")
+    )
+    offerings = (
+        select(Offering.id, Offering.property_id, Offering.development_id)
+        .where(offering_scope(identity, select(cids.c.id)))
+        .cte("report_offerings")
+        .prefix_with("MATERIALIZED", dialect="postgresql")
+    )
+    return ReportScope(cids, offerings)
+
+
+def stock_scope(identity: CurrentIdentity, kind: str, scope: ReportScope | None = None) -> Any:
     if identity.user.role != "agent":
         return true()
-    if kind == "property":
-        return Property.id.in_(scoped.with_only_columns(Offering.property_id))
-    property_projects = select(Property.development_id).where(
-        Property.id.in_(scoped.with_only_columns(Offering.property_id))
+    scoped = (
+        select(scope.offerings)
+        if scope is not None
+        else select(Offering).where(offering_scope(identity))
     )
+    property_ids = scoped.with_only_columns(scoped.selected_columns.property_id)
+    development_ids = scoped.with_only_columns(scoped.selected_columns.development_id)
+    if kind == "property":
+        return Property.id.in_(property_ids)
+    property_projects = select(Property.development_id).where(Property.id.in_(property_ids))
     return or_(
-        Development.id.in_(scoped.with_only_columns(Offering.development_id)),
+        Development.id.in_(development_ids),
         Development.id.in_(property_projects),
     )
 
 
 def dataset(
-    identity: CurrentIdentity, metric: str, period: PeriodQuery, now: datetime
+    identity: CurrentIdentity,
+    metric: str,
+    period: PeriodQuery,
+    now: datetime,
+    scope: ReportScope | None = None,
 ) -> Select[Any]:
     start, end = period.resolved(now)
     lower = datetime.combine(start, time(), ZONE).astimezone(UTC)
     upper = datetime.combine(end + timedelta(days=1), time(), ZONE).astimezone(UTC)
-    cids = contacts(identity).with_only_columns(Contact.id)
+    cids = (
+        select(scope.contacts.c.id)
+        if scope is not None
+        else contacts(identity).with_only_columns(Contact.id)
+    )
     blank = literal(None, String)
 
     one = literal(1)
@@ -173,11 +209,11 @@ def dataset(
         )
     if metric == "developments":
         return rows(Development.id, Development.name, "development").where(
-            Development.archived_at.is_(None), stock_scope(identity, "development")
+            Development.archived_at.is_(None), stock_scope(identity, "development", scope)
         )
     if metric in ("units", "standalone"):
         return rows(Property.id, Property.reference, "property").where(
-            stock_scope(identity, "property"),
+            stock_scope(identity, "property", scope),
             Property.development_id.is_not(None)
             if metric == "units"
             else Property.development_id.is_(None),
@@ -192,7 +228,9 @@ def dataset(
         .outerjoin(Property, Property.id == Offering.property_id)
         .outerjoin(Development, Development.id == Offering.development_id)
         .where(
-            offering_scope(identity),
+            Offering.id.in_(select(scope.offerings.c.id))
+            if scope is not None and identity.user.role == "agent"
+            else offering_scope(identity),
             Offering.is_current,
             Offering.property_id.is_not(None)
             if metric == "property_offerings"

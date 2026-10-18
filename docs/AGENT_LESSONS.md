@@ -1162,3 +1162,19 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
 - Integrity-pinned checker wrappers can share an extraction cache. Run the same
   tool's staged/history invocations serially; parallel extraction can collide
   even when both scans eventually succeed. Do not suppress installation errors.
+
+## 2026-10-18: aggregate load needs scoped SQL reuse, not weaker limits
+
+- Profile actual SQL before changing pools or timeouts. Repeated contact/stock
+  membership work across metrics can dominate a small team's dashboard under
+  concurrent load. Query-local shared scopes must preserve current identity,
+  repeatable-read isolation, private counts, stock levels and every drill-down.
+  Test populated parity for all roles and a concurrent ownership change.
+- In a PostgreSQL UNION, driver bind-type hints alone do not reliably type NULL
+  branches before a later numeric branch. Use an explicit SQL numeric cast and
+  verify empty collections, nonempty decimal corrections and ordered chart rows.
+- A low-load profile is not a p95 pass. Retain failed setup/request windows and
+  require the original measured users/duration/sample/latency gates. Diagnostic
+  counters may expose phases and exception classes, never raw credential-bearing
+  startup errors; unexpected user errors must fail the load result.
+- Promote to AGENTS.md: no; existing isolation/security/evidence rules apply.

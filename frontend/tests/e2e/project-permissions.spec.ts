@@ -27,8 +27,15 @@ test("Project permissions: agent creates and edits projects, structure, units an
     await page.getByRole("link", { name: "Modifier le programme", exact: true }).click();
     await page.getByLabel("Nom du programme", { exact: true }).fill("Programme modifié par agent");
     await page.getByLabel("Présentation partagée (facultative)", { exact: true }).fill("Présentation synthétique révisée.");
-    await page.getByRole("button", { name: "Enregistrer le programme", exact: true }).click();
+    const [saveResponse] = await Promise.all([
+      page.waitForResponse(response => new URL(response.url()).pathname === `/api/v1/developments/${project.id}` && response.request().method() === "PATCH", { timeout: 5000 }),
+      page.getByRole("button", { name: "Enregistrer le programme", exact: true }).click(),
+    ]);
+    expect(saveResponse.status()).toBe(200);
     await expect(page.getByText("Programme modifié par agent", { exact: true })).toBeVisible();
+    const saved = await (await page.request.get(`/api/v1/developments/${project.id}`)).json();
+    expect(saved.name).toBe("Programme modifié par agent");
+    expect(saved.briefing_text).toBe("Présentation synthétique révisée.");
     await page.getByRole("tab", { name: "Offres du programme", exact: true }).click();
     await expect(page.getByRole("button", { name: /Créer une campagne/ })).toHaveCount(0);
     expect((await staffCommand(page, `developments/${project.id}/archive`, { expected_version: 1, reason: "Test synthétique" })).status()).toBe(403);

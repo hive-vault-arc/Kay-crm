@@ -133,11 +133,11 @@ def list_in_session(
         ).all()
         items = list(contact_views(session, records).values())
     else:
-        enquiries = (
-            select(Enquiry)
-            .join(Contact, Contact.id == Enquiry.contact_id)
-            .where(Contact.id.in_(contacts.with_only_columns(Contact.id)))
+        enquiries = select(Enquiry).where(
+            Enquiry.contact_id.in_(contacts.with_only_columns(Contact.id))
         )
+        if query.sort == "name":
+            enquiries = enquiries.join(Contact, Contact.id == Enquiry.contact_id)
         if identity.user.role == "agent":
             enquiries = enquiries.where(Enquiry.assigned_agent_id.is_not(None))
         if query.status:

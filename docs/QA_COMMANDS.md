@@ -3,8 +3,10 @@
 ## Combined CRM regression/publication (2026-10-18)
 
 The [complete chronological ledger](03-planning/full-regression-publication-2026-10-18.md)
-retains failed attempts, corrections and actual boundaries. **Merge is blocked by
-full-volume latency**, even if subsequent hosted functional checks pass.
+retains failed attempts, corrections and actual boundaries. Initial latency
+failures are preserved below; the owner-directed repair subsequently passes the
+unchanged load gate. Final source still requires full exact-head regressions;
+actual hosted outcomes are recorded in [PR15](https://github.com/hive-vault-arc/Kay-crm/pull/15).
 
 | Location | Actual command/check | Result |
 |---|---|---|
@@ -15,12 +17,18 @@ full-volume latency**, even if subsequent hosted functional checks pass.
 | frontend | compiled `playwright.acceptance.config.ts`, complete batches and affected reruns |169 distinct passing variants:112 Chrome and19 each Edge/mobile Chromium/mobile WebKit; initial matrix was not green, intermittent startup/WebKit observations remain disclosed |
 | frontend | compiled `playwright.final-chrome.config.ts`, affected rerun; supplemental `tests/review/iconsax.chrome.spec.ts` |4 native final cases and3 Iconsax cases pass; actual200% zoom, touch, keyboard, synthetic recovery and visual inspection |
 | frontend | `npm.cmd run test:e2e -- --project=chrome --grep 'live shadcn/RHF/Zod/table' --max-failures=1` |Development-only component case1/1 pass48.6s |
-| backend | guarded `APP_ENVIRONMENT=benchmark`; explicit venv `-m alembic upgrade head`, `-m benchmarks.plans`, `-m benchmarks.run` |Benchmark-only upgrade0022→0026, unchanged100/200000/20000 counts;18 plans; final100-user/4-worker run3924 completed/0 failures/62.553s but p95 ordinary max2117.471ms/dashboard3340.722ms: FAIL, limits1000/2000ms unchanged |
+| backend | Initial guarded benchmark `APP_ENVIRONMENT=benchmark`; explicit venv `-m alembic upgrade head`, `-m benchmarks.plans`, `-m benchmarks.run` |Benchmark-only upgrade0022→0026, unchanged100/200000/20000 counts;18 plans; pre-repair3924 completed/0 failures/62.553s but p95 ordinary max2117.471ms/dashboard3340.722ms: FAIL retained, limits1000/2000ms unchanged |
+| backend | Owner-directed repair: `.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_reports.py tests/test_report_edges.py tests/test_lead_counts.py tests/test_contacts.py --maxfail=2` |49 passed61.80s; includes3 new populated/private role cases requiring one metric SQL statement and exact dashboard/drill parity, decimal correction and concurrent transfer |
+| backend | Repaired `APP_ENVIRONMENT=benchmark`; `.venv/Scripts/python.exe -m benchmarks.run`, independent full-volume runs |6964/6575/7026 completed,0 measured failures,100 users/4 workers/>60s; latest p95 ordinary max322.455ms/dashboard574.745ms PASS. Intermediate97-user setup failure retained with new diagnostics, never counted as a measured pass; no retries/target/timeout/pool relaxation |
+| frontend | compiled acceptance config, Chrome `project-permissions.spec.ts --repeat-each=3 --max-failures=2` |6/6 pass2.9m; actual PATCH200/persisted name/briefing added after baseline hosted programme-label failure; cause not claimed fixed, full exact-head hosted browser pass still required |
 | root/frontend | repository/index/private-value checks, redacted staged/full-history Gitleaks, actionlint, repository-only sprint validator; bundle scanner and sanitized report audit |8404 indexed/0 forbidden/7 known private values/0 matches;1195 links/22 sprints/41 AT/13 Mermaid/12 JSON valid;586 JS/0 configured secrets;0 detailed input-bearing report steps |
 
-Automatic CI and manual disposable database/browser integration must run on the
-actual published head; their eventual results belong in the live PR. No main
-merge or remote migration is claimed by this local checkpoint. Existing npm
+Baselinebc686c1 automatic CI passes; manual backend836 passed737.60s but browser
+75 passed/1 failed/39 not run17.8m. Complete local839-test regression is running
+after the performance repair. New automatic CI and manual disposable database/
+browser integration must run on the final published head; their eventual results
+belong in the live PR. No main merge or remote migration is claimed by this
+checkpoint. Existing npm
 runtime audit is clean;9 inherited development-only findings retain the approved
 expiring exception, not a clean full audit. No physical-device/human approval.
 

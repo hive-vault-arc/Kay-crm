@@ -10,6 +10,7 @@ from uuid import uuid4
 import gevent
 from gevent.queue import Queue
 from locust import HttpUser, between, events, task
+from locust.exception import StopUser
 from sqlalchemy import text
 
 from app.db.isolation import assert_isolated
@@ -24,6 +25,8 @@ ACTORS = Queue()
 SAMPLES = defaultdict(list)
 FAILURES = defaultdict(int)
 SETUP_LOGINS = defaultdict(int)
+SETUP_PHASES = defaultdict(int)
+USER_ERRORS = defaultdict(int)
 READY = set()
 STATE = {
     "measuring": False,
@@ -33,6 +36,11 @@ STATE = {
     "started": 0,
     "completed": 0,
 }
+
+
+@events.user_error.add_listener
+def user_error(user_instance, exception, tb, **kwargs):
+    USER_ERRORS[type(exception).__name__] += 1
 
 
 @events.init.add_listener
@@ -103,7 +111,12 @@ def record(name, response_time, exception, context=None, **kwargs):
 @events.quitting.add_listener
 def finish(environment, **kwargs):
     routes = []
-    passed = len(READY) == 100 and STATE["seconds"] >= 60 and STATE["minimum_users"] == 100
+    passed = (
+        len(READY) == 100
+        and STATE["seconds"] >= 60
+        and STATE["minimum_users"] == 100
+        and not USER_ERRORS
+    )
     passed = passed and STATE["started"] == STATE["completed"] == sum(map(len, SAMPLES.values()))
     for name, samples in sorted(SAMPLES.items()):
         ordered = sorted(samples)
@@ -129,6 +142,8 @@ def finish(environment, **kwargs):
             {"role": role, "status": status, "count": count}
             for (role, status), count in sorted(SETUP_LOGINS.items())
         ],
+        "setup_phases": dict(SETUP_PHASES),
+        "user_error_types": dict(USER_ERRORS),
         "minimum_steady_users": STATE["minimum_users"],
         "warmup_after_all_logins_seconds": 15,
         "steady_seconds": STATE["seconds"],
@@ -201,7 +216,21 @@ class KAYBenchmarkUser(HttpUser):
                 STATE["completed"] += 1
 
     def on_start(self):
+        try:
+            if not self.establish_session():
+                raise StopUser
+        except StopUser:
+            raise
+        except Exception as failure:
+            USER_ERRORS[type(failure).__name__] += 1
+            raise StopUser from None
+        # Establish all sessions before the documented fifteen-second workload warm-up.
+        while len(READY) != 100:
+            gevent.sleep(0.1)
+
+    def establish_session(self) -> bool:
         self.actor = ACTORS.get_nowait()
+        SETUP_PHASES["assigned"] += 1
         settings = load_settings()
         self.client.verify = str(BACKEND_ROOT / ".local-data/certificates/ca.pem")
         self.client.trust_env = False
@@ -211,16 +240,18 @@ class KAYBenchmarkUser(HttpUser):
                 "X-Kay-Facade-Secret": settings.facade_secret.get_secret_value(),
             }
         )
+        SETUP_PHASES["request_started"] += 1
         with self.client.post(
             "/api/v1/auth/login",
             json={"email": self.actor["email"], "password": self.actor["password"]},
             name="SETUP login",
             catch_response=True,
         ) as response:
+            SETUP_PHASES["response_received"] += 1
             SETUP_LOGINS[self.actor["role"], response.status_code] += 1
             if response.status_code != 200:
                 response.failure("BENCHMARK_LOGIN_FAILED")
-                return
+                return False
             token = response.json()["session_token"]
         self.client.headers.update(
             {
@@ -229,9 +260,8 @@ class KAYBenchmarkUser(HttpUser):
             }
         )
         READY.add(self.actor["id"])
-        # Establish all sessions before the documented fifteen-second workload warm-up.
-        while len(READY) != 100:
-            gevent.sleep(0.1)
+        SETUP_PHASES["ready"] += 1
+        return True
 
     @task(3)
     def contacts(self):
