@@ -1,6 +1,6 @@
 """SP-19 strict transport and populated non-destructive upgrade."""
 
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 import pytest
 from sqlalchemy import text
@@ -11,8 +11,9 @@ from app.discovery.exports import request_export
 from app.identity.security import csrf_token
 from app.main import create_app
 from tests.contact_support import actor, create_lead
+from tests.legacy_support import contact as legacy_contact
+from tests.legacy_support import property as legacy_property
 from tests.test_foundation import client_for
-from tests.test_inventory import property_draft
 from tests.test_isolation_migrations import migrate
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
@@ -93,18 +94,16 @@ async def test_strict_transport_scope_roles_single_use_origin_and_session_bound_
 def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refuses_evidence(
     settings, database
 ):
-    _, agent = actor(settings, database)
-    _, manager = actor(settings, database, "manager")
-    lead = create_lead(settings, database, agent)
-    cid = UUID(lead["contact"]["id"])
-    pid = property_draft(settings, database, manager)
+    uid, _ = actor(settings, database)
+    manager_id, manager = actor(settings, database, "manager")
 
     def facts():
         with database.engine.connect() as connection:
             return [
                 connection.execute(text(query), {"cid": cid, "pid": pid}).scalars().all()
                 for query in (
-                    "SELECT to_jsonb(c)-'website_source_id' FROM contact c WHERE id=:cid",
+                    "SELECT to_jsonb(c)-ARRAY['website_source_id','country','nationality',"
+                    "'languages'] FROM contact c WHERE id=:cid",
                     "SELECT to_jsonb(p)-'website_source_id' FROM contact_phone p "
                     "WHERE contact_id=:cid ORDER BY id",
                     "SELECT to_jsonb(p)-'archived_at' FROM property p WHERE id=:pid",
@@ -112,10 +111,11 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
                 )
             ]
 
-    before = facts()
     assert migrate("downgrade", "0019_atomic_contact_import").returncode == 0
     try:
-        assert facts() == before
+        cid = legacy_contact(database, uid)
+        pid = legacy_property(database, manager_id)
+        before = facts()
         assert migrate("upgrade", "head").returncode == 0
         assert migrate("check").returncode == 0
         assert facts() == before
@@ -124,7 +124,10 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
                 text("SELECT website_source_id IS NULL FROM contact WHERE id=:cid"), {"cid": cid}
             )
         request_export(database, manager, uuid4(), NewExport())
-        assert migrate("downgrade", "0019_atomic_contact_import").returncode != 0
+        refused = migrate("downgrade", "0019_atomic_contact_import")
+        assert refused.returncode != 0
+        assert "QUALIFICATION_HISTORY_DOWNGRADE_REFUSED" in refused.stderr
+        assert facts() == before
     finally:
         assert migrate("upgrade", "head").returncode == 0
 

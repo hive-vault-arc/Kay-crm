@@ -4,7 +4,7 @@ import path from "node:path";
 import { test, expect, createActor, removeActor, clearActorContext, signIn } from "../helpers/auth";
 
 const artifacts = path.resolve("output/playwright/list-header-actions");
-const header = (page: Page) => page.locator("main header").first();
+const header = (page: Page) => page.locator("main:has(.crm-directory-toolbar) .crm-directory-toolbar, main:not(:has(.crm-directory-toolbar)) header").first();
 
 async function capture(page: Page, name: string) {
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
@@ -14,7 +14,7 @@ async function capture(page: Page, name: string) {
 
 async function creationStyle(link: Locator) {
   await expect(link).toHaveAttribute("data-variant", "creation");
-  await expect(link).toHaveCSS("background-color", "rgb(201, 167, 92)");
+  await expect(link).toHaveCSS("background-color", "rgb(216, 170, 69)");
   await expect(link).toHaveCSS("color", "rgb(39, 39, 39)");
   await expect(link).toHaveCSS("font-weight", "600");
 }
@@ -31,7 +31,7 @@ async function geometry(page: Page) {
   for (const control of await header(page).getByRole("group", { name: "Actions secondaires", exact: true }).locator('[data-slot="button"]').all()) {
     await expect(control).toHaveAttribute("data-variant", "quiet");
     await expect(control).toHaveAttribute("data-size", "compact");
-    await expect(control).toHaveCSS("font-size", "14px");
+    await expect(control).toHaveCSS("font-size", await page.locator(".crm-directory-toolbar").count() ? "13px" : "14px");
     await expect(control).toHaveCSS("font-weight", "400");
     await expect(control).toHaveCSS("padding-left", "8px");
     await expect(control).toHaveCSS("border-top-width", "0px");
@@ -49,18 +49,18 @@ test("list header actions: gold creation, quiet utilities, responsive states and
   try {
     await page.goto("/leads");
     await expect(page.getByText("Chargement des Leads…", { exact: true })).toBeVisible();
-    await creationStyle(header(page).getByRole("link", { name: "Créer un Lead", exact: true }));
+    await creationStyle(header(page).getByRole("link", { name: "Nouveau prospect", exact: true }));
     await capture(page, "leads-loading");
   } finally { hold.resolve(); }
   await expect(page.getByRole("alert").filter({ hasText: "Le service local est indisponible" })).toBeVisible();
   await capture(page, "leads-error");
   await page.unroute("**/api/v1/enquiries?**");
   await page.getByRole("button", { name: "Réessayer", exact: true }).click();
-  await expect(page.getByText("0 demande(s) accessible(s).", { exact: true })).toBeVisible();
+  await expect(page.getByText("0 demande", { exact: true }).and(page.getByRole("status"))).toBeVisible();
   for (const route of ["/leads", "/deals"]) {
     await page.goto(route);
-    await expect(page.getByText(route === "/leads" ? "0 demande(s) accessible(s)." : "0 affaire(s) accessible(s) dans ces filtres.", { exact: true })).toBeVisible();
-    const create = header(page).getByRole("link", { name: route === "/leads" ? "Créer un Lead" : "Créer une affaire", exact: true });
+    await expect(page.getByText(route === "/leads" ? "0 demande" : "0 affaire", { exact: true }).and(page.getByRole("status"))).toBeVisible();
+    const create = header(page).getByRole("link", { name: route === "/leads" ? "Nouveau prospect" : "Créer une affaire", exact: true });
     await creationStyle(create);
     for (const width of [320, 360, 768, 1024, 1440]) {
       await page.setViewportSize({ width, height: 900 });
@@ -68,7 +68,7 @@ test("list header actions: gold creation, quiet utilities, responsive states and
       if (width === 360 || width === 1440) await capture(page, `${route.slice(1)}-${width}`);
     }
     await create.hover();
-    await expect(create).toHaveCSS("background-color", "rgb(185, 154, 84)");
+    await expect(create).toHaveCSS("background-color", "rgb(228, 188, 98)");
     await create.focus();
     await page.keyboard.press("Tab");
     await page.keyboard.press("Shift+Tab");
@@ -95,9 +95,12 @@ test("list header actions: gold creation, quiet utilities, responsive states and
   await columns.click();
   const drawer = page.getByRole("dialog", { name: "Colonnes des Leads", exact: true });
   await expect(drawer).toBeVisible();
-  await drawer.getByRole("checkbox", { name: "Réception", exact: true }).uncheck();
+  await expect(drawer.getByRole("checkbox", { name: "Budget", exact: true })).toBeChecked();
+  await drawer.getByRole("checkbox", { name: "Budget", exact: true }).uncheck();
+  await expect(drawer.getByRole("checkbox", { name: "Budget", exact: true })).not.toBeChecked();
   await drawer.getByRole("button", { name: "Rétablir les colonnes", exact: true }).click();
-  await expect(drawer.getByRole("checkbox", { name: "Réception", exact: true })).toBeChecked();
+  for (const name of ["Budget", "Qualification", "Source"]) await expect(drawer.getByRole("checkbox", { name, exact: true })).toBeChecked();
+  for (const name of ["Pays", "Langues"]) await expect(drawer.getByRole("checkbox", { name, exact: true })).not.toBeChecked();
   await page.keyboard.press("Escape");
   await expect(columns).toBeFocused();
   await page.setViewportSize({ width: 360, height: 900 });
@@ -122,10 +125,10 @@ test("list header actions: agent permissions and real touch controls on Leads an
     const phone = await mobile.newPage();
     for (const route of ["/leads", "/deals"]) {
       await phone.goto(route);
-      await expect(phone.getByText(route === "/leads" ? "0 demande(s) accessible(s)." : "0 affaire(s) accessible(s) dans ces filtres.", { exact: true })).toBeVisible();
+      await expect(phone.getByText(route === "/leads" ? "0 demande" : "0 affaire", { exact: true }).and(phone.getByRole("status"))).toBeVisible();
       await expect(phone.getByRole("link", { name: "Importer des contacts", exact: true })).toHaveCount(0);
       await expect(phone.getByRole("button", { name: "Exporter les résultats filtrés", exact: true })).toHaveCount(0);
-      const create = header(phone).getByRole("link", { name: route === "/leads" ? "Créer un Lead" : "Créer une affaire", exact: true });
+      const create = header(phone).getByRole("link", { name: route === "/leads" ? "Nouveau prospect" : "Créer une affaire", exact: true });
       await creationStyle(create);
       await geometry(phone);
       await header(phone).getByRole("button", { name: "Colonnes", exact: true }).tap();

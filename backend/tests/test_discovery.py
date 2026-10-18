@@ -438,7 +438,12 @@ def test_deal_and_deal_document_names_inherit_current_private_contact_scope(sett
         (other, private, "+212600000002", "SP19 privée affaire"),
     ]:
         contact = UUID(lead(settings, database, token, phone, title)["contact"]["id"])
-        did = UUID(deal_command(settings, database, token, new_deal(contact, title=title))["id"])
+        created = deal_command(settings, database, token, new_deal(contact))
+        did = UUID(created["id"])
+        with database.session() as session:
+            from app.deals.models import Deal
+
+            assert title in session.get(Deal, did).title
         with database.session() as session, session.begin():
             session.add(
                 Document(

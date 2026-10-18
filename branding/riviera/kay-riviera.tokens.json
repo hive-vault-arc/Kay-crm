@@ -1,0 +1,2353 @@
+{
+  "meta": {
+    "name": "KAY Riviera — refined dashboard",
+    "version": "1.1.0",
+    "language": "fr",
+    "direction": "Light ivory workspace, luminous coastal header, deeper warm charcoal sidebar, honey actions, and distinct categorical status colors.",
+    "visualReference": "Refinement of the user-selected Riviera dashboard",
+    "precision": "These are exact intended implementation tokens, not sampled or guaranteed pixel colors from the generated visual.",
+    "revision": "User correction: each chart status has its own distinct hue; sidebar darkened. Existing fonts, brand colors, layout and source counts are preserved."
+  },
+  "format": {
+    "name": "kay-custom-design-tokens",
+    "version": 1,
+    "status": "Project-specific documented JSON format; not claimed to implement the W3C Design Tokens Community Group format.",
+    "tokenRecord": {
+      "requiredKeys": [
+        "type",
+        "value"
+      ],
+      "optionalKeys": [
+        "description"
+      ],
+      "types": [
+        "color",
+        "dimension",
+        "number",
+        "duration",
+        "fontFamily",
+        "shadow",
+        "cssColor"
+      ],
+      "color": "Opaque six-digit sRGB hexadecimal.",
+      "dimension": "CSS dimension string with an explicit unit, including px or em.",
+      "number": "JSON number; used for font weights, variable axes and SVG stroke width.",
+      "duration": "CSS time string in ms.",
+      "fontFamily": "A complete CSS font-family list.",
+      "shadow": "A complete CSS box-shadow string; compound lengths and color remain together.",
+      "cssColor": "A CSS color string that may contain alpha; not included in opaque sRGB contrast calculations."
+    },
+    "references": {
+      "syntax": "A whole string containing a dot-delimited token path enclosed in braces.",
+      "example": "{tokens.color.canvas}",
+      "scope": "References resolve to a token value below tokens; recursive aliases are permitted, cycles are invalid.",
+      "cssExport": "Join token path segments below tokens with hyphens; convert camelCase to kebab-case; resolve aliases before output."
+    },
+    "contentSchema": {
+      "stage": {
+        "required": [
+          "id",
+          "label",
+          "count",
+          "fill",
+          "labelColor",
+          "renderSegment"
+        ],
+        "count": "Nonnegative integer or null. null means unknown, never zero.",
+        "renderSegment": "Must equal count !== null && count > 0.",
+        "legendValue": "Em dash for null, otherwise the decimal integer as text."
+      },
+      "demoDataset": "Must declare illustrative=true and display the supplied demonstration label."
+    }
+  },
+  "tokens": {
+    "color": {
+      "canvas": {
+        "type": "color",
+        "value": "#FAF8F4"
+      },
+      "surface": {
+        "type": "color",
+        "value": "#FFFDF8"
+      },
+      "surfaceBeige": {
+        "type": "color",
+        "value": "#F6ECDA"
+      },
+      "ink": {
+        "type": "color",
+        "value": "#272727"
+      },
+      "muted": {
+        "type": "color",
+        "value": "#6B6257"
+      },
+      "white": {
+        "type": "color",
+        "value": "#FFFFFF"
+      },
+      "divider": {
+        "type": "color",
+        "value": "#E5E0D6"
+      },
+      "controlBorder": {
+        "type": "color",
+        "value": "#858779"
+      },
+      "goldText": {
+        "type": "color",
+        "value": "#765A13"
+      },
+      "focusLight": {
+        "type": "color",
+        "value": "#765A13"
+      },
+      "focusDark": {
+        "type": "color",
+        "value": "#E1BA66"
+      },
+      "brand": {
+        "default": {
+          "type": "color",
+          "value": "#D8AA45"
+        },
+        "hover": {
+          "type": "color",
+          "value": "#E4BC62"
+        },
+        "pressed": {
+          "type": "color",
+          "value": "#CC9C36"
+        },
+        "foreground": {
+          "type": "color",
+          "value": "{tokens.color.ink}"
+        }
+      },
+      "sidebar": {
+        "background": {
+          "type": "color",
+          "value": "#121512"
+        },
+        "hover": {
+          "type": "color",
+          "value": "#1B211B"
+        },
+        "active": {
+          "type": "color",
+          "value": "#252D24"
+        },
+        "activeHover": {
+          "type": "color",
+          "value": "#2D372B"
+        },
+        "label": {
+          "type": "color",
+          "value": "#F8F7F0"
+        },
+        "secondary": {
+          "type": "color",
+          "value": "#B9C2B6"
+        },
+        "tertiary": {
+          "type": "color",
+          "value": "#8F9C8B"
+        },
+        "activeLabel": {
+          "type": "color",
+          "value": "#FFFFFF"
+        },
+        "accent": {
+          "type": "color",
+          "value": "{tokens.color.brand.default}"
+        },
+        "tileIcon": {
+          "type": "color",
+          "value": "#121512"
+        },
+        "inputBorder": {
+          "type": "color",
+          "value": "#8F9C8B"
+        },
+        "decorativeRule": {
+          "type": "color",
+          "value": "#46503F"
+        }
+      },
+      "interactive": {
+        "secondaryDefault": {
+          "type": "color",
+          "value": "{tokens.color.surface}"
+        },
+        "secondaryHover": {
+          "type": "color",
+          "value": "#F6ECDA"
+        },
+        "secondaryPressed": {
+          "type": "color",
+          "value": "#EFE3CC"
+        },
+        "disabledBackground": {
+          "type": "color",
+          "value": "#E8E4DC"
+        },
+        "disabledForeground": {
+          "type": "color",
+          "value": "#6B6257"
+        },
+        "disabledBorder": {
+          "type": "color",
+          "value": "#BBB5AA"
+        },
+        "linkDefault": {
+          "type": "color",
+          "value": "{tokens.color.goldText}"
+        },
+        "linkHover": {
+          "type": "color",
+          "value": "#5C440D"
+        },
+        "linkPressed": {
+          "type": "color",
+          "value": "#443108"
+        },
+        "selectionBackground": {
+          "type": "color",
+          "value": "#EEDBA8"
+        },
+        "selectionForeground": {
+          "type": "color",
+          "value": "{tokens.color.ink}"
+        }
+      },
+      "semantic": {
+        "success": {
+          "foreground": {
+            "type": "color",
+            "value": "#235D37"
+          },
+          "background": {
+            "type": "color",
+            "value": "#E8F5DD"
+          }
+        },
+        "warning": {
+          "foreground": {
+            "type": "color",
+            "value": "#825A14"
+          },
+          "background": {
+            "type": "color",
+            "value": "#FFF1CF"
+          }
+        },
+        "danger": {
+          "foreground": {
+            "type": "color",
+            "value": "#994A40"
+          },
+          "background": {
+            "type": "color",
+            "value": "#FBEDEA"
+          }
+        },
+        "neutral": {
+          "foreground": {
+            "type": "color",
+            "value": "#606651"
+          },
+          "background": {
+            "type": "color",
+            "value": "#EFEFE8"
+          }
+        },
+        "info": {
+          "foreground": {
+            "type": "color",
+            "value": "#35647E"
+          },
+          "background": {
+            "type": "color",
+            "value": "#E8F1F7"
+          }
+        }
+      },
+      "kpi": {
+        "contacts": {
+          "foreground": {
+            "type": "color",
+            "value": "#3158A6"
+          },
+          "badge": {
+            "type": "color",
+            "value": "#EDF2FB"
+          },
+          "card": {
+            "type": "color",
+            "value": "{tokens.color.surface}"
+          }
+        },
+        "activeDeals": {
+          "foreground": {
+            "type": "color",
+            "value": "#765A13"
+          },
+          "badge": {
+            "type": "color",
+            "value": "#F6ECDA"
+          },
+          "card": {
+            "type": "color",
+            "value": "{tokens.color.surface}"
+          }
+        },
+        "requests": {
+          "foreground": {
+            "type": "color",
+            "value": "#7051A4"
+          },
+          "badge": {
+            "type": "color",
+            "value": "#F2EEFB"
+          },
+          "card": {
+            "type": "color",
+            "value": "{tokens.color.surface}"
+          }
+        },
+        "wonDeals": {
+          "foreground": {
+            "type": "color",
+            "value": "#235D37"
+          },
+          "badge": {
+            "type": "color",
+            "value": "#E8F5DD"
+          },
+          "card": {
+            "type": "color",
+            "value": "{tokens.color.surface}"
+          }
+        },
+        "receipts": {
+          "foreground": {
+            "type": "color",
+            "value": "#765A13"
+          },
+          "badge": {
+            "type": "color",
+            "value": "#F6EDCF"
+          },
+          "card": {
+            "type": "color",
+            "value": "{tokens.color.surface}"
+          }
+        }
+      },
+      "chart": {
+        "periodPrevious": {
+          "fill": {
+            "type": "color",
+            "value": "{tokens.color.stage.blue.fill}",
+            "description": "Blue identifies September in the comparison chart; this period meaning is independent of pipeline stages."
+          },
+          "label": {
+            "type": "color",
+            "value": "{tokens.color.stage.blue.label}"
+          }
+        },
+        "periodCurrent": {
+          "fill": {
+            "type": "color",
+            "value": "{tokens.color.stage.purple.fill}",
+            "description": "Purple identifies October in the comparison chart; this period meaning is independent of pipeline stages."
+          },
+          "label": {
+            "type": "color",
+            "value": "{tokens.color.stage.purple.label}"
+          }
+        },
+        "separator": {
+          "type": "color",
+          "value": "#FFFFFF"
+        },
+        "grid": {
+          "type": "color",
+          "value": "#DDDCD3"
+        },
+        "axis": {
+          "type": "color",
+          "value": "#6B6257"
+        }
+      },
+      "stage": {
+        "blue": {
+          "fill": {
+            "type": "color",
+            "value": "#3B82F6"
+          },
+          "label": {
+            "type": "color",
+            "value": "#0A0A0A"
+          }
+        },
+        "cyan": {
+          "fill": {
+            "type": "color",
+            "value": "#06B6D4"
+          },
+          "label": {
+            "type": "color",
+            "value": "#0A0A0A"
+          }
+        },
+        "yellow": {
+          "fill": {
+            "type": "color",
+            "value": "#FACC15"
+          },
+          "label": {
+            "type": "color",
+            "value": "#0A0A0A"
+          }
+        },
+        "purple": {
+          "fill": {
+            "type": "color",
+            "value": "#8B5CF6"
+          },
+          "label": {
+            "type": "color",
+            "value": "#0A0A0A"
+          }
+        },
+        "green": {
+          "fill": {
+            "type": "color",
+            "value": "#22C55E"
+          },
+          "label": {
+            "type": "color",
+            "value": "#0A0A0A"
+          }
+        },
+        "orange": {
+          "fill": {
+            "type": "color",
+            "value": "#F97316"
+          },
+          "label": {
+            "type": "color",
+            "value": "#0A0A0A"
+          }
+        },
+        "red": {
+          "fill": {
+            "type": "color",
+            "value": "#EF4444"
+          },
+          "label": {
+            "type": "color",
+            "value": "#0A0A0A"
+          }
+        },
+        "pink": {
+          "fill": {
+            "type": "color",
+            "value": "#EC4899"
+          },
+          "label": {
+            "type": "color",
+            "value": "#0A0A0A"
+          }
+        },
+        "slate": {
+          "fill": {
+            "type": "color",
+            "value": "#64748B"
+          },
+          "label": {
+            "type": "color",
+            "value": "#FFFFFF"
+          }
+        }
+      },
+      "overlay": {
+        "drawerBackdrop": {
+          "type": "cssColor",
+          "value": "rgb(20 27 20 / 48%)",
+          "description": "Existing translucent modal backdrop; excluded from opaque-pair contrast claims."
+        }
+      }
+    },
+    "space": {
+      "unit": {
+        "type": "dimension",
+        "value": "4px"
+      },
+      "icon": {
+        "type": "dimension",
+        "value": "8px"
+      },
+      "compact": {
+        "type": "dimension",
+        "value": "12px"
+      },
+      "regular": {
+        "type": "dimension",
+        "value": "16px"
+      },
+      "section": {
+        "type": "dimension",
+        "value": "20px"
+      },
+      "page": {
+        "type": "dimension",
+        "value": "24px"
+      },
+      "large": {
+        "type": "dimension",
+        "value": "32px"
+      },
+      "micro": {
+        "type": "dimension",
+        "value": "2px",
+        "description": "KPI content internal gap."
+      },
+      "tight": {
+        "type": "dimension",
+        "value": "6px",
+        "description": "Field and badge internal gap."
+      },
+      "controlInset": {
+        "type": "dimension",
+        "value": "10px",
+        "description": "Button and input block padding."
+      }
+    },
+    "radius": {
+      "panel": {
+        "type": "dimension",
+        "value": "12px"
+      },
+      "control": {
+        "type": "dimension",
+        "value": "10px"
+      },
+      "iconTile": {
+        "type": "dimension",
+        "value": "8px"
+      },
+      "round": {
+        "type": "dimension",
+        "value": "9999px"
+      },
+      "statusBadge": {
+        "type": "dimension",
+        "value": "8px"
+      }
+    },
+    "size": {
+      "control": {
+        "type": "dimension",
+        "value": "44px"
+      },
+      "navRow": {
+        "type": "dimension",
+        "value": "48px"
+      },
+      "navIcon": {
+        "type": "dimension",
+        "value": "20px"
+      },
+      "actionIcon": {
+        "type": "dimension",
+        "value": "18px"
+      },
+      "metaIcon": {
+        "type": "dimension",
+        "value": "16px"
+      },
+      "iconTile": {
+        "type": "dimension",
+        "value": "32px"
+      },
+      "kpiBadge": {
+        "type": "dimension",
+        "value": "32px"
+      },
+      "kpiIcon": {
+        "type": "dimension",
+        "value": "20px"
+      }
+    },
+    "layout": {
+      "sidebar": {
+        "type": "dimension",
+        "value": "224px"
+      },
+      "pageGutter": {
+        "type": "dimension",
+        "value": "24px"
+      },
+      "sectionGap": {
+        "type": "dimension",
+        "value": "20px"
+      },
+      "panelPadding": {
+        "type": "dimension",
+        "value": "20px"
+      },
+      "kpiPadding": {
+        "type": "dimension",
+        "value": "16px"
+      },
+      "kpiTextGap": {
+        "type": "dimension",
+        "value": "12px"
+      },
+      "kpiMinHeight": {
+        "type": "dimension",
+        "value": "96px"
+      },
+      "heroMinHeight": {
+        "type": "dimension",
+        "value": "196px"
+      },
+      "drawerWidth": {
+        "type": "dimension",
+        "value": "304px"
+      },
+      "mobileGutter": {
+        "type": "dimension",
+        "value": "16px"
+      }
+    },
+    "breakpoint": {
+      "kpiWrap": {
+        "type": "dimension",
+        "value": "1280px",
+        "description": "Allow KPI groups to wrap below this viewport width."
+      },
+      "panelStack": {
+        "type": "dimension",
+        "value": "1100px",
+        "description": "Stack both the pipeline and agent panel grids below this viewport width."
+      },
+      "sidebarDrawer": {
+        "type": "dimension",
+        "value": "900px",
+        "description": "Replace the persistent sidebar with an accessible dialog drawer below this viewport width."
+      },
+      "compact": {
+        "type": "dimension",
+        "value": "560px",
+        "description": "Compact mobile padding and wrapping below this viewport width."
+      }
+    },
+    "icon": {
+      "strokeWidth": {
+        "type": "number",
+        "value": 1.75
+      }
+    },
+    "motion": {
+      "fast": {
+        "type": "duration",
+        "value": "120ms"
+      },
+      "reduced": {
+        "type": "duration",
+        "value": "0ms"
+      }
+    },
+    "chart": {
+      "separatorWidth": {
+        "type": "dimension",
+        "value": "2px"
+      },
+      "legendSwatch": {
+        "type": "dimension",
+        "value": "12px"
+      },
+      "labelGap": {
+        "type": "dimension",
+        "value": "8px"
+      }
+    },
+    "typography": {
+      "display": {
+        "family": {
+          "type": "fontFamily",
+          "value": "\"Fraunces\", Georgia, \"Times New Roman\", serif"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "44px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "48px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 550
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": "-0.025em"
+        },
+        "opticalSize": {
+          "type": "number",
+          "value": 40
+        },
+        "softness": {
+          "type": "number",
+          "value": 0
+        },
+        "wonk": {
+          "type": "number",
+          "value": 0
+        }
+      },
+      "panelTitle": {
+        "family": {
+          "type": "fontFamily",
+          "value": "{tokens.typography.display.family}"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "24px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "30px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 550
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": "-0.01em"
+        }
+      },
+      "body": {
+        "family": {
+          "type": "fontFamily",
+          "value": "\"Manrope\", Arial, sans-serif"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "15px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "22.5px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 400
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": "0em"
+        }
+      },
+      "label": {
+        "family": {
+          "type": "fontFamily",
+          "value": "{tokens.typography.body.family}"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "14px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "20px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 600
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": "0em"
+        }
+      },
+      "kpi": {
+        "family": {
+          "type": "fontFamily",
+          "value": "{tokens.typography.body.family}"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "30px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "34px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 700
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": "-0.02em"
+        }
+      },
+      "metadata": {
+        "family": {
+          "type": "fontFamily",
+          "value": "\"DM Sans\", Arial, sans-serif"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "13px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "18px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 400
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": "0em"
+        }
+      },
+      "mobileDisplay": {
+        "family": {
+          "type": "fontFamily",
+          "value": "{tokens.typography.display.family}"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "32px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "36px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 550
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": "-0.025em"
+        }
+      },
+      "chartLabel": {
+        "family": {
+          "type": "fontFamily",
+          "value": "{tokens.typography.metadata.family}"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "13px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "18px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 550
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": "0em"
+        }
+      },
+      "kpiGroupTitle": {
+        "family": {
+          "type": "fontFamily",
+          "value": "{tokens.typography.display.family}"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "18px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "24px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 550
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": "0em"
+        }
+      },
+      "eyebrow": {
+        "family": {
+          "type": "fontFamily",
+          "value": "{tokens.typography.metadata.family}"
+        },
+        "size": {
+          "type": "dimension",
+          "value": "13px"
+        },
+        "lineHeight": {
+          "type": "dimension",
+          "value": "18px"
+        },
+        "weight": {
+          "type": "number",
+          "value": 650
+        },
+        "letterSpacing": {
+          "type": "dimension",
+          "value": ".14em"
+        }
+      }
+    },
+    "border": {
+      "width": {
+        "none": {
+          "type": "dimension",
+          "value": "0px",
+          "description": "Cards and borderless navigation surfaces."
+        },
+        "hairline": {
+          "type": "dimension",
+          "value": "1px",
+          "description": "Controls and necessary rules."
+        },
+        "strong": {
+          "type": "dimension",
+          "value": "2px",
+          "description": "Explicit high-contrast outline treatment."
+        }
+      }
+    },
+    "focus": {
+      "width": {
+        "type": "dimension",
+        "value": "2px",
+        "description": "Visible keyboard focus outline width."
+      },
+      "offset": {
+        "type": "dimension",
+        "value": "3px",
+        "description": "Gap between the control and keyboard focus outline."
+      }
+    },
+    "shadow": {
+      "panel": {
+        "type": "shadow",
+        "value": "0 1px 3px rgb(32 38 32 / 4%)",
+        "description": "Existing restrained panel and KPI elevation; not a contrast boundary."
+      }
+    }
+  },
+  "fonts": {
+    "display": {
+      "family": "Fraunces",
+      "versionPin": "1.000",
+      "file": "./fonts/Fraunces-variable.woff2",
+      "format": "woff2",
+      "style": "normal",
+      "weightRange": [
+        100,
+        900
+      ],
+      "usedAxes": {
+        "wght": 550,
+        "opsz": 40,
+        "SOFT": 0,
+        "WONK": 0
+      },
+      "opticalSizing": "Explicit opsz=40; CSS font-optical-sizing:none prevents automatic substitution.",
+      "source": "Google Fonts OFL distribution",
+      "license": "SIL Open Font License 1.1"
+    },
+    "body": {
+      "family": "Manrope",
+      "versionPin": "4.505",
+      "file": "./fonts/Manrope-variable.woff2",
+      "format": "woff2",
+      "style": "normal",
+      "weightRange": [
+        200,
+        800
+      ],
+      "source": "Google Fonts OFL distribution",
+      "license": "SIL Open Font License 1.1"
+    },
+    "metadata": {
+      "family": "DM Sans",
+      "versionPin": "4.004",
+      "file": "./fonts/DMSans-variable.woff2",
+      "format": "woff2",
+      "style": "normal",
+      "weightRange": [
+        100,
+        1000
+      ],
+      "source": "Google Fonts OFL distribution",
+      "license": "SIL Open Font License 1.1"
+    },
+    "delivery": "Keep the bundled, version-pinned files at the relative paths above. Do not silently replace them with a live CSS font endpoint.",
+    "numerals": "Use lining and tabular numerals for KPI values, chart values, counts, dates and monetary amounts."
+  },
+  "components": {
+    "sidebar": {
+      "width": "{tokens.layout.sidebar}",
+      "navigationRowHeight": "{tokens.size.navRow}",
+      "activeSelector": ".nav-item[aria-current=\"page\"]",
+      "activeTreatment": "Opaque olive-charcoal capsule; 32px gold square icon tile; charcoal 20px icon; white label; small gold trailing ChevronRight.",
+      "prohibitedTreatment": [
+        "Leading active stripe",
+        "Beige active pill",
+        "Navy sidebar"
+      ],
+      "selectedState": "The gold tile and trailing chevron supplement the subtle active surface; do not rely on the surface change alone.",
+      "landmark": "Use a nav landmark with an accessible name and exactly one aria-current=page link.",
+      "padding": {
+        "blockStart": "{tokens.space.page}",
+        "inline": "{tokens.space.compact}",
+        "blockEnd": "{tokens.space.regular}"
+      },
+      "navigationGap": "{tokens.space.icon}"
+    },
+    "hero": {
+      "minHeight": "{tokens.layout.heroMinHeight}",
+      "headingStyle": "display",
+      "copy": [
+        "KAY REAL ESTATE",
+        "Tableau de bord",
+        "Votre activité, en un regard."
+      ],
+      "photo": "Bright coastal architectural panorama with sunlit ivory buildings and clear sea.",
+      "textProtection": "Place text on the solid ivory hero-copy area; the photo may fill the remaining area. Any alternative text-on-photo composite requires a separate contrast review.",
+      "headingLevel": "Use one h1 for Tableau de bord.",
+      "copyPadding": {
+        "block": "{tokens.space.page}",
+        "inline": "{tokens.space.large}"
+      }
+    },
+    "kpi": {
+      "minHeight": "{tokens.layout.kpiMinHeight}",
+      "padding": "{tokens.layout.kpiPadding}",
+      "badgeSize": "{tokens.size.kpiBadge}",
+      "iconSize": "{tokens.size.kpiIcon}",
+      "iconTextGap": "{tokens.layout.kpiTextGap}",
+      "alignment": "Circular badge at left; label, value, and optional metadata form one right-hand column.",
+      "valueColorRule": "Use each category foreground for both the icon and numeric value; the label stays charcoal. Each category foreground passes the declared 4.5:1 token contrast target on its card.",
+      "labelStyle": "label",
+      "valueStyle": "kpi",
+      "metadataStyle": "metadata",
+      "minimumHeightIsNotFixedHeight": "Allow cards to grow when helper text or localized values wrap.",
+      "categories": {
+        "contacts": {
+          "icon": "Users",
+          "foreground": "{tokens.color.kpi.contacts.foreground}",
+          "badge": "{tokens.color.kpi.contacts.badge}"
+        },
+        "activeDeals": {
+          "icon": "BriefcaseBusiness",
+          "foreground": "{tokens.color.kpi.activeDeals.foreground}",
+          "badge": "{tokens.color.kpi.activeDeals.badge}"
+        },
+        "requests": {
+          "icon": "Inbox",
+          "foreground": "{tokens.color.kpi.requests.foreground}",
+          "badge": "{tokens.color.kpi.requests.badge}"
+        },
+        "wonDeals": {
+          "icon": "CircleCheck",
+          "foreground": "{tokens.color.kpi.wonDeals.foreground}",
+          "badge": "{tokens.color.kpi.wonDeals.badge}"
+        },
+        "receipts": {
+          "icon": "Wallet",
+          "foreground": "{tokens.color.kpi.receipts.foreground}",
+          "badge": "{tokens.color.kpi.receipts.badge}"
+        }
+      },
+      "contentGap": "{tokens.space.micro}",
+      "shadow": "{tokens.shadow.panel}"
+    },
+    "panel": {
+      "padding": "{tokens.layout.panelPadding}",
+      "radius": "{tokens.radius.panel}",
+      "titleStyle": "panelTitle",
+      "headingLevel": "h2",
+      "separation": "Surface and spacing define panels. No default card outline; reserve visible borders for controls, focus and necessary dividers.",
+      "shadow": "{tokens.shadow.panel}",
+      "headerGap": "{tokens.space.compact}",
+      "headerBottomGap": "{tokens.space.regular}",
+      "titleSubtitleGap": "{tokens.space.unit}"
+    },
+    "controls": {
+      "minimumTarget": "{tokens.size.control}",
+      "radius": "{tokens.radius.control}",
+      "primary": {
+        "defaultFill": "{tokens.color.brand.default}",
+        "hoverFill": "{tokens.color.brand.hover}",
+        "pressedFill": "{tokens.color.brand.pressed}",
+        "foreground": "{tokens.color.ink}",
+        "label": "Nouveau prospect",
+        "icon": "Plus",
+        "iconPosition": "leading"
+      },
+      "secondary": {
+        "defaultFill": "{tokens.color.interactive.secondaryDefault}",
+        "hoverFill": "{tokens.color.interactive.secondaryHover}",
+        "pressedFill": "{tokens.color.interactive.secondaryPressed}",
+        "border": "{tokens.color.controlBorder}",
+        "foreground": "{tokens.color.ink}"
+      },
+      "input": {
+        "fill": "{tokens.color.surface}",
+        "text": "{tokens.color.ink}",
+        "placeholder": "{tokens.color.muted}",
+        "border": "{tokens.color.controlBorder}",
+        "errorBorder": "{tokens.color.semantic.danger.foreground}",
+        "errorText": "{tokens.color.semantic.danger.foreground}",
+        "labels": "Keep a visible label; placeholder text does not replace it.",
+        "errorSemantics": "Use aria-invalid=true and aria-describedby pointing to actionable error text."
+      },
+      "disabled": {
+        "fill": "{tokens.color.interactive.disabledBackground}",
+        "foreground": "{tokens.color.interactive.disabledForeground}",
+        "border": "{tokens.color.interactive.disabledBorder}",
+        "behavior": "Use native disabled where appropriate. If aria-disabled is used so a reason remains discoverable, JavaScript must suppress activation."
+      },
+      "loading": "Keep the original button width and label. Add aria-busy=true and a decorative spinner; prevent duplicate submission without replacing useful context.",
+      "focus": {
+        "lightRing": "{tokens.color.focusLight}",
+        "darkRing": "{tokens.color.focusDark}",
+        "widthPx": 2,
+        "offsetPx": 3,
+        "behavior": "Use :focus-visible. Do not remove the outline without a visible replacement.",
+        "width": "{tokens.focus.width}",
+        "offset": "{tokens.focus.offset}"
+      },
+      "links": "Use darker gold for small action text; underline on hover and focus. In prose, retain an underline by default.",
+      "buttonPadding": {
+        "block": "{tokens.space.controlInset}",
+        "inline": "{tokens.space.regular}"
+      },
+      "inputPadding": {
+        "block": "{tokens.space.controlInset}",
+        "inline": "{tokens.space.compact}"
+      },
+      "fieldGap": "{tokens.space.tight}",
+      "borderWidth": "{tokens.border.width.hairline}"
+    },
+    "icons": {
+      "library": "Lucide",
+      "strokeWidth": "{tokens.icon.strokeWidth}",
+      "color": "currentColor",
+      "sizes": {
+        "navigation": "{tokens.size.navIcon}",
+        "action": "{tokens.size.actionIcon}",
+        "metadata": "{tokens.size.metaIcon}"
+      },
+      "iconLabelGap": "{tokens.space.icon}",
+      "placement": "Leading icon for actions and filters; trailing chevrons for disclosure or selected navigation; KPI badge uses its separate 12px gap.",
+      "roles": {
+        "dashboard": "LayoutDashboard",
+        "prospects": "Users",
+        "deals": "BriefcaseBusiness",
+        "visits": "CalendarDays",
+        "projects": "House",
+        "settings": "Settings",
+        "search": "Search",
+        "agencyFilter": "Building2",
+        "dateFilter": "CalendarDays",
+        "newProspect": "Plus",
+        "notifications": "Bell",
+        "disclosure": "ChevronDown",
+        "activeNavigation": "ChevronRight",
+        "viewAll": "ArrowRight",
+        "menuOpen": "Menu",
+        "menuClose": "X",
+        "metadataHelp": "Info"
+      },
+      "accessibility": "Decorative SVG: aria-hidden=true and focusable=false. Icon-only buttons need a localized accessible name and a 44px target.",
+      "strokeMeaning": "Supported SVG shapes use vector-effect:non-scaling-stroke so strokeWidth=1.75 remains 1.75 CSS pixels on screen at the declared 20px, 18px and 16px icon sizes.",
+      "vectorEffect": "non-scaling-stroke",
+      "vectorEffectTargets": [
+        "path",
+        "line",
+        "polyline",
+        "polygon",
+        "rect",
+        "circle",
+        "ellipse"
+      ]
+    },
+    "responsive": [
+      {
+        "belowPx": 1280,
+        "behavior": "Wrap KPI groups while keeping Situation actuelle and Période sélectionnée attached to their own metrics."
+      },
+      {
+        "belowPx": 1100,
+        "behavior": "Stack pipeline panels and stack agent chart panels. Chart legends may wrap."
+      },
+      {
+        "belowPx": 900,
+        "behavior": "Hide the persistent sidebar and expose a labeled menu button opening a native modal dialog drawer."
+      },
+      {
+        "belowPx": 560,
+        "behavior": "Use 16px page gutters; let filter controls and their labels wrap; stack hero media below the text when needed."
+      }
+    ],
+    "drawerBehavior": {
+      "element": "dialog",
+      "open": "Call showModal(); connect aria-controls to the dialog ID; update the opener aria-expanded state.",
+      "name": "Give the dialog an accessible name with aria-labelledby or aria-label.",
+      "focus": "Focus a meaningful element such as the close button when opened; native modal behavior confines tab navigation; restore focus to the opener when closed.",
+      "close": "Provide a visible labeled close button and preserve the native Escape close behavior.",
+      "background": "Background content is inert while the native modal is open.",
+      "implementationBoundary": "CSS supplies presentation only. The host application must implement opening, closing, focus restoration and state updates."
+    },
+    "statusBadge": {
+      "padding": {
+        "block": "{tokens.space.unit}",
+        "inline": "{tokens.space.icon}"
+      },
+      "gap": "{tokens.space.tight}",
+      "radius": "{tokens.radius.statusBadge}",
+      "meaning": "Action, warning, error and success badge semantics remain separate from categorical chart identity."
+    },
+    "borders": {
+      "panels": {
+        "width": "{tokens.border.width.none}",
+        "purpose": "Separation through spacing and restrained shadow."
+      },
+      "controls": {
+        "width": "{tokens.border.width.hairline}",
+        "color": "{tokens.color.controlBorder}"
+      },
+      "dividers": {
+        "width": "{tokens.border.width.hairline}",
+        "color": "{tokens.color.divider}",
+        "purpose": "Decorative grouping; not the sole control boundary."
+      },
+      "focus": {
+        "width": "{tokens.focus.width}",
+        "offset": "{tokens.focus.offset}",
+        "onLight": "{tokens.color.focusLight}",
+        "onDark": "{tokens.color.focusDark}"
+      },
+      "chartSegments": {
+        "width": "{tokens.chart.separatorWidth}",
+        "color": "{tokens.color.chart.separator}"
+      }
+    },
+    "typographyRoles": {
+      "chartLabels": "chartLabel",
+      "kpiGroupHeadings": "kpiGroupTitle",
+      "heroEyebrow": "eyebrow"
+    }
+  },
+  "content": {
+    "metrics": {
+      "currentSnapshot": {
+        "label": "Situation actuelle",
+        "scope": "Current authorized agency/responsible-user record snapshot, independent of the date range.",
+        "items": [
+          {
+            "id": "contacts",
+            "label": "Contacts actifs",
+            "value": 12,
+            "category": "contacts",
+            "helper": "au sein de l’agence"
+          },
+          {
+            "id": "active_deals",
+            "label": "Affaires actives",
+            "value": 6,
+            "category": "activeDeals",
+            "helper": "au sein de l’agence"
+          }
+        ]
+      },
+      "selectedPeriod": {
+        "label": "Période sélectionnée",
+        "displayRange": "1–31 oct. 2026",
+        "fromInclusive": "2026-10-01",
+        "toExclusive": "2026-11-01",
+        "scope": "Selected-period metrics; preserve existing product formulas and authorization rules.",
+        "items": [
+          {
+            "id": "requests",
+            "label": "Demandes reçues",
+            "value": 12,
+            "category": "requests",
+            "helper": "sur la période"
+          },
+          {
+            "id": "won_deals",
+            "label": "Affaires gagnées",
+            "value": 0,
+            "category": "wonDeals",
+            "helper": "sur la période",
+            "definition": "Won deals not reopened."
+          },
+          {
+            "id": "receipts",
+            "label": "Encaissements",
+            "value": 0,
+            "currency": "MAD",
+            "displayValue": "0,00 MAD",
+            "category": "receipts",
+            "helper": "sur la période",
+            "definition": "Valid receipts with existing corrections applied."
+          }
+        ]
+      }
+    },
+    "pipelines": {
+      "scopeLabel": "Situation actuelle · Répartition par étape",
+      "interpretation": "Current stage populations, not measured step-to-step conversion rates.",
+      "segmentRule": "Render a segment only when count is an integer greater than zero. Keep zero and unknown categories in the labeled legend.",
+      "unknownRule": "null displays as an em dash and never contributes a fabricated count or percentage.",
+      "geometry": "The staged funnel is a schematic ordering device; labeled counts are authoritative. Do not infer transition rates from the taper.",
+      "separator": "{tokens.color.chart.separator}",
+      "separatorWidth": "{tokens.chart.separatorWidth}",
+      "prospects": {
+        "title": "Pipeline des prospects",
+        "stages": [
+          {
+            "id": "nouveau",
+            "label": "Nouveau",
+            "count": 2,
+            "fill": "{tokens.color.stage.blue.fill}",
+            "labelColor": "{tokens.color.stage.blue.label}",
+            "semanticMeaning": "Active prospect category.",
+            "renderSegment": true,
+            "legendValue": "2",
+            "categoricalHue": "blue"
+          },
+          {
+            "id": "contacte",
+            "label": "Contacté",
+            "count": 2,
+            "fill": "{tokens.color.stage.cyan.fill}",
+            "labelColor": "{tokens.color.stage.cyan.label}",
+            "semanticMeaning": "Active prospect category.",
+            "renderSegment": true,
+            "legendValue": "2",
+            "categoricalHue": "cyan"
+          },
+          {
+            "id": "a_relancer",
+            "label": "À relancer",
+            "count": 2,
+            "fill": "{tokens.color.stage.yellow.fill}",
+            "labelColor": "{tokens.color.stage.yellow.label}",
+            "semanticMeaning": "Active prospect requiring follow-up; overdue is not implied.",
+            "renderSegment": true,
+            "legendValue": "2",
+            "optionalStatusBadge": "warning",
+            "categoricalHue": "yellow"
+          },
+          {
+            "id": "en_analyse",
+            "label": "En analyse",
+            "count": 2,
+            "fill": "{tokens.color.stage.purple.fill}",
+            "labelColor": "{tokens.color.stage.purple.label}",
+            "semanticMeaning": "Active prospect category.",
+            "renderSegment": true,
+            "legendValue": "2",
+            "categoricalHue": "purple"
+          },
+          {
+            "id": "qualifie",
+            "label": "Qualifié",
+            "count": 2,
+            "fill": "{tokens.color.stage.green.fill}",
+            "labelColor": "{tokens.color.stage.green.label}",
+            "semanticMeaning": "Qualified active prospect; not a won deal.",
+            "renderSegment": true,
+            "legendValue": "2",
+            "categoricalHue": "green"
+          },
+          {
+            "id": "non_qualifie",
+            "label": "Non qualifié",
+            "count": 1,
+            "fill": "{tokens.color.stage.orange.fill}",
+            "labelColor": "{tokens.color.stage.orange.label}",
+            "semanticMeaning": "Not-qualified prospect. Orange is its categorical chart identity; it is not shown as a success.",
+            "renderSegment": true,
+            "legendValue": "1",
+            "categoricalHue": "orange"
+          },
+          {
+            "id": "perdu",
+            "label": "Perdu",
+            "count": 0,
+            "fill": "{tokens.color.stage.red.fill}",
+            "labelColor": "{tokens.color.stage.red.label}",
+            "semanticMeaning": "Lost prospect.",
+            "renderSegment": false,
+            "legendValue": "0",
+            "categoricalHue": "red"
+          },
+          {
+            "id": "indesirable",
+            "label": "Indésirable",
+            "count": 0,
+            "fill": "{tokens.color.stage.pink.fill}",
+            "labelColor": "{tokens.color.stage.pink.label}",
+            "semanticMeaning": "Excluded or unwanted prospect; distinct pink categorical identity.",
+            "renderSegment": false,
+            "legendValue": "0",
+            "categoricalHue": "pink"
+          },
+          {
+            "id": "cloture",
+            "label": "Clôturé",
+            "count": null,
+            "fill": "{tokens.color.stage.slate.fill}",
+            "labelColor": "{tokens.color.stage.slate.label}",
+            "semanticMeaning": "Closed outcome unspecified; slate categorical identity. Count was cropped in the source and must not be inferred.",
+            "renderSegment": false,
+            "legendValue": "—",
+            "categoricalHue": "slate"
+          }
+        ],
+        "knownSubtotal": 11,
+        "completeTotal": null
+      },
+      "deals": {
+        "title": "Pipeline des affaires",
+        "stages": [
+          {
+            "id": "nouvelle",
+            "label": "Nouvelle",
+            "count": 2,
+            "fill": "{tokens.color.stage.blue.fill}",
+            "labelColor": "{tokens.color.stage.blue.label}",
+            "semanticMeaning": "Active deal category.",
+            "renderSegment": true,
+            "legendValue": "2",
+            "categoricalHue": "blue"
+          },
+          {
+            "id": "visite",
+            "label": "Visite",
+            "count": 2,
+            "fill": "{tokens.color.stage.cyan.fill}",
+            "labelColor": "{tokens.color.stage.cyan.label}",
+            "semanticMeaning": "Active deal category.",
+            "renderSegment": true,
+            "legendValue": "2",
+            "categoricalHue": "cyan"
+          },
+          {
+            "id": "negociation",
+            "label": "Négociation",
+            "count": 1,
+            "fill": "{tokens.color.stage.orange.fill}",
+            "labelColor": "{tokens.color.stage.orange.label}",
+            "semanticMeaning": "Active deal category.",
+            "renderSegment": true,
+            "legendValue": "1",
+            "categoricalHue": "orange"
+          },
+          {
+            "id": "reservee",
+            "label": "Réservée",
+            "count": 0,
+            "fill": "{tokens.color.stage.yellow.fill}",
+            "labelColor": "{tokens.color.stage.yellow.label}",
+            "semanticMeaning": "Reserved deal; not yet won.",
+            "renderSegment": false,
+            "legendValue": "0",
+            "categoricalHue": "yellow"
+          },
+          {
+            "id": "documents",
+            "label": "Documents",
+            "count": 1,
+            "fill": "{tokens.color.stage.purple.fill}",
+            "labelColor": "{tokens.color.stage.purple.label}",
+            "semanticMeaning": "Active documentation stage; not yet won.",
+            "renderSegment": true,
+            "legendValue": "1",
+            "categoricalHue": "purple"
+          },
+          {
+            "id": "gagnee",
+            "label": "Gagnée",
+            "count": 0,
+            "fill": "{tokens.color.stage.green.fill}",
+            "labelColor": "{tokens.color.stage.green.label}",
+            "semanticMeaning": "Won deal.",
+            "renderSegment": false,
+            "legendValue": "0",
+            "categoricalHue": "green"
+          },
+          {
+            "id": "perdue",
+            "label": "Perdue",
+            "count": 0,
+            "fill": "{tokens.color.stage.red.fill}",
+            "labelColor": "{tokens.color.stage.red.label}",
+            "semanticMeaning": "Lost deal.",
+            "renderSegment": false,
+            "legendValue": "0",
+            "categoricalHue": "red"
+          },
+          {
+            "id": "annulee",
+            "label": "Annulée",
+            "count": 0,
+            "fill": "{tokens.color.stage.slate.fill}",
+            "labelColor": "{tokens.color.stage.slate.label}",
+            "semanticMeaning": "Cancelled deal; slate categorical identity, not a successful outcome.",
+            "renderSegment": false,
+            "legendValue": "0",
+            "categoricalHue": "slate"
+          }
+        ],
+        "total": 6
+      },
+      "colorRule": "Each of the nine prospect categories has a distinct hue. The eight deal categories reuse the fixed mapping for semantically equivalent or corresponding categories. Labels preserve exact status meaning."
+    },
+    "agentCharts": {
+      "sectionTitle": "Performance par agent",
+      "illustrative": true,
+      "visibleDisclosure": "Données illustratives · agents fictifs",
+      "agents": [
+        {
+          "id": "agent_a",
+          "label": "Agent A"
+        },
+        {
+          "id": "agent_b",
+          "label": "Agent B"
+        },
+        {
+          "id": "agent_c",
+          "label": "Agent C"
+        },
+        {
+          "id": "agent_d",
+          "label": "Agent D"
+        }
+      ],
+      "left": {
+        "title": "Demandes par agent",
+        "subtitle": "Comparaison mensuelle · exemple",
+        "chartType": "groupedBar",
+        "illustrative": true,
+        "meaning": "Blue identifies September and purple identifies October. These series colors describe periods, not pipeline stages.",
+        "agentOrder": [
+          "agent_a",
+          "agent_b",
+          "agent_c",
+          "agent_d"
+        ],
+        "series": [
+          {
+            "id": "2026-09",
+            "label": "Septembre",
+            "values": [
+              3,
+              4,
+              2,
+              1
+            ],
+            "fill": "{tokens.color.chart.periodPrevious.fill}",
+            "labelColor": "{tokens.color.ink}",
+            "total": 10
+          },
+          {
+            "id": "2026-10",
+            "label": "Octobre",
+            "values": [
+              4,
+              3,
+              3,
+              2
+            ],
+            "fill": "{tokens.color.chart.periodCurrent.fill}",
+            "labelColor": "{tokens.color.ink}",
+            "total": 12
+          }
+        ],
+        "labels": "Place numeric labels outside the bars in charcoal; preserve the visible period legend.",
+        "axis": {
+          "startAt": 0,
+          "tickStep": 1,
+          "suggestedMax": 5
+        },
+        "provenance": "Fictional per-agent allocation. October total matches the supplied 12 requests; September comparison is illustrative."
+      },
+      "right": {
+        "title": "Affaires par agent",
+        "subtitle": "Situation actuelle · exemple",
+        "chartType": "stackedBar",
+        "illustrative": true,
+        "meaning": "Each segment reuses the exact fill and label color from the deal-stage dictionary.",
+        "stageDictionary": "content.pipelines.deals.stages",
+        "stageOrder": [
+          "nouvelle",
+          "visite",
+          "negociation",
+          "reservee",
+          "documents",
+          "gagnee",
+          "perdue",
+          "annulee"
+        ],
+        "allocations": [
+          {
+            "agentId": "agent_a",
+            "nouvelle": 1,
+            "visite": 1,
+            "negociation": 0,
+            "reservee": 0,
+            "documents": 0,
+            "gagnee": 0,
+            "perdue": 0,
+            "annulee": 0
+          },
+          {
+            "agentId": "agent_b",
+            "nouvelle": 1,
+            "visite": 0,
+            "negociation": 1,
+            "reservee": 0,
+            "documents": 0,
+            "gagnee": 0,
+            "perdue": 0,
+            "annulee": 0
+          },
+          {
+            "agentId": "agent_c",
+            "nouvelle": 0,
+            "visite": 1,
+            "negociation": 0,
+            "reservee": 0,
+            "documents": 0,
+            "gagnee": 0,
+            "perdue": 0,
+            "annulee": 0
+          },
+          {
+            "agentId": "agent_d",
+            "nouvelle": 0,
+            "visite": 0,
+            "negociation": 0,
+            "reservee": 0,
+            "documents": 1,
+            "gagnee": 0,
+            "perdue": 0,
+            "annulee": 0
+          }
+        ],
+        "total": 6,
+        "legendRule": "Show all eight deal statuses, including zero counts, in a complete labeled legend. Use four columns and two rows when space permits; wrap to two columns on compact screens.",
+        "segmentRule": "Do not draw zero-sized segments or assign them a minimum visible width.",
+        "labels": "Show segment counts when space permits; otherwise provide a directly associated count list. Show the total above each stack.",
+        "axis": {
+          "startAt": 0,
+          "tickStep": 1,
+          "suggestedMax": 3
+        },
+        "provenance": "Fictional ownership allocation; its stage totals reconcile to the supplied six current deals.",
+        "legendClass": "legend legend--stages",
+        "legendPlacement": "Below the panel header, above the chart; do not force eight entries onto one row."
+      }
+    }
+  },
+  "accessibilityNotes": [
+    "Token contrast checks apply to opaque sRGB color pairs only and do not certify the raster mockup or the complete application.",
+    "Keep stage names and values visible. Distinct hues and 2px white gaps are not sufficient by themselves to communicate exact quantities.",
+    "Bright categorical fills, especially yellow and cyan, supplement visible stage names and counts; color alone is not the data representation.",
+    "Supply each chart with an accessible name, a concise description, and a table or equivalent list of its exact data.",
+    "Use real buttons and links, native form controls, ordered heading levels, and visible keyboard focus.",
+    "Do not encode selection, warnings, losses or success in color alone.",
+    "Use minmax(0, 1fr), flexible legends and wrapping labels. Do not hide horizontal overflow to conceal an inaccessible layout.",
+    "Respect prefers-reduced-motion. Charts do not require animation to communicate their values."
+  ],
+  "validation": {
+    "method": "WCAG relative luminance contrast formula, using exact opaque sRGB token colors.",
+    "scope": "Declared text and required control/state-indicator pairs only. Decorative surfaces, photos, separators and adjacent chart hues are not asserted to satisfy a contrast target.",
+    "claimLimit": "A token-level calculation is not a claim of complete WCAG conformance.",
+    "contrastPairs": [
+      {
+        "name": "ink on canvas",
+        "foreground": "{tokens.color.ink}",
+        "background": "{tokens.color.canvas}",
+        "foregroundHex": "#272727",
+        "backgroundHex": "#FAF8F4",
+        "ratio": 14.083,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "muted on canvas",
+        "foreground": "{tokens.color.muted}",
+        "background": "{tokens.color.canvas}",
+        "foregroundHex": "#6B6257",
+        "backgroundHex": "#FAF8F4",
+        "ratio": 5.641,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "ink on surface",
+        "foreground": "{tokens.color.ink}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#272727",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 14.695,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "muted on surface",
+        "foreground": "{tokens.color.muted}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#6B6257",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 5.886,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "ink on surfaceBeige",
+        "foreground": "{tokens.color.ink}",
+        "background": "{tokens.color.surfaceBeige}",
+        "foregroundHex": "#272727",
+        "backgroundHex": "#F6ECDA",
+        "ratio": 12.754,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "muted on surfaceBeige",
+        "foreground": "{tokens.color.muted}",
+        "background": "{tokens.color.surfaceBeige}",
+        "foregroundHex": "#6B6257",
+        "backgroundHex": "#F6ECDA",
+        "ratio": 5.108,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Primary label: default",
+        "foreground": "{tokens.color.ink}",
+        "background": "{tokens.color.brand.default}",
+        "foregroundHex": "#272727",
+        "backgroundHex": "#D8AA45",
+        "ratio": 6.94,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Primary label: hover",
+        "foreground": "{tokens.color.ink}",
+        "background": "{tokens.color.brand.hover}",
+        "foregroundHex": "#272727",
+        "backgroundHex": "#E4BC62",
+        "ratio": 8.3,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Primary label: pressed",
+        "foreground": "{tokens.color.ink}",
+        "background": "{tokens.color.brand.pressed}",
+        "foregroundHex": "#272727",
+        "backgroundHex": "#CC9C36",
+        "ratio": 5.958,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "goldText on canvas",
+        "foreground": "{tokens.color.goldText}",
+        "background": "{tokens.color.canvas}",
+        "foregroundHex": "#765A13",
+        "backgroundHex": "#FAF8F4",
+        "ratio": 6.106,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "goldText on surface",
+        "foreground": "{tokens.color.goldText}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#765A13",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 6.372,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "focusLight on canvas",
+        "foreground": "{tokens.color.focusLight}",
+        "background": "{tokens.color.canvas}",
+        "foregroundHex": "#765A13",
+        "backgroundHex": "#FAF8F4",
+        "ratio": 6.106,
+        "minimum": 3,
+        "purpose": "focus or control boundary",
+        "passes": true
+      },
+      {
+        "name": "focusLight on surface",
+        "foreground": "{tokens.color.focusLight}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#765A13",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 6.372,
+        "minimum": 3,
+        "purpose": "focus or control boundary",
+        "passes": true
+      },
+      {
+        "name": "controlBorder on canvas",
+        "foreground": "{tokens.color.controlBorder}",
+        "background": "{tokens.color.canvas}",
+        "foregroundHex": "#858779",
+        "backgroundHex": "#FAF8F4",
+        "ratio": 3.45,
+        "minimum": 3,
+        "purpose": "focus or control boundary",
+        "passes": true
+      },
+      {
+        "name": "controlBorder on surface",
+        "foreground": "{tokens.color.controlBorder}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#858779",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 3.6,
+        "minimum": 3,
+        "purpose": "focus or control boundary",
+        "passes": true
+      },
+      {
+        "name": "Sidebar label",
+        "foreground": "{tokens.color.sidebar.label}",
+        "background": "{tokens.color.sidebar.background}",
+        "foregroundHex": "#F8F7F0",
+        "backgroundHex": "#121512",
+        "ratio": 17.127,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Sidebar secondary",
+        "foreground": "{tokens.color.sidebar.secondary}",
+        "background": "{tokens.color.sidebar.background}",
+        "foregroundHex": "#B9C2B6",
+        "backgroundHex": "#121512",
+        "ratio": 10.033,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Sidebar tertiary",
+        "foreground": "{tokens.color.sidebar.tertiary}",
+        "background": "{tokens.color.sidebar.background}",
+        "foregroundHex": "#8F9C8B",
+        "backgroundHex": "#121512",
+        "ratio": 6.39,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Active sidebar label on active",
+        "foreground": "{tokens.color.sidebar.activeLabel}",
+        "background": "{tokens.color.sidebar.active}",
+        "foregroundHex": "#FFFFFF",
+        "backgroundHex": "#252D24",
+        "ratio": 14.194,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Gold sidebar indicator on active",
+        "foreground": "{tokens.color.sidebar.accent}",
+        "background": "{tokens.color.sidebar.active}",
+        "foregroundHex": "#D8AA45",
+        "backgroundHex": "#252D24",
+        "ratio": 6.594,
+        "minimum": 3,
+        "purpose": "state icon",
+        "passes": true
+      },
+      {
+        "name": "Active sidebar label on activeHover",
+        "foreground": "{tokens.color.sidebar.activeLabel}",
+        "background": "{tokens.color.sidebar.activeHover}",
+        "foregroundHex": "#FFFFFF",
+        "backgroundHex": "#2D372B",
+        "ratio": 12.404,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Gold sidebar indicator on activeHover",
+        "foreground": "{tokens.color.sidebar.accent}",
+        "background": "{tokens.color.sidebar.activeHover}",
+        "foregroundHex": "#D8AA45",
+        "backgroundHex": "#2D372B",
+        "ratio": 5.763,
+        "minimum": 3,
+        "purpose": "state icon",
+        "passes": true
+      },
+      {
+        "name": "Gold sidebar tile icon",
+        "foreground": "{tokens.color.sidebar.tileIcon}",
+        "background": "{tokens.color.sidebar.accent}",
+        "foregroundHex": "#121512",
+        "backgroundHex": "#D8AA45",
+        "ratio": 8.545,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Sidebar focus on background",
+        "foreground": "{tokens.color.focusDark}",
+        "background": "{tokens.color.sidebar.background}",
+        "foregroundHex": "#E1BA66",
+        "backgroundHex": "#121512",
+        "ratio": 10.0,
+        "minimum": 3,
+        "purpose": "focus indicator",
+        "passes": true
+      },
+      {
+        "name": "Sidebar focus on active",
+        "foreground": "{tokens.color.focusDark}",
+        "background": "{tokens.color.sidebar.active}",
+        "foregroundHex": "#E1BA66",
+        "backgroundHex": "#252D24",
+        "ratio": 7.717,
+        "minimum": 3,
+        "purpose": "focus indicator",
+        "passes": true
+      },
+      {
+        "name": "Sidebar focus on activeHover",
+        "foreground": "{tokens.color.focusDark}",
+        "background": "{tokens.color.sidebar.activeHover}",
+        "foregroundHex": "#E1BA66",
+        "backgroundHex": "#2D372B",
+        "ratio": 6.744,
+        "minimum": 3,
+        "purpose": "focus indicator",
+        "passes": true
+      },
+      {
+        "name": "KPI value: contacts",
+        "foreground": "{tokens.color.kpi.contacts.foreground}",
+        "background": "{tokens.color.kpi.contacts.card}",
+        "foregroundHex": "#3158A6",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 6.713,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "KPI icon: contacts",
+        "foreground": "{tokens.color.kpi.contacts.foreground}",
+        "background": "{tokens.color.kpi.contacts.badge}",
+        "foregroundHex": "#3158A6",
+        "backgroundHex": "#EDF2FB",
+        "ratio": 6.075,
+        "minimum": 3,
+        "purpose": "meaningful icon",
+        "passes": true
+      },
+      {
+        "name": "KPI value: activeDeals",
+        "foreground": "{tokens.color.kpi.activeDeals.foreground}",
+        "background": "{tokens.color.kpi.activeDeals.card}",
+        "foregroundHex": "#765A13",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 6.372,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "KPI icon: activeDeals",
+        "foreground": "{tokens.color.kpi.activeDeals.foreground}",
+        "background": "{tokens.color.kpi.activeDeals.badge}",
+        "foregroundHex": "#765A13",
+        "backgroundHex": "#F6ECDA",
+        "ratio": 5.53,
+        "minimum": 3,
+        "purpose": "meaningful icon",
+        "passes": true
+      },
+      {
+        "name": "KPI value: requests",
+        "foreground": "{tokens.color.kpi.requests.foreground}",
+        "background": "{tokens.color.kpi.requests.card}",
+        "foregroundHex": "#7051A4",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 6.072,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "KPI icon: requests",
+        "foreground": "{tokens.color.kpi.requests.foreground}",
+        "background": "{tokens.color.kpi.requests.badge}",
+        "foregroundHex": "#7051A4",
+        "backgroundHex": "#F2EEFB",
+        "ratio": 5.408,
+        "minimum": 3,
+        "purpose": "meaningful icon",
+        "passes": true
+      },
+      {
+        "name": "KPI value: wonDeals",
+        "foreground": "{tokens.color.kpi.wonDeals.foreground}",
+        "background": "{tokens.color.kpi.wonDeals.card}",
+        "foregroundHex": "#235D37",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 7.673,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "KPI icon: wonDeals",
+        "foreground": "{tokens.color.kpi.wonDeals.foreground}",
+        "background": "{tokens.color.kpi.wonDeals.badge}",
+        "foregroundHex": "#235D37",
+        "backgroundHex": "#E8F5DD",
+        "ratio": 6.885,
+        "minimum": 3,
+        "purpose": "meaningful icon",
+        "passes": true
+      },
+      {
+        "name": "KPI value: receipts",
+        "foreground": "{tokens.color.kpi.receipts.foreground}",
+        "background": "{tokens.color.kpi.receipts.card}",
+        "foregroundHex": "#765A13",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 6.372,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "KPI icon: receipts",
+        "foreground": "{tokens.color.kpi.receipts.foreground}",
+        "background": "{tokens.color.kpi.receipts.badge}",
+        "foregroundHex": "#765A13",
+        "backgroundHex": "#F6EDCF",
+        "ratio": 5.531,
+        "minimum": 3,
+        "purpose": "meaningful icon",
+        "passes": true
+      },
+      {
+        "name": "Semantic badge: success",
+        "foreground": "{tokens.color.semantic.success.foreground}",
+        "background": "{tokens.color.semantic.success.background}",
+        "foregroundHex": "#235D37",
+        "backgroundHex": "#E8F5DD",
+        "ratio": 6.885,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Semantic small text: success",
+        "foreground": "{tokens.color.semantic.success.foreground}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#235D37",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 7.673,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Semantic badge: warning",
+        "foreground": "{tokens.color.semantic.warning.foreground}",
+        "background": "{tokens.color.semantic.warning.background}",
+        "foregroundHex": "#825A14",
+        "backgroundHex": "#FFF1CF",
+        "ratio": 5.475,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Semantic small text: warning",
+        "foreground": "{tokens.color.semantic.warning.foreground}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#825A14",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 6.037,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Semantic badge: danger",
+        "foreground": "{tokens.color.semantic.danger.foreground}",
+        "background": "{tokens.color.semantic.danger.background}",
+        "foregroundHex": "#994A40",
+        "backgroundHex": "#FBEDEA",
+        "ratio": 5.4,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Semantic small text: danger",
+        "foreground": "{tokens.color.semantic.danger.foreground}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#994A40",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 6.061,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Semantic badge: neutral",
+        "foreground": "{tokens.color.semantic.neutral.foreground}",
+        "background": "{tokens.color.semantic.neutral.background}",
+        "foregroundHex": "#606651",
+        "backgroundHex": "#EFEFE8",
+        "ratio": 5.17,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Semantic small text: neutral",
+        "foreground": "{tokens.color.semantic.neutral.foreground}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#606651",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 5.874,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Semantic badge: info",
+        "foreground": "{tokens.color.semantic.info.foreground}",
+        "background": "{tokens.color.semantic.info.background}",
+        "foregroundHex": "#35647E",
+        "backgroundHex": "#E8F1F7",
+        "ratio": 5.604,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Semantic small text: info",
+        "foreground": "{tokens.color.semantic.info.foreground}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#35647E",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 6.307,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Period previous optional inside label",
+        "foreground": "{tokens.color.chart.periodPrevious.label}",
+        "background": "{tokens.color.chart.periodPrevious.fill}",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#3B82F6",
+        "ratio": 5.383,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Period current optional inside label",
+        "foreground": "{tokens.color.chart.periodCurrent.label}",
+        "background": "{tokens.color.chart.periodCurrent.fill}",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#8B5CF6",
+        "ratio": 4.676,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Disabled label",
+        "foreground": "{tokens.color.interactive.disabledForeground}",
+        "background": "{tokens.color.interactive.disabledBackground}",
+        "foregroundHex": "#6B6257",
+        "backgroundHex": "#E8E4DC",
+        "ratio": 4.719,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Link hover",
+        "foreground": "{tokens.color.interactive.linkHover}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#5C440D",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 9.03,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Link pressed",
+        "foreground": "{tokens.color.interactive.linkPressed}",
+        "background": "{tokens.color.surface}",
+        "foregroundHex": "#443108",
+        "backgroundHex": "#FFFDF8",
+        "ratio": 12.233,
+        "minimum": 4.5,
+        "purpose": "text",
+        "passes": true
+      },
+      {
+        "name": "Categorical stage blue",
+        "foreground": "{tokens.color.stage.blue.label}",
+        "background": "{tokens.color.stage.blue.fill}",
+        "minimum": 4.5,
+        "purpose": "text",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#3B82F6",
+        "ratio": 5.383,
+        "passes": true
+      },
+      {
+        "name": "Categorical stage cyan",
+        "foreground": "{tokens.color.stage.cyan.label}",
+        "background": "{tokens.color.stage.cyan.fill}",
+        "minimum": 4.5,
+        "purpose": "text",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#06B6D4",
+        "ratio": 8.155,
+        "passes": true
+      },
+      {
+        "name": "Categorical stage yellow",
+        "foreground": "{tokens.color.stage.yellow.label}",
+        "background": "{tokens.color.stage.yellow.fill}",
+        "minimum": 4.5,
+        "purpose": "text",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#FACC15",
+        "ratio": 12.928,
+        "passes": true
+      },
+      {
+        "name": "Categorical stage purple",
+        "foreground": "{tokens.color.stage.purple.label}",
+        "background": "{tokens.color.stage.purple.fill}",
+        "minimum": 4.5,
+        "purpose": "text",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#8B5CF6",
+        "ratio": 4.676,
+        "passes": true
+      },
+      {
+        "name": "Categorical stage green",
+        "foreground": "{tokens.color.stage.green.label}",
+        "background": "{tokens.color.stage.green.fill}",
+        "minimum": 4.5,
+        "purpose": "text",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#22C55E",
+        "ratio": 8.689,
+        "passes": true
+      },
+      {
+        "name": "Categorical stage orange",
+        "foreground": "{tokens.color.stage.orange.label}",
+        "background": "{tokens.color.stage.orange.fill}",
+        "minimum": 4.5,
+        "purpose": "text",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#F97316",
+        "ratio": 7.063,
+        "passes": true
+      },
+      {
+        "name": "Categorical stage red",
+        "foreground": "{tokens.color.stage.red.label}",
+        "background": "{tokens.color.stage.red.fill}",
+        "minimum": 4.5,
+        "purpose": "text",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#EF4444",
+        "ratio": 5.261,
+        "passes": true
+      },
+      {
+        "name": "Categorical stage pink",
+        "foreground": "{tokens.color.stage.pink.label}",
+        "background": "{tokens.color.stage.pink.fill}",
+        "minimum": 4.5,
+        "purpose": "text",
+        "foregroundHex": "#0A0A0A",
+        "backgroundHex": "#EC4899",
+        "ratio": 5.613,
+        "passes": true
+      },
+      {
+        "name": "Categorical stage slate",
+        "foreground": "{tokens.color.stage.slate.label}",
+        "background": "{tokens.color.stage.slate.fill}",
+        "minimum": 4.5,
+        "purpose": "text",
+        "foregroundHex": "#FFFFFF",
+        "backgroundHex": "#64748B",
+        "ratio": 4.759,
+        "passes": true
+      }
+    ],
+    "contrastPairCount": 60,
+    "minimumTextRatio": 4.676,
+    "minimumNontextRatio": 3.45
+  }
+}

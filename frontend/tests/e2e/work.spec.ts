@@ -54,7 +54,11 @@ test("SP15 AT-17/23: task creation, overdue delivery/read and completion in curr
     await expect(page.getByRole("region", { name: "Travail à faire", exact: true }).getByRole("link", { name: "SP15 tâche synthétique", exact: true })).toBeVisible();
     const inbox = page.getByRole("region", { name: "Notifications internes", exact: true });
     await expect(inbox.getByRole("heading", { name: "Échéance de tâche", exact: true })).toHaveCount(1);
-    await inbox.getByRole("button", { name: "Marquer comme lue", exact: true }).click();
+    const [readResponse] = await Promise.all([
+      page.waitForResponse(response => /\/api\/v1\/notifications\/[^/]+\/read$/.test(new URL(response.url()).pathname) && response.request().method() === "POST", { timeout: 5000 }),
+      inbox.getByRole("button", { name: "Marquer comme lue", exact: true }).click(),
+    ]);
+    expect(readResponse.status()).toBe(200);
     await expect(inbox.getByText("Notification marquée comme lue.", { exact: true })).toBeVisible();
     await page.getByLabel("Notifications affichées", { exact: true }).selectOption("unread"); await expect(inbox.getByRole("heading", { name: "Échéance de tâche", exact: true })).toHaveCount(0);
     await page.getByLabel("Notifications affichées", { exact: true }).selectOption("read"); await inbox.getByRole("link", { name: "Ouvrir le dossier", exact: true }).click();

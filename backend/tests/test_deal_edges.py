@@ -67,7 +67,7 @@ def test_customer_offer_rejects_invalid_money_types_and_fields(values):
         offer(**values)
 
 
-def test_same_contact_requirement_enquiry_and_offer_kind_are_authoritative(settings, database):
+def test_same_contact_requirement_and_dedicated_conversion_are_authoritative(settings, database):
     _, token, contact, _ = setup(settings, database)
     _, outsider = actor(settings, database)
     other = cid(create_lead(settings, database, outsider, new_lead("+212600000002")))
@@ -82,10 +82,11 @@ def test_same_contact_requirement_enquiry_and_offer_kind_are_authoritative(setti
     for values in (
         {"requirement_id": str(req)},
         {"requirement_id": str(uuid4())},
-        {"enquiry_id": str(uuid4())},
     ):
         with pytest.raises(IdentityError, match="INVALID_DEAL_CONTEXT"):
             run(settings, database, token, new(contact, **values))
+    with pytest.raises(ValidationError):
+        new(contact, enquiry_id=str(uuid4()))
     assert read_list(database, token, DealQuery())["total"] == 0
 
 

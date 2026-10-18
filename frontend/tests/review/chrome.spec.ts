@@ -1,7 +1,7 @@
 import { chromium } from "@playwright/test";
 import { expect, signedInTest as test, test as publicTest, signIn, createActor, removeActor } from "../helpers/auth";
 import { randomBytes } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { apiProcess } from "../helpers/api-process";
 
@@ -53,7 +53,7 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
   await mobile.screenshot({ path: path.join(artifactRoot, "sp03-mobile-ready.png"), fullPage: true });
   try {
     await apiProcess("stop");
-    await mobileReports.getByRole("button", { name: "Actualiser les indicateurs", exact: true }).tap();
+    await mobileReports.getByRole("button", { name: "Appliquer la période", exact: true }).tap();
     await expect(mobileReports.getByRole("alert")).toHaveText("Le service local est indisponible. Vérifiez son démarrage, puis réessayez.");
     await mobile.screenshot({ path: path.join(artifactRoot, "sp03-mobile-unavailable.png"), fullPage: true });
   } finally { await apiProcess("start"); }
@@ -95,7 +95,9 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
 
   // This is a generated disposable Chrome profile, never the user's browser profile.
   const profile = path.resolve("test-results/zoom-profile");
-  let zoomContext = await chromium.launchPersistentContext(profile, {
+  let zoomContext!: Awaited<ReturnType<typeof chromium.launchPersistentContext>>;
+  try {
+  zoomContext = await chromium.launchPersistentContext(profile, {
     ignoreHTTPSErrors: true,
     channel: "chrome",
     headless: false,
@@ -125,11 +127,10 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
     deviceScaleFactor: undefined,
     args: ["--window-size=1440,1000"],
   });
-  try {
     zoomPage = zoomContext.pages()[0];
     await zoomPage.goto(`${baseURL}/dashboard`);
     await expect(zoomPage.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
-    await zoomPage.getByRole("button", { name: "Actualiser les indicateurs", exact: true }).focus();
+    await zoomPage.getByRole("button", { name: "Appliquer la période", exact: true }).focus();
     await zoomPage.keyboard.press("Enter");
     await expect(zoomPage.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
     const measurement = await zoomPage.evaluate(() => ({
@@ -148,9 +149,9 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
       const query = drawer.getByLabel(search, { exact: true });
       await query.fill("SP06 contrôle synthétique du zoom");
       expect(await drawer.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
-      await drawer.getByRole("button", { name: submit, exact: true }).click();
-      await expect(drawer).toHaveCount(0);
-      await trigger.click();
+      if (submit) await drawer.getByRole("button", { name: submit, exact: true }).click();
+      else await zoomPage.keyboard.press("Escape");
+      await expect(drawer).toHaveCount(0); await trigger.click();
       await expect(drawer.getByLabel(search, { exact: true })).toHaveValue("SP06 contrôle synthétique du zoom");
       await expect(zoomPage.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
       const session = await zoomContext.newCDPSession(zoomPage);
@@ -159,8 +160,7 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
       const capture = await session.send("Page.captureScreenshot", { format: "png", fromSurface: false });
       await writeFile(path.join(artifactRoot, `filter-rail-${name.replaceAll(" ", "-")}-zoom-200.png`), Buffer.from(capture.data, "base64"));
       await session.detach();
-      await zoomPage.keyboard.press("Escape");
-      await expect(trigger).toBeFocused();
+      await zoomPage.keyboard.press("Escape"); await expect(trigger).toBeFocused();
       expect(await zoomPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
     await zoomPage
@@ -177,24 +177,24 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
       path: path.join(artifactRoot, "sp03-zoom-200-dashboard.png"),
       scale: "css",
     });
-    for (const [route, label, status] of [
-      ["/leads", "Créer un Lead", "0 demande(s) accessible(s)."],
-      ["/deals", "Créer une affaire", "0 affaire(s) accessible(s) dans ces filtres."],
+    for (const [route, label, heading, status] of [
+      ["/leads", "Nouveau prospect", "Créer un Lead", "0 demande"],
+      ["/deals", "Créer une affaire", "Créer une affaire", "0 affaire"],
     ] as const) {
       await zoomPage.goto(`${baseURL}${route}`);
-      await expect(zoomPage.getByText(status, { exact: true })).toBeVisible();
+      await expect(zoomPage.getByRole("status").filter({ hasText: new RegExp(`^${status}$`) })).toBeVisible();
       const create = zoomPage.getByRole("link", { name: label, exact: true });
-      await expect(create).toHaveCSS("background-color", "rgb(201, 167, 92)");
+      await expect(create).toHaveCSS("background-color", "rgb(216, 170, 69)");
       expect(await zoomPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await zoomPage.screenshot({ path: path.join(artifactRoot, `list-header-${route.slice(1)}-zoom-200.png`), scale: "device" });
       await verifyFilterZoom(route === "/leads" ? "Filtres des Leads" : "Filtres des affaires", route === "/leads" ? "Rechercher un nom, téléphone ou e-mail" : "Rechercher une affaire, un contact ou une action", "Appliquer");
       await create.focus();
       await zoomPage.keyboard.press("Enter");
       await expect(zoomPage).toHaveURL(new RegExp(`${route}/new$`));
-      await expect(zoomPage.getByRole("heading", { level: 1, name: label, exact: true })).toBeVisible();
+      await expect(zoomPage.getByRole("heading", { level: 1, name: heading, exact: true })).toBeVisible();
     }
     await zoomPage.goto(`${baseURL}/projects`);
-    await verifyFilterZoom("Filtres des biens", "Référence, nom ou localisation", "Appliquer les filtres");
+    await verifyFilterZoom("Affiner les biens", "Rechercher un nom, une référence ou un lieu", "");
     await zoomPage.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click();
     await verifyFilterZoom("Filtres des programmes", "Rechercher un programme", "Filtrer les programmes");
     await zoomPage.goto(`${baseURL}/leads?view=contacts`);
@@ -238,7 +238,10 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
       contentType: "application/json",
     });
   } finally {
-    await zoomContext.close();
+    await zoomContext?.close();
+    expect(path.dirname(profile)).toBe(path.resolve("test-results"));
+    expect(path.basename(profile)).toBe("zoom-profile");
+    await rm(profile, { recursive: true, force: true });
   }
   expect(failures).toEqual([]);
 });
@@ -270,6 +273,8 @@ publicTest("SP-03: visible login, empty-field captures, invalid feedback and mob
   await page.getByRole("button", { name: "Se connecter", exact: true }).click();
   await expect(page.getByText("Adresse e-mail ou mot de passe incorrect.", { exact: true })).toBeVisible();
   expect(await page.getByLabel("Mot de passe", { exact: true }).inputValue() === "").toBe(true);
+  await page.getByLabel("Adresse e-mail", { exact: true }).fill("");
+  expect(await page.getByLabel("Adresse e-mail", { exact: true }).inputValue() === "").toBe(true);
   await page.screenshot({ path: path.join(artifactRoot, "sp03-login-mobile-invalid.png"), fullPage: true });
   await signIn(page, actor);
   await page.screenshot({ path: path.join(artifactRoot, "sp03-dashboard-mobile.png"), fullPage: true });

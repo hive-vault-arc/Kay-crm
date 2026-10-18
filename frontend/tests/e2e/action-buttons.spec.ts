@@ -23,14 +23,18 @@ async function inspectActions(page: Page) {
     if (!await control.isVisible()) continue;
     await expect(control.locator("[data-action-icon]")).toHaveCount(1);
     await expect(control.locator("[data-action-icon]")).toHaveAttribute("aria-hidden", "true");
-    await expect(control.locator("[data-action-icon]")).toHaveCSS("width", "16px");
+    const iconSize = await control.evaluate(element => element.classList.contains("crm-sort-heading")) ? "12px" : "16px";
+    await expect(control.locator("[data-action-icon]")).toHaveCSS("width", iconSize);
+    await expect(control.locator("[data-action-icon]")).toHaveCSS("height", iconSize);
     const box = (await control.boundingBox())!;
     expect(box.height).toBeGreaterThanOrEqual(44);
     expect(box.width).toBeGreaterThanOrEqual(44);
     expect(await control.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
     if (await control.getAttribute("data-action") === "create") {
       await expect(control).toHaveAttribute("data-variant", "creation");
-      await expect(control).toHaveCSS("background-color", "rgb(201, 167, 92)");
+      const gold = await control.isDisabled() ? "rgb(232, 228, 220)"
+        : await control.evaluate(element => element.matches(":hover")) ? "rgb(228, 188, 98)" : "rgb(216, 170, 69)";
+      await expect(control).toHaveCSS("background-color", gold);
     }
   }
   const headerSearch = page.locator("header").getByRole("button", { name: "Rechercher", exact: true });
@@ -65,9 +69,9 @@ test("Action buttons: every semantic action renders on the server with correct c
   await page.locator("html").evaluate((element, style) => element.setAttribute("style", style ?? ""), theme);
   const creationLink = page.getByRole("link", { name: "Créer un dossier synthétique", exact: true });
   await expect(creationLink).toHaveAttribute("data-action", "create");
-  await expect(creationLink).toHaveCSS("background-color", "rgb(201, 167, 92)");
+  await expect(creationLink).toHaveCSS("background-color", "rgb(216, 170, 69)");
   await expect(creationLink.locator("[data-action-icon]")).toHaveCount(1);
-  await expect(page.getByRole("button", { name: "Action create synthétique", exact: true })).toHaveCSS("background-color", "rgb(201, 167, 92)");
+  await expect(page.getByRole("button", { name: "Action create synthétique", exact: true })).toHaveCSS("background-color", "rgb(216, 170, 69)");
   const metrics = [];
   for (const width of [320, 360, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -100,7 +104,7 @@ test("Action buttons: real CRM route families, responsive forms, dialogs and pre
     const contact = (await (await page.request.get(`/api/v1/enquiries/${lead}`)).json()).contact.id;
     await clearActorContext(page); await signIn(page, actor);
     const stock = await inventoryFixture(page, contact);
-    const created = await staffCommand(page, "deals", { ...dealBody(contact, "SP11 affaire synthétique des actions"), enquiry_id: lead });
+    const created = await staffCommand(page, "deals", dealBody(contact, "SP11 affaire synthétique des actions"));
     expect(created.status()).toBe(200); const deal = (await created.json()).id;
     const routes = [
       ["dashboard", "/dashboard"], ["leads", "/leads"], ["contacts", "/leads?view=contacts"],
@@ -121,9 +125,9 @@ test("Action buttons: real CRM route families, responsive forms, dialogs and pre
     await page.getByRole("button", { name: "Ajouter un téléphone", exact: true }).click();
     const remove = page.getByRole("button", { name: "Retirer le téléphone 2", exact: true });
     await expect(remove).toHaveAttribute("data-action", "remove");
-    await expect(remove.locator("svg")).toHaveCSS("color", "rgb(161, 29, 34)");
+    await expect(remove.locator("svg")).toHaveCSS("color", "rgb(153, 74, 64)");
     await capture(page, "contact-fields-remove-360");
-    await remove.click(); await expect(page.getByLabel("Téléphone international 2", { exact: true })).toHaveCount(0);
+    await remove.click(); await expect(page.getByLabel("Téléphone 2", { exact: true })).toHaveCount(0);
     await page.goto(`/deals/${deal}`);
     await page.getByRole("button", { name: "Clôturer l’affaire", exact: true }).click();
     const dialog = page.getByRole("alertdialog"); await expect(dialog).toBeVisible();

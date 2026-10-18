@@ -16,6 +16,7 @@ from app.inventory.contracts import (
     InventoryQuery,
     NewOffering,
     Owners,
+    PropertiesQuery,
     PropertyFields,
 )
 from app.inventory.hierarchy_contracts import ArchiveDevelopment
@@ -52,7 +53,7 @@ def validate_query(request: Request, allowed: set[str] | None = None) -> None:
 
 @router.get("/properties")
 def properties(
-    request: Request, token: Proof, query: Annotated[InventoryQuery, Query()]
+    request: Request, token: Proof, query: Annotated[PropertiesQuery, Query()]
 ) -> dict[str, object]:
     validate_query(
         request,
@@ -61,6 +62,7 @@ def properties(
             "page_size",
             "q",
             "category",
+            "categories",
             "offering_kind",
             "state",
             "sort",

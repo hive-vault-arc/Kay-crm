@@ -21,6 +21,18 @@ ROOT = BACKEND_ROOT / ".local-data" / "benchmark"
 CONTEXT = b"kay-sp22-benchmark-v1"
 
 
+def expected_enquiries(position: int, status_counts: dict[str, int]) -> int:
+    if not 0 <= position < 100 or status_counts not in (
+        {"new": 200000},
+        {"new": 180000, "converted": 20000},
+    ):
+        raise RuntimeError("BENCHMARK_ENQUIRY_DISTRIBUTION_REFUSED")
+    converted = status_counts.get("converted", 0)
+    if position < 10:
+        return 200000 - converted
+    return 2000 if converted else 2223 if position < 30 else 2222
+
+
 def identity(kind: str, number: int) -> UUID:
     import hashlib
 
@@ -34,9 +46,9 @@ def populate(connection, admin: UUID) -> None:
         values = {**common, "first": first, "last": first + 4999}
         connection.execute(
             text("""INSERT INTO contact
-            (id,name,type,primary_agent_id,created_by_user_id,source,version)
+            (id,name,type,primary_agent_id,created_by_user_id,source,version,country,languages)
             SELECT md5('sp22:contact:'||n)::uuid,'SP22 contact synthétique '||n,'person',
-            md5('sp22:user:'||(10+(n-1)%90))::uuid,:actor,'manual',1
+            md5('sp22:user:'||(10+(n-1)%90))::uuid,:actor,'manual',1,'MA','["french","darija"]'
             FROM generate_series(CAST(:first AS integer),CAST(:last AS integer)) n"""),
             values,
         )
@@ -59,10 +71,11 @@ def populate(connection, admin: UUID) -> None:
         connection.execute(
             text("""INSERT INTO enquiry
             (id,contact_id,origin_contact_id,message,source,assigned_agent_id,
-            created_by_user_id,status,version)
+            created_by_user_id,status,version,initial_budget,campaign_source,rating)
             SELECT md5('sp22:enquiry:'||n)::uuid,md5('sp22:contact:'||n)::uuid,
             md5('sp22:contact:'||n)::uuid,'Demande synthétique SP22','manual',
-            md5('sp22:user:'||(10+(n-1)%90))::uuid,:actor,'new',1
+            md5('sp22:user:'||(10+(n-1)%90))::uuid,:actor,'new',1,
+            '1000000.00 MAD','facebook','warm'
             FROM generate_series(CAST(:first AS integer),CAST(:last AS integer)) n"""),
             values,
         )
@@ -109,7 +122,14 @@ def populate(connection, admin: UUID) -> None:
     for first in range(1, 20001, 500):
         connection.info["seed_phase"] = f"inventory_{first}"
         populate_inventory(connection, {**common, "first": first, "last": first + 499})
-        for table in ("property", "property_owner", "offering", "deal", "deal_stage_event"):
+        for table in (
+            "property",
+            "property_owner",
+            "offering",
+            "deal",
+            "deal_project",
+            "deal_stage_event",
+        ):
             connection.exec_driver_sql("ANALYZE " + table)
         connection.exec_driver_sql("SET CONSTRAINTS ALL IMMEDIATE")
         connection.exec_driver_sql("SET CONSTRAINTS ALL DEFERRED")
@@ -163,23 +183,67 @@ def populate_inventory(connection, common) -> None:
     connection.execute(
         text("""INSERT INTO deal
         (id,contact_id,origin_contact_id,enquiry_id,offering_id,title,stage,
-        next_action,created_by_user_id,updated_by_user_id)
+        next_action,created_by_user_id,updated_by_user_id,initial_budget,campaign_source,
+        rating,purchase_reasons,client_snapshot)
         SELECT md5('sp22:deal:'||n)::uuid,md5('sp22:contact:'||n)::uuid,
         md5('sp22:contact:'||n)::uuid,md5('sp22:enquiry:'||n)::uuid,
-        md5('sp22:offering:'||n)::uuid,'Affaire synthétique SP22 '||n,'new',
-        'Suivi synthétique',:actor,:actor
-        FROM generate_series(CAST(:first AS integer),CAST(:last AS integer)) n"""),
+        md5('sp22:offering:'||n)::uuid,
+        left(c.name||' · '||coalesce(dev.name,p.marketing_name,p.reference),160),'new',
+        'Suivi synthétique',:actor,:actor,'1000000.00 MAD','facebook','warm','["residence"]',
+        jsonb_build_object('name',c.name,'type',c.type,'country',c.country,
+          'nationality',c.nationality,'languages',c.languages,'calling_code','+212',
+          'emails','[]'::jsonb,'phones',jsonb_build_array(jsonb_build_object(
+            'number',phone.normalized,'label',phone.label,'is_primary',true)))
+        FROM generate_series(CAST(:first AS integer),CAST(:last AS integer)) n
+        JOIN contact c ON c.id=md5('sp22:contact:'||n)::uuid
+        JOIN contact_phone phone ON phone.contact_id=c.id AND phone.is_primary
+        JOIN property p ON p.id=md5('sp22:property:'||n)::uuid
+        LEFT JOIN development dev ON dev.id=p.development_id"""),
+        common,
+    )
+    connection.execute(
+        text("""INSERT INTO deal_project(deal_id,position,development_id,property_id,name)
+        SELECT d.id,1,p.development_id,CASE WHEN p.development_id IS NULL THEN p.id END,
+        coalesce(dev.name,p.marketing_name,p.reference)
+        FROM generate_series(CAST(:first AS integer),CAST(:last AS integer)) n
+        JOIN deal d ON d.id=md5('sp22:deal:'||n)::uuid
+        JOIN property p ON p.id=md5('sp22:property:'||n)::uuid
+        LEFT JOIN development dev ON dev.id=p.development_id"""),
         common,
     )
     connection.execute(
         text("""INSERT INTO deal_stage_event
         (id,deal_id,contact_id,actor_user_id,actor_name,action,to_stage,
-        before_version,after_version,title,next_action,offering_id,reason)
+        before_version,after_version,title,next_action,offering_id,reason,qualification)
         SELECT md5('sp22:deal-event:'||n)::uuid,md5('sp22:deal:'||n)::uuid,
         md5('sp22:contact:'||n)::uuid,:actor,'SP22 administrateur synthétique',
-        'created','new',0,1,'Affaire synthétique SP22 '||n,'Suivi synthétique',
-        md5('sp22:offering:'||n)::uuid,'Fixture synthétique'
-        FROM generate_series(CAST(:first AS integer),CAST(:last AS integer)) n"""),
+        'created','new',0,1,d.title,d.next_action,d.offering_id,'Fixture synthétique',
+        jsonb_build_object('initial_budget',d.initial_budget,'campaign_source',d.campaign_source,
+          'rating',d.rating,'purchase_reasons',d.purchase_reasons,
+          'client_snapshot',d.client_snapshot,'notes',d.notes,'payment_method',d.payment_method,
+          'number_of_rooms',d.number_of_rooms,'projects',jsonb_build_array(jsonb_build_object(
+            'position',p.position,'name',p.name,'development_id',p.development_id,
+            'property_id',p.property_id,'external_name',p.external_name)))
+        FROM generate_series(CAST(:first AS integer),CAST(:last AS integer)) n
+        JOIN deal d ON d.id=md5('sp22:deal:'||n)::uuid
+        JOIN deal_project p ON p.deal_id=d.id"""),
+        common,
+    )
+    connection.execute(
+        text("""UPDATE enquiry e SET status='converted',converted_deal_id=d.id,
+        converted_at=now(),version=e.version+1,updated_at=now()
+        FROM generate_series(CAST(:first AS integer),CAST(:last AS integer)) n
+        JOIN deal d ON d.id=md5('sp22:deal:'||n)::uuid
+        WHERE e.id=d.enquiry_id"""),
+        common,
+    )
+    connection.execute(
+        text("""INSERT INTO timeline_event
+        (id,contact_id,enquiry_id,deal_id,actor_user_id,actor_name,action,body,reason)
+        SELECT md5('sp22:conversion-event:'||n)::uuid,d.contact_id,d.enquiry_id,d.id,:actor,
+        'SP22 administrateur synthétique','enquiries.converted','Fixture de charge synthétique',''
+        FROM generate_series(CAST(:first AS integer),CAST(:last AS integer)) n
+        JOIN deal d ON d.id=md5('sp22:deal:'||n)::uuid"""),
         common,
     )
     connection.execute(

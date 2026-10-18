@@ -15,10 +15,11 @@ export async function expectCurrentSearch(page: Page, name: string) {
   await page.mouse.move(0, 0);
   await expect(region.locator('button[aria-pressed="true"]')).toHaveCount(1);
   await expect(active).toHaveAttribute("aria-pressed", "true");
-  await expect(active.locator('svg[data-kay-icon="check"]')).toBeVisible();
-  await expect(region.locator('button[aria-pressed="false"] svg[data-kay-icon="check"]')).toHaveCount(0);
-  await expect(active).toHaveCSS("background-color", "rgb(246, 236, 218)");
-  await expect(active).toHaveCSS("border-top-color", "rgb(121, 88, 33)");
+  await expect(active).toHaveAttribute("data-action", "select");
+  await expect(active.locator('svg[data-action-icon][data-kay-icon="completed"][data-icon-family="iconsax"]')).toBeVisible();
+  await expect(region.locator('button[aria-pressed="false"] svg[data-kay-icon="completed"]')).toHaveCount(0);
+  await expect(active).toHaveCSS("background-color", "rgb(238, 219, 168)");
+  await expect(active).toHaveCSS("border-top-color", "rgb(133, 135, 121)");
 }
 export async function beginRequirement(page: Page, title = "SP10 recherche locative synthétique", intent = "rental") {
   await page.getByRole("button", { name: "Nouvelle recherche", exact: true }).click();

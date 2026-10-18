@@ -37,5 +37,10 @@ class EditUser(NamedUser):
     expected_version: int = Field(ge=1)
 
 
+class NewUser(NamedUser):
+    temporary_password: SecretStr = Field(min_length=12, max_length=1024)
+
+
 class ResetUser(Versioned):
     admin_password: SecretStr = Field(min_length=1, max_length=1024)
+    temporary_password: SecretStr = Field(min_length=12, max_length=1024)

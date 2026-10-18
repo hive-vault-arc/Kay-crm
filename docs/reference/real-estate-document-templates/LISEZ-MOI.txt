@@ -1,0 +1,98 @@
+KAY - 12 MODÈLES IMMOBILIERS EN FRANÇAIS
+Préparation : 16 octobre 2026
+
+IMPORTANT : STATUT ET PROVENANCE
+
+Les 12 PDF de ce dossier sont des modèles vierges ORIGINAUX DE TRAVAIL,
+préparés après recherche de modèles publics et de références marocaines.
+Il ne s'agit pas de 12 formulaires officiels ou de 12 PDF tiers téléchargés.
+Les sources sont indiquées dans chaque PDF ; aucun modèle tiers n'est reproduit.
+Les fichiers sont destinés à l'impression et au remplissage ; ils ne comportent
+pas de champs PDF interactifs. Aucune identité ou donnée réelle n'est utilisée.
+
+Les contrats et mandats nécessitent une adaptation et une validation par un
+professionnel marocain compétent avant signature. La facture doit être adaptée
+par le comptable à l'identité et au régime fiscal réels de l'agence.
+
+Le document 07 est une fiche de préparation du compromis pour le notaire/les
+adouls, PAS un compromis exécutoire à signer entre particuliers. Il ne demande
+aucun acompte. Faire contrôler la forme légale en vigueur avant tout engagement.
+
+CONTENU
+
+01_Bon_de_visite.pdf
+02_Mandat_de_vente.pdf
+03_Mandat_de_location.pdf
+04_Contrat_location_longue_duree.pdf
+05_Contrat_location_courte_duree.pdf
+06_Contrat_bail_commercial.pdf
+07_Compromis_de_vente_PROJET_NOTAIRE.pdf
+08_Fiche_descriptive_bien_immobilier.pdf
+09_Fiches_clients_proprietaire_acquereur_locataire.pdf
+10_Recu_de_paiement.pdf
+11_Facture_de_commission.pdf
+12_Etat_des_lieux_entree_et_sortie.pdf
+
+Le PDF 09 regroupe trois fiches distinctes : propriétaire, acquéreur, locataire.
+Le PDF 12 peut servir pour l'entrée, la sortie et leur comparaison.
+Le PDF 03 porte sur la MISE EN LOCATION : il n'ajoute pas une gestion locative
+récurrente ni un pouvoir d'encaisser/signature générale pour le propriétaire.
+
+EXEMPLES PUBLICS REPÉRÉS (NON REPRODUITS)
+
+Location courte durée :
+https://locosuite.ma/contrat-location-courte-duree-gratuit
+Quittance / reçu :
+https://locosuite.ma/quittance-loyer-gratuite
+Facture d'agence immobilière :
+https://fawatirai.com/fr/modele-facture-maroc/agence-immobiliere
+Bail commercial, présentation par un cabinet :
+https://www.eljouaidi.com/modele-bail-commercial-maroc/
+Catalogue de documents immobiliers marocains :
+https://www.guideimmobilier.ma/documents-sur-limmobilier-au-maroc
+
+Exemples écartés comme modèles prêts à signer :
+- Le bail public Jurispromaroc de 2018 comporte notamment une inversion du
+  bailleur/locataire dans la clause de paiement. Il n'est pas joint comme modèle.
+  https://jurispromaroc.com/wp-content/uploads/2018/02/Contrat-bail-habitation-1.pdf
+- Le PDF d'état des lieux proposé sur une page « Maroc » de Captain.legal cite
+  la loi ALUR et la loi française du 6 juillet 1989. Il n'est pas présenté ici
+  comme formulaire de droit marocain.
+  https://www.captain.legal/docnotices/etat-des-lieux.pdf
+- Les dépôts de documents déjà remplis, susceptibles de contenir des données
+  personnelles, et les modèles accessibles uniquement après paiement ne sont
+  pas repris dans le dossier.
+
+RÉFÉRENCES À CONTRÔLER AVANT USAGE
+
+Courtage / Code de commerce :
+https://adala.justice.gov.ma/api/uploads/2024/03/01/Code%20de%20commerce_compressed-1709282723074.pdf
+Loi 67-12 : texte arabe publié au B.O. 6208, copie publique :
+https://cabinetlahfaia.com/lois/loi-67-12-baux-habitation.ar.pdf
+Loi 49-16, ministère de la Justice :
+https://adala.justice.gov.ma/api/uploads/2024/03/05/Baux%20des%20immeubles%20ou%20des%20locaux%20lou%C3%A9s%20%C3%A0%20usage%20commercial-1709645781229.pdf
+Code des droits réels / textes actualisés :
+https://adala.justice.gov.ma/resources/12
+Veille : le document SGG 041.25 est intitulé PROJET ; il ne prouve pas à lui
+seul la promulgation ou l'entrée en vigueur. Faire vérifier le Bulletin officiel.
+https://www.sgg.gov.ma/Portals/1/PL/projet_loi_041.25.pdf
+Hébergement touristique :
+https://mtaess.gov.ma/fr/tourisme/metiers-tourisme/hebergement-touristique/
+Code général des impôts 2026 :
+https://www.finances.gov.ma/Publication/dgi/2025/CGI-2026-FR.pdf
+Protection des données / CNDP :
+https://www.cndp.ma/conditions/
+
+PRÉCAUTIONS
+
+- Ne pas transformer une réservation CRM en contrat de réservation VEFA.
+- Ne pas reconnaître un paiement qui n'a pas été réellement encaissé.
+- Ne pas fixer un taux de commission ou de TVA sans base vérifiée.
+- Ne pas demander systématiquement un CIN à la première demande d'information.
+- Conserver les pièces d'identité et documents privés dans les dossiers protégés.
+- Les durées, conditions de résiliation et modalités de notification doivent
+  suivre le régime applicable, pas une clause française copiée par défaut.
+- Pour le bail relevant de la loi 67-12, faire notamment contrôler l'article 20
+  sur le dépôt de garantie dans sa version applicable.
+
+Aucun fichier du CRM n'a été modifié par la préparation de ce dossier.

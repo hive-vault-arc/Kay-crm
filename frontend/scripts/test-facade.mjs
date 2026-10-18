@@ -24,7 +24,15 @@ try {
     delete environment[key];
   const result = spawnSync(process.execPath, [
     "--test", "tests/unit/facade-config.test.mjs", "tests/unit/facade-tls.test.mjs",
+    "tests/unit/acceptance-selection.test.mjs",
     "tests/unit/auth-boundary.test.mjs",
+    "tests/unit/qualification.test.mjs",
+    "tests/unit/activities.test.mjs",
+    "tests/unit/users.test.mjs",
+    "tests/unit/calendar.test.mjs",
+    "tests/unit/projects.test.mjs",
+    "tests/unit/directory-filters.test.mjs",
+    "tests/unit/theme.test.mjs",
   ], {
     cwd: frontend, stdio: "inherit", windowsHide: true,
     env: { ...environment, NODE_EXTRA_CA_CERTS: path.join(temporary, "trusted.pem"), KAY_FACADE_TEST_CERTS: temporary },

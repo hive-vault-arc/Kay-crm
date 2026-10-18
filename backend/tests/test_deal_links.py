@@ -201,8 +201,8 @@ async def test_private_deal_file_real_scan_and_post_permit_scope_revocation(sett
         assert response.status_code == 200 and response.content == data
 
 
-def test_populated_prior_schema_preserved_and_nonempty_downgrade_refused(settings, database):
-    _, token, contact, enquiry = setup(settings, database)
+def test_populated_contact_inventory_and_requirement_survive_refused_downgrade(settings, database):
+    _, token, contact, _ = setup(settings, database)
     _, manager = actor(settings, database, "manager")
     pid = property_draft(settings, database, manager)
     oid = UUID(offering_draft(settings, database, manager, pid)["offering_id"])
@@ -230,7 +230,8 @@ def test_populated_prior_schema_preserved_and_nonempty_downgrade_refused(setting
             ),
             {"id": requirement},
         ).one()
-    assert migrate("downgrade", "0012_requirements_shortlists").returncode == 0
+    refused = migrate("downgrade", "0012_requirements_shortlists")
+    assert refused.returncode != 0 and "QUALIFICATION_HISTORY_DOWNGRADE_REFUSED" in refused.stderr
     try:
         with database.engine.connect() as connection:
             assert (
@@ -259,7 +260,6 @@ def test_populated_prior_schema_preserved_and_nonempty_downgrade_refused(setting
                 token,
                 new(
                     contact,
-                    enquiry_id=str(enquiry),
                     requirement_id=str(requirement),
                     offering_id=str(oid),
                     expected_offering_version=1,

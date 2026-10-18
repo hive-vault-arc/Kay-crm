@@ -7,7 +7,7 @@ export async function discoveryFixture(page: Page, actors: TestActor[]) {
   const manager = await createActor("manager", false, "SP06 responsable recherche synthétique"); actors.push(manager);
   await signIn(page, manager);
   async function contact(name: string, phone: string, owner: string) {
-    const response = await staffCommand(page, "enquiries", { new_contact: { name, type: "person", phones: [{ number: phone, label: "", is_primary: true }], emails: [], roles: ["buyer"], primary_agent_id: owner }, message: "SP19 demande synthétique", source: "manual", assigned_agent_id: owner });
+    const response = await staffCommand(page, "enquiries", { new_contact: { name, type: "person", phones: [{ number: phone, label: "", is_primary: true }], emails: [], roles: ["buyer"], country: "MA", languages: ["french", "darija"], primary_agent_id: owner }, initial_budget: "1000000", campaign_source: "facebook", rating: "warm", message: "SP19 demande synthétique", source: "manual", assigned_agent_id: owner });
     expect(response.status()).toBe(200); const result = await response.json(); return result;
   }
   const visible = await contact("SP19 visible synthétique", "+212600000001", agent.id);

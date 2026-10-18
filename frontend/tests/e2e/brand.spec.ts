@@ -115,12 +115,15 @@ test("KAY branding: shared shell covers every navigation family and responsive d
       await expect(logo).toBeVisible();
       await expect(logo).toHaveAttribute("src", /kay-luxury-gold/);
       await expect.poll(() => logo.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+      const illustration = page.locator("aside[data-sidebar] .sidebar-illustration img");
+      await expect(illustration).toHaveAttribute("src", /login-architecture/);
+      await expect.poll(() => illustration.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
       expect(await logo.evaluate(image => getComputedStyle(image.parentElement!).backgroundColor)).toBe("rgb(0, 0, 0)");
       await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", iconUrl);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
     await page.goto("/leads");
-    await expect(page.getByText("0 demande(s) accessible(s).", { exact: true })).toBeVisible();
+    await expect(page.getByText("0 demande", { exact: true }).and(page.getByRole("status"))).toBeVisible();
     await page.screenshot({ path: `${captures}/sidebar-desktop.png` });
     await page.setViewportSize({ width: 360, height: 800 });
     const trigger = page.getByRole("button", { name: "Ouvrir la navigation", exact: true });

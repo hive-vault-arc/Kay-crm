@@ -9,7 +9,12 @@ export async function importFixture(page: Page, actors: TestActor[]) {
   const agent = await createActor("agent", false, "SP06 SP18 agent responsable synthétique"), other = await createActor("agent", false, "SP06 SP18 autre agent au nom particulièrement long pour le contrôle mobile synthétique"), manager = await createActor("manager", false, "SP06 SP18 responsable import synthétique"); actors.push(agent, other, manager);
   await signIn(page, agent); await createLead(page, "SP18 contact existant synthétique"); await clearActorContext(page); await signIn(page, manager);
   await page.goto("/leads"); await page.getByRole("link", { name: "Importer des contacts", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Importer des contacts", exact: true })).toBeVisible();
+  try { await expect(page.getByRole("heading", { name: "Importer des contacts", exact: true })).toBeVisible(); }
+  catch (failure) {
+    const diagnostic = await page.evaluate(() => ({ path: location.pathname, view: new URLSearchParams(location.search).get("view"), width: innerWidth, scrollWidth: document.documentElement.scrollWidth, desktopFilters: matchMedia("(min-width: 80rem)").matches, ready: document.readyState, dialogs: document.querySelectorAll('[role="dialog"]').length, headings: document.querySelectorAll("h1").length })).catch(() => ({ closed: true }));
+    console.info("SP18_IMPORT_NAVIGATION_DIAGNOSTIC", JSON.stringify(diagnostic));
+    throw failure;
+  }
   return { agent, other, manager };
 }
 export async function selectCsv(page: Page, data: Buffer, name = "contacts-synthetiques.csv") {

@@ -1,5 +1,63 @@
 # Requirements, rules, and evidence traceability
 
+## Projects reference (2026-10-18)
+
+D39 / C04/C13/C14 / AT-06/23/27/31/35/36 map to `test_property_facets.py`,
+existing inventory/edge/permission tests, facade/model `projects.test.mjs`,
+real `projects-reference.spec.ts` and affected `inventory.spec.ts` checks.
+The [ledger](../03-planning/projects-reference-refresh.md) separates actual
+reference images, clean/private file fixtures, server counts and technical gates
+from pending human visual/product approval. No migration or real seed.
+
+## Calendar reference (2026-10-18)
+
+D38 / C09/C13/C14 / AT-16/23/40 map to `test_calendar_filters.py`, existing
+`test_schedule*.py`, facade/model `calendar.test.mjs`, real headed
+`calendar-reference.spec.ts` and `schedule.spec.ts`. The
+[ledger](../03-planning/calendar-reference-refresh.md) records populated-reference
+comparison, exact server facets, privacy, layouts and intentional accessibility
+differences. Tests are not Khalid's product/design approval.
+
+## Staff setup/deletion (2026-10-18)
+
+D37 / C01/C13/C14 / AT-01/02/23/38 map to `test_users.py`, `test_auth.py`,
+`test_first_admin.py`, `test_staff_deletion.py`, facade `users.test.mjs`, real-stack
+`users.spec.ts` and visible `users.chrome.spec.ts`. The
+[ledger](../03-planning/staff-onboarding-deletion.md) separates current results,
+local migrations, existing-account preservation and pending human review.
+
+## Lead/Deal activities (2026-10-18)
+
+C05/C08/C13/C14 and AT-04/05/23/24/39 map to the scoped
+[activity contract](../04-design/api-contracts.md#leaddeal-activities-2026-10-18),
+[model](../04-design/data-model.md#record-scoped-activities-2026-10-18) and
+[implementation/evidence](../03-planning/lead-deal-activities.md).
+`test_scoped_activities.py` verifies exact conversion origin, metadata/immutability,
+current scope/replay, merge, HTTP guards and migration preservation. Visible
+`scoped-activities.spec.ts` verifies separate tables, real entries, paging,
+lost-response retry, forbidden/archived and loading/error/empty paths; existing
+native200% record verification is rerun. The ledger records77 distinct scoped
+PostgreSQL cases, not a complete backend aggregate. Local migration0025 was later
+approved/applied with existing-row preservation; product review remains pending.
+
+## Owner-requested Lead/Deal alignment (2026-10-17)
+
+C02/C03/C08/C13 and affected AT-03/04/23/39 now map to the
+[current contract](../04-design/deal-pipeline-local.md) and
+[explicit requirement/evidence ledger](../03-planning/leads-deals-immoworld-alignment.md).
+Backend qualification, manual-deal, conversion, history-guard and populated
+migration tests exercise the new writable/read/history boundary. Compiled
+`leads-qualification.spec.ts`/`deals-qualification.spec.ts` exercise actual
+selected calling codes, client facts, project qualification, atomic edits and
+conversion. Updated prior lead/deal tests retain private, stale, interrupted,
+proposal, inventory and count assertions under the replacement workflow.
+Native lead/deal reviews and directory-filter coverage retain responsive,
+keyboard, touch, states and real200% checks. Each actual command/result and its
+limitations belongs to the ledger; this mapping alone establishes no pass.
+
+Earlier SP-22 counts and generated catalogue totals below describe that earlier
+baseline, not automatic acceptance of this qualification extension.
+
 SP-22 cumulative [AT01–41 map](../03-planning/sprints/sp-22-acceptance-map.md)
 links every core variant to current backend/browser/negative/race/retry/recovery
 evidence. [Execution](../03-planning/sprints/sp-22-execution.md) records actual

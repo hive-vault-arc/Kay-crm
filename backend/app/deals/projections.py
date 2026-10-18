@@ -7,9 +7,10 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.contacts.models import Contact
+from app.contacts.projections import contact_views
 from app.deals.history_models import DealStageEvent
 from app.deals.models import CustomerOffer, Deal
-from app.identity.models import User
+from app.deals.project_models import DealProject
 from app.inventory.models import Offering
 from app.inventory.queries import money, offering_view
 from app.inventory.reservation_models import Reservation
@@ -19,14 +20,25 @@ from app.inventory.stock_review import occupied
 
 
 def deal_views(session: Session, rows: Sequence[Deal]) -> list[dict[str, object]]:
-    contacts = {
-        c.id: (c, u)
-        for c, u in session.execute(
-            select(Contact, User)
-            .join(User, User.id == Contact.primary_agent_id)
-            .where(Contact.id.in_({r.contact_id for r in rows}))
+    contacts = contact_views(
+        session,
+        session.scalars(select(Contact).where(Contact.id.in_({r.contact_id for r in rows}))).all(),
+    )
+    projects: dict[UUID, list[dict[str, object]]] = {r.id: [] for r in rows}
+    for project in session.scalars(
+        select(DealProject)
+        .where(DealProject.deal_id.in_(projects))
+        .order_by(DealProject.deal_id, DealProject.position)
+    ):
+        projects[project.deal_id].append(
+            {
+                "position": project.position,
+                "name": project.name,
+                "development_id": str(project.development_id) if project.development_id else None,
+                "property_id": str(project.property_id) if project.property_id else None,
+                "external_name": project.external_name,
+            }
         )
-    }
     offerings = list(
         session.scalars(
             select(Offering).where(Offering.id.in_({r.offering_id for r in rows if r.offering_id}))
@@ -56,18 +68,21 @@ def deal_views(session: Session, rows: Sequence[Deal]) -> list[dict[str, object]
     }
     result: list[dict[str, object]] = []
     for row in rows:
-        contact, agent = contacts[row.contact_id]
         result.append(
             {
                 "id": str(row.id),
                 "title": row.title,
                 "stage": row.stage,
-                "contact": {
-                    "id": str(contact.id),
-                    "name": contact.name,
-                    "primary_agent": {"id": str(agent.id), "display_name": agent.display_name},
-                    "archived_at": contact.archived_at.isoformat() if contact.archived_at else None,
-                },
+                "contact": contacts[row.contact_id],
+                "initial_budget": row.initial_budget,
+                "campaign_source": row.campaign_source,
+                "rating": row.rating,
+                "purchase_reasons": row.purchase_reasons,
+                "client_snapshot": row.client_snapshot,
+                "notes": row.notes,
+                "payment_method": row.payment_method,
+                "number_of_rooms": row.number_of_rooms,
+                "projects": projects[row.id],
                 "origin_contact_id": str(row.origin_contact_id),
                 "enquiry_id": str(row.enquiry_id) if row.enquiry_id else None,
                 "requirement_id": str(row.requirement_id) if row.requirement_id else None,
@@ -157,6 +172,7 @@ def event_views(session: Session, rows: Sequence[DealStageEvent]) -> list[dict[s
             "expires_on": row.expires_on.isoformat() if row.expires_on else None,
             "offer_status": row.offer_status,
             "reason": row.reason,
+            "qualification": row.qualification,
             "occurred_at": row.occurred_at.isoformat(),
         }
         for row in rows

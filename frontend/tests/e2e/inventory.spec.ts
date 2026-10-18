@@ -31,7 +31,7 @@ test("SP07 AT-23/39: a late inventory denial cannot replace intentional logout",
     expect(await logoutStatus).toBe(200);
     releaseRead();
     await expect(page.getByRole("alert").filter({ hasText: "Votre session a expiré. Reconnectez-vous." })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Déconnexion en cours…", exact: true })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Déconnexion en cours", exact: true })).toBeDisabled();
     expect(new URL(page.url()).pathname).toBe("/projects");
     releaseLogout();
     await expect(page).toHaveURL(/\/login\?signed_out=1$/);
@@ -44,14 +44,13 @@ test("SP07 AT-23/39: failed logout restores normal session-expiry handling", asy
   const actor = await createActor("agent");
   try {
     await signIn(page, actor); await page.goto("/projects");
-    await expect(page.getByText("0 bien(s) correspondant(s).", { exact: true })).toBeVisible();
+    await expect(page.getByText("0 bien correspondant", { exact: true })).toBeVisible();
     await page.route("**/api/v1/auth/logout", route => route.abort("failed"), { times: 1 });
     await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
     await expect(page.getByRole("alert").filter({ hasText: "Le service local est indisponible." })).toBeVisible();
     await expect(page.getByRole("button", { name: "Se déconnecter", exact: true })).toBeEnabled();
     await changeActor(actor, "revoke");
-    await page.getByLabel("Référence, nom ou localisation", { exact: true }).fill("SP07 session révoquée");
-    await page.getByRole("button", { name: "Appliquer les filtres", exact: true }).click();
+    await page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true }).fill("SP07 session révoquée");
     await expect(page).toHaveURL(/\/login\?return_to=%2Fprojects$/);
     expect((await page.request.get("/api/v1/auth/me")).status()).toBe(401);
   } finally { await removeActor(actor); }
@@ -117,11 +116,11 @@ test("SP07 AT-06/08/27/31: manager standalone inventory, separate prices and unr
     expect((await agent.request.get(`/api/v1/contacts/${contact.id}`)).status()).toBe(404);
     await agent.getByRole("tab", { name: "Offres", exact: true }).click();
     await expect(agent.getByRole("button", { name: /Modifier la campagne/ })).toHaveCount(0);
-    expect((await staffCommand(agent, `properties/${id}`, { reference: "SP07-forbidden", category: "land", marketing_name: null, location: null, area_sqm: null, expected_version: facts.version }, "PATCH")).status()).toBe(403);
+    expect((await staffCommand(agent, `properties/${id}/owners`, { owners: [], expected_version: facts.version }, "PUT")).status()).toBe(403);
     await agent.goto(`/projects/properties/${id}/edit`);
-    await expect(agent.getByRole("alert").filter({ hasText: "Accès non autorisé" })).toBeVisible();
+    await expect(agent.getByRole("form", { name: "Modifier le bien", exact: true })).toBeVisible();
     await agent.goto("/projects/properties/new");
-    await expect(agent.getByRole("alert").filter({ hasText: "Accès non autorisé" })).toBeVisible();
+    await expect(agent.getByRole("button", { name: "Créer le bien", exact: true })).toBeEnabled();
     await clearActorContext(agent); await signIn(agent, owner); await openProperty(agent, id, "Propriétaires");
     await expect(agent.getByRole("link", { name: "SP07 propriétaire privé synthétique", exact: true })).toBeVisible();
     await openProperty(page, id, "Offres");
@@ -152,14 +151,13 @@ test("SP07 AT-27/31: all standalone categories, incomplete drafts and availabili
     }
     const landPath = new URL(page.url()).pathname;
     await page.goto("/projects");
-    await page.getByLabel("Référence, nom ou localisation", { exact: true }).fill("..");
-    await expect(page.getByLabel("Référence, nom ou localisation", { exact: true })).toHaveValue("..");
     const literalSearch = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === "/api/v1/properties" && url.searchParams.get("q") === ".."; });
-    await page.getByRole("button", { name: "Appliquer les filtres", exact: true }).click();
+    await page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true }).fill("..");
+    await expect(page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true })).toHaveValue("..");
     const literalResult = await literalSearch;
     expect(literalResult.status()).toBe(200);
     expect((await literalResult.json()).total).toBe(0);
-    await expect(page.getByText("0 bien(s) correspondant(s).", { exact: true })).toBeVisible();
+    await expect(page.getByText("0 bien correspondant", { exact: true })).toBeVisible();
     await page.goto(landPath);
     await expect(page.getByRole("tab", { name: "Offres", exact: true })).toBeEnabled();
     await createCampaign(page, "rental", "");

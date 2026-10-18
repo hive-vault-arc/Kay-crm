@@ -79,10 +79,14 @@ def test_actual_cli_worker_once_delivers_due_task(settings, database):
 def test_populated_0016_migration_preserves_visit_actor_history_and_backfills_outbox(
     settings, database
 ):
-    uid, token, contact, _ = setup(settings, database)
+    from tests.contact_support import actor
+    from tests.legacy_support import contact as legacy_contact
+
+    uid, token = actor(settings, database)
     assert migrate("downgrade", "0016_visit_calendar").returncode == 0
     vid = uuid4()
     try:
+        contact = legacy_contact(database, uid)
         with database.engine.begin() as connection:
             connection.execute(text("SET LOCAL kay.visit_action='created'"))
             connection.execute(

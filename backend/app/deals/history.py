@@ -1,10 +1,12 @@
 """Each committed operation appends an exact snapshot and contact/audit link."""
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.contacts.history import record
 from app.deals.history_models import DealStageEvent
 from app.deals.models import CustomerOffer, Deal
+from app.deals.project_models import DealProject
 from app.identity.sessions import CurrentIdentity
 
 
@@ -18,6 +20,7 @@ def append_event(
     reason: str = "",
     offer: CustomerOffer | None = None,
 ) -> None:
+    qualification = qualification_snapshot(session, row)
     session.add(
         DealStageEvent(
             deal_id=row.id,
@@ -42,6 +45,47 @@ def append_event(
             conditions=offer.conditions if offer else None,
             expires_on=offer.expires_on if offer else None,
             offer_status=offer.status if offer else None,
+            qualification=qualification,
         )
     )
-    record(session, identity, row.contact_id, f"deals.{action}", reason=reason, deal_id=row.id)
+    status_note = (
+        f"Étape : {previous_stage} → {row.stage}."
+        if previous_stage and previous_stage != row.stage
+        else ""
+    )
+    record(
+        session,
+        identity,
+        row.contact_id,
+        f"deals.{action}",
+        reason=reason,
+        body=status_note,
+        deal_id=row.id,
+    )
+
+
+def qualification_snapshot(session: Session, row: Deal) -> dict[str, object]:
+    return {
+        "initial_budget": row.initial_budget,
+        "campaign_source": row.campaign_source,
+        "rating": row.rating,
+        "purchase_reasons": list(row.purchase_reasons),
+        "client_snapshot": row.client_snapshot,
+        "notes": row.notes,
+        "payment_method": row.payment_method,
+        "number_of_rooms": row.number_of_rooms,
+        "projects": [
+            {
+                "position": project.position,
+                "name": project.name,
+                "development_id": str(project.development_id) if project.development_id else None,
+                "property_id": str(project.property_id) if project.property_id else None,
+                "external_name": project.external_name,
+            }
+            for project in session.scalars(
+                select(DealProject)
+                .where(DealProject.deal_id == row.id)
+                .order_by(DealProject.position)
+            )
+        ],
+    }

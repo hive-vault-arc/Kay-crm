@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import type { KayIconComponent } from "@/components/icons";
 
-export function RecordFacts({ children }: { children: ReactNode }) {
-  return <dl data-summary className="record-facts">{children}</dl>;
+export function RecordFacts({ children, columns = 2 }: { children: ReactNode; columns?: 1 | 2 }) {
+  return <dl data-summary data-columns={columns} className="record-facts">{children}</dl>;
 }
 
 export function RecordFact({ icon: Icon, label, children }: {

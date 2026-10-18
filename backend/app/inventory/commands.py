@@ -1,4 +1,4 @@
-"""Versioned manager commands, current authority and exact-once durable receipts."""
+"""Versioned inventory commands, current authority and exact-once durable receipts."""
 
 import json
 from collections.abc import Sequence
@@ -27,6 +27,7 @@ from app.inventory.contracts import (
 from app.inventory.hierarchy_contracts import (
     ArchiveDevelopment,
     DevelopmentFields,
+    EditDevelopment,
     StructureFields,
     TypeFields,
 )
@@ -51,14 +52,32 @@ Body = (
 )
 
 
-def locked_identity(session: Session, token: str) -> CurrentIdentity:
+PROJECT_EDIT_OPERATIONS = frozenset(
+    {
+        "create-development",
+        "development-edit",
+        "create-property",
+        "edit-property",
+        "create-block",
+        "edit-block",
+        "create-floor",
+        "edit-floor",
+        "create-type",
+        "edit-type",
+    }
+)
+
+
+def locked_identity(session: Session, token: str, operation: str) -> CurrentIdentity:
     # Same agency → actor → asset ordering as user/contact administrative commands.
     session.scalar(select(Agency).where(Agency.id == AGENCY_ID).with_for_update())
     identity = current_identity(session, token)
     session.scalars(select(User).where(User.id == identity.user.id).with_for_update()).all()
     session.expire_all()
     identity = current_identity(session, token)
-    require_role(identity, {"manager"})
+    require_role(
+        identity, {"manager", "agent"} if operation in PROJECT_EDIT_OPERATIONS else {"manager"}
+    )
     return identity
 
 
@@ -383,14 +402,17 @@ def command(
     target: UUID | None = None,
 ) -> dict[str, object]:
     route = f"{operation}/{target or ''}"
+    payload = body.model_dump(mode="json")
+    if isinstance(body, EditDevelopment) and "developer_contact_id" not in body.model_fields_set:
+        payload.pop("developer_contact_id")
     digest = keyed_digest(
         secret,
         "inventory-command",
-        json.dumps(body.model_dump(mode="json"), sort_keys=True, separators=(",", ":")),
+        json.dumps(payload, sort_keys=True, separators=(",", ":")),
     )
     try:
         with database.session() as session, session.begin():
-            identity = locked_identity(session, token)
+            identity = locked_identity(session, token, operation)
             session.execute(
                 delete(InventoryReceipt).where(
                     InventoryReceipt.created_at < datetime.now(UTC) - timedelta(hours=24)

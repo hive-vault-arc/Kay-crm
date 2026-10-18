@@ -27,6 +27,9 @@ def record(
     enquiry_id: UUID | None = None,
     related: UUID | None = None,
     deal_id: UUID | None = None,
+    duration_minutes: int | None = None,
+    direction: str | None = None,
+    projects: list[str] | None = None,
 ) -> UUID:
     eid = uuid4()
     session.add(
@@ -41,6 +44,9 @@ def record(
             enquiry_id=enquiry_id,
             related_contact_id=related,
             deal_id=deal_id,
+            duration_minutes=duration_minutes,
+            direction=direction,
+            activity_projects=projects or [],
         )
     )
     session.add(

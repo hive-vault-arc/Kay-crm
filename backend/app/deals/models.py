@@ -16,6 +16,7 @@ from sqlalchemy import (
     String,
     func,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -26,6 +27,16 @@ class Deal(Base):
     __table_args__ = (
         CheckConstraint("length(btrim(title)) > 0", name="deal_title"),
         CheckConstraint("version > 0", name="deal_version"),
+        CheckConstraint("rating IN ('cold','warm','hot')", name="deal_rating"),
+        CheckConstraint(
+            "initial_budget IS NULL OR length(btrim(initial_budget)) BETWEEN 1 AND 160",
+            name="deal_budget",
+        ),
+        CheckConstraint(
+            "jsonb_typeof(purchase_reasons)='array' AND jsonb_array_length(purchase_reasons)<=8",
+            name="deal_purchase_reasons",
+        ),
+        CheckConstraint("jsonb_typeof(client_snapshot)='object'", name="deal_client_snapshot"),
         CheckConstraint(
             "stage IN ('new','visit','negotiation','reserved','documents',"
             "'won','lost','cancelled')",
@@ -54,6 +65,18 @@ class Deal(Base):
         ForeignKey("offering.id", ondelete="RESTRICT"), index=True
     )
     title: Mapped[str] = mapped_column(String(160))
+    initial_budget: Mapped[str | None] = mapped_column(String(160))
+    campaign_source: Mapped[str] = mapped_column(
+        String(40), default="unknown", server_default="unknown"
+    )
+    rating: Mapped[str] = mapped_column(String(8), default="cold", server_default="cold")
+    purchase_reasons: Mapped[list[str]] = mapped_column(JSONB, default=list, server_default="[]")
+    client_snapshot: Mapped[dict[str, object]] = mapped_column(
+        JSONB, default=dict, server_default="{}"
+    )
+    payment_method: Mapped[str | None] = mapped_column(String(24))
+    number_of_rooms: Mapped[int | None]
+    notes: Mapped[str] = mapped_column(String(4000), default="", server_default="")
     stage: Mapped[str] = mapped_column(String(16), server_default="new")
     next_action: Mapped[str] = mapped_column(String(1000), server_default="")
     stock_review_required: Mapped[bool] = mapped_column(server_default="false")

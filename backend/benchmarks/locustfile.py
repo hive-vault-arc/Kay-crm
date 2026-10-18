@@ -10,17 +10,20 @@ from uuid import uuid4
 import gevent
 from gevent.queue import Queue
 from locust import HttpUser, between, events, task
+from sqlalchemy import text
 
 from app.db.isolation import assert_isolated
+from app.db.session import Database
 from app.identity.security import csrf_token
 from app.recovery.private import crypt, guard
 from app.runtime import BACKEND_ROOT, require_venv
 from app.settings import load_settings
-from benchmarks.dataset import CONTEXT, ROOT
+from benchmarks.dataset import CONTEXT, ROOT, expected_enquiries
 
 ACTORS = Queue()
 SAMPLES = defaultdict(list)
 FAILURES = defaultdict(int)
+SETUP_LOGINS = defaultdict(int)
 READY = set()
 STATE = {
     "measuring": False,
@@ -47,10 +50,22 @@ def initialize(environment, **kwargs):
     actors = json.loads(crypt(path.read_bytes(), CONTEXT, encrypt=False))
     if len(actors) != 100:
         raise RuntimeError("EXACTLY_100_BENCHMARK_ACCOUNTS_REQUIRED")
+    database = Database(settings.selected_database_url())
+    try:
+        with database.engine.connect() as connection:
+            connection.execute(text("SET TRANSACTION READ ONLY"))
+            status_counts = dict(
+                connection.execute(
+                    text("SELECT status,count(*) FROM enquiry GROUP BY status")
+                ).all()
+            )
+    finally:
+        database.close()
     for position, actor in enumerate(actors):
         actor["expected_contacts"] = (
             200000 if actor["role"] != "agent" else 2223 if position < 30 else 2222
         )
+        actor["expected_enquiries"] = expected_enquiries(position, status_counts)
         ACTORS.put(actor)
 
 
@@ -110,6 +125,10 @@ def finish(environment, **kwargs):
     result = {
         "api_processes": int(os.environ.get("KAY_BENCHMARK_WORKERS", "1")),
         "accounts": len(READY),
+        "setup_logins": [
+            {"role": role, "status": status, "count": count}
+            for (role, status), count in sorted(SETUP_LOGINS.items())
+        ],
         "minimum_steady_users": STATE["minimum_users"],
         "warmup_after_all_logins_seconds": 15,
         "steady_seconds": STATE["seconds"],
@@ -153,7 +172,11 @@ class KAYBenchmarkUser(HttpUser):
                         valid = True
                         if name in {"contacts", "enquiries", "properties"}:
                             expected = (
-                                20000 if name == "properties" else self.actor["expected_contacts"]
+                                20000
+                                if name == "properties"
+                                else self.actor["expected_enquiries"]
+                                if name == "enquiries"
+                                else self.actor["expected_contacts"]
                             )
                             valid = body["total"] == expected and len(body["items"]) == 25
                         elif name == "contact_detail":
@@ -194,6 +217,7 @@ class KAYBenchmarkUser(HttpUser):
             name="SETUP login",
             catch_response=True,
         ) as response:
+            SETUP_LOGINS[self.actor["role"], response.status_code] += 1
             if response.status_code != 200:
                 response.failure("BENCHMARK_LOGIN_FAILED")
                 return
@@ -205,6 +229,9 @@ class KAYBenchmarkUser(HttpUser):
             }
         )
         READY.add(self.actor["id"])
+        # Establish all sessions before the documented fifteen-second workload warm-up.
+        while len(READY) != 100:
+            gevent.sleep(0.1)
 
     @task(3)
     def contacts(self):

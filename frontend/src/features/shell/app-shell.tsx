@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { SearchTrigger } from "@/features/discovery/search-trigger";
-import { NotificationIcon, NavigationMenuIcon } from "@/components/icons";
+import { ChevronDownIcon, NotificationIcon, NavigationMenuIcon } from "@/components/icons";
 import { Brand } from "@/components/shared/brand";
 import { NotificationPanel } from "@/features/work/notification-panel";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,18 +16,25 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Navigation } from "./navigation";
+import { Navigation, SettingsNavigationItem } from "./navigation";
 import { AccountFooter } from "./account-footer";
 import { useHydrated } from "@/hooks/use-hydrated";
 import type { PublicIdentity } from "@/lib/auth/contracts";
 import { SessionMonitor } from "@/features/auth/session-controls";
+import { DashboardHeaderActions } from "@/features/reports/dashboard-header-actions";
 
 export function AppShell({ children, identity }: { children: React.ReactNode; identity: PublicIdentity }) {
   const hydrated = useHydrated();
   const [open, setOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const pathname = usePathname();
+  const crmWorkspace = /^\/(leads|deals)(\/|$)/.test(pathname);
+  const calendarWorkspace = pathname === "/visits";
+  const projectsWorkspace = pathname === "/projects";
+  const crmReference = calendarWorkspace || /^\/(leads|deals)(?:\/[a-f0-9-]{36})?$/.test(pathname);
   const focusTarget = useRef<string | null>(null);
   const navigationClose = useRef(false);
+  const shellStyle = { "--app-sidebar-width": sidebarCollapsed ? "72px" : "224px" } as CSSProperties;
   useEffect(() => {
     if (open || !focusTarget.current) return;
     let frame = 0;
@@ -60,7 +68,7 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
     };
   }, [pathname, open]);
   return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-[var(--layout-desktop-sidebar)_minmax(0,1fr)]">
+    <div data-app-shell data-sidebar-collapsed={sidebarCollapsed ? "true" : "false"} style={shellStyle} className="app-shell min-h-dvh lg:grid lg:grid-cols-[var(--app-sidebar-width)_minmax(0,1fr)]">
       <SessionMonitor expiresAt={identity.expires_at} />
       <a
         href="#main-content"
@@ -70,14 +78,32 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
       </a>
       <aside
         data-sidebar
-        className="sticky top-0 hidden h-dvh flex-col gap-6 overflow-y-auto bg-sidebar px-3 pb-5 text-sidebar-foreground lg:flex"
+        data-sidebar-collapsed={sidebarCollapsed ? "true" : "false"}
+        className="sidebar sticky top-0 hidden h-dvh flex-col gap-6 overflow-y-auto bg-sidebar px-3 pb-5 text-sidebar-foreground lg:flex"
       >
-        <Brand className="mx-auto w-28 shrink-0" />
-        <Navigation administrator={identity.user.role === "administrator"} />
-        <AccountFooter user={identity.user} />
+        <div className="sidebar-brand-row shrink-0">
+          <Brand className={`sidebar-brand mx-auto shrink-0 ${sidebarCollapsed ? "w-10" : "w-28"}`} />
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={sidebarCollapsed ? "Développer la navigation" : "Réduire la navigation"}
+            aria-controls="main-navigation"
+            aria-expanded={!sidebarCollapsed}
+            title={sidebarCollapsed ? "Développer la navigation" : "Réduire la navigation"}
+            onClick={() => setSidebarCollapsed(value => !value)}
+            className="sidebar-toggle text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          >
+            <ChevronDownIcon aria-hidden="true" className={`size-5 transition-transform ${sidebarCollapsed ? "-rotate-90" : "rotate-90"}`} />
+          </Button>
+        </div>
+        <div className="sidebar-search shrink-0"><SearchTrigger compact={sidebarCollapsed} sidebar /></div>
+        <Navigation administrator={identity.user.role === "administrator"} compact={sidebarCollapsed} settingsPlacement="external" />
+        <div className="sidebar-illustration" aria-hidden="true"><Image src="/images/login-architecture.svg" alt="" width={640} height={510} /></div>
+        {identity.user.role === "administrator" ? <nav className="sidebar-settings" aria-label="Administration"><SettingsNavigationItem compact={sidebarCollapsed} /></nav> : null}
+        <AccountFooter user={identity.user} collapsed={sidebarCollapsed} />
       </aside>
-      <div className="min-w-0">
-        <header className="page-gutter flex min-h-17 flex-wrap items-center gap-3 border-b bg-card py-2">
+      <div className="workspace-body min-w-0">
+        <header className={`workspace-utility-header page-gutter ${projectsWorkspace ? "projects-utility-header " : ""}${crmWorkspace ? "crm-gutter " : ""}flex min-h-17 flex-wrap items-center gap-3 border-b bg-card py-2`}>
           <div className="flex min-w-0 items-center gap-3">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
@@ -131,17 +157,18 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
               </span>
             </p>
           </div>
-          <div className="order-3 w-full min-w-0 lg:order-none lg:w-auto lg:flex-1"><SearchTrigger /></div>
+          <div className="order-3 w-full min-w-0 lg:hidden"><SearchTrigger /></div>
           <div className="ml-auto flex flex-wrap items-center gap-2">
-            <Sheet><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Ouvrir les notifications" disabled={!hydrated}><NotificationIcon aria-hidden="true" /></Button></SheetTrigger>
+            {crmReference ? <DashboardHeaderActions user={identity.user} /> : <Sheet><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Ouvrir les notifications" disabled={!hydrated}><NotificationIcon aria-hidden="true" /></Button></SheetTrigger>
               <SheetContent closeLabel="Fermer les notifications" className="w-full overflow-y-auto p-5 sm:max-w-reading"><SheetHeader className="mb-6 p-0 pr-6 text-left"><SheetTitle>Votre boîte de réception</SheetTitle><SheetDescription>Notifications internes accessibles avec vos droits actuels.</SheetDescription></SheetHeader><NotificationPanel /></SheetContent>
-            </Sheet>
+            </Sheet>}
           </div>
         </header>
         <main
           id="main-content"
           tabIndex={-1}
-          className="page-gutter mx-auto grid max-w-workspace gap-4 py-5 md:py-6"
+          data-crm-workspace={crmWorkspace || undefined}
+          className={crmWorkspace ? "page-gutter crm-gutter grid min-w-0 w-full gap-4 py-4" : calendarWorkspace || projectsWorkspace ? "page-gutter calendar-gutter grid min-w-0 w-full gap-3 py-3" : pathname === "/dashboard" ? "page-gutter dashboard-gutter grid min-w-0 w-full gap-3 py-2 md:py-3" : "page-gutter grid min-w-0 w-full gap-4 py-5 md:py-6"}
         >
           {children}
         </main>

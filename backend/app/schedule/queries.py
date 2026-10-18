@@ -1,5 +1,6 @@
 """Scoped details and deliberately metadata-free colleague busy intervals."""
 
+from typing import cast
 from uuid import UUID
 
 from sqlalchemy import func, select, text
@@ -45,7 +46,7 @@ def read_visits(
         identity = current_identity(session, token)
         base = select(Visit).where(Visit.start_at < query.end_at, Visit.end_at > query.start_at)
         if busy:
-            if query.contact_id:
+            if query.contact_id or query.types is not None or query.statuses is not None:
                 raise IdentityError("VALIDATION_ERROR", 422)
             base = base.where(Visit.status.in_(ACTIVE))
         else:
@@ -65,6 +66,31 @@ def read_visits(
                 )
                 .exists()
             )
+        facets: dict[str, object] = {}
+        if not busy:
+            scoped = base.subquery()
+            types = dict.fromkeys(("office", "without_company_car", "company_car"), 0)
+            statuses = dict.fromkeys(
+                ("draft", "scheduled", "confirmed", "completed", "cancelled"), 0
+            )
+            for kind, status, count in session.execute(
+                select(scoped.c.type, scoped.c.status, func.count()).group_by(
+                    scoped.c.type, scoped.c.status
+                )
+            ):
+                types[cast(str, kind)] += cast(int, count)
+                statuses[cast(str, status)] += cast(int, count)
+            facets = {
+                "type_counts": types,
+                "status_counts": statuses,
+                "unfiltered_total": sum(types.values()),
+            }
+            if query.types is not None:
+                base = base.where(Visit.type.in_(query.types.split(",") if query.types else []))
+            if query.statuses is not None:
+                base = base.where(
+                    Visit.status.in_(query.statuses.split(",") if query.statuses else [])
+                )
         total = session.scalar(select(func.count()).select_from(base.subquery())) or 0
         rows = session.scalars(
             base.order_by(Visit.start_at, Visit.id)
@@ -87,7 +113,7 @@ def read_visits(
             }
             for row in rows
         ]
-        return page(values, total, query)
+        return {**page(values, total, query), **facets}
 
 
 def detail(

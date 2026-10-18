@@ -13,8 +13,10 @@ design-taste-frontend does not apply to this existing authentication form.
 
 - Email and lock icons precede the two persistent labels, identifying each
   field without replacing its accessible name or moving labels into inputs.
-- An incoming sign-in icon accompanies the existing submit action, including
-  its pending state. The button stays charcoal, with inherited white icon color.
+- The original icon refinement used an incoming sign-in glyph. Khalid's later
+  supplied login reference replaces it with a trailing forward arrow on the
+  existing submit action. The button stays charcoal, with inherited white icon
+  color; authentication and pending behavior do not change.
 - A person identifies administrator-created accounts; a group identifies the
   team-only footer. Supporting text wraps beside fixed-size16 icons with an8px
   gap. The shared footer also appears on change-password.

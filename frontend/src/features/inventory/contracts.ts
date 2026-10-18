@@ -23,12 +23,18 @@ const hierarchySchema = z.object({ development: z.object({ id: z.uuid(), referen
 const propertyShape = { ...propertyFieldsSchema.shape, archived_at: date.nullable(), hierarchy: hierarchySchema.optional(), id: z.uuid(), version, created_at: date, updated_at: date, offerings: z.array(offeringSchema).max(2) };
 export const propertySummarySchema = z.object(propertyShape).strict();
 export const propertySchema = z.object({ ...propertyShape, owners: z.array(z.object({ marketing_display: z.string().max(160).nullable(), contact: z.object({ id: z.uuid(), name: z.string().max(160) }).strict().nullable() }).strict()).max(100) }).strict();
-export const propertiesSchema = numberedPage(propertySummarySchema);
+export const propertyCategoryOrder = ["land", "apartment", "villa", "house"] as const;
+export const propertiesSchema = numberedPage(propertySummarySchema).extend({
+  category_counts: z.object({ land: z.number().int().nonnegative(), apartment: z.number().int().nonnegative(), villa: z.number().int().nonnegative(), house: z.number().int().nonnegative() }).strict(),
+  unfiltered_total: z.number().int().nonnegative(),
+});
 export const offeringsSchema = numberedPage(offeringSchema);
 export const resultSchema = z.union([z.object({ property_id: z.uuid(), offering_id: z.uuid().nullable(), version, event_id: z.uuid() }).strict(), z.object({ development_id: z.uuid(), offering_id: z.uuid().nullable(), version, event_id: z.uuid() }).strict()]);
 export const historySchema = numberedPage(z.object({ id: z.uuid(), offering_id: z.uuid().nullable(), actor: z.object({ id: z.uuid(), display_name: z.string().max(160) }).strict(), action: z.string().max(40), property_version: version, offering_version: version.nullable(), state: z.enum(["draft", "available", "reserved", "withdrawn", "sold", "rented", "review"]).nullable(), price_mad: amount.nullable(), price_period: z.enum(["month", "year"]).nullable(), conditions: z.string().max(2000).nullable(), completed_on: z.iso.date().nullable(), external_outcome: z.boolean().nullable(), reason: z.string().max(1000), occurred_at: date }).strict());
 export const inventoryQuerySchema = z.object({ archive: z.enum(["active", "archived", "all"]).optional(), page: z.coerce.number().int().min(1).max(1_000_000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional(), q: z.string().max(160).optional(), category: categorySchema.optional(), kind: z.enum(["sale", "rental"]).optional(), offering_kind: z.enum(["sale", "rental"]).optional(), target_level: z.enum(["property", "development", "standalone", "unit"]).optional(), state: z.enum(["draft", "available", "reserved", "withdrawn", "sold", "rented", "review", "all"]).optional(), property_id: z.uuid().optional(), development_id: z.uuid().optional(), block_id: z.uuid().optional(), floor_id: z.uuid().optional(), unit_type_id: z.uuid().optional(), sort: z.enum(["reference", "-updated_at"]).optional(), min_comparison_mad: z.string().regex(/^[0-9]{1,18}(\.[0-9]{1,2})?$/).optional(), max_comparison_mad: z.string().regex(/^[0-9]{1,18}(\.[0-9]{1,2})?$/).optional(), min_area_sqm: amount.optional(), min_rooms: z.coerce.number().int().min(1).max(1000).optional() }).strict();
 export type Property = z.infer<typeof propertySchema>;
+export const propertiesQuerySchema = inventoryQuerySchema.extend({ categories: z.string().max(40).refine(value => value === "" || (value.split(",").every(category => propertyCategoryOrder.includes(category as typeof propertyCategoryOrder[number])) && new Set(value.split(",")).size === value.split(",").length)).optional() }).refine(value => value.category === undefined || value.categories === undefined);
+export type PropertyPage = z.infer<typeof propertiesSchema>;
 export type PropertySummary = z.infer<typeof propertySummarySchema>;
 export type Offering = z.infer<typeof offeringSchema>;
 export type InventoryTarget = Pick<Property, "id" | "version" | "owners" | "offerings"> & { inventoryLevel?: "development" };

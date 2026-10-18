@@ -7,5 +7,5 @@ export const metadata = { title: "Créer un programme immobilier" };
 export default async function Page() {
   const identity = await requireIdentity("/projects/new");
   if (identity.state !== "authenticated") return <AuthUnavailable path="/projects/new" />;
-  return <><PageHeader title="Créer un programme immobilier" description="Un programme peut regrouper plusieurs catégories de biens." route="/projects/new" />{identity.profile.user.role === "agent" ? <p role="alert">Accès non autorisé : seuls les responsables et administrateurs peuvent créer un programme.</p> : <DevelopmentEditor />}</>;
+  return <><PageHeader title="Créer un programme immobilier" description="Un programme peut regrouper plusieurs catégories de biens." route="/projects/new" /><DevelopmentEditor /></>;
 }

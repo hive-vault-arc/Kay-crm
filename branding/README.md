@@ -14,7 +14,15 @@ status: ready-for-review
 
 ## KAY-facing interface extension
 
+Current KAY CRM branding (2026-10-18): [Riviera](riviera/README.md) supersedes the
+older KAY-facing palette/font proposals. The KEPVY magazine below remains a
+separate historical identity reference, not the current KAY application theme.
+
 This page documents the **KEPVY** brand magazine, not the KAY Real Estate logo. On 2026-10-16 Khalid explicitly replaced the earlier KAY artwork with the supplied [transparent Champagne Gold](kay-logo-reference-flat.png) and [black-background Luxury Gold](kay-logo-reference-textured.png) PNGs. These two reference paths now contain the new originals unchanged, not the retired artwork. See [current logo usage and verification](kay-logos.md). They are approved raster assets, not vector masters. The KAY-facing [interface design system](../docs/04-design/design-system.md) and [exact UI tokens](kay-ui-tokens.json) remain separate from this KEPVY identity guide.
+
+On 2026-10-18, the app's current KAY-facing palette and typography changed to
+the owner-selected [Riviera system](riviera/README.md). That separate interface
+handoff does not merge KEPVY and KAY logos or alter this brand magazine.
 
 ## Quick Jump
 

@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import { chromium } from "@playwright/test";
 import { renderToStaticMarkup } from "react-dom/server";
-import { readFile, mkdir, writeFile, mkdtemp } from "node:fs/promises";
+import { readFile, mkdir, writeFile, mkdtemp, rm } from "node:fs/promises";
 import path from "node:path";
 import { test, expect, signIn } from "../helpers/auth";
 import * as Icons from "../../src/components/icons";
@@ -12,10 +12,10 @@ import { DataState } from "../../src/components/shared/data-state";
 import { inspectIcons } from "../helpers/icons";
 
 test("Iconsax: all verified glyphs SSR, accessibility, native controls and offline vectors", async ({ page }) => {
-  const manifest = JSON.parse(await readFile("../docs/reference/iconsax/assets.json", "utf8")) as { icons: { export: string; semanticName: string; pathCount: number; viewBox: string }[] };
+  const manifest = JSON.parse(await readFile("../docs/reference/iconsax/assets.json", "utf8")) as { icons: { export: string; semanticName: string; pathCount: number; renderedPathCount?: number; viewBox: string }[] };
   const names = Object.keys(Icons).sort();
   expect(names).toEqual(manifest.icons.map(icon => icon.export).sort());
-  expect(names).toHaveLength(43);
+  expect(names).toHaveLength(45);
   const cells: string[] = [];
   for (const entry of manifest.icons) {
     const Component = Icons[entry.export as keyof typeof Icons];
@@ -23,7 +23,7 @@ test("Iconsax: all verified glyphs SSR, accessibility, native controls and offli
     expect(html).toContain('aria-hidden="true"'); expect(html).toContain('focusable="false"');
     expect(html).toContain(`data-kay-icon="${entry.semanticName}"`);
     expect(html).toContain(`viewBox="${entry.viewBox}"`);
-    expect(html.match(/<path /g)).toHaveLength(entry.pathCount);
+    expect(html.match(/<path /g)).toHaveLength(entry.renderedPathCount ?? entry.pathCount);
     expect(html).not.toMatch(/<script|<use|<image|<foreignObject|\bid=|href=|url\(/);
     const labelled = renderToStaticMarkup(createElement(Component, { label: "Repère synthétique" }));
     expect(labelled).toContain('role="img"'); expect(labelled).toContain('aria-label="Repère synthétique"');
@@ -62,7 +62,7 @@ test("Iconsax: real Next HTML before hydration, disabled JavaScript and authenti
   page.on("request", request => { if (/iconsax|unpkg|jsdelivr/.test(new URL(request.url()).hostname)) remote.push("EXTERNAL_ICON_REQUEST"); });
   const response = await page.goto("/login");
   expect(response?.status()).toBe(200);
-  const loginIcons = ["email", "password", "sign-in", "contact", "contacts", "show-password"];
+  const loginIcons = ["email", "password", "forward", "contact", "contacts", "development", "show-password"];
   const loginHtml = await response!.text();
   for (const name of loginIcons) expect(loginHtml).toContain(`data-kay-icon="${name}"`);
   await expect(page.getByRole("button", { name: "Afficher le mot de passe", exact: true })).toBeEnabled();
@@ -74,7 +74,7 @@ test("Iconsax: real Next HTML before hydration, disabled JavaScript and authenti
     for (const label of ["Adresse e-mail", "Mot de passe"]) {
       const input = page.getByLabel(label, { exact: true });
       await expect(input).toHaveAccessibleName(label);
-      expect(await input.evaluate(element => getComputedStyle(element).borderRadius)).toBe("10px");
+      expect(await input.evaluate(element => getComputedStyle(element).borderRadius)).toBe("12px");
       expect((await input.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     }
     expect(await page.locator("form label").evaluateAll(labels => labels.every(label => {
@@ -102,7 +102,11 @@ test("Iconsax: real Next HTML before hydration, disabled JavaScript and authenti
   const noJS = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, javaScriptEnabled: false, locale: "fr-FR" });
   try {
     const initial = await noJS.newPage(); await initial.goto("/login");
-    for (const name of loginIcons) await expect(initial.locator(`svg[data-kay-icon="${name}"]`)).toBeVisible();
+    for (const name of loginIcons) {
+      const glyphs = initial.locator(`svg[data-kay-icon="${name}"]`);
+      expect(await glyphs.count()).toBeGreaterThan(0);
+      for (const glyph of await glyphs.all()) await expect(glyph).toBeVisible();
+    }
     expect(await initial.locator("svg path").count()).toBeGreaterThan(0);
   } finally { await noJS.close(); }
   await signIn(page, actor);
@@ -118,7 +122,9 @@ test("Iconsax login: actual 200% Chrome zoom keeps labels, icons and controls us
   await mkdir("test-results", { recursive: true });
   const profile = await mkdtemp(path.resolve("test-results/login-zoom-"));
   const options = { channel: "chrome", headless: false, ignoreHTTPSErrors: true, viewport: null, deviceScaleFactor: undefined, args: ["--window-size=1440,1000"] };
-  let context = await chromium.launchPersistentContext(profile, options);
+  let context!: Awaited<ReturnType<typeof chromium.launchPersistentContext>>;
+  try {
+  context = await chromium.launchPersistentContext(profile, options);
   let baselineRatio: number, baselineWidth: number;
   try {
     const page = context.pages()[0]; await page.goto(`${baseURL}/login`);
@@ -130,7 +136,6 @@ test("Iconsax login: actual 200% Chrome zoom keeps labels, icons and controls us
   preferences.partition = { ...preferences.partition, default_zoom_level: { x: Math.log(2) / Math.log(1.2) } };
   await writeFile(preferencesPath, JSON.stringify(preferences));
   context = await chromium.launchPersistentContext(profile, options);
-  try {
     const page = context.pages()[0];
     const failures: string[] = [];
     page.on("pageerror", () => failures.push("PAGE_ERROR"));
@@ -160,5 +165,10 @@ test("Iconsax login: actual 200% Chrome zoom keeps labels, icons and controls us
       await writeFile("output/playwright/login-icons/login-zoom-200.png", Buffer.from(capture.data, "base64"));
     } finally { await session.detach(); }
     expect(failures).toEqual([]);
-  } finally { await context.close(); }
+  } finally {
+    await context?.close();
+    expect(path.dirname(path.resolve(profile))).toBe(path.resolve("test-results"));
+    expect(path.basename(profile)).toMatch(/^login-zoom-/);
+    await rm(profile, { recursive: true, force: true });
+  }
 });

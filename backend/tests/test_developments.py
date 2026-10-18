@@ -329,7 +329,7 @@ def test_versions_retries_roles_interruptions_and_real_races(settings, database)
     key = uuid4()
     first = run(settings, database, token, "create-block", body, did, key)
     assert run(settings, database, token, "create-block", body, did, key) == first
-    with pytest.raises(IdentityError, match="FORBIDDEN"):
+    with pytest.raises(IdentityError, match="INVENTORY_VERSION_CONFLICT"):
         run(settings, database, at, "create-block", body, did)
     with pytest.raises(IdentityError, match="INVENTORY_VERSION_CONFLICT"):
         run(settings, database, token, "create-block", body, did)

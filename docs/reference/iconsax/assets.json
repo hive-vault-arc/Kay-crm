@@ -17,6 +17,20 @@
   ],
   "icons": [
     {
+      "export": "CarIcon", "semanticName": "car", "asset": "car", "style": "linear",
+      "source": "package/dist/data/car.json",
+      "originalSvgSha256": "65150c413f424bd9b6a9098be55297d5e4c9dc1259784f135c3b1940321f09b8",
+      "pathCount": 8, "renderedPathCount": 3, "originalPathIndices": [0,1,2,3,4,5,6,7], "viewBox": "0 0 24 24",
+      "adaptation": "Retained coordinates; six simple subpaths combined without changing geometry. White strokes use currentColor; full-canvas clip removed."
+    },
+    {
+      "export": "ClockIcon", "semanticName": "clock", "asset": "clock", "style": "linear",
+      "source": "package/dist/data/time.json",
+      "originalSvgSha256": "93765154e2c94c54aba697c6aa22bdb77cfb6af0d657e4f7c2fa3068673fd00a",
+      "pathCount": 2, "originalPathIndices": [0,1], "viewBox": "0 0 24 24",
+      "adaptation": "Original paths retained; white strokes use currentColor; full-canvas clip removed."
+    },
+    {
       "export": "AlertIcon",
       "semanticName": "alert",
       "asset": "info-circle",

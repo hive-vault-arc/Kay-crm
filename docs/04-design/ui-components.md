@@ -1,5 +1,42 @@
 # KAY interface components: shadcn/ui working guide
 
+## Projects directory composition: D39
+
+`PropertyDirectory` retains shadcn Tabs and the shared FilterResultsLayout/Sheet.
+`PropertyFilterFields` composes labeled shadcn Input/Checkbox/NativeSelect with
+automatic backend queries; categories are explicit CSV, never an invented
+client-side page union. `PropertyCard` and `PropertyCampaign` present existing
+facts and truthful campaign state/price/annual comparison. `PropertyList` reuses
+the shared TanStack/shadcn DataTable with a named horizontal scroll region.
+Both views reuse `InventoryThumbnail`'s clean-only, current-session permit and
+object-URL cleanup flow. No public upload URL, new chart/component kit or dummy
+production cover. Geometry is central; scoped CSS corrects reference anatomy,
+not the global filter utility or unrelated routes.
+[Scope and evidence](../03-planning/projects-reference-refresh.md).
+
+## Calendar composition: D38
+
+`VisitCalendar` composes shadcn Button/Input/NativeSelect/Tabs/Sheet and the
+existing `FilterResultsLayout`. Optional `className`/`panelHeading` extend that
+layout without changing other consumers' defaults. `CalendarSidebar` owns the
+mini-month and labeled shadcn type/status checkboxes; the parent owns selection
+and server pagination. `VisitWeekGrid` uses shared geometry and connected overlap
+lanes; `CalendarVisit` shares type/status semantics with the mobile agenda and
+by-type view. Building/people/car/clock use the typed Iconsax layer. No drag-only
+editing, chart or new component kit. See
+[contract](visit-scheduling-local.md) and
+[verification](../03-planning/calendar-reference-refresh.md).
+
+## Current Riviera system (2026-10-18)
+
+Shared controls retain shadcn/Radix behavior and semantic Iconsax actions while
+consuming [Riviera](../../branding/riviera/README.md): honey primary actions,
+warm-white surfaces,10px control corners,12px quiet panels, dark-gold focus and
+explicit disabled colors. Labels use Manrope; titles Fraunces; metadata DM Sans.
+The selected sidebar link has a gold icon tile, white text and trailing Iconsax
+chevron. KPI cards keep live drill-down actions and distinct category badges.
+Existing responsive layouts, forms, dialogs, focus order and permissions remain.
+
 Status: shadcn foundation and SP-03–SP-08 feature compositions implemented; later compositions remain planned  
 Date: 2026-10-15  
 Confirmed decision: shadcn/ui is the mandatory source for standard UI components in KAY's Next.js web interface; no substitute component kit.  

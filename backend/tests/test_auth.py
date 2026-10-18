@@ -132,32 +132,32 @@ async def test_invalid_signin_is_generic_bounded_and_redacted(
         "expired",
         "revoked",
         "temporary_expired",
-        "handoff_removed",
+        "deleted",
     ],
 )
 def test_current_state_invalidates_session(
     changed: str, settings: Settings, database: Database
 ) -> None:
     user_id, email, password = create_actor(
-        settings, database, restricted=changed in {"temporary_expired", "handoff_removed"}
+        settings, database, restricted=changed == "temporary_expired"
     )
     token, _ = login(database, settings.facade_secret.get_secret_value(), email, password)
     with database.session() as session, session.begin():
-        if changed in {"disabled", "pending", "role", "user_version"}:
+        if changed in {"disabled", "pending", "role", "user_version", "deleted"}:
             values: dict[str, object] = {
                 "disabled": {"state": "disabled"},
                 "pending": {"state": "pending_handoff"},
                 "role": {"role": "agent"},
                 "user_version": {"version": 2},
+                "deleted": {"state": "disabled", "deleted_at": datetime.now(UTC)},
             }[changed]
             session.execute(update(User).where(User.id == user_id).values(**values))
-        elif changed in {"credential_version", "temporary_expired", "handoff_removed"}:
+        elif changed in {"credential_version", "temporary_expired"}:
             changes = {
                 "credential_version": {"version": 2},
                 "temporary_expired": {
                     "temporary_expires_at": datetime.now(UTC) - timedelta(seconds=1)
                 },
-                "handoff_removed": {"handoff_confirmed_at": None},
             }[changed]
             session.execute(
                 update(Credential).where(Credential.user_id == user_id).values(**changes)

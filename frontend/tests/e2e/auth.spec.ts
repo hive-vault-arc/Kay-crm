@@ -36,6 +36,11 @@ test("AT-26/39: protected redirect, safe return, cookie, refresh, logout and rep
   expect((await profile.json()).session_token === undefined).toBe(true);
   const denied = await page.request.post("/api/v1/auth/logout", { headers: { Origin: new URL(page.url()).origin }, data: {} });
   expect(denied.status()).toBe(403);
+  const navigation = page.getByRole("button", { name: "Ouvrir la navigation", exact: true });
+  if (await navigation.isVisible()) {
+    await navigation.click();
+    await expect(page.getByRole("dialog", { name: "Navigation KAY", exact: true })).toBeVisible();
+  }
   await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
   await expect(page).toHaveURL(/\/login\?signed_out=1$/);
   expect((await page.context().cookies()).some((cookie) => cookie.name === "__Host-kay_session")).toBe(false);
@@ -95,9 +100,8 @@ test("AT-39: agent/manager Settings denial, scoped empty dashboard, shared Proje
     const actor = await createActor(role);
     try {
       await signIn(page, actor);
-      await expect(page.getByText(role === "agent"
-        ? "Le travail affiché concerne uniquement vos dossiers attribués ou partagés."
-        : "Le travail affiché respecte vos droits sur les dossiers de l’équipe.")).toBeVisible();
+      await expect(page.getByText("Votre activité, en un regard.", { exact: true })).toBeVisible();
+      await expect(page.getByText(role === "agent" ? "Mes dossiers accessibles" : "Toute l’agence", { exact: true })).toBeVisible();
       await expect(page.getByText("Paramètres", { exact: true })).toHaveCount(0);
       await page.goto("/settings");
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("Accès non autorisé");

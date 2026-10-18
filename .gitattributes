@@ -1,6 +1,9 @@
 * text=auto eol=lf
 # Preserve byte-for-byte upstream snapshots and their published provenance hashes.
 docs/reference/** -text
+# Retain upstream font-license bytes, including their published whitespace.
+frontend/src/fonts/*-OFL.txt -text -whitespace
+frontend/public/licenses/fonts/*-OFL.txt -text -whitespace
 *.cmd text eol=crlf
 *.bat text eol=crlf
 *.png binary

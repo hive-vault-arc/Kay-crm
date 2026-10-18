@@ -52,7 +52,7 @@ test("SP-02: real HTTPS facade readiness, API stop/restart, keyboard recovery @i
   expect(query.status()).toBe(422);
   try {
     await apiProcess("stop");
-    await reports.getByRole("button", { name: "Actualiser les indicateurs", exact: true }).focus();
+    await reports.getByRole("button", { name: "Appliquer la période", exact: true }).focus();
     await page.keyboard.press("Enter");
     await expect(reports.getByRole("alert")).toHaveText("Le service local est indisponible. Vérifiez son démarrage, puis réessayez.");
     await expect(reports.getByRole("button", { name: "Réessayer", exact: true })).toBeEnabled();
@@ -67,7 +67,7 @@ test("SP-02: real HTTPS facade readiness, API stop/restart, keyboard recovery @i
   await expect(reports.getByRole("alert")).toHaveCount(0);
   for (const width of [320, 360, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth), { timeout: 3000 }).toBeLessThanOrEqual(width);
   }
   expect(businessRequests.length).toBeGreaterThan(0);
   expect(failures).toEqual([]);

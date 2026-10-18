@@ -35,6 +35,10 @@ CommandBody = NewContact | NewEnquiry | EditContact | EditEnquiry
 
 
 def replace_values(session: Session, contact: Contact, body: ContactFields, actor: UUID) -> None:
+    for field in ("country", "nationality", "languages"):
+        if isinstance(body, NewContact) or field in body.model_fields_set:
+            value = getattr(body, field)
+            setattr(contact, field, list(value) if field == "languages" else value)
     now = datetime.now(UTC)
     for model in (ContactPhone, ContactEmail):
         session.execute(
@@ -109,6 +113,8 @@ def create_enquiry(session: Session, identity: CurrentIdentity, body: NewEnquiry
     )
     if contact is None:
         raise IdentityError("VALIDATION_ERROR", 422)
+    if not contact.languages:
+        raise IdentityError("LANGUAGES_REQUIRED", 422)
     if identity.user.role == "agent":
         if body.assigned_agent_id is not None:
             raise IdentityError("FORBIDDEN", 403)
@@ -125,6 +131,10 @@ def create_enquiry(session: Session, identity: CurrentIdentity, body: NewEnquiry
         source_submission_id=body.source_submission_id,
         assigned_agent_id=assignee,
         created_by_user_id=identity.user.id,
+        initial_budget=body.initial_budget,
+        campaign_source=body.campaign_source,
+        rating=body.rating,
+        status=body.status,
     )
     session.add(enquiry)
     session.flush()
@@ -162,10 +172,36 @@ def apply_command(
         raise ContactConflict(
             "VERSION_CONFLICT", {"current": detail_in_session(session, identity, kind, target)}
         )
+    if enquiry.status == "converted":
+        raise IdentityError("LEAD_CONVERTED", 409)
+    if body.contact_fields is not None:
+        try:
+            apply_command(session, identity, "contacts", body.contact_fields, enquiry.contact_id)
+        except ContactConflict:
+            raise ContactConflict(
+                "VERSION_CONFLICT", {"current": detail_in_session(session, identity, kind, target)}
+            ) from None
+    if not scoped_contact(session, identity, enquiry.contact_id).languages:
+        raise IdentityError("LANGUAGES_REQUIRED", 422)
+    status_note = (
+        f"Statut : {enquiry.status} → {body.status}." if enquiry.status != body.status else ""
+    )
     enquiry.message, enquiry.status = body.message, body.status
+    enquiry.initial_budget, enquiry.campaign_source, enquiry.rating = (
+        body.initial_budget,
+        body.campaign_source,
+        body.rating,
+    )
     enquiry.version += 1
     enquiry.updated_at = datetime.now(UTC)
-    record(session, identity, enquiry.contact_id, "enquiries.updated", enquiry_id=enquiry.id)
+    record(
+        session,
+        identity,
+        enquiry.contact_id,
+        "enquiries.updated",
+        enquiry_id=enquiry.id,
+        body=status_note,
+    )
     return enquiry.id, enquiry.contact_id
 
 

@@ -62,6 +62,7 @@ def main() -> int:
                 database,
                 data["active_token"],
                 NewEnquiry(
+                    initial_budget="500000",
                     contact_id=UUID(data["contact_id"]),
                     message="SP21 écriture synthétique après point",
                     source="phone",

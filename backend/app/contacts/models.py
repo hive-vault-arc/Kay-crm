@@ -27,6 +27,12 @@ class Contact(Base):
     __table_args__ = (
         CheckConstraint("length(btrim(name)) > 0", name="contact_name_required"),
         CheckConstraint("type IN ('person','organization')", name="contact_type"),
+        CheckConstraint("country='' OR country ~ '^[A-Z]{2}$'", name="contact_country"),
+        CheckConstraint("nationality='' OR nationality ~ '^[A-Z]{2}$'", name="contact_nationality"),
+        CheckConstraint(
+            "jsonb_typeof(languages)='array' AND jsonb_array_length(languages)<=30",
+            name="contact_languages",
+        ),
         CheckConstraint(
             "merged_into_contact_id IS NULL OR "
             "(merged_into_contact_id <> id AND archived_at IS NOT NULL)",
@@ -38,6 +44,9 @@ class Contact(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(160))
     type: Mapped[str] = mapped_column(String(24))
+    country: Mapped[str] = mapped_column(String(2), default="", server_default="")
+    nationality: Mapped[str] = mapped_column(String(2), default="", server_default="")
+    languages: Mapped[list[str]] = mapped_column(JSONB, default=list, server_default="[]")
     primary_agent_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     created_by_user_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("user.id", ondelete="RESTRICT")
@@ -157,8 +166,23 @@ class ContactCollaborator(Base):
 class Enquiry(Base):
     __tablename__ = "enquiry"
     __table_args__ = (
-        CheckConstraint("status IN ('new','in_progress','closed')", name="enquiry_status"),
+        CheckConstraint(
+            "status IN ('new','in_progress','follow_up','analysis','qualified',"
+            "'not_qualified','lost','junk_lead','closed','converted')",
+            name="enquiry_status",
+        ),
+        CheckConstraint("rating IN ('cold','warm','hot')", name="enquiry_rating"),
+        CheckConstraint(
+            "(status='converted' AND converted_deal_id IS NOT NULL AND converted_at IS NOT NULL) "
+            "OR (status<>'converted' AND converted_deal_id IS NULL AND converted_at IS NULL)",
+            name="enquiry_conversion_state",
+        ),
+        CheckConstraint(
+            "initial_budget IS NULL OR length(btrim(initial_budget)) BETWEEN 1 AND 160",
+            name="enquiry_budget",
+        ),
         UniqueConstraint("source", "source_submission_id", name="uq_enquiry_source_submission"),
+        UniqueConstraint("converted_deal_id", name="uq_enquiry_converted_deal"),
         Index("ix_enquiry_contact", "contact_id", "updated_at", "id"),
         Index("ix_enquiry_received", "source", "received_at", "id"),
     )
@@ -181,6 +205,17 @@ class Enquiry(Base):
         DateTime(timezone=True), server_default=func.now()
     )
     status: Mapped[str] = mapped_column(String(24), default="new")
+    initial_budget: Mapped[str | None] = mapped_column(String(160))
+    campaign_source: Mapped[str] = mapped_column(
+        String(40), default="unknown", server_default="unknown"
+    )
+    rating: Mapped[str] = mapped_column(String(8), default="cold", server_default="cold")
+    converted_deal_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey(
+            "deal.id", name="fk_enquiry_converted_deal", use_alter=True, ondelete="RESTRICT"
+        ),
+    )
+    converted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     version: Mapped[int] = mapped_column(BigInteger, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

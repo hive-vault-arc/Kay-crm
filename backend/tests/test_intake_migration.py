@@ -1,23 +1,26 @@
 import pytest
 from sqlalchemy import text
 
-from tests.contact_support import actor, create_lead
+from tests.contact_support import actor
 from tests.identity_support import clear_identity
+from tests.legacy_support import contact as legacy_contact
+from tests.legacy_support import enquiry as legacy_enquiry
 from tests.test_isolation_migrations import migrate
 
 
 @pytest.mark.usefixtures("clean_identity")
 def test_intake_additive_populated_upgrade_and_retained_history(settings, database):
-    _, token = actor(settings, database)
-    legacy = create_lead(settings, database, token)
+    uid, _ = actor(settings, database)
     assert migrate("downgrade", "0021_discovery_indexes").returncode == 0
     try:
+        cid = legacy_contact(database, uid)
+        eid = legacy_enquiry(database, uid, cid)
         with database.engine.connect() as connection:
-            assert connection.scalar(text("SELECT id::text FROM enquiry")) == legacy["id"]
+            assert connection.scalar(text("SELECT id FROM enquiry")) == eid
         assert migrate("upgrade", "head").returncode == 0
         assert migrate("check").returncode == 0
         with database.engine.connect() as connection:
-            assert connection.scalar(text("SELECT id::text FROM enquiry")) == legacy["id"]
+            assert connection.scalar(text("SELECT id FROM enquiry")) == eid
             assert (
                 connection.scalar(
                     text(
@@ -36,7 +39,7 @@ def test_intake_additive_populated_upgrade_and_retained_history(settings, databa
         configure(uid)
         delivery(database, load_key(settings))
         result = migrate("downgrade", "0021_discovery_indexes")
-        assert result.returncode != 0 and "WEBSITE_HISTORY_DOWNGRADE_REFUSED" in result.stderr
+        assert result.returncode != 0 and "QUALIFICATION_HISTORY_DOWNGRADE_REFUSED" in result.stderr
     finally:
         assert migrate("upgrade", "head").returncode == 0
         clear_identity(settings, database)

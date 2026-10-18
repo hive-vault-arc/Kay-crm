@@ -5,9 +5,11 @@ from uuid import UUID
 
 import pytest
 from sqlalchemy import select, text
+from sqlalchemy.exc import IntegrityError
 
 from app.db.isolation import UnsafeDatabaseTarget, assert_isolated
 from app.db.session import Database
+from app.deals.contracts import ConvertLead
 from app.identity.models import User
 from app.identity.security import IdentityError
 from app.identity.service import login
@@ -16,6 +18,7 @@ from app.recovery.maintenance import Admission, flag, pause
 from app.recovery.private import RecoveryError
 from app.recovery.service import create, extract_code, recovery_settings, restore
 from app.recovery.store import Store
+from tests.deal_support import run as deal_command
 from tests.recovery_support import build, clear_recovery
 
 pytestmark = pytest.mark.usefixtures("clean_identity")
@@ -23,9 +26,21 @@ pytestmark = pytest.mark.usefixtures("clean_identity")
 
 def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(settings, database):
     data = build(settings, database)
+    converted = deal_command(
+        settings,
+        database,
+        data["active_token"],
+        ConvertLead(
+            expected_version=1,
+            project={"external_name": "Projet de restauration synthétique"},
+            initial_budget="1000000",
+            purchase_reasons=["residence"],
+        ),
+        UUID(data["enquiry_id"]),
+    )
     point = create(settings)
     result = restore(settings, UUID(point["point_id"]), replace_recovery=True)
-    assert result["verified_tables"] == 69 and result["objects"] >= 2
+    assert result["verified_tables"] == 70 and result["objects"] >= 2
     assert 0 <= result["rpo_seconds"] <= 3600 and result["restore_seconds"] < 14400
     target = recovery_settings(settings)
     db = Database(target.selected_database_url())
@@ -38,11 +53,32 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
             assert session.scalar(text("SELECT count(*) FROM job WHERE state='running'")) == 0
             assert session.scalar(text("SELECT count(*) FROM website_source WHERE active")) == 0
             assert session.scalar(text("SELECT bootstrap_completed_at IS NOT NULL FROM agency"))
+            assert (
+                session.scalar(
+                    text("SELECT count(*) FROM deal_project WHERE deal_id=:did"),
+                    {"did": UUID(data["deal_id"])},
+                )
+                == 1
+            )
             assert session.scalar(text("SELECT count(*) FROM receipt")) == 1
+            assert session.scalar(
+                text("SELECT converted_deal_id FROM enquiry WHERE id=:eid"),
+                {"eid": UUID(data["enquiry_id"])},
+            ) == UUID(converted["id"])
             assert (
                 session.scalar(text("SELECT count(*) FROM import_batch WHERE state='committed'"))
                 == 1
             )
+        with pytest.raises(IntegrityError, match="LEAD_CONVERSION_IDENTITY"):
+            with db.session() as session, session.begin():
+                session.execute(text("SET LOCAL kay.synthetic_cleanup='on'"))
+                session.execute(
+                    text(
+                        "UPDATE enquiry SET status='closed',converted_deal_id=NULL,"
+                        "converted_at=NULL WHERE id=:eid"
+                    ),
+                    {"eid": UUID(data["enquiry_id"])},
+                )
         from app.identity.bootstrap import bootstrap_administrator
 
         with pytest.raises(IdentityError, match="ALREADY_INITIALIZED"):

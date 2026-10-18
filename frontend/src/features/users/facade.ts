@@ -4,9 +4,9 @@ import { z } from "zod";
 import { boundedJson, frontendOrigin } from "@/lib/auth/facade";
 import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
-import { commandSchema, editUserSchema, issuedSchema, namedUserSchema, resetUserSchema, userRoute, userSchema, usersSchema, versionSchema } from "./contracts";
+import { commandSchema, editUserSchema, newUserSchema, resetUserSchema, userRoute, userSchema, usersSchema, versionSchema } from "./contracts";
 
-const knownErrors = new Set(["UNAUTHENTICATED", "FORBIDDEN", "PASSWORD_CHANGE_REQUIRED", "VALIDATION_ERROR", "NOT_FOUND", "EMAIL_IN_USE", "VERSION_CONFLICT", "LAST_ADMIN_REQUIRED", "ADMIN_PASSWORD_INVALID", "TEMPORARY_EXPIRED", "INVALID_STATE", "IDEMPOTENCY_CONFLICT", "ONE_TIME_RESULT_UNAVAILABLE", "USE_OWN_PASSWORD_CHANGE", "BOOTSTRAP_REQUIRED", "RATE_LIMITED"]);
+const knownErrors = new Set(["UNAUTHENTICATED", "FORBIDDEN", "PASSWORD_CHANGE_REQUIRED", "PASSWORD_POLICY", "VALIDATION_ERROR", "NOT_FOUND", "EMAIL_IN_USE", "VERSION_CONFLICT", "LAST_ADMIN_REQUIRED", "ADMIN_PASSWORD_INVALID", "TEMPORARY_EXPIRED", "INVALID_STATE", "IDEMPOTENCY_CONFLICT", "ONE_TIME_RESULT_UNAVAILABLE", "USE_OWN_PASSWORD_CHANGE", "BOOTSTRAP_REQUIRED", "RATE_LIMITED"]);
 export async function relayUsers(key: string, request: Request, requestId: string) {
   if (!userRoute(key, request.method)) return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url);
@@ -20,7 +20,7 @@ export async function relayUsers(key: string, request: Request, requestId: strin
   const idempotencyKey = request.headers.get("Idempotency-Key") ?? undefined;
   if (mutation) {
     if (!z.uuid().safeParse(idempotencyKey).success) return facadeError(422, "VALIDATION_ERROR", requestId);
-    const schema = key === "users" ? namedUserSchema : request.method === "PATCH" ? editUserSchema : key.endsWith("/reset-password") ? resetUserSchema : versionSchema;
+    const schema = key === "users" ? newUserSchema : request.method === "PATCH" ? editUserSchema : key.endsWith("/reset-password") ? resetUserSchema : versionSchema;
     try {
       const parsed = schema.safeParse(await boundedJson(request));
       if (!parsed.success) return facadeError(422, "VALIDATION_ERROR", requestId);
@@ -30,7 +30,7 @@ export async function relayUsers(key: string, request: Request, requestId: strin
   try {
     const jar = await cookies();
     const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, {
-      method: request.method as "GET" | "POST" | "PATCH", body, token: jar.get(SESSION_COOKIE)?.value,
+      method: request.method as "GET" | "POST" | "PATCH" | "DELETE", body, token: jar.get(SESSION_COOKIE)?.value,
       csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: mutation ? frontendOrigin() : undefined,
       idempotencyKey: mutation ? idempotencyKey : undefined,
     });
@@ -39,7 +39,7 @@ export async function relayUsers(key: string, request: Request, requestId: strin
       const code = parsed.success && knownErrors.has(parsed.data.error.code) ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE";
       return facadeError(code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, code, requestId);
     }
-    const schema = mutation ? (key === "users" || key.endsWith("/reset-password") ? issuedSchema : commandSchema) : key === "users" ? usersSchema : userSchema;
+    const schema = mutation ? commandSchema : key === "users" ? usersSchema : userSchema;
     const result = schema.parse(upstream.body);
     return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }

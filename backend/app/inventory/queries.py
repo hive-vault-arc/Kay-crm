@@ -12,7 +12,7 @@ from app.contacts.models import Contact
 from app.db.session import Database
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
-from app.inventory.contracts import InventoryQuery
+from app.inventory.contracts import InventoryQuery, PropertiesQuery
 from app.inventory.hierarchy_models import Block, Development, Floor, UnitType
 from app.inventory.models import InventoryEvent, Offering, Property, PropertyOwner
 from app.inventory.outcome_history import metadata
@@ -246,8 +246,6 @@ def read_list(
                         Property.location.ilike(pattern),
                     )
                 )
-            if query.category:
-                conditions.append(Property.category == query.category)
             if query.development_id:
                 conditions.append(Property.development_id == query.development_id)
             if query.floor_id:
@@ -273,6 +271,20 @@ def read_list(
                 conditions.append(campaign.exists())
             if query.property_id:
                 conditions.append(Property.id == query.property_id)
+            counts = dict.fromkeys(("land", "apartment", "villa", "house"), 0)
+            for category, count in session.execute(
+                select(Property.category, func.count())
+                .where(*conditions)
+                .group_by(Property.category)
+            ):
+                counts[category] = count
+            unfiltered_total = sum(counts.values())
+            if query.category:
+                conditions.append(Property.category == query.category)
+            if isinstance(query, PropertiesQuery) and query.categories is not None:
+                conditions.append(
+                    Property.category.in_(query.categories.split(",") if query.categories else [])
+                )
             total = (
                 session.scalar(select(func.count()).select_from(Property).where(*conditions)) or 0
             )
@@ -284,7 +296,11 @@ def read_list(
                 .offset((query.page - 1) * query.page_size)
                 .limit(query.page_size)
             ).all()
-            return numbered(properties_view(session, items), total, query)
+            return {
+                **numbered(properties_view(session, items), total, query),
+                "category_counts": counts,
+                "unfiltered_total": unfiltered_total,
+            }
         from app.inventory.selection import select_offerings
 
         return select_offerings(session, query, offering_view)

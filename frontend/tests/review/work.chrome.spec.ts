@@ -42,13 +42,31 @@ async function geometry(page: Page) {
   const result = await page.evaluate(() => {
     const root = document.querySelector('[role="alertdialog"]') ?? document.querySelector("main") ?? document.body;
     const visible = (el: Element) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
-    function luminance(color: string) { const v = (color.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number).map(n => { const x = n / 255; return x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; }); return v[0] * .2126 + v[1] * .7152 + v[2] * .0722; }
-    function background(el: Element): string { const color = getComputedStyle(el).backgroundColor; return color !== "rgba(0, 0, 0, 0)" && color !== "transparent" ? color : el.parentElement ? background(el.parentElement) : "rgb(255, 255, 255)"; }
+    const canvas = document.createElement("canvas"); canvas.width = canvas.height = 1;
+    const painter = canvas.getContext("2d", { willReadFrequently: true });
+    if (!painter) throw new Error("CONTRAST_COLOUR_RESOLUTION_UNAVAILABLE");
+    function rgba(color: string): number[] {
+      painter!.clearRect(0, 0, 1, 1); painter!.fillStyle = color; painter!.fillRect(0, 0, 1, 1);
+      return [...painter!.getImageData(0, 0, 1, 1).data];
+    }
+    function over(front: number[], back: number[]): number[] {
+      const alpha = front[3] / 255;
+      return [0, 1, 2].map(index => front[index] * alpha + back[index] * (1 - alpha)).concat(255);
+    }
+    function luminance(color: number[]) { const v = color.slice(0, 3).map(n => { const x = n / 255; return x <= .04045 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; }); return v[0] * .2126 + v[1] * .7152 + v[2] * .0722; }
+    function background(el: Element): number[] {
+      const parent = el.parentElement ? background(el.parentElement) : [255, 255, 255, 255];
+      return over(rgba(getComputedStyle(el).backgroundColor), parent);
+    }
     const controls = [...root.querySelectorAll<HTMLElement>("button,input,select,textarea")].filter(visible).map(el => { const r = el.getBoundingClientRect(); return { width: r.width, height: r.height }; });
-    const ratios = [...root.querySelectorAll<HTMLElement>("p,h1,h2,h3,label,button,a")].filter(el => visible(el) && el.textContent?.trim() && !el.hasAttribute("disabled")).map(el => { const a = luminance(getComputedStyle(el).color), b = luminance(background(el)); return (Math.max(a, b) + .05) / (Math.min(a, b) + .05); });
-    return { width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth, dialogOverflow: root.scrollWidth > root.clientWidth, minimumContrast: Math.min(...ratios), controls, dialogPadding: document.querySelector('[role="alertdialog"]') ? getComputedStyle(root).padding : null };
+    const contrasts = [...root.querySelectorAll<HTMLElement>("p,h1,h2,h3,label,button,a")].filter(el => visible(el) && el.textContent?.trim() && !el.hasAttribute("disabled")).map(el => {
+      const foreground = getComputedStyle(el).color, backdrop = background(el);
+      const a = luminance(over(rgba(foreground), backdrop)), b = luminance(backdrop);
+      return { ratio: (Math.max(a, b) + .05) / (Math.min(a, b) + .05), tag: el.tagName, role: el.getAttribute("role"), action: el.dataset.action ?? null, classes: el.className.slice(0, 200), foreground, backdrop };
+    });
+    return { width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth, dialogOverflow: root.scrollWidth > root.clientWidth, minimumContrast: Math.min(...contrasts.map(item => item.ratio)), contrastFailures: contrasts.filter(item => item.ratio < 4.5).slice(0, 8), controls, dialogPadding: document.querySelector('[role="alertdialog"]') ? getComputedStyle(root).padding : null };
   });
-  expect(result.overflow).toBe(false); expect(result.dialogOverflow).toBe(false); expect(result.minimumContrast).toBeGreaterThanOrEqual(4.5); expect(result.controls.filter(v => v.width < 44 || v.height < 44)).toEqual([]);
+  expect(result.overflow).toBe(false); expect(result.dialogOverflow).toBe(false); expect(result.minimumContrast, JSON.stringify(result.contrastFailures, null, 2)).toBeGreaterThanOrEqual(4.5); expect(result.controls.filter(v => v.width < 44 || v.height < 44)).toEqual([]);
   return result;
 }
 

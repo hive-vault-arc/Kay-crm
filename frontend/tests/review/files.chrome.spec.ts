@@ -9,7 +9,7 @@ import { testControl } from "../helpers/api-process";
 import { manage, previewOperation, confirmOperation } from "../helpers/ownership";
 
 async function capture(page: Page, name: string) {
-  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true, includeHidden: true })).toBeEnabled();
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
   const before = await page.evaluate(() => document.documentElement.clientWidth);
   const cdp = await page.context().newCDPSession(page);
@@ -56,6 +56,7 @@ test("SP09 visible Chrome: actual quarantine, clean/rejected files, private deni
   let zoomContext: Awaited<ReturnType<typeof chromium.launchPersistentContext>> | undefined; let profile: string | undefined;
   await mkdir(path.resolve("output/playwright"), { recursive: true });
   try {
+    await testControl("worker-start");
     const clean = await syntheticFile("clean", `SP09 pièce synthétique ${"document".repeat(17)}.png`);
     const rejected = await syntheticFile("rejected");
     await signIn(page, owner);
@@ -92,9 +93,15 @@ test("SP09 visible Chrome: actual quarantine, clean/rejected files, private deni
     await row.scrollIntoViewIfNeeded(); await capture(page, "pending-desktop");
     await testControl("worker-unavailable");
     await expect(row.getByText(/L’analyse est indisponible/)).toBeVisible(); await capture(page, "scanner-unavailable-desktop");
-    await testControl("worker-start");
+    await testControl("worker-stop");
+    const scanRetry = page.waitForResponse(response => response.request().method() === "POST" && new URL(response.url()).pathname.endsWith("/retry-scan"));
     await row.getByRole("button", { name: "Réessayer l’analyse", exact: true }).click();
-    await expect(row.getByText("Analyse réussie", { exact: true })).toBeVisible();
+    const scanResponse = await scanRetry;
+    const scanPayload = await scanResponse.json();
+    expect([200, 409]).toContain(scanResponse.status());
+    if (scanResponse.status() === 409) expect(scanPayload.error.code).toBe("FILE_SCAN_IN_PROGRESS");
+    await testControl("worker-start");
+    await expect(row.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 120_000 });
     await downloadFile(page, clean.name, clean.buffer);
     await row.getByRole("button", { name: `Afficher ${clean.name}`, exact: true }).click();
     await expect(page.getByRole("img", { name: `Aperçu du fichier ${clean.name}`, exact: true })).toBeVisible();

@@ -5,6 +5,7 @@ from app.contacts import models as contact_models  # noqa: F401
 from app.deals import history_models as deal_history_models  # noqa: F401
 from app.deals import models as deal_models  # noqa: F401
 from app.deals import outcome_models as deal_outcomes  # noqa: F401
+from app.deals import project_models as deal_project_models  # noqa: F401
 from app.discovery import models as discovery_models  # noqa: F401
 from app.files import models as file_models  # noqa: F401
 from app.finance import models as finance_models  # noqa: F401

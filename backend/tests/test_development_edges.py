@@ -75,22 +75,25 @@ async def test_hierarchy_http_default_available_strict_queries_and_current_autho
                     f"/api/v1/developments/{did}/inventory{suffix}", headers=proof(agent)
                 )
             ).status_code == 422
-        for path, method, body in (
-            ("developments", "POST", {"reference": "SP08-denied", "name": "Synthétique"}),
+        for path, method, body, expected in (
+            ("developments", "POST", {"reference": "SP08-agent", "name": "Synthétique"}, 200),
             (
                 f"developments/{did}/blocks",
                 "POST",
-                {"expected_version": 5, "code": "X", "label": "Synthétique"},
+                {"expected_version": 5, "code": "BLOCK-AGENT", "label": "Synthétique"},
+                200,
             ),
             (
                 f"blocks/{bid}/floors",
                 "POST",
-                {"expected_version": 5, "code": "X", "label": "Synthétique"},
+                {"expected_version": 5, "code": "FLOOR-AGENT", "label": "Synthétique"},
+                200,
             ),
             (
                 f"floors/{floors[0]}",
                 "PATCH",
-                {"expected_version": 5, "code": "X", "label": "Synthétique"},
+                {"expected_version": 5, "code": "FLOOR-EDIT", "label": "Synthétique"},
+                200,
             ),
             (
                 f"unit-types/{tid}",
@@ -102,12 +105,23 @@ async def test_hierarchy_http_default_available_strict_queries_and_current_autho
                     "label": "T2",
                     "category": "apartment",
                 },
+                200,
             ),
-            (f"developments/{did}/owners", "PUT", {"expected_version": 5, "owners": []}),
+            (f"developments/{did}/owners", "PUT", {"expected_version": 5, "owners": []}, 403),
+            (
+                f"developments/{did}/archive",
+                "POST",
+                {"expected_version": 5, "reason": "Archivage refusé à l’agent"},
+                403,
+            ),
         ):
-            assert (
-                await client.request(method, f"/api/v1/{path}", headers=proof(agent), json=body)
-            ).status_code == 403
+            if "expected_version" in body:
+                body["expected_version"] = read(database, token, target=did)["version"]
+            response = await client.request(
+                method, f"/api/v1/{path}", headers=proof(agent), json=body
+            )
+            assert response.status_code == expected
+            assert response.headers["cache-control"] == "no-store"
         assert (
             await client.post(
                 "/api/v1/developments",

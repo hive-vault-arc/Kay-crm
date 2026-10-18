@@ -14,7 +14,7 @@ from app.contacts.contracts import (
     NewEnquiry,
     ResolvePhone,
 )
-from app.contacts.queries import assignment_options, read_detail, read_list, resolve_phone
+from app.contacts.queries import assignment_options, metadata, read_detail, read_list, resolve_phone
 from app.db.session import Database
 from app.identity.router import facade_authority, session_proof
 from app.identity.security import IdentityError
@@ -50,6 +50,13 @@ def agents(
 @router.post("/contacts/resolve-phone")
 def resolve(body: ResolvePhone, request: Request, token: Proof) -> dict[str, bool]:
     return resolve_phone(configuration(request)[0], token, body.phone)
+
+
+@router.get("/contacts/metadata")
+def qualification_options(request: Request, token: Proof) -> dict[str, object]:
+    if request.query_params:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    return metadata(configuration(request)[0], token)
 
 
 @router.get("/contacts")

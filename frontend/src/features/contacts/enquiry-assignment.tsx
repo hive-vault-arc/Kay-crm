@@ -11,6 +11,8 @@ import { contactSchema, type Enquiry } from "./contracts";
 import { commandResultSchema } from "./ownership-contracts";
 import { RecordError } from "./record-states";
 import { useQuery } from "./use-query";
+import { ContactsIcon } from "@/components/icons";
+import { SectionHeading } from "@/components/shared/section-heading";
 
 export function EnquiryAssignment({ enquiry, saved }: { enquiry: Enquiry; saved: () => void }) {
   const query = useQuery(`/api/v1/contacts/${enquiry.contact.id}`, contactSchema);
@@ -29,7 +31,7 @@ export function EnquiryAssignment({ enquiry, saved }: { enquiry: Enquiry; saved:
     catch (failure) { setError(failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
     finally { setBusy(false); }
   }
-  return <section className="grid gap-4"><h2 className="text-section font-medium">Attribution de la demande</h2>
+  return <section className="crm-panel crm-assignment-panel"><SectionHeading compact icon={ContactsIcon}>Attribution de la demande</SectionHeading>
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des agents du contact…</p> : <form className="grid gap-4" onSubmit={event => void submit(event)} aria-busy={busy}>
       <fieldset className="grid gap-4" disabled={busy}>
         <div className="grid gap-2"><Label htmlFor={`${control}-agent`}>Attribuer à un agent du contact</Label><NativeSelect id={`${control}-agent`} value={selected} onChange={event => setSelected(event.target.value)}><option value="">File du responsable, non attribuée</option>{[query.value.primary_agent, ...query.value.collaborators].map(value => <option key={value.id} value={value.id}>{value.display_name}</option>)}</NativeSelect></div>
@@ -37,7 +39,6 @@ export function EnquiryAssignment({ enquiry, saved }: { enquiry: Enquiry; saved:
         <Button action="assign" className="justify-self-start" disabled={selected === (enquiry.assigned_agent?.id ?? "")}>Attribuer cette demande</Button>
       </fieldset>
       {error ? <RecordError error={error} /> : null}
-      <p className="text-sm text-muted-foreground">L’accès au contact est revérifié à l’enregistrement ; le changement conserve l’ancien et le nouvel agent ainsi que l’acteur de la décision.</p>
     </form>}
   </section>;
 }

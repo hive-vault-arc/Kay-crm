@@ -91,6 +91,14 @@ wins remain distinct definitions, never one combined total or invented daily
 worked-Lead/Deal series. Existing exact API/table/attribution/drill-down and
 ten-contributor pagination contracts stay authoritative.
 
+The Lead/Deal alignment expands the current prospect distribution to all nine
+writable statuses. One scoped `/enquiries?page=1&page_size=1` response supplies
+its complete `status_counts`, rather than one request per state or counts inferred
+from a single numbered page. Converted prospects and archived contacts are
+explicitly excluded. The nine states remain distinct; no invented conversion
+rate or grouping is introduced. The existing Bklit distribution and accessible
+definition list share those exact counts, including zero states.
+
 The pinned shadcn4.21.5 CLI installs reviewed @bklit/bar-chart and transitive
 registry source locally (56 files plus equivalent cn utility). Bklit MIT and
 vendored visx-pattern license are retained. Registry SVG/portal refs and lifecycle

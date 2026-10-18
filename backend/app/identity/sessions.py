@@ -20,13 +20,11 @@ class CurrentIdentity:
 
 
 def credential_active(user: User, credential: Credential, now: datetime) -> bool:
-    if user.state != "active":
+    if user.state != "active" or user.deleted_at is not None:
         return False
     if credential.must_change_password:
         return bool(
-            credential.handoff_confirmed_at is not None
-            and credential.temporary_expires_at is not None
-            and credential.temporary_expires_at > now
+            credential.temporary_expires_at is not None and credential.temporary_expires_at > now
         )
     return credential.temporary_expires_at is None
 

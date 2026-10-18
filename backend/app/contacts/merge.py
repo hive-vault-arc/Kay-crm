@@ -58,6 +58,12 @@ def verify_link_policies(session: Session) -> None:
 def merge_values(
     session: Session, source: Contact, survivor: Contact, identity: CurrentIdentity
 ) -> None:
+    for field in ("country", "nationality"):
+        if not getattr(survivor, field):
+            setattr(survivor, field, getattr(source, field))
+    survivor.languages = list(dict.fromkeys([*survivor.languages, *source.languages]))
+    if len(survivor.languages) > 30:
+        raise ContactConflict("MERGE_IDENTITY_LIMIT", {})
     merge_links(session, identity, source.id, survivor.id)
     merge_documents(session, source.id, survivor.id)
     merge_requirements(session, source.id, survivor.id)

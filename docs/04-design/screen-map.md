@@ -1,5 +1,60 @@
 # KAY screen map and navigation contract
 
+D39 Projects override (2026-10-18): S10 `/projects` keeps standalone/programme
+tabs and role-correct creation. Standalone uses warm category/offer/status rail,
+automatic search/filter/reset, Cards/List, server sort and numbered pages.
+Photo cards show actual clean protected previews, category/name/location and
+separate current sale/rental campaigns; missing campaigns say « Aucune ».
+Mobile collapses filters to the shared Sheet. Maison, archive and size remain
+available; existing programme hierarchy/detail/offering/privacy routes remain.
+[Scope and evidence](../03-planning/projects-reference-refresh.md).
+
+D38 calendar override (2026-10-18): S09 `/visits` retains its route and create/
+detail lifecycle. One compact toolbar selects the backend-resolved week, accessible
+visits or private colleague busy intervals and Week/Agenda/Par type. The left
+mini-month/type/status rail collapses to the shared filter Sheet; narrower screens
+use the agenda automatically. Actual policy lunch windows and truthful scoped
+full-week counts replace reference-only values. Building/people/car Iconsax
+identify visit types. No new shell destination, fleet assignment or public details.
+[Implementation and evidence](../03-planning/calendar-reference-refresh.md).
+
+D37 account override (2026-10-18): S15 keeps numbered administrator-only users;
+create adds a labeled initial-password field with private show/hide. Edit never
+changes existing passwords implicitly. Reset accepts a chosen initial password
+and current administrator password. Remove activation/handoff and disable
+buttons; confirmed Delete hides/removes access, retaining CRM attribution.
+First login goes directly to existing forced own-password setup, then fresh login.
+No credential email sender or new navigation route.
+
+2026-10-18 activity extension: S05 `/leads/{id}` adds a full-width, numbered,
+type-filtered activity table and inline immutable-entry form. S08 `/deals/{id}`
+adds its own activity table plus a separate read-only origin Lead table when
+explicitly linked. Tables include notes, date, type, duration, direction,
+historical project labels and original author; only the named table region
+scrolls horizontally. Archive/current authority, existing Deal version history,
+Riviera components and navigation remain. No new route/sidebar destination or
+screenshot-only stage/delete action is introduced.
+[Contract and evidence](../03-planning/lead-deal-activities.md).
+
+D35 (owner-requested IMMO World Lead/Deal alignment) supersedes the earlier
+free-title/no-conversion page behavior. `/leads` and `/deals` use compact inline
+toolbars and rich configurable tables; the Contacts and Projects rail remains.
+`/leads/new` and `/leads/{id}/edit` show canonical client fields beside country/
+nationality/languages and qualification. The calling code is selected, not a
+free prefix field. `/leads/{id}` offers explicit project/budget/intent conversion
+or the saved deal link after conversion. `/deals/new` supports qualified new or
+existing clients. `/deals/{id}` retains its paired facts and operational sections,
+with direct form edit mode and saved client/qualification history. No arbitrary
+deal-title prompt, duplicated client, empty permanent summary column or automatic
+stock reservation is introduced. Existing scoped files/work/proposal/outcome/
+finance actions remain. [Current evidence and limits](../03-planning/leads-deals-immoworld-alignment.md).
+
+D34 (2026-10-16) supersedes the historical read-only-agent descriptions below:
+active agents can create/edit developments, briefing, hierarchy/types and physical
+property/unit facts through the existing Projects routes and controls. Legal-owner,
+inventory-file, offering/availability, external stock and archive/restore controls
+remain M/A-only. Private contacts keep their independent current-scope checks.
+
 SP-20 adds /website-simulator as a synthetic form rendered through the separate
 https://127.0.0.1:8001 server; it is not staff registration or a new CRM navigation
 entry. Anonymous receipt/status replaces the form. Existing S03/S05 Leads filter
@@ -67,13 +122,13 @@ The following English-slug paths and contextual placements guide local implement
 | S07 | Deal create `/deals/new` | Contact selection or prefill from S05, optional requirement/offering, initial stage, next action, validation and duplicate-safe save. This is one deal form reached from Leads or Deals, not two unrelated deal-creation pages. | Manager/administrator or contact-scoped agent. |
 | S08 | Deal detail `/deals/[id]` | Pipeline, customer offers, visits/tasks, reservation and outcome, true-actor history; financial controls only to managers/administrators. Reopen and stock conflict states follow the existing contracts. | Manager/administrator or contact-scoped agent. |
 | S09 | Visit calendar `/visits` | Calendar, visit create/edit/reschedule, three visit types, colleague free/busy, capacity and out-of-hours feedback, overlap warning with reason, reminders. Office visits may be booked at any time. | Authenticated; private visit detail remains scoped. |
-| S10 | Projects list `/projects` | Standalone and programme tabs: category/reference/name/location and campaign filters, safe separate campaign facts, actual unit counts and numbered pages. | Shared inventory read; manager/administrator write. |
-| S11 | Project detail `/projects/[id]` | Non-secret facts, location, safe developer/owner display, separate whole-development offerings, optional briefing, bounded block/floor/type tabs and links to actual units. Shared attachments remain SP-09; protected contact details/documents require separate contact access. | Shared inventory read; manager/administrator edit. |
-| S12 | Project units tab `/projects/[id]?tab=units` | Default to available physical units, then filter by block, floor, type, category and offering kind; distinguish each actual unit from its reusable type and whole-project offerings. | Shared inventory read; manager/administrator inventory changes. |
-| S13 | Project create/edit `/projects/new`, `/projects/[id]/edit` | Development facts, location, safe developer/owner links, optional briefing, hierarchy and offering management. The two modes may share one form implementation. Incomplete drafts remain possible under H-01/H-02. | Manager/administrator only. |
+| S10 | Projects list `/projects` | Standalone and programme tabs: category/reference/name/location and campaign filters, safe separate campaign facts, actual unit counts and numbered pages. | All active staff read and create/edit facts (D34); other inventory commands M/A-only. |
+| S11 | Project detail `/projects/[id]` | Non-secret facts, location, safe developer/owner display, separate whole-development offerings, optional briefing, bounded block/floor/type tabs and links to actual units. Shared attachments remain SP-09; protected contact details/documents require separate contact access. | All active staff edit facts/briefing/structure (D34); owners/files/offers/lifecycle M/A-only. |
+| S12 | Project units tab `/projects/[id]?tab=units` | Default to available physical units, then filter by block, floor, type, category and offering kind; distinguish each actual unit from its reusable type and whole-project offerings. | All active staff create/edit physical-unit facts (D34); stock and availability M/A-only. |
+| S13 | Project create/edit `/projects/new`, `/projects/[id]/edit` | Development facts, location, safe developer/owner links, optional briefing, hierarchy and offering management. The two modes may share one form implementation. Incomplete drafts remain possible under H-01/H-02. | All active staff create/edit facts/briefing (D34); developer-contact scope still required. |
 | S14 | Settings hub `/settings` | Entry to All Users and Working Hours. Do not expose an empty settings page to non-admin roles. | Administrator only for the currently named settings. |
-| S15 | All Users `/settings/users` | Paginated user table with role, state, safe controls for create, edit, remove/deactivate, reset and handoff. “Remove” disables the account and revokes sessions; it does not physically erase a historical actor. Do not show credential values after their one-time response. | Administrator only. |
-| S16 | User create/edit `/settings/users/new`, `/settings/users/[id]/edit` | Named account, role and state; create/disable/reset flows keep the bootstrap and credential-handoff safeguards. The modes may share one form implementation. | Administrator only. |
+| S15 | All Users `/settings/users` | Numbered users with role/state, create/edit/reset and confirmed Delete. Delete hides/revokes access and retains historical attribution. No activation/handoff action or API credential response. | Administrator only. |
+| S16 | User create/edit `/settings/users/new`, `/settings/users/[id]/edit` | Named account and role; create accepts a chosen initial password, active immediately with forced own-password setup. Edit never implicitly changes existing credentials. | Administrator only. |
 | S17 | Working hours `/settings/working-hours` | Edit active weekdays, working intervals, lunch breaks and agency-wide company-car visits-per-hour (initially 2); preview impact on existing future visits before save. | Administrator only; others may read safe availability through the calendar API. |
 
 The optional briefing is inside project detail/create/edit (detail tab `?tab=briefing`), and units use the selected S12 tab. Accepted local Q-08 retains all core workflows using these support contexts:
@@ -82,7 +137,7 @@ The optional briefing is inside project detail/create/edit (detail tab `?tab=bri
 |---|---|---|
 | SC01 | `/change-password` | Restricted temporary-password flow; own password change and required fresh login. |
 | SC02 | Contacts view `/leads?view=contacts`, contact detail `/contacts/[id]` | Full contact identity/edit, enquiries, requirements, timeline, notes and collaboration; S or M/A scope. Shared contact-create form/dialog is also used by lead/owner selectors. |
-| SC03 | Standalone view `/projects?view=properties`; `/projects/properties/new`, `/projects/properties/[id]`, `/projects/properties/[id]/edit` | Read physical standalone assets and their offerings; the same property detail/edit supports actual development units with safe hierarchy breadcrumbs. Manager/administrator writes, shared safe inventory reads. |
+| SC03 | Standalone view `/projects?view=properties`; `/projects/properties/new`, `/projects/properties/[id]`, `/projects/properties/[id]/edit` | All active staff create/edit standalone and actual-unit facts under D34; the same detail/edit supports safe hierarchy breadcrumbs. Owners/files/offerings/availability/lifecycle writes remain M/A-only. |
 | SC04 | Dashboard and contact/deal detail panels | Today's/overdue tasks and notifications; follow linked record scope. |
 | SC05 | Deal detail finance tab | Optional commissions and receipts; manager/administrator only. |
 | SC06 | Leads import/export actions and contextual flows | Manager/administrator bulk operations, atomic import and protected export. |

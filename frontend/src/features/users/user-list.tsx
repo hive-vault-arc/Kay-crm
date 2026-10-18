@@ -33,7 +33,7 @@ export function UserList() {
   return <div className="grid min-w-0 gap-3">
     <PageHeader title="Tous les utilisateurs" description="Comptes, rôles et accès de l’équipe." route="/settings/users" actions={<><Button action="create" asChild><Link href="/settings/users/new">Créer un utilisateur</Link></Button><Button action="settings" asChild variant="outline"><Link href="/settings">Paramètres</Link></Button></>} />
     {error ? <div className="grid gap-4"><p role="alert" className="text-danger">{error}</p><Button action="retry" variant="outline" onClick={() => { setError(""); setRetry(retry + 1); }}>Réessayer</Button></div> : !result ? <p role="status">Chargement des utilisateurs…</p> : <>
-      <div role="region" aria-label="Tableau des utilisateurs, défilement horizontal si nécessaire" tabIndex={0} className="min-w-0 overflow-x-auto"><DataTable columns={columns} rows={result.items} caption={`${result.total} utilisateur(s). Les identités désactivées restent conservées.`} emptyLabel="Aucun utilisateur sur cette page." /></div>
+      <div role="region" aria-label="Tableau des utilisateurs, défilement horizontal si nécessaire" tabIndex={0} className="min-w-0 overflow-x-auto"><DataTable columns={columns} rows={result.items} caption={`${result.total} utilisateur(s). Supprimer un compte conserve son historique CRM.`} emptyLabel="Aucun utilisateur sur cette page." /></div>
       <NumberedPages label="Pages des utilisateurs" page={page} total={result.total} size={result.page_size} change={navigate} />
     </>}
   </div>;

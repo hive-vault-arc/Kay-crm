@@ -7,7 +7,7 @@ const artifacts = path.resolve("output/playwright/account-footer");
 
 async function capture(page: Page, name: string) {
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
-  await expect(page.getByText("0 demande(s) accessible(s).", { exact: true })).toBeVisible();
+  await expect(page.getByText("0 demande", { exact: true }).and(page.getByRole("status", { includeHidden: true }))).toBeVisible();
   await mkdir(artifacts, { recursive: true });
   await page.screenshot({ path: path.join(artifacts, `${name}.png`) });
 }
@@ -29,8 +29,8 @@ test("account footer: one account location, real role, long name and responsive 
       const mobile = width < 1024;
       if (mobile) await page.getByRole("button", { name: "Ouvrir la navigation", exact: true }).click();
       const sidebar = mobile ? page.getByRole("dialog", { name: "Navigation KAY", exact: true }) : page.locator("aside[data-sidebar]");
-      await expect(sidebar).toHaveCSS("background-color", "rgb(0, 0, 0)");
-      await expect(sidebar.getByRole("link", { name: "Prospects", exact: true })).toHaveCSS("background-color", "rgb(65, 58, 45)");
+      await expect(sidebar).toHaveCSS("background-color", "rgb(18, 21, 18)");
+      await expect(sidebar.getByRole("link", { name: "Prospects", exact: true })).toHaveCSS("background-color", "rgb(37, 45, 36)");
       const footer = sidebar.getByRole("region", { name: "Compte utilisateur", exact: true });
       await expect(footer.getByText(name, { exact: true })).toBeVisible();
       await expect(footer.getByText("Responsable", { exact: true })).toBeVisible();
@@ -70,15 +70,15 @@ test("account footer: plain logout button retains pending, failure, keyboard ret
   await page.route("**/api/v1/auth/logout", async route => { await hold.promise; await route.abort("connectionfailed"); });
   try {
     await footer.getByRole("button", { name: "Se déconnecter", exact: true }).click();
-    const pending = footer.getByRole("button", { name: "Déconnexion en cours…", exact: true });
+    const pending = footer.getByRole("button", { name: /^Déconnexion en cours(?:…)?$/ });
     await expect(pending).toBeDisabled();
     expect(await footer.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
     await capture(page, "pending");
   } finally { hold.resolve(); }
   const error = footer.getByRole("alert");
   await expect(error).toBeVisible();
-  await expect(error).toHaveCSS("background-color", "rgb(253, 235, 236)");
-  await expect(error).toHaveCSS("color", "rgb(161, 29, 34)");
+  await expect(error).toHaveCSS("background-color", "rgb(251, 237, 234)");
+  await expect(error).toHaveCSS("color", "rgb(153, 74, 64)");
   expect((await page.request.get("/api/v1/auth/me")).status()).toBe(200);
   await capture(page, "logout-error");
   await page.unroute("**/api/v1/auth/logout");
@@ -101,7 +101,7 @@ test("account footer: mobile agent can sign out by touch from the navigation dra
     await expect(phone.getByRole("banner").getByRole("button", { name: "Se déconnecter", exact: true })).toHaveCount(0);
     await phone.getByRole("button", { name: "Ouvrir la navigation", exact: true }).tap();
     const drawer = phone.getByRole("dialog", { name: "Navigation KAY", exact: true });
-    await expect(drawer).toHaveCSS("background-color", "rgb(0, 0, 0)");
+    await expect(drawer).toHaveCSS("background-color", "rgb(18, 21, 18)");
     const footer = drawer.getByRole("region", { name: "Compte utilisateur", exact: true });
     await expect(footer.getByText("Agent", { exact: true })).toBeVisible();
     await expect(drawer.getByRole("link", { name: "Changer le mot de passe", exact: true })).toHaveCount(0);

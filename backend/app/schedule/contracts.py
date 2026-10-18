@@ -10,6 +10,7 @@ from pydantic import (
     ConfigDict,
     Field,
     StringConstraints,
+    ValidationInfo,
     field_validator,
     model_validator,
 )
@@ -133,6 +134,27 @@ class CalendarQuery(Period):
     page_size: Annotated[int, Field(ge=1, le=100)] = 50
     contact_id: UUID | None = None
     user_id: UUID | None = None
+    types: Annotated[str, Field(max_length=80)] | None = None
+    statuses: Annotated[str, Field(max_length=80)] | None = None
+
+    @field_validator("types", "statuses", mode="before")
+    @classmethod
+    def selections(cls, value: object, info: ValidationInfo) -> str | None:
+        if value is None:
+            return None
+        if not isinstance(value, str):
+            raise ValueError("INVALID_CALENDAR_SELECTION")
+        if value == "":
+            return value
+        allowed = (
+            {"office", "company_car", "without_company_car"}
+            if info.field_name == "types"
+            else {"draft", "scheduled", "confirmed", "completed", "cancelled"}
+        )
+        parts = value.split(",")
+        if len(parts) != len(set(parts)) or not set(parts) <= allowed:
+            raise ValueError("INVALID_CALENDAR_SELECTION")
+        return value
 
 
 class AvailabilityQuery(Period):

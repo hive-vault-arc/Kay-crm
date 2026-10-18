@@ -65,10 +65,10 @@ test("SP05 visible Chrome: desktop/mobile, keyboard, touch, duplicate/private an
     await expect(mobile.getByText("SP05 demande synthétique de contrôle", { exact: true })).toBeVisible();
     await mobile.screenshot({ path: path.join(artifact, "sp05-detail-mobile.png"), fullPage: true });
     await mobile.goto(`/leads/${id}/edit`);
-    await expect(mobile.getByLabel("Message de la demande", { exact: true })).toBeEnabled();
-    await mobile.getByLabel("Message de la demande", { exact: true }).fill("SP05 modification tactile synthétique");
-    await mobile.getByRole("button", { name: "Enregistrer la demande", exact: true }).tap();
-    await expect(mobile.getByText("Demande enregistrée.", { exact: true })).toBeVisible();
+    await expect(mobile.getByLabel("Description", { exact: true })).toBeEnabled();
+    await mobile.getByLabel("Description", { exact: true }).fill("SP05 modification tactile synthétique");
+    await mobile.getByRole("button", { name: "Enregistrer le prospect", exact: true }).tap();
+    await expect(mobile.getByText("Prospect enregistré.", { exact: true })).toBeVisible();
     await mobile.screenshot({ path: path.join(artifact, "sp05-edit-mobile.png"), fullPage: true });
     await mobile.goto("/leads/new");
     await expect(mobile.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
@@ -84,27 +84,31 @@ test("SP05 visible Chrome: desktop/mobile, keyboard, touch, duplicate/private an
     await mobile.getByLabel("Contact de la demande", { exact: true }).selectOption("new");
     await mobile.getByLabel("Nom du contact", { exact: true }).fill("SP05 validation synthétique");
     await mobile.getByRole("button", { name: "Créer le Lead", exact: true }).tap();
-    const invalidPhone = mobile.getByLabel("Téléphone international 1", { exact: true });
+    const invalidPhone = mobile.getByLabel("Téléphone 1 *", { exact: true });
     await expect(invalidPhone).toHaveAttribute("aria-invalid", "true");
     expect(await invalidPhone.evaluate(element => {
       const descriptions = (element.getAttribute("aria-describedby") ?? "").split(/\s+/).map(id => document.getElementById(id));
-      return descriptions.some(node => node?.textContent?.includes("Indicatif international obligatoire")) && descriptions.some(node => node?.getAttribute("data-slot") === "form-message" && Boolean(node.textContent));
+      return descriptions.some(node => node?.textContent?.includes("Choisissez l’indicatif")) && descriptions.some(node => node?.getAttribute("data-slot") === "form-message" && Boolean(node.textContent));
     })).toBe(true);
     await mobile.getByLabel("Nom du contact", { exact: true }).fill("SP05 nouvelle saisie synthétique");
-    await mobile.getByLabel("Téléphone international 1", { exact: true }).fill("+212600000001");
+    await mobile.getByLabel("Indicatif Téléphone 1 *", { exact: true }).selectOption("MA");
+    await mobile.getByLabel("Téléphone 1 *", { exact: true }).fill("0600000001");
+    await mobile.getByLabel("Langues parlées *", { exact: true }).selectOption("french");
+    await mobile.getByLabel("Budget *", { exact: true }).selectOption("500.000 DH - 1.000.000 DH");
     await mobile.getByRole("button", { name: "Ajouter un téléphone", exact: true }).tap();
-    await mobile.getByLabel("Téléphone international 2", { exact: true }).fill("+12025550101");
+    await mobile.getByLabel("Indicatif Téléphone 2", { exact: true }).selectOption("US");
+    await mobile.getByLabel("Téléphone 2", { exact: true }).fill("2025550101");
     await mobile.getByRole("radio", { name: "Principal 2", exact: true }).focus();
     await mobile.keyboard.press("Space");
     await expect(mobile.getByRole("radio", { name: "Principal 2", exact: true })).toBeChecked();
     await mobile.getByRole("button", { name: "Retirer le téléphone 2", exact: true }).tap();
-    await expect(mobile.getByRole("radio", { name: "Principal 1", exact: true })).toBeChecked();
+    await expect(mobile.getByText("Numéro principal", { exact: true })).toBeVisible();
     await mobile.getByRole("button", { name: "Ajouter un e-mail", exact: true }).tap();
     await mobile.getByRole("button", { name: "Retirer l’e-mail 1", exact: true }).tap();
     for (const width of [320, 360, 768, 1024, 1440]) {
       await mobile.setViewportSize({ width, height: 900 });
       expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      for (const field of ["Nom du contact", "Téléphone international 1"]) expect((await mobile.getByLabel(field, { exact: true }).boundingBox())?.height).toBeGreaterThanOrEqual(44);
+      for (const field of ["Nom du contact", "Téléphone 1 *"]) expect((await mobile.getByLabel(field, { exact: true }).boundingBox())?.height).toBeGreaterThanOrEqual(44);
       expect((await mobile.getByRole("button", { name: "Créer le Lead", exact: true }).boundingBox())?.height).toBeGreaterThanOrEqual(44);
     }
     await mobile.setViewportSize({ width: 360, height: 800 });
@@ -134,7 +138,10 @@ test("SP05 visible Chrome: desktop/mobile, keyboard, touch, duplicate/private an
     await mobile.goto("/leads/new");
     await expect(mobile.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
     await mobile.getByLabel("Nom du contact", { exact: true }).fill("SP05 tentative synthétique");
-    await mobile.getByLabel("Téléphone international 1", { exact: true }).fill("+33600000002");
+    await mobile.getByLabel("Indicatif Téléphone 1 *", { exact: true }).selectOption("FR");
+    await mobile.getByLabel("Téléphone 1 *", { exact: true }).fill("0600000002");
+    await mobile.getByLabel("Langues parlées *", { exact: true }).selectOption("french");
+    await mobile.getByLabel("Budget *", { exact: true }).selectOption("500.000 DH - 1.000.000 DH");
     await mobile.getByRole("button", { name: "Créer le Lead", exact: true }).tap();
     await expect(mobile.getByText("Aucun accès ni doublon n’a été créé.", { exact: false })).toBeVisible();
     await mobile.screenshot({ path: path.join(artifact, "sp05-private-mobile.png"), fullPage: true });

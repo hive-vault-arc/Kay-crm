@@ -15,9 +15,10 @@ export const columnPreferenceSchema = z
           "source",
           "receivedAt",
           "message",
+          "budget", "rating", "country", "languages", "email", "provenance", "projects",
         ]),
       )
-      .max(8)
+      .max(16)
       .refine(values => new Set(values).size === values.length),
   })
   .strict();

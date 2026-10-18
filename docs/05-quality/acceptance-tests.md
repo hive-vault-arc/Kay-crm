@@ -1,5 +1,86 @@
 # Acceptance scenarios
 
+## Projects reference extension (2026-10-18)
+
+D39 extends AT-06/23/27/31/35/36: four-column photo cards, automatic category/
+search/offer/status filtering, authoritative pre-page facets and explicit-none
+selection. Retain Maison, current campaign facts/prices/annual comparison,
+numbered pages, Cards/List and programme navigation. Cover clean private previews,
+role/stock denial, loading/empty/outage/retry, six widths, keyboard/touch and
+actual200% zoom. Synthetic photo fixtures never replace real listing data.
+[Scope and evidence](../03-planning/projects-reference-refresh.md).
+
+## Calendar reference extension (2026-10-18)
+
+D38 extends AT-16/23/40: three typed Iconsax visits and real statuses, populated
+weekly/agenda/by-type layouts, empty selection/week, scoped pre-page filters and
+whole-range facets beyond page one. Reject invalid filters and all type/status
+queries on metadata-free busy intervals. Preserve authoritative civil time,
+working/lunch/capacity/version/overlap and interrupted retry behavior. Check
+overlap hit targets, short/overnight access, mobile touch, keyboard, native200%,
+actual loading/backend outage/retry and safe screenshots. No real seed/migration.
+[Evidence](../03-planning/calendar-reference-refresh.md).
+
+## Staff setup/deletion override (2026-10-18)
+
+D37 updates AT-01/02/23/38: admin-chosen initial/reset password, immediate
+restricted login without activation/handoff, mandatory different own password
+and fresh login. No API/receipt/GET plaintext. Existing staff are unchanged.
+Delete hides/revokes access but preserves CRM attribution. Cover concurrent/
+same-key, stale, rollback, current-authority and last-admin cases; additive
+migration preservation; strict DELETE facade; keyboard/touch/200% zoom,
+denied/outage/retry and secret-safe captures.
+[Evidence](../03-planning/staff-onboarding-deletion.md).
+
+## Lead/Deal activity extension (2026-10-18)
+
+Extend AT-04/05/23/24/39 with exact Lead-to-Deal activity lineage: append all
+manual kinds/metadata, convert, then append Deal-only notes. Original Lead IDs,
+authors, timestamps and text must be unchanged in the separate origin table;
+another Lead on the same contact and generic Contact notes must not leak in.
+Exercise current-scope denial (including retry after transfer), archived
+read-only history, missing/manual origins, merge preservation, duplicate query,
+actor/time/context spoofing, invalid bounds, SQL context/immutability guards,
+same-key concurrency, rollback and committed-but-lost-response retry. Prove
+numbered filtering/counts, loading/empty/error/retry and actual mobile/keyboard/
+touch/200% behavior. Migration round-trip must preserve pre-existing history;
+downgrade must refuse retained new activity data. Actual commands/results and
+remaining rollout/product limits live in the [activity ledger](../03-planning/lead-deal-activities.md).
+
+## Current Lead/Deal replacement (2026-10-17)
+
+The owner-requested [IMMO World alignment](../03-planning/leads-deals-immoworld-alignment.md)
+supersedes free-title/manual-enquiry-link variants of AT-03/04/23/39, not their
+canonical identity, private scope, version, retry or history assertions. Cover
+selected calling codes and cross-country phones, residence/nationality/multiple
+languages, required budget and the shared campaign catalogue. Convert a real
+Lead with reviewed version/project/budget/buying intent and inspect both saved
+histories and the reused client. Invalid/private/archived/stale/concurrent and
+same-key cases must retain the existing fail-closed boundaries.
+
+Manual creation/editing must prove atomic canonical-client qualification and
+one-to-three project interests without inventory reservation or writable title.
+Read/list/history must expose those actual facts; historical profile display
+uses the saved revision rather than today's contact. Existing proposal, stock,
+outcome, finance, file, merge, import and intake coverage remains required.
+The alignment ledger separates observed passes, retained corrected failures,
+pending visual/state checks and human product review; historical sprint passes
+do not certify this replacement.
+
+## D34: agent project creation/editing (2026-10-16)
+
+Active agents create/edit shared development facts/briefing, blocks/floors/types
+and standalone/physical-unit facts, with true-actor audit and version/retry guards.
+Archived targets remain read-only. Private developer contacts cannot be linked,
+removed or disclosed without scope; omitted IDs preserve existing hidden links.
+Omission and explicit removal must have distinct idempotency fingerprints.
+Legal-owner/file/offering/availability/external-outcome/archive/restore operations
+remain M/A-only. Authentication, CSRF and post-lock/current-replay authority remain.
+These replace older read-only-agent expectations for create/edit only.
+Cases: backend `tests/test_project_permissions.py` plus affected inventory/hierarchy
+regressions; frontend `tests/e2e/project-permissions.spec.ts` and updated prior cases.
+[Actual verification and limitations](../06-delivery-and-operations/agent-project-permissions.md).
+
 SP-22 now has a [current41-scenario evidence map](../03-planning/sprints/sp-22-acceptance-map.md)
 and [live execution record](../03-planning/sprints/sp-22-execution.md). Backend
 regression/corrected migration/recovery results are recorded; final browser,

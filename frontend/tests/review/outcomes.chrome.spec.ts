@@ -4,6 +4,7 @@ import path from "node:path";
 import { test, expect, createActor, removeActor, signIn, clearActorContext, type TestActor } from "../helpers/auth";
 import { reservationFixture } from "../helpers/reservations";
 import { fillOutcome, outcomeDialog, salePair } from "../helpers/outcomes";
+import { staffCommand } from "../helpers/leads";
 
 async function capture(page: Page, name: string, full = false) {
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
@@ -88,9 +89,18 @@ test("SP13 visible Chrome: close, partial programme, reopen, external results, k
     await clearActorContext(page); await signIn(page, data.manager); await page.goto(`/projects/properties/${pair.pid}`); await page.getByRole("tab", { name: "Offres", exact: true }).click();
     await page.getByRole("button", { name: "Marquer vendue ailleurs", exact: true }).click(); const external = page.getByRole("alertdialog", { name: "Marquer vendue ailleurs", exact: true }); await expect(external.getByRole("button", { name: "Marquer vendue ailleurs", exact: true })).toBeEnabled();
     await external.getByLabel("Date du résultat externe (obligatoire)", { exact: true }).fill("2026-10-15"); await external.getByLabel("Motif partagé, sans donnée privée (obligatoire)", { exact: true }).fill("SP13 vente externe synthétique partagée"); await external.evaluate(el => { el.scrollTop = 0; }); await capture(page, "external-desktop");
+    const reviewed = await page.request.get(`/api/v1/properties/${pair.pid}/stock-review?offering_id=${pair.saleOffer}`);
+    expect(reviewed.status()).toBe(200);
+    const stock = await reviewed.json();
+    const externalBody = { expected_version: stock.expected_target_version, offering_id: stock.offering_id, expected_offering_version: stock.expected_offering_version, expected_development_version: stock.expected_development_version, expected_stock_fingerprint: stock.expected_stock_fingerprint, completed_on: "2026-10-15", explanation: "SP13 vente externe synthétique partagée" };
     await external.getByRole("button", { name: "Marquer vendue ailleurs", exact: true }).click(); await expect(external).not.toBeVisible(); await page.getByRole("tab", { name: "Historique", exact: true }).click(); await expect(page.getByText(/Résultat externe du/).first()).toBeVisible();
     const outsider = await createActor("agent"); actors.push(outsider); await clearActorContext(mobile); await mobile.setViewportSize({ width: 390, height: 844 }); await signIn(mobile, outsider); await mobile.goto(`/deals/${data.unit}`); await expect(mobile.getByRole("alert").filter({ hasText: "introuvable" })).toBeVisible(); await capture(mobile, "denied-mobile");
-    await mobile.goto(`/projects/properties/${pair.pid}`); await expect(mobile.getByText(/Lecture seule : les modifications d’inventaire/)).toBeVisible(); await expect(mobile.getByRole("button", { name: "Marquer vendue ailleurs", exact: true })).toHaveCount(0); await capture(mobile, "external-denied-mobile");
+    await mobile.goto(`/projects/properties/${pair.pid}`);
+    await expect(mobile.getByRole("link", { name: "Modifier le bien", exact: true })).toHaveAttribute("href", `/projects/properties/${pair.pid}/edit`);
+    await mobile.getByRole("tab", { name: "Offres", exact: true }).tap();
+    await expect(mobile.getByRole("button", { name: "Marquer vendue ailleurs", exact: true })).toHaveCount(0);
+    expect((await staffCommand(mobile, `properties/${pair.pid}/external-outcome`, externalBody)).status()).toBe(403);
+    await capture(mobile, "external-denied-mobile");
     console.info("SP13 native observations", JSON.stringify({ desktop, touch, baseline, measurement, expectedNetworkErrors, unexpectedConsoleErrors: errors })); expect(errors).toEqual([]);
   } finally {
     await zoomContext?.close(); if (profile) { expect(path.dirname(path.resolve(profile))).toBe(path.resolve("test-results")); expect(path.basename(profile)).toMatch(/^sp13-zoom-/); await rm(profile, { recursive: true, force: true }); }

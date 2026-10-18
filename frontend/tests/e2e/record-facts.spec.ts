@@ -1,9 +1,9 @@
 import { chromium, type Page } from "@playwright/test";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { test, expect, createActor, removeActor, clearActorContext, signIn } from "../helpers/auth";
 import { createLead } from "../helpers/leads";
-import { fillDeal, saveDeal } from "../helpers/deals";
+import { convertLead } from "../helpers/deals";
 import { geometry } from "../helpers/report-review";
 
 const artifacts = path.resolve("output/playwright/record-facts");
@@ -16,11 +16,23 @@ async function capture(page: Page, name: string) {
 }
 
 async function factsGeometry(page: Page, width: number) {
-  const facts = page.locator(".record-facts");
+  const layout = page.locator(".crm-record-layout").first();
+  const left = (await layout.locator(":scope > [data-record-contact]").boundingBox())!;
+  const right = (await layout.locator(":scope > .crm-record-primary").boundingBox())!;
+  if (width >= 1280) {
+    expect(Math.abs(left.y - right.y)).toBeLessThanOrEqual(1);
+    expect(right.x).toBeGreaterThanOrEqual(left.x + left.width + 15);
+    expect(right.width).toBeGreaterThanOrEqual(left.width * 1.6);
+  } else {
+    expect(Math.abs(left.x - right.x)).toBeLessThanOrEqual(1);
+    expect(right.y).toBeGreaterThanOrEqual(left.y + left.height + 15);
+  }
+  const facts = page.locator(".record-facts:visible");
   for (const list of await facts.all()) {
+    const stackedLabels = await list.evaluate(element => Boolean(element.closest(".crm-detail-facts")));
     const pairs = list.locator(":scope > div");
     const first = (await pairs.nth(0).boundingBox())!, second = (await pairs.nth(1).boundingBox())!;
-    if (width >= 1280) {
+    if (width >= 1280 && await list.getAttribute("data-columns") !== "1") {
       expect(Math.abs(first.y - second.y)).toBeLessThanOrEqual(1);
       expect(second.x).toBeGreaterThan(first.x + first.width);
     } else {
@@ -32,7 +44,7 @@ async function factsGeometry(page: Page, width: number) {
       await expect(term.locator('svg[data-icon-family="iconsax"][aria-hidden="true"]')).toHaveCount(1);
       await expect(term.locator("svg")).toHaveCSS("width", "16px");
       const labelBox = (await term.boundingBox())!, valueBox = (await value.boundingBox())!;
-      if (width >= 640) expect(valueBox.x).toBeGreaterThan(labelBox.x + labelBox.width);
+      if (width >= 640 && !stackedLabels) expect(valueBox.x).toBeGreaterThan(labelBox.x + labelBox.width);
       else expect(valueBox.y).toBeGreaterThan(labelBox.y);
       expect(await value.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
       for (const link of await value.locator(":scope > a").all()) {
@@ -61,25 +73,23 @@ test("Lead/Deal facts: Iconsax, paired desktop details, mobile, keyboard, touch 
     await expect(contact.locator("dd").nth(1)).toHaveText(detail.contact.primary_phone);
     await expect(contact.locator("dd").nth(2)).toHaveText("Non renseigné");
     await expect(page.getByRole("heading", { name: "Attribution de la demande", exact: true })).toHaveCount(0);
-    const editLead = page.getByRole("link", { name: "Modifier le Lead", exact: true });
+    const editLead = page.getByRole("link", { name: "Modifier le prospect", exact: true });
     await editLead.focus(); await page.keyboard.press("Tab"); await page.keyboard.press("Shift+Tab");
     expect(await editLead.evaluate(element => element.matches(":focus-visible"))).toBe(true);
     await page.keyboard.press("Enter");
-    await expect(page.getByLabel("Message de la demande", { exact: true })).toBeEnabled();
-    await page.getByRole("link", { name: "Voir le Lead", exact: true }).click();
-    const create = page.getByRole("link", { name: "Créer une affaire", exact: true });
-    await create.click(); await fillDeal(page, "SP11 affaire synthétique aux informations réparties");
-    const deal = await saveDeal(page);
+    await expect(page.getByLabel("Description", { exact: true })).toBeEnabled();
+    await page.getByRole("link", { name: "Voir le prospect", exact: true }).click();
+    const deal = await convertLead(page, "SP11 projet synthétique aux informations réparties");
     const summary = page.getByRole("region", { name: "Contact et offre liée", exact: true });
     await expect(summary.getByRole("link", { name: "Voir la demande d’origine conservée", exact: true })).toHaveAttribute("href", `/leads/${lead}`);
-    await expect(summary.locator("dd").filter({ hasText: "SP11 rappeler le contact" })).toBeVisible();
+    await expect(summary.locator("dd").filter({ hasText: "SP11 projet synthétique aux informations réparties" })).toBeVisible();
     const metrics = [];
     for (const [name, route] of [["lead", `/leads/${lead}`], ["deal", `/deals/${deal}`]]) {
       await page.goto(route); await expect(page.locator(".record-facts").first()).toBeVisible();
-      for (const width of [320, 360, 768, 1024, 1280, 1440]) {
+      for (const width of [320, 360, 768, 1024, 1280, 1440, 1600]) {
         await page.setViewportSize({ width, height: 1100 });
         metrics.push({ route: name, ...(await factsGeometry(page, width)) });
-        if (width === 360 || width === 1440) {
+        if (width === 360 || width === 1440 || width === 1600) {
           await page.evaluate(() => scrollTo(0, 0)); await capture(page, `${name}-${width}`);
         }
       }
@@ -140,12 +150,12 @@ test("Lead/Deal facts: native 200% Chrome zoom reflows both records", async ({ b
   const owner = await createActor("agent");
   const profile = testInfo.outputPath("record-facts-zoom-profile");
   const options = { channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, ignoreHTTPSErrors: true, args: ["--window-size=1440,1000"] };
-  let context = await chromium.launchPersistentContext(profile, options);
+  let context!: Awaited<ReturnType<typeof chromium.launchPersistentContext>>;
   let baseline: { ratio: number; width: number }, lead: string, deal: string;
   try {
+    context = await chromium.launchPersistentContext(profile, options);
     const page = context.pages()[0]; await page.goto(`${baseURL}/login`); await signIn(page, owner);
-    lead = await createLead(page); await page.getByRole("link", { name: "Créer une affaire", exact: true }).click();
-    await fillDeal(page); deal = await saveDeal(page);
+    lead = await createLead(page); deal = await convertLead(page);
     baseline = await page.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth }));
     await context.close();
     const preferencesPath = path.join(profile, "Default", "Preferences");
@@ -168,5 +178,11 @@ test("Lead/Deal facts: native 200% Chrome zoom reflows both records", async ({ b
       await writeFile(path.join(artifacts, `${name}-zoom-200.png`), Buffer.from(shot.data, "base64"));
       await session.detach();
     }
-  } finally { await context.close(); await removeActor(owner); }
+  } finally {
+    await context?.close();
+    expect(path.basename(profile)).toBe("record-facts-zoom-profile");
+    expect(path.dirname(path.dirname(path.resolve(profile)))).toBe(path.resolve("test-results"));
+    await rm(profile, { recursive: true, force: true });
+    await removeActor(owner);
+  }
 });
