@@ -63,7 +63,7 @@ test("projects reference: eight real synthetic photos, cards and filters", async
     await page.getByRole("button", { name: "Réinitialiser", exact: true }).click();
     await expect(page.locator("article")).toHaveCount(8);
     const noCategories = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === "/api/v1/properties" && url.searchParams.get("categories") === ""; }, { timeout: 15_000 });
-    for (const name of ["Terrain", "Appartement", "Villa"]) await page.getByRole("checkbox", { name, exact: true }).uncheck();
+    for (const name of ["Terrain", "Appartement", "Villa", "Local commercial"]) await page.getByRole("checkbox", { name, exact: true }).uncheck();
     expect((await noCategories).status()).toBe(200); await expect(page.getByRole("heading", { name: "Aucun bien correspondant", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Réinitialiser", exact: true }).click(); await expect(page.locator("article")).toHaveCount(8);
     await page.getByRole("tab", { name: "Liste", exact: true }).click();

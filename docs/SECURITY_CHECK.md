@@ -16,7 +16,9 @@ creation/filter: 1 pass. Ruff, format, mypy, lint, TypeScript, build and runtime
 dependency audit pass. The dev-only dependency advisory still uses the existing
 time-limited exception. `alembic check` reports pre-existing 0027 Lead/Deal
 archive model drift (archive columns/indexes absent from ORM metadata), not a
-0028 category discrepancy; release must track this separately. Production
+0028 category discrepancy. The full backend attempts are not green: 241 pass/3
+fail initially, then 556 pass/3 fail/1 deselected with healthy ClamAV; all
+remaining failures call that same 0027 check. Release must track this separately. Production
 migration/access and human review have not occurred. See the
 [D40 ledger](03-planning/commercial-properties-2026-10-19.md).
 
