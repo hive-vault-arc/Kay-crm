@@ -185,6 +185,7 @@ class Enquiry(Base):
         UniqueConstraint("converted_deal_id", name="uq_enquiry_converted_deal"),
         Index("ix_enquiry_contact", "contact_id", "updated_at", "id"),
         Index("ix_enquiry_received", "source", "received_at", "id"),
+        Index("ix_enquiry_archive_updated", "archived_at", "updated_at", "id"),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     contact_id: Mapped[UUID] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
@@ -216,6 +217,10 @@ class Enquiry(Base):
         ),
     )
     converted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    archived_by_user_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("user.id", ondelete="RESTRICT")
+    )
     version: Mapped[int] = mapped_column(BigInteger, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

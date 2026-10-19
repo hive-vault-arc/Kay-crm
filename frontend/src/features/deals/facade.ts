@@ -4,7 +4,7 @@ import { z } from "zod";
 import { boundedJson, frontendOrigin } from "@/lib/auth/facade";
 import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
-import { childQuerySchema, dealSchema, dealsSchema, editDealSchema, editOfferSchema, historySchema, newDealSchema, newOfferSchema, offersSchema, querySchema, resultSchema, transitionSchema } from "./contracts";
+import { archiveIntentSchema, childQuerySchema, dealSchema, dealsSchema, editDealSchema, editOfferSchema, historySchema, newDealSchema, newOfferSchema, offersSchema, querySchema, resultSchema, transitionSchema } from "./contracts";
 import { releaseSchema, reserveSchema } from "./contracts";
 import { closeSchema, reopenSchema, dealStockReviewSchema, outcomesSchema } from "@/features/inventory/outcome-contracts";
 import { convertLeadSchema } from "./qualification-contracts";
@@ -32,8 +32,9 @@ export async function relayDeals(key: string, request: Request, requestId: strin
   const reopen = new RegExp(`^deals/${id}/reopen$`).test(key);
   const review = new RegExp(`^deals/${id}/stock-review$`).test(key);
   const outcomes = new RegExp(`^deals/${id}/outcomes$`).test(key);
-  for (const code of ["DEAL_TARGET_REQUIRED", "DEAL_ALREADY_CLOSED", "DEAL_NOT_CLOSED", "STOCK_REVIEW_CHANGED", "PARTIAL_DEVELOPMENT_REVIEW_REQUIRED"]) allowedErrors.add(code);
-  if (!((list && ["GET", "POST"].includes(method)) || (record && ["GET", "PATCH"].includes(method)) || (offers && ["GET", "POST"].includes(method)) || ((conversion || transition || reserve || release || close || reopen) && method === "POST") || (offer && method === "PATCH") || ((history || review || outcomes) && method === "GET"))) return facadeError(404, "NOT_FOUND", requestId);
+  const lifecycle = new RegExp(`^deals/${id}/(archive|restore)$`).test(key);
+  for (const code of ["DEAL_TARGET_REQUIRED", "DEAL_ALREADY_CLOSED", "DEAL_NOT_CLOSED", "STOCK_REVIEW_CHANGED", "PARTIAL_DEVELOPMENT_REVIEW_REQUIRED", "RECORD_ARCHIVED", "RECORD_NOT_ARCHIVED", "RESTORE_WINDOW_EXPIRED"]) allowedErrors.add(code);
+  if (!((list && ["GET", "POST"].includes(method)) || (record && ["GET", "PATCH"].includes(method)) || (offers && ["GET", "POST"].includes(method)) || ((conversion || transition || reserve || release || close || reopen || lifecycle) && method === "POST") || (offer && method === "PATCH") || ((history || review || outcomes) && method === "GET"))) return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url); const params = [...url.searchParams];
   const qs = list ? querySchema : childQuerySchema;
   if (method === "GET" && !record && !review ? new Set(params.map(([k]) => k)).size !== params.length || !qs.safeParse(Object.fromEntries(params)).success : Boolean(url.search)) return facadeError(422, "VALIDATION_ERROR", requestId);
@@ -42,7 +43,7 @@ export async function relayDeals(key: string, request: Request, requestId: strin
   if (mutation) {
     if (request.headers.get("Origin") !== frontendOrigin()) return facadeError(403, "FORBIDDEN", requestId);
     if (!z.uuid().safeParse(retryKey).success) return facadeError(422, "VALIDATION_ERROR", requestId);
-    const schema = conversion ? convertLeadSchema : list ? newDealSchema : record ? editDealSchema : close ? closeSchema : reopen ? reopenSchema : reserve ? reserveSchema : release ? releaseSchema : transition ? transitionSchema : offers ? newOfferSchema : editOfferSchema;
+    const schema = conversion ? convertLeadSchema : list ? newDealSchema : record ? editDealSchema : lifecycle ? archiveIntentSchema : close ? closeSchema : reopen ? reopenSchema : reserve ? reserveSchema : release ? releaseSchema : transition ? transitionSchema : offers ? newOfferSchema : editOfferSchema;
     try { const parsed = schema.safeParse(await boundedJson(request, 32768)); if (!parsed.success) return facadeError(422, "VALIDATION_ERROR", requestId); body = JSON.stringify(parsed.data); }
     catch { return facadeError(422, "VALIDATION_ERROR", requestId); }
   }

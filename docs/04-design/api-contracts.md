@@ -1,5 +1,29 @@
 # HTTP contracts for `/api/v1`
 
+## Lead/Deal directory loading and record archive (2026-10-19)
+
+`GET /enquiries` and `GET /deals` retain scoped, stable numbered pagination;
+the directories request `page_size=50` and fetch another page only when selected.
+`record_state=active` (default) excludes individually archived rows;
+`record_state=archived` lists them within the same current contact scope. Counts
+and status/stage facets derive from the selected state before `LIMIT/OFFSET`.
+Detail and history remain readable to current authorized staff. Dashboard active
+Lead/Deal stock and global search exclude individually archived rows; retained
+outcomes, collections and audit history are not rewritten.
+
+`POST /enquiries/{id}/archive|restore` and
+`POST /deals/{id}/archive|restore` require CSRF, idempotency key and strict
+`{ "expected_version": integer }`. An agent must be the current Lead assignee or
+the Deal's linked contact primary agent respectively; manager/administrator
+retain agency oversight. Archive changes the row version and appends true-actor
+history without deleting linked facts. An active Deal reservation must first be
+released. Restore is accepted only within 30 elapsed days, while current
+authority and active parent still hold; afterward `RESTORE_WINDOW_EXPIRED` is
+returned. The row and protected business/financial history remain retained after
+that deadline, but restoration is no longer offered. Archived rows reject new
+edits, activities and linked writes. These are individual record archives, not
+the existing no-expiry contact archive.
+
 ## Property category selection and facets (2026-10-18)
 
 D39 extends only `GET /properties` with optional `categories`, a≤40-character

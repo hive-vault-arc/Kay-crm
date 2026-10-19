@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-export function ScrollableResultsTable({ children }: { children: ReactNode }) {
+export function ScrollableResultsTable({ children, bounded = false }: { children: ReactNode; bounded?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = useState(false);
   useEffect(() => {
@@ -14,7 +14,7 @@ export function ScrollableResultsTable({ children }: { children: ReactNode }) {
     observer.observe(table);
     return () => observer.disconnect();
   }, []);
-  return <div ref={root} className="grid min-w-0 gap-3">
+  return <div ref={root} className={`grid min-w-0 gap-3${bounded ? " crm-directory-scroll" : ""}`}>
     <p hidden={!overflow} className="text-sm text-muted-foreground">Faites défiler le tableau horizontalement pour lire les colonnes choisies.</p>
     {children}
   </div>;

@@ -41,7 +41,7 @@ def offering_scope(identity: CurrentIdentity, contact_ids: Select[Any] | None = 
     if identity.user.role != "agent":
         return true()
     cids = contacts(identity).with_only_columns(Contact.id) if contact_ids is None else contact_ids
-    deals = select(Deal.offering_id).where(Deal.contact_id.in_(cids))
+    deals = select(Deal.offering_id).where(Deal.contact_id.in_(cids), Deal.archived_at.is_(None))
     shortlists = (
         select(ShortlistEntry.offering_id).join(Requirement).where(Requirement.contact_id.in_(cids))
     )
@@ -139,6 +139,7 @@ def dataset(
             .join(Contact, Contact.id == Enquiry.contact_id)
             .where(
                 Enquiry.contact_id.in_(cids),
+                Enquiry.archived_at.is_(None),
                 Enquiry.received_at >= lower,
                 Enquiry.received_at < upper,
             )
@@ -148,7 +149,7 @@ def dataset(
             rows(Deal.id, Deal.title, "deal", User.id, User.display_name)
             .join(Contact, Contact.id == Deal.contact_id)
             .join(User, User.id == Contact.primary_agent_id)
-            .where(Deal.contact_id.in_(cids), Deal.stage.in_(ACTIVE))
+            .where(Deal.contact_id.in_(cids), Deal.stage.in_(ACTIVE), Deal.archived_at.is_(None))
         )
     if metric in ("won", "lost", "cancelled"):
         return (
@@ -262,6 +263,7 @@ def exceptions(identity: CurrentIdentity, kind: str, now: datetime) -> Any:
         ).where(
             Deal.contact_id.in_(contacts(identity).with_only_columns(Contact.id)),
             Deal.stage.in_(ACTIVE),
+            Deal.archived_at.is_(None),
             baseline <= now - timedelta(days=14),
         )
     available = (

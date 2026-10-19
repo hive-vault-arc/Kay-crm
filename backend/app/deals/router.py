@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Query, Request
 from app.contacts.router import Proof, RetryKey, configuration, validate_query
 from app.deals.commands import Body, command
 from app.deals.contracts import (
+    ArchiveDeal,
     ChildQuery,
     CloseDeal,
     ConvertLead,
@@ -19,6 +20,7 @@ from app.deals.contracts import (
     ReleaseReservation,
     ReopenDeal,
     Reserve,
+    RestoreDeal,
     Transition,
 )
 from app.deals.outcome_queries import outcomes as read_outcomes
@@ -69,6 +71,20 @@ def deal(request: Request, token: Proof, did: UUID) -> dict[str, object]:
     if request.query_params:
         raise IdentityError("VALIDATION_ERROR", 422)
     return read_detail(configuration(request)[0], token, did)
+
+
+@router.post("/deals/{did}/archive")
+def archive_deal(
+    request: Request, token: Proof, key: RetryKey, did: UUID, body: ArchiveDeal
+) -> dict[str, object]:
+    return mutate(request, token, key, body, did)
+
+
+@router.post("/deals/{did}/restore")
+def restore_deal(
+    request: Request, token: Proof, key: RetryKey, did: UUID, body: RestoreDeal
+) -> dict[str, object]:
+    return mutate(request, token, key, body, did)
 
 
 @router.patch("/deals/{did}")

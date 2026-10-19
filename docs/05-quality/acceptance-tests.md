@@ -1,5 +1,17 @@
 # Acceptance scenarios
 
+## Lead/Deal loading, pages and archive (2026-10-19)
+
+For Dashboard, Leads and Deals verify shape-matched accessible skeletons on
+pending client requests, clean replacement on ready/error/empty and static
+skeletons under reduced motion. At desktop and mobile widths, the populated
+directory table owns its vertical and horizontal scroll; page controls remain
+outside. Requests use 50 rows and the next page is not fetched until selected.
+Cover owner versus collaborator/outsider, manager oversight, current scope after
+transfer, stale version, same-key retry, reservation guard, original histories,
+active search/report exclusion, and restore before/after day 30. No physical
+purge or real client records are part of the acceptance fixture.
+
 ## Projects reference extension (2026-10-18)
 
 D39 extends AT-06/23/27/31/35/36: four-column photo cards, automatic category/

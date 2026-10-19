@@ -1,5 +1,12 @@
 # KEPVY: core business workflows
 
+Individual Lead/Deal removal now means archive: the owner agent (or M/A) confirms
+the action, the record leaves active directories, and its notes/history remain
+readable under current scope. It can be restored from its directory archive for
+30 elapsed days, provided ownership and parent authority still hold. Beyond
+that, restoration is denied but linked business/financial history is retained.
+This does not change the separate, non-expiring contact archive workflow.
+
 Status: target workflows, not demonstrated  
 Date: 2026-10-14  
 Confirmed decisions: actors, stages, and outcomes follow the [business rules](docs/02-requirements/business-rules.md).  

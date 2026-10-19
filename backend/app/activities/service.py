@@ -23,10 +23,15 @@ ActivityScope = Literal["enquiries", "deals"]
 
 
 def context(
-    session: Session, identity: CurrentIdentity, scope: ActivityScope, target: UUID
+    session: Session,
+    identity: CurrentIdentity,
+    scope: ActivityScope,
+    target: UUID,
+    *,
+    write: bool = False,
 ) -> UUID:
     return (
-        enquiry_in_scope(session, identity, target).contact_id
+        enquiry_in_scope(session, identity, target, include_archived=not write).contact_id
         if scope == "enquiries"
         else authorized(session, identity, target).contact_id
     )
@@ -49,7 +54,9 @@ def append_activity(
     )
     with database.session() as session, session.begin():
         identity = locked_identity(session, token)
-        cid = context(session, identity, scope, target)
+        cid = context(session, identity, scope, target, write=True)
+        if scope == "deals" and authorized(session, identity, target).archived_at is not None:
+            raise IdentityError("RECORD_ARCHIVED", 409)
         contact = readable_contact(session, identity, cid)
         previous = session.get(IdempotencyRecord, (identity.user.id, route, key))
         if previous:
@@ -105,7 +112,7 @@ def read_activities(
                 raise IdentityError("NOT_FOUND", 404)
             origin_id = authorized(session, identity, target).enquiry_id
             if origin_id:
-                enquiry_in_scope(session, identity, origin_id)
+                enquiry_in_scope(session, identity, origin_id, include_archived=True)
             predicate = TimelineEvent.enquiry_id == origin_id if origin_id else text("false")
         else:
             predicate = (

@@ -9,6 +9,7 @@ from sqlalchemy.dialects.postgresql import insert
 from app.contacts.access import has_scope
 from app.contacts.models import Contact
 from app.db.session import Database
+from app.deals.models import Deal
 from app.files.models import Job, Notification, OutboxEvent
 from app.identity.models import AGENCY_ID, Agency
 from app.schedule.models import Visit, VisitParticipant
@@ -145,6 +146,13 @@ def deliver(database: Database, jid: UUID, fence: UUID, now: datetime | None = N
             or target is None
             or target.schedule_version != event.schedule_version
             or event.invalidated_at
+            or (
+                target.deal_id is not None
+                and (
+                    (deal := session.get(Deal, target.deal_id)) is None
+                    or deal.archived_at is not None
+                )
+            )
         ):
             job.state, job.lease_token, job.lease_until = "invalidated", None, None
             return True

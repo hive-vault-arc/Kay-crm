@@ -407,6 +407,8 @@
 .crm-agent { display: flex; min-width: 0; align-items: center; gap: 8px; }
 .crm-agent > span:last-child { min-width: 0; max-width: 6rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .crm-directory-table { font-size: .75rem; line-height: 1.4; }
+.crm-directory-scroll [data-slot="table-container"] { max-height: clamp(14rem, calc(100dvh - 25rem), 42rem); overflow: auto; overscroll-behavior: contain; }
+.crm-directory-scroll .crm-directory-table th { position: sticky; top: 0; z-index: 1; }
 .crm-directory-table th { height: var(--control-touch-target); padding: 0 8px; background: color-mix(in srgb, var(--neutral-surface-muted) 40%, var(--surface-content)); color: var(--content-primary); white-space: nowrap; font-size: .75rem; font-weight: 500; }
 .crm-directory-table td { padding: 2px 8px; border-inline: 0; }
 .crm-directory-table tr { border-color: var(--neutral-border-subtle); }
@@ -515,7 +517,7 @@
 }
 @media (min-width: 80rem) {
   .crm-reference-filter-layout { --layout-filter-panel: var(--layout-crm-filter-panel); column-gap: 12px; }
-  .crm-reference-filter-layout .filter-rail { top: 12px; max-height: calc(100dvh - 24px); }
+  .crm-reference-filter-layout .filter-rail { top: 12px; max-height: clamp(14rem, calc(100dvh - 11rem), 48rem); }
   .crm-reference-filter-layout .crm-filter-submit { display: none; }
   .crm-record-layout { grid-template-columns: var(--layout-crm-record-contact) minmax(0, 1fr); gap: 16px; }
   .crm-lead-work-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }

@@ -7,12 +7,14 @@ from fastapi import APIRouter, Depends, Header, Query, Request
 
 from app.contacts.commands import command
 from app.contacts.contracts import (
+    ArchiveEnquiry,
     EditContact,
     EditEnquiry,
     ListQuery,
     NewContact,
     NewEnquiry,
     ResolvePhone,
+    RestoreEnquiry,
 )
 from app.contacts.queries import assignment_options, metadata, read_detail, read_list, resolve_phone
 from app.db.session import Database
@@ -83,6 +85,22 @@ def contact(target: UUID, request: Request, token: Proof) -> dict[str, object]:
 @router.get("/enquiries/{target}")
 def enquiry(target: UUID, request: Request, token: Proof) -> dict[str, object]:
     return read_detail(configuration(request)[0], token, "enquiries", target)
+
+
+@router.post("/enquiries/{target}/archive")
+def archive_enquiry(
+    target: UUID, body: ArchiveEnquiry, request: Request, token: Proof, key: RetryKey
+) -> dict[str, object]:
+    database, secret = configuration(request)
+    return command(database, token, secret, key, "enquiries", body, target)
+
+
+@router.post("/enquiries/{target}/restore")
+def restore_enquiry(
+    target: UUID, body: RestoreEnquiry, request: Request, token: Proof, key: RetryKey
+) -> dict[str, object]:
+    database, secret = configuration(request)
+    return command(database, token, secret, key, "enquiries", body, target)
 
 
 @router.post("/contacts")

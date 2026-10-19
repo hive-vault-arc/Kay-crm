@@ -1,5 +1,81 @@
 # KAY QA command register
 
+## Lead/Deal archive, 50-row directories and skeletons (2026-10-19)
+
+The additive `0027_record_archive` was applied only to the isolated test and
+benchmark targets; neither development nor production data was migrated. An
+initial full-suite attempt stopped at186 passes because the real local ClamAV
+service was stopped (`ANTIVIRUS_UNAVAILABLE`). After starting the existing
+project-scoped Compose service and confirming it healthy, the full backend
+`.venv/Scripts/python.exe -m pytest -q --maxfail=1` run passed **842/842** in
+19m04s, zero skipped. After freezing migration action vocabulary and adding
+explicit archive/search/report/activity assertions, the focused archive plus
+populated downgrade/upgrade check passed **4/4**; test Alembic reports
+`0027_record_archive (head)` and no model drift. Ruff check/format, strict mypy
+and DB-independent units pass (234 units; DB tests deliberately deselected).
+
+The unchanged full-volume benchmark target was upgraded from0026 to0027, then
+`APP_ENVIRONMENT=benchmark .venv/Scripts/python.exe -m benchmarks.run` passed:
+100 users,4 API processes,60.42s steady state,6815 completed requests/0 errors;
+ordinary p95 maximum554.934ms (<1000), dashboard982.455ms (<2000). This load
+mix covers existing enquiries, not a separate Deal-directory throughput claim.
+
+Frontend `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run test:unit`
+(71/71), `KAY_UI_CHECKS=1 npm.cmd run build` and dependency gate pass. The
+dependency gate still reports nine inherited development-only findings under
+the approved expiring exception, not a clean full audit. The browser bundle
+scan inspected605 JS files/4 roots and found zero configured secret or signing
+key matches; the headed report audit has zero detailed step arrays. Synthetic
+desktop/mobile captures remain ignored; no real client records or credentials
+were used. Final headed Chrome `npm.cmd run test:e2e --
+tests/e2e/record-archive-pagination.spec.ts tests/e2e/filter-rail.spec.ts
+tests/e2e/list-header-actions.spec.ts --project=chrome --max-failures=1` passed
+**6/6** in3.3m: lazy50-row pages, internal desktop/mobile scrolling, owner
+archive/restore, reduced-motion dashboard/directory skeletons, filters and
+touch/keyboard actions. The development server emitted a non-fatal input
+`caret-color` hydration warning and one interrupted destination-stream message;
+neither caused a test failure and neither is claimed resolved. Hosted exact-head
+checks remain separate; no main merge, production migration or product approval
+is inferred from these local checks.
+
+The subsequent all-five-target run initially passed Chromium's populated
+directory case but failed its loading case with Playwright `Route is already
+handled` (1 pass/1 fail/8 not run): the test removed a held request handler
+before it finished. No application assertion failed. After tracking handler
+completions before unroute, the focused Chromium case passed1/1, then the full
+`npm.cmd run test:e2e -- tests/e2e/record-archive-pagination.spec.ts
+--workers=1 --max-failures=1` matrix passed **10/10** in5.9m across Chromium,
+installed Chrome, Edge, Firefox and WebKit. The original failure remains in the
+ledger; this is not a claim that the entire five-target product suite ran.
+
+Migration-only PR16 merged after its checks passed, leaving feature PR17 in
+draft. Hosted synthetic integration run39236522096 passed the full backend job
+but its compiled Chromium browser job stopped at26 passes/1 failure/90 unrun:
+the older SP-11 Deal list test still selected the retired `Lignes par page`
+control. The application now fixes directory pages at50. The corrected local
+Chromium case (`deals.spec.ts`, `--grep "fixed 50-row page"`) passed1/1 in50.3s,
+asserting all11 synthetic Deal rows on page1 and disabled Next. This does not
+turn the failed hosted run green; a new exact-head hosted run is required.
+The first local full compiled suite also stopped at its first SP-22 recovery
+case (0 pass/1 fail/116 unrun); the isolated rerun failed the same Lead-create
+navigation. That run had unintentionally used a stale `.next` artifact: the
+earlier successful `KAY_UI_CHECKS=1` build wrote `.next-e2e` instead. The same
+case passed in dev mode, then after a fresh ordinary `npm.cmd run build`, passed
+in compiled `ci-chromium` mode1/1 in35.5s. Against that current ordinary `.next`
+build, `KAY_E2E_PRODUCTION=1 npm.cmd run test:e2e --
+--config=playwright.ci.config.ts --project=ci-chromium --max-failures=1`
+passed **117/117** in35.8m, zero skipped; the failed attempts remain recorded.
+The isolated local API/browser services and project-scoped ClamAV were stopped;
+ports3000/3100/8100/8101/8200/3310 have no listeners. Port8000 was untouched.
+
+[Fresh hosted synthetic integration run39239104868](https://github.com/hive-vault-arc/Kay-crm/actions/runs/39239104868)
+at feature commit `05c3647` passed the real PostgreSQL backend regression
+**842/842** in11m38s, compiled Chromium browser regression **117/117** in26.9m,
+browser-bundle secret scan (67 JS files, zero matches), and its aggregate
+release gate. Required PR CI is separate. Neither this run nor the local tests
+applied `0027_record_archive` to production; production migration confirmation
+and the owner's product review remain pending before feature merge.
+
 ## Combined CRM regression/publication (2026-10-18)
 
 The [complete chronological ledger](03-planning/full-regression-publication-2026-10-18.md)

@@ -15,7 +15,15 @@ from app.contacts.access import (
     responsible_agent,
     scoped_contact,
 )
-from app.contacts.contracts import ContactFields, EditContact, EditEnquiry, NewContact, NewEnquiry
+from app.contacts.contracts import (
+    ArchiveEnquiry,
+    ContactFields,
+    EditContact,
+    EditEnquiry,
+    NewContact,
+    NewEnquiry,
+    RestoreEnquiry,
+)
 from app.contacts.history import record
 from app.contacts.models import (
     Contact,
@@ -31,7 +39,7 @@ from app.identity.models import AGENCY_ID, Agency, User
 from app.identity.security import IdentityError, keyed_digest
 from app.identity.sessions import CurrentIdentity, current_identity
 
-CommandBody = NewContact | NewEnquiry | EditContact | EditEnquiry
+CommandBody = NewContact | NewEnquiry | EditContact | EditEnquiry | ArchiveEnquiry | RestoreEnquiry
 
 
 def replace_values(session: Session, contact: Contact, body: ContactFields, actor: UUID) -> None:
@@ -166,6 +174,34 @@ def apply_command(
         replace_values(session, contact, body, identity.user.id)
         record(session, identity, contact.id, "contacts.updated")
         return contact.id, contact.id
+    if isinstance(body, ArchiveEnquiry | RestoreEnquiry):
+        enquiry = enquiry_in_scope(session, identity, target, include_archived=True)
+        contact = scoped_contact(session, identity, enquiry.contact_id)
+        if identity.user.role == "agent" and enquiry.assigned_agent_id != identity.user.id:
+            raise IdentityError("NOT_FOUND", 404)
+        if enquiry.version != body.expected_version:
+            raise ContactConflict(
+                "VERSION_CONFLICT", {"current": detail_in_session(session, identity, kind, target)}
+            )
+        now = datetime.now(UTC)
+        if isinstance(body, ArchiveEnquiry):
+            if enquiry.archived_at is not None:
+                raise IdentityError("RECORD_ARCHIVED", 409)
+            enquiry.archived_at, enquiry.archived_by_user_id = now, identity.user.id
+            action = "enquiries.archive"
+        else:
+            if enquiry.archived_at is None:
+                raise IdentityError("RECORD_NOT_ARCHIVED", 409)
+            if enquiry.archived_at < now - timedelta(days=30):
+                raise IdentityError("RESTORE_WINDOW_EXPIRED", 409)
+            if contact.archived_at is not None:
+                raise IdentityError("CONTACT_ARCHIVED", 409)
+            enquiry.archived_at, enquiry.archived_by_user_id = None, None
+            action = "enquiries.restore"
+        enquiry.version += 1
+        enquiry.updated_at = now
+        record(session, identity, enquiry.contact_id, action, enquiry_id=enquiry.id)
+        return enquiry.id, enquiry.contact_id
     enquiry = enquiry_in_scope(session, identity, target)
     scoped_contact(session, identity, enquiry.contact_id)
     if enquiry.version != body.expected_version:
@@ -237,7 +273,18 @@ def command(
                 raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
             readable_contact(session, identity, previous.contact_id)
             if kind == "enquiries":
-                enquiry_in_scope(session, identity, UUID(str(previous.response["id"])))
+                enquiry = enquiry_in_scope(
+                    session,
+                    identity,
+                    UUID(str(previous.response["id"])),
+                    include_archived=isinstance(body, ArchiveEnquiry | RestoreEnquiry),
+                )
+                if (
+                    isinstance(body, ArchiveEnquiry | RestoreEnquiry)
+                    and identity.user.role == "agent"
+                    and enquiry.assigned_agent_id != identity.user.id
+                ):
+                    raise IdentityError("NOT_FOUND", 404)
             return previous.response
         if target:
             if kind == "contacts":

@@ -1,5 +1,26 @@
 # KAY agent lessons
 
+## Update older browser contracts when fixing page size (2026-10-19)
+
+Changing Lead/Deal directories from a selectable page size to fixed 50-row
+pages left an SP-11 browser case selecting the removed control. A new feature
+matrix passed, but the complete hosted browser suite caught the stale test and
+stopped its release gate. Search older tests for retired labels and pagination
+assumptions, run the affected legacy case locally, then rerun the exact-head
+hosted integration suite before treating a new pagination contract as ready.
+For compiled local parity, build without `KAY_UI_CHECKS=1`: that flag writes
+`.next-e2e`, while the production-mode test server starts from `.next`. A stale
+`.next` made an unrelated recovery test fail twice even though dev mode passed.
+
+## Measure the complete directory viewport after bounding a table (2026-10-19)
+
+A bounded table can still leave the document scrolling if the adjacent sticky
+filter rail has a later breakpoint-specific max-height or if pagination sits
+below the viewport. Inspect the computed rail, table, results, pagination and
+main bounds together on a populated 50-row page; a screenshot of the table
+scrollbar alone does not prove the page itself is bounded. Change the effective
+breakpoint rule, then rerun the geometry assertion in headed Chrome.
+
 ## Do not normalize selection using unknown loading facets (2026-10-18)
 
 useQuery intentionally hides a previous-path value while a request is pending.
@@ -1178,3 +1199,14 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
   counters may expose phases and exception classes, never raw credential-bearing
   startup errors; unexpected user errors must fail the load result.
 - Promote to AGENTS.md: no; existing isolation/security/evidence rules apply.
+
+## 2026-10-19: delayed browser routes must finish before removal
+
+- When a Playwright test holds several API routes behind a promise, resolving
+  the promise and immediately removing those handlers can double-handle an
+  in-flight request. Track the pending handler completions, wait for the UI to
+  settle and for the active-handler set to empty, then remove the routes. A
+  passing single browser is insufficient evidence for this timing-sensitive
+  cleanup; rerun the affected test across all configured engines.
+- Promote to AGENTS.md: no; this is a test-harness correction, not a product
+  rule.

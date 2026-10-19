@@ -1,5 +1,15 @@
 # Data model: dictionary, conceptual, logical, and physical views
 
+## Individual Lead/Deal archive (2026-10-19)
+
+Revision `0027_record_archive` adds nullable paired `archived_at` and
+`archived_by_user_id` to `enquiry` and `deal`, indexed for directory reads. The
+actor FK is restrictive; status, stage, provenance, finance and linked history
+are unchanged. Timeline and Deal-stage action checks admit archive/restore
+events. After 30 elapsed days, only restoration authority expires: no physical
+purge of protected business history is implied. The guarded downgrade refuses
+an archived row and is disabled outside isolated test/benchmark/recovery targets.
+
 ## Staff deletion (2026-10-18)
 
 Revision0026 adds nullable `user.deleted_at` and a disabled-state check. No existing

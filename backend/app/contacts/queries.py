@@ -19,7 +19,9 @@ from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity, require_role
 
 
-def enquiry_in_scope(session: Session, identity: CurrentIdentity, eid: UUID) -> Enquiry:
+def enquiry_in_scope(
+    session: Session, identity: CurrentIdentity, eid: UUID, *, include_archived: bool = False
+) -> Enquiry:
     query = (
         select(Enquiry)
         .join(Contact, Contact.id == Enquiry.contact_id)
@@ -27,6 +29,8 @@ def enquiry_in_scope(session: Session, identity: CurrentIdentity, eid: UUID) -> 
     )
     if identity.user.role == "agent":
         query = query.where(Enquiry.assigned_agent_id.is_not(None), Contact.archived_at.is_(None))
+    if not include_archived:
+        query = query.where(Enquiry.archived_at.is_(None))
     enquiry = session.scalar(query)
     if enquiry is None:
         raise IdentityError("NOT_FOUND", 404)
@@ -39,7 +43,7 @@ def detail_in_session(
     if kind == "contacts":
         contact = readable_contact(session, identity, target)
         return contact_views(session, [contact], detail=True)[contact.id]
-    enquiry = enquiry_in_scope(session, identity, target)
+    enquiry = enquiry_in_scope(session, identity, target, include_archived=True)
     contact = readable_contact(session, identity, enquiry.contact_id)
     return enquiry_views(session, [enquiry], [contact], detail=True)[0]
 
@@ -109,6 +113,8 @@ def list_in_session(
     if query.language:
         contacts = contacts.where(Contact.languages.contains([query.language]))
     if kind == "contacts":
+        if query.record_state != "active":
+            raise IdentityError("VALIDATION_ERROR", 422)
         if (
             query.status
             or query.campaign_source
@@ -136,13 +142,18 @@ def list_in_session(
         enquiries = select(Enquiry).where(
             Enquiry.contact_id.in_(contacts.with_only_columns(Contact.id))
         )
+        enquiries = enquiries.where(
+            Enquiry.archived_at.is_(None)
+            if query.record_state == "active"
+            else Enquiry.archived_at.is_not(None)
+        )
         if query.sort == "name":
             enquiries = enquiries.join(Contact, Contact.id == Enquiry.contact_id)
         if identity.user.role == "agent":
             enquiries = enquiries.where(Enquiry.assigned_agent_id.is_not(None))
         if query.status:
             enquiries = enquiries.where(Enquiry.status == query.status)
-        else:
+        elif query.record_state == "active":
             enquiries = enquiries.where(Enquiry.status != "converted")
         if query.campaign_source:
             enquiries = enquiries.where(Enquiry.campaign_source == query.campaign_source)

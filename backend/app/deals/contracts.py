@@ -17,6 +17,14 @@ STAGES = ("new", "visit", "negotiation", "reserved", "documents", "won", "lost",
 ORDINARY_STAGES = ("new", "visit", "negotiation", "documents")
 
 
+class ArchiveDeal(StrictBody):
+    expected_version: Version
+
+
+class RestoreDeal(StrictBody):
+    expected_version: Version
+
+
 class ProjectChoice(StrictBody):
     development_id: UUID | None = None
     property_id: UUID | None = None
@@ -221,6 +229,7 @@ class DealQuery(StrictBody):
     updated_from: date | None = None
     updated_to: date | None = None
     archive: Literal["active", "archived", "all"] = "active"
+    record_state: Literal["active", "archived"] = "active"
     sort: Literal["-updated_at", "-created_at", "title", "contact_name"] = "-updated_at"
     page: int = Field(default=1, ge=1, le=1_000_000)
     page_size: int = Field(default=50, ge=1, le=100)

@@ -1107,3 +1107,17 @@ verify the known project CA; disposable headed browser TLS exceptions are not a
 production policy. Final browser-build scan:4 roots/351 JS/zero configured secret
 matches. Guarded test-only cleanup and a separate read-only development check are
 recorded in [startup execution](06-delivery-and-operations/local-startup-execution.md).
+
+## Lead/Deal 30-day archive and directory paging (2026-10-19)
+
+The new archive commands recheck the current session, scoped record, current
+owner (Lead assignee or Deal contact primary), expected version and idempotency
+receipt inside the transaction. Manager/administrator oversight remains scoped.
+Archived records leave active lists, search, reports and new work, but existing
+private history remains under the original current-authority checks. Restoration
+requires the same authority, an unarchived contact and a server-checked 30-day
+window; no timer, client clock or physical purge grants authority. Active
+reservations block Deal archive until explicitly released. The new migration is
+additive and its downgrade refuses non-isolated environments or archived rows.
+Only synthetic isolated databases and headed browser actors are used for tests;
+no production migration or real record mutation is authorized by this check.
