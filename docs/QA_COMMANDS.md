@@ -1,5 +1,15 @@
 # KAY QA command register
 
+## Commercial property category — 2026-10-19
+
+Backend explicit venv, isolated test DB head0028: `-m pytest tests/test_inventory.py tests/test_inventory_edges.py tests/test_developments.py tests/test_property_facets.py tests/test_requirements.py tests/test_inventory_migration.py -q --tb=short --maxfail=2` — 77 passed/103.31s. First run against isolated head0027 failed two category inserts as expected; `APP_ENVIRONMENT=test -m app.cli.inspect_database` confirmed database/OID, then `-m alembic upgrade head` advanced only the isolated test target. Ruff check/format all and mypy app pass. `-m alembic check` still fails on pre-existing 0027 Lead/Deal archive metadata drift; no 0028 operation is listed.
+
+Frontend: `npm.cmd run test:unit` — 72 passed; `npm.cmd run typecheck`, lint, build and security:check pass (zero runtime vulnerabilities; nine dev-only findings under existing dated exception). `npm.cmd run test:chrome -- tests/e2e/inventory.spec.ts --grep 'all standalone categories' --max-failures=1` — 1 visible Chrome pass/42.3s using the guarded isolated stack. `npm.cmd run test:chrome -- tests/e2e/projects-reference.spec.ts --grep 'eight real synthetic photos' --max-failures=1` — 1 visible Chrome pass/1.2m after the fifth-category assertion update. Synthetic desktop/mobile captures inspected. Publication/hosted CI evidence follows in the [D40 ledger](03-planning/commercial-properties-2026-10-19.md).
+
+Full backend attempt: 241 passed/3 failed (two ClamAV-unavailable tests, one pre-existing 0027 metadata drift); after starting the pinned healthy ClamAV, the two file cases pass. A second run excluding only the first drift assertion reaches 556 passed/3 failed/1 deselected before `--maxfail=3`; all three failures are the same 0027 `alembic check` drift. Neither run is a full pass. The first exact-commit manual GitHub integration run was cancelled after an additional browser assertion needed alignment with the fifth category; rerun on the final commit, not counted as passed.
+
+Follow-up on the commercial PR: mapped the already-migrated 0027 Lead/Deal archive columns, foreign keys, checks and indexes in ORM metadata. Explicit test environment `-m alembic check` now reports no operations; Ruff check/format and mypy pass. The first `-m pytest --cov=app -q --tb=short -x` attempt reached 186 pass/1 fail because the project ClamAV container was stopped; after `docker compose -f backend/compose.clamav.yaml up -d` reported healthy, the same complete suite passed 843/843 in 1138.10 s with 94% coverage. Frontend lint, typecheck, build and 72/72 units pass. Hosted exact-head regression and publication remain separate gates.
+
 ## Combined CRM regression/publication (2026-10-18)
 
 The [complete chronological ledger](03-planning/full-regression-publication-2026-10-18.md)

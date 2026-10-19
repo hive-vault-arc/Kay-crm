@@ -107,8 +107,8 @@ def owners(settings, database, token, pid, cids):
     )
 
 
-@pytest.mark.parametrize("category", ["villa", "house", "apartment", "land"])
-def test_four_standalone_categories_and_both_campaigns(settings, database, category):
+@pytest.mark.parametrize("category", ["villa", "house", "apartment", "land", "commercial"])
+def test_standalone_categories_and_both_campaigns(settings, database, category):
     _, mt = actor(settings, database, "manager")
     _, at = actor(settings, database)
     contact = cid(create_lead(settings, database, at))

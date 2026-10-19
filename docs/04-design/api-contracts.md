@@ -3,7 +3,7 @@
 ## Property category selection and facets (2026-10-18)
 
 D39 extends only `GET /properties` with optional `categories`, a≤40-character
-unique exact CSV of land/apartment/villa/house. Omitted means all; explicit empty
+unique exact CSV of land/apartment/villa/house/commercial under D40. Omitted means all; explicit empty
 means none. Legacy single `category` remains, but providing both is invalid.
 Whitespace, unknown/duplicate/trailing values and repeated parameters fail422.
 Other resource queries do not gain this field. Existing q/target/hierarchy/
@@ -238,7 +238,7 @@ compatible. Replays recheck current authority and return no cached contact data.
   `available_unit_count` (each physical unit counted once), plus at most two
   current whole-development campaigns. Types and developments are not unit rows.
 - `POST /developments` and `PATCH /developments/{id}`: reference80/name160,
-  category=mixed|villa|house|apartment|land, nullable location500/briefing_text/
+  category=mixed|villa|house|apartment|land|commercial, nullable location500/briefing_text/
   developer_contact_id/developer_marketing_display160; PATCH adds expected_version.
   Omitted developer_contact_id on PATCH preserves the association; explicit null
   requests removal. An agent must have scope for any changed current/new developer.

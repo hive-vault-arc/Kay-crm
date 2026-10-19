@@ -148,12 +148,12 @@ def test_mixed_categories_scoped_pages_reuse_and_independent_facts(settings, dat
     did = development(settings, database, token)
     bid, floors, tid = hierarchy(settings, database, token, did)
     ids = [unit(settings, database, token, did, floor, tid) for floor in floors]
-    for category in ("villa", "house", "land"):
+    for category in ("villa", "house", "land", "commercial"):
         unit(settings, database, token, did, category=category)
     structure(settings, database, token, did, "create-block", code="B2")
     assert read(database, token, "blocks", did)["total"] == 2
     all_units = read(database, token, "inventory", did)
-    assert all_units["total"] == 5 and all_units["development"]["unit_count"] == 5
+    assert all_units["total"] == 6 and all_units["development"]["unit_count"] == 6
     filtered = read(database, token, "inventory", did, unit_type_id=tid, block_id=bid, page_size=1)
     assert filtered["total"] == 2 and filtered["has_next"] and len(filtered["items"]) == 1
     assert read(database, token, "inventory", did, floor_id=floors[0])["total"] == 1
@@ -171,6 +171,10 @@ def test_mixed_categories_scoped_pages_reuse_and_independent_facts(settings, dat
     assert [read_detail(database, token, pid)["area_sqm"] for pid in ids] == ["80.00", "80.00"]
     assert read(database, token, "inventory", did, category="land")["items"][0]["floor_id"] is None
     assert (
+        read(database, token, "inventory", did, category="commercial")["items"][0]["floor_id"]
+        is None
+    )
+    assert (
         read_list(database, token, "properties", InventoryQuery(target_level="standalone"))["total"]
         == 0
     )
@@ -180,6 +184,30 @@ def test_mixed_categories_scoped_pages_reuse_and_independent_facts(settings, dat
         ]
         == 2
     )
+
+
+def test_commercial_development_type_and_direct_unit(settings, database):
+    _, token = actor(settings, database, "manager")
+    did = development(settings, database, token, category="commercial")
+    run(
+        settings,
+        database,
+        token,
+        "create-type",
+        TypeFields(
+            expected_version=read(database, token, target=did)["version"],
+            development_id=did,
+            code="LOCAL",
+            label="Local synthétique",
+            category="commercial",
+        ),
+        did,
+    )
+    tid = UUID(read(database, token, "unit-types", did)["items"][0]["id"])
+    pid = unit(settings, database, token, did, tid=tid, category="commercial")
+    assert read(database, token, target=did)["category"] == "commercial"
+    assert read_detail(database, token, pid)["category"] == "commercial"
+    assert read(database, token, "inventory", did, category="commercial")["total"] == 1
 
 
 def test_incomplete_apartment_project_whole_target_ownership_and_optional_briefing(

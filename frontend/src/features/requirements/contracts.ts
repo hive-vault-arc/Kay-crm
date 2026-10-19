@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { numberedPage } from "@/features/contacts/contracts";
-import { offeringSchema } from "@/features/inventory/contracts";
+import { categorySchema, offeringSchema } from "@/features/inventory/contracts";
 
 export const criterionLabels = { category: "Catégorie", location: "Localisation", area_sqm: "Surface minimale (m²)", rooms: "Pièces minimales", parking: "Parking", elevator: "Ascenseur" } as const;
 export const criterionKeys = ["category", "location", "area_sqm", "rooms", "parking", "elevator"] as const;
@@ -15,7 +15,7 @@ export const criterionSchema = z.object({ key: z.enum(criterionKeys), importance
   if (c.key === "parking" || c.key === "elevator") return typeof c.value === "boolean";
   if (c.key === "rooms") return typeof c.value === "number" && c.value >= 1 && c.value <= 1000;
   if (c.key === "area_sqm") return amount.safeParse(c.value).success;
-  if (c.key === "category") return ["villa", "house", "apartment", "land"].includes(String(c.value));
+  if (c.key === "category") return categorySchema.safeParse(c.value).success;
   return typeof c.value === "string" && c.value.trim().length > 0 && c.value.length <= 500;
 }, { message: "Valeur invalide : vide signifie inconnu ; une surface ou un nombre de pièces doit être positif.", path: ["value"] });
 const fields = { title: z.string().trim().min(1, "Nommez cette recherche.").max(160), intent: z.enum(["sale", "rental"]), currency: z.literal("MAD"), budget_min_mad: amount.nullable(), budget_max_mad: amount.nullable(), budget_period: z.enum(["month", "year"]).nullable(), criteria: z.array(criterionSchema).max(6) };

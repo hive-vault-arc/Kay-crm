@@ -158,7 +158,7 @@ without activation/handoff or changing existing staff. Prospects now
 supports scoped Leads, contact identity, duplicate confirmation, editing, filters,
 pages and columns. Contact tabs now include authored history/assignments, with
 manager collaboration/transfer, archive/restore and authorized merge previews.
-Projects now adds standalone villa/house/apartment/land inventory, separately
+Projects now adds standalone villa/house/apartment/land/commercial-premises inventory, separately
 protected legal owners, sale/rental campaigns and availability history. SP-07's
 scoped technical gates pass in its [execution record](docs/03-planning/sprints/sp-07-evidence.md); product review remains pending.
 SP-08 adds development hierarchy, real units, reusable types, optional briefing

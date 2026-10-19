@@ -49,6 +49,11 @@ class Deal(Base):
         ),
         Index("ix_deal_contact_stage_updated", "contact_id", "stage", "updated_at", "id"),
         Index("ix_deal_updated_id", "updated_at", "id"),
+        CheckConstraint(
+            "(archived_at IS NULL) = (archived_by_user_id IS NULL)",
+            name="deal_archive_pair",
+        ),
+        Index("ix_deal_archive_updated", "archived_at", "updated_at", "id"),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     contact_id: Mapped[UUID] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
@@ -80,6 +85,10 @@ class Deal(Base):
     stage: Mapped[str] = mapped_column(String(16), server_default="new")
     next_action: Mapped[str] = mapped_column(String(1000), server_default="")
     stock_review_required: Mapped[bool] = mapped_column(server_default="false")
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    archived_by_user_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("user.id", ondelete="RESTRICT")
+    )
     primary_agent_at_close_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("user.id", ondelete="RESTRICT")
     )

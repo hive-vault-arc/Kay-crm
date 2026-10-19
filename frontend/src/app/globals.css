@@ -95,6 +95,7 @@
 [data-property-category="land"] { --project-category-color: var(--riviera-color-stage-cyan-fill); --project-category-background: var(--status-info-background); --project-category-ink: var(--status-info-foreground); }
 [data-property-category="apartment"] { --project-category-color: var(--riviera-color-stage-blue-fill); --project-category-background: var(--status-info-background); --project-category-ink: var(--status-info-foreground); }
 [data-property-category="villa"], [data-property-category="house"] { --project-category-color: var(--riviera-color-stage-purple-fill); --project-category-background: var(--status-purple-background); --project-category-ink: var(--status-purple-foreground); }
+[data-property-category="commercial"] { --project-category-color: var(--riviera-color-stage-orange-fill); --project-category-background: var(--status-warning-background); --project-category-ink: var(--status-warning-foreground); }
 .project-category-filter [role="checkbox"] { border-radius: var(--spacing); }
 .project-category-filter [role="checkbox"][data-state="checked"] { background: var(--action-creation-background); color: var(--content-primary); }
 .project-category { position: absolute; inset-inline-start: calc(var(--spacing) * 3); inset-block-end: var(--spacing); display: flex; align-items: center; gap: calc(var(--spacing) * 2); border-radius: var(--radius-medium); padding: var(--spacing) calc(var(--spacing) * 3); background: var(--project-category-background); color: var(--project-category-ink); font-size: var(--text-xs); line-height: 1.4; }

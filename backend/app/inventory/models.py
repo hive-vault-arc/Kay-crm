@@ -25,7 +25,8 @@ class Property(Base):
     __tablename__ = "property"
     __table_args__ = (
         CheckConstraint(
-            "category IN ('villa','house','apartment','land')", name="property_category"
+            "category IN ('villa','house','apartment','land','commercial')",
+            name="property_category",
         ),
         CheckConstraint(
             "reference = upper(btrim(reference)) AND length(reference) > 0",

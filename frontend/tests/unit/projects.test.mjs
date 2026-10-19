@@ -9,10 +9,19 @@ const model = loadServer("src/features/inventory/property-directory-model.ts", {
 const development = loadServer("src/features/inventory/development-contracts.ts", { modules: { "@/features/contacts/contracts": contacts, "./contracts": contracts } });
 const requirements = loadServer("src/features/requirements/contracts.ts", { modules: { "@/features/contacts/contracts": contacts, "@/features/inventory/contracts": contracts } });
 const outcomes = loadServer("src/features/inventory/outcome-contracts.ts", { modules: { "@/features/contacts/contracts": contacts, "@/features/requirements/contracts": requirements, "./contracts": contracts } });
-const empty = { items: [], total: 0, page: 1, page_size: 50, has_previous: false, has_next: false, category_counts: { land: 0, apartment: 0, villa: 0, house: 0 }, unfiltered_total: 0 };
+const empty = { items: [], total: 0, page: 1, page_size: 50, has_previous: false, has_next: false, category_counts: { land: 0, apartment: 0, villa: 0, house: 0, commercial: 0 }, unfiltered_total: 0 };
+
+test("commercial premises remain valid across property, development, type and requirement contracts", () => {
+  assert.equal(contracts.categoryLabels.commercial, "Local commercial");
+  assert.equal(contracts.categorySchema.safeParse("commercial").success, true);
+  assert.equal(development.developmentFieldsSchema.shape.category.safeParse("commercial").success, true);
+  assert.equal(requirements.criterionSchema.safeParse({ key: "category", importance: "required", value: "commercial" }).success, true);
+  assert.equal(contracts.propertiesSchema.safeParse(empty).success, true);
+  assert.equal(contracts.propertiesSchema.safeParse({ ...empty, category_counts: { ...empty.category_counts, commercial: undefined } }).success, false);
+});
 
 test("property selections preserve all legacy categories and exact multiple/empty semantics", () => {
-  for (const categories of ["land,villa", "house", ""]) assert.equal(contracts.propertiesQuerySchema.safeParse({ categories }).success, true);
+  for (const categories of ["land,villa", "house", "commercial", ""]) assert.equal(contracts.propertiesQuerySchema.safeParse({ categories }).success, true);
   for (const input of [{ categories: "land,land" }, { categories: " land" }, { categories: "castle" }, { categories: "land," }, { categories: "", category: "land" }]) assert.equal(contracts.propertiesQuerySchema.safeParse(input).success, false);
   assert.equal(contracts.propertiesQuerySchema.safeParse({ category: "house" }).success, true);
   assert.equal(contracts.inventoryQuerySchema.safeParse({ categories: "villa" }).success, false);
@@ -27,7 +36,7 @@ test("property paths keep empty selection, encoded literal search and server num
 });
 test("unchecking every visible category sends none without an invisible empty-house selection", () => {
   let selection = model.propertyDefaults.categories;
-  for (const category of ["land", "apartment", "villa"]) selection = model.togglePropertyCategory(selection, category, true);
+  for (const category of ["land", "apartment", "villa", "commercial"]) selection = model.togglePropertyCategory(selection, category, true);
   assert.equal(selection, "");
   assert.equal(model.togglePropertyCategory("villa,house", "villa", false), "house");
   assert.equal(model.togglePropertyCategory("", "house", false), "house");

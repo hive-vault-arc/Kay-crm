@@ -82,6 +82,7 @@ def test_independent_searches_unknown_false_and_exact_budgets(settings, database
         token,
         new(contact, intent="sale", budget_period=None, title="Achat distinct"),
     )
+
     a, b = UUID(first["id"]), UUID(second["id"])
     before = read_detail(database, token, a)
     assert before["annual_budget_max_mad"] == "143999.88"
@@ -110,6 +111,28 @@ def test_independent_searches_unknown_false_and_exact_budgets(settings, database
         )
         == 1
     )
+
+
+def test_commercial_category_criterion_and_offering_search(settings, database):
+    _, token, contact = setup(settings, database)
+    result = run(
+        settings,
+        database,
+        token,
+        new(
+            contact,
+            criteria=[{"key": "category", "importance": "required", "value": "commercial"}],
+        ),
+    )
+    assert read_detail(database, token, UUID(result["id"]))["criteria"] == [
+        {"key": "category", "importance": "required", "value": "commercial"}
+    ]
+    _, manager = actor(settings, database, "manager")
+    pid = property_draft(settings, database, manager, category="commercial")
+    offering_draft(settings, database, manager, pid)
+    rows = inventory_list(database, token, "offerings", InventoryQuery(category="commercial"))
+    assert rows["total"] == 1
+    assert rows["items"][0]["target"]["category"] == "commercial"
 
 
 @pytest.mark.parametrize(

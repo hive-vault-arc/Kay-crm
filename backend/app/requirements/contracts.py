@@ -32,7 +32,7 @@ class Criterion(StrictBody):
                 and Decimal(value) > 0
             )
         elif self.key == "category":
-            valid = value in {"villa", "house", "apartment", "land"}
+            valid = value in {"villa", "house", "apartment", "land", "commercial"}
         else:
             valid = isinstance(value, str) and 1 <= len(value) <= 500
         if not valid:
