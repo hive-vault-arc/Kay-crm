@@ -113,12 +113,12 @@ test("KAY branding: shared shell covers every navigation family and responsive d
       await page.goto(route);
       const logo = page.locator("aside[data-sidebar]").getByRole("img", { name: "KAY Real Estate", exact: true });
       await expect(logo).toBeVisible();
-      await expect(logo).toHaveAttribute("src", /kay-luxury-gold/);
+      await expect(logo).toHaveAttribute("src", /kay-champagne-gold/);
       await expect.poll(() => logo.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
       const illustration = page.locator("aside[data-sidebar] .sidebar-illustration img");
       await expect(illustration).toHaveAttribute("src", /login-architecture/);
       await expect.poll(() => illustration.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-      expect(await logo.evaluate(image => getComputedStyle(image.parentElement!).backgroundColor)).toBe("rgb(0, 0, 0)");
+      expect(await logo.evaluate(image => getComputedStyle(image.parentElement!).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
       await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", iconUrl);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }

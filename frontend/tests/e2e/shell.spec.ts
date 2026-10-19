@@ -1,3 +1,4 @@
+import { mkdir } from "node:fs/promises";
 import type { Page } from "@playwright/test";
 import { expect, signedInTest as test, signIn } from "../helpers/auth";
 
@@ -98,6 +99,7 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
 });
 
 test("Riviera desktop rail collapses without hiding destinations or search @shell", async ({ page }) => {
+  await mkdir("output/playwright/sidebar", { recursive: true });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/dashboard");
   const sidebar = page.locator("aside[data-sidebar]");
@@ -105,11 +107,29 @@ test("Riviera desktop rail collapses without hiding destinations or search @shel
   const collapse = sidebar.getByRole("button", { name: "Réduire la navigation", exact: true });
   await expect(collapse).toHaveAttribute("aria-expanded", "true");
   await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(224);
+  await expect.poll(async () => {
+    const rail = await sidebar.boundingBox();
+    const control = await collapse.boundingBox();
+    return rail && control ? Math.abs(control.x + control.width / 2 - (rail.x + rail.width)) : Infinity;
+  }).toBeLessThan(2);
+  expect((await collapse.boundingBox())?.width).toBeGreaterThanOrEqual(44);
+  await page.screenshot({ path: "output/playwright/sidebar/expanded.png" });
   await collapse.focus();
   await page.keyboard.press("Enter");
   const reopen = sidebar.getByRole("button", { name: "Développer la navigation", exact: true });
   await expect(reopen).toHaveAttribute("aria-expanded", "false");
   await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(72);
+  await expect.poll(async () => {
+    const rail = await sidebar.boundingBox();
+    const control = await reopen.boundingBox();
+    return rail && control ? Math.abs(control.x + control.width / 2 - (rail.x + rail.width)) : Infinity;
+  }).toBeLessThan(2);
+  const collapsedToggle = await reopen.boundingBox();
+  const collapsedSearch = await sidebar.getByRole("button", { name: "Rechercher", exact: true }).boundingBox();
+  await page.screenshot({ path: "output/playwright/sidebar/collapsed.png" });
+  expect(collapsedToggle && collapsedSearch && collapsedToggle.y + collapsedToggle.height <= collapsedSearch.y).toBe(true);
+  const collapsedBrand = await sidebar.locator(".sidebar-brand").boundingBox();
+  expect(collapsedToggle && collapsedBrand && collapsedBrand.y + collapsedBrand.height <= collapsedToggle.y).toBe(true);
   for (const label of ["Tableau de bord", "Prospects", "Affaires", "Calendrier des visites", "Projets"]) {
     await expect(navigation.getByRole("link", { name: label, exact: true })).toBeVisible();
   }
@@ -123,6 +143,40 @@ test("Riviera desktop rail collapses without hiding destinations or search @shel
   await expect(sidebar.getByRole("button", { name: "Réduire la navigation", exact: true })).toHaveAttribute("aria-expanded", "true");
   await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(224);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test("Riviera rail fits the viewport and gives short windows the drawer @shell", async ({ page }) => {
+  await mkdir("output/playwright/sidebar", { recursive: true });
+  for (const height of [900, 768, 700]) {
+    await page.setViewportSize({ width: 1440, height });
+    await page.goto("/dashboard");
+    const sidebar = page.locator("aside[data-sidebar]");
+    const content = sidebar.locator(".sidebar-scroll");
+    await expect(sidebar).toBeVisible();
+    expect(await content.evaluate(element => getComputedStyle(element).overflowY)).toBe("hidden");
+    expect(await content.evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
+    await expect(sidebar.getByRole("button", { name: "Se déconnecter" })).toBeInViewport();
+    const toggle = sidebar.getByRole("button", { name: "Réduire la navigation" });
+    const face = toggle.locator(".sidebar-toggle-face");
+    expect((await toggle.boundingBox())?.width).toBeGreaterThanOrEqual(44);
+    expect((await face.boundingBox())?.width).toBe(32);
+    expect(await face.evaluate(element => parseFloat(getComputedStyle(element).borderRadius) >= element.clientWidth / 2)).toBe(true);
+    expect(await face.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe("rgb(255, 255, 255)");
+    await page.screenshot({ path: `output/playwright/sidebar/expanded-${height}.png` });
+    await toggle.click();
+    expect(await content.evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
+    await expect(sidebar.getByRole("button", { name: "Se déconnecter" })).toBeInViewport();
+  }
+  await page.setViewportSize({ width: 1440, height: 640 });
+  await page.goto("/dashboard");
+  await expect(page.locator("aside[data-sidebar]")).toBeHidden();
+  const trigger = page.getByRole("button", { name: "Ouvrir la navigation" });
+  await expect(trigger).toBeVisible();
+  await trigger.click();
+  const drawer = page.getByRole("dialog", { name: "Navigation KAY" });
+  await expect(drawer.getByRole("link", { name: "Projets" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(trigger).toBeFocused();
 });
 
 test("AT-23: sheet keyboard, containment, Escape and focus return @shell", async ({

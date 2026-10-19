@@ -79,28 +79,32 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
       <aside
         data-sidebar
         data-sidebar-collapsed={sidebarCollapsed ? "true" : "false"}
-        className="sidebar sticky top-0 hidden h-dvh flex-col gap-6 overflow-y-auto bg-sidebar px-3 pb-5 text-sidebar-foreground lg:flex"
+        className="sidebar sticky top-0 hidden h-dvh bg-sidebar text-sidebar-foreground lg:block"
       >
-        <div className="sidebar-brand-row shrink-0">
-          <Brand className={`sidebar-brand mx-auto shrink-0 ${sidebarCollapsed ? "w-10" : "w-28"}`} />
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={sidebarCollapsed ? "Développer la navigation" : "Réduire la navigation"}
-            aria-controls="main-navigation"
-            aria-expanded={!sidebarCollapsed}
-            title={sidebarCollapsed ? "Développer la navigation" : "Réduire la navigation"}
-            onClick={() => setSidebarCollapsed(value => !value)}
-            className="sidebar-toggle text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          >
-            <ChevronDownIcon aria-hidden="true" className={`size-5 transition-transform ${sidebarCollapsed ? "-rotate-90" : "rotate-90"}`} />
-          </Button>
+        <div className="sidebar-scroll flex h-dvh flex-col px-3">
+          <div className="sidebar-brand-row shrink-0">
+            <Brand appearance="transparent" className={`sidebar-brand mx-auto shrink-0 ${sidebarCollapsed ? "w-10" : "w-28"}`} />
+          </div>
+          <div className="sidebar-search shrink-0"><SearchTrigger compact={sidebarCollapsed} sidebar /></div>
+          <Navigation administrator={identity.user.role === "administrator"} compact={sidebarCollapsed} settingsPlacement="external" />
+          <div className="sidebar-illustration" aria-hidden="true"><Image src="/images/login-architecture.svg" alt="" width={640} height={510} /></div>
+          {identity.user.role === "administrator" ? <nav className="sidebar-settings" aria-label="Administration"><SettingsNavigationItem compact={sidebarCollapsed} /></nav> : null}
+          <AccountFooter user={identity.user} collapsed={sidebarCollapsed} />
         </div>
-        <div className="sidebar-search shrink-0"><SearchTrigger compact={sidebarCollapsed} sidebar /></div>
-        <Navigation administrator={identity.user.role === "administrator"} compact={sidebarCollapsed} settingsPlacement="external" />
-        <div className="sidebar-illustration" aria-hidden="true"><Image src="/images/login-architecture.svg" alt="" width={640} height={510} /></div>
-        {identity.user.role === "administrator" ? <nav className="sidebar-settings" aria-label="Administration"><SettingsNavigationItem compact={sidebarCollapsed} /></nav> : null}
-        <AccountFooter user={identity.user} collapsed={sidebarCollapsed} />
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={sidebarCollapsed ? "Développer la navigation" : "Réduire la navigation"}
+          aria-controls="main-navigation"
+          aria-expanded={!sidebarCollapsed}
+          title={sidebarCollapsed ? "Développer la navigation" : "Réduire la navigation"}
+          onClick={() => setSidebarCollapsed(value => !value)}
+          className="sidebar-toggle rounded-full"
+        >
+          <span className="sidebar-toggle-face grid size-8 place-items-center rounded-full">
+            <ChevronDownIcon aria-hidden="true" className={`size-4 transition-transform ${sidebarCollapsed ? "-rotate-90" : "rotate-90"}`} />
+          </span>
+        </Button>
       </aside>
       <div className="workspace-body min-w-0">
         <header className={`workspace-utility-header page-gutter ${projectsWorkspace ? "projects-utility-header " : ""}${crmWorkspace ? "crm-gutter " : ""}flex min-h-17 flex-wrap items-center gap-3 border-b bg-card py-2`}>
@@ -111,6 +115,7 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
                   variant="outline"
                   size="icon"
                   aria-label="Ouvrir la navigation"
+                  data-shell-menu-trigger
                   disabled={!hydrated}
                   className="lg:hidden"
                 >
@@ -157,7 +162,7 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
               </span>
             </p>
           </div>
-          <div className="order-3 w-full min-w-0 lg:hidden"><SearchTrigger /></div>
+          <div data-shell-search className="order-3 w-full min-w-0 lg:hidden"><SearchTrigger /></div>
           <div className="ml-auto flex flex-wrap items-center gap-2">
             {crmReference ? <DashboardHeaderActions user={identity.user} /> : <Sheet><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Ouvrir les notifications" disabled={!hydrated}><NotificationIcon aria-hidden="true" /></Button></SheetTrigger>
               <SheetContent closeLabel="Fermer les notifications" className="w-full overflow-y-auto p-5 sm:max-w-reading"><SheetHeader className="mb-6 p-0 pr-6 text-left"><SheetTitle>Votre boîte de réception</SheetTitle><SheetDescription>Notifications internes accessibles avec vos droits actuels.</SheetDescription></SheetHeader><NotificationPanel /></SheetContent>
