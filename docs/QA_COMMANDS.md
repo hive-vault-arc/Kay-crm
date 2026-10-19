@@ -48,6 +48,22 @@ completions before unroute, the focused Chromium case passed1/1, then the full
 installed Chrome, Edge, Firefox and WebKit. The original failure remains in the
 ledger; this is not a claim that the entire five-target product suite ran.
 
+Migration-only PR16 merged after its checks passed, leaving feature PR17 in
+draft. Hosted synthetic integration run39236522096 passed the full backend job
+but its compiled Chromium browser job stopped at26 passes/1 failure/90 unrun:
+the older SP-11 Deal list test still selected the retired `Lignes par page`
+control. The application now fixes directory pages at50. The corrected local
+Chromium case (`deals.spec.ts`, `--grep "fixed 50-row page"`) passed1/1 in50.3s,
+asserting all11 synthetic Deal rows on page1 and disabled Next. This does not
+turn the failed hosted run green; a new exact-head hosted run is required.
+The first local full compiled suite also stopped at its first SP-22 recovery
+case (0 pass/1 fail/116 unrun); the isolated rerun failed the same Lead-create
+navigation. That run had unintentionally used a stale `.next` artifact: the
+earlier successful `KAY_UI_CHECKS=1` build wrote `.next-e2e` instead. The same
+case passed in dev mode, then after a fresh ordinary `npm.cmd run build`, passed
+in compiled `ci-chromium` mode1/1 in35.5s. The complete compiled suite must
+still pass against that current build; the failed attempts remain recorded.
+
 ## Combined CRM regression/publication (2026-10-18)
 
 The [complete chronological ledger](03-planning/full-regression-publication-2026-10-18.md)

@@ -25,7 +25,7 @@ test("Qualified conversion from Lead, accepted proposal and stage skipping", asy
   } finally { await clearActorContext(page); await removeActor(agent); }
 });
 
-test("SP11: list creation, numbered pages, scoped counts, filters and ID-only columns", async ({ page }) => {
+test("SP11: list creation, fixed 50-row page, scoped counts, filters and ID-only columns", async ({ page }) => {
   test.setTimeout(180_000); const agent = await createActor("agent"); const outsider = await createActor("agent");
   try {
     await signIn(page, agent); const lead = await createLead(page, "SP11 contact du tableau"); const contact = (await (await page.request.get(`/api/v1/enquiries/${lead}`)).json()).contact.id;
@@ -33,8 +33,8 @@ test("SP11: list creation, numbered pages, scoped counts, filters and ID-only co
     const derivedTitle = "SP11 contact du tableau · SP11 tableau 00";
     await expect(page.getByRole("heading", { name: derivedTitle, exact: true })).toBeVisible();
     for (let i = 1; i <= 10; i++) expect((await staffCommand(page, "deals", dealBody(contact, `SP11 tableau ${String(i).padStart(2, "0")}`))).status()).toBe(200);
-    await page.goto("/deals"); await page.getByText("Filtres avancés", { exact: true }).click(); await page.getByText("Affichage et archivage", { exact: true }).click(); await page.getByLabel("Lignes par page", { exact: true }).selectOption("10"); await page.getByLabel("Trier par", { exact: true }).selectOption("title");
-    await expect(page.getByText("11 affaires", { exact: true }).and(page.getByRole("status"))).toBeVisible(); await expect(page.getByRole("row")).toHaveCount(11); await page.getByRole("button", { name: "Suivant", exact: true }).click(); await expect(page.getByRole("row")).toHaveCount(2);
+    await page.goto("/deals"); await page.getByText("Filtres avancés", { exact: true }).click(); await page.getByText("Affichage et archivage", { exact: true }).click(); await expect(page.getByText("50 affaires par page.")).toBeVisible(); await page.getByLabel("Trier par", { exact: true }).selectOption("title");
+    await expect(page.getByText("11 affaires", { exact: true }).and(page.getByRole("status"))).toBeVisible(); await expect(page.getByRole("row")).toHaveCount(12); await expect(page.getByRole("button", { name: "Suivant", exact: true })).toBeDisabled();
     await page.getByRole("button", { name: "Colonnes", exact: true }).click(); await page.getByRole("checkbox", { name: "Qualification", exact: true }).uncheck(); await page.keyboard.press("Escape"); await expect(page.getByRole("columnheader", { name: "Qualification", exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem("kay:deals:columns:v1")!))).toEqual({ version: 1, list: "deals", visibleColumns: ["name", "status", "projects", "budget", "responsibleAgent", "updatedAt"] });
     await page.getByLabel("Rechercher une affaire, un contact ou une action", { exact: true }).fill("SP11 tableau 00"); await expect(page.getByText("1 affaire", { exact: true }).and(page.getByRole("status"))).toBeVisible();

@@ -1,5 +1,17 @@
 # KAY agent lessons
 
+## Update older browser contracts when fixing page size (2026-10-19)
+
+Changing Lead/Deal directories from a selectable page size to fixed 50-row
+pages left an SP-11 browser case selecting the removed control. A new feature
+matrix passed, but the complete hosted browser suite caught the stale test and
+stopped its release gate. Search older tests for retired labels and pagination
+assumptions, run the affected legacy case locally, then rerun the exact-head
+hosted integration suite before treating a new pagination contract as ready.
+For compiled local parity, build without `KAY_UI_CHECKS=1`: that flag writes
+`.next-e2e`, while the production-mode test server starts from `.next`. A stale
+`.next` made an unrelated recovery test fail twice even though dev mode passed.
+
 ## Measure the complete directory viewport after bounding a table (2026-10-19)
 
 A bounded table can still leave the document scrolling if the adjacent sticky
