@@ -107,12 +107,14 @@ test("dashboard and directories show accessible reduced-motion loading placehold
     ["/deals", "deals", "Chargement des affaires…"],
   ]) {
     const pending = Promise.withResolvers<void>();
+    const inFlight = new Set<Promise<void>>();
     const delayed = route === "/dashboard"
       ? [api, "tasks", "notifications", "visits/follow-up"] : [api];
     for (const endpoint of delayed) {
       await page.route(`**/api/v1/${endpoint}?**`, async handler => {
-        await pending.promise;
-        await handler.continue();
+        const completion = pending.promise.then(() => handler.continue());
+        inFlight.add(completion);
+        try { await completion; } finally { inFlight.delete(completion); }
       });
     }
     try {
@@ -127,8 +129,9 @@ test("dashboard and directories show accessible reduced-motion loading placehold
       }
     } finally {
       pending.resolve();
+      await expect(page.locator(`[aria-busy="true"][aria-label="${label}"]`)).toHaveCount(0);
+      await expect.poll(() => inFlight.size).toBe(0);
       for (const endpoint of delayed) await page.unroute(`**/api/v1/${endpoint}?**`);
     }
-    await expect(page.locator(`[aria-busy="true"][aria-label="${label}"]`)).toHaveCount(0);
   }
 });

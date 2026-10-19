@@ -38,6 +38,16 @@ neither caused a test failure and neither is claimed resolved. Hosted exact-head
 checks remain separate; no main merge, production migration or product approval
 is inferred from these local checks.
 
+The subsequent all-five-target run initially passed Chromium's populated
+directory case but failed its loading case with Playwright `Route is already
+handled` (1 pass/1 fail/8 not run): the test removed a held request handler
+before it finished. No application assertion failed. After tracking handler
+completions before unroute, the focused Chromium case passed1/1, then the full
+`npm.cmd run test:e2e -- tests/e2e/record-archive-pagination.spec.ts
+--workers=1 --max-failures=1` matrix passed **10/10** in5.9m across Chromium,
+installed Chrome, Edge, Firefox and WebKit. The original failure remains in the
+ledger; this is not a claim that the entire five-target product suite ran.
+
 ## Combined CRM regression/publication (2026-10-18)
 
 The [complete chronological ledger](03-planning/full-regression-publication-2026-10-18.md)

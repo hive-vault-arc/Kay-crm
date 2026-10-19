@@ -1187,3 +1187,14 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
   counters may expose phases and exception classes, never raw credential-bearing
   startup errors; unexpected user errors must fail the load result.
 - Promote to AGENTS.md: no; existing isolation/security/evidence rules apply.
+
+## 2026-10-19: delayed browser routes must finish before removal
+
+- When a Playwright test holds several API routes behind a promise, resolving
+  the promise and immediately removing those handlers can double-handle an
+  in-flight request. Track the pending handler completions, wait for the UI to
+  settle and for the active-handler set to empty, then remove the routes. A
+  passing single browser is insufficient evidence for this timing-sensitive
+  cleanup; rerun the affected test across all configured engines.
+- Promote to AGENTS.md: no; this is a test-harness correction, not a product
+  rule.
