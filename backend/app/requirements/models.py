@@ -77,7 +77,8 @@ class RequirementCriterion(Base):
         ),
         CheckConstraint(
             "(key='category' AND value_number IS NULL AND value_bool IS NULL AND "
-            "(value_text IS NULL OR value_text IN ('villa','house','apartment','land'))) "
+            "(value_text IS NULL OR value_text IN "
+            "('villa','house','apartment','land','commercial'))) "
             "OR (key='location' AND value_number IS NULL AND value_bool IS NULL AND "
             "(value_text IS NULL OR length(btrim(value_text))>0)) OR (key IN "
             "('area_sqm','rooms') AND value_text IS NULL AND value_bool IS NULL AND "

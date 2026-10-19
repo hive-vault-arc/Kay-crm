@@ -1,5 +1,25 @@
 # KAY security check for changes
 
+## Commercial property category (2026-10-19)
+
+D40 extends only the allowed category vocabulary in existing property,
+development, unit-type and requirement-criterion constraints. Existing manager/
+administrator writes, agent denial, current-session reads, protected ownership,
+stock commands, archive and audit paths remain unchanged. There is no public
+file URL, new personal field, real seed/import/export, credential change or
+retention execution. Migration 0028 was applied only to the inspected isolated
+`kayrealestate_test` database (OID 109061), never development or production;
+its populated-upgrade test preserves legacy rows and refuses lossy downgrade.
+
+Focused PostgreSQL: 77 pass; frontend units: 72 pass; visible Chrome commercial
+creation/filter: 1 pass. Ruff, format, mypy, lint, TypeScript, build and runtime
+dependency audit pass. The dev-only dependency advisory still uses the existing
+time-limited exception. `alembic check` reports pre-existing 0027 Lead/Deal
+archive model drift (archive columns/indexes absent from ORM metadata), not a
+0028 category discrepancy; release must track this separately. Production
+migration/access and human review have not occurred. See the
+[D40 ledger](03-planning/commercial-properties-2026-10-19.md).
+
 ## Combined CRM regression/publication (2026-10-18)
 
 [Execution and retained failures](03-planning/full-regression-publication-2026-10-18.md)

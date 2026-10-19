@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { numberedPage } from "@/features/contacts/contracts";
 
-export const categoryLabels = { villa: "Villa", house: "Maison", apartment: "Appartement", land: "Terrain" } as const;
+export const categoryLabels = { villa: "Villa", house: "Maison", apartment: "Appartement", land: "Terrain", commercial: "Local commercial" } as const;
 export const kindLabels = { sale: "Vente", rental: "Location" } as const;
 export const stateLabels = { draft: "Brouillon", available: "Disponible", reserved: "Réservée", withdrawn: "Retirée", sold: "Vendue", rented: "Louée", review: "Revue nécessaire" } as const;
-export const categorySchema = z.enum(["villa", "house", "apartment", "land"]);
+export const categorySchema = z.enum(["villa", "house", "apartment", "land", "commercial"]);
 const amount = z.string().regex(/^[0-9]{1,16}(\.[0-9]{1,2})?$/).refine(value => /[1-9]/.test(value));
 const version = z.number().int().positive();
 const date = z.iso.datetime({ offset: true });
@@ -23,9 +23,9 @@ const hierarchySchema = z.object({ development: z.object({ id: z.uuid(), referen
 const propertyShape = { ...propertyFieldsSchema.shape, archived_at: date.nullable(), hierarchy: hierarchySchema.optional(), id: z.uuid(), version, created_at: date, updated_at: date, offerings: z.array(offeringSchema).max(2) };
 export const propertySummarySchema = z.object(propertyShape).strict();
 export const propertySchema = z.object({ ...propertyShape, owners: z.array(z.object({ marketing_display: z.string().max(160).nullable(), contact: z.object({ id: z.uuid(), name: z.string().max(160) }).strict().nullable() }).strict()).max(100) }).strict();
-export const propertyCategoryOrder = ["land", "apartment", "villa", "house"] as const;
+export const propertyCategoryOrder = ["land", "apartment", "villa", "house", "commercial"] as const;
 export const propertiesSchema = numberedPage(propertySummarySchema).extend({
-  category_counts: z.object({ land: z.number().int().nonnegative(), apartment: z.number().int().nonnegative(), villa: z.number().int().nonnegative(), house: z.number().int().nonnegative() }).strict(),
+  category_counts: z.object({ land: z.number().int().nonnegative(), apartment: z.number().int().nonnegative(), villa: z.number().int().nonnegative(), house: z.number().int().nonnegative(), commercial: z.number().int().nonnegative() }).strict(),
   unfiltered_total: z.number().int().nonnegative(),
 });
 export const offeringsSchema = numberedPage(offeringSchema);

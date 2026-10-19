@@ -13,7 +13,7 @@ pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
 def test_property_facets_precede_selection_and_pages_and_follow_other_filters(settings, database):
     _, token = actor(settings, database, "manager")
-    for index, category in enumerate(["land"] * 51 + ["apartment", "villa", "house"]):
+    for index, category in enumerate(["land"] * 51 + ["apartment", "villa", "house", "commercial"]):
         run(
             settings,
             database,
@@ -29,8 +29,14 @@ def test_property_facets_precede_selection_and_pages_and_follow_other_filters(se
     first = read_list(
         database, token, "properties", PropertiesQuery(page_size=1, target_level="standalone")
     )
-    assert first["total"] == first["unfiltered_total"] == 54
-    assert first["category_counts"] == {"land": 51, "apartment": 1, "villa": 1, "house": 1}
+    assert first["total"] == first["unfiltered_total"] == 55
+    assert first["category_counts"] == {
+        "land": 51,
+        "apartment": 1,
+        "villa": 1,
+        "house": 1,
+        "commercial": 1,
+    }
     selected = read_list(
         database, token, "properties", PropertiesQuery(categories="villa,apartment", page_size=1)
     )
@@ -42,8 +48,12 @@ def test_property_facets_precede_selection_and_pages_and_follow_other_filters(se
     searched = read_list(
         database, token, "properties", PropertiesQuery(q="Search", categories="house")
     )
-    assert searched["total"] == 0 and searched["unfiltered_total"] == 53
+    assert searched["total"] == 0 and searched["unfiltered_total"] == 54
     assert searched["category_counts"]["house"] == 0
+    assert (
+        read_list(database, token, "properties", PropertiesQuery(categories="commercial"))["total"]
+        == 1
+    )
     legacy = read_list(database, token, "properties", PropertiesQuery(category="land"))
     assert legacy["total"] == 51
     _, agent = actor(settings, database)

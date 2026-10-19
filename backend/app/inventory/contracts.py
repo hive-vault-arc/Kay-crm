@@ -18,7 +18,7 @@ ComparisonAmount = Annotated[
     str, Field(pattern=r"^[0-9]{1,18}(\.[0-9]{1,2})?$"), AfterValidator(positive)
 ]
 Version = Annotated[int, Field(strict=True, ge=1)]
-Category = Literal["villa", "house", "apartment", "land"]
+Category = Literal["villa", "house", "apartment", "land", "commercial"]
 
 
 class StrictBody(BaseModel):
@@ -175,6 +175,7 @@ class PropertiesQuery(InventoryQuery):
             "apartment",
             "villa",
             "house",
+            "commercial",
         }:
             raise ValueError("INVALID_CATEGORY_SELECTION")
         return value

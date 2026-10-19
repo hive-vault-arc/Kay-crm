@@ -140,17 +140,23 @@ test("SP07 AT-06/08/27/31: manager standalone inventory, separate prices and unr
 });
 
 test("SP07 AT-27/31: all standalone categories, incomplete drafts and availability price check", async ({ page }) => {
-  test.setTimeout(140_000);
+  test.setTimeout(180_000);
   const manager = await createActor("administrator");
   try {
     await signIn(page, manager);
-    for (const category of ["villa", "house", "apartment", "land"]) {
+    for (const category of ["villa", "house", "apartment", "land", "commercial"]) {
       const id = await createProperty(page, category);
       const facts = await (await page.request.get(`/api/v1/properties/${id}`)).json();
       expect(facts.category).toBe(category); expect(facts.area_sqm).toBeNull(); expect(facts.owners).toEqual([]);
     }
     const landPath = new URL(page.url()).pathname;
     await page.goto("/projects");
+    await expect(page.getByRole("checkbox", { name: "Local commercial" })).toBeVisible();
+    for (const label of ["Villa", "Appartement", "Terrain", "Maison"]) {
+      await page.getByRole("checkbox", { name: label, exact: true }).uncheck();
+    }
+    await expect(page.getByText("1 bien correspondant", { exact: true })).toBeVisible();
+    await expect(page.getByText("Local commercial", { exact: true }).last()).toBeVisible();
     const literalSearch = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === "/api/v1/properties" && url.searchParams.get("q") === ".."; });
     await page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true }).fill("..");
     await expect(page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true })).toHaveValue("..");

@@ -26,7 +26,8 @@ class Development(Base):
     __tablename__ = "development"
     __table_args__ = (
         CheckConstraint(
-            "category IN ('mixed','villa','house','apartment','land')", name="development_category"
+            "category IN ('mixed','villa','house','apartment','land','commercial')",
+            name="development_category",
         ),
         CheckConstraint(
             "reference = upper(btrim(reference)) AND length(reference)>0",
@@ -115,7 +116,8 @@ class UnitType(Base):
     __table_args__ = (
         UniqueConstraint("development_id", "code", name="uq_unit_type_code"),
         CheckConstraint(
-            "category IN ('villa','house','apartment','land')", name="unit_type_category"
+            "category IN ('villa','house','apartment','land','commercial')",
+            name="unit_type_category",
         ),
         CheckConstraint(
             "default_area_sqm IS NULL OR (default_area_sqm>0 AND default_area_sqm!='NaN'::numeric)",

@@ -11,7 +11,7 @@ from app.inventory.contracts import Amount, Category, StrictBody, Version
 class DevelopmentFields(StrictBody):
     reference: str = Field(min_length=1, max_length=80)
     name: str = Field(min_length=1, max_length=160)
-    category: Literal["mixed", "villa", "house", "apartment", "land"] = "mixed"
+    category: Literal["mixed", "villa", "house", "apartment", "land", "commercial"] = "mixed"
     location: str | None = Field(default=None, min_length=1, max_length=500)
     briefing_text: str | None = Field(default=None, max_length=10000)
     developer_contact_id: UUID | None = None

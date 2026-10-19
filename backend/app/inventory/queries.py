@@ -271,7 +271,7 @@ def read_list(
                 conditions.append(campaign.exists())
             if query.property_id:
                 conditions.append(Property.id == query.property_id)
-            counts = dict.fromkeys(("land", "apartment", "villa", "house"), 0)
+            counts = dict.fromkeys(("land", "apartment", "villa", "house", "commercial"), 0)
             for category, count in session.execute(
                 select(Property.category, func.count())
                 .where(*conditions)

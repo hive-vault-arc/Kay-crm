@@ -17,8 +17,8 @@ References: [brief](../../Project-brief.md), [rules](business-rules.md), [data m
 | Block / building | `block` | Optional subdivision of a development except where apartment units require a block; one development may have one or many. |
 | Floor | `floor` | Level within a block. An apartment unit in a development belongs to a floor; other unit categories may be directly under a development. |
 | Unit type | `unit_type` | Reusable development-scoped layout/classification template, such as T2/80 m². It can describe many physical units on different floors. It has no independent reservation or stock state. |
-| Physical property / unit | `property` | One real asset: a standalone villa, house, apartment, or land parcel, or one identifiable physical unit within a development. A unit type is not this asset. |
-| Property category | `property.category` | `villa`, `house`, `apartment`, or `land`; category does not decide whether the asset is standalone or part of a development, nor whether it is for sale or rent. |
+| Physical property / unit | `property` | One real asset: a standalone villa, house, apartment, land parcel or commercial premises, or one identifiable physical unit within a development. A unit type is not this asset. |
+| Property category | `property.category` | `villa`, `house`, `apartment`, `land`, or `commercial` (local commercial); category does not decide whether the asset is standalone or part of a development, nor whether it is for sale or rent. |
 | Property offering | `offering` | A `sale` or `rental` marketing offer targeting exactly one physical property or one whole development, with its own price, period, and state. Distinct from a customer's price proposal. |
 | Customer offer | `customer_offer` | Price and conditions submitted within a deal. Acceptance and deal closing are separate events. |
 | Opportunity / deal | `deal` | A contact's commercial case, possibly linked to a property and its offering. |

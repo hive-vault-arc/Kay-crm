@@ -98,7 +98,8 @@ rowsets. Attribution history is not rewritten; schema remains0018.
 SP-07 additive revision `0007_standalone_inventory` introduces five tables:
 `property`, `property_owner`, `offering`, `inventory_event`, and
 `inventory_command_receipt`. Properties are real standalone physical assets,
-with unique canonical reference, four categories, nullable unknown draft facts,
+with unique canonical reference, originally four categories and now `commercial`
+under D40/migration0028, nullable unknown draft facts,
 numeric(18,2) area and optimistic version. No speculative development/block/floor/
 type UUIDs or stock templates are created. Later hierarchy requires real FKs.
 
@@ -258,7 +259,7 @@ records the actual migration checks and acceptance status.
 | `development`, `development_owner` | Unique project reference, non-secret name/location/facts, nullable shared `briefing_text`, optional protected `developer_contact_id`, state, reconfirmation, linked legal owners | `development 1:N property`; `development N:M contact` for owners under H-03. Briefing is optional and shared with staff; private developer and owner details remain on protected `contact` records. The developer is not automatically an owner. |
 | `block`, `floor` | Stable code/label and display order within the parent | `development 1:N block`, `block 1:N floor`; these levels are optional for non-apartment units. Apartment units in a development require both. |
 | `unit_type` | Development-scoped reusable template: code/name, category, optional layout facts such as area/rooms | `development 1:N unit_type`; `unit_type 1:N property` possible across floors. No price, availability, reservation, or offering lives on the template. |
-| `property`, `property_owner` | Unique physical-asset reference, `category villa/house/apartment/land`, optional `development_id`, `floor_id`, `unit_type_id`, non-secret facts, reconfirmation, state, linked owner | `property` is one standalone asset when `development_id` is NULL, otherwise one identifiable physical unit; `property N:M contact` under H-03. Apartment units require same-development floor/type. Contact details stay on `contact`. |
+| `property`, `property_owner` | Unique physical-asset reference, `category villa/house/apartment/land/commercial`, optional `development_id`, `floor_id`, `unit_type_id`, non-secret facts, reconfirmation, state, linked owner | `property` is one standalone asset when `development_id` is NULL, otherwise one identifiable physical unit; `property N:M contact` under H-03. Apartment units require same-development floor/type. Contact details stay on `contact`. |
 | `offering` | Exactly one of `property_id` or `development_id`, `kind sale/rental`, MAD price, `price_period month/year` for rent, state, version | At most one current offering of each kind per physical property or whole development; past periods remain in history. Unit types, blocks, and floors cannot be offering targets. |
 | `deal`, `deal_stage_event`, `deal_outcome` | Contact; nullable `offering_id` before selection; agent-at-close snapshot; stage, next step, agreed price, outcome date/reason | `contact 1:N deal`; stage changes and reopenings append events. |
 | `customer_offer`, `reservation` | Proposed amount/conditions/expiry/outcome; offering reserved for a deal | `deal 1:N customer_offer`; `offering 0:1` active reservation. |

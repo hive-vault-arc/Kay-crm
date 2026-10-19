@@ -47,6 +47,11 @@ The agent records the requirement, including unknown, required, and preferred cr
 
 ## W04: manage inventory (C04)
 
+D40 adds commercial premises to the same independent-property and physical-unit
+creation, sale/rental, search and stock workflows. A commercial unit may attach
+directly to its development; only apartment units require a floor and type.
+No new commercial-specific fields or permission grant is introduced.
+
 D34 (Khalid, 2026-10-16) extends the create/edit parts of this workflow to all
 active agents: shared development facts/briefing, blocks/floors/reusable types,
 standalone properties and physical units. Agents can select only accessible

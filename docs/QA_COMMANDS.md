@@ -1,5 +1,11 @@
 # KAY QA command register
 
+## Commercial property category — 2026-10-19
+
+Backend explicit venv, isolated test DB head0028: `-m pytest tests/test_inventory.py tests/test_inventory_edges.py tests/test_developments.py tests/test_property_facets.py tests/test_requirements.py tests/test_inventory_migration.py -q --tb=short --maxfail=2` — 77 passed/103.31s. First run against isolated head0027 failed two category inserts as expected; `APP_ENVIRONMENT=test -m app.cli.inspect_database` confirmed database/OID, then `-m alembic upgrade head` advanced only the isolated test target. Ruff check/format all and mypy app pass. `-m alembic check` still fails on pre-existing 0027 Lead/Deal archive metadata drift; no 0028 operation is listed.
+
+Frontend: `npm.cmd run test:unit` — 72 passed; `npm.cmd run typecheck`, lint, build and security:check pass (zero runtime vulnerabilities; nine dev-only findings under existing dated exception). `npm.cmd run test:chrome -- tests/e2e/inventory.spec.ts --grep 'all standalone categories' --max-failures=1` — 1 visible Chrome pass/42.3s using the guarded isolated stack. Publication/hosted CI evidence follows in the [D40 ledger](03-planning/commercial-properties-2026-10-19.md).
+
 ## Combined CRM regression/publication (2026-10-18)
 
 The [complete chronological ledger](03-planning/full-regression-publication-2026-10-18.md)

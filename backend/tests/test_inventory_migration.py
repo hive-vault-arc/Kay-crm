@@ -89,3 +89,49 @@ def test_populated_finite_upgrade_preserves_drafts_and_refuses_invalid_existing_
                 {"id": oid},
             )
         assert migrate("upgrade", "head").returncode == 0
+
+
+def test_commercial_category_upgrade_preserves_existing_and_refuses_lossy_downgrade(
+    settings, database
+):
+    uid, _ = actor(settings, database, "manager")
+    legacy_id, commercial_id = uuid4(), uuid4()
+    with database.session() as session, session.begin():
+        session.execute(
+            text(
+                "INSERT INTO property(id,reference,category,created_by_user_id) "
+                "VALUES(:id,'COMMERCIAL-LEGACY','land',:uid)"
+            ),
+            {"id": legacy_id, "uid": uid},
+        )
+    assert migrate("downgrade", "0027_record_archive").returncode == 0
+    try:
+        with database.session() as session:
+            assert session.get(Property, legacy_id).category == "land"
+        with pytest.raises(IntegrityError), database.session() as session, session.begin():
+            session.execute(
+                text(
+                    "INSERT INTO property(id,reference,category,created_by_user_id) "
+                    "VALUES(:id,'COMMERCIAL-NEW','commercial',:uid)"
+                ),
+                {"id": commercial_id, "uid": uid},
+            )
+        assert migrate("upgrade", "head").returncode == 0
+        with database.session() as session, session.begin():
+            assert session.get(Property, legacy_id).category == "land"
+            session.execute(
+                text(
+                    "INSERT INTO property(id,reference,category,created_by_user_id) "
+                    "VALUES(:id,'COMMERCIAL-NEW','commercial',:uid)"
+                ),
+                {"id": commercial_id, "uid": uid},
+            )
+        assert migrate("downgrade", "0027_record_archive").returncode != 0
+        with database.session() as session:
+            assert session.get(Property, commercial_id).category == "commercial"
+            assert (
+                session.scalar(text("SELECT version_num FROM alembic_version"))
+                == "0028_commercial_properties"
+            )
+    finally:
+        assert migrate("upgrade", "head").returncode == 0
