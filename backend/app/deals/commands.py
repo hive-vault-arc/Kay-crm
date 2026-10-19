@@ -14,6 +14,7 @@ from app.db.session import Database
 from app.deals.access import authorized, check_links, check_period, context_kind, writable
 from app.deals.contracts import (
     ORDINARY_STAGES,
+    ArchiveDeal,
     CloseDeal,
     ConvertLead,
     EditCustomerOffer,
@@ -23,6 +24,7 @@ from app.deals.contracts import (
     ReleaseReservation,
     ReopenDeal,
     Reserve,
+    RestoreDeal,
     Transition,
 )
 from app.deals.history import append_event
@@ -44,6 +46,8 @@ Body = (
     | ReleaseReservation
     | CloseDeal
     | ReopenDeal
+    | ArchiveDeal
+    | RestoreDeal
 )
 
 
@@ -106,6 +110,36 @@ def apply(
         if did is None:
             raise IdentityError("NOT_FOUND", 404)
         row = authorized(session, identity, did)
+        if isinstance(body, ArchiveDeal | RestoreDeal):
+            contact = readable_contact(session, identity, row.contact_id)
+            if identity.user.role == "agent" and contact.primary_agent_id != identity.user.id:
+                raise IdentityError("NOT_FOUND", 404)
+            if row.version != body.expected_version:
+                raise ContactConflict(
+                    "DEAL_VERSION_CONFLICT", {"current": {"version": row.version}}
+                )
+            if isinstance(body, ArchiveDeal):
+                if row.archived_at is not None:
+                    raise IdentityError("RECORD_ARCHIVED", 409)
+                if reservations.active_hold(session, row.id):
+                    raise IdentityError("RESERVATION_RELEASE_REQUIRED", 409)
+                row.archived_at, row.archived_by_user_id = now, identity.user.id
+                action = "archived"
+            else:
+                if row.archived_at is None:
+                    raise IdentityError("RECORD_NOT_ARCHIVED", 409)
+                if row.archived_at < now - timedelta(days=30):
+                    raise IdentityError("RESTORE_WINDOW_EXPIRED", 409)
+                if contact.archived_at is not None:
+                    raise IdentityError("CONTACT_ARCHIVED", 409)
+                row.archived_at, row.archived_by_user_id = None, None
+                action = "restored"
+            previous = row.stage
+            row.version += 1
+            row.updated_by_user_id, row.updated_at = identity.user.id, now
+            append_event(session, identity, row, action, previous)
+            session.flush()
+            return row, None
         contact = writable(session, identity, row)
         expected = (
             body.expected_deal_version
@@ -210,7 +244,12 @@ def command(
                     raise IdentityError("NOT_FOUND", 404)
                 enquiry_in_scope(session, identity, did)
             row = authorized(session, identity, receipt.deal_id)
-            writable(session, identity, row)
+            if isinstance(body, ArchiveDeal | RestoreDeal):
+                contact = readable_contact(session, identity, row.contact_id)
+                if identity.user.role == "agent" and contact.primary_agent_id != identity.user.id:
+                    raise IdentityError("NOT_FOUND", 404)
+            else:
+                writable(session, identity, row)
             if receipt.request_hash != digest:
                 raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
             return {

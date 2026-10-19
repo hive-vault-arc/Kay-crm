@@ -152,6 +152,7 @@ def enquiry_views(
             if enquiry.converted_deal_id
             else None,
             "converted_at": enquiry.converted_at.isoformat() if enquiry.converted_at else None,
+            "archived_at": enquiry.archived_at.isoformat() if enquiry.archived_at else None,
         }
         for enquiry in enquiries
     ]

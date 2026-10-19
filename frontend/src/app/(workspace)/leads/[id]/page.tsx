@@ -10,5 +10,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   if (!z.uuid().safeParse(id).success) notFound();
   const identity = await requireIdentity(`/leads/${id}`);
   if (identity.state !== "authenticated") return <AuthUnavailable path={`/leads/${id}`} />;
-  return <LeadRecord key={id} id={id} role={identity.profile.user.role} />;
+  return <LeadRecord key={id} id={id} role={identity.profile.user.role} actorId={identity.profile.user.id} />;
 }

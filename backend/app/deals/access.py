@@ -25,6 +25,8 @@ def authorized(session: Session, identity: CurrentIdentity, did: UUID) -> Deal:
 
 def writable(session: Session, identity: CurrentIdentity, row: Deal) -> Contact:
     contact = readable_contact(session, identity, row.contact_id)
+    if row.archived_at is not None:
+        raise IdentityError("RECORD_ARCHIVED", 409)
     if contact.archived_at is not None:
         raise IdentityError("CONTACT_ARCHIVED", 409)
     return contact
@@ -65,7 +67,11 @@ def check_links(
         enquiry = session.scalar(
             select(Enquiry).where(Enquiry.id == enquiry_id, Enquiry.contact_id == contact.id)
         )
-        if enquiry is None or (identity.user.role == "agent" and enquiry.assigned_agent_id is None):
+        if (
+            enquiry is None
+            or enquiry.archived_at is not None
+            or (identity.user.role == "agent" and enquiry.assigned_agent_id is None)
+        ):
             raise IdentityError("INVALID_DEAL_CONTEXT", 422)
     offering = session.get(Offering, body.offering_id) if body.offering_id else None
     if body.offering_id and offering is None:

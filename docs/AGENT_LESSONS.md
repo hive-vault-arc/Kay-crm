@@ -1,5 +1,14 @@
 # KAY agent lessons
 
+## Measure the complete directory viewport after bounding a table (2026-10-19)
+
+A bounded table can still leave the document scrolling if the adjacent sticky
+filter rail has a later breakpoint-specific max-height or if pagination sits
+below the viewport. Inspect the computed rail, table, results, pagination and
+main bounds together on a populated 50-row page; a screenshot of the table
+scrollbar alone does not prove the page itself is bounded. Change the effective
+breakpoint rule, then rerun the geometry assertion in headed Chrome.
+
 ## Do not normalize selection using unknown loading facets (2026-10-18)
 
 useQuery intentionally hides a previous-path value while a request is pending.

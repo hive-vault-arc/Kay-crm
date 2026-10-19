@@ -9,6 +9,7 @@ from app.contacts.access import contact_scope, readable_contact
 from app.contacts.models import Contact
 from app.db.session import Database
 from app.deals.access import authorized as authorized_deal
+from app.deals.models import Deal
 from app.identity.sessions import current_identity
 from app.schedule.models import Visit
 from app.schedule.records import view as visit_view
@@ -49,6 +50,11 @@ def read_tasks(
         base = (
             select(Task).join(Contact, Contact.id == Task.contact_id).where(contact_scope(identity))
         )
+        if query.bucket in ("today", "overdue", "upcoming"):
+            base = base.where(
+                Task.deal_id.is_(None)
+                | Task.deal_id.in_(select(Deal.id).where(Deal.archived_at.is_(None)))
+            )
         if identity.user.role == "agent":
             base = base.where(Contact.archived_at.is_(None))
         if query.contact_id:

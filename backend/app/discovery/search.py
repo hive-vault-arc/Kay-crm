@@ -91,7 +91,9 @@ def projections(identity: CurrentIdentity, query: SearchQuery) -> Subquery:
     def href(prefix: str, identifier: SQLColumnExpression[UUID | None]) -> ColumnElement[str]:
         return literal(prefix) + cast(identifier, String)
 
-    deals = select(Deal.id).where(Deal.contact_id.in_(select(contacts.c.id)))
+    deals = select(Deal.id).where(
+        Deal.contact_id.in_(select(contacts.c.id)), Deal.archived_at.is_(None)
+    )
     records = [
         row("contact", Contact.id, Contact.name, href("/contacts/", Contact.id)).where(
             Contact.id.in_(select(contacts.c.id)), contact_match
@@ -100,6 +102,7 @@ def projections(identity: CurrentIdentity, query: SearchQuery) -> Subquery:
         .join(Contact, Contact.id == Enquiry.contact_id)
         .where(
             Enquiry.contact_id.in_(select(contacts.c.id)),
+            Enquiry.archived_at.is_(None),
             or_(contact_match, Enquiry.message.ilike(needle, escape="\\")),
             Enquiry.assigned_agent_id.is_not(None)
             if identity.user.role == "agent"

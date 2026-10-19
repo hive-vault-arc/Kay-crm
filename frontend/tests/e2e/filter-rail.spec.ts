@@ -60,7 +60,7 @@ async function exerciseFilters(page: Page, panel: Locator, endpoint: string, sub
   await panel.getByLabel(search, { exact: true }).fill("");
   const parameterByLabel: Record<string, string> = {
     "Statut": "status", "Source": ["enquiries", "deals"].includes(endpoint) ? "campaign_source" : "source", "Provenance": "source", "Qualification": "rating", "Trier par": "sort", "Lignes par page": "page_size", "Biens par page": "page_size",
-    "Agent attribué": "assigned_agent_id", "Agent responsable": "assigned_agent_id", "Étape": "stage",
+    "Agent attribué": "assigned_agent_id", "Agent responsable": "assigned_agent_id", "Étape": "stage", "Dossiers": "record_state",
     "Type d’offre liée": "offering_kind", "Contacts": "archive", "Catégorie": "category",
     "Type d’offre": "offering_kind", "Statut de l’offre": "state", "État du dossier": "archive",
     "Catégorie du programme": "category", "Offre du programme entier": "offering_kind", "Langue": "language", "Pays de résidence": "country",
@@ -166,7 +166,7 @@ test("directory filters: left rails, mobile sheets and real scoped requests", as
       await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
     }
     if (screen.name === "leads" || screen.name === "deals") {
-      const scroller = page.getByRole("region", { name: screen.name === "leads" ? "Tableau des Leads, défilement horizontal" : "Tableau des affaires, défilement horizontal", exact: true });
+      const scroller = page.getByRole("region", { name: screen.name === "leads" ? "Tableau des Leads, défilement vertical et horizontal" : "Tableau des affaires, défilement vertical et horizontal", exact: true });
       await page.setViewportSize({ width: 1280, height: 900 });
       await expect(page.getByText("Faites défiler le tableau horizontalement pour lire les colonnes choisies.", { exact: true })).toBeVisible();
       await scroller.focus();

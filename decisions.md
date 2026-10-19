@@ -1,10 +1,10 @@
 # KEPVY: decisions and items to validate
 
-Status: active register as of 2026-10-18
+Status: active register as of 2026-10-19
 
-Date: 2026-10-18
+Date: 2026-10-19
 
-Confirmed decisions: D01–D39 below, including Khalid's project-edit authorization, Lead/Deal alignment, Riviera branding, simplified staff setup, calendar and Projects references.
+Confirmed decisions: D01–D40 below, including Khalid's project-edit authorization, Lead/Deal alignment, Riviera branding, simplified staff setup, calendar and Projects references.
 Technical proposals: P01–P06, to be tested through implementation and exercises.  
 References: [product brief](Project-brief.md), [business rules](docs/02-requirements/business-rules.md), [architecture](docs/04-design/architecture.md), [security](docs/04-design/security-and-privacy.md), and [lifecycle guide](software_engineering_lifecycle.md).
 
@@ -52,6 +52,7 @@ References: [product brief](Project-brief.md), [business rules](docs/02-requirem
 | D37 | On 2026-10-18, Khalid replaces separate staff activation/handoff with administrator-chosen initial passwords, privately revealable in the creation/reset form. New accounts can log in immediately but must choose a different own password before CRM access and then sign in freshly. Existing staff credentials are unchanged. Replace disable with confirmed Delete; implementation retains identity/business-history FKs while removing access and staff-list visibility. No automated delivery, real account deletion or publication. Local additive migrations0025 and0026 were explicitly approved and applied with unchanged existing-row fingerprints. | C01,C13,C14, [account change/evidence](docs/03-planning/staff-onboarding-deletion.md) |
 | D38 | On 2026-10-18, Khalid requests the supplied compact calendar composition while retaining KAY branding: mini-month, scoped full-week type/status filters, seven-day grid, agenda and by-type views. Visit types use existing Iconsax building/people/car icons, not emojis. Use varied synthetic visits for visual verification; preserve backend Casablanca time, working/lunch/capacity rules, numbered pages and metadata-free colleague free/busy. No real seed, scheduling-rule change or publication is implied. | C09,C13,C14, [calendar scope/evidence](docs/03-planning/calendar-reference-refresh.md) |
 | D39 | On 2026-10-18, Khalid requests the supplied Projects directory composition: warm left filters with category counts, automatic application, four-column photo cards, separate current sale/rental campaigns and working Cards/List/sort. Retain Riviera, standalone/development tabs, Maison and archive/page capabilities, current stock/owner privacy and private scanned file previews. Synthetic photos/records prove the comparison only; no real seed, new stock rule, migration or publication. | C04,C13,C14, [Projects scope/evidence](docs/03-planning/projects-reference-refresh.md) |
+| D40 | On 2026-10-19, Khalid requests shape-matched loading skeletons on Dashboard/Leads/Deals, internal Leads/Deals table scrolling and 50-record numbered pages fetched on demand. A Lead/Deal's owner agent may remove it into an archive, recoverable for 30 days and not restorable after that. Existing protected CRM/financial history is retained; this is not a physical retention purge. Manager/administrator oversight and current contact scope remain. Test the feature before a main-branch pull request/merge. | C02,C05,C08,C10,C13,C14, [archive/API contract](docs/04-design/api-contracts.md#leaddeal-directory-loading-and-record-archive-2026-10-19) |
 
 | ID | Local resolution or later validation | Timing / boundary |
 |---|---|---|

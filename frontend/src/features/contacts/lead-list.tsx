@@ -8,6 +8,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Label } from "@/components/ui/label";
 import { FilterResultsLayout } from "@/components/shared/filter-results-layout";
 import { ScrollableResultsTable } from "@/components/shared/scrollable-results-table";
+import { ResultsSkeleton } from "@/components/shared/results-skeleton";
 import { DataTable } from "@/components/shared/data-table";
 import { CrmAgent, CrmContactCell, CrmDirectoryHeader, CrmDirectoryToolbar, CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { CrmStatusFilter } from "@/components/shared/crm-status-filter";
@@ -41,7 +42,7 @@ const columns: Record<ColumnId, ColumnDef<LeadSummary>> = {
   message: { id: "message", header: "Demande", cell: ({ row }) => <span className="wrap-anywhere">{row.original.message_preview || "Non renseignée"}</span> },
   updatedAt: { id: "updatedAt", header: "Modifié le", cell: ({ row }) => <span className="crm-date-cell">{formatInstant(row.original.updated_at)}</span> },
 };
-const defaults = { q: "", status: "", campaign_source: "", source: "", rating: "", assigned_agent_id: "", received_from: "", received_to: "", country: "", language: "", sort: "-updated_at", page_size: 50 };
+const defaults = { q: "", status: "", campaign_source: "", source: "", rating: "", assigned_agent_id: "", received_from: "", received_to: "", country: "", language: "", record_state: "active", sort: "-updated_at", page_size: 50 };
 
 export function LeadList({ role, contactId, archived = false }: { role: StaffRole; contactId?: string; archived?: boolean }) {
   const hydrated = useHydrated();
@@ -53,7 +54,7 @@ export function LeadList({ role, contactId, archived = false }: { role: StaffRol
   const toolbar = <CrmDirectoryToolbar primary={<Button action="create" asChild variant="creation"><Link href="/leads/new">Nouveau prospect</Link></Button>}>
     <Button action="contact" asChild variant="quiet" size="compact"><Link href="/leads?view=contacts">Contacts</Link></Button>
     {role !== "agent" ? <Button action="upload" asChild variant="quiet" size="compact"><Link href="/leads?view=import">Importer des contacts</Link></Button> : null}
-    {role !== "agent" && result ? <ExportAction compact kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
+    {role !== "agent" && result && filters.record_state === "active" ? <ExportAction compact kind="enquiries" filters={{ ...filters, record_state: undefined, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
     <ColumnChooser compact visible={visible} change={change} />
   </CrmDirectoryToolbar>;
   return <div className={!contactId ? "crm-directory" : "grid min-w-0 gap-3"}>
@@ -69,7 +70,8 @@ export function LeadList({ role, contactId, archived = false }: { role: StaffRol
           <details><summary>Provenance</summary><Label className="sr-only" htmlFor="lead-provenance">Provenance</Label><NativeSelect id="lead-provenance" value={draft.source} onChange={event => setDraft({ ...draft, source: event.target.value })}><option value="">Toutes les provenances</option>{Object.entries(sourceLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></details>
           <details><summary>Pays et langues</summary><div className="grid gap-3"><DirectoryCountryFilter id="lead-country" value={draft.country} change={country => setDraft({ ...draft, country })} /><Label htmlFor="lead-language">Langue</Label><NativeSelect id="lead-language" value={draft.language} onChange={event => setDraft({ ...draft, language: event.target.value })}><option value="">Toutes les langues</option>{Object.entries(languageLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div></details>
           <details><summary>Dates</summary><div className="grid gap-3"><Label htmlFor="lead-from">Reçue à partir du</Label><Input id="lead-from" type="date" value={draft.received_from} onChange={event => setDraft({ ...draft, received_from: event.target.value })} /><Label htmlFor="lead-to">Reçue jusqu’au</Label><Input id="lead-to" type="date" value={draft.received_to} onChange={event => setDraft({ ...draft, received_to: event.target.value })} /></div></details>
-          <details><summary>Affichage</summary><div className="grid gap-3"><Label htmlFor="lead-sort">Trier par</Label><NativeSelect id="lead-sort" value={draft.sort} onChange={event => setDraft({ ...draft, sort: event.target.value })}><option value="-updated_at">Modification récente</option><option value="-received_at">Réception récente</option><option value="name">Nom du contact</option></NativeSelect><Label htmlFor="lead-page-size">Lignes par page</Label><NativeSelect id="lead-page-size" value={draft.page_size} onChange={event => setDraft({ ...draft, page_size: Number(event.target.value) })}>{[10, 25, 50, 100].map(size => <option value={size} key={size}>{size}</option>)}</NativeSelect></div></details>
+          <details><summary>Affichage</summary><div className="grid gap-3"><Label htmlFor="lead-sort">Trier par</Label><NativeSelect id="lead-sort" value={draft.sort} onChange={event => setDraft({ ...draft, sort: event.target.value })}><option value="-updated_at">Modification récente</option><option value="-received_at">Réception récente</option><option value="name">Nom du contact</option></NativeSelect><p className="text-sm text-muted-foreground">50 demandes par page.</p></div></details>
+          {!contactId ? <details><summary>Archives des prospects</summary><div className="grid gap-2"><Label htmlFor="lead-record-state">Dossiers</Label><NativeSelect id="lead-record-state" value={draft.record_state} onChange={event => setDraft({ ...draft, record_state: event.target.value })}><option value="active">Prospects actifs</option><option value="archived">Prospects archivés</option></NativeSelect><p className="text-sm text-muted-foreground">Restauration pendant 30 jours après l’archivage.</p></div></details> : null}
         </details>
         {invalid ? <p role="alert" className="text-danger">{invalid}</p> : null}
         <div className="crm-filter-submit"><Button action="filter" type="submit" variant="outline">Appliquer</Button><Button action="reset" type="button" variant="quiet" onClick={clearFilters}>Réinitialiser</Button></div>
@@ -77,10 +79,10 @@ export function LeadList({ role, contactId, archived = false }: { role: StaffRol
       <p className="crm-filter-note">Les filtres sont appliqués automatiquement.</p>
     </form>}>
       {!contactId ? toolbar : null}{notice ? <p role="status">{notice}</p> : null}
-      {error ? <RecordError error={error} retry={refresh} /> : !result ? <p role="status">Chargement des Leads…</p> : <>
-        {role !== "agent" && contactId ? <ExportAction kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
+      {error ? <RecordError error={error} retry={refresh} /> : !result ? <ResultsSkeleton label="Chargement des Leads…" /> : <>
+        {role !== "agent" && contactId && filters.record_state === "active" ? <ExportAction kind="enquiries" filters={{ ...filters, record_state: undefined, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
         <h2 className="crm-results-title" role="status">{result.total} demande{result.total > 1 ? "s" : ""}</h2>
-        {!result.items.length ? <p>{activeCount ? "Aucune demande ne correspond à vos filtres." : "Aucune demande sur cette page. Créez un Lead ou revenez à la première page."}</p> : <ScrollableResultsTable><DataTable className="crm-directory-table min-w-table" scrollLabel="Tableau des Leads, défilement horizontal" rows={result.items} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} footerCaption columns={visible.map(id => ({ ...columns[id], id, ...(id === "name" || id === "updatedAt" ? { header: () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" onClick={() => setDraft({ ...draft, sort: id === "name" ? "name" : "-updated_at" })}>{id === "name" ? "Contact" : "Modifié le"}</Button> } : {}) }))} caption="Une ligne par demande, même si le contact est déjà connu." emptyLabel="Aucune demande." /></ScrollableResultsTable>}
+        {!result.items.length ? <p>{activeCount ? "Aucune demande ne correspond à vos filtres." : "Aucune demande sur cette page. Créez un Lead ou revenez à la première page."}</p> : <ScrollableResultsTable bounded={!contactId}><DataTable className="crm-directory-table min-w-table" scrollLabel="Tableau des Leads, défilement vertical et horizontal" rows={result.items} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} footerCaption columns={visible.map(id => ({ ...columns[id], id, ...(id === "name" || id === "updatedAt" ? { header: () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" onClick={() => setDraft({ ...draft, sort: id === "name" ? "name" : "-updated_at" })}>{id === "name" ? "Contact" : "Modifié le"}</Button> } : {}) }))} caption="Une ligne par demande, même si le contact est déjà connu." emptyLabel="Aucune demande." /></ScrollableResultsTable>}
         <NumberedPages compact={!contactId} page={page} total={result.total} size={result.page_size} change={setPage} />
       </>}
     </FilterResultsLayout>

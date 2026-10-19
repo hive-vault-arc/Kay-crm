@@ -21,14 +21,28 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
 
+DEAL_ACTIONS = (
+    "created",
+    "updated",
+    "transition",
+    "customer_offer.created",
+    "customer_offer.updated",
+    "contact_merged",
+    "reservation.created",
+    "reservation.released",
+    "closed",
+    "reopened",
+    "stock.flagged",
+    "archived",
+    "restored",
+)
+
 
 class DealStageEvent(Base):
     __tablename__ = "deal_stage_event"
     __table_args__ = (
         CheckConstraint(
-            "action IN ('created','updated','transition','customer_offer.created',"
-            "'customer_offer.updated','contact_merged','reservation.created','reservation.released',"
-            "'closed','reopened','stock.flagged')",
+            "action IN (" + ",".join(repr(value) for value in DEAL_ACTIONS) + ")",
             name="deal_event_action",
         ),
         CheckConstraint(

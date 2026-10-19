@@ -52,6 +52,11 @@ def read_list(database: Database, token: str, query: DealQuery) -> dict[str, obj
             .outerjoin(Offering, Offering.id == Deal.offering_id)
         )
         base = base.where(contact_scope(identity), Contact.merged_into_contact_id.is_(None))
+        base = base.where(
+            Deal.archived_at.is_(None)
+            if query.record_state == "active"
+            else Deal.archived_at.is_not(None)
+        )
         if query.archive != "all":
             base = base.where(
                 Contact.archived_at.is_(None)

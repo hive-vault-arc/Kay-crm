@@ -1,5 +1,12 @@
 # KEPVY: roles and permissions
 
+Individual Lead/Deal archive: an agent may archive/restore only a Lead currently
+assigned to them or a Deal whose linked contact currently names them as primary
+agent. Collaboration alone does not confer deletion authority. Managers and
+administrators retain agency oversight. Restoration expires after 30 elapsed
+days; current scope is rechecked on every request and retry. Archive never
+grants access to another contact or deletes protected history.
+
 D35 Lead/Deal qualification introduces no new role grant. Accessible Lead
 conversion, manual deal creation and canonical profile edits use the current
 contact responsible/collaborator scope and active identity. Assignment remains

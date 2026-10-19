@@ -42,6 +42,10 @@ def scope(identity: CurrentIdentity) -> ColumnElement[bool]:
             Task.owner_user_id == identity.user.id,
             Task.schedule_version == Notification.schedule_version,
             contact_allowed(Task.contact_id),
+            or_(
+                Task.deal_id.is_(None),
+                Task.deal_id.in_(select(Deal.id).where(Deal.archived_at.is_(None))),
+            ),
         )
         .exists()
     )
@@ -72,7 +76,11 @@ def scope(identity: CurrentIdentity) -> ColumnElement[bool]:
             or_(
                 contact_allowed(Document.contact_id),
                 select(Deal.id)
-                .where(Deal.id == Document.deal_id, contact_allowed(Deal.contact_id))
+                .where(
+                    Deal.id == Document.deal_id,
+                    Deal.archived_at.is_(None),
+                    contact_allowed(Deal.contact_id),
+                )
                 .exists(),
                 select(Property.id).where(Property.id == Document.property_id).exists(),
                 select(Development.id)

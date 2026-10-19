@@ -55,6 +55,10 @@ TIMELINE_ACTIONS = (
     "meeting",
     "other",
     "enquiries.assign",
+    "enquiries.archive",
+    "enquiries.restore",
+    "deals.archived",
+    "deals.restored",
 )
 
 

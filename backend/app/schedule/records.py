@@ -27,6 +27,10 @@ def authorized(
     contact = readable_contact(session, identity, row.contact_id)
     if write and contact.archived_at:
         raise IdentityError("CONTACT_ARCHIVED", 409)
+    if write and row.deal_id:
+        deal = session.get(Deal, row.deal_id)
+        if deal is None or deal.archived_at is not None:
+            raise IdentityError("RECORD_ARCHIVED", 409)
     return row
 
 
@@ -40,7 +44,7 @@ def check_context(
         raise IdentityError("INVALID_VISIT_PARTICIPANT", 422)
     if fields.deal_id:
         deal = session.get(Deal, fields.deal_id)
-        if deal is None or deal.contact_id != contact.id:
+        if deal is None or deal.contact_id != contact.id or deal.archived_at is not None:
             raise IdentityError("INVALID_VISIT_CONTEXT", 422)
     if fields.property_id:
         target = session.get(Property, fields.property_id)

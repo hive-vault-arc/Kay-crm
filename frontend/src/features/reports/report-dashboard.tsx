@@ -4,6 +4,8 @@ import { useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { DevelopmentIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { DashboardSkeleton } from "@/components/shared/dashboard-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RecordError } from "@/features/contacts/record-states";
@@ -16,8 +18,8 @@ import { KpiSummary } from "./kpi-summary";
 
 const highlightKeys: MetricKey[] = ["contacts", "enquiries", "active_deals", "won", "collections"];
 
-const MetricChart = dynamic(() => import("./metric-chart").then(module => module.MetricChart), { ssr: false, loading: () => <p role="status">Chargement du graphique…</p> });
-const PipelineOverview = dynamic(() => import("./pipeline-overview").then(module => module.PipelineOverview), { ssr: false, loading: () => <p role="status">Chargement des pipelines…</p> });
+const MetricChart = dynamic(() => import("./metric-chart").then(module => module.MetricChart), { ssr: false, loading: () => <div className="surface grid gap-3" aria-busy="true"><p role="status">Chargement du graphique…</p><Skeleton aria-hidden="true" className="h-24 w-full" /></div> });
+const PipelineOverview = dynamic(() => import("./pipeline-overview").then(module => module.PipelineOverview), { ssr: false, loading: () => <div className="grid gap-3" aria-busy="true"><p role="status">Chargement des pipelines…</p><div aria-hidden="true" className="grid gap-4 xl:grid-cols-2"><Skeleton className="h-32 w-full" /><Skeleton className="h-32 w-full" /></div></div> });
 export function ReportDashboard({ children }: { children?: ReactNode }) {
   const [period, setPeriod] = useState<{ start_on?: string; end_on?: string }>({}), [validation, setValidation] = useState(false), [selection, setSelection] = useState<Selection>();
   const start = useRef<HTMLInputElement>(null), end = useRef<HTMLInputElement>(null), lastTrigger = useRef<HTMLElement | null>(null);
@@ -48,7 +50,7 @@ export function ReportDashboard({ children }: { children?: ReactNode }) {
         <Button className="dashboard-new-lead" action="create" asChild><Link href="/leads/new">Nouveau prospect</Link></Button>
       </div>
       {validation ? <p role="alert" id="report-period-error" className="text-danger">Choisissez deux dates dans l’ordre, sur 366 jours maximum.</p> : null}
-      {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des indicateurs…</p> : <>
+      {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <DashboardSkeleton /> : <>
         <KpiSummary metrics={query.value.metrics} startOn={query.value.start_on} endOn={query.value.end_on} open={open} />
         <p id="dashboard-period-description" className="sr-only">Contacts, affaires actives et inventaire : situation actuelle. Résultats, demandes, actions et encaissements : période sélectionnée. Les dates sont inclusives et calculées selon l’heure de Casablanca.</p>
         <PipelineOverview />

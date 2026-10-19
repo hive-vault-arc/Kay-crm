@@ -166,6 +166,14 @@ class ResolvePhone(StrictBody):
         return normalize_phone(value)
 
 
+class ArchiveEnquiry(StrictBody):
+    expected_version: int = Field(strict=True, ge=1)
+
+
+class RestoreEnquiry(StrictBody):
+    expected_version: int = Field(strict=True, ge=1)
+
+
 class ListQuery(StrictBody):
     page: int = Field(default=1, ge=1, le=1000000)
     page_size: int = Field(default=50, ge=1, le=100)
@@ -178,6 +186,7 @@ class ListQuery(StrictBody):
     received_to: date | None = None
     contact_id: UUID | None = None
     archive: Literal["active", "archived", "all"] = "active"
+    record_state: Literal["active", "archived"] = "active"
     campaign_source: CampaignSource | None = None
     rating: LeadRating | None = None
     country: str | None = Field(default=None, min_length=2, max_length=2)

@@ -93,6 +93,7 @@ def deal_views(session: Session, rows: Sequence[Deal]) -> list[dict[str, object]
                 if row.primary_agent_at_close_id
                 else None,
                 "version": row.version,
+                "archived_at": row.archived_at.isoformat() if row.archived_at else None,
                 "active_reservation": (
                     {
                         "id": str(holds[row.id].id),

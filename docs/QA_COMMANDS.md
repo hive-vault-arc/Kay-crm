@@ -1,5 +1,43 @@
 # KAY QA command register
 
+## Lead/Deal archive, 50-row directories and skeletons (2026-10-19)
+
+The additive `0027_record_archive` was applied only to the isolated test and
+benchmark targets; neither development nor production data was migrated. An
+initial full-suite attempt stopped at186 passes because the real local ClamAV
+service was stopped (`ANTIVIRUS_UNAVAILABLE`). After starting the existing
+project-scoped Compose service and confirming it healthy, the full backend
+`.venv/Scripts/python.exe -m pytest -q --maxfail=1` run passed **842/842** in
+19m04s, zero skipped. After freezing migration action vocabulary and adding
+explicit archive/search/report/activity assertions, the focused archive plus
+populated downgrade/upgrade check passed **4/4**; test Alembic reports
+`0027_record_archive (head)` and no model drift. Ruff check/format, strict mypy
+and DB-independent units pass (234 units; DB tests deliberately deselected).
+
+The unchanged full-volume benchmark target was upgraded from0026 to0027, then
+`APP_ENVIRONMENT=benchmark .venv/Scripts/python.exe -m benchmarks.run` passed:
+100 users,4 API processes,60.42s steady state,6815 completed requests/0 errors;
+ordinary p95 maximum554.934ms (<1000), dashboard982.455ms (<2000). This load
+mix covers existing enquiries, not a separate Deal-directory throughput claim.
+
+Frontend `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run test:unit`
+(71/71), `KAY_UI_CHECKS=1 npm.cmd run build` and dependency gate pass. The
+dependency gate still reports nine inherited development-only findings under
+the approved expiring exception, not a clean full audit. The browser bundle
+scan inspected605 JS files/4 roots and found zero configured secret or signing
+key matches; the headed report audit has zero detailed step arrays. Synthetic
+desktop/mobile captures remain ignored; no real client records or credentials
+were used. Final headed Chrome `npm.cmd run test:e2e --
+tests/e2e/record-archive-pagination.spec.ts tests/e2e/filter-rail.spec.ts
+tests/e2e/list-header-actions.spec.ts --project=chrome --max-failures=1` passed
+**6/6** in3.3m: lazy50-row pages, internal desktop/mobile scrolling, owner
+archive/restore, reduced-motion dashboard/directory skeletons, filters and
+touch/keyboard actions. The development server emitted a non-fatal input
+`caret-color` hydration warning and one interrupted destination-stream message;
+neither caused a test failure and neither is claimed resolved. Hosted exact-head
+checks remain separate; no main merge, production migration or product approval
+is inferred from these local checks.
+
 ## Combined CRM regression/publication (2026-10-18)
 
 The [complete chronological ledger](03-planning/full-regression-publication-2026-10-18.md)
