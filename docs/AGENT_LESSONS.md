@@ -1178,3 +1178,19 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
   counters may expose phases and exception classes, never raw credential-bearing
   startup errors; unexpected user errors must fail the load result.
 - Promote to AGENTS.md: no; existing isolation/security/evidence rules apply.
+
+## 2026-10-19: migration availability is not metadata or deployment readiness
+
+- Before a release, compare the deployed migration head with the actual database
+  revision and check ORM metadata against the migrated isolated database. An
+  additive schema-only merge can leave `alembic check` failing in unrelated
+  later PRs if model fields, foreign keys or indexes are omitted.
+- A failed real-scan test with `ANTIVIRUS_UNAVAILABLE` needs an actual healthy
+  scoped ClamAV service and a full rerun; changing the expectation or counting
+  earlier partial successes would hide the integration gap.
+- A production migration is not complete when the shell command returns zero:
+  confirm `alembic current`, the active code revision, recoverability and
+  authenticated read-only CRM pages. Do not run synthetic fixtures or retention
+  cleanup on production.
+- Promote to AGENTS.md: no; the existing release and truthful-evidence rules
+  already cover this.

@@ -8,6 +8,8 @@ Frontend: `npm.cmd run test:unit` — 72 passed; `npm.cmd run typecheck`, lint, 
 
 Full backend attempt: 241 passed/3 failed (two ClamAV-unavailable tests, one pre-existing 0027 metadata drift); after starting the pinned healthy ClamAV, the two file cases pass. A second run excluding only the first drift assertion reaches 556 passed/3 failed/1 deselected before `--maxfail=3`; all three failures are the same 0027 `alembic check` drift. Neither run is a full pass. The first exact-commit manual GitHub integration run was cancelled after an additional browser assertion needed alignment with the fifth category; rerun on the final commit, not counted as passed.
 
+Follow-up on the commercial PR: mapped the already-migrated 0027 Lead/Deal archive columns, foreign keys, checks and indexes in ORM metadata. Explicit test environment `-m alembic check` now reports no operations; Ruff check/format and mypy pass. The first `-m pytest --cov=app -q --tb=short -x` attempt reached 186 pass/1 fail because the project ClamAV container was stopped; after `docker compose -f backend/compose.clamav.yaml up -d` reported healthy, the same complete suite passed 843/843 in 1138.10 s with 94% coverage. Frontend lint, typecheck, build and 72/72 units pass. Hosted exact-head regression and publication remain separate gates.
+
 ## Combined CRM regression/publication (2026-10-18)
 
 The [complete chronological ledger](03-planning/full-regression-publication-2026-10-18.md)

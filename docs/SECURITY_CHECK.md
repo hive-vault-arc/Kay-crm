@@ -22,6 +22,15 @@ remaining failures call that same 0027 check. Release must track this separately
 migration/access and human review have not occurred. See the
 [D40 ledger](03-planning/commercial-properties-2026-10-19.md).
 
+Follow-up: ORM metadata now matches the already-approved 0027 schema and the
+isolated Alembic drift check passes. The complete isolated PostgreSQL/real
+ClamAV suite passes 843 tests at 94% coverage. The owner separately authorized
+production migration: live code 707c9ae contained 0027, managed PostgreSQL
+reported 0026, point-in-time restore was available, and the targeted upgrade
+confirmed 0027. No production test fixture, retention command, credential
+exposure or record export was used. Authenticated read-only dashboard/Lead/Deal
+smoke passed. This is not evidence that 0028 or the commercial UI is deployed.
+
 ## Combined CRM regression/publication (2026-10-18)
 
 [Execution and retained failures](03-planning/full-regression-publication-2026-10-18.md)
