@@ -61,8 +61,20 @@ case (0 pass/1 fail/116 unrun); the isolated rerun failed the same Lead-create
 navigation. That run had unintentionally used a stale `.next` artifact: the
 earlier successful `KAY_UI_CHECKS=1` build wrote `.next-e2e` instead. The same
 case passed in dev mode, then after a fresh ordinary `npm.cmd run build`, passed
-in compiled `ci-chromium` mode1/1 in35.5s. The complete compiled suite must
-still pass against that current build; the failed attempts remain recorded.
+in compiled `ci-chromium` mode1/1 in35.5s. Against that current ordinary `.next`
+build, `KAY_E2E_PRODUCTION=1 npm.cmd run test:e2e --
+--config=playwright.ci.config.ts --project=ci-chromium --max-failures=1`
+passed **117/117** in35.8m, zero skipped; the failed attempts remain recorded.
+The isolated local API/browser services and project-scoped ClamAV were stopped;
+ports3000/3100/8100/8101/8200/3310 have no listeners. Port8000 was untouched.
+
+[Fresh hosted synthetic integration run39239104868](https://github.com/hive-vault-arc/Kay-crm/actions/runs/39239104868)
+at feature commit `05c3647` passed the real PostgreSQL backend regression
+**842/842** in11m38s, compiled Chromium browser regression **117/117** in26.9m,
+browser-bundle secret scan (67 JS files, zero matches), and its aggregate
+release gate. Required PR CI is separate. Neither this run nor the local tests
+applied `0027_record_archive` to production; production migration confirmation
+and the owner's product review remain pending before feature merge.
 
 ## Combined CRM regression/publication (2026-10-18)
 
