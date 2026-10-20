@@ -96,7 +96,7 @@ export function PropertyCreationWizard({ developmentId }: { developmentId?: stri
       <div>
         <h2 ref={heading} tabIndex={-1} className="sr-only">{steps[step].label}</h2>
         <SectionHeading icon={steps[step].icon} tone="teal">{steps[step].label}</SectionHeading>
-        <p className="mt-2 text-sm text-muted-foreground">{step === 0 ? developmentId ? "Identifiez l’unité physique à ajouter au programme." : "Identifiez le bien physique à ajouter à l’inventaire." : step === 1 ? "Renseignez seulement les caractéristiques connues pour ce type de bien." : "Vérifiez la fiche avant création. Les photos, offres et pièces jointes s’ajoutent ensuite."}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{step === 0 ? developmentId ? "Identifiez l’unité physique à ajouter au programme." : "Identifiez le bien physique à ajouter à l’inventaire." : step === 1 ? "Renseignez seulement les caractéristiques connues pour ce type de bien." : "Vérifiez la fiche avant création. Les offres et pièces jointes s’ajoutent ensuite."}</p>
       </div>
       <fieldset disabled={!hydrated || command.pending} className="grid min-w-0 gap-4">
         {step === 0 ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
@@ -110,7 +110,7 @@ export function PropertyCreationWizard({ developmentId }: { developmentId?: stri
           {hasRooms(category) ? <div className="grid gap-2"><Label htmlFor="property-rooms">Nombre de pièces (facultatif)</Label><Input id="property-rooms" inputMode="numeric" maxLength={4} aria-invalid={Boolean(form.formState.errors.rooms)} aria-describedby={form.formState.errors.rooms ? "property-validation" : undefined} {...form.register("rooms")} /></div> : null}
           {developmentId && category === "apartment" ? <fieldset className="grid min-w-0 gap-4 sm:col-span-2"><legend className="mb-3 font-medium">Rattachement de l’unité</legend><LevelPicker parent={developmentId} kind="blocks" label="Bloc de l’unité" value={placement.block_id} change={value => setPlacement(previous => ({ ...previous, block_id: value, floor_id: "" }))} />{placement.block_id ? <LevelPicker key={placement.block_id} parent={placement.block_id} kind="floors" label="Étage de l’unité" value={placement.floor_id} change={value => setPlacement(previous => ({ ...previous, floor_id: value }))} /> : null}<LevelPicker parent={developmentId} kind="unit-types" label="Type réutilisable de l’unité" value={placement.unit_type_id} change={value => setPlacement(previous => ({ ...previous, unit_type_id: value }))} /></fieldset> : null}
         </div> : null}
-        {step === 2 ? <InventoryDraftSummary icon={PropertyIcon} title={developmentId ? "Unité à créer" : "Bien à créer"} facts={facts} onlyFilled wide next="Après la création, vous pourrez ajouter jusqu’à 10 photos, les propriétaires, les campagnes vente ou location et les pièces jointes depuis la fiche." /> : null}
+        {step === 2 ? <InventoryDraftSummary icon={PropertyIcon} title={developmentId ? "Unité à créer" : "Bien à créer"} facts={facts} onlyFilled wide next="Après la création, vous pourrez ajouter les propriétaires, les campagnes vente ou location et les pièces jointes depuis la fiche." /> : null}
       </fieldset>
       {step === 2 ? <p className="text-sm text-muted-foreground">Ces informations seront lisibles par toute l’équipe. N’y saisissez pas de coordonnées privées.</p> : null}
       {validation ? <p id="property-validation" role="alert" className="text-danger">{validation}</p> : null}
