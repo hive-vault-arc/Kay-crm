@@ -14,6 +14,12 @@ archive/cap and agent read-only access. Desktop/mobile viewer screenshots were
 inspected, including the final 320px frame; `impeccable.cmd detect --json` returned `[]`. System-first Riviera geometry and an icon-only narrow-screen control were used; design-taste-frontend's marketing workflow was excluded for this dense CRM surface. AFTER audit: [AFTER040](../anti-slop/audit-040-2026-10-20.md), with no aesthetic-only change. Runtime dependency
 audit found zero issues; the existing nine dev-only findings remain under the
 dated approved exception. No backend code or migration changed in this slice.
+The prior hosted full-browser run also exposed a stale shell assertion: the
+edge-mounted sidebar toggle intentionally protrudes outside the rail, so
+`aside.scrollWidth` is not the interior-overflow measure. The test now measures
+`.sidebar-scroll` on desktop and the drawer itself on mobile, while retaining
+the document-width check. The focused compiled headed case passed 1/1 after
+that correction; the full hosted integration must pass on the final commit.
 
 ## Inventory record icons and shell scroll isolation — 2026-10-19
 
