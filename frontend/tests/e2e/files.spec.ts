@@ -67,7 +67,7 @@ test("SP09: interrupted network transfer and unavailable scanner recover without
   const manager = await createActor("manager");
   try {
     await signIn(page, manager); await createProperty(page);
-    const file = await syntheticFile();
+    const file = await syntheticFile("clean-document");
     await page.route("https://localhost:8100/api/v1/transfers/**", route => route.abort("connectionfailed"));
     await page.getByLabel("Fichier à ajouter", { exact: true }).setInputFiles(file);
     await page.getByRole("button", { name: "Envoyer le fichier", exact: true }).click();

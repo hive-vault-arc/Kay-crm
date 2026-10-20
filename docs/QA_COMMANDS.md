@@ -24,7 +24,9 @@ old file test tried to put a PNG into a property's attachment panel. Photos
 now have their own WebP-only purpose, so the corrected test uses a clean
 synthetic DOCX for the shared attachment while retaining a private contact
 PNG and rejected document. The focused headed Chrome file case passed 1/1
-in 1.7m. The attempted local 118-case suite passed its first 21 cases but
+in 1.7m; the separate network-interruption/scanner-recovery file case also
+uses a clean DOCX and passed 1/1 in 2.4m. The attempted local 118-case suite
+passed its first 21 cases but
 was interrupted by a workstation suspension (the next fixture request timed
 out); it is not a full-suite pass. Full hosted integration must pass on the
 final commit.
