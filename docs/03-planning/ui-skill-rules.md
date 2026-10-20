@@ -18,8 +18,8 @@ contracts remain binding. Reference sample values are illustrative and never
 become live dashboard data. The desktop rail gains an accessible collapse
 control and reuses the existing login line art; 72px is a documented geometry
 proposal pending visual verification. This branding request supersedes older
-visual colors/type and the pure-black-rail choice, not Approved V3 layout
-patterns or the project's AFTER-only timing for aesthetic audit findings.
+visual colors/type and the pure-black-rail choice; the project's AFTER-only
+timing for aesthetic audit findings remains.
 
 Final evidence: headed Chrome checks17 routes at1440px/360px and all5 shell
 cases, with the 224px/72px collapse keyboard-operable and no measured overflow,
@@ -28,7 +28,7 @@ contrast or touch-target failures. The one detector returns `[]`;
 The shared execution ledger records commands, captures and limits. The72px
 collapsed width remains a proposal pending Khalid's product/design review.
 
-## Approved V3 redesign: explicit current-task override (2026-10-16)
+## Historical UI redesign evidence (2026-10-16)
 
 ### Owner-requested compact-space rule (2026-10-16)
 
@@ -39,14 +39,13 @@ available width, outer padding stays small, and max-widths remain only when they
 protect reading/form usability. Preserve meaningful internal spacing, touch
 targets, safe areas and dialog clearance. This does not mean stripping every gap
 or rewriting historical Markdown whitespace. The present source change is
-limited to login; other routes keep their approved V3 geometry until they are
-individually reviewed. The user's explicit request authorizes this login fix;
+limited to login; other routes require their own review. The user's explicit request authorizes this login fix;
 no unrelated AFTER-only finding is being applied.
 
 The user's redesign request explicitly requires antislop **during** implementation,
 not only afterward. It was applied alongside design-system-ops, responsive,
 uncodixfy, relevant React guidance and Impeccable's existing-surface workflow.
-The nine approved compositions replace concept exploration. Dense CRM/admin/
+The then-approved compositions replaced concept exploration. Dense CRM/admin/
 tables/forms remain outside design-taste-frontend's marketing workflow; no
 marketing concept tournament or forced motion was introduced. Shared shadcn,
 Tailwind, Bklit and Lucide remain mandatory. Decorative city/villa assets are
@@ -56,11 +55,7 @@ This task-specific override does not automatically select earlier AFTER-only
 findings. One manual detector returned[]; it was not repeatedly rerun after
 corrections. A fresh independent review cleared its scored correction batch and
 all55 refreshed captures. Its verdict is not human product acceptance. DESIGN.md
-merge remains user-gated. [Coverage](../04-design/ui-reference/approved-v3/coverage.md),
-[execution](../04-design/ui-reference/approved-v3/execution.md) and
-[implemented system](../04-design/ui-reference/approved-v3/implemented-system.md)
-record actual scope, checks and limitations. Historical AFTER entries below keep
-their original meaning.
+merge remains user-gated. Historical AFTER entries below keep their original meaning.
 
 SP-22: [execution](sprints/sp-22-execution.md) and
 [AFTER022](../../anti-slop/audit-022-2026-10-16.md). Main read all three mandatory
@@ -117,9 +112,9 @@ These paths are installed outside the repository on Khalid's laptop. Do not copy
 
 ## Authority and project constraints
 
-The user's explicit choices and KAY contracts take precedence over generic skill defaults. Follow [DESIGN.md](../../DESIGN.md) and [Approved V3's screenshots/extension rules](../04-design/ui-reference/approved-v3/README.md), including unpictured screens. V3 supersedes older conflicting visual proposals; preserve shared semantic tokens as the implementation starting point, light-only 60-30-10 direction, French interface, status colors, red destructive actions and system sans-serif until licensed Satoshi files are available. Reconcile necessary token changes centrally during the authorized UI implementation, not in this reference handoff.
+The user's explicit choices and KAY contracts take precedence over generic skill defaults. Follow [DESIGN.md](../../DESIGN.md), the [design system](../04-design/design-system.md), Riviera branding and later owner-supplied references. The former nine-image reference is retired under D41. Preserve the French interface, semantic status colors and red destructive actions. Reconcile necessary token changes centrally during authorized UI implementation.
 
-Use shadcn/ui for standard components/tables, Tailwind CSS for styling, Bklit for charts and Iconsax through KAY's typed semantic layer under D33. D33 supersedes the historical Lucide baseline recorded above, not prior verification evidence. KAY-specific compositions and narrow custom CSS remain allowed under the existing rules. Do not switch to Fluent, Carbon, another icon family or another chart library because a skill suggests it. V3 explicitly authorizes its pictured dashboard city header and faded-villa login treatment. Do not invent additional marketing heroes, generated photography, forced animation, a dark-mode toggle or new routes merely to satisfy an out-of-scope marketing-page checklist. Preserve accessibility and backend authorization regardless of aesthetic direction.
+Use shadcn/ui for standard components/tables, Tailwind CSS for styling, Bklit for charts and Iconsax through KAY's typed semantic layer under D33. D33 supersedes the historical Lucide baseline recorded above, not prior verification evidence. KAY-specific compositions and narrow custom CSS remain allowed under the existing rules. Do not switch to Fluent, Carbon, another icon family or another chart library because a skill suggests it. Do not invent additional marketing heroes, generated photography, forced animation, a dark-mode toggle or new routes merely to satisfy an out-of-scope marketing-page checklist. Preserve accessibility and backend authorization regardless of aesthetic direction.
 
 ## Sprint workflow
 

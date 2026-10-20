@@ -97,7 +97,7 @@ tokens, exact MAD/date formatters and numbered pages. Current vs period basis,
 attribution and lack of rate denominator are explicit. Failed/denied/loading
 reports preserve the shell and period input. Chart code is lazy-loaded.
 
-The later UI-only [performance refinement](ui-reference/approved-v3/performance-dashboard.md)
+The later UI-only performance refinement
 uses a neutral grouped KPI strip, current-distribution funnel silhouettes and
 stacked contributions per metric. Current contacts, period actions and period
 wins remain distinct definitions, never one combined total or invented daily

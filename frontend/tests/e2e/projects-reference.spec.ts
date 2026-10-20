@@ -29,13 +29,20 @@ test("projects reference: eight real synthetic photos, cards and filters", async
     for (const [index, [asset, name, category, location]] of fixtures.entries()) {
       const created = await staffCommand(page, "properties", { reference: `SP07-REF-${String(index + 1).padStart(2, "0")}`, category, marketing_name: name, location, area_sqm: "120" });
       expect(created.status()).toBe(200); const parent = (await created.json()).property_id;
-      const bytes = await readFile(path.resolve(`tests/fixtures/projects-reference/${asset}.png`));
-      const doc = await staffCommand(page, "documents", { parent_kind: "property", parent_id: parent, filename: `SP09 photo synthétique ${asset}.png`, mime_type: "image/png", size_bytes: bytes.length });
+      const source = await readFile(path.resolve(`tests/fixtures/projects-reference/${asset}.png`));
+      const bytes = Buffer.from(await page.evaluate(async encoded => {
+        const image = await createImageBitmap(await (await fetch(`data:image/png;base64,${encoded}`)).blob());
+        const canvas = document.createElement("canvas"); canvas.width = image.width; canvas.height = image.height;
+        canvas.getContext("2d")!.drawImage(image, 0, 0); image.close();
+        const webp = await new Promise<Blob>(resolve => canvas.toBlob((value: Blob | null) => resolve(value!), "image/webp", 0.82));
+        return Array.from(new Uint8Array(await webp.arrayBuffer()));
+      }, source.toString("base64")));
+      const doc = await staffCommand(page, "documents", { parent_kind: "property", parent_id: parent, purpose: "photo", filename: `SP09 photo synthétique ${asset}.webp`, mime_type: "image/webp", size_bytes: bytes.length });
       expect(doc.status()).toBe(200); const document = await doc.json();
       const permitResponse = await staffCommand(page, "files/permits", { action: "upload", document_id: document.id, expected_version: document.version });
       expect(permitResponse.status()).toBe(200); const permit = await permitResponse.json();
       const identity = await (await page.request.get("/api/v1/auth/me")).json();
-      const uploaded = await transfer.put(permit.transfer_url, { headers: { Origin: new URL(page.url()).origin, "X-File-Permit": permit.token, "X-File-Session": identity.csrf_token, "Content-Type": "image/png" }, data: bytes });
+      const uploaded = await transfer.put(permit.transfer_url, { headers: { Origin: new URL(page.url()).origin, "X-File-Permit": permit.token, "X-File-Session": identity.csrf_token, "Content-Type": "image/webp" }, data: bytes });
       expect(uploaded.status()).toBe(200);
       await expect.poll(async () => (await (await page.request.get(`/api/v1/documents/${document.id}`)).json()).versions[0].state, { timeout: 60_000 }).toBe("clean");
     }

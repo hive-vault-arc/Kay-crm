@@ -58,11 +58,14 @@ def documents(
     token: Proof,
     parent_kind: Literal["contact", "development", "property", "deal"],
     parent_id: UUID,
+    purpose: Literal["attachment", "photo"] | None = None,
     page: Annotated[int, Query(ge=1, le=100000)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 50,
 ) -> dict[str, object]:
-    validate_query(request, {"parent_kind", "parent_id", "page", "page_size"})
-    return list_documents(resources(request)[0], token, parent_kind, parent_id, page, page_size)
+    validate_query(request, {"parent_kind", "parent_id", "purpose", "page", "page_size"})
+    return list_documents(
+        resources(request)[0], token, parent_kind, parent_id, page, page_size, purpose
+    )
 
 
 @router.get("/documents/{did}")

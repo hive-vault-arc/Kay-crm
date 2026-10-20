@@ -1,5 +1,46 @@
 # KAY security check for changes
 
+## Inventory record and shell presentation (2026-10-19)
+
+This follow-up changes icons, layout and sidebar positioning only. The shared
+attachment component retains its existing query, permitted upload/download,
+quarantine, authorization and archive controls; owner identities remain guarded
+by the same API scope. No authentication, CSRF, file permit, backend, schema or
+role rule changed. Browser checks used synthetic isolated records and safe
+post-login captures without traces or credential-bearing artifacts. No real
+data, remote migration, retention command or deployment occurred.
+
+## Property photographs (2026-10-19)
+
+New property images use the existing private document metadata, transfer-permit,
+ClamAV scan, and clean-only download flow. The browser decodes JPEG/PNG/WebP and
+uploads freshly encoded WebP bytes; this is a space-saving UX path, not a security
+boundary. Backend metadata and byte validation independently require a WebP
+property photo and cap active property images at ten under the existing
+serialized agency lock. Legacy JPEG/PNG documents remain private, visible and
+counted toward that cap; no real image is rewritten or deleted by migration
+0029. The photo list and archive actions retain the file service's role and
+parent-scope checks, with agent denial covered in isolated tests. Only synthetic
+browser fixtures and test-database images were used. The additive migration was
+applied to local development after target/OID inspection; no production service,
+database, export, credential or external message was touched.
+
+## Inventory presentation only (2026-10-19)
+
+Creation-wizard follow-up: client-side step validation and category-specific
+field visibility add no authorization path, API field, migration or data copy.
+Final submission still uses the existing strict property/development schemas and
+server authorization. Apartment programme placement is checked before submit;
+the backend remains authoritative. The review summary uses only shared entered
+facts, and a linked promoter is shown as “Contact lié”, never by a protected
+private name. A headed synthetic Chrome case selects the promoter, confirms its
+private name is absent from review, then dissociates it. Browser evidence uses
+isolated synthetic records only. No
+production service, real database, retention command or external message was
+used for this follow-up.
+
+The [inventory design refresh](03-planning/inventory-design-refresh-2026-10-19.md) changes no API, schema, auth, file transfer, stock transition or backend authorization. The live form preview contains only the same shared fields already entered on that form; it never reads protected promoter/owner identities. Existing private file permits, role-scoped owner/campaign commands, session handling and archived-state guards remain. The visible shared-fact edit link was retained for agents after the existing permission test caught an over-restrictive UI condition. Browser checks used the guarded isolated synthetic target, with post-login captures only and no credential-bearing traces, videos or automatic snapshots. No production access, real import/export, retention command, deployment or external message occurred.
+
 ## Commercial property category (2026-10-19)
 
 D40 extends only the allowed category vocabulary in existing property,
@@ -567,7 +608,6 @@ widget was already removed. The direct audit view, server role guard and API
 authorization remain unchanged. No backend, health/TLS, database, migration,
 credential or permission change. Tests retain privileged access and agent403
 checks using the isolated synthetic harness, never production.
-[Current scope and results](04-design/ui-reference/approved-v3/dashboard-header.md).
 
 ## Performance-dashboard presentation (2026-10-16)
 
@@ -587,7 +627,6 @@ edge case uses an explicitly synthetic browser response after real API parity
 checks; it is not represented as an application feature or a server data test.
 Captures are post-login synthetic UI only; traces/password snapshots remain off.
 Backend working diff is empty. No push, production connection or deployment.
-[Scope, actual verification and limits](04-design/ui-reference/approved-v3/performance-dashboard.md).
 
 ## Dashboard development diagnostic removal (2026-10-16)
 
@@ -599,7 +638,6 @@ instead of diagnostic copy and retain real health status/body/cache/request-ID,
 invalid-route/query and outage503/restart200 checks. Five focused compiled
 headed Chrome cases pass against the guarded synthetic target; no production
 access, customer data, credential capture, new dependency, push or deployment.
-[Evidence and release-test limitation](04-design/ui-reference/approved-v3/dashboard-header.md#subsequent-owner-request-remove-local-diagnostics).
 
 ## Local dashboard city-header presentation (2026-10-16)
 
@@ -610,7 +648,6 @@ credential, customer record or production access. Visible compiled Chrome uses
 the guarded synthetic database; scoped admin/agent/audit and failure/recovery
 checks pass. Safe captures exclude credentials. Test services stop afterward,
 shared PostgreSQL preserved. No UI commit/push/deployment performed.
-[Scope and evidence](04-design/ui-reference/approved-v3/dashboard-header.md).
 
 ## Local login icon presentation (2026-10-16)
 
@@ -623,7 +660,6 @@ no remote loader, asset request, key, subscription or public sign-up is added.
 Real guarded synthetic auth/retry/password-change Chrome cases pass. No password
 is captured; safe screenshots and disposable profiles stay ignored. Test services
 stop afterward, shared PostgreSQL preserved. No commit/push/deployment performed.
-[Scope and evidence](04-design/ui-reference/approved-v3/login-icons.md).
 
 ## Managed application runtime exception (2026-10-16)
 
@@ -651,8 +687,7 @@ ID, scope grant or payload field. No backend, migration or API contract diff.
 Synthetic-only guarded browser fixtures/captures, no credential-bearing trace;
 new output paths are ignored. Final compiled client scan checks4 roots/352 JS
 files and finds0 configured facade-secret/0 configured signing-key occurrences.
-[Current interaction evidence and limits](04-design/ui-reference/approved-v3/filter-rail.md)
-are separate from historical full-product checks. No real records, import/export,
+These observations are separate from historical full-product checks. No real records, import/export,
 external message, new dependency or deployment is introduced by this change.
 
 ## Leads/Deals header action hierarchy (2026-10-16)
@@ -664,7 +699,7 @@ pending/retry, private download and record creation commands are unchanged.
 Actual scoped CSV download/agent403 and Lead/Deal creation regressions pass;
 new header cases check agent-hidden import/export and real touch/keyboard paths.
 Backend/API/permission files remain untouched, and fixtures/captures are synthetic.
-No credential, external asset, deployment or new dependency added. [Evidence](04-design/ui-reference/approved-v3/list-header-actions.md).
+No credential, external asset, deployment or new dependency added.
 
 ## Sidebar account footer boundary (2026-10-16)
 
@@ -676,7 +711,7 @@ requested. Real isolated Chrome checks pass pending/failure/retry, mobile touch
 revocation401, keyboard logout, refresh/replay, restricted-password fresh login
 and late-denial races. Failed transport leaves the real session valid before
 retry; the alert uses existing readable danger tokens. All identities/data are
-synthetic; no credential-bearing trace/capture is added. [Evidence and limits](04-design/ui-reference/approved-v3/account-footer.md).
+synthetic; no credential-bearing trace/capture is added.
 
 ## DigitalOcean detection metadata (2026-10-16)
 
@@ -767,8 +802,7 @@ Synthetic isolated browser checks exercise session/CSRF, permissions, private
 files, imports/exports, financial originals, retry/conflict and recovery. Shipping
 source/public assets remain frozen during recovery because they are included in
 its compatibility fingerprint; no guard was bypassed after the interrupted first
-attempt. Current scan, report privacy and exact cleanup/port results belong in
-the [V3 execution ledger](04-design/ui-reference/approved-v3/execution.md).
+attempt. Historical scan and cleanup results were recorded for that scoped run.
 No production, real-client data, external messaging or deployment was used.
 
 Final V3 closure:4 client roots/313 JS have0 configured facade-secret and
@@ -1114,7 +1148,6 @@ glyphs have no external SVG references or offline requests. No premium key,
 secret, dependency install, production access or real customer data is used.
 Synthetic post-login captures and test profiles stay ignored; no issued
 credential capture. This is not a complete production/release security result.
-[Scope, source inventory, retained failures and final checks](04-design/ui-reference/approved-v3/action-buttons.md).
 
 Subsequent Lead/Deal fact-layout refinement is UI-only: backend and workflow
 diffs remain empty, HTTPS/session/CSRF/authorization/version checks are unchanged.
@@ -1124,7 +1157,6 @@ not rendered. Admin-only assignment remains absent for agents. No production
 database, real records, secrets, export or external send is used. Screenshots
 are post-login synthetic only; output/test-results paths remain ignored.
 Focused UI evidence is not a complete database/release/security-suite pass.
-[Actual verification and scope](04-design/ui-reference/approved-v3/record-facts.md).
 
 No facade/identity/secure-cookie/TLS checks were disabled. The Windows server loop
 change does not filter exceptions or logs. Static filename compatibility accepts

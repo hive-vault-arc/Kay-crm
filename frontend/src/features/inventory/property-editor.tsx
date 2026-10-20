@@ -4,7 +4,7 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,13 +14,19 @@ import { categoryLabels, propertyFieldsSchema, type Property } from "./contracts
 import { InventoryError } from "./states";
 import { useInventoryCommand } from "./use-command";
 import { LevelPicker } from "./level-picker";
+import { InventoryDraftSummary } from "./inventory-draft-summary";
+import { PropertyCreationWizard } from "./property-creation-wizard";
 
 type Values = { reference: string; category: Property["category"]; marketing_name: string; location: string; area_sqm: string; rooms: string };
-export function PropertyEditor({ property, developmentId = property?.development_id ?? undefined }: { property?: Property; developmentId?: string }) {
+export function PropertyEditor({ property, developmentId }: { property?: Property; developmentId?: string }) {
+  return property ? <PropertyEditForm property={property} developmentId={developmentId} /> : <PropertyCreationWizard developmentId={developmentId} />;
+}
+function PropertyEditForm({ property, developmentId = property.development_id ?? undefined }: { property: Property; developmentId?: string }) {
   const [placement, setPlacement] = useState({ block_id: property?.hierarchy?.block?.id ?? "", floor_id: property?.floor_id ?? "", unit_type_id: property?.unit_type_id ?? "" });
   const router = useRouter();
   const hydrated = useHydrated();
   const form = useForm<Values>({ defaultValues: { reference: property?.reference ?? "", category: property?.category ?? "apartment", marketing_name: property?.marketing_name ?? "", location: property?.location ?? "", area_sqm: property?.area_sqm ?? "", rooms: property?.rooms ? String(property.rooms) : "" } });
+  const draft = useWatch({ control: form.control });
   const [version, setVersion] = useState(property?.version ?? 1);
   const [validation, setValidation] = useState("");
   const command = useInventoryCommand();
@@ -31,9 +37,10 @@ export function PropertyEditor({ property, developmentId = property?.development
     setValidation("");
     await command.submit(property ? `/api/v1/properties/${property.id}` : "/api/v1/properties", { ...parsed.data, ...(property ? { expected_version: version } : {}) }, property ? "PATCH" : "POST", id => router.push(`/projects/properties/${id}`));
   }
-  return <form noValidate className="form-surface grid max-w-reading gap-6" aria-label={property ? "Modifier le bien" : developmentId ? "Créer une unité physique" : "Créer un bien indépendant"} aria-busy={command.pending} onSubmit={event => void form.handleSubmit(save)(event)}>
+  return <form noValidate className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1.7fr)_minmax(19rem,1fr)]" aria-label={property ? "Modifier le bien" : developmentId ? "Créer une unité physique" : "Créer un bien indépendant"} aria-busy={command.pending} onSubmit={event => void form.handleSubmit(save)(event)}>
+    <div className="form-surface grid min-w-0 gap-5">
     <SectionHeading icon={PropertyIcon} tone="teal">Caractéristiques du bien</SectionHeading>
-    <p>{developmentId ? "Unité physique du programme : un appartement exige un étage et un type du même programme. Les faits saisis appartiennent à cette unité ; un type ne les réécrit jamais." : "Les informations inconnues restent vides. Le bien est physique et indépendant, y compris un appartement sans programme."}</p>
+    <p className="text-sm text-muted-foreground">{developmentId ? "Unité physique du programme : un appartement exige un étage et un type du même programme. Les faits saisis appartiennent à cette unité ; un type ne les réécrit jamais." : "Les informations inconnues restent vides. Le bien est physique et indépendant, y compris un appartement sans programme."}</p>
     <fieldset disabled={!hydrated || command.pending} className="grid min-w-0 gap-4 sm:grid-cols-2">
       <div className="grid gap-2"><Label htmlFor="property-reference">Référence du bien</Label><Input id="property-reference" aria-invalid={Boolean(form.formState.errors.reference)} aria-describedby={form.formState.errors.reference ? "property-validation" : undefined} maxLength={80} required {...form.register("reference")} /></div>
       <div className="grid gap-2"><Label htmlFor="property-category">Catégorie</Label><NativeSelect id="property-category" {...form.register("category")}>{Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
@@ -46,6 +53,15 @@ export function PropertyEditor({ property, developmentId = property?.development
     <p className="text-sm text-muted-foreground">Ces informations seront lisibles par toute l’équipe. N’y saisissez pas de coordonnées privées.</p>
     {validation ? <p id="property-validation" role="alert" className="text-danger">{validation}</p> : null}
     <InventoryError error={command.error} id={property?.id} choose={current => { setVersion(current.version); command.clear(); }} />
-    <div className="flex flex-wrap gap-2"><Button action={property ? "save" : "create"} type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : property ? "Enregistrer le bien" : developmentId ? "Créer l’unité" : "Créer le bien"}</Button><Button action="cancel" variant="outline" asChild><Link href={property ? `/projects/properties/${property.id}` : "/projects"}>Annuler</Link></Button></div>
+    <div className="flex flex-wrap gap-2 border-t pt-4"><Button action={property ? "save" : "create"} type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : property ? "Enregistrer le bien" : developmentId ? "Créer l’unité" : "Créer le bien"}</Button><Button action="cancel" variant="outline" asChild><Link href={property ? `/projects/properties/${property.id}` : "/projects"}>Annuler</Link></Button></div>
+    </div>
+    <InventoryDraftSummary icon={PropertyIcon} title={developmentId ? "Unité en préparation" : "Bien en préparation"} facts={[
+      { label: "Référence", value: draft.reference?.trim() },
+      { label: "Catégorie", value: categoryLabels[draft.category ?? "apartment"] },
+      { label: "Nom commercial", value: draft.marketing_name?.trim() },
+      { label: "Localisation", value: draft.location?.trim() },
+      { label: "Surface", value: draft.area_sqm?.trim() ? `${draft.area_sqm.trim()} m²` : null },
+      { label: "Pièces", value: draft.rooms?.trim() },
+    ]} next="Après l’enregistrement, vous pourrez lier les propriétaires, créer les campagnes vente ou location et ajouter les pièces jointes depuis la fiche." />
   </form>;
 }

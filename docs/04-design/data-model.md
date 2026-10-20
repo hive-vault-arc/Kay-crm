@@ -266,6 +266,14 @@ records the actual migration checks and acceptance status.
 | `task`, `visit`, `visit_participant`, `timeline_event` | Owner, due date/state; visit `type company_car/without_company_car/office`, start/end, participants, conflict/reason; actor, source, context link | Explicit contact/deal/property links by type; no unverifiable polymorphic reference. Off-site visits obey active schedule policy; office visits do not. |
 | `visit_schedule_policy`, `visit_working_window`, `visit_break_window` | One agency policy with `company_car_capacity_per_hour` initially `2`, `version`, editor/time; local weekday and start/end time rows for working windows and lunch breaks | `agency 1:1 policy`, `policy 1:N` windows/breaks. Only an administrator changes the policy. A missing work schedule blocks new off-site bookings, not office visits. |
 | `document`, `document_version`, `file_permit` | `contact/development/property/deal` parent, inherited visibility, private object key, size, hash, MIME, scan state, session/action/expiry | Exactly one typed parent per document; development/property documents are shared inventory files, private owner/developer documents are on `contact`. |
+
+Migration0029 adds `document.purpose = attachment|photo` with an additive default of
+`attachment`. New `photo` rows require a physical `property_id` and WebP MIME.
+Existing property JPEG/PNG/WebP attachments remain unchanged in storage but are
+treated as photos by the read/count projection. Active property image rows,
+including pending/rejected scans, occupy the 10-photo allowance; archive frees a
+slot without erasing file history. All writes retain the same private permit,
+scan, authorization and audit path.
 | `commission`, `commission_revision`, `receipt` | Deal, fixed/percentage/base calculation, expected/recognized state, due date, amount; corrections and valid receipts | `deal 0:N commission`; only managers/administrators write. Original version and replacement link are retained. |
 | `import_batch`, `import_row`, `website_source`, `website_receipt` | Import evidence; distinct source authority, source/submission and durable processed-enquiry link | [Import](contact-import-local.md) and [intake](website-intake-local.md);202 receipt commit precedes atomic worker effects. |
 | `import_preview` (SP-18) | Append-only version/hash/counts/actor evidence for a contact batch | [Implemented import schema](contact-import-local.md); immutable original contact/agent links, private raw object and atomic permanent result. Website receipt is implemented by SP-20. |

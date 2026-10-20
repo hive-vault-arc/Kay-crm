@@ -98,6 +98,7 @@ def new_document(
     filename="Synthétique.png",
     mime_type="image/png",
     key=None,
+    purpose="attachment",
 ):
     return document_command(
         database,
@@ -109,6 +110,7 @@ def new_document(
             filename=filename,
             mime_type=mime_type,
             size_bytes=len(data),
+            purpose=purpose,
         ),
     )
 

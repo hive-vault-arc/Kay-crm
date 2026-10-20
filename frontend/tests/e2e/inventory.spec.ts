@@ -120,7 +120,7 @@ test("SP07 AT-06/08/27/31: manager standalone inventory, separate prices and unr
     await agent.goto(`/projects/properties/${id}/edit`);
     await expect(agent.getByRole("form", { name: "Modifier le bien", exact: true })).toBeVisible();
     await agent.goto("/projects/properties/new");
-    await expect(agent.getByRole("button", { name: "Créer le bien", exact: true })).toBeEnabled();
+    await expect(agent.getByRole("button", { name: "Suivant", exact: true })).toBeEnabled();
     await clearActorContext(agent); await signIn(agent, owner); await openProperty(agent, id, "Propriétaires");
     await expect(agent.getByRole("link", { name: "SP07 propriétaire privé synthétique", exact: true })).toBeVisible();
     await openProperty(page, id, "Offres");

@@ -29,6 +29,7 @@ class NewDocument(Contract):
     filename: str = Field(min_length=1, max_length=180)
     mime_type: str = Field(min_length=1, max_length=120)
     size_bytes: int = Field(strict=True, gt=0, le=MAX_FILE_BYTES)
+    purpose: Literal["attachment", "photo"] = "attachment"
 
     @field_validator("filename")
     @classmethod

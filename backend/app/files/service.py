@@ -29,6 +29,9 @@ from app.identity.sessions import (
 from app.inventory.hierarchy_models import Development
 from app.inventory.models import Property
 
+PHOTO_MIMES = ("image/jpeg", "image/png", "image/webp")
+MAX_PROPERTY_PHOTOS = 10
+
 
 def locked_identity(
     session: Session, token: str | None = None, sid: UUID | None = None
@@ -122,6 +125,9 @@ def view(session: Session, document: Document) -> dict[str, object]:
         "id": str(document.id),
         "filename": document.filename,
         "mime_type": document.mime_type,
+        "purpose": "photo"
+        if document.property_id and document.mime_type in PHOTO_MIMES
+        else document.purpose,
         "size_bytes": document.size_bytes,
         "version": document.version,
         "archived": document.archived_at is not None,
@@ -143,11 +149,19 @@ def read_document(database: Database, token: str, did: UUID) -> dict[str, object
 
 
 def list_documents(
-    database: Database, token: str, kind: str, pid: UUID, page: int, page_size: int
+    database: Database,
+    token: str,
+    kind: str,
+    pid: UUID,
+    page: int,
+    page_size: int,
+    purpose: str | None = None,
 ) -> dict[str, object]:
     with database.session() as session:
         identity = current_identity(session, token)
         authorize(session, identity, kind, pid)
+        if purpose == "photo" and kind != "property":
+            raise IdentityError("VALIDATION_ERROR", 422)
         column = {
             "contact": Document.contact_id,
             "deal": Document.deal_id,
@@ -155,6 +169,15 @@ def list_documents(
             "property": Document.property_id,
         }[kind]
         statement = select(Document).where(column == pid, Document.archived_at.is_(None))
+        if purpose is not None:
+            if kind == "property":
+                statement = statement.where(
+                    Document.mime_type.in_(PHOTO_MIMES)
+                    if purpose == "photo"
+                    else Document.mime_type.not_in(PHOTO_MIMES)
+                )
+            elif purpose == "attachment":
+                statement = statement.where(Document.purpose == "attachment")
         total = session.scalar(select(func.count()).select_from(statement.subquery())) or 0
         rows = session.scalars(
             statement.order_by(Document.created_at.desc(), Document.id)
@@ -195,12 +218,36 @@ def document_command(
             authorize(session, identity, body.parent_kind, body.parent_id, write=True)
             if FORMATS[PurePosixPath(body.filename).suffix.lower()] != body.mime_type:
                 raise IdentityError("UNSUPPORTED_MEDIA_TYPE", 415)
+            if body.purpose == "photo":
+                if (
+                    body.parent_kind != "property"
+                    or body.mime_type != "image/webp"
+                    or PurePosixPath(body.filename).suffix.lower() != ".webp"
+                ):
+                    raise IdentityError("UNSUPPORTED_MEDIA_TYPE", 415)
+                used = (
+                    session.scalar(
+                        select(func.count())
+                        .select_from(Document)
+                        .where(
+                            Document.property_id == body.parent_id,
+                            Document.mime_type.in_(PHOTO_MIMES),
+                            Document.archived_at.is_(None),
+                        )
+                    )
+                    or 0
+                )
+                if used >= MAX_PROPERTY_PHOTOS:
+                    raise IdentityError("PROPERTY_PHOTO_LIMIT", 409)
+            elif body.parent_kind == "property" and body.mime_type in PHOTO_MIMES:
+                raise IdentityError("PROPERTY_PHOTO_WEBP_REQUIRED", 415)
             document = Document(
                 id=uuid4(),
                 **{f"{body.parent_kind}_id": body.parent_id},
                 origin_contact_id=body.parent_id if body.parent_kind == "contact" else None,
                 filename=body.filename,
                 mime_type=body.mime_type,
+                purpose=body.purpose,
                 size_bytes=body.size_bytes,
                 created_by_user_id=identity.user.id,
                 version=1,

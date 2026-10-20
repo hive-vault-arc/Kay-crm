@@ -1,5 +1,49 @@
 # KAY agent lessons
 
+## Sticky navigation and edge controls (2026-10-19)
+
+A later `.sidebar { position: relative }` rule silently overrode an earlier
+Tailwind `sticky` class, letting the rail travel with long pages. Restoring
+sticky positioning creates a stacking context: an edge-mounted toggle can be
+visible but intercepted by the workspace header. Test both scroll position and
+real pointer clicks, then give the rail an appropriate stacking layer. When
+taking Playwright screenshots of SSR pages, wait for a hydrated control first;
+the screenshot caret-hiding style can otherwise race hydration and produce a
+false mismatch warning.
+
+## Photo upload completion and mobile geometry (2026-10-19)
+
+A fast scan can move an uploaded file directly to `clean` before the gallery
+ever observes `pending_scan`; track the just-uploaded document ID so the record
+thumbnail still refreshes. A visually hidden native file input may contribute
+its intrinsic width to a narrow page even when transparent; constrain its box
+to one pixel and assert no horizontal overflow at mobile width. Keep source
+JPEG/PNG conversion before the private transfer, while enforcing WebP and the
+ten-image cap in the backend rather than trusting browser conversion alone.
+
+## Creation wizards must preserve authority and selection state (2026-10-19)
+
+Separate programme creation from physical-unit creation, and render only fields
+persisted by each existing schema. A marketplace listing checklist is useful
+domain reference, not permission to add unsupported amenities or ask for
+terrain floors. In a React multi-step form, use functional updates for related
+block/floor/type selection so consecutive changes cannot overwrite one another.
+Scope browser locators to the wizard's action group: embedded hierarchy pickers
+also contain numbered-page buttons named “Suivant”. Inspect the actual 320/360px
+step labels; three desktop-length labels can collide even without horizontal
+page overflow.
+
+More importantly, a `type="button"` Next control can be reconciled into the
+`type="submit"` Create control during the same click. Browser default action may
+then submit before the user confirms. Explicitly prevent the Next click's
+default and assert the review step is idle, with Create enabled, before the
+final click. The intermittent disappearing-button test was an actual premature
+submission, not merely a locator timing issue.
+
+## Inventory edit authority differs by action (2026-10-19)
+
+Moving record actions into a compact header accidentally hid shared-fact editing from agents because the `writable` flag applied to owner/campaign commands, not ordinary programme/property facts. Existing Chrome tests found it. Preserve the distinct authorization paths when relocating buttons; verify agent as well as manager roles. The same UI pass moved a marketing name from a heading to plain text, breaking record-discovery semantics; keep it a heading even when visually subordinate to the reference. No backend permission was changed.
+
 ## Do not normalize selection using unknown loading facets (2026-10-18)
 
 useQuery intentionally hides a previous-path value while a request is pending.
