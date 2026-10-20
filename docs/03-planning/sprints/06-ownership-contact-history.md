@@ -41,7 +41,7 @@ Read the relevant clauses for the C/BR/AT identifiers above before editing. Thes
 - [API contract](../../04-design/api-contracts.md)
 - [Architecture](../../04-design/architecture.md)
 - [Screen map](../../04-design/screen-map.md)
-- [Approved V3 screenshots, route map and rules for unpictured pages](../../04-design/ui-reference/approved-v3/README.md)
+- [Current design system](../../04-design/design-system.md), [screen map](../../04-design/screen-map.md), and applicable owner-supplied references
 - [Mandatory UI skill rules, timing and applicability](../ui-skill-rules.md)
 - [antislop skill](<C:/Users/khali/.codex/skills/antislop/SKILL.md>)
 - [design-system-ops skill](<C:/Users/khali/.codex/skills/design-system-ops/SKILL.md>)

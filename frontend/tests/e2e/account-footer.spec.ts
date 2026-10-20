@@ -42,7 +42,8 @@ test("account footer: one account location, real role, long name and responsive 
       const box = await logout.boundingBox();
       expect(box!.width).toBeGreaterThanOrEqual(44);
       expect(box!.height).toBeGreaterThanOrEqual(44);
-      expect(await sidebar.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+      const sidebarWidths = await sidebar.evaluate(element => ({ scroll: element.scrollWidth, client: element.clientWidth }));
+      expect(sidebarWidths.scroll, `sidebar overflow at ${width}px (${sidebarWidths.scroll}px > ${sidebarWidths.client}px)`).toBeLessThanOrEqual(sidebarWidths.client);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       if (width === 360 || width === 1440) await capture(page, `long-name-${width}`);
       if (mobile) await page.keyboard.press("Escape");

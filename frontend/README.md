@@ -5,12 +5,11 @@ and the separate API/worker:
 [Local startup](../docs/06-delivery-and-operations/local-startup.md).
 
 
-Approved V3 now supplies the shared presentation across all existing routes,
-tabs and contextual workflows. [Coverage](../docs/04-design/ui-reference/approved-v3/coverage.md),
-[execution](../docs/04-design/ui-reference/approved-v3/execution.md) and
-[implemented system](../docs/04-design/ui-reference/approved-v3/implemented-system.md)
-describe the active shared tokens,29 route files/168 contextual sites, actual
-checks and limits. shadcn/ui, Tailwind and Bklit remain; Iconsax replaces Lucide under
+The former nine-image design reference was retired under D41; this cleanup does
+not change the implemented interface. Current visual direction is in
+[DESIGN.md](../DESIGN.md), the [design system](../docs/04-design/design-system.md)
+and [Riviera branding](../branding/riviera/README.md). shadcn/ui, Tailwind and
+Bklit remain; Iconsax replaces Lucide under
 [D33](../decisions.md) through the SSR-safe semantic layer. [Migration coverage,
 license and verification](../docs/reference/iconsax/migration.md). All API-backed
 commands/fields/permissions are retained. The system font and opaque original

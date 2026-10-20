@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
+import { EmptyFolderIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -67,7 +68,7 @@ function FilePanelBody({ parentKind, parentId, writable }: { parentKind: ParentK
     finally { locked.current = false; setBusy(false); setProgress(undefined); abort.current = null; if (controller.signal.aborted) heading.current?.focus(); refresh(); }
   }
   return <section aria-label="Pièces jointes" className="grid min-w-0 gap-6 border-t pt-6">
-    <div className="grid gap-2"><h2 ref={heading} tabIndex={-1} className="text-section font-medium">Pièces jointes</h2><p className="max-w-reading text-sm text-muted-foreground">{parentKind === "contact" || parentKind === "deal" ? "Documents privés liés au contact. Seules les personnes autorisées peuvent les consulter." : "Fichiers partagés avec l’équipe. Les justificatifs privés des propriétaires et promoteurs restent sur leurs fiches Contacts."}</p></div>
+    <div className="grid gap-2"><h2 ref={heading} tabIndex={-1} className="flex items-center gap-3 text-section font-medium"><span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-sm bg-info-background text-info"><EmptyFolderIcon aria-hidden="true" className="size-4" /></span>Pièces jointes</h2><p className="max-w-reading text-sm text-muted-foreground">{parentKind === "contact" || parentKind === "deal" ? "Documents privés liés au contact. Seules les personnes autorisées peuvent les consulter." : "Fichiers partagés avec l’équipe. Les justificatifs privés des propriétaires et promoteurs restent sur leurs fiches Contacts."}</p></div>
     {query.error ? <RecordError error={query.error} retry={refresh} /> : <>
     {writable ? <form className="grid min-w-0 max-w-reading gap-4" onSubmit={event => { event.preventDefault(); void upload(); }}>
       <fieldset disabled={!hydrated || busy} className="relative grid min-w-0 gap-2"><Label htmlFor={inputId}>{resume ? "Sélectionner à nouveau le fichier" : "Fichier à ajouter"}</Label><Input ref={fileInput} id={inputId} type="file" tabIndex={-1} className="sr-only left-0 top-0 h-px w-px border-0 p-0" accept=".jpg,.jpeg,.png,.webp,.pdf,.docx,.xlsx" aria-describedby={`${inputId}-help`} onChange={event => { setFile(event.target.files?.[0]); setError(undefined); setNotice(""); attempt.current = { key: "", documentId: "" }; }} /><Button action="file" ref={chooser} type="button" variant="outline" className="justify-self-start" aria-describedby={`${inputId}-selection ${inputId}-help`} onClick={() => fileInput.current?.click()}>Choisir un fichier</Button><p id={`${inputId}-selection`} className="wrap-anywhere text-sm" aria-live="polite">{file?.name ?? "Aucun fichier sélectionné"}</p><p id={`${inputId}-help`} className="text-sm text-muted-foreground">JPEG, PNG, WebP, PDF, DOCX ou XLSX sans macro. 20 Mo maximum (20 971 520 octets).</p>{resume ? <p className="wrap-anywhere">Reprise de {resume.filename}. Conservez le même nom, format et nombre d’octets.</p> : null}</fieldset>

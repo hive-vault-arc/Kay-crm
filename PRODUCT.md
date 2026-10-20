@@ -27,9 +27,9 @@ core; other future options are not authorized by this pointer.
 
 ## Current visual authority
 
-[Approved V3](docs/04-design/ui-reference/approved-v3/README.md) supplies nine
-selected compositions and the extension rules for every existing surface.
-[DESIGN.md](DESIGN.md) is the existing visual entry point. The current explicit
+The former nine-image reference was retired under D41. [DESIGN.md](DESIGN.md),
+the [design system](docs/04-design/design-system.md), Riviera branding and later
+owner-supplied references are the current visual entry points. The explicit
 Lead/Deal request extends both workflow and UI to the IMMO World reference:
 canonical client qualification, selectable calling codes, rich source choices,
 project/budget/intent conversion and matching manual deal forms/tables/details.
@@ -40,9 +40,5 @@ editing the reference repository. Antislop retains the owner's AFTER timing;
 aesthetic-only audit findings require user selection. The
 [alignment record](docs/03-planning/leads-deals-immoworld-alignment.md) tracks
 actual implementation, verification and remaining acceptance separately from
-the earlier V3-only evidence below.
-
-Implementation coverage and actual results are recorded in the
-[route/surface checklist](docs/04-design/ui-reference/approved-v3/coverage.md)
-and [execution ledger](docs/04-design/ui-reference/approved-v3/execution.md).
-These are technical evidence, not Khalid's final product acceptance.
+earlier technical evidence. Technical checks are not Khalid's final product
+acceptance.

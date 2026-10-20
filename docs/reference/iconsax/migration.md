@@ -1,13 +1,13 @@
 # KAY Iconsax migration — coverage and integration
 
 2026-10-16. Explicit user authorization: [D33](../../../decisions.md). UI-only;
-Approved V3, shadcn/ui, Tailwind and Bklit remain authoritative. Current technical
+the current design system, shadcn/ui, Tailwind and Bklit remain authoritative. Current technical
 results and limitations: [execution.md](execution.md). A source checkbox is not
 a claim of one browser screenshot for every nested permission/state permutation.
 
 ## Local login extension (2026-10-16)
 
-The later [app-wide action-button refinement](../../04-design/ui-reference/approved-v3/action-buttons.md)
+The later app-wide action-button refinement
 adds14 verified Free linear assets to the same SSR-safe semantic layer. Current
 local inventory:43 semantic exports,28 icon consumers,113 icon sites and0
 violations;3 chart roots excluded. The action registry reaches276 explicitly
@@ -22,12 +22,11 @@ semantic exports from28 unique official assets,23 consumer files and45 sites;
 the original migration counts and browser evidence below remain historical.
 The original statement about not adding icons to text-only buttons describes
 that migration, not this subsequently requested sign-in icon.
-[Scope, provenance and current checks](../../04-design/ui-reference/approved-v3/login-icons.md).
 No push is authorized for this local extension.
 
 ## Integration and license
 
-The subsequent [Lead/Deal fact-layout extension](../../04-design/ui-reference/approved-v3/record-facts.md)
+The subsequent Lead/Deal fact-layout extension
 reuses the same verified assets and typed layer for summary labels and section
 headings. Its actual inventory is29 semantic exports,27 consumer files,67 sites,
 0 violations and3 excluded chart roots. No new asset/license/dependency or
@@ -88,8 +87,8 @@ consumer. After:the same21 consumers,40 static/dynamic/composed icon sites,
 27 semantic exports,26 distinct official assets. Repeatable read-only inventory:
 `cd frontend; node scripts/icon-inventory.mjs`. No interface SVG is permitted
 outside the layer; Bklit's three SVG roots are explicitly chart geometry.
-The full route/context inventory remains29 route files,168 contextual sites and
-111 overlapping region/disclosure sites in71 files: [V3 complete surface map](../../04-design/ui-reference/approved-v3/coverage.md).
+The historical route/context inventory counted29 route files,168 contextual
+sites and111 overlapping region/disclosure sites in71 files.
 
 | Source checked | Source (frontend/) | Semantic imports | Sites | Running evidence family |
 |---|---|---|---|---|

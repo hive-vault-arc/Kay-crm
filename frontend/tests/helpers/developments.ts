@@ -7,7 +7,13 @@ export async function createDevelopment(page: Page, category = "mixed") {
   await page.getByLabel("Référence du programme", { exact: true }).fill(reference);
   await page.getByLabel("Nom du programme", { exact: true }).fill("Programme mixte synthétique");
   await page.getByLabel("Catégorie du programme", { exact: true }).selectOption(category);
-  await page.getByRole("button", { name: "Enregistrer le programme", exact: true }).click();
+  const form = page.getByRole("form", { name: "Créer un programme" });
+  const navigation = form.getByRole("group", { name: "Navigation du formulaire" });
+  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
+  await expect(form.getByText("Étape 2 sur 3")).toBeVisible();
+  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
+  await expect(form.getByText("Étape 3 sur 3")).toBeVisible();
+  await navigation.getByRole("button", { name: "Créer le programme", exact: true }).click();
   await expect(page.getByRole("heading", { name: reference, exact: true })).toBeVisible();
   const id = new URL(page.url()).pathname.split("/")[2];
   return { id, reference, path: `/projects/${id}` };
@@ -46,16 +52,22 @@ export async function createType(page: Page, code = "T2", label = "T2 / 80 m²")
 export async function createUnit(page: Page, did: string, floor = "F2", category = "apartment", area = "80,00") {
   await openDevelopment(page, did, "Unités");
   await page.getByRole("button", { name: "Créer une unité physique", exact: true }).click();
+  const form = page.getByRole("form", { name: "Créer une unité physique" });
+  const navigation = form.getByRole("group", { name: "Navigation du formulaire" });
   const reference = `SP08-U-${randomUUID().slice(0, 8)}`.toUpperCase();
   await page.getByLabel("Référence du bien", { exact: true }).fill(reference);
   await page.getByLabel("Catégorie", { exact: true }).selectOption(category);
-  await page.getByLabel("Surface en m² (facultative)", { exact: true }).fill(area);
+  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
+  await expect(form.getByText("Étape 2 sur 3")).toBeVisible();
+  await page.getByLabel(category === "land" ? "Surface du terrain en m² (facultative)" : category === "commercial" ? "Surface du local en m² (facultative)" : "Surface en m² (facultative)", { exact: true }).fill(area);
   if (category === "apartment") {
     await page.getByLabel("Bloc de l’unité", { exact: true }).selectOption({ label: "B1 · Bloc synthétique B1" });
     await page.getByLabel("Étage de l’unité", { exact: true }).selectOption({ label: `${floor} · Étage synthétique ${floor}` });
     await page.getByLabel("Type réutilisable de l’unité", { exact: true }).selectOption({ label: "T2 · T2 / 80 m²" });
   }
-  await page.getByRole("button", { name: "Créer l’unité", exact: true }).click();
+  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
+  await expect(form.getByText("Étape 3 sur 3")).toBeVisible();
+  await navigation.getByRole("button", { name: "Créer l’unité", exact: true }).click();
   await expect(page.getByRole("heading", { name: reference, exact: true })).toBeVisible();
   return { id: new URL(page.url()).pathname.split("/")[3], reference };
 }

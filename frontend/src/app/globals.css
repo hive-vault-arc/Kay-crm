@@ -735,10 +735,10 @@ h1, h2, h3 { font-weight: 550; }
 }
 
 .app-shell { transition: grid-template-columns var(--riviera-motion-fast) ease-out; }
-.sidebar { position: relative; overflow: visible; }
+.sidebar { position: sticky; top: 0; align-self: start; overflow: visible; }
 .sidebar-scroll { gap: var(--riviera-space-compact); overflow: hidden; padding-block-end: var(--riviera-space-compact); }
 .sidebar-brand-row { display: flex; min-width: 0; align-items: center; justify-content: center; }
-.sidebar-toggle { position: absolute; z-index: 10; inset-block-start: var(--control-touch-target); inset-inline-end: 0; transform: translateX(50%); }
+.sidebar-toggle { position: fixed; z-index: 10; inset-block-start: var(--control-touch-target); inset-inline-start: calc(var(--app-sidebar-width) - var(--control-touch-target) / 2); }
 .sidebar-toggle:hover { background: transparent; }
 .sidebar-toggle-face { background: var(--brand-gold); color: var(--content-primary); }
 .sidebar-toggle:hover .sidebar-toggle-face { background: var(--action-creation-hover); }

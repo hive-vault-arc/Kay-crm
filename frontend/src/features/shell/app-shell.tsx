@@ -79,7 +79,7 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
       <aside
         data-sidebar
         data-sidebar-collapsed={sidebarCollapsed ? "true" : "false"}
-        className="sidebar sticky top-0 hidden h-dvh bg-sidebar text-sidebar-foreground lg:block"
+        className="sidebar sticky top-0 z-30 hidden h-dvh bg-sidebar text-sidebar-foreground lg:block"
       >
         <div className="sidebar-scroll flex h-dvh flex-col px-3">
           <div className="sidebar-brand-row shrink-0">
