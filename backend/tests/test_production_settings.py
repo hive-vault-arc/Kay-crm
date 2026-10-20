@@ -56,6 +56,24 @@ def test_development_only_requires_its_own_url():
     assert load_settings().test_database_url is None
 
 
+def test_spaces_requires_a_verified_endpoint_and_credentials(monkeypatch):
+    production(monkeypatch)
+    monkeypatch.setenv("STORAGE_BACKEND", "spaces")
+    monkeypatch.setenv("SPACES_REGION", "fra1")
+    monkeypatch.setenv("SPACES_ENDPOINT", "https://fra1.digitaloceanspaces.com")
+    monkeypatch.setenv("SPACES_BUCKET", "synthetic-private")
+    monkeypatch.setenv("SPACES_KEY", "synthetic-key")
+    monkeypatch.setenv("SPACES_SECRET", "synthetic-secret")
+    assert load_settings().storage_backend == "spaces"
+    monkeypatch.setenv("SPACES_ENDPOINT", "http://127.0.0.1:9000")
+    with pytest.raises(ConfigurationError, match="SPACES_ENDPOINT:ENDPOINT_INVALID"):
+        load_settings()
+    monkeypatch.setenv("SPACES_ENDPOINT", "https://fra1.digitaloceanspaces.com")
+    monkeypatch.delenv("SPACES_SECRET")
+    with pytest.raises(ConfigurationError, match="SPACES_SECRET:REQUIRED"):
+        load_settings()
+
+
 def test_blank_unused_urls_are_absent_not_required(monkeypatch):
     production(monkeypatch)
     for name in ("TEST_DATABASE_URL", "BENCHMARK_DATABASE_URL", "RECOVERY_DATABASE_URL"):

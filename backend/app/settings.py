@@ -43,6 +43,47 @@ class Settings(BaseSettings):
     postgres_bin: Path = Path("C:/Program Files/PostgreSQL/18/bin")
     antivirus_host: str = Field(default="127.0.0.1", validate_default=True)
     antivirus_port: int = Field(default=3310, ge=1, le=65535)
+    storage_backend: Literal["local", "spaces"] = "local"
+    spaces_region: str | None = None
+    spaces_endpoint: str | None = Field(default=None, validate_default=True)
+    spaces_bucket: str | None = Field(default=None, validate_default=True)
+    spaces_key: SecretStr | None = Field(default=None, validate_default=True)
+    spaces_secret: SecretStr | None = Field(default=None, validate_default=True)
+
+    @field_validator("spaces_endpoint")
+    @classmethod
+    def validate_spaces_endpoint(cls, value: str | None, info: ValidationInfo) -> str | None:
+        if info.data.get("storage_backend") != "spaces":
+            return value
+        region = info.data.get("spaces_region")
+        if not region or not re.fullmatch(r"[a-z0-9]+", region):
+            raise PydanticCustomError("REGION_INVALID", "REGION_INVALID")
+        if value not in {
+            f"https://{region}.digitaloceanspaces.com",
+            f"{region}.digitaloceanspaces.com",
+        }:
+            raise PydanticCustomError("ENDPOINT_INVALID", "ENDPOINT_INVALID")
+        return f"https://{region}.digitaloceanspaces.com"
+
+    @field_validator("spaces_bucket")
+    @classmethod
+    def validate_spaces_bucket(cls, value: str | None, info: ValidationInfo) -> str | None:
+        if info.data.get("storage_backend") == "spaces" and (
+            not value or not re.fullmatch(r"[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]", value)
+        ):
+            raise PydanticCustomError("BUCKET_INVALID", "BUCKET_INVALID")
+        return value
+
+    @field_validator("spaces_key", "spaces_secret")
+    @classmethod
+    def validate_spaces_credential(
+        cls, value: SecretStr | None, info: ValidationInfo
+    ) -> SecretStr | None:
+        if info.data.get("storage_backend") == "spaces" and (
+            value is None or not value.get_secret_value()
+        ):
+            raise PydanticCustomError("REQUIRED", "REQUIRED")
+        return value
 
     @field_validator("antivirus_host")
     @classmethod

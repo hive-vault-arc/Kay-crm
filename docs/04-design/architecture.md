@@ -203,6 +203,8 @@ The browser requests a `file_permit` through the facade, limited to one action, 
 
 The direct transfer route accepts only the configured Vercel origin in CORS, with the necessary methods and headers and no third-party cookie. The page passes the permit in a header from transient memory. A download can use `fetch` and present the resulting file to the browser. An interrupted transfer needs a fresh permit; the old one is not silently reused.
 
+The production storage adapter uses the configured private DigitalOcean Spaces bucket for both API publication and worker reads. UUID object keys are prefixed by environment; the filename never forms an object path. Spaces access stays server-side through the same permit route, with SHA-256 checked on each scan/read. Local and isolated environments retain the filesystem adapter. A provider failure records only the operation and a safe error class/code, never credentials, object bytes or private filenames. Existing objects in an ephemeral container are not migrated by changing this adapter; cloud backup/restore remains a separate operational requirement.
+
 ```mermaid
 sequenceDiagram
     participant B as Browser
