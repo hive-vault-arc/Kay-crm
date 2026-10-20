@@ -1,5 +1,17 @@
 # KAY screen map and navigation contract
 
+2026-10-19 inventory creation refinement: `/projects/new`,
+`/projects/properties/new` and programme-unit creation use three steps:
+identity/type, relevant characteristics or context, then a confirmation summary.
+Creation retains entered values when moving backward; edit forms stay direct.
+Terrain and commercial units omit residential-only rooms; apartment units inside
+a programme require an existing block, floor and reusable type. The wizard uses
+only persisted schema fields; pricing, owners, files and campaigns stay on the
+created record. `/projects/{id}` and
+`/projects/properties/{id}` keep existing tabs/actions but use compact identity,
+facts/files and side-by-side sale/rental regions; mobile stacks these surfaces.
+No route, permission or inventory lifecycle changed. [Scoped evidence](../03-planning/inventory-design-refresh-2026-10-19.md).
+
 D39 Projects override (2026-10-18): S10 `/projects` keeps standalone/programme
 tabs and role-correct creation. Standalone uses warm category/offer/status rail,
 automatic search/filter/reset, Cards/List, server sort and numbered pages.
@@ -78,9 +90,9 @@ References: [decisions D23–D25](../../decisions.md), [scope C01–C13](../../c
 
 The original request estimated 19 pages and named 17 screen families. The approved local sprint plan now places the remaining core workflows contextually and selects project units as a detail tab. Implement the named families and support views below, then record the actual route manifest; no artificial page quota or further routine choice is required before local implementation.
 
-## Approved visual reference and unpictured screens
+## Visual reference and unpictured screens
 
-Use [Approved V3's screenshot-to-route map and extension guide](ui-reference/approved-v3/README.md) for appearance across every existing screen, tab, dialog and contextual panel below. Pages without a dedicated image inherit its shared form, list, record-detail, project or administration patterns. Keep every supported field/action and the existing role/business rules; illustrative screenshot states, numbers and view toggles do not add backend capabilities. The current handoff changes references only; the listed implementation evidence does not certify the later V3 redesign.
+Use the current [design system](design-system.md), [DESIGN.md](../../DESIGN.md), Riviera branding and the owner's later screen-specific references for appearance across existing screens, tabs, dialogs and contextual panels. Keep every supported field/action and the existing role/business rules; illustrative screenshots do not add backend capabilities. The former nine-image reference was removed under D41.
 
 ## Entry and navigation
 
@@ -125,7 +137,7 @@ The following English-slug paths and contextual placements guide local implement
 | S10 | Projects list `/projects` | Standalone and programme tabs: category/reference/name/location and campaign filters, safe separate campaign facts, actual unit counts and numbered pages. | All active staff read and create/edit facts (D34); other inventory commands M/A-only. |
 | S11 | Project detail `/projects/[id]` | Non-secret facts, location, safe developer/owner display, separate whole-development offerings, optional briefing, bounded block/floor/type tabs and links to actual units. Shared attachments remain SP-09; protected contact details/documents require separate contact access. | All active staff edit facts/briefing/structure (D34); owners/files/offers/lifecycle M/A-only. |
 | S12 | Project units tab `/projects/[id]?tab=units` | Default to available physical units, then filter by block, floor, type, category and offering kind; distinguish each actual unit from its reusable type and whole-project offerings. | All active staff create/edit physical-unit facts (D34); stock and availability M/A-only. |
-| S13 | Project create/edit `/projects/new`, `/projects/[id]/edit` | Development facts, location, safe developer/owner links, optional briefing, hierarchy and offering management. The two modes may share one form implementation. Incomplete drafts remain possible under H-01/H-02. | All active staff create/edit facts/briefing (D34); developer-contact scope still required. |
+| S13 | Project create/edit `/projects/new`, `/projects/[id]/edit` | Creation is a three-step programme wizard for identity, location/context and review; edit remains a direct form. Hierarchy, ownership and offerings are managed after creation. Incomplete drafts remain possible under H-01/H-02. | All active staff create/edit facts/briefing (D34); developer-contact scope still required. |
 | S14 | Settings hub `/settings` | Entry to All Users and Working Hours. Do not expose an empty settings page to non-admin roles. | Administrator only for the currently named settings. |
 | S15 | All Users `/settings/users` | Numbered users with role/state, create/edit/reset and confirmed Delete. Delete hides/revokes access and retains historical attribution. No activation/handoff action or API credential response. | Administrator only. |
 | S16 | User create/edit `/settings/users/new`, `/settings/users/[id]/edit` | Named account and role; create accepts a chosen initial password, active immediately with forced own-password setup. Edit never implicitly changes existing credentials. | Administrator only. |

@@ -1,0 +1,169 @@
+import { randomUUID } from "node:crypto";
+import { mkdir } from "node:fs/promises";
+import path from "node:path";
+import { test, expect, createActor, removeActor, signIn, clearActorContext } from "../helpers/auth";
+import { createLead } from "../helpers/leads";
+
+const evidence = path.resolve("output/playwright/inventory-design");
+
+test("inventory forms and records use the workspace width without losing their actions", async ({ page, browser, baseURL }) => {
+  test.setTimeout(180_000);
+  const manager = await createActor("manager");
+  const errors: string[] = [];
+  page.on("pageerror", () => errors.push("page error"));
+  let mobile: Awaited<ReturnType<typeof browser.newContext>> | undefined;
+  try {
+    await mkdir(evidence, { recursive: true });
+    await signIn(page, manager);
+    await page.setViewportSize({ width: 1440, height: 900 });
+
+    await page.goto("/projects/properties/new");
+    const propertyForm = page.getByRole("form", { name: "Créer un bien indépendant" });
+    const propertyReference = `UI-${randomUUID().slice(0, 8)}`.toUpperCase();
+    await propertyForm.getByLabel("Référence du bien", { exact: true }).fill(propertyReference);
+    await propertyForm.getByLabel("Nom commercial (facultatif)", { exact: true }).fill("Bien de contrôle synthétique");
+    await expect(propertyForm.getByText("Étape 1 sur 3")).toBeVisible();
+    await expect(propertyForm.getByLabel("Surface en m² (facultative)")).toHaveCount(0);
+    await page.screenshot({ path: path.join(evidence, "property-create-desktop.png") });
+    await propertyForm.getByRole("button", { name: "Suivant", exact: true }).click();
+    await propertyForm.getByLabel("Surface en m² (facultative)").fill("75,00");
+    await page.screenshot({ path: path.join(evidence, "property-characteristics-desktop.png") });
+    await propertyForm.getByRole("button", { name: "Suivant", exact: true }).click();
+    await expect(propertyForm.getByRole("complementary", { name: "Aperçu du dossier" })).toContainText(propertyReference);
+    await expect(propertyForm.getByRole("complementary", { name: "Aperçu du dossier" })).not.toContainText("Non renseigné");
+    await expect(propertyForm.getByRole("button", { name: "Créer le bien", exact: true })).toBeEnabled();
+    await expect(propertyForm).toHaveAttribute("aria-busy", "false");
+    await page.screenshot({ path: path.join(evidence, "property-review-desktop.png") });
+    await propertyForm.getByRole("button", { name: "Créer le bien", exact: true }).click();
+    await expect(page.getByRole("heading", { name: propertyReference, exact: true })).toBeVisible();
+    const propertyPath = new URL(page.url()).pathname;
+    await expect(page.getByRole("tab", { name: "Aperçu", exact: true }).locator("svg[data-kay-icon='dashboard']")).toHaveCount(1);
+    await expect(page.getByRole("tab", { name: "Propriétaires", exact: true }).locator("svg[data-kay-icon='contacts']")).toHaveCount(1);
+    await expect(page.getByRole("tab", { name: "Offres", exact: true }).locator("svg[data-kay-icon='deal']")).toHaveCount(1);
+    await expect(page.getByRole("tab", { name: "Historique", exact: true }).locator("svg[data-kay-icon='clock']")).toHaveCount(1);
+    await expect(page.getByText("Surface", { exact: true }).locator("xpath=..").locator("xpath=..").locator("svg[data-kay-icon='columns']")).toHaveCount(1);
+    await page.screenshot({ path: path.join(evidence, "property-detail-desktop.png") });
+    await page.getByRole("tab", { name: "Offres", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Vente", exact: true })).toBeVisible();
+    await page.screenshot({ path: path.join(evidence, "property-offers-desktop.png") });
+
+    await page.goto("/projects/new");
+    const developmentForm = page.getByRole("form", { name: "Créer un programme" });
+    const developmentReference = `UI-${randomUUID().slice(0, 8)}`.toUpperCase();
+    await developmentForm.getByLabel("Référence du programme", { exact: true }).fill(developmentReference);
+    await developmentForm.getByLabel("Nom du programme", { exact: true }).fill("Programme de contrôle synthétique");
+    await expect(developmentForm.getByText("Étape 1 sur 3")).toBeVisible();
+    await expect(developmentForm.getByLabel("Présentation partagée (facultative)")).toHaveCount(0);
+    await page.screenshot({ path: path.join(evidence, "development-create-desktop.png") });
+    await developmentForm.getByRole("button", { name: "Suivant", exact: true }).click();
+    await page.screenshot({ path: path.join(evidence, "development-context-desktop.png") });
+    await developmentForm.getByRole("button", { name: "Suivant", exact: true }).click();
+    await expect(developmentForm.getByRole("complementary", { name: "Aperçu du dossier" })).toContainText(developmentReference);
+    await expect(developmentForm.getByRole("complementary", { name: "Aperçu du dossier" })).not.toContainText("Non renseigné");
+    await expect(developmentForm.getByRole("button", { name: "Créer le programme", exact: true })).toBeEnabled();
+    await expect(developmentForm).toHaveAttribute("aria-busy", "false");
+    await page.screenshot({ path: path.join(evidence, "development-review-desktop.png") });
+    await developmentForm.getByRole("button", { name: "Créer le programme", exact: true }).click();
+    await expect(page.getByRole("heading", { name: developmentReference, exact: true })).toBeVisible();
+    await page.screenshot({ path: path.join(evidence, "development-detail-desktop.png") });
+    await page.getByRole("tab", { name: "Offres du programme", exact: true }).click();
+    await page.screenshot({ path: path.join(evidence, "development-offers-desktop.png") });
+
+    mobile = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, viewport: { width: 360, height: 800 }, hasTouch: true, locale: "fr-FR", timezoneId: "Africa/Casablanca" });
+    const mobilePage = await mobile.newPage();
+    mobilePage.on("pageerror", () => errors.push("mobile page error"));
+    await signIn(mobilePage, manager);
+    await mobilePage.goto(propertyPath);
+    await expect(mobilePage.getByRole("heading", { name: propertyReference, exact: true })).toBeVisible();
+    expect(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    await mobilePage.screenshot({ path: path.join(evidence, "property-detail-mobile.png") });
+    await mobilePage.getByRole("tab", { name: "Offres", exact: true }).tap();
+    await mobilePage.screenshot({ path: path.join(evidence, "property-offers-mobile.png") });
+    await mobilePage.goto("/projects/properties/new");
+    await expect(mobilePage.getByRole("form", { name: "Créer un bien indépendant" })).toBeVisible();
+    await expect(mobilePage.getByRole("button", { name: "Suivant", exact: true })).toBeEnabled();
+    expect(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    await mobilePage.screenshot({ path: path.join(evidence, "property-create-mobile.png") });
+    await mobilePage.setViewportSize({ width: 320, height: 640 });
+    const labels = await Promise.all(["Type", "Détails", "Vérifier"].map(label => mobilePage.getByRole("navigation", { name: "Progression de la création" }).getByText(label, { exact: true }).boundingBox()));
+    expect(labels.every(Boolean)).toBe(true);
+    expect(labels[0]!.x + labels[0]!.width).toBeLessThan(labels[1]!.x);
+    expect(labels[1]!.x + labels[1]!.width).toBeLessThan(labels[2]!.x);
+    expect(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    await mobilePage.screenshot({ path: path.join(evidence, "property-create-mobile-320.png") });
+    await mobilePage.setViewportSize({ width: 360, height: 800 });
+    await mobilePage.goto("/projects/new");
+    await expect(mobilePage.getByRole("form", { name: "Créer un programme" })).toBeVisible();
+    await expect(mobilePage.getByRole("button", { name: "Suivant", exact: true })).toBeEnabled();
+    expect(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    await mobilePage.screenshot({ path: path.join(evidence, "development-create-mobile.png") });
+    expect(errors).toEqual([]);
+  } finally {
+    await mobile?.close();
+    await removeActor(manager);
+  }
+});
+
+test("creation steps adapt to land and commercial premises without dropping entered facts", async ({ page }) => {
+  const manager = await createActor("manager");
+  try {
+    await signIn(page, manager);
+    await page.goto("/projects/properties/new");
+    const form = page.getByRole("form", { name: "Créer un bien indépendant" });
+    await form.getByRole("button", { name: "Suivant", exact: true }).click();
+    await expect(form.getByRole("alert")).toContainText("référence valide");
+    await form.getByLabel("Référence du bien", { exact: true }).fill("WIZARD-LAND");
+    await form.getByLabel("Catégorie", { exact: true }).selectOption("land");
+    await form.getByRole("button", { name: "Suivant", exact: true }).click();
+    await expect(form.getByLabel("Surface du terrain en m² (facultative)")).toBeVisible();
+    await expect(form.getByLabel("Nombre de pièces (facultatif)")).toHaveCount(0);
+    await expect(form.getByLabel("Étage de l’unité")).toHaveCount(0);
+    await form.getByLabel("Surface du terrain en m² (facultative)").fill("0");
+    await form.getByRole("button", { name: "Suivant", exact: true }).click();
+    await expect(form.getByRole("alert")).toContainText("surface");
+    await form.getByLabel("Surface du terrain en m² (facultative)").fill("250,50");
+    await form.getByRole("button", { name: "Précédent", exact: true }).click();
+    await expect(form.getByLabel("Référence du bien", { exact: true })).toHaveValue("WIZARD-LAND");
+    await form.getByLabel("Catégorie", { exact: true }).selectOption("commercial");
+    await form.getByRole("button", { name: "Suivant", exact: true }).click();
+    await expect(form.getByLabel("Surface du local en m² (facultative)")).toHaveValue("250,50");
+    await expect(form.getByLabel("Nombre de pièces (facultatif)")).toHaveCount(0);
+    await form.getByRole("button", { name: "Suivant", exact: true }).click();
+    await expect(form.getByRole("complementary", { name: "Aperçu du dossier" })).toContainText("Local commercial");
+    await expect(form.getByRole("complementary", { name: "Aperçu du dossier" })).not.toContainText("Pièces");
+  } finally { await removeActor(manager); }
+});
+
+test("programme creation keeps its draft through keyboard navigation and optional promoter disclosure", async ({ page }) => {
+  const manager = await createActor("manager");
+  const contactOwner = await createActor("agent");
+  try {
+    await signIn(page, contactOwner);
+    await createLead(page, "Promoteur de contrôle synthétique", `+2126${Math.floor(Math.random() * 100_000_000).toString().padStart(8, "0")}`);
+    await clearActorContext(page);
+    await signIn(page, manager);
+    await page.goto("/projects/new");
+    const form = page.getByRole("form", { name: "Créer un programme" });
+    await form.getByLabel("Référence du programme", { exact: true }).fill("WIZARD-PROGRAMME");
+    await form.getByLabel("Nom du programme", { exact: true }).fill("Programme synthétique");
+    await form.getByRole("button", { name: "Suivant", exact: true }).focus();
+    await page.keyboard.press("Enter");
+    await expect(form.getByText("Étape 2 sur 3")).toBeVisible();
+    await form.getByRole("button", { name: "Ajouter un promoteur (facultatif)" }).click();
+    await expect(form.getByLabel("Libellé commercial du promoteur (facultatif)")).toBeVisible();
+    await form.getByLabel("Rechercher un contact accessible").fill("Promoteur de contrôle synthétique");
+    await form.getByRole("button", { name: "Rechercher le contact" }).click();
+    await form.getByRole("button", { name: "Choisir Promoteur de contrôle synthétique" }).click();
+    await form.getByRole("button", { name: "Suivant", exact: true }).click();
+    const summary = form.getByRole("complementary", { name: "Aperçu du dossier" });
+    await expect(summary).toContainText("Contact lié");
+    await expect(summary).not.toContainText("Promoteur de contrôle synthétique");
+    await form.getByRole("button", { name: "Précédent", exact: true }).click();
+    await form.getByRole("button", { name: "Dissocier le promoteur" }).click();
+    await expect(form.getByRole("button", { name: "Rechercher le contact" })).toBeVisible();
+    await form.getByRole("button", { name: "Précédent", exact: true }).click();
+    await expect(form.getByLabel("Référence du programme", { exact: true })).toHaveValue("WIZARD-PROGRAMME");
+    await form.getByRole("link", { name: "Annuler", exact: true }).click();
+    await expect(page).toHaveURL(/\/projects$/);
+  } finally { await removeActor(manager); await removeActor(contactOwner); }
+});

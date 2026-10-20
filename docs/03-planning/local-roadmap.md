@@ -14,9 +14,9 @@ Sprint files begin with planned/not-run status. [SP-01](sprints/sp-01-evidence.m
 
 Use the states `planned → ready → in_progress → technically_accepted`, with `blocked` naming an actual unmet prerequisite. A future sprint can be fully specified while remaining planned. Before marking it ready, verify its dependency has passed its technical gate and its environment prerequisites exist. The ordered roadmap is the approved starting sequence; record any later change and its effect on dependencies.
 
-## Approved V3 visual reference
+## UI visual reference
 
-All future UI work and UI rework follow [Approved V3: nine screenshots, route map and unpictured-page rules](../04-design/ui-reference/approved-v3/README.md), selected under D32. Keep the existing shared shadcn/ui, Tailwind CSS and Bklit stack, implement reusable patterns first, and preserve functional/API/security contracts. Screens without a dedicated picture inherit the same visual system. This reference handoff did not change source, tokens or dependencies and does not replace historical sprint evidence with a new acceptance claim. See [the shared V3 sprint gate](sprints/README.md#approved-v3-ui-work).
+Future UI work follows [DESIGN.md](../../DESIGN.md), the [design system](../04-design/design-system.md), Riviera branding and later owner-supplied screen references. Keep the shared shadcn/ui, Tailwind CSS and Bklit stack, implement reusable patterns first, and preserve functional/API/security contracts. The former nine-image reference is retired under D41; historical sprint evidence remains historical.
 
 ## Runtime and dependency baseline
 

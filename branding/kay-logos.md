@@ -1,7 +1,7 @@
 # KAY supplied logo replacement
 
 Owner request:2026-10-16. Replace the earlier low-resolution logo and the empty
-favicon with the two supplied PNGs; preserve the existing Approved V3 interface.
+favicon with the two supplied PNGs; preserve the existing interface.
 No generated/redrawn brand, backend, data, permission or business-rule changes.
 This explicit owner instruction supersedes the older reference-only restriction
 for these raster logos; it does not claim a vector master or a new font license.

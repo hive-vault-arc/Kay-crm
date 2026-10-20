@@ -1,5 +1,32 @@
 # KAY QA command register
 
+## Inventory UI-only release split — 2026-10-20
+
+This candidate contains the creation wizards, record/icons/layout, fixed sidebar
+scrolling and the owner-requested retirement of the former V3 reference. It
+does not contain property-photo UI/API or migration 0029. The photo work remains
+in a separate draft until private production files have persistent storage.
+The UI-only source passes frontend lint, typecheck, 72 unit tests and build;
+hosted exact-commit integration is a separate release gate.
+
+## Inventory record icons and shell scroll isolation — 2026-10-19
+
+Frontend `npm.cmd run typecheck`, lint, 72/72 units and final build pass.
+Headed Chrome: inventory-design selected journey 1/1; full shell 7/7; inventory
+and development reviews 2/2 at 320–1440px and real 200% zoom. Earlier shell
+reruns exposed an edge-toggle pointer overlap and then a pre-hydration screenshot
+warning; both were fixed before the final pass. Final Impeccable detector `[]`.
+No backend/database migration, production change, or publication in this slice.
+See [execution](03-planning/inventory-design-refresh-2026-10-19.md#record-details-and-stationary-shell-follow-up-owner-request-2026-10-19).
+
+## Inventory creation wizards — 2026-10-19
+
+[Follow-up ledger](03-planning/inventory-design-refresh-2026-10-19.md): creation-only, three-step adaptive programme/property/unit forms; no schema or production change. `frontend/`: `npm.cmd run typecheck`, `npm.cmd run lint`, `npm.cmd run test:unit` (72/72), and `npm.cmd run build` pass. Headed isolated Chrome `npm.cmd run test:chrome -- tests/e2e/inventory.spec.ts tests/e2e/developments.spec.ts tests/review/inventory-design.chrome.spec.ts --workers=1 --max-failures=1` passes 14/14 (5.4m) on final UI source; the later dedicated review passes 3/3, including keyboard/optional-promoter/cancel. `backend/` explicit venv `-m pytest tests/test_inventory.py tests/test_developments.py -q --tb=short --maxfail=2` passes 30/30. Final layout detector `[]`, desktop/mobile (320/360/1440) synthetic captures inspected. Earlier failed aggregate runs exposed a premature Next→submit browser-default action; the fix and regression assertion are retained in the ledger. No full-product or hosted release gate is claimed.
+
+## Inventory form/detail design — 2026-10-19
+
+UI-only [execution](03-planning/inventory-design-refresh-2026-10-19.md): `frontend/` `npm.cmd run typecheck`, `npm.cmd run lint`, `npm.cmd run test:unit` (72/72), final `npm.cmd run build` all pass. Headed isolated Chrome `npm.cmd run test:chrome -- tests/e2e/inventory.spec.ts tests/e2e/developments.spec.ts --workers=1 --max-failures=1`: clean final 12/12 in 5.1m. Existing inventory/development reviews 2/2 and new final design case 1/1 pass. Earlier failures (agent edit visibility, marketing-name heading) and corrections are retained in the ledger. Desktop/mobile synthetic captures inspected; final layout detector `[]`. No production data or migration touched.
+
 ## Commercial property category — 2026-10-19
 
 Backend explicit venv, isolated test DB head0028: `-m pytest tests/test_inventory.py tests/test_inventory_edges.py tests/test_developments.py tests/test_property_facets.py tests/test_requirements.py tests/test_inventory_migration.py -q --tb=short --maxfail=2` — 77 passed/103.31s. First run against isolated head0027 failed two category inserts as expected; `APP_ENVIRONMENT=test -m app.cli.inspect_database` confirmed database/OID, then `-m alembic upgrade head` advanced only the isolated test target. Ruff check/format all and mypy app pass. `-m alembic check` still fails on pre-existing 0027 Lead/Deal archive metadata drift; no 0028 operation is listed.
@@ -561,7 +588,7 @@ affected search/export/archive/audit regression passes. Captures inspected.
 Current button inventory284 sites/94 files/0 violations. Test servers stopped;
 no backend/CI edit, production access, commit or push. Separate full database
 integration/release workflow not executed/not passed and still required before
-real customer data. [Exact command and scoped evidence](04-design/ui-reference/approved-v3/dashboard-header.md).
+real customer data.
 
 ## App-wide semantic action buttons (2026-10-16)
 
@@ -576,7 +603,6 @@ recovery/denial and all43 glyphs/offline checks pass. Actual minimum normal-text
 contrast5.536:1; controls44px; no horizontal overflow or unexpected main-review
 console/page errors. Prior fixture/selector failures and the real Radix
 composition/width corrections are retained in the evidence, not called passed.
-[Exact commands, complete source coverage and limits](04-design/ui-reference/approved-v3/action-buttons.md).
 
 Final additional import/Next-SSR selection passes2/2,0 skipped,1.0m: actual
 import confirmation return/icon/focus, atomic commit/mapping and role denial;
@@ -602,7 +628,6 @@ creation/edit/proposal/stage/retry/conflict and scoped denial are covered.
 Actual normal-text contrast minimum6.045:1,44px controls,0 horizontal overflow
 and0 unexpected page/console errors in the main layout case. Safe captures and
 geometry stay ignored. No backend or CI edit, production test, commit or push.
-[Exact commands, retained failure, coverage and limits](04-design/ui-reference/approved-v3/record-facts.md).
 
 ## Performance dashboard: neutral KPIs, funnels and agent stacks (2026-10-16)
 
@@ -617,7 +642,6 @@ funnel/stack parity, eleven-contributor browser pagination, agent/private/financ
 scope, dates and states, keyboard/touch,320–1440px and native200% pass.
 Observed contrast minimum5.536:1,44px controls and0 unexpected page/console errors.
 This is local UI-only evidence, not a full database release workflow result.
-[Commands, retained failure, corrections and limits](04-design/ui-reference/approved-v3/performance-dashboard.md).
 
 ## Dashboard local-service widget removal (2026-10-16)
 
@@ -630,7 +654,6 @@ endpoint assertions and real API outage/restart/report recovery retained.
 320–1440px, native200% zoom, keyboard/touch and agent/audit checks pass; actual
 desktop/mobile captures opened. This UI change remains local, not pushed or
 deployed, and is not a full release-suite result.
-[Exact command and evidence](04-design/ui-reference/approved-v3/dashboard-header.md#subsequent-owner-request-remove-local-diagnostics).
 
 ## Local dashboard city-header refinement (2026-10-16)
 
@@ -641,7 +664,6 @@ coverage,44px actions, keyboard/touch, audit/agent permissions, synthetic health
 failure/recovery and native200% zoom. Actual captures opened. Final project
 listeners/service processes0; shared PostgreSQL preserved. UI only, local and
 unpublished; not a whole-product or release-suite result.
-[Exact evidence, coverage and scoped gate](04-design/ui-reference/approved-v3/dashboard-header.md).
 
 ## Local login Iconsax refinement (2026-10-16)
 
@@ -653,7 +675,6 @@ Current29-export SSR/no-JS/hydration/offline glyph checks, real auth/retry/passw
 change,320–1440 geometry, keyboard and native200% zoom pass. Screenshots opened,
 calculated contrast recorded, test listeners/service processes0. No push,
 deployment, backend changes or newly claimed whole-product verification.
-[Exact commands, scoped gate and limits](04-design/ui-reference/approved-v3/login-icons.md).
 
 ## Pinned managed Python startup (2026-10-16)
 
@@ -690,8 +711,7 @@ scrolling,51-Lead/11-Deal pages and actual200% zoom. Initial fixture/route races
 focus correction and interrupted guessed-option test remain disclosed, not
 counted as passes. Native review collects0 unexpected console/page errors.
 Client scan4 roots/352 JS/0 configured-secret/signing-key occurrences. Exact
-commands, five-view coverage, inspected captures, during-work antislop gate and
-limits: [left-filter execution](04-design/ui-reference/approved-v3/filter-rail.md).
+commands, five-view coverage, inspected captures and during-work antislop gate.
 No full backend/browser matrix or deployment is inferred.
 Final project service listeners/processes0; shared PostgreSQL and Codex execution
 helpers preserved. Changes remain local/uncommitted/unpushed.
@@ -704,8 +724,7 @@ two new action/permission/touch cases, actual Lead and Deal creation/list
 regressions, filtered CSV generation/download and native zoom. After the bounded
 8px utility-padding adjustment, fresh affected confirmation3/3 pass1.4m, including
 both list creation links at actual200% Chrome zoom. Counts overlap; this is not
-nine independent cases or a new full backend/browser certification. [Commands,
-surface coverage, captures, antislop gate and limitations](04-design/ui-reference/approved-v3/list-header-actions.md).
+nine independent cases or a new full backend/browser certification.
 
 ## Pure-black sidebar refinement (2026-10-16)
 
@@ -715,7 +734,7 @@ without warnings. Compiled headed Chrome account-footer cases plus the existing
 native200% zoom review pass4/4 in1.1m. Five widths, long names, short drawer,
 touch/keyboard logout, pending/failure/retry and exact black/retained selection
 colors are verified; six fresh synthetic captures inspected. All other theme
-values match HEAD structurally. [Exact command, contrast and gate report](04-design/ui-reference/approved-v3/account-footer.md#pure-black-sidebar-refinement).
+values match HEAD structurally.
 
 ## Sidebar account footer refinement (2026-10-16)
 
@@ -723,8 +742,7 @@ Frontend `npm.cmd run lint`, `npm.cmd run typecheck` and `npm.cmd run build`
 all exit0, without lint/build warnings. The compiled headed Chrome selection
 passes13/13 in3.1m: three new account-footer cases plus ten existing shell/auth,
 logout-race and native review cases, including actual200% zoom. This is focused
-UI evidence, not a rerun of the whole backend/CRM matrix. Exact repeatable
-commands, coverage and screenshots: [account footer execution](04-design/ui-reference/approved-v3/account-footer.md).
+UI evidence, not a rerun of the whole backend/CRM matrix.
 The settled-capture confirmation repeats the three new cases:3/3 pass51.4s;
 subsequent lint/typecheck pass. Project service listeners/processes finish at0.
 
@@ -842,12 +860,9 @@ failed attempt. A focused77-case Chrome/Edge/mobile Chromium/mobile WebKit
 selection plus corrected affected checks passes across commands:28 retained
 passes, corrected Chrome Lead/staff,47 remaining variants, plus4 shell cases =81
 unique passing variants. The failed selected attempt was28/3/46 not run; the
-actual outcomes and exact regex are in [execution](04-design/ui-reference/approved-v3/execution.md).
 No pending result is counted as passed. Native Chrome is155.0.8059.79; no physical device, actual
 Safari, fresh backend/load suite, production or human acceptance is claimed.
 Nonfatal inherited Windows Proactor10054 shutdown warnings remain disclosed.
-See [coverage](04-design/ui-reference/approved-v3/coverage.md) and
-[implemented system](04-design/ui-reference/approved-v3/implemented-system.md).
 
 ## SP-22 final local verified commands (2026-10-16)
 
@@ -1445,8 +1460,7 @@ real account creation or whole-product certification is implied.
 
 ## Login composition preview (2026-10-16)
 
-The [login implementation note](04-design/ui-reference/approved-v3/login-layout.md)
-records the local `/login` reference alignment. From `frontend/`,
+The historical login refinement covered local `/login` alignment. From `frontend/`,
 `npm.cmd run lint`, `.\node_modules\.bin\tsc.cmd --noEmit --incremental false`
 and `npm.cmd run security:check` pass. From the repository root,
 `powershell -NoProfile -File docs/03-planning/validate-sprints.ps1` and
@@ -1466,8 +1480,7 @@ acceptance is pending; this is not whole-product or production-release acceptanc
 ## Login compact-frame follow-up (2026-10-17)
 
 The compact-frame refinement supersedes the earlier 98rem desktop screenshot.
-The current [`login implementation note`](04-design/ui-reference/approved-v3/login-layout.md)
-records 2048 × 1152 and 375px full-page captures in ignored
+The historical review recorded 2048 × 1152 and 375px full-page captures in ignored
 `frontend/output/playwright/`. At 2048 × 1152, 1440 × 900, 1024 × 900 and
 768 × 900, the page fits the viewport; widths 320/375/768/1024/1280/1440/2048
 have no horizontal overflow. The 1280 × 720 viewport scrolls vertically to keep

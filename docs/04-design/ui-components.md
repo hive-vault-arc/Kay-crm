@@ -47,7 +47,7 @@ shadcn/ui distributes component source into the application. It is not a single 
 
 ## Current icon contract: Iconsax (D33)
 
-The subsequent [app-wide action-button refinement](ui-reference/approved-v3/action-buttons.md)
+The subsequent app-wide action-button refinement
 adds a typed `action` prop to the existing shadcn Button and a shared
 `button-actions.ts` registry. Call sites declare meaning explicitly; rendering
 does not infer behavior from translated labels or API values. Icons remain
@@ -58,7 +58,7 @@ metric data controls retain their existing data marks instead of extra glyphs.
 dialog actions or unclassified interface buttons. No business command moves
 into the Button implementation.
 
-The owner-requested [Lead/Deal summary refinement](ui-reference/approved-v3/record-facts.md)
+The owner-requested Lead/Deal summary refinement
 uses `components/shared/record-facts.tsx`: a semantic definition list with typed
 icon-labelled terms and real React values/links. It owns the two-column desktop
 and mobile label/value anatomy, not data fetching or editing. `data-summary`

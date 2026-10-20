@@ -51,7 +51,7 @@ The other chart types remain available in the [offline catalogue](../reference/b
 
 ## Data, appearance, and verification
 
-2026-10-16 owner-requested [performance refinement](ui-reference/approved-v3/performance-dashboard.md):
+2026-10-16 owner-requested performance refinement:
 current pipeline counts are shown as distribution funnels, not cumulative
 conversion cohorts. KAY composes its installed Bklit horizontal stacked BarChart
 with a rotated, square funnel silhouette; segment height encodes exact count.

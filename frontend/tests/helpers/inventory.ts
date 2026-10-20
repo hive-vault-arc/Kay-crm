@@ -5,10 +5,27 @@ import { expect } from "./auth";
 export async function createProperty(page: Page, category = "apartment", reference = `SP07-${randomUUID()}`) {
   await page.goto("/projects");
   await page.getByRole("link", { name: "Créer un bien indépendant", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Créer le bien", exact: true })).toBeEnabled();
+  const form = page.getByRole("form", { name: "Créer un bien indépendant" });
+  const navigation = form.getByRole("group", { name: "Navigation du formulaire" });
   await page.getByLabel("Référence du bien", { exact: true }).fill(reference);
   await page.getByLabel("Catégorie", { exact: true }).selectOption(category);
-  await page.getByRole("button", { name: "Créer le bien", exact: true }).click();
+  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
+  await expect(form.getByText("Étape 2 sur 3")).toBeVisible();
+  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
+  await expect(form.getByText("Étape 3 sur 3")).toBeVisible();
+  try {
+    await navigation.getByRole("button", { name: "Créer le bien", exact: true }).click();
+  } catch (error) {
+    const state = await page.evaluate(() => ({
+      createPath: location.pathname === "/projects/properties/new",
+      detailPath: /^\/projects\/properties\/[a-f0-9-]{36}$/.test(location.pathname),
+      loginPath: location.pathname === "/login",
+      formPresent: Boolean(document.querySelector('form[aria-label="Créer un bien indépendant"]')),
+      step: document.querySelector('nav[aria-label="Progression de la création"] [role="status"]')?.textContent ?? null,
+      alertCount: document.querySelectorAll('[role="alert"]').length,
+    }));
+    throw new Error(`Property creation action disappeared; safe state ${JSON.stringify(state)}`, { cause: error });
+  }
   await expect.poll(() => /^\/projects\/properties\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
   await expect(page.getByRole("heading", { name: reference.toUpperCase(), exact: true })).toBeVisible();
   return new URL(page.url()).pathname.split("/")[3];

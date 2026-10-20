@@ -153,6 +153,7 @@ test("Riviera rail fits the viewport and gives short windows the drawer @shell",
     const sidebar = page.locator("aside[data-sidebar]");
     const content = sidebar.locator(".sidebar-scroll");
     await expect(sidebar).toBeVisible();
+    await expect(page.getByRole("button", { name: "Ouvrir les notifications" })).toBeEnabled();
     expect(await content.evaluate(element => getComputedStyle(element).overflowY)).toBe("hidden");
     expect(await content.evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
     await expect(sidebar.getByRole("button", { name: "Se déconnecter" })).toBeInViewport();
@@ -177,6 +178,21 @@ test("Riviera rail fits the viewport and gives short windows the drawer @shell",
   await expect(drawer.getByRole("link", { name: "Projets" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
+});
+
+test("desktop rail stays in place while workspace pages scroll @shell", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  for (const route of ["/dashboard", "/leads", "/deals", "/projects"]) {
+    await page.goto(route);
+    const sidebar = page.locator("aside[data-sidebar]");
+    await expect(sidebar).toBeVisible();
+    await page.locator("main").evaluate(element => { element.style.minHeight = "250vh"; });
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+    await expect.poll(async () => Math.abs((await sidebar.boundingBox())?.y ?? Infinity)).toBeLessThan(2);
+    expect(await sidebar.locator(".sidebar-scroll").evaluate(element => element.scrollTop)).toBe(0);
+    await page.evaluate(() => window.scrollTo(0, 0));
+  }
 });
 
 test("AT-23: sheet keyboard, containment, Escape and focus return @shell", async ({
