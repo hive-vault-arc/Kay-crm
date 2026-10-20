@@ -27,22 +27,14 @@ public CA and guarded first-admin script remain unchanged.
 
 ## Coverage and earlier evidence
 
-The [route/surface coverage](../04-design/ui-reference/approved-v3/coverage.md)
-and [current action inventory](../04-design/ui-reference/approved-v3/action-buttons-coverage.json)
-retain the complete affected surface list. Current inventory: 284 buttons in 94
+The retired detailed reference records once listed the affected surfaces. Current
+inventory at this historical publication gate: 284 buttons in 94
 files, 275 typed semantic mappings, 5 pre-existing icon buttons, 4 numeric/chart
 exceptions and 0 violations. Icons: 43 semantic exports, 28 consumers, 113 sites,
 3 chart roots excluded and 0 violations. shadcn/ui, Tailwind and Bklit are retained.
 
-The individual records preserve the earlier scoped real-browser results:
-[account/footer](../04-design/ui-reference/approved-v3/account-footer.md),
-[list actions](../04-design/ui-reference/approved-v3/list-header-actions.md),
-[filter rail](../04-design/ui-reference/approved-v3/filter-rail.md),
-[login](../04-design/ui-reference/approved-v3/login-icons.md),
-[city header](../04-design/ui-reference/approved-v3/dashboard-header.md),
-[performance](../04-design/ui-reference/approved-v3/performance-dashboard.md),
-[record facts](../04-design/ui-reference/approved-v3/record-facts.md) and
-[shared actions](../04-design/ui-reference/approved-v3/action-buttons.md).
+The earlier scoped real-browser results are summarized in
+[QA commands](../QA_COMMANDS.md) and [security checks](../SECURITY_CHECK.md).
 
 This publication adds no new visual direction. Existing KAY 1/1/1 dials,
 design-system geometry and antislop DURING implementation remain the context;

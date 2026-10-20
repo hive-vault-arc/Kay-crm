@@ -1,5 +1,17 @@
 # KAY interface design system
 
+## Inventory forms and records: local implementation, 2026-10-19
+
+The owner-requested property/programme form/detail refinement uses the existing
+Riviera tokens and current inventory patterns: creation is a three-stage task flow with
+semantic step icons, one visible field group and a review summary before save;
+edit remains a direct form. The field group changes with the physical category,
+never inventing non-schema bedrooms, bathrooms or marketplace amenities. Record overviews pair facts
+with protected-file controls; the two offer kinds share a compact row. Programme
+identity stays above a full-width four-fact summary row. Narrow screens return
+to one reading/focus column. This is an implementation record, not Khalid's
+human design approval. [Actual checks and differences](../03-planning/inventory-design-refresh-2026-10-19.md).
+
 ## Projects directory: D39, 2026-10-18
 
 Central `layoutPx` roles define projectFilterPanel314, projectCover148,
@@ -73,7 +85,7 @@ follow-up. Additional project interests use subsequent balanced grid rows,
 not a growing right column beside an empty left column. Existing section,
 control, gap and breakpoint tokens remain; no arbitrary spacer is introduced.
 
-Status: Approved V3 visual target selected; shared token mapping exists, redesign verification pending  
+Status: current design-system rules; former nine-image reference retired under D41
 Date: 2026-10-15  
 Confirmed direction: KAY asked for a white/ivory-led 60–30–10 balance, visible colors for meaningful statuses, and consistently red destructive actions. shadcn/ui, Tailwind CSS, and Bklit UI are mandatory implementation choices; the palette below remains proposed.  
 Technical proposals: the secondary and accent colors, exact hex values, semantic mapping, typography, geometry, and component recipes below.  
@@ -93,9 +105,9 @@ KAY's palette, Iconsax, semantic controls, authority and unrelated route geometr
 remain. No new global token, font, raster or dependency is introduced.
 [Current scope and evidence](../03-planning/leads-deals-interface-refresh.md).
 
-## Approved V3 visual target
+## Current visual authority
 
-Khalid selected the [nine Approved V3 screenshots](ui-reference/approved-v3/README.md) under [D32](../../decisions.md). Their route map and unpictured-page extension rules govern future appearance. Keep the city dashboard header, distinct KPI/pipeline colors, faded-villa login, neutral form/card surfaces, compact tables and vertically stacked record details. Where an older visual proposal below differs, follow V3 while preserving semantic accessibility and existing functional contracts. Reconcile exact geometry/color values centrally in the implementation; this documentation update changes no token JSON, CSS or application source. Earlier sprint checks are not proof of V3 compliance.
+The former nine-image reference selected under D32 was removed under [D41](../../decisions.md) and no longer governs future appearance. Use the current Riviera mapping, later owner-supplied screen references and the shared implementation rules below. Preserve semantic accessibility and existing functional contracts. This documentation cleanup changes no token JSON, CSS or application source.
 
 ## Identity and design intent
 
@@ -107,8 +119,8 @@ not hidden duplicates. Visible labels and single-column controls retain44px
 targets; long rails scroll within the viewport. Wide tables keep named keyboard-
 scrollable regions and show the helper when actual overflow exists, including
 desktop widths. Contact-record lists retain their inline presentation. Existing
-KAY tokens, gold creation/quiet utilities, black navigation and real handlers
-remain authoritative. [Scope and evidence](ui-reference/approved-v3/filter-rail.md).
+KAY tokens, gold creation/quiet utilities, navigation and real handlers
+remain authoritative for this historical refinement.
 
 Owner-requested refinement,2026-10-16: `color.surface.sidebar` is pure black
 `#000000`, matching the existing logo background, for both desktop navigation and
@@ -122,8 +134,8 @@ surfaces should use their available shell width; retain a narrow max-width only
 for content whose reading/form legibility benefits from it. Keep small safe-area
 insets and intentional internal rhythm, including 44px touch targets and dialog
 clearance. This rule removes dead space, not all whitespace. The login refinement
-below applies it to `/login`; other route-specific geometry remains governed by
-Approved V3 and is reviewed when that surface changes.
+below applies it to `/login`; other route-specific geometry is reviewed when
+that surface changes.
 
 KEPVY is the software product; KAY Real Estate is the customer and the intended visible identity for this team's workspace. The five existing branding pages specify a **KEPVY** rounded-K identity with white `#FFFFFF`, neutral dark grey `#272727`, soft beige `#F6ECDA`, and proposed Satoshi typography. The supplied **KAY** logo is a different, fine-line key-and-wordmark in cream/gold on black. Neither logo should be substituted for the other. This document adapts the neutral foundation to a KAY-facing CRM and proposes one restrained gold family because of KAY's supplied mark. It does not revise the KEPVY logo master or assert that KAY's raster artwork contains an exact flat gold hex.
 
@@ -200,7 +212,6 @@ utilities transparent rest surfaces, normal-weight14px labels and8px inline
 padding, preserving44px targets. `ListHeaderActions` separates creation from the
 secondary group with16px, and keeps8px between secondary controls. Default
 buttons elsewhere, including save/submit/export confirmations, are unchanged.
-See [coverage and checks](ui-reference/approved-v3/list-header-actions.md).
 
 | Role | Proposed treatment | Rule |
 |---|---|---|
@@ -256,19 +267,19 @@ Charts may need more than three category colors because data series are not bran
 Iconsax replaces Lucide across the application, including local shadcn controls.
 Use only `@/components/icons` semantic exports. Selected official Free linear
 assets render inline on the server and inherit existing semantic colors.
-Preserve V3 sizing classes, alignment, labelled controls and touch targets.
+Preserve current sizing classes, alignment, labelled controls and touch targets.
 No theme, layout, logo, photograph or chart geometry is changed by this migration.
 License notice, source integrity and coverage: [Iconsax migration](../reference/iconsax/migration.md).
 Older Lucide references below describe D29's historical baseline, superseded
 for icons only by D33.
 
-The local [login refinement](ui-reference/approved-v3/login-icons.md) adds
+The local login refinement adds
 semantic field/action/team icons and uses the existing large10px radius on
 login controls. It does not restyle every Input/Button or change authentication.
 
 ## Decision and verification log
 
-The [app-wide action-button refinement](ui-reference/approved-v3/action-buttons.md)
+The app-wide action-button refinement
 reuses existing palette/spacing/radius roles. Gold creation is now app-wide,
 positive saves/confirmations use the existing success foreground as a filled
 background with white text, and secondary controls retain neutral surfaces with
@@ -279,7 +290,7 @@ instead of leaking horizontal overflow. Existing caller-selected destructive,
 quiet, compact, outline and link variants remain, apart from explicitly gold
 creation. No new raw palette, font, chart role or component-kit dependency.
 
-The [Lead/Deal detail refinement](ui-reference/approved-v3/record-facts.md) adds
+The Lead/Deal detail refinement adds
 opt-in `RecordFacts` / `RecordFact` definition lists. Summary labels use existing
 16px semantic Iconsax icons,8px icon gaps,20px row gaps and32px column gutters.
 At1280px the list has two fact columns; at640px each fact places its label/value
@@ -290,7 +301,7 @@ Only these detail pages remove their52rem reading cap. All other record-stack
 consumers and operation forms retain their existing layout. The summary opt-out
 marker prevents the legacy single-column rule from overriding this composition.
 
-The later [performance-dashboard refinement](ui-reference/approved-v3/performance-dashboard.md)
+The later performance-dashboard refinement
 replaces filled KPI tiles with neutral grouped current/period cells, retaining
 semantic icon/value accents. Equal-height pipeline panels contain current-count
 distribution funnels with complete legends. Existing contributor totals use
@@ -298,7 +309,7 @@ Bklit stacked bars below; recorded actions span the row, then wins/contacts shar
 the next row. Exact tables, ten-contributor pagination and real drill-downs
 remain. No new global token, daily metric, conversion denominator or API change.
 
-The local [dashboard-header refinement](ui-reference/approved-v3/dashboard-header.md)
+The local dashboard-header refinement
 removes the city strip's outer border/radius and uses existing28/32 spacing steps
 for112/128px responsive minimum heights. The same decorative photo fills the
 strip with a static1.05 scale; its clipping/overlay and existing controls remain.

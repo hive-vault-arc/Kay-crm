@@ -7,8 +7,8 @@ import { facadeError, upstreamRequest } from "@/lib/api/facade";
 import { frenchApiError } from "@/lib/api/errors";
 import { documentSchema, documentsSchema, fileCommandSchema, newDocumentSchema, parentSchema, permitRequestSchema, permitSchema } from "./contracts";
 
-const querySchema = parentSchema.extend({ page: z.coerce.number().int().min(1).max(100000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional() }).strict();
-const known = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "IDEMPOTENCY_CONFLICT", "RATE_LIMITED", "UNSUPPORTED_MEDIA_TYPE", "FILE_VERSION_CONFLICT", "FILE_NOT_CLEAN", "FILE_SCAN_NOT_PENDING", "FILE_SCAN_IN_PROGRESS"]);
+const querySchema = parentSchema.extend({ purpose: z.enum(["attachment", "photo"]).optional(), page: z.coerce.number().int().min(1).max(100000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional() }).strict();
+const known = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "IDEMPOTENCY_CONFLICT", "RATE_LIMITED", "UNSUPPORTED_MEDIA_TYPE", "PROPERTY_PHOTO_LIMIT", "PROPERTY_PHOTO_WEBP_REQUIRED", "FILE_VERSION_CONFLICT", "FILE_NOT_CLEAN", "FILE_SCAN_NOT_PENDING", "FILE_SCAN_IN_PROGRESS"]);
 export async function relayFiles(key: string, request: Request, requestId: string) {
   const parts = key.split("/");
   const documentTarget = parts[0] === "documents" && parts.length >= 2 && z.uuid().safeParse(parts[1]).success;

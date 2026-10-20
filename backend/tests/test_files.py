@@ -201,7 +201,17 @@ def test_private_scope_shared_inventory_permit_race_and_revocation(settings, dat
         with pytest.raises(IdentityError, match="NOT_FOUND"):
             operation()
     pid = property_draft(settings, database, manager)
-    shared = new_document(settings, database, manager, "property", pid, data)
+    shared = new_document(
+        settings,
+        database,
+        manager,
+        "property",
+        pid,
+        image_bytes("WEBP"),
+        "Synthétique.webp",
+        "image/webp",
+        purpose="photo",
+    )
     assert list_documents(database, outsider, "property", pid, 1, 50)["total"] == 1
     with pytest.raises(IdentityError, match="FORBIDDEN"):
         grant(database, outsider, shared)

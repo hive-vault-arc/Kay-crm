@@ -30,6 +30,11 @@ class Document(Base):
         ),
         CheckConstraint("size_bytes>0 AND size_bytes<=20971520", name="document_size"),
         CheckConstraint("version>0", name="document_version_positive"),
+        CheckConstraint(
+            "purpose IN ('attachment','photo') AND "
+            "(purpose<>'photo' OR (property_id IS NOT NULL AND mime_type='image/webp'))",
+            name="document_purpose",
+        ),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     contact_id: Mapped[UUID | None] = mapped_column(
@@ -49,6 +54,9 @@ class Document(Base):
     )
     filename: Mapped[str] = mapped_column(String(180))
     mime_type: Mapped[str] = mapped_column(String(120))
+    purpose: Mapped[str] = mapped_column(
+        String(20), default="attachment", server_default="attachment"
+    )
     size_bytes: Mapped[int] = mapped_column(BigInteger)
     created_by_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     version: Mapped[int] = mapped_column(BigInteger, default=1)

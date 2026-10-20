@@ -137,11 +137,13 @@ def main() -> int:
 
             from tests.file_support import eicar_bytes, image_bytes, office_bytes
 
-            if command.get("kind") not in {"clean", "rejected"}:
+            if command.get("kind") not in {"clean", "clean-document", "rejected"}:
                 raise ValueError
             data = (
                 image_bytes()
                 if command["kind"] == "clean"
+                else office_bytes()
+                if command["kind"] == "clean-document"
                 else office_bytes(extra=("word/antivirus-test.txt", eicar_bytes()))
             )
             print(json.dumps({"base64": base64.b64encode(data).decode("ascii")}))
