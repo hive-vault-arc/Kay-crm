@@ -1,5 +1,9 @@
 # KAY security check for changes
 
+## Production property-photo transfer (2026-10-20)
+
+The property overview now shows the existing manager/admin photo chooser first and starts the same permit-bound WebP transfer on selection. This does not grant agents write access or bypass MIME/signature, size, ten-photo, quarantine, scan or clean-only read checks. The API and worker select the same private Spaces adapter in production; no public object URL, browser Spaces credential, CDN or CORS grant is introduced. Object keys are UUID-only and environment-prefixed; download still requires a current-session permit and verifies the stored SHA-256. Provider failures log a safe operation and error code/class only. Synthetic unit and isolated transfer tests cover provider denial and integrity failure. Existing container-local files are not moved by this change, and production Spaces still needs independent backup/restore qualification.
+
 ## Inventory record and shell presentation (2026-10-19)
 
 This follow-up changes icons, layout and sidebar positioning only. The shared

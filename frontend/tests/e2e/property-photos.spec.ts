@@ -18,8 +18,20 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     await page.goto(`/projects/properties/${id}`);
     const gallery = page.getByRole("region", { name: "Photos du bien" });
     await expect(gallery.getByText("0 / 10 photos")).toBeVisible();
+    await expect(gallery.getByRole("button", { name: "Choisir une image" })).toBeInViewport();
+    let interrupted = false;
+    await page.route("**/transfers/**", route => {
+      if (route.request().method() === "PUT" && !interrupted) {
+        interrupted = true;
+        return route.fulfill({ status: 503, contentType: "application/json", body: '{"error":{"code":"FILE_STORAGE_UNAVAILABLE"}}' });
+      }
+      return route.continue();
+    });
     await gallery.locator('input[type="file"]').setInputFiles(path.resolve("tests/fixtures/projects-reference/patio.png"));
-    await gallery.getByRole("button", { name: "Envoyer la photo" }).click();
+    await expect(gallery.getByRole("button", { name: "Envoyer la photo" })).toHaveCount(0);
+    await expect(gallery.getByRole("alert")).toBeVisible();
+    await gallery.getByRole("button", { name: "Réessayer l’envoi" }).click();
+    await page.unroute("**/transfers/**");
     await expect(gallery.getByText("1 / 10 photos")).toBeVisible();
     await expect(gallery.getByText("Analyse réussie")).toBeVisible({ timeout: 60_000 });
     await expect(gallery.locator('img[src^="blob:"]')).toBeVisible();
@@ -33,7 +45,6 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     await expect(viewer).toHaveCount(0);
     await expect(firstPhoto).toBeFocused();
     await gallery.locator('input[type="file"]').setInputFiles(path.resolve("tests/fixtures/projects-reference/sable.png"));
-    await gallery.getByRole("button", { name: "Envoyer la photo" }).click();
     await expect(gallery.getByText("2 / 10 photos")).toBeVisible();
     const secondPhoto = gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" });
     await expect(secondPhoto).toBeVisible({ timeout: 60_000 });
