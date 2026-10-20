@@ -25,6 +25,7 @@ from app.errors import error_response
 from app.files.router import router as files_router
 from app.files.router import transfers as transfer_router
 from app.finance.router import router as finance_router
+from app.generated.router import router as generated_router
 from app.health import router
 from app.identity.router import router as identity_router
 from app.identity.security import IdentityError, dummy_hash
@@ -76,6 +77,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(inventory_router)
     application.include_router(hierarchy_router)
     application.include_router(files_router)
+    application.include_router(generated_router)
     application.include_router(requirements_router)
     application.include_router(deals_router)
     application.include_router(activities_router)

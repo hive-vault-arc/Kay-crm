@@ -32,6 +32,7 @@ try {
     "tests/unit/calendar.test.mjs",
     "tests/unit/projects.test.mjs",
     "tests/unit/directory-filters.test.mjs",
+    "tests/unit/generated-documents.test.mjs",
     "tests/unit/theme.test.mjs",
   ], {
     cwd: frontend, stdio: "inherit", windowsHide: true,

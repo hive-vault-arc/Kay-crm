@@ -532,6 +532,16 @@ by reopen or external dispositions. Development/history-bearing downgrade is
 refused. See [concrete contract](outcomes-local.md) and
 [verification record](../03-planning/sprints/sp-13-execution.md) for passing scoped local gates and remaining limits.
 
+## Generated document extension
+
+Additive migration `0030_generated_documents` extends the existing `document`
+ledger with nullable `enquiry_id` and `template_code`. Exactly one parent remains
+required. `purpose='generated'` requires a Lead or Deal parent, a template code,
+and PDF MIME; existing attachment and photo rows are unchanged. Each generation
+retains an immutable clean `document_version`, SHA-256, actor audit, and
+idempotency receipt. Private bytes stay in the configured local or Spaces
+storage. See [generated documents](generated-documents.md).
+
 ## SP-15 physical task/reminder extension
 
 Additive0017_tasks_reminders creates task, task_event and task_command_receipt.

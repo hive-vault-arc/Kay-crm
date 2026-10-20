@@ -187,7 +187,7 @@ def test_additive_photo_migration_preserves_legacy_image_and_refuses_lossy_downg
         with database.session() as session:
             assert (
                 session.scalar(text("SELECT version_num FROM alembic_version"))
-                == "0029_property_photos"
+                == "0030_generated_documents"
             )
     finally:
         assert migrate("upgrade", "head").returncode == 0

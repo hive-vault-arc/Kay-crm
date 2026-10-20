@@ -31,7 +31,7 @@ export function LeadRecord({ id, edit = false, role = "agent" }: { id: string; e
   const writable = !enquiry.contact.archived_at;
   return <div className="record-stack crm-record-view grid min-w-0 gap-4">
     {returnLink}
-    <CrmRecordHeader contact={enquiry.contact} title={enquiry.contact.name} route={`/leads/${id}`} badges={<><CrmStatusBadge state={enquiry.status}>{statusLabels[enquiry.status]}</CrmStatusBadge><CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge></>} actions={writable ? <>{enquiry.status !== "converted" ? <Button action="edit" asChild variant="outline"><Link href={`/leads/${id}/edit`}>Modifier le prospect</Link></Button> : null}<ConvertLead enquiry={enquiry} onRefresh={refresh} /></> : undefined} />
+    <CrmRecordHeader contact={enquiry.contact} title={enquiry.contact.name} route={`/leads/${id}`} badges={<><CrmStatusBadge state={enquiry.status}>{statusLabels[enquiry.status]}</CrmStatusBadge><CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge></>} actions={<><Button action="file" asChild variant="outline"><Link href={`/leads/${id}/documents`}>Documents et PDF</Link></Button>{writable ? <>{enquiry.status !== "converted" ? <Button action="edit" asChild variant="outline"><Link href={`/leads/${id}/edit`}>Modifier le prospect</Link></Button> : null}<ConvertLead enquiry={enquiry} onRefresh={refresh} /></> : null}</>} />
     <div className="crm-record-layout">
       <ContactProfilePanel contact={enquiry.contact} />
       <div className="crm-record-primary">

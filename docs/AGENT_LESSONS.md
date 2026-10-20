@@ -1258,3 +1258,22 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
   document for property attachments, and verify photos through their own
   upload/scan/permit tests. A transient transfer notice is not a substitute
   for the eventual clean-file and downloaded-byte assertions.
+
+## Restrict generated-file reads as well as creation (2026-10-20)
+
+- Mistake caught before publication: hiding financial PDF models from agents in
+  the picker and generator alone would still leave a manager-created PDF visible
+  through generic document history or a direct download permit on the same Lead.
+- Prevention: enforce the same classification in the shared authoritative
+  document read, list and permit path, and test with a manager-created file that
+  belongs to an agent-scoped Lead. UI filtering is never the security boundary.
+
+## Audit the expanded Python locks, not the compatibility shim (2026-10-20)
+
+- A scan of `requirements.lock` returned green while a direct scan of
+  `requirements.txt` found a vulnerable Pillow pin. The compatibility file only
+  redirects to the actual runtime lock; audit tooling did not expand it as
+  expected. The development lock separately exposed an outdated certifi pin.
+- Prevention: audit `requirements.txt` and `requirements-dev.lock` directly with
+  `--require-hashes`, then install and test both updated locks. CI now enforces
+  both direct scans.

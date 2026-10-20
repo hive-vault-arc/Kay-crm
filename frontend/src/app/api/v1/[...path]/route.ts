@@ -14,6 +14,7 @@ import { relayFinance } from "@/features/finance/facade";
 import { relayReports } from "@/features/reports/facade";
 import { relayImports } from "@/features/imports/facade";
 import { relayActivities } from "@/features/activities/facade";
+import { relayGenerated } from "@/features/generated/facade";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,6 +39,7 @@ export async function GET(
   const key = path.join("/");
   if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
   if (/^(search|exports|audit)(\/|$)/.test(key)) return relayDiscovery(key, request, requestId);
+  if (/^generated-documents(\/|$)/.test(key)) return relayGenerated(key, request, requestId);
   if (/^imports(\/|$)/.test(key)) return relayImports(key, request, requestId);
   if (/^reports(\/|$)/.test(key)) return relayReports(key, request, requestId);
   if (/^commissions(\/|$)/.test(key) || /^deals\/[^/]+\/commissions$/.test(key)) return relayFinance(key, request, requestId);
@@ -62,6 +64,7 @@ export async function POST(request: Request, context: { params: Promise<{ path: 
   if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
   if (/^enquiries\/[a-f0-9-]{36}\/convert$/.test(key)) return relayDeals(key, request, requestId);
   if (/^(search|exports|audit)(\/|$)/.test(key)) return relayDiscovery(key, request, requestId);
+  if (/^generated-documents(\/|$)/.test(key)) return relayGenerated(key, request, requestId);
   if (/^imports(\/|$)/.test(key)) return relayImports(key, request, requestId);
   if (/^commissions(\/|$)/.test(key) || /^deals\/[^/]+\/commissions$/.test(key)) return relayFinance(key, request, requestId);
   if (/^(tasks|notifications|work)(\/|$)/.test(key)) return relayWork(key, request, requestId);

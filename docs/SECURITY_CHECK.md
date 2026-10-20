@@ -1,5 +1,25 @@
 # KAY security check for changes
 
+## Generated Lead/Deal document drafts (2026-10-20)
+
+The new routes require the existing facade authority, revocable session and
+write-side Origin/CSRF checks. Current Lead/Deal/contact scope is rechecked for
+context, history, generation, same-key retry and the existing one-use download
+permit. Only manager/administrator sees the receipt and invoice drafts. Inputs
+are strictly bounded, allowed per model and escaped before PDF rendering;
+neither credentials nor uploaded client files are placed in source templates.
+Generated PDFs are immutable private UUID objects in local or Spaces storage,
+with SHA-256 and actor audit; they are assembled server-side from text plus
+bundled owner originals, not treated as uploaded PDFs. Uploaded attachments
+retain normal quarantine/ClamAV handling. No public object URL, third-party
+PDF service, external message, real-data import or retention command is added.
+Migration 0030 is additive and downgrade refuses development/production data.
+Originals are working drafts and not legal/accounting validation.
+The ReportLab dependency adds no remote rendering service. Its Pillow dependency
+is pinned to 13.0.0; the development CA bundle is constrained to certifi
+2026.10.19 or newer. Direct hash-locked runtime and development audits pass;
+CI scans the expanded locks rather than the compatibility redirect file.
+
 ## Production property-photo transfer (2026-10-20)
 
 The property overview now shows the existing manager/admin photo chooser first and starts the same permit-bound WebP transfer on selection. This does not grant agents write access or bypass MIME/signature, size, ten-photo, quarantine, scan or clean-only read checks. The API and worker select the same private Spaces adapter in production; no public object URL, browser Spaces credential, CDN or CORS grant is introduced. Object keys are UUID-only and environment-prefixed; download still requires a current-session permit and verifies the stored SHA-256. Provider failures log a safe operation and error code/class only. Synthetic unit and isolated transfer tests cover provider denial and integrity failure. Existing container-local files are not moved by this change, and production Spaces still needs independent backup/restore qualification.

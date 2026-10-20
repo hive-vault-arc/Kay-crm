@@ -22,7 +22,7 @@ class Document(Base):
     __tablename__ = "document"
     __table_args__ = (
         CheckConstraint(
-            "num_nonnulls(contact_id,development_id,property_id,deal_id)=1",
+            "num_nonnulls(contact_id,development_id,property_id,deal_id,enquiry_id)=1",
             name="document_one_parent",
         ),
         CheckConstraint(
@@ -31,8 +31,11 @@ class Document(Base):
         CheckConstraint("size_bytes>0 AND size_bytes<=20971520", name="document_size"),
         CheckConstraint("version>0", name="document_version_positive"),
         CheckConstraint(
-            "purpose IN ('attachment','photo') AND "
-            "(purpose<>'photo' OR (property_id IS NOT NULL AND mime_type='image/webp'))",
+            "purpose IN ('attachment','photo','generated') AND "
+            "(purpose<>'photo' OR (property_id IS NOT NULL AND mime_type='image/webp')) AND "
+            "(purpose<>'generated' OR (template_code IS NOT NULL AND mime_type='application/pdf' "
+            "AND (enquiry_id IS NOT NULL OR deal_id IS NOT NULL))) AND "
+            "(purpose='generated' OR template_code IS NULL)",
             name="document_purpose",
         ),
     )
@@ -52,6 +55,10 @@ class Document(Base):
     deal_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("deal.id", ondelete="RESTRICT"), index=True
     )
+    enquiry_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("enquiry.id", ondelete="RESTRICT"), index=True
+    )
+    template_code: Mapped[str | None] = mapped_column(String(40))
     filename: Mapped[str] = mapped_column(String(180))
     mime_type: Mapped[str] = mapped_column(String(120))
     purpose: Mapped[str] = mapped_column(
