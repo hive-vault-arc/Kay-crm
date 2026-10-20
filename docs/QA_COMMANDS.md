@@ -1,5 +1,20 @@
 # KAY QA command register
 
+## Full-size private property photo viewer — 2026-10-20
+
+Frontend `npm.cmd run typecheck`, lint, build, security:check and 72/72 units
+pass. The first headed photo browser attempt failed waiting for a clean scan
+because KAY's ClamAV container was stopped, not because of the viewer. After
+`docker compose -f backend/compose.clamav.yaml up -d` became healthy, the
+headed development Chrome case passed 1/1; the final compiled Chrome case
+passed 1/1 in 52.5s after the 320px control adjustment. The latter opens two synthetic WebP photos, checks
+previous/next and keyboard arrows, Escape/focus return, single-photo disabled
+arrows, mobile 390px and 320px geometry, a simulated private-transfer failure/retry,
+archive/cap and agent read-only access. Desktop/mobile viewer screenshots were
+inspected, including the final 320px frame; `impeccable.cmd detect --json` returned `[]`. System-first Riviera geometry and an icon-only narrow-screen control were used; design-taste-frontend's marketing workflow was excluded for this dense CRM surface. AFTER audit: [AFTER040](../anti-slop/audit-040-2026-10-20.md), with no aesthetic-only change. Runtime dependency
+audit found zero issues; the existing nine dev-only findings remain under the
+dated approved exception. No backend code or migration changed in this slice.
+
 ## Inventory record icons and shell scroll isolation — 2026-10-19
 
 Frontend `npm.cmd run typecheck`, lint, 72/72 units and final build pass.

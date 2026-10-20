@@ -4,8 +4,8 @@ import { clearActorContext, createActor, expect, removeActor, signIn, test } fro
 import { staffCommand } from "../helpers/leads";
 import { testControl } from "../helpers/api-process";
 
-test("property photos: browser WebP conversion, ten slots, archive and agent read-only", async ({ page }) => {
-  test.setTimeout(180_000);
+test("property photos: private viewer, browser WebP conversion, ten slots, archive and agent read-only", async ({ page }) => {
+  test.setTimeout(240_000);
   const manager = await createActor("manager", false, "SP06 Photos synthétiques");
   const agent = await createActor("agent", false, "SP06 Photos lecture seule");
   try {
@@ -23,17 +23,62 @@ test("property photos: browser WebP conversion, ten slots, archive and agent rea
     await expect(gallery.getByText("1 / 10 photos")).toBeVisible();
     await expect(gallery.getByText("Analyse réussie")).toBeVisible({ timeout: 60_000 });
     await expect(gallery.locator('img[src^="blob:"]')).toBeVisible();
-    await expect(page.locator('header img[src^="blob:"]').first()).toBeVisible();
+    const firstPhoto = gallery.getByRole("button", { name: "Ouvrir la photo patio.webp" });
+    await firstPhoto.click();
+    const viewer = page.getByRole("dialog", { name: "Photos du bien" });
+    await expect(viewer.getByRole("img", { name: "Photo du bien : patio.webp" })).toBeVisible();
+    await expect(viewer.getByRole("button", { name: "Précédente" })).toBeDisabled();
+    await expect(viewer.getByRole("button", { name: "Suivante" })).toBeDisabled();
+    await page.keyboard.press("Escape");
+    await expect(viewer).toHaveCount(0);
+    await expect(firstPhoto).toBeFocused();
+    await gallery.locator('input[type="file"]').setInputFiles(path.resolve("tests/fixtures/projects-reference/sable.png"));
+    await gallery.getByRole("button", { name: "Envoyer la photo" }).click();
+    await expect(gallery.getByText("2 / 10 photos")).toBeVisible();
+    const secondPhoto = gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" });
+    await expect(secondPhoto).toBeVisible({ timeout: 60_000 });
+    await secondPhoto.click();
     await mkdir("output/playwright/property-photos", { recursive: true });
+    await expect(viewer.getByRole("img", { name: "Photo du bien : sable.webp" })).toBeVisible();
+    await page.screenshot({ path: "output/playwright/property-photos/viewer-desktop.png" });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(viewer.getByRole("button", { name: "Suivante" })).toBeVisible();
+    const viewerGeometry = await page.evaluate(() => ({ width: innerWidth, documentWidth: document.documentElement.scrollWidth }));
+    expect(viewerGeometry.documentWidth).toBeLessThanOrEqual(viewerGeometry.width + 1);
+    await page.screenshot({ path: "output/playwright/property-photos/viewer-mobile.png" });
+    await page.setViewportSize({ width: 320, height: 568 });
+    await expect(viewer.getByRole("button", { name: "Précédente" })).toBeVisible();
+    await expect(viewer.getByRole("button", { name: "Suivante" })).toBeVisible();
+    const narrowGeometry = await viewer.evaluate(element => ({ viewerWidth: element.getBoundingClientRect().width, controls: Array.from(element.querySelectorAll("button")).map(button => ({ name: button.getAttribute("aria-label"), left: button.getBoundingClientRect().left, right: button.getBoundingClientRect().right })) }));
+    expect(narrowGeometry.controls.filter(control => control.name === "Précédente" || control.name === "Suivante").every(control => control.left >= 0 && control.right <= 320), JSON.stringify(narrowGeometry)).toBe(true);
+    await page.screenshot({ path: "output/playwright/property-photos/viewer-narrow.png" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await viewer.getByRole("button", { name: "Suivante" }).click();
+    await expect(viewer.getByRole("img", { name: "Photo du bien : patio.webp" })).toBeVisible();
+    await page.keyboard.press("ArrowLeft");
+    await expect(viewer.getByRole("img", { name: "Photo du bien : sable.webp" })).toBeVisible();
+    await page.keyboard.press("ArrowRight");
+    await expect(viewer.getByRole("img", { name: "Photo du bien : patio.webp" })).toBeVisible();
+    await page.route("**/transfers/**", route => route.request().method() === "GET"
+      ? route.fulfill({ status: 503, contentType: "application/json", body: '{"error":{"code":"FILE_STORAGE_UNAVAILABLE"}}' })
+      : route.continue());
+    await viewer.getByRole("button", { name: "Précédente" }).click();
+    await expect(viewer.getByRole("alert")).toHaveText("Impossible d’ouvrir cette photo.");
+    await page.unroute("**/transfers/**");
+    await viewer.getByRole("button", { name: "Réessayer" }).click();
+    await expect(viewer.getByRole("img", { name: "Photo du bien : sable.webp" })).toBeVisible();
+    await viewer.getByRole("button", { name: "Fermer la photo" }).click();
+    await expect(viewer).toHaveCount(0);
+    await expect(page.locator('header img[src^="blob:"]').first()).toBeVisible();
     await page.screenshot({ path: "output/playwright/property-photos/desktop.png", fullPage: true });
     const photos = await (await page.request.get(`/api/v1/documents?parent_kind=property&parent_id=${id}&purpose=photo&page=1&page_size=10`)).json();
-    expect(photos.total).toBe(1);
-    expect(photos.items[0].filename).toBe("patio.webp");
+    expect(photos.total).toBe(2);
+    expect(photos.items.map((item: { filename: string }) => item.filename)).toEqual(expect.arrayContaining(["patio.webp", "sable.webp"]));
     expect(photos.items[0].mime_type).toBe("image/webp");
     expect(photos.items[0].size_bytes).toBeGreaterThan(0);
     const invalid = await staffCommand(page, "documents", { parent_kind: "property", parent_id: id, filename: "direct.png", mime_type: "image/png", size_bytes: 100 });
     expect(invalid.status()).toBe(415);
-    for (let index = 0; index < 9; index++) {
+    for (let index = 0; index < 8; index++) {
       const result = await staffCommand(page, "documents", { parent_kind: "property", parent_id: id, purpose: "photo", filename: `attente-${index}.webp`, mime_type: "image/webp", size_bytes: 100 });
       expect(result.status()).toBe(200);
     }
@@ -56,6 +101,9 @@ test("property photos: browser WebP conversion, ten slots, archive and agent rea
     await page.screenshot({ path: "output/playwright/property-photos/mobile.png", fullPage: true });
     await clearActorContext(page); await signIn(page, agent); await page.goto(`/projects/properties/${id}`);
     await expect(page.getByRole("region", { name: "Photos du bien" }).getByText("9 / 10 photos")).toBeVisible();
+    await page.getByRole("region", { name: "Photos du bien" }).getByRole("button", { name: "Ouvrir la photo sable.webp" }).click();
+    await expect(page.getByRole("dialog", { name: "Photos du bien" }).getByRole("img", { name: "Photo du bien : sable.webp" })).toBeVisible();
+    await page.keyboard.press("Escape");
     await expect(page.getByRole("button", { name: "Choisir une image" })).toHaveCount(0);
     expect((await staffCommand(page, "documents", { parent_kind: "property", parent_id: id, purpose: "photo", filename: "agent.webp", mime_type: "image/webp", size_bytes: 100 })).status()).toBe(403);
   } finally { await testControl("worker-stop"); await clearActorContext(page); await removeActor(agent); await removeActor(manager); }

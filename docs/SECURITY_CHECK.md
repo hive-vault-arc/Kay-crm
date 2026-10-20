@@ -25,6 +25,13 @@ browser fixtures and test-database images were used. The additive migration was
 applied to local development after target/OID inspection; no production service,
 database, export, credential or external message was touched.
 
+The full-size property viewer uses the same clean-only document metadata and
+requests a fresh, current-session download permit for each opened image. It
+keeps bytes in a revocable browser object URL only while that image is selected;
+arrows do not create public links or expose pending/rejected versions. The
+thumbnail remains separately permission-scoped. Viewer failure gives a retry
+without persisting a permit or response body in browser storage.
+
 ## Inventory presentation only (2026-10-19)
 
 Creation-wizard follow-up: client-side step validation and category-specific

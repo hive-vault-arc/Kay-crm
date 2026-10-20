@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
-import { UploadIcon } from "@/components/icons";
+import { ShowPasswordIcon, UploadIcon } from "@/components/icons";
 import { ProtectedFileState } from "@/components/shared/protected-file-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
@@ -53,6 +54,8 @@ export function PropertyPhotos({ propertyId, writable, onChanged }: { propertyId
   const [progress, setProgress] = useState<number>();
   const [error, setError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string>();
+  const previewTrigger = useRef<HTMLButtonElement>(null);
   const inputId = useId();
   const input = useRef<HTMLInputElement>(null);
   const chooser = useRef<HTMLButtonElement>(null);
@@ -63,6 +66,8 @@ export function PropertyPhotos({ propertyId, writable, onChanged }: { propertyId
   const thumbnailPending = useRef<string | null>(null);
   const observed = useRef<Record<string, string>>({});
   const pending = Boolean(query.value?.items.some(item => item.versions[0]?.state === "pending_scan"));
+  const cleanPhotos = query.value?.items.filter(item => item.versions.some(version => version.state === "clean")) ?? [];
+  const selectedIndex = cleanPhotos.findIndex(item => item.id === selectedPhotoId);
   const refresh = query.refreshQuietly;
   useEffect(() => { if (!pending) return; const timer = setInterval(refresh, 2000); return () => clearInterval(timer); }, [pending, refresh]);
   useEffect(() => () => abort.current?.abort(), []);
@@ -110,14 +115,15 @@ export function PropertyPhotos({ propertyId, writable, onChanged }: { propertyId
       </form> : null}
       {progress !== undefined ? <p role="status">Transfert WebP : {progress} %. Analyse antivirus à suivre.</p> : null}
       {error ? <p role="alert" className="text-danger">{error.message}</p> : null}{notice ? <p role="status" className="text-info">{notice}</p> : null}
-      {!query.value ? <p role="status">Chargement des photos…</p> : query.value.items.length ? <ul className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">{query.value.items.map(photo => <PhotoCard key={`${photo.id}:${photo.version}`} photo={photo} writable={writable && !busy} refresh={() => { setPage(1); refresh(); }} onChanged={onChanged} resume={() => { setResume(photo); setFile(undefined); setError(undefined); attempt.current = { key: "", documentId: "" }; chooser.current?.focus(); }} />)}</ul> : <p className="text-sm text-muted-foreground">Aucune photo sur ce bien.</p>}
+      {!query.value ? <p role="status">Chargement des photos…</p> : query.value.items.length ? <ul className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">{query.value.items.map(photo => <PhotoCard key={`${photo.id}:${photo.version}`} photo={photo} writable={writable && !busy} refresh={() => { setPage(1); refresh(); }} onChanged={onChanged} openPreview={trigger => { previewTrigger.current = trigger; setSelectedPhotoId(photo.id); }} resume={() => { setResume(photo); setFile(undefined); setError(undefined); attempt.current = { key: "", documentId: "" }; chooser.current?.focus(); }} />)}</ul> : <p className="text-sm text-muted-foreground">Aucune photo sur ce bien.</p>}
       {query.value && query.value.total >= photoLimit ? <p className="text-sm text-muted-foreground">Limite de 10 photos atteinte. Archivez une photo pour libérer une place.</p> : null}
       {query.value ? <NumberedPages label="Pages des photos du bien" page={page} total={query.value.total} size={10} change={setPage} /> : null}
+      {selectedIndex >= 0 ? <PhotoViewer photos={cleanPhotos} index={selectedIndex} change={index => setSelectedPhotoId(cleanPhotos[index]?.id)} close={() => setSelectedPhotoId(undefined)} returnFocus={previewTrigger} /> : null}
     </>}
   </section>;
 }
 
-function PhotoCard({ photo, writable, refresh, resume, onChanged }: { photo: ProtectedDocument; writable: boolean; refresh: () => void; resume: () => void; onChanged: () => void }) {
+function PhotoCard({ photo, writable, refresh, resume, onChanged, openPreview }: { photo: ProtectedDocument; writable: boolean; refresh: () => void; resume: () => void; onChanged: () => void; openPreview: (trigger: HTMLButtonElement) => void }) {
   const latest = photo.versions[0];
   const cleanId = photo.versions.find(version => version.state === "clean")?.id;
   const [url, setUrl] = useState<string>();
@@ -152,10 +158,49 @@ function PhotoCard({ photo, writable, refresh, resume, onChanged }: { photo: Pro
     finally { setBusy(false); }
   }
   return <li className="grid min-w-0 content-start gap-3 rounded-md border bg-card p-3">
-    <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-muted">{url ? <Image src={url} alt={`Photo du bien : ${photo.filename}`} fill unoptimized sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover" /> : <p className="grid h-full place-items-center px-3 text-center text-sm text-muted-foreground">{previewFailed ? "Aperçu indisponible" : cleanId ? "Chargement de la photo…" : "Aperçu après analyse"}</p>}</div>
+    {url ? <Button type="button" variant="ghost" className="group relative block aspect-[4/3] h-auto min-h-0 w-full overflow-hidden rounded-sm bg-muted p-0 focus-visible:ring-2 focus-visible:ring-ring" aria-label={`Ouvrir la photo ${photo.filename}`} onClick={event => openPreview(event.currentTarget)}><Image src={url} alt="" fill unoptimized sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover" onError={() => { setUrl(undefined); setPreviewFailed(true); }} /><span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-sm bg-card/95 px-2 py-1 text-xs text-foreground shadow-sm"><ShowPasswordIcon aria-hidden="true" className="size-4" />Voir</span></Button> : <div className="relative grid aspect-[4/3] place-items-center overflow-hidden rounded-sm bg-muted px-3 text-center text-sm text-muted-foreground">{previewFailed ? "Aperçu indisponible" : cleanId ? "Chargement de la photo…" : "Aperçu après analyse"}</div>}
     <div className="grid min-w-0 gap-1"><h3 className="wrap-anywhere text-sm font-medium">{photo.filename}</h3><p className="text-xs text-muted-foreground">{new Intl.NumberFormat("fr-MA").format(photo.size_bytes)} octets</p><ProtectedFileState version={latest} /></div>
     {error ? <p role="alert" className="text-sm text-danger">{error.message}</p> : null}
     <div className="flex flex-wrap gap-2">{previewFailed && cleanId ? <Button action="retry" type="button" variant="outline" disabled={busy} onClick={() => { setError(undefined); setPreviewFailed(false); setPreviewRetry(value => value + 1); }}>Réessayer l’aperçu</Button> : null}{writable && latest?.state === "awaiting_upload" ? <Button action="upload" type="button" variant="outline" disabled={busy} onClick={resume}>Reprendre</Button> : null}{writable && latest?.state === "pending_scan" && latest.scan_error ? <Button action="retry" type="button" variant="outline" disabled={busy} onClick={() => void command("retry-scan")}>Réessayer l’analyse</Button> : null}{writable ? <Button ref={archiveButton} action="archive" type="button" variant="outline" disabled={busy} onClick={() => setConfirm(true)}>Archiver</Button> : null}</div>
     <AlertDialog open={confirm} onOpenChange={open => { if (!busy) setConfirm(open); }}><AlertDialogContent onCloseAutoFocus={event => { event.preventDefault(); archiveButton.current?.focus(); }}><AlertDialogTitle>Archiver cette photo ?</AlertDialogTitle><AlertDialogDescription>Elle ne sera plus visible sur le bien. L’historique du fichier est conservé.</AlertDialogDescription><div className="flex flex-wrap gap-2"><AlertDialogCancel asChild><Button action="cancel" variant="outline" disabled={busy}>Annuler</Button></AlertDialogCancel><Button action="archive" variant="destructive" disabled={busy} onClick={() => void command("archive")}>Confirmer l’archivage</Button></div>{error ? <p role="alert" className="text-danger">{error.message}</p> : null}</AlertDialogContent></AlertDialog>
   </li>;
+}
+
+function PhotoViewer({ photos, index, change, close, returnFocus }: { photos: ProtectedDocument[]; index: number; change: (index: number) => void; close: () => void; returnFocus: React.RefObject<HTMLButtonElement | null> }) {
+  const photo = photos[index];
+  const cleanId = photo.versions.find(version => version.state === "clean")?.id;
+  const [preview, setPreview] = useState<{ key: string; url: string }>();
+  const [failedKey, setFailedKey] = useState<string>();
+  const [navigation, setNavigation] = useState(0);
+  const [retry, setRetry] = useState(0);
+  const mediaKey = `${photo.id}:${photo.version}:${navigation}:${retry}`;
+  function navigate(next: number) { setNavigation(value => value + 1); change(next); }
+  useEffect(() => {
+    if (!cleanId) return;
+    let active = true;
+    let objectUrl: string | undefined;
+    async function load() {
+      try {
+        const permit = await requestFilePermit({ action: "download", document_id: photo.id, expected_version: photo.version, version_id: cleanId! });
+        const blob = await downloadBytes(permit);
+        if (!active) return;
+        objectUrl = URL.createObjectURL(blob);
+        setPreview({ key: mediaKey, url: objectUrl });
+        setFailedKey(undefined);
+      } catch { if (active) setFailedKey(mediaKey); }
+    }
+    void load();
+    return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [photo.id, photo.version, cleanId, mediaKey]);
+  const url = preview?.key === mediaKey ? preview.url : undefined;
+  return <Dialog open onOpenChange={open => { if (!open) close(); }}>
+    <DialogContent className="inset-3 top-3 flex h-[calc(100dvh-1.5rem)] max-h-none max-w-none translate-y-0 flex-col overflow-hidden p-3 sm:inset-6 sm:top-6 sm:h-[calc(100dvh-3rem)] sm:p-5" onCloseAutoFocus={event => { event.preventDefault(); returnFocus.current?.focus(); }} onKeyDown={event => {
+      if (event.key === "ArrowLeft" && index > 0) { event.preventDefault(); navigate(index - 1); }
+      if (event.key === "ArrowRight" && index < photos.length - 1) { event.preventDefault(); navigate(index + 1); }
+    }}>
+      <div className="flex min-w-0 items-start justify-between gap-3"><div className="min-w-0"><DialogTitle>Photos du bien</DialogTitle><DialogDescription className="wrap-anywhere">{photo.filename} · {index + 1} sur {photos.length} photos analysées</DialogDescription></div><Button action="close" type="button" variant="outline" size="icon" aria-label="Fermer la photo" onClick={close}><span className="sr-only">Fermer</span></Button></div>
+      <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-sm bg-foreground" aria-live="polite">{url ? <Image src={url} alt={`Photo du bien : ${photo.filename}`} fill unoptimized sizes="(min-width: 1024px) 90vw, 100vw" className="object-contain" onError={() => { setPreview(undefined); setFailedKey(mediaKey); }} /> : failedKey === mediaKey ? <div className="grid justify-items-center gap-3 p-4 text-center text-background"><p role="alert">Impossible d’ouvrir cette photo.</p><Button action="retry" type="button" variant="outline" onClick={() => setRetry(value => value + 1)}>Réessayer</Button></div> : <p role="status" className="text-background">Ouverture de la photo…</p>}</div>
+      <div className="flex items-center justify-between gap-3"><Button action="back" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Précédente" disabled={index === 0} onClick={() => navigate(index - 1)}><span className="sr-only sm:not-sr-only">Précédente</span></Button><span className="text-sm text-muted-foreground" aria-live="polite">{index + 1} / {photos.length}</span><Button action="forward" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Suivante" disabled={index === photos.length - 1} onClick={() => navigate(index + 1)}><span className="sr-only sm:not-sr-only">Suivante</span></Button></div>
+    </DialogContent>
+  </Dialog>;
 }

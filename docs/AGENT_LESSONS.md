@@ -1238,3 +1238,13 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
   cleanup on production.
 - Promote to AGENTS.md: no; the existing release and truthful-evidence rules
   already cover this.
+
+## Verify the scoped scanner before photo browser tests (2026-10-20)
+
+- Mistake: the first private-photo Chrome case waited for a clean verdict while
+  KAY's ClamAV Compose container was stopped. The resulting timeout did not
+  distinguish the environment prerequisite from viewer behavior.
+- Prevention: inspect `docker compose -f backend/compose.clamav.yaml ps` and
+  wait for `healthy` before running photo upload/scan cases. Start only KAY's
+  scoped scanner; keep isolated database writers serial. Rerun the unchanged
+  failing case before drawing an application conclusion.

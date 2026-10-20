@@ -235,7 +235,10 @@ clean-only image preview/download, numbered pages and archive confirmation are
 implemented. Empty/loading/denied/error states retain the existing record shell.
 On property details, a separate Photos section shows the active 10-photo count,
 clean-only private previews, WebP conversion/upload progress and archive/retry
-controls. Agents can view clean photos but cannot upload or archive. Existing
+controls. Selecting a clean photo opens a full-size private viewer with previous/
+next buttons, Left/Right keyboard navigation and Escape to close; focus returns
+to the selected thumbnail. Pending or rejected photos cannot be opened. Agents
+can view clean photos but cannot upload or archive. Existing
 property image attachments appear as photos; non-image files stay in Pièces
 jointes. Programmes have their existing attachment panel; the 10-photo cap is
 per physical bien, not shared across the programme.
