@@ -13,7 +13,7 @@ test("SP09 AT-06/26/35: private contact versus shared property/programme and act
   test.setTimeout(180000);
   const owner = await createActor("agent"); const manager = await createActor("manager"); const outsider = await createActor("agent");
   try {
-    const clean = await syntheticFile(); const rejected = await syntheticFile("rejected");
+    const clean = await syntheticFile(); const cleanDocument = await syntheticFile("clean-document"); const rejected = await syntheticFile("rejected");
     await signIn(page, owner);
     const lead = await createLead(page, "SP09 contact privé synthétique");
     const contact = (await (await page.request.get(`/api/v1/enquiries/${lead}`)).json()).contact;
@@ -33,7 +33,7 @@ test("SP09 AT-06/26/35: private contact versus shared property/programme and act
     const copiedPermit = await (await staffCommand(page, "files/permits", { action: "download", document_id: privateDocument.id, expected_version: privateDocument.version, version_id: privateDocument.versions[0].id })).json();
     await clearActorContext(page); await signIn(page, manager);
     const property = await createProperty(page);
-    const sharedRow = await uploadFile(page, clean);
+    const sharedRow = await uploadFile(page, cleanDocument);
     await expect(sharedRow.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 20_000 });
     const development = await createDevelopment(page);
     const rejectedRow = await uploadFile(page, rejected);
@@ -47,7 +47,7 @@ test("SP09 AT-06/26/35: private contact versus shared property/programme and act
     expect((await copiedResponse.json()).error.code).toBe("FILE_PERMIT_INVALID");
     await page.goto(`/projects/properties/${property}`);
     await expect(page.getByRole("button", { name: "Envoyer le fichier", exact: true })).toHaveCount(0);
-    await downloadFile(page, clean.name, clean.buffer);
+    await downloadFile(page, cleanDocument.name, cleanDocument.buffer);
     const documents = await (await page.request.get(`/api/v1/documents?parent_kind=property&parent_id=${property}`)).json();
     expect(JSON.stringify(documents).includes(contact.id)).toBe(false);
     expect((await staffCommand(page, "files/permits", { action: "upload", document_id: documents.items[0].id, expected_version: documents.items[0].version })).status()).toBe(403);

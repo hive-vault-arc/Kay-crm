@@ -1248,3 +1248,13 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
   wait for `healthy` before running photo upload/scan cases. Start only KAY's
   scoped scanner; keep isolated database writers serial. Rerun the unchanged
   failing case before drawing an application conclusion.
+
+## Keep file fixtures aligned with distinct photo and attachment purposes (2026-10-20)
+
+- Mistake: a legacy browser regression reused a clean PNG for both a contact
+  document and a property's attachment panel. The photo feature intentionally
+  rejects images there and accepts them only through its WebP photo flow.
+- Prevention: keep the original contact-image case, use a synthetic clean
+  document for property attachments, and verify photos through their own
+  upload/scan/permit tests. A transient transfer notice is not a substitute
+  for the eventual clean-file and downloaded-byte assertions.

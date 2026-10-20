@@ -19,7 +19,15 @@ edge-mounted sidebar toggle intentionally protrudes outside the rail, so
 `aside.scrollWidth` is not the interior-overflow measure. The test now measures
 `.sidebar-scroll` on desktop and the drawer itself on mobile, while retaining
 the document-width check. The focused compiled headed case passed 1/1 after
-that correction; the full hosted integration must pass on the final commit.
+that correction. The next hosted full-browser run passed 36 cases before an
+old file test tried to put a PNG into a property's attachment panel. Photos
+now have their own WebP-only purpose, so the corrected test uses a clean
+synthetic DOCX for the shared attachment while retaining a private contact
+PNG and rejected document. The focused headed Chrome file case passed 1/1
+in 1.7m. The attempted local 118-case suite passed its first 21 cases but
+was interrupted by a workstation suspension (the next fixture request timed
+out); it is not a full-suite pass. Full hosted integration must pass on the
+final commit.
 
 ## Inventory record icons and shell scroll isolation — 2026-10-19
 

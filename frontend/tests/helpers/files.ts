@@ -3,9 +3,9 @@ import type { Page } from "@playwright/test";
 import { expect } from "./auth";
 import { testControl } from "./api-process";
 
-export async function syntheticFile(kind: "clean" | "rejected" = "clean", name?: string) {
+export async function syntheticFile(kind: "clean" | "clean-document" | "rejected" = "clean", name?: string) {
   const result = await testControl("fixture", { action: "file-bytes", kind }) as { base64: string };
-  return { name: name ?? (kind === "clean" ? "SP09 image synthétique.png" : "SP09 test antivirus.docx"), mimeType: kind === "clean" ? "image/png" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document", buffer: Buffer.from(result.base64, "base64") };
+  return { name: name ?? (kind === "clean" ? "SP09 image synthétique.png" : kind === "clean-document" ? "SP09 document synthétique.docx" : "SP09 test antivirus.docx"), mimeType: kind === "clean" ? "image/png" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document", buffer: Buffer.from(result.base64, "base64") };
 }
 export async function uploadFile(page: Page, file: Awaited<ReturnType<typeof syntheticFile>>) {
   await expect(page.getByLabel("Fichier à ajouter", { exact: true })).toBeEnabled();
