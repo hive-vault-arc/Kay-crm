@@ -117,8 +117,11 @@ jobs:
           ./.venv/Scripts/python.exe -m pip check
       - name: Python lint, formatting and strict types
         run: ./scripts/kay.ps1 -Task check
-      - name: Audit locked runtime dependencies
-        run: ./.venv/Scripts/python.exe -m pip_audit -r requirements.lock --require-hashes --disable-pip
+      - name: Audit locked runtime and development dependencies
+        run: |
+          ./.venv/Scripts/python.exe -m pip_audit -r requirements.txt --require-hashes --disable-pip
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./.venv/Scripts/python.exe -m pip_audit -r requirements-dev.lock --require-hashes --disable-pip
       - name: Database-independent unit tests (connections forbidden)
         run: ./.venv/Scripts/python.exe -m tests.unit_runner
 

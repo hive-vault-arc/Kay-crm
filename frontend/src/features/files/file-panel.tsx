@@ -23,7 +23,7 @@ export function FilePanel({ parentKind, parentId, writable }: { parentKind: Pare
 function FilePanelBody({ parentKind, parentId, writable }: { parentKind: ParentKind; parentId: string; writable: boolean }) {
   const hydrated = useHydrated();
   const [page, setPage] = useState(1);
-  const query = useQuery(`/api/v1/documents?parent_kind=${parentKind}&parent_id=${parentId}${parentKind === "property" ? "&purpose=attachment" : ""}&page=${page}&page_size=20`, documentsSchema);
+  const query = useQuery(`/api/v1/documents?parent_kind=${parentKind}&parent_id=${parentId}&purpose=attachment&page=${page}&page_size=20`, documentsSchema);
   const [file, setFile] = useState<File>();
   const [resume, setResume] = useState<ProtectedDocument>();
   const [busy, setBusy] = useState(false);

@@ -13,6 +13,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.contacts.access import readable_contact, scoped_contact
+from app.contacts.queries import enquiry_in_scope
 from app.db.session import Database
 from app.deals.access import authorized as authorized_deal
 from app.deals.access import writable as writable_deal
@@ -63,6 +64,13 @@ def authorize(
         deal = authorized_deal(session, identity, target)
         if write:
             writable_deal(session, identity, deal)
+            if deal.archived_at is not None:
+                raise IdentityError("NOT_FOUND", 404)
+        return
+    if kind == "enquiry":
+        enquiry = enquiry_in_scope(session, identity, target)
+        if write and enquiry.archived_at is not None:
+            raise IdentityError("NOT_FOUND", 404)
         return
     model = {"development": Development, "property": Property}.get(kind)
     if model is None:
@@ -75,7 +83,7 @@ def authorize(
 
 
 def parent(document: Document) -> tuple[str, UUID]:
-    for kind in ("contact", "development", "property", "deal"):
+    for kind in ("contact", "development", "property", "deal", "enquiry"):
         value = getattr(document, f"{kind}_id")
         if value is not None:
             return kind, UUID(str(value))
@@ -87,6 +95,12 @@ def authorized_document(
 ) -> Document:
     document = session.get(Document, did)
     if document is None:
+        raise IdentityError("NOT_FOUND", 404)
+    if (
+        document.purpose == "generated"
+        and document.template_code in {"10", "11"}
+        and identity.user.role == "agent"
+    ):
         raise IdentityError("NOT_FOUND", 404)
     authorize(session, identity, *parent(document), write=write)
     return document
@@ -101,6 +115,7 @@ def audit(session: Session, identity: CurrentIdentity, document: Document, actio
             development_id=document.development_id,
             property_id=document.property_id,
             deal_id=document.deal_id,
+            enquiry_id=document.enquiry_id,
         )
     )
 
@@ -167,8 +182,15 @@ def list_documents(
             "deal": Document.deal_id,
             "development": Document.development_id,
             "property": Document.property_id,
+            "enquiry": Document.enquiry_id,
         }[kind]
         statement = select(Document).where(column == pid, Document.archived_at.is_(None))
+        if identity.user.role == "agent":
+            statement = statement.where(
+                (Document.purpose != "generated")
+                | (Document.template_code.is_(None))
+                | (Document.template_code.not_in(("10", "11")))
+            )
         if purpose is not None:
             if kind == "property":
                 statement = statement.where(
@@ -178,6 +200,8 @@ def list_documents(
                 )
             elif purpose == "attachment":
                 statement = statement.where(Document.purpose == "attachment")
+            elif purpose == "generated":
+                statement = statement.where(Document.purpose == "generated")
         total = session.scalar(select(func.count()).select_from(statement.subquery())) or 0
         rows = session.scalars(
             statement.order_by(Document.created_at.desc(), Document.id)
@@ -257,6 +281,8 @@ def document_command(
         else:
             assert did is not None  # noqa: S101
             document = authorized_document(session, identity, did, write=True)
+            if document.purpose == "generated":
+                raise IdentityError("FORBIDDEN", 403)
             if document.version != body.expected_version:
                 raise IdentityError("FILE_VERSION_CONFLICT", 409)
             if operation == "retry-scan":
@@ -336,6 +362,8 @@ def issue_permit(
             raise IdentityError("RATE_LIMITED", 429)
         version: DocumentVersion | None
         if body.action == "upload":
+            if document.purpose == "generated":
+                raise IdentityError("FORBIDDEN", 403)
             if body.version_id is not None:
                 raise IdentityError("VALIDATION_ERROR", 422)
             version = DocumentVersion(

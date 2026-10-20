@@ -1,5 +1,18 @@
 # Acceptance scenarios
 
+## Generated Lead/Deal PDF preparations (2026-10-20)
+
+All twelve supplied working models render a branded preparation sheet with
+editable current-scope prefill and the unchanged original as an appendix.
+Lead and Deal pages expose the action; generation creates immutable numbered
+private history and a permit-bound download. Cover agent/manager visibility,
+foreign dossier denial, archived read-only state, invalid fields/control text,
+markup escaping, same-key concurrent and lost-response retry, storage failure
+rollback, exact original appendix, migration preservation, and desktop/mobile/
+keyboard loading, empty and error states. Finance 10/11 and notary 07 remain
+explicit drafts, never confirmation of funds or signable legal documents. See
+[contract](../04-design/generated-documents.md).
+
 ## Projects reference extension (2026-10-18)
 
 D39 extends AT-06/23/27/31/35/36: four-column photo cards, automatic category/

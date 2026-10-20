@@ -210,7 +210,8 @@ See [SP-06 evidence](../docs/03-planning/sprints/sp-06-evidence.md) and
 .\.venv\Scripts\python.exe -m mypy app
 .\.venv\Scripts\python.exe -m pytest --cov=app
 .\.venv\Scripts\python.exe -m pip check
-.\.venv\Scripts\python.exe -m pip_audit --no-deps --disable-pip -r requirements.lock
+.\.venv\Scripts\python.exe -m pip_audit --no-deps --disable-pip -r requirements.txt
+.\.venv\Scripts\python.exe -m pip_audit --no-deps --disable-pip -r requirements-dev.lock
 ```
 
 The fixture forces the explicit test environment and compares live PostgreSQL

@@ -851,6 +851,13 @@ recorded for Khalid's product/security review, not silently promoted into C04/C1
 business decisions. Any later relaxation needs fresh validation/security tests;
 do not bypass quarantine or change the confirmed20MiB/format/authorization rules.
 
+## Generated Lead and Deal documents
+
+The twelve owner-supplied working models, strict facade routes, current-scope
+prefill and private immutable history are specified in
+[generated documents](generated-documents.md). They remain drafts and do not
+replace legal or accounting review.
+
 ## SP-15 task and inbox boundary
 
 The implemented strict contract is [tasks and internal reminders](tasks-reminders-local.md).

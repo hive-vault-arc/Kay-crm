@@ -131,7 +131,7 @@ def test_commercial_category_upgrade_preserves_existing_and_refuses_lossy_downgr
             assert session.get(Property, commercial_id).category == "commercial"
             assert (
                 session.scalar(text("SELECT version_num FROM alembic_version"))
-                == "0029_property_photos"
+                == "0030_generated_documents"
             )
     finally:
         assert migrate("upgrade", "head").returncode == 0

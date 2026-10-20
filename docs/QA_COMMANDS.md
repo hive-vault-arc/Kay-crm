@@ -1,5 +1,50 @@
 # KAY QA command register
 
+## Generated Lead/Deal PDF preparations — 2026-10-20
+
+The twelve owner-supplied blank models are bundled unchanged. Each generated
+private PDF contains an editable-field preparation sheet followed by the
+unchanged model; the owner accepted this as **internal preparation**, not a
+completed or legally approved contract. Migration `0030_generated_documents`
+adds nullable document links and preserves existing records. Only synthetic
+isolated database/browser fixtures were used for application testing.
+SHA-256 comparison confirms all twelve bundled source PDFs are byte-for-byte
+identical to `docs/reference/real-estate-document-templates/`; none has an
+AcroForm, root OpenAction, additional-action or Names entry.
+
+From `backend/`, `./.venv/Scripts/python.exe -m pytest tests/test_generated_unit.py`
+passes 27/27 (all twelve original appendices and bounded fields included).
+`./.venv/Scripts/python.exe -m alembic check`, Ruff lint/format, mypy, and
+`pip check` pass. Direct `pip_audit -r requirements.txt --require-hashes
+--disable-pip` and the same command for `requirements-dev.lock` both report no
+known vulnerabilities after Pillow 13.0.0 and certifi 2026.10.19 pinning.
+The complete isolated PostgreSQL backend regression with these final pinned
+versions (`./.venv/Scripts/python.exe -m pytest -q --tb=short --maxfail=1`)
+passes **885/885** in 22m01s, with no skipped or failed cases.
+The CI-style database-forbidden `./.venv/Scripts/python.exe -m
+tests.unit_runner` also passes 262 selected unit cases (623 deselected).
+
+From `frontend/`, `npm.cmd run lint`, `typecheck`, `build`, `test:unit` (75/75),
+and `security:check` pass; the runtime audit is clean and the nine pre-existing
+dev-only advisories remain under their dated exception. A headed compiled
+Chrome Lead/Deal case passes 1/1, exercising creation, immutable history,
+download, keyboard selection and mobile no-overflow; safe synthetic desktop and
+mobile captures in ignored `frontend/output/playwright/generated-documents/`
+were inspected. The final rerun on the pinned backend passes 1/1 in 35.1s.
+The system-first CRM layout used design-system-ops and
+impeccable's operation/visual checks; responsive, uncodixfy, antislop and React
+performance guidance kept the form compact, semantic and lazy to open. The
+design-taste-frontend marketing workflow is out of scope. Per the owner's
+AFTER choice, purely aesthetic audit findings are held for his selection.
+
+Repository-only documentation validation passes (1200 links, 22 sprints, 41
+acceptance mappings, 13 Mermaid pairs, 12 API JSON examples). `repository-check`
+passes 8434 indexed files with no forbidden or oversized path. Actionlint and
+redacted full-history Gitleaks pass; staged diff has no whitespace errors.
+Candidate CI,
+manual integration and production deployment are separate gates, not inferred
+from these local checks.
+
 ## Full-size private property photo viewer — 2026-10-20
 
 Frontend `npm.cmd run typecheck`, lint, build, security:check and 72/72 units

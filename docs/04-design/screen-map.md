@@ -1,5 +1,13 @@
 # KAY screen map and navigation contract
 
+2026-10-20 generated documents: `/leads/{id}/documents` and
+`/deals/{id}/documents` open from a visible record-header action. A responsive
+model list sits beside the editable prefilled preparation form; a separate
+numbered history exposes private permit-bound PDF downloads. There is no new
+global sidebar destination. Owner-supplied originals remain blank appendices;
+working-draft and finance/notary cautions are visible. See
+[generated documents](generated-documents.md).
+
 2026-10-19 inventory creation refinement: `/projects/new`,
 `/projects/properties/new` and programme-unit creation use three steps:
 identity/type, relevant characteristics or context, then a confirmation summary.
