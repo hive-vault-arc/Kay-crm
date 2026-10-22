@@ -1,5 +1,19 @@
 # Live updates implementation,2026-10-22
 
+## Release follow-up,2026-10-23
+
+Owner authorized production migration/WSS verification and PR24 promotion only
+after all tests pass. Manual integration39870030626 at06de2f2 failed: backend
+675 passed before a stale70-table recovery assertion (the additive migration
+adds four tables); browser72 passed before contact merge lost its survivor
+display. The fixes preserve exact74-table verification and requery the source
+route after a merge, without letting an old local snapshot mask a different
+canonical identity. Replacement full integration is required before release.
+
+DigitalOcean read-only console inspection confirms deployed code and database
+both report0030_generated_documents(head). The0031 migration is not yet deployed;
+no production write or feature flag change has been performed at this checkpoint.
+
 ## Scope and isolation
 
 Owner-approved WebSocket invalidations and opt-in Web Push implement the

@@ -1,5 +1,14 @@
 # KAY agent lessons
 
+## Canonical identity and additive recovery counts (2026-10-23)
+
+- A merged contact resolves to a different canonical ID. Compare local snapshot
+  versions only for the same ID; after merging, refetch the original route so
+  its canonical redirect notice and survivor history remain visible.
+- Adding bookkeeping tables also changes full recovery inventory counts. Update
+  the exact asserted schema count and rerun the full recovery regression, rather
+  than loosening restore verification or relying only on focused feature tests.
+
 ## Real push and socket lifecycle tests (2026-10-22)
 
 - Chrome's ordinary Playwright contexts are incognito and do not support PushManager.

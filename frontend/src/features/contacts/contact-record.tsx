@@ -28,10 +28,12 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
   const [tab, setTab] = useState(initialTask ? "tasks" : "identity");
   const [saved, setSaved] = useState(false);
   const [notice, setNotice] = useState("");
-  const contact = edited?.id === id && (!query.value || edited.version >= query.value.version) ? edited : query.value;
+  const contact = edited?.id === id && (!query.value || (edited.id === query.value.id && edited.version >= query.value.version)) ? edited : query.value;
   async function changed(target: string, operation: Operation) {
     const fresh = await apiGet(`/api/v1/contacts/${target}`, contactSchema);
-    setEdited(fresh); setSaved(false); setNotice(`${operationLabels[operation]} : opération enregistrée.`);
+    if (target === id) setEdited(fresh);
+    else { setEdited(undefined); query.refreshQuietly(); }
+    setSaved(false); setNotice(`${operationLabels[operation]} : opération enregistrée.`);
   }
   const heading = <PageHeader title="Fiche contact" description="Identité, coordonnées et demandes dans votre périmètre." route={`/contacts/${id}`} />;
   if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;

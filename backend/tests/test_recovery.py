@@ -40,7 +40,7 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
     )
     point = create(settings)
     result = restore(settings, UUID(point["point_id"]), replace_recovery=True)
-    assert result["verified_tables"] == 70 and result["objects"] >= 2
+    assert result["verified_tables"] == 74 and result["objects"] >= 2
     assert 0 <= result["rpo_seconds"] <= 3600 and result["restore_seconds"] < 14400
     target = recovery_settings(settings)
     db = Database(target.selected_database_url())
