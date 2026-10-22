@@ -13,6 +13,9 @@ canonical identity. Replacement full integration is required before release.
 DigitalOcean read-only console inspection confirms deployed code and database
 both report0030_generated_documents(head). The0031 migration is not yet deployed;
 no production write or feature flag change has been performed at this checkpoint.
+The actual managed launcher is sh scripts/start-api.sh, not the direct command
+in the runbook. It now explicitly selects wsproto and512-byte/four-frame bounds;
+packaging tests assert those transport options on the deployed entry point.
 
 ## Scope and isolation
 
