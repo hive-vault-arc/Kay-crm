@@ -39,7 +39,7 @@ From the existing `backend` source directory, the normal Uvicorn service command
 binds the platform's port:
 
 ```sh
-python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --no-access-log
+python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --no-access-log --ws wsproto --ws-max-size 512 --ws-max-queue 4
 ```
 
 No factory flag, development reload or Windows interpreter path is needed there.

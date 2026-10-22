@@ -54,7 +54,7 @@ these diagnostics, TTY/hidden-input checks and one-time transactional rules.
 With private production configuration, from the managed backend directory:
 
 ```sh
-python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --no-access-log
+python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --no-access-log --ws wsproto --ws-max-size 512 --ws-max-queue 4
 python -m app.cli.worker
 ```
 

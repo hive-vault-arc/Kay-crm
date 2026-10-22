@@ -1,5 +1,23 @@
 # KAY agent lessons
 
+## Real push and socket lifecycle tests (2026-10-22)
+
+- Chrome's ordinary Playwright contexts are incognito and do not support PushManager.
+  Use a fresh disposable persistent profile for genuine push checks, with no
+  user profile or credential-bearing traces. Do not mock success to hide an
+  AbortError. The persistent-profile test verifies real generic provider delivery.
+- Receive disconnects while waiting for notifications, not only after the next
+  heartbeat. Otherwise rapid full-page navigation temporarily exhausts a correct
+  session connection quota. Preserve the quota and fix lifecycle cleanup.
+- A heartbeat briefly borrowing a pool slot is not a per-socket held connection.
+  Capacity assertions should bound slots and verify return between operations,
+  not demand zero at an arbitrary concurrent instant.
+- Pass the intended isolated database URL explicitly on each writer invocation;
+  a fresh tool shell does not inherit a previous tool call's environment override.
+- Coalesce pending ticket issuance across React Strict Mode remounts. Abandoned
+  proofs otherwise accumulate toward the outstanding-ticket quota during fast
+  navigation. Preserve that quota and use fresh proof after the pending call.
+
 ## Sticky navigation and edge controls (2026-10-19)
 
 A later `.sidebar { position: relative }` rule silently overrode an earlier

@@ -8,7 +8,14 @@ from typing import Literal
 from urllib.parse import urlsplit
 
 from psycopg import pq
-from pydantic import Field, SecretStr, ValidationError, ValidationInfo, field_validator
+from pydantic import (
+    Field,
+    SecretStr,
+    ValidationError,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 from pydantic_core import PydanticCustomError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
@@ -39,6 +46,24 @@ class Settings(BaseSettings):
     benchmark_database_url: SecretStr | None = Field(default=None, validate_default=True)
     recovery_database_url: SecretStr | None = Field(default=None, validate_default=True)
     facade_secret: SecretStr
+    realtime_enabled: bool = False
+    web_push_enabled: bool = False
+    vapid_private_key: SecretStr | None = None
+    vapid_public_key: str | None = None
+    vapid_subject: str | None = None
+
+    @model_validator(mode="after")
+    def validate_push_configuration(self) -> Settings:
+        if self.web_push_enabled and not (
+            self.realtime_enabled
+            and self.vapid_private_key
+            and self.vapid_public_key
+            and self.vapid_subject
+            and self.vapid_subject.startswith("mailto:")
+        ):
+            raise ValueError("PUSH_CONFIGURATION_REQUIRED")
+        return self
+
     frontend_origin: str = Field(default="https://localhost:3000", validate_default=True)
     postgres_bin: Path = Path("C:/Program Files/PostgreSQL/18/bin")
     antivirus_host: str = Field(default="127.0.0.1", validate_default=True)

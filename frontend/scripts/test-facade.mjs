@@ -34,6 +34,7 @@ try {
     "tests/unit/directory-filters.test.mjs",
     "tests/unit/generated-documents.test.mjs",
     "tests/unit/theme.test.mjs",
+    "tests/unit/realtime.test.mjs",
   ], {
     cwd: frontend, stdio: "inherit", windowsHide: true,
     env: { ...environment, NODE_EXTRA_CA_CERTS: path.join(temporary, "trusted.pem"), KAY_FACADE_TEST_CERTS: temporary },

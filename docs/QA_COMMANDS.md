@@ -1,5 +1,40 @@
 # KAY QA command register
 
+## Realtime and Web Push,2026-10-22
+
+Use the explicit project venv in the isolated realtime worktree, not global
+Python. This work's synthetic test URL is on loopback55439; never substitute a
+development/production target. Browser supervision and pytest stay serial.
+
+- Backend: `.venv/Scripts/python.exe -m pytest --unit-only -q` passes262.
+- Backend: `.venv/Scripts/python.exe -m pytest tests/test_realtime.py tests/test_realtime_capacity.py -q --tb=short --maxfail=1` passes16.
+- Existing auth/work/foundation plus the earlier realtime selection passes48.
+- Final combined realtime/auth/work/foundation selection passes51/51.
+- Additive realtime plus existing PDF/photo/commercial-stock migration/regression
+  selection passes31/31 with the actual scanner running. The additional genuine
+  crypto, six clean formats and controlled-rejection scanner selection passes8/8.
+  The isolated target reports0031_realtime(head); `-m alembic check` reports no
+  new upgrade operations. Production is not that target.
+- Backend: `.venv/Scripts/python.exe -m ruff check .`, `-m ruff format --check .`
+  and `-m mypy app` pass; mypy200 modules.
+- Frontend: `npm.cmd run lint`, `npm.cmd run test:unit` (80/80),
+  `npm.cmd run typecheck`, `npm.cmd run build`, `npm.cmd run security:check` pass.
+  Runtime audit0; existing approved dev-only exception remains.
+- Frontend: `npm.cmd run test:realtime -- --max-failures=1` is the dedicated
+  real WSS/Chrome/push suite, using a persistent disposable profile for push.
+  Final compiled run passes3/3 in2.9m: real detail updates/draft protection,
+  process-stop/reconnect,15 consultation routes at alternating1440/390 widths,
+  release-flag refresh removal/outage restoration and real generic provider
+  delivery after leaving the CRM. The release flag is1 only in this isolated
+  acceptance build; production configuration remains unchanged.
+- Benchmark: set isolated benchmark URL, `APP_ENVIRONMENT=benchmark`,
+  `REALTIME_ENABLED=true`, `KAY_BENCHMARK_REALTIME=1`, then run the project venv
+  `-m benchmarks.run`. Final pass100 users/sockets,7,007 requests,0 errors;
+  p95 ordinary≤350.968ms/dashboard495.097ms under unchanged1s/2s limits.
+
+Read [execution and limits](03-planning/realtime-execution.md) before rollout.
+Production migrations and hosted WSS are not verified by these commands.
+
 ## Generated Lead/Deal PDF preparations — 2026-10-20
 
 The twelve owner-supplied blank models are bundled unchanged. Each generated

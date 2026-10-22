@@ -17,7 +17,7 @@ from tests.file_support import grant, image_bytes
 from tests.test_files import headers
 from tests.test_foundation import client_for
 from tests.test_inventory import property_draft
-from tests.test_isolation_migrations import migrate
+from tests.test_isolation_migrations import HEAD, migrate
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
@@ -185,9 +185,6 @@ def test_additive_photo_migration_preserves_legacy_image_and_refuses_lossy_downg
         photo(database, manager, pid)
         assert migrate("downgrade", "0028_commercial_properties").returncode != 0
         with database.session() as session:
-            assert (
-                session.scalar(text("SELECT version_num FROM alembic_version"))
-                == "0030_generated_documents"
-            )
+            assert session.scalar(text("SELECT version_num FROM alembic_version")) == HEAD
     finally:
         assert migrate("upgrade", "head").returncode == 0

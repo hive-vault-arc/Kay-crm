@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { SearchTrigger } from "@/features/discovery/search-trigger";
-import { ChevronDownIcon, NotificationIcon, NavigationMenuIcon } from "@/components/icons";
+import { ChevronDownIcon, NavigationMenuIcon } from "@/components/icons";
 import { Brand } from "@/components/shared/brand";
 import { NotificationPanel } from "@/features/work/notification-panel";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
@@ -21,6 +21,8 @@ import { AccountFooter } from "./account-footer";
 import { useHydrated } from "@/hooks/use-hydrated";
 import type { PublicIdentity } from "@/lib/auth/contracts";
 import { SessionMonitor } from "@/features/auth/session-controls";
+import { LiveUpdates } from "@/features/realtime/live-updates";
+import { LiveNotificationIcon } from "@/features/realtime/notification-bell";
 import { DashboardHeaderActions } from "@/features/reports/dashboard-header-actions";
 
 export function AppShell({ children, identity }: { children: React.ReactNode; identity: PublicIdentity }) {
@@ -164,7 +166,7 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
           </div>
           <div data-shell-search className="order-3 w-full min-w-0 lg:hidden"><SearchTrigger /></div>
           <div className="ml-auto flex flex-wrap items-center gap-2">
-            {crmReference ? <DashboardHeaderActions user={identity.user} /> : <Sheet><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Ouvrir les notifications" disabled={!hydrated}><NotificationIcon aria-hidden="true" /></Button></SheetTrigger>
+            {crmReference ? <DashboardHeaderActions user={identity.user} /> : <Sheet><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Ouvrir les notifications" disabled={!hydrated}><LiveNotificationIcon /></Button></SheetTrigger>
               <SheetContent closeLabel="Fermer les notifications" className="w-full overflow-y-auto p-5 sm:max-w-reading"><SheetHeader className="mb-6 p-0 pr-6 text-left"><SheetTitle>Votre boîte de réception</SheetTitle><SheetDescription>Notifications internes accessibles avec vos droits actuels.</SheetDescription></SheetHeader><NotificationPanel /></SheetContent>
             </Sheet>}
           </div>
@@ -175,6 +177,7 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
           data-crm-workspace={crmWorkspace || undefined}
           className={crmWorkspace ? "page-gutter crm-gutter grid min-w-0 w-full gap-4 py-4" : calendarWorkspace || projectsWorkspace ? "page-gutter calendar-gutter grid min-w-0 w-full gap-3 py-3" : pathname === "/dashboard" ? "page-gutter dashboard-gutter grid min-w-0 w-full gap-3 py-2 md:py-3" : "page-gutter grid min-w-0 w-full gap-4 py-5 md:py-6"}
         >
+          <LiveUpdates />
           {children}
         </main>
       </div>

@@ -33,7 +33,7 @@ export function ActivityHistory({ scope, id, origin = false, writable = false }:
   const query = useQuery(queryPath(path, { page, page_size: 20, kind }), activitiesSchema);
   function close() { setAdding(false); addButton.current?.focus(); }
   return <section className="grid min-w-0 gap-4 border-t pt-6" aria-label={title}>
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-section font-medium">{title}</h2><div className="flex flex-wrap gap-2"><Button action="refresh" variant="quiet" onClick={query.refresh}>Actualiser l’historique</Button>{writable && !origin ? <Button action="create" ref={addButton} aria-expanded={adding} onClick={() => { setAdding(true); setNotice(""); }}>Ajouter une activité</Button> : null}</div></div>
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-section font-medium">{title}</h2><div className="flex flex-wrap gap-2"><Button liveRefresh action="refresh" variant="quiet" onClick={query.refresh}>Actualiser l’historique</Button>{writable && !origin ? <Button action="create" ref={addButton} aria-expanded={adding} onClick={() => { setAdding(true); setNotice(""); }}>Ajouter une activité</Button> : null}</div></div>
     {origin ? <p className="text-sm text-muted-foreground">Notes et échanges de la demande liée, conservés avec leur auteur et leur date d’origine. Lecture seule depuis l’affaire.</p> : null}
     {adding ? <ActivityForm path={`/api/v1/${scope}/${id}/activities`} cancel={close} saved={() => { close(); setNotice("Activité enregistrée."); setPage(1); query.refresh(); }} /> : null}
     {notice ? <p role="status" className="text-success">{notice}</p> : null}

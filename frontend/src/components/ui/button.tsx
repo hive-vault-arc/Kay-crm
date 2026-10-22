@@ -52,12 +52,14 @@ function Button({
   size = "default",
   asChild = false,
   action,
+  liveRefresh = false,
   children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     action?: ButtonAction;
+    liveRefresh?: boolean;
   }) {
   const Comp = asChild ? Slot.Root : "button";
   const definition: ActionDefinition | undefined = action ? buttonActions[action] : undefined;
@@ -76,6 +78,7 @@ function Button({
       data-variant={resolvedVariant}
       data-size={size}
       data-action={action}
+      data-live-refresh={liveRefresh || undefined}
       data-action-tone={definition?.tone}
       className={cn(buttonVariants({ variant: resolvedVariant, size, className }))}
       {...props}

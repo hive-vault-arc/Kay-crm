@@ -81,6 +81,8 @@ jobs:
       - name: Install and compile the actual frontend
         if: matrix.suite == 'browser'
         working-directory: frontend
+        env:
+          NEXT_PUBLIC_KAY_REALTIME_RELEASED: '1'
         run: |
           npm ci
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -97,6 +99,12 @@ jobs:
         if: matrix.suite == 'browser'
         working-directory: frontend
         run: node scripts/scan-client-secrets.mjs
+      - name: Real WSS and opt-in Web Push browser regression (serial)
+        if: matrix.suite == 'browser'
+        working-directory: frontend
+        env:
+          KAY_E2E_PRODUCTION: '1'
+        run: npm run test:realtime -- --max-failures=1
       - name: Safe scanner diagnostics on failure
         if: failure()
         run: |

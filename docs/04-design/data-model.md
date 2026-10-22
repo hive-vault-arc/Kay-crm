@@ -1,5 +1,14 @@
 # Data model: dictionary, conceptual, logical, and physical views
 
+## Additive realtime bookkeeping (2026-10-22)
+
+0031_realtime adds realtime_ticket (digest/session/expiry), realtime_presence
+(connection/session/last-seen/visibility), push_subscription (private endpoint/
+keys/session) and push_delivery (notification/subscription/original-session,
+unique delivery, state/attempt/availability/lease). Business tables/history and
+revocable sessions remain unchanged. These are not a replacement message broker
+or a new source of CRM truth. [Contract](realtime.md).
+
 ## Staff deletion (2026-10-18)
 
 Revision0026 adds nullable `user.deleted_at` and a disabled-state check. No existing

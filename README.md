@@ -1,5 +1,10 @@
 # KEPVY for KAY: specification index
 
+[Live updates contract](docs/04-design/realtime.md) and
+[implementation/release gates](docs/03-planning/realtime-execution.md) describe
+the default-off WebSocket/Web Push slice. Hosted WSS validation remains required
+before removing production refresh controls.
+
 The 2026-10-18 [full regression/publication record](docs/03-planning/full-regression-publication-2026-10-18.md)
 tracks the combined CRM candidate, retained failures and the owner-directed load
 repair. The request authorizes feature-branch publication and a tested PR, unlike

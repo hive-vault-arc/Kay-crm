@@ -18,7 +18,7 @@ export function TaskRecord({ id, contactId, dealId, writable, changed, close }: 
   const query = useQuery(`/api/v1/tasks/${id}`, taskSchema), hydrated = useHydrated();
   const [fresh, setFresh] = useState<Task>(), [editing, setEditing] = useState(false), [notice, setNotice] = useState("");
   const [reloadError, setReloadError] = useState<ApiError>();
-  const task = fresh ?? query.value, focusEdit = useRef(false), heading = useRef<HTMLHeadingElement>(null);
+  const task = (fresh && (!query.value || fresh.version >= query.value.version) ? fresh : query.value), focusEdit = useRef(false), heading = useRef<HTMLHeadingElement>(null);
   const initialFocus = useRef(true);
   useEffect(() => { if (task && initialFocus.current) { initialFocus.current = false; heading.current?.focus(); } }, [task]);
   const restore = useCallback((node: HTMLButtonElement | null) => { if (node && focusEdit.current) { focusEdit.current = false; node.focus(); } }, []);
@@ -37,7 +37,7 @@ export function TaskRecord({ id, contactId, dealId, writable, changed, close }: 
     {reloadError ? <RecordError error={reloadError} /> : null}
     {editing && canWrite ? <TaskForm key={task.id} contactId={task.contact_id} value={task} saved={async () => { await endEdit(true); }} cancel={() => { void endEdit().catch(() => { focusEdit.current = true; setEditing(false); }); }} /> : <>
       <TaskFacts task={task} />{notice ? <p role="status" className="text-success">{notice}</p> : null}
-      <Button action="refresh" type="button" variant="outline" className="justify-self-start" onClick={() => { void reload().catch(() => {}); }}>Actualiser la tâche</Button>
+      <Button liveRefresh action="refresh" type="button" variant="outline" className="justify-self-start" onClick={() => { void reload().catch(() => {}); }}>Actualiser la tâche</Button>
       <div className="flex flex-wrap gap-2">{canWrite ? <><Button action="edit" ref={restore} type="button" disabled={!hydrated} onClick={() => { setEditing(true); setNotice(""); }}>Modifier la tâche</Button>{(["completed", "cancelled"] as const).map(action => <TaskFinish key={`${task.version}:${action}`} task={task} action={action} saved={async () => { await reload(); setNotice(action === "completed" ? "Tâche terminée. Les rappels obsolètes sont invalidés." : "Tâche annulée. Les rappels obsolètes sont invalidés."); }} terminalFocus={() => heading.current?.focus()} />)}</> : <p>Tâche conservée en lecture seule. Son historique reste disponible.</p>}<Button action="close" type="button" variant="outline" onClick={close}>Fermer la tâche</Button></div>
       <TaskHistory key={task.version} id={id} />
     </>}

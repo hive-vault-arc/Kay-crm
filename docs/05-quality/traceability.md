@@ -1,5 +1,14 @@
 # Requirements, rules, and evidence traceability
 
+## Live updates extension (2026-10-22)
+
+Authenticated freshness and notification authority map to test_realtime.py,
+test_realtime_capacity.py, frontend realtime.test.mjs and tests/realtime/live.spec.ts.
+The existing100-user benchmarks/locustfile.py adds sockets and safe aggregate
+diagnostics without changing HTTP mix or latency limits. See the
+[contract](../04-design/realtime.md), [execution](../03-planning/realtime-execution.md)
+and [QA register](../QA_COMMANDS.md); hosted/physical-device gates remain separate.
+
 ## Projects reference (2026-10-18)
 
 D39 / C04/C13/C14 / AT-06/23/27/31/35/36 map to `test_property_facets.py`,

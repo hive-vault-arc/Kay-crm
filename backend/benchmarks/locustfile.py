@@ -3,6 +3,7 @@
 import json
 import math
 import os
+import ssl
 import time
 from collections import defaultdict
 from uuid import uuid4
@@ -28,6 +29,9 @@ SETUP_LOGINS = defaultdict(int)
 SETUP_PHASES = defaultdict(int)
 USER_ERRORS = defaultdict(int)
 READY = set()
+SOCKETS = set()
+TELEMETRY = defaultdict(float)
+LIVE = os.environ.get("KAY_BENCHMARK_REALTIME") == "1"
 STATE = {
     "measuring": False,
     "began": None,
@@ -35,6 +39,8 @@ STATE = {
     "minimum_users": 100,
     "started": 0,
     "completed": 0,
+    "minimum_sockets": 100,
+    "invalidations": 0,
 }
 
 
@@ -93,6 +99,8 @@ def start_measurement(environment, **kwargs):
         print("SP22_STEADY_BEGIN users=100 warmup_seconds=15", flush=True)
         for _ in range(60):
             STATE["minimum_users"] = min(STATE["minimum_users"], environment.runner.user_count)
+            if LIVE:
+                STATE["minimum_sockets"] = min(STATE["minimum_sockets"], len(SOCKETS))
             gevent.sleep(1)
         STATE["seconds"] = time.monotonic() - STATE["began"]
         STATE["measuring"] = False
@@ -116,6 +124,7 @@ def finish(environment, **kwargs):
         and STATE["seconds"] >= 60
         and STATE["minimum_users"] == 100
         and not USER_ERRORS
+        and (not LIVE or STATE["minimum_sockets"] == 100)
     )
     passed = passed and STATE["started"] == STATE["completed"] == sum(map(len, SAMPLES.values()))
     for name, samples in sorted(SAMPLES.items()):
@@ -138,6 +147,11 @@ def finish(environment, **kwargs):
     result = {
         "api_processes": int(os.environ.get("KAY_BENCHMARK_WORKERS", "1")),
         "accounts": len(READY),
+        "realtime_enabled": LIVE,
+        "minimum_steady_sockets": STATE["minimum_sockets"] if LIVE else None,
+        "live_invalidations": STATE["invalidations"],
+        "live_telemetry_maxima": dict(TELEMETRY),
+        "unexpected_socket_disconnects": USER_ERRORS.get("WebSocketDisconnected", 0),
         "setup_logins": [
             {"role": role, "status": status, "count": count}
             for (role, status), count in sorted(SETUP_LOGINS.items())
@@ -259,9 +273,58 @@ class KAYBenchmarkUser(HttpUser):
                 "X-CSRF-Token": csrf_token(settings.facade_secret.get_secret_value(), token),
             }
         )
+        if LIVE:
+            import websocket
+
+            response = self.client.post("/api/v1/realtime/tickets", json={}, name="SETUP ticket")
+            if response.status_code != 200 or not response.json().get("enabled"):
+                raise RuntimeError("BENCHMARK_TICKET_FAILED")
+            self.live_socket = websocket.create_connection(
+                "wss://localhost:8200/api/v1/realtime/ws",
+                origin=settings.frontend_origin,
+                sslopt={"ca_certs": self.client.verify, "cert_reqs": ssl.CERT_REQUIRED},
+                timeout=30,
+            )
+            self.live_socket.send(json.dumps({"ticket": response.json()["ticket"]}))
+            if json.loads(self.live_socket.recv()) != {"type": "ready"}:
+                raise RuntimeError("BENCHMARK_SOCKET_AUTH_FAILED")
+            SOCKETS.add(self.actor["id"])
+            self.live_stopping = False
+            self.live_reader = gevent.spawn(self.read_live)
         READY.add(self.actor["id"])
         SETUP_PHASES["ready"] += 1
         return True
+
+    def read_live(self):
+        try:
+            while not self.live_stopping:
+                message = json.loads(self.live_socket.recv())
+                if message["type"] == "ping":
+                    self.live_socket.send(json.dumps({"type": "pong", "visible": True}))
+                elif message["type"] == "invalidate":
+                    STATE["invalidations"] += 1
+                    if (
+                        self.actor["role"] == "administrator"
+                        and time.monotonic() - getattr(self, "telemetry_at", 0) > 5
+                    ):
+                        self.telemetry_at = time.monotonic()
+                        response = self.client.get("/api/v1/realtime/status", name="TELEMETRY live")
+                        if response.status_code == 200:
+                            for key, value in response.json().items():
+                                if isinstance(value, (int, float)):
+                                    TELEMETRY[key] = max(TELEMETRY[key], value)
+        except Exception:
+            if not self.live_stopping:
+                USER_ERRORS["WebSocketDisconnected"] += 1
+        finally:
+            SOCKETS.discard(self.actor["id"])
+
+    def on_stop(self):
+        if LIVE and hasattr(self, "live_socket"):
+            self.live_stopping = True
+            if hasattr(self, "live_reader"):
+                self.live_reader.kill(block=False)
+            self.live_socket.close()
 
     @task(3)
     def contacts(self):

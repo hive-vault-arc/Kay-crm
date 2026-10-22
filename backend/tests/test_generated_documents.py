@@ -19,7 +19,7 @@ from app.main import create_app
 from tests.contact_support import actor, create_lead
 from tests.deal_support import new, run, setup
 from tests.test_foundation import client_for
-from tests.test_isolation_migrations import migrate
+from tests.test_isolation_migrations import HEAD, migrate
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
@@ -256,8 +256,6 @@ def test_additive_migration_preserves_old_file_and_refuses_generated_data_downgr
         )
         assert migrate("downgrade", "0029_property_photos").returncode != 0
         with database.session() as session:
-            assert session.scalar(text("SELECT version_num FROM alembic_version")) == (
-                "0030_generated_documents"
-            )
+            assert session.scalar(text("SELECT version_num FROM alembic_version")) == (HEAD)
     finally:
         assert migrate("upgrade", "head").returncode == 0

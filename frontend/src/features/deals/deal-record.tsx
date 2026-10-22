@@ -32,7 +32,7 @@ import { ActivityHistory } from "@/features/activities/activity-history";
 
 export function DealRecord({ id, initialTask, role = "agent", initialTab }: { id: string; initialTask?: string; role?: StaffRole; initialTab?: string }) {
   const query = useQuery(`/api/v1/deals/${id}`, dealSchema); const [fresh, setFresh] = useState<Deal>(); const [editing, setEditing] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState<ApiError>(); const [comparison, setComparison] = useState<Deal>(); const [notice, setNotice] = useState("");
-  const lock = useRef(false); const attempt = useRef({ fingerprint: "", key: "" }); const focusEdit = useRef(false); const hydrated = useHydrated(); const value = fresh ?? query.value;
+  const lock = useRef(false); const attempt = useRef({ fingerprint: "", key: "" }); const focusEdit = useRef(false); const hydrated = useHydrated(); const value = (fresh && (!query.value || fresh.version >= query.value.version) ? fresh : query.value);
   const restoreFocus = useCallback((node: HTMLButtonElement | null) => { if (node && focusEdit.current) { focusEdit.current = false; node.focus(); } }, []);
   function endEdit() { focusEdit.current = true; setEditing(false); }
   async function reload() { const current = await apiGet(`/api/v1/deals/${id}`, dealSchema); setFresh(current); return current; }
