@@ -31,7 +31,10 @@ export function LiveUpdates() {
         enabled = true;
         setStatus("connecting");
         socket = new WebSocket(result.ws_url);
-        socket.onopen = () => socket?.send(JSON.stringify({ ticket: result.ticket }));
+        socket.onopen = () => {
+          lastMessage = Date.now();
+          socket?.send(JSON.stringify({ ticket: result.ticket }));
+        };
         socket.onmessage = event => {
           lastMessage = Date.now();
           if (typeof event.data !== "string" || event.data.length > 2048) { socket?.close(); return; }

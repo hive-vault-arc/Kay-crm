@@ -54,7 +54,7 @@ export function PushControl() {
   if (!key) return notice ? <p role="status">{notice}</p> : null;
   return <div className="grid gap-2">
     <Button action="read" variant="outline" disabled={busy} onClick={() => void toggle()}>{active ? "Désactiver les notifications système" : "Activer les notifications système"}</Button>
-    <p className="text-sm text-muted-foreground">Un message sans données client quand le CRM est fermé. Sur iPhone, ajoutez KAY à l’écran d’accueil. Les alertes s’arrêtent à la déconnexion.</p>
+    <p className="text-sm text-muted-foreground">Un message sans données client quand le CRM est fermé. Sur iPhone, ajoutez KAY à l’écran d’accueil. Les nouveaux envois s’arrêtent à la déconnexion.</p>
     {notice ? <p role="status">{notice}</p> : null}
   </div>;
 }
