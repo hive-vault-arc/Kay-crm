@@ -1,23 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import { requestTicket } from "./ticket-request";
 
 export function LiveUpdates() {
   const [status, setStatus] = useState("disabled");
-  const [pending, setPending] = useState(false);
+  const pathname = usePathname();
+  const route = useMemo(() => ({ pathname }), [pathname]);
+  const [pendingRoute, setPendingRoute] = useState<typeof route>();
+  const pending = pendingRoute === route;
   useEffect(() => {
     let stopped = false, socket: WebSocket | undefined, reconnect: ReturnType<typeof setTimeout> | undefined;
     let attempt = 0, lastMessage = Date.now(), enabled = false;
     function invalidate(topics?: string[]) {
       if (!enabled) return;
+      if (topics?.length && document.querySelector("[data-live-dirty]")) window.dispatchEvent(new Event("kay:live-deferred"));
       window.dispatchEvent(new CustomEvent("kay:live-invalidate", { detail: topics }));
     }
     async function connect() {
       if (stopped) return;
       try {
         const result = await requestTicket(crypto.randomUUID());
-        if (stopped || !result.enabled) return;
+        if (stopped) return;
+        if (!result.enabled) {
+          enabled = false; setStatus("disabled");
+          delete document.documentElement.dataset.liveRefresh;
+          return;
+        }
         enabled = true;
         setStatus("connecting");
         socket = new WebSocket(result.ws_url);
@@ -53,8 +63,7 @@ export function LiveUpdates() {
       if (form?.querySelector('[data-action="filter"], [data-action="search"]')) return;
       if (form) form.dataset.liveDirty = "true";
     }
-    function deferred() { setPending(true); }
-    function saved() { setPending(Boolean(document.querySelector("[data-live-dirty]"))); invalidate(); }
+    function saved() { invalidate(); }
     void connect();
     const safety = setInterval(focused, 120_000 + Math.random() * 30_000);
     const watchdog = setInterval(() => {
@@ -65,7 +74,6 @@ export function LiveUpdates() {
     document.addEventListener("visibilitychange", focused);
     document.addEventListener("input", dirty);
     document.addEventListener("change", dirty);
-    window.addEventListener("kay:live-deferred", deferred);
     window.addEventListener("kay:command-saved", saved);
     return () => {
       stopped = true; clearTimeout(reconnect); clearInterval(safety); clearInterval(watchdog); socket?.close();
@@ -73,9 +81,17 @@ export function LiveUpdates() {
       window.removeEventListener("focus", focused); window.removeEventListener("online", focused);
       document.removeEventListener("visibilitychange", focused);
       document.removeEventListener("input", dirty); document.removeEventListener("change", dirty);
-      window.removeEventListener("kay:live-deferred", deferred); window.removeEventListener("kay:command-saved", saved);
+      window.removeEventListener("kay:command-saved", saved);
     };
   }, []);
+  useEffect(() => {
+    const deferred = () => setPendingRoute(route);
+    const saved = () => setPendingRoute(document.querySelector("[data-live-dirty]") ? route : undefined);
+    window.addEventListener("kay:live-deferred", deferred); window.addEventListener("kay:command-saved", saved);
+    return () => {
+      window.removeEventListener("kay:live-deferred", deferred); window.removeEventListener("kay:command-saved", saved);
+    };
+  }, [route]);
   if (status === "disabled") return null;
   const quiet = !pending && status !== "offline";
   return <div data-realtime-status={status} className={quiet ? "sr-only" : "text-sm text-muted-foreground"} role="status">

@@ -62,6 +62,8 @@ durable deliveries, waits 90 seconds to account for tab presence, skips foregrou
 sessions, and uses bounded leases/retries and per-notification/subscription dedupe.
 Expired/revoked sessions cannot send. HTTP 404/410 disables obsolete subscriptions.
 Browser display tags collapse duplicate deliveries after interrupted acknowledgments.
+An alert already accepted by the external provider cannot be recalled at logout;
+it can still arrive later, always without client data. Delivery remains best-effort.
 
 Provider URLs accept HTTPS and an exact allowlist (FCM, Mozilla and Apple), never
 credentials, alternate ports, fragments or redirects. Additional push providers

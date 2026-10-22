@@ -93,6 +93,13 @@ widgets. Ignored reports and synthetic browser images remain local.
 
 ## Release gates
 
+Source is published as [draft PR24](https://github.com/hive-vault-arc/Kay-crm/pull/24),
+not merged. The dc372df candidate passes actual automatic GitHub CI; full hosted
+database/browser integration was dispatched separately. Follow-up changes and
+their exact-commit checks are visible in that PR, not assumed passed from this
+earlier CI result. Local final follow-up checks preserve fresh contact data,
+route-scoped draft notices and disabled-feature rollback behavior.
+
 Not production-enabled. Accessible DigitalOcean sessions require login; the
 owner was asked to authenticate without sharing credentials. Do not merge or
 hide production refresh controls before hosted WSS idle/reconnect, the actual

@@ -40,7 +40,8 @@ test("live Lead detail/list refresh and protected draft over real WSS", async ({
   await update("Modification synthétique concurrente");
   await expect(page.getByText("Des données ont changé. Votre saisie est conservée pendant la modification.", { exact: false })).toBeVisible();
   await expect(draft).toHaveValue("Brouillon synthétique à conserver");
-  await page.goto("/leads");
+  await page.locator('a[href="/leads"]').first().click();
+  await expect(page.getByText("Des données ont changé. Votre saisie est conservée pendant la modification.", { exact: false })).toHaveCount(0);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('[data-realtime-status="connected"]')).toHaveCount(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

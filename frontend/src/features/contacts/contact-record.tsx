@@ -28,7 +28,7 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
   const [tab, setTab] = useState(initialTask ? "tasks" : "identity");
   const [saved, setSaved] = useState(false);
   const [notice, setNotice] = useState("");
-  const contact = edited ?? query.value;
+  const contact = edited?.id === id && (!query.value || edited.version >= query.value.version) ? edited : query.value;
   async function changed(target: string, operation: Operation) {
     const fresh = await apiGet(`/api/v1/contacts/${target}`, contactSchema);
     setEdited(fresh); setSaved(false); setNotice(`${operationLabels[operation]} : opération enregistrée.`);
