@@ -101,6 +101,45 @@ redacted full-history Gitleaks pass; staged diff has no whitespace errors.
 Candidate CI,
 manual integration and production deployment are separate gates, not inferred
 from these local checks.
+## D44 record removal (2026-10-20)
+
+From `backend/`, the explicit `.venv` interpreter ran Ruff check/format,
+mypy for the changed app modules, and PostgreSQL pytest. The neighboring suite
+(`test_record_archive.py`, contacts, deals, conversion, activities, work,
+reports, schedule, calendar filters and project permissions) passed **144/144**.
+After adding interrupted-command and linked-task cases, the focused archive
+module passed **8/8**. The final activity/archive rerun after a query cleanup
+passed **30/30**. From `frontend/`, `npm.cmd run lint`, direct TypeScript
+check, `npm.cmd run test:unit` (**73/73**) and `npm.cmd run build` passed.
+`npm.cmd run test:chrome -- tests/e2e/record-removal.spec.ts --workers=1
+--max-failures=1` passed **3/3** in visible Chrome on the isolated synthetic
+database: Lead/deal archive/restore, project archive, and calendar cancellation.
+The final keyboard/focus and mobile visual/no-page-overflow pass is recorded in the task's
+AFTER audit. Existing migration 0027 already supplies record archive columns;
+no migration was created or applied in this slice. No production deployment or
+real-data retention operation is claimed.
+
+## Complete local operation guide (2026-10-20)
+
+[Run KAY locally](../RUN_LOCALLY.md) now separates first installation from
+daily 3100/8100 operation, with prerequisites, native PostgreSQL, private setup,
+Docker/ClamAV, verified local HTTPS, migrations, interactive bootstrap, worker,
+health checks and safe shutdown. README and the former startup entry point
+link to this single procedure. Plain-language copy rules kept commands and
+observed configuration distinct from unexecuted installation/release checks;
+no UI audit-only changes apply to this documentation task.
+
+Documentation verification: PowerShell's parser accepts all 30 PowerShell
+blocks with zero syntax errors; Markdown fences balance; local links/anchors
+resolve; `git diff --check` and
+`powershell -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly`
+pass. Read-only tool checks confirm Node24.13.1/npm11.8.0, Python3.14.3,
+PostgreSQL client18.2 and working Docker Compose. Ignored configuration checks
+confirm development mode, matching frontend3100/API8100 origins, equal facade
+secrets and a present CA file, without exposing secret values. No application
+service was started; no install, migration, bootstrap, database fixture cleanup
+or production access was performed. Fresh-machine installation and integration
+tests are **not executed**, not passed, for this documentation-only change.
 
 ## Full-size private property photo viewer — 2026-10-20
 

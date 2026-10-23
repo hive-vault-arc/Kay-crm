@@ -6,7 +6,7 @@ import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
 import { activitiesSchema, activityQuerySchema, activityResultSchema, activityRoute, newActivitySchema } from "./contracts";
 
-const known = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONTACT_ARCHIVED", "CONTACT_MERGED", "IDEMPOTENCY_CONFLICT", "RATE_LIMITED"]);
+const known = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONTACT_ARCHIVED", "RECORD_ARCHIVED", "CONTACT_MERGED", "IDEMPOTENCY_CONFLICT", "RATE_LIMITED"]);
 export async function relayActivities(key: string, request: Request, requestId: string) {
   if (!activityRoute(key, request.method)) return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url), mutation = request.method === "POST";

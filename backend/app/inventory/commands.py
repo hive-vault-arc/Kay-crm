@@ -18,6 +18,7 @@ from app.identity.security import IdentityError, keyed_digest
 from app.identity.sessions import CurrentIdentity, current_identity, require_role
 from app.inventory.contracts import (
     ConfirmAvailability,
+    CreateProperty,
     EditOffering,
     EditProperty,
     NewOffering,
@@ -40,6 +41,7 @@ from app.inventory.queries import property_record
 
 Body = (
     PropertyFields
+    | CreateProperty
     | Owners
     | NewOffering
     | EditOffering
@@ -256,7 +258,23 @@ def execute(
         item = Property(**property_values(body), created_by_user_id=identity.user.id)
         session.add(item)
         session.flush()
-        return item, None, record(session, identity, item, "properties.created")
+        event_id = record(session, identity, item, "properties.created")
+        if isinstance(body, CreateProperty) and body.initial_offering is not None:
+            initial = body.initial_offering
+            offering = Offering(
+                property_id=item.id,
+                kind=initial.kind,
+                price_mad=Decimal(initial.price_mad),
+                price_period=initial.price_period,
+                currency=initial.currency,
+                conditions="",
+                created_by_user_id=identity.user.id,
+            )
+            session.add(offering)
+            session.flush()
+            bump(item)
+            event_id = record(session, identity, item, "offerings.created", offering)
+        return item, offering, event_id
     if isinstance(body, NewOffering):
         item = (
             property_record(session, body.property_id, lock=True)
@@ -403,6 +421,8 @@ def command(
 ) -> dict[str, object]:
     route = f"{operation}/{target or ''}"
     payload = body.model_dump(mode="json")
+    if isinstance(body, CreateProperty) and body.initial_offering is None:
+        payload.pop("initial_offering")
     if isinstance(body, EditDevelopment) and "developer_contact_id" not in body.model_fields_set:
         payload.pop("developer_contact_id")
     digest = keyed_digest(

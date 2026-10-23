@@ -20,6 +20,19 @@ test("commercial premises remain valid across property, development, type and re
   assert.equal(contracts.propertiesSchema.safeParse({ ...empty, category_counts: { ...empty.category_counts, commercial: undefined } }).success, false);
 });
 
+test("property creation accepts one priced draft and rejects unpriced or activated offers", () => {
+  const fields = { reference: "PRICED-1", category: "apartment", marketing_name: null, location: null, area_sqm: null };
+  const draft = { kind: "sale", price_mad: "900000.01", price_period: null, currency: "MAD" };
+  assert.equal(contracts.createPropertySchema.safeParse({ ...fields, initial_offering: draft }).success, true);
+  for (const initial_offering of [
+    { ...draft, price_mad: "0" },
+    { ...draft, price_mad: null },
+    { ...draft, price_period: "month" },
+    { ...draft, state: "available" },
+  ]) assert.equal(contracts.createPropertySchema.safeParse({ ...fields, initial_offering }).success, false);
+  assert.equal(contracts.createPropertySchema.safeParse({ ...fields, initial_offering: { ...draft, kind: "rental", price_period: "year" } }).success, true);
+});
+
 test("property selections preserve all legacy categories and exact multiple/empty semantics", () => {
   for (const categories of ["land,villa", "house", "commercial", ""]) assert.equal(contracts.propertiesQuerySchema.safeParse({ categories }).success, true);
   for (const input of [{ categories: "land,land" }, { categories: " land" }, { categories: "castle" }, { categories: "land," }, { categories: "", category: "land" }]) assert.equal(contracts.propertiesQuerySchema.safeParse(input).success, false);

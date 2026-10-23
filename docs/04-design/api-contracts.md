@@ -156,6 +156,16 @@ enquiries below. File permits and other business modules remain later work.
 
 ### SP-07 standalone inventory wire contract
 
+Current D43 creation extension (2026-10-20): `POST /properties` accepts
+`initial_offering:{kind:sale|rental,price_mad:positiveDecimalString,
+price_period:null|month|year,currency:MAD}`. The staff creation wizard requires it;
+sale has no period, rent requires month/year. The property and this one draft
+offering commit under the existing idempotency key and true-actor history in one
+transaction. An active agent may use this narrow create path but cannot invoke
+`POST/PATCH /offerings`, change owners or confirm availability. The wizard
+requires this field, while existing API callers may still create incomplete
+drafts. Existing records are not backfilled.
+
 All inventory routes reuse the current staff session/facade proof. All active
 staff read shared facts. Under D34, all active staff may POST/PATCH property
 facts; owner/offering/availability/lifecycle commands remain M/A-only. Every
@@ -570,6 +580,7 @@ public URL, export or external delivery is added. See [SP-04 evidence](../03-pla
 | C02 | `GET/POST /contacts`, `GET/PATCH /contacts/{id}`, `POST /contacts/{id}/archive`, `POST /contacts/{id}/restore` | M/A or S; archive/restore M/A; name and phone required. |
 | C02 | `POST /contacts/resolve-phone`, `POST /contacts/{id}/merge`, `POST /contacts/{id}/assign`, `PUT /contacts/{id}/collaborators` | Explained resolution within scope; assignment and collaboration M/A; cross-portfolio merge M/A. |
 | C02 | `GET/POST /enquiries`, `GET/PATCH /enquiries/{id}`, `POST /enquiries/{id}/assign` | These are the UI Leads operations. M/A or S; unassigned queue M/A; assignment M/A and assignee must have current contact scope. A contact transfer clears/reassigns invalid enquiry assignments. A new lead links or creates a contact under the same phone/scope rules; no separate `lead` table. |
+| C02 | `POST /enquiries/{id}/archive`, `POST /enquiries/{id}/restore` | M/A or current assigned agent within contact scope; reason and `expected_version` required. Restore expires 30 days after archive. History and identity remain. |
 | C03 | `GET/POST /requirements`, `GET/PATCH /requirements/{id}`, `POST /requirements/{id}/shortlist`, `DELETE /requirements/{id}/shortlist/{offering_id}` | M/A or S for contact; inventory read under R. |
 | C04 | `GET /developments`, `GET /developments/{id}`, `GET /developments/{id}/inventory`, `GET /properties`, `GET /properties/{id}`, `GET /offerings` | R; shared project/physical inventory facts and allowed attachments. Development inventory groups blocks/floors/types/units and separates physical-unit counts from whole-development offerings. |
 | C04 | `POST /developments`, `PATCH /developments/{id}` | R under D34 for shared facts/briefing. Developer changes require current contact scope for agents; omitted `developer_contact_id` on PATCH preserves the existing association, explicit null requests removal. Hidden links cannot be removed/replaced by an unrelated agent. |
@@ -582,6 +593,7 @@ public URL, export or external delivery is added. See [SP-04 evidence](../03-pla
 | C07 | `GET/POST /visits`, `GET/PATCH /visits/{id}`, `POST /visits/{id}/confirm`, `POST /visits/{id}/reschedule`, `POST /visits/{id}/complete`, `POST /visits/{id}/cancel`, `GET /calendar/free-busy`, `GET /calendar/availability` | M/A or S; three visit types. Ordinary conflict confirmation requires a reason; colleague free/busy excludes private metadata. Off-site working-time and company-car capacity are hard server checks. |
 | C07 | `GET /visit-schedule/policy`, `POST /visit-schedule/policy/preview`, `PUT /visit-schedule/policy` | GET returns safe work windows, lunch breaks and company-car capacity to active staff; preview and PUT are administrator-only. PUT is versioned and audited. A changed policy reports affected existing future visits but never silently cancels them. |
 | C08 | `GET/POST /deals`, `GET/PATCH /deals/{id}`, `POST /deals/{id}/transition`, `POST /deals/{id}/reserve`, `POST /deals/{id}/close`, `POST /deals/{id}/reopen` | M/A or S; explicit transitions, stock locks, history events. |
+| C08 | `POST /deals/{id}/archive`, `POST /deals/{id}/restore` | M/A or current primary contact agent within scope; reason and `expected_version` required. Archive blocks on an active reservation, visit or open task. Restore expires after 30 days; historical outcomes/finance are preserved. |
 | C08 | `POST /deals/{id}/release-reservation` | M/A or S; reviewed deal/offering/target/parent versions, reason and idempotency key; release only this deal's active hold under stock locks, append actor/history, and never close the deal automatically. See [SP-12 local contract](reservations-local.md). |
 | C08 | `GET /deals/{id}/stock-review`, `GET /deals/{id}/outcomes` | Current contact scope; safe reviewed stock facts and numbered immutable private outcome/reopening history. See [SP-13 local contract](outcomes-local.md). |
 | C04 | `GET /properties/{id}/stock-review`, `GET /developments/{id}/stock-review`, corresponding `POST .../external-outcome` | M/A only; exact offering identity, complete reviewed stock versions/fingerprint, date and safe shared explanation. No KAY win, commission or income. See [SP-13 local contract](outcomes-local.md). |
@@ -597,6 +609,15 @@ Command `POST` routes accept documented JSON bodies, not a general `PATCH` that 
 First-administrator bootstrap remains server-local with no HTTP route. `POST /users` requires completed bootstrap and a current full administrator. Under D37, creation/reset accept a chosen initial password and return no-store user metadata only. New accounts are active without handoff; expired initial passwords and legacy pending/disabled/deleted accounts cannot sign in. A valid initial credential creates a restricted session. Own-password change clears the flag, revokes sessions and requires fresh login; temporary expiry is checked on every restricted request. Existing staff credentials/sessions are not bulk-changed. See the [runbook](../06-delivery-and-operations/admin-bootstrap.md).
 
 An offering's target (`property_id` versus `development_id`) is immutable once referenced by a deal or reservation. `PATCH /offerings/{id}` cannot turn a unit offer into a whole-development offer. Reparenting a committed unit or archiving a development with active child commitments returns `409 STOCK_REVIEW_REQUIRED`; history and child records never disappear through a parent command.
+
+For D44 record-level removal, archive and restore require an idempotency key,
+an exact version and a nonblank reason. `GET /enquiries` and `GET /deals` accept
+`record_archive=active|archived|all` (default `active`) independently of their
+existing contact `archive` filter. Detail/history links still resolve an archived
+record under current contact scope; writes reject `RECORD_ARCHIVED`. After 30 days
+restore returns `RECORD_RESTORE_EXPIRED` without erasing protected business or
+financial history. Project/physical-property archive and visit cancellation use
+their existing guarded routes; there is no hard-delete route for those records.
 
 ## Lead, project briefing, and visit-schedule additions
 

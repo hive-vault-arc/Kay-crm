@@ -49,7 +49,14 @@ def append_activity(
     )
     with database.session() as session, session.begin():
         identity = locked_identity(session, token)
-        cid = context(session, identity, scope, target)
+        scoped_record = (
+            enquiry_in_scope(session, identity, target)
+            if scope == "enquiries"
+            else authorized(session, identity, target)
+        )
+        if scoped_record.archived_at is not None:
+            raise IdentityError("RECORD_ARCHIVED", 409)
+        cid = scoped_record.contact_id
         contact = readable_contact(session, identity, cid)
         previous = session.get(IdempotencyRecord, (identity.user.id, route, key))
         if previous:

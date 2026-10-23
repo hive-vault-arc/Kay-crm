@@ -67,6 +67,37 @@ The ReportLab dependency adds no remote rendering service. Its Pillow dependency
 is pinned to 13.0.0; the development CA bundle is constrained to certifi
 2026.10.19 or newer. Direct hash-locked runtime and development audits pass;
 CI scans the expanded locks rather than the compatibility redirect file.
+## D44 record removal controls (2026-10-20)
+
+Lead/deal removal is an individual archive, not a database delete. The current
+assigned Lead agent or current primary Deal agent may act on an accessible record;
+manager/administrator access is still scope-checked. Both commands require a
+reason, expected version, CSRF/origin-protected staff facade and stable
+idempotency key. A serialized transaction rechecks ownership and state, records
+the true actor, and preserves activity, contact, reservation and finance history.
+An active reservation, visit or task blocks Deal archive. Detail/history remain
+scoped; active lists/search/report counts omit archived records; mutations are
+denied until restore. Restore is rejected at 30 days; protected history is not
+purged. Existing project/property stock-guarded archive remains M/A-only, and
+calendar removal is reasoned visit cancellation, not erasure. No retention CLI,
+production access, real record or migration was used. Synthetic PostgreSQL tests
+cover ownership denial, invalid input, concurrent versions, interruption and
+idempotent retry; headed Chrome exercises the user controls on an isolated DB.
+
+## Initial property price (2026-10-20)
+
+D43 uses the existing `offering` table and positive bounded decimal validation;
+no schema migration or floating-point amount is introduced. A property creator,
+including an active agent, can supply exactly one initial sale/rental draft price
+inside `POST /properties`. It commits with the property, immutable true-actor
+events, and the existing idempotency receipt in one database transaction.
+Unpriced legacy retries retain the pre-extension receipt hash.
+Separate offering creation/edit, owner, availability, stock, file, and archive
+commands retain their manager/administrator checks. The ordinary facade still
+checks Origin, CSRF, session and idempotency key; malformed periods, currencies,
+unexpected stock fields and nonpositive prices are rejected. Price is shared
+inventory information, not a private contact field. Existing incomplete drafts
+remain readable, and no production data or migration is touched by this change.
 
 ## Production property-photo transfer (2026-10-20)
 

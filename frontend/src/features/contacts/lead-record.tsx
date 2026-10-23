@@ -19,24 +19,26 @@ import { campaignLabels, ratingLabels } from "./qualification-contracts";
 import { ContactProfilePanel } from "./contact-profile-panel";
 import { LeadFollowUp } from "./lead-follow-up";
 import { ActivityHistory } from "@/features/activities/activity-history";
+import { RecordLifecycleAction } from "@/features/discovery/record-lifecycle-action";
 
-export function LeadRecord({ id, edit = false, role = "agent" }: { id: string; edit?: boolean; role?: StaffRole }) {
+export function LeadRecord({ id, edit = false, role = "agent", actorId }: { id: string; edit?: boolean; role?: StaffRole; actorId?: string }) {
   const [saved, setSaved] = useState(false);
   const { value: enquiry, error, refresh } = useQuery(`/api/v1/enquiries/${id}`, enquirySchema);
   const returnLink = <Button action="back" asChild variant="quiet" size="compact" className="crm-record-back justify-self-start"><Link href="/leads">Retour aux prospects</Link></Button>;
   const heading = !edit ? <div className="grid min-w-0 justify-items-start gap-2">{returnLink}<PageHeader title="Détail du Lead" description="La demande et les coordonnées accessibles de son contact." route={`/leads/${id}`} /></div> : null;
   if (error) return <>{heading}<RecordError error={error} retry={refresh} /></>;
   if (!enquiry) return <>{heading}<p role="status">Chargement de la demande…</p></>;
-  if (edit && !enquiry.contact.archived_at) return <LeadEditor key={id} enquiry={enquiry} />;
-  const writable = !enquiry.contact.archived_at;
+  if (edit && !enquiry.contact.archived_at && !enquiry.archived_at) return <LeadEditor key={id} enquiry={enquiry} />;
+  const writable = !enquiry.contact.archived_at && !enquiry.archived_at;
+  const canArchive = !enquiry.contact.archived_at && (role !== "agent" || (actorId && enquiry.assigned_agent?.id === actorId));
   return <div className="record-stack crm-record-view grid min-w-0 gap-4">
     {returnLink}
-    <CrmRecordHeader contact={enquiry.contact} title={enquiry.contact.name} route={`/leads/${id}`} badges={<><CrmStatusBadge state={enquiry.status}>{statusLabels[enquiry.status]}</CrmStatusBadge><CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge></>} actions={<><Button action="file" asChild variant="outline"><Link href={`/leads/${id}/documents`}>Documents et PDF</Link></Button>{writable ? <>{enquiry.status !== "converted" ? <Button action="edit" asChild variant="outline"><Link href={`/leads/${id}/edit`}>Modifier le prospect</Link></Button> : null}<ConvertLead enquiry={enquiry} onRefresh={refresh} /></> : null}</>} />
+    <CrmRecordHeader contact={enquiry.contact} title={enquiry.contact.name} route={`/leads/${id}`} badges={<><CrmStatusBadge state={enquiry.status}>{statusLabels[enquiry.status]}</CrmStatusBadge><CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge>{enquiry.archived_at ? <CrmStatusBadge state="archived">Archivé</CrmStatusBadge> : null}</>} actions={<><Button action="file" asChild variant="outline"><Link href={`/leads/${id}/documents`}>Documents et PDF</Link></Button>{writable ? <>{enquiry.status !== "converted" ? <Button action="edit" asChild variant="outline"><Link href={`/leads/${id}/edit`}>Modifier le prospect</Link></Button> : null}<ConvertLead enquiry={enquiry} onRefresh={refresh} /></> : null}{canArchive ? <RecordLifecycleAction kind="enquiries" id={id} version={enquiry.version} archivedAt={enquiry.archived_at} label={enquiry.contact.name} onChanged={refresh} /> : null}</>} />
     <div className="crm-record-layout">
       <ContactProfilePanel contact={enquiry.contact} />
       <div className="crm-record-primary">
         <CrmStatusBoard title="Statut de la demande" label="Statuts de la demande, lecture seule" current={enquiry.status} items={Object.entries(statusLabels).map(([id, label]) => ({ id, label }))} />
-        {enquiry.contact.archived_at ? <p role="status">Le contact est archivé. Restaurez-le avant de modifier la demande.</p> : null}
+        {enquiry.contact.archived_at ? <p role="status">Le contact est archivé. Restaurez-le avant de modifier la demande.</p> : null}{enquiry.archived_at ? <p role="status">Prospect archivé. Restauration possible pendant 30 jours ; son historique reste consultable.</p> : null}
         <div className="crm-lead-work-grid">
           <div className="crm-record-primary">
             <section className="crm-panel crm-demand-panel" aria-label="Demande reçue"><SectionHeading compact icon={EnquiryIcon}>Demande reçue</SectionHeading>

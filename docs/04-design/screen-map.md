@@ -157,7 +157,7 @@ The optional briefing is inside project detail/create/edit (detail tab `?tab=bri
 |---|---|---|
 | SC01 | `/change-password` | Restricted temporary-password flow; own password change and required fresh login. |
 | SC02 | Contacts view `/leads?view=contacts`, contact detail `/contacts/[id]` | Full contact identity/edit, enquiries, requirements, timeline, notes and collaboration; S or M/A scope. Shared contact-create form/dialog is also used by lead/owner selectors. |
-| SC03 | Standalone view `/projects?view=properties`; `/projects/properties/new`, `/projects/properties/[id]`, `/projects/properties/[id]/edit` | All active staff create/edit standalone and actual-unit facts under D34; the same detail/edit supports safe hierarchy breadcrumbs. Owners/files/offerings/availability/lifecycle writes remain M/A-only. |
+| SC03 | Standalone view `/projects?view=properties`; `/projects/properties/new`, `/projects/properties/[id]`, `/projects/properties/[id]/edit` | All active staff create/edit standalone and actual-unit facts under D34. D43 requires one positive sale/rental asking price in the creation wizard, saved as an initial draft offering; this is the sole agent offering exception. Detail and cards show current sale/rental prices separately. The same detail/edit supports safe hierarchy breadcrumbs. Owners/files/other offering writes/availability/lifecycle remain M/A-only. |
 | SC04 | Dashboard and contact/deal detail panels | Today's/overdue tasks and notifications; follow linked record scope. |
 | SC05 | Deal detail finance tab | Optional commissions and receipts; manager/administrator only. |
 | SC06 | Leads import/export actions and contextual flows | Manager/administrator bulk operations, atomic import and protected export. |

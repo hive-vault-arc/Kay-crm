@@ -45,7 +45,7 @@ test("SP07 visible Chrome: inventory, owner privacy, keyboard, touch, responsive
     await expect(page.getByText("0 programme(s) correspondant(s).", { exact: true })).toBeVisible();
     const id = await createProperty(page);
     await addOwners(page, [`SP07 ${"Propriétaire".repeat(11)}`]);
-    await createCampaign(page, "sale", "900000,01"); await createCampaign(page, "rental");
+    await createCampaign(page, "rental");
     await confirmCampaign(page, "sale"); await confirmCampaign(page, "rental");
     await capture(page, path.join(root, "sp07-detail-desktop.png"));
     await page.getByRole("tab", { name: "Offres", exact: true }).click();

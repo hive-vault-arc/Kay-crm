@@ -9,6 +9,7 @@ export async function createProperty(page: Page, category = "apartment", referen
   const navigation = form.getByRole("group", { name: "Navigation du formulaire" });
   await page.getByLabel("Référence du bien", { exact: true }).fill(reference);
   await page.getByLabel("Catégorie", { exact: true }).selectOption(category);
+  await page.getByLabel("Prix de vente demandé en MAD", { exact: true }).fill("900000,01");
   await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
   await expect(form.getByText("Étape 2 sur 3")).toBeVisible();
   await navigation.getByRole("button", { name: "Suivant", exact: true }).click();

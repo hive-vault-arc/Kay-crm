@@ -167,6 +167,8 @@ def apply_command(
         record(session, identity, contact.id, "contacts.updated")
         return contact.id, contact.id
     enquiry = enquiry_in_scope(session, identity, target)
+    if enquiry.archived_at is not None:
+        raise IdentityError("RECORD_ARCHIVED", 409)
     scoped_contact(session, identity, enquiry.contact_id)
     if enquiry.version != body.expected_version:
         raise ContactConflict(

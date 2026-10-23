@@ -11,13 +11,13 @@ from app.identity.security import IdentityError
 from app.inventory.commands import Body, command
 from app.inventory.contracts import (
     ConfirmAvailability,
+    CreateProperty,
     EditOffering,
     EditProperty,
     InventoryQuery,
     NewOffering,
     Owners,
     PropertiesQuery,
-    PropertyFields,
 )
 from app.inventory.hierarchy_contracts import ArchiveDevelopment
 from app.inventory.outcome_contracts import ExternalOutcome
@@ -79,7 +79,7 @@ def properties(
 
 @router.post("/properties")
 def create_property(
-    request: Request, token: Proof, key: RetryKey, body: PropertyFields
+    request: Request, token: Proof, key: RetryKey, body: CreateProperty
 ) -> dict[str, object]:
     return mutate(request, token, key, "create-property", body)
 

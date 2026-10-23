@@ -25,6 +25,7 @@ import { campaignLabels, languageLabels, ratingLabels } from "./qualification-co
 import { countryLabel } from "./qualification-inputs";
 import { useDirectoryFilters } from "./use-directory-filters";
 import { DirectoryCountryFilter } from "./directory-country-filter";
+import { RecordLifecycleAction } from "@/features/discovery/record-lifecycle-action";
 
 const columns: Record<ColumnId, ColumnDef<LeadSummary>> = {
   name: { id: "name", header: "Contact", cell: ({ row: { original: lead } }) => <CrmContactCell contact={lead.contact} href={`/leads/${lead.id}`} describedBy={`lead-phone-${lead.id}`} /> },
@@ -43,17 +44,19 @@ const columns: Record<ColumnId, ColumnDef<LeadSummary>> = {
 };
 const defaults = { q: "", status: "", campaign_source: "", source: "", rating: "", assigned_agent_id: "", received_from: "", received_to: "", country: "", language: "", sort: "-updated_at", page_size: 50 };
 
-export function LeadList({ role, contactId, archived = false, revision }: { role: StaffRole; contactId?: string; archived?: boolean; revision?: number }) {
+export function LeadList({ role, actorId, contactId, archived = false, revision }: { role: StaffRole; actorId?: string; contactId?: string; archived?: boolean; revision?: number }) {
   const hydrated = useHydrated();
   const { draft, setDraft, filters, page, setPage, invalid, apply, reset, activeCount } = useDirectoryFilters(defaults, "received_from", "received_to");
   const [agentLabel, setAgentLabel] = useState("");
+  const [recordArchive, setRecordArchive] = useState<"active" | "archived">("active");
   const { visible, change, notice } = useLeadColumns();
-  const { value: result, error, refresh } = useQuery(queryPath("enquiries", { ...filters, page, contact_id: contactId, archive: archived ? "archived" : undefined }), enquiriesSchema, revision);
+  const { value: result, error, refresh } = useQuery(queryPath("enquiries", { ...filters, page, contact_id: contactId, archive: archived ? "archived" : undefined, record_archive: recordArchive }), enquiriesSchema, revision);
   function clearFilters() { reset(); setAgentLabel(""); }
   const toolbar = <CrmDirectoryToolbar primary={<Button action="create" asChild variant="creation"><Link href="/leads/new">Nouveau prospect</Link></Button>}>
     <Button action="contact" asChild variant="quiet" size="compact"><Link href="/leads?view=contacts">Contacts</Link></Button>
+    <Button action={recordArchive === "active" ? "archive" : "back"} variant="quiet" size="compact" aria-pressed={recordArchive === "archived"} onClick={() => { setRecordArchive(value => value === "active" ? "archived" : "active"); setPage(1); }}>{recordArchive === "active" ? "Archives des prospects" : "Prospects actifs"}</Button>
     {role !== "agent" ? <Button action="upload" asChild variant="quiet" size="compact"><Link href="/leads?view=import">Importer des contacts</Link></Button> : null}
-    {role !== "agent" && result ? <ExportAction compact kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
+    {role !== "agent" && result && recordArchive === "active" ? <ExportAction compact kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
     <ColumnChooser compact visible={visible} change={change} />
   </CrmDirectoryToolbar>;
   return <div className={!contactId ? "crm-directory" : "grid min-w-0 gap-3"}>
@@ -79,8 +82,8 @@ export function LeadList({ role, contactId, archived = false, revision }: { role
       {!contactId ? toolbar : null}{notice ? <p role="status">{notice}</p> : null}
       {error ? <RecordError error={error} retry={refresh} /> : !result ? <p role="status">Chargement des Leads…</p> : <>
         {role !== "agent" && contactId ? <ExportAction kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
-        <h2 className="crm-results-title" role="status">{result.total} demande{result.total > 1 ? "s" : ""}</h2>
-        {!result.items.length ? <p>{activeCount ? "Aucune demande ne correspond à vos filtres." : "Aucune demande sur cette page. Créez un Lead ou revenez à la première page."}</p> : <ScrollableResultsTable><DataTable className="crm-directory-table min-w-table" scrollLabel="Tableau des Leads, défilement horizontal" rows={result.items} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} footerCaption columns={visible.map(id => ({ ...columns[id], id, ...(id === "name" || id === "updatedAt" ? { header: () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" onClick={() => setDraft({ ...draft, sort: id === "name" ? "name" : "-updated_at" })}>{id === "name" ? "Contact" : "Modifié le"}</Button> } : {}) }))} caption="Une ligne par demande, même si le contact est déjà connu." emptyLabel="Aucune demande." /></ScrollableResultsTable>}
+        <h2 className="crm-results-title" role="status">{recordArchive === "archived" ? "Archives · " : ""}{result.total} demande{result.total > 1 ? "s" : ""}</h2>
+        {!result.items.length ? <p>{recordArchive === "archived" ? "Aucun prospect archivé dans cette sélection." : activeCount ? "Aucune demande ne correspond à vos filtres." : "Aucune demande sur cette page. Créez un Lead ou revenez à la première page."}</p> : <ScrollableResultsTable><DataTable className="crm-directory-table min-w-table" scrollLabel="Tableau des Leads, défilement horizontal" rows={result.items} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} selectionAction={(selected, clear) => selected.length === 1 && (role !== "agent" || selected[0].assigned_agent?.id === actorId) ? <RecordLifecycleAction kind="enquiries" id={selected[0].id} version={selected[0].version} archivedAt={selected[0].archived_at} label={selected[0].contact.name} onChanged={() => { clear(); refresh(); }} /> : <span className="text-xs text-muted-foreground">{selected.length > 1 ? "Archivez une fiche à la fois." : "Seul l’agent attribué peut archiver cette fiche."}</span>} footerCaption columns={visible.map(id => ({ ...columns[id], id, ...(id === "name" || id === "updatedAt" ? { header: () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" onClick={() => setDraft({ ...draft, sort: id === "name" ? "name" : "-updated_at" })}>{id === "name" ? "Contact" : "Modifié le"}</Button> } : {}) }))} caption="Une ligne par demande, même si le contact est déjà connu." emptyLabel="Aucune demande." /></ScrollableResultsTable>}
         <NumberedPages compact={!contactId} page={page} total={result.total} size={result.page_size} change={setPage} />
       </>}
     </FilterResultsLayout>

@@ -136,6 +136,10 @@ def list_in_session(
         enquiries = select(Enquiry).where(
             Enquiry.contact_id.in_(contacts.with_only_columns(Contact.id))
         )
+        if query.record_archive == "active":
+            enquiries = enquiries.where(Enquiry.archived_at.is_(None))
+        elif query.record_archive == "archived":
+            enquiries = enquiries.where(Enquiry.archived_at.is_not(None))
         if query.sort == "name":
             enquiries = enquiries.join(Contact, Contact.id == Enquiry.contact_id)
         if identity.user.role == "agent":

@@ -24,7 +24,7 @@ Confirmed decisions: managers have full business access and administrators inher
 Technical proposals: capability checks and typed-parent authorization on every operation.  
 References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs/04-design/api-contracts.md), [security](docs/04-design/security-and-privacy.md), and [tests](docs/05-quality/acceptance-tests.md).
 
-`S` means a contact for whom the agent is the current primary agent or an active collaborator. `All` means every active KAY team member. Under D34 (Khalid, 2026-10-16), active agents may create/edit shared project facts, hierarchy, reusable types and physical properties/units. This grants no private-contact access or other manager-only inventory command. Administrators inherit all managers' business rights.
+`S` means a contact for whom the agent is the current primary agent or an active collaborator. `All` means every active KAY team member. Under D34 (Khalid, 2026-10-16), active agents may create/edit shared project facts, hierarchy, reusable types and physical properties/units. D43 permits one positive-priced draft sale/rental offering only inside the atomic creation of that property; other offering commands remain manager-only. This grants no private-contact access. Administrators inherit all managers' business rights.
 
 | Action | Administrator | Manager | Agent |
 |---|---|---|---|
@@ -34,7 +34,7 @@ References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs
 | Merge duplicates within the same writable scope after confirmation | Yes | Yes | Yes, within S only |
 | Read developments, blocks, floors, unit types, properties/units, their offerings, and shared inventory attachments | All | All | All |
 | Create/edit development facts and shared briefing, hierarchy, unit types, properties/units | Yes | Yes | Yes; developer selection requires current contact scope |
-| Change legal owners, inventory files, offerings, availability, external outcomes or archive/restore inventory | Yes | Yes | No |
+| Change legal owners, inventory files, offerings, availability, external outcomes or archive/restore inventory | Yes | Yes | No, except one priced draft offering during property creation (D43) |
 | Read an owner/developer's private contact details/documents | All | All | Only if S for that contact |
 | Create/edit a contact's visits, tasks, and deals | All | All | S |
 | Reserve, close, and reopen a contact's deal | All | All | S, subject to stock invariants |
@@ -46,6 +46,7 @@ References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs
 | View KPIs and drill-downs | All | All | S and shared inventory, without other private contacts |
 | Import CSV and export in bulk | Yes | Yes | No |
 | Archive/restore contacts, developments, and properties | Yes | Yes | No |
+| Archive/restore an individual Lead or deal within 30 days | Yes | Yes | Only the Lead's current assigned agent or the deal contact's current primary agent, respectively; current contact scope is still required |
 | Read privileged security audit | Yes | Yes when operationally needed | No |
 
 When an agent enters a phone already held by a private contact, only the current primary agent's name is shown. This is the narrow BR-04 disclosure exception. The agent cannot open, duplicate, or merge the contact, or see its deals. A shared development or unit record may show a non-private marketing name/reference, but its developer/owner link does not expose protected contact IDs, phones, documents, deals, or notes. Current permissions are rechecked on reads, search, writes, notifications, exports, downloads, and worker execution. Removing a collaboration or transferring a contact revokes access that has no remaining basis without changing the recorded authorship of past actions. Private contacts must not leak through counts, autocomplete, filenames, or copied URLs.

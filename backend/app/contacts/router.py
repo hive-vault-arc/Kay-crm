@@ -5,6 +5,8 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, Query, Request
 
+from app.archive.records import RecordLifecycle
+from app.archive.records import command as record_lifecycle
 from app.contacts.commands import command
 from app.contacts.contracts import (
     EditContact,
@@ -115,3 +117,23 @@ def edit_enquiry(
 ) -> dict[str, object]:
     database, secret = configuration(request)
     return command(database, token, secret, key, "enquiries", body, target)
+
+
+@router.post("/enquiries/{target}/archive")
+def archive_enquiry(
+    target: UUID, body: RecordLifecycle, request: Request, token: Proof, key: RetryKey
+) -> dict[str, object]:
+    if request.query_params:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    database, secret = configuration(request)
+    return record_lifecycle(database, token, secret, key, "enquiries", target, "archive", body)
+
+
+@router.post("/enquiries/{target}/restore")
+def restore_enquiry(
+    target: UUID, body: RecordLifecycle, request: Request, token: Proof, key: RetryKey
+) -> dict[str, object]:
+    if request.query_params:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    database, secret = configuration(request)
+    return record_lifecycle(database, token, secret, key, "enquiries", target, "restore", body)

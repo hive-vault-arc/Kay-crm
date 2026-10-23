@@ -12,7 +12,7 @@ export function PropertyCampaign({ kind, offerings }: { kind: "sale" | "rental";
   return <section aria-label={kindLabels[kind]} className="project-campaign flex min-w-0 items-start gap-3">
     <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
     <div className="grid min-w-0 gap-1"><h3 className="font-sans text-xs font-medium">{kindLabels[kind]}</h3>
-      {offering ? <><InventoryStatus state={offering.state} occupied={offering.occupied} conflict={offering.reservation_conflict} /><Price offering={offering} /></> : <p className="text-xs text-muted-foreground">Aucune</p>}
+      {offering ? <><div className="font-semibold"><Price offering={offering} /></div><InventoryStatus state={offering.state} occupied={offering.occupied} conflict={offering.reservation_conflict} /></> : <p className="text-xs text-muted-foreground">Prix non renseigné</p>}
     </div>
   </section>;
 }
@@ -23,7 +23,7 @@ export function PropertyCard({ property }: { property: PropertySummary }) {
     <div className="project-card-content grid min-w-0 gap-1 p-3">
       <h2 className="font-sans text-base leading-snug font-semibold wrap-anywhere" title={property.reference}>{name}</h2>
       <p className="flex min-w-0 items-start gap-2 text-sm text-muted-foreground"><LocationIcon aria-hidden="true" className="size-4 shrink-0" /><span className="wrap-anywhere">{property.location || "Localisation non renseignée"}</span></p>
-      <div className="grid min-w-0 gap-2 pt-1"><h3 className="font-sans text-xs font-semibold">Campagnes actuelles</h3><div className="grid min-w-0 grid-cols-2 gap-3">{(["sale", "rental"] as const).map(kind => <PropertyCampaign key={kind} kind={kind} offerings={property.offerings} />)}</div></div>
+      <div className="grid min-w-0 gap-2 border-t pt-3"><h3 className="font-sans text-xs font-semibold">Prix demandés</h3><div className="grid min-w-0 grid-cols-2 gap-3">{(["sale", "rental"] as const).map(kind => <PropertyCampaign key={kind} kind={kind} offerings={property.offerings} />)}</div></div>
       <Link className="project-card-link inline-flex min-h-control items-center gap-3 justify-self-start text-sm font-semibold text-link hover:underline" href={href} aria-label={`Ouvrir la fiche ${name} (${property.reference})`}>Ouvrir la fiche<ForwardIcon aria-hidden="true" className="size-4" /></Link>
     </div>
   </article>;

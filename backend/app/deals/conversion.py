@@ -21,6 +21,8 @@ from app.identity.sessions import CurrentIdentity
 def convert(session: Session, identity: CurrentIdentity, eid: UUID, body: ConvertLead) -> Deal:
     session.scalar(select(Enquiry).where(Enquiry.id == eid).with_for_update())
     enquiry = enquiry_in_scope(session, identity, eid)
+    if enquiry.archived_at is not None:
+        raise IdentityError("RECORD_ARCHIVED", 409)
     contact = scoped_contact(session, identity, enquiry.contact_id)
     if enquiry.version != body.expected_version:
         raise ContactConflict("VERSION_CONFLICT", {"current": {"version": enquiry.version}})

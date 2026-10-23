@@ -25,6 +25,7 @@ import { useHydrated } from "@/hooks/use-hydrated";
 import { formatInstant } from "@/lib/format";
 import { dealsSchema, stageLabels, type Deal } from "./contracts";
 import { DealColumns, useDealColumns, type ColumnId } from "./columns";
+import { RecordLifecycleAction } from "@/features/discovery/record-lifecycle-action";
 
 const columns: Record<ColumnId, ColumnDef<Deal>> = {
   name: { id: "name", header: "Contact", cell: ({ row: { original: deal } }) => <CrmContactCell contact={deal.contact} href={`/deals/${deal.id}`} describedBy={`deal-phone-${deal.id}`} /> },
@@ -42,15 +43,16 @@ const columns: Record<ColumnId, ColumnDef<Deal>> = {
 };
 const defaults = { q: "", stage: "", assigned_agent_id: "", offering_kind: "", campaign_source: "", rating: "", country: "", language: "", updated_from: "", updated_to: "", archive: "active", sort: "-updated_at", page_size: 50 };
 
-export function DealList({ role, contactId, archived = false, revision }: { role: StaffRole; contactId?: string; archived?: boolean; revision?: number }) {
+export function DealList({ role, actorId, contactId, archived = false, revision }: { role: StaffRole; actorId?: string; contactId?: string; archived?: boolean; revision?: number }) {
   const { draft, setDraft, filters, page, setPage, invalid, apply, reset, activeCount } = useDirectoryFilters(defaults, "updated_from", "updated_to");
   const [agentLabel, setAgentLabel] = useState("");
+  const [recordArchive, setRecordArchive] = useState<"active" | "archived">("active");
   const hydrated = useHydrated();
   const { visible, change, notice } = useDealColumns();
-  const query = useQuery(queryPath("deals", { ...filters, contact_id: contactId, archive: archived ? "archived" : filters.archive, page }), dealsSchema, revision);
+  const query = useQuery(queryPath("deals", { ...filters, contact_id: contactId, archive: archived ? "archived" : filters.archive, record_archive: recordArchive, page }), dealsSchema, revision);
   function clearFilters() { reset(); setAgentLabel(""); }
   const toolbar = <CrmDirectoryToolbar primary={!archived ? <Button action="create" asChild variant="creation"><Link href={`/deals/new${contactId ? `?contact_id=${contactId}` : ""}`}>Créer une affaire</Link></Button> : null}>
-    <Button action="contact" asChild variant="quiet" size="compact"><Link href="/leads?view=contacts">Contacts</Link></Button><DealColumns compact visible={visible} change={change} />
+    <Button action="contact" asChild variant="quiet" size="compact"><Link href="/leads?view=contacts">Contacts</Link></Button><Button action={recordArchive === "active" ? "archive" : "back"} variant="quiet" size="compact" aria-pressed={recordArchive === "archived"} onClick={() => { setRecordArchive(value => value === "active" ? "archived" : "active"); setPage(1); }}>{recordArchive === "active" ? "Archives des affaires" : "Affaires actives"}</Button><DealColumns compact visible={visible} change={change} />
   </CrmDirectoryToolbar>;
   return <div className={!contactId ? "crm-directory" : "grid min-w-0 gap-3"}>
     {!contactId ? <CrmDirectoryHeader title="Affaires" count={query.value?.total} noun="affaires" description="Suivez vos projets et préparez les prochaines étapes de vos affaires." route="/deals" /> : null}
@@ -72,8 +74,8 @@ export function DealList({ role, contactId, archived = false, revision }: { role
     </form>}>
       {toolbar}{notice ? <p role="status">{notice}</p> : null}
       {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des affaires…</p> : <>
-        <h2 className="crm-results-title" role="status">{query.value.total} affaire{query.value.total > 1 ? "s" : ""}</h2>
-        {query.value.items.length ? <ScrollableResultsTable><DataTable className="crm-directory-table min-w-table" scrollLabel="Tableau des affaires, défilement horizontal" rows={query.value.items} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} footerCaption columns={visible.map(id => ({ ...columns[id], id, ...(id === "name" || id === "updatedAt" ? { header: () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" onClick={() => setDraft({ ...draft, sort: id === "name" ? "contact_name" : "-updated_at" })}>{id === "name" ? "Contact" : "Modifié le"}</Button> } : {}) }))} caption="Une affaire explicite par ligne. Le responsable suit la fiche contact." emptyLabel="Aucune affaire." /></ScrollableResultsTable> : <p>Aucune affaire sur cette page ou dans ces filtres. Créez une affaire, réinitialisez les filtres ou revenez à la première page.</p>}
+        <h2 className="crm-results-title" role="status">{recordArchive === "archived" ? "Archives · " : ""}{query.value.total} affaire{query.value.total > 1 ? "s" : ""}</h2>
+        {query.value.items.length ? <ScrollableResultsTable><DataTable className="crm-directory-table min-w-table" scrollLabel="Tableau des affaires, défilement horizontal" rows={query.value.items} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} selectionAction={(selected, clear) => selected.length === 1 && (role !== "agent" || selected[0].contact.primary_agent.id === actorId) ? <RecordLifecycleAction kind="deals" id={selected[0].id} version={selected[0].version} archivedAt={selected[0].archived_at} label={selected[0].title} onChanged={() => { clear(); query.refresh(); }} /> : <span className="text-xs text-muted-foreground">{selected.length > 1 ? "Archivez une fiche à la fois." : "Seul l’agent responsable peut archiver cette fiche."}</span>} footerCaption columns={visible.map(id => ({ ...columns[id], id, ...(id === "name" || id === "updatedAt" ? { header: () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" onClick={() => setDraft({ ...draft, sort: id === "name" ? "contact_name" : "-updated_at" })}>{id === "name" ? "Contact" : "Modifié le"}</Button> } : {}) }))} caption="Une affaire explicite par ligne. Le responsable suit la fiche contact." emptyLabel="Aucune affaire." /></ScrollableResultsTable> : <p>{recordArchive === "archived" ? "Aucune affaire archivée dans cette sélection." : "Aucune affaire sur cette page ou dans ces filtres. Créez une affaire, réinitialisez les filtres ou revenez à la première page."}</p>}
         <NumberedPages compact={!contactId} label="Pages des affaires" page={page} total={query.value.total} size={query.value.page_size} change={setPage} />
       </>}
     </FilterResultsLayout>

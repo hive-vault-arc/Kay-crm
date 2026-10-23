@@ -408,3 +408,12 @@ This extends AT-16/17/23 variants, not whole-product acceptance or human approva
 [Concrete contract](../04-design/commissions-local.md) and
 [actual verification](../03-planning/sprints/sp-16-execution.md). Focused tests do
 not claim the complete final-acceptance suite or human product/design approval.
+
+## D44 record-level removal extension
+
+AT-06/23/24 now include visible project, Lead and Deal archive controls and
+30-day Lead/Deal restore. AT-16/17 include reasoned calendar cancellation.
+The executable cases are `backend/tests/test_record_archive.py`, the existing
+inventory/scheduling permission suites, and
+`frontend/tests/e2e/record-removal.spec.ts`. Archive preserves linked business
+history; this extension does not authorize the security retention CLI.

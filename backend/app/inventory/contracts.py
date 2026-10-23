@@ -45,6 +45,23 @@ class PropertyFields(StrictBody):
         return canonical
 
 
+class InitialPropertyOffering(StrictBody):
+    kind: Literal["sale", "rental"]
+    price_mad: Amount
+    price_period: Literal["month", "year"] | None = None
+    currency: Literal["MAD"] = "MAD"
+
+    @model_validator(mode="after")
+    def period(self) -> InitialPropertyOffering:
+        if (self.kind == "sale") != (self.price_period is None):
+            raise ValueError("INVALID_PRICE_PERIOD")
+        return self
+
+
+class CreateProperty(PropertyFields):
+    initial_offering: InitialPropertyOffering | None = None
+
+
 class EditProperty(PropertyFields):
     expected_version: Version
 

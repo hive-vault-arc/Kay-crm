@@ -11,5 +11,5 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   if (!z.uuid().safeParse(id).success) notFound();
   const identity = await requireIdentity(`/contacts/${id}`);
   if (identity.state !== "authenticated") return <AuthUnavailable path={`/contacts/${id}`} />;
-  return <ContactRecord key={`${id}:${task ?? ""}`} id={id} role={identity.profile.user.role} initialTask={z.uuid().safeParse(task).success ? task : undefined} />;
+  return <ContactRecord key={`${id}:${task ?? ""}`} id={id} role={identity.profile.user.role} actorId={identity.profile.user.id} initialTask={z.uuid().safeParse(task).success ? task : undefined} />;
 }

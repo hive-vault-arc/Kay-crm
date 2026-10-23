@@ -28,7 +28,7 @@ class DealStageEvent(Base):
         CheckConstraint(
             "action IN ('created','updated','transition','customer_offer.created',"
             "'customer_offer.updated','contact_merged','reservation.created','reservation.released',"
-            "'closed','reopened','stock.flagged')",
+            "'closed','reopened','stock.flagged','archived','restored')",
             name="deal_event_action",
         ),
         CheckConstraint(

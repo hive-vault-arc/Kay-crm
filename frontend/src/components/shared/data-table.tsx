@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
@@ -28,6 +28,7 @@ export function DataTable<T>({
   scrollLabel,
   getRowId,
   rowSelectionLabel,
+  selectionAction,
   footerCaption = false,
 }: {
   columns: ColumnDef<T>[];
@@ -38,6 +39,7 @@ export function DataTable<T>({
   scrollLabel?: string;
   getRowId?: (row: T) => string;
   rowSelectionLabel?: (row: T) => string;
+  selectionAction?: (rows: T[], clear: () => void) => ReactNode;
   footerCaption?: boolean;
 }) {
   "use no memo";
@@ -58,7 +60,7 @@ export function DataTable<T>({
   const displayedRows = onlySelected && selected.length ? selected : table.getRowModel().rows;
   return (
     <div className="grid min-w-0 gap-2">
-    {rowSelectionLabel && selected.length ? <div className="crm-selection-toolbar"><p>{selected.length} sélectionné(s) sur cette page</p><Button action="filter" variant="quiet" size="compact" onClick={() => setOnlySelected(value => !value)}>{onlySelected ? "Afficher toute la page" : "Afficher la sélection"}</Button><Button action="reset" variant="quiet" size="compact" onClick={() => { table.resetRowSelection(); setOnlySelected(false); }}>Effacer la sélection</Button></div> : null}
+    {rowSelectionLabel && selected.length ? <div className="crm-selection-toolbar"><p>{selected.length} sélectionné(s) sur cette page</p>{selectionAction?.(selected.map(row => row.original), () => { table.resetRowSelection(); setOnlySelected(false); })}<Button action="filter" variant="quiet" size="compact" onClick={() => setOnlySelected(value => !value)}>{onlySelected ? "Afficher toute la page" : "Afficher la sélection"}</Button><Button action="reset" variant="quiet" size="compact" onClick={() => { table.resetRowSelection(); setOnlySelected(false); }}>Effacer la sélection</Button></div> : null}
     <Table className={className} scrollLabel={scrollLabel}>
       <TableCaption className={footerCaption ? "sr-only" : undefined}>{caption}</TableCaption>
       <TableHeader>

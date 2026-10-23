@@ -47,6 +47,14 @@
 - Coalesce pending ticket issuance across React Strict Mode remounts. Abandoned
   proofs otherwise accumulate toward the outstanding-ticket quota during fast
   navigation. Preserve that quota and use fresh proof after the pending call.
+## Archive-flow synthetic fixtures (2026-10-20)
+
+`tests.contact_support.create_lead` uses a fixed default phone. Creating a
+second Lead in the same fixture needs an explicit distinct synthetic phone;
+otherwise the duplicate-contact guard correctly rejects the test setup before
+the archive behavior is reached. For list-removal E2E, assert the scoped API
+total and the archive switch before asserting archive rows, rather than binding
+the test to an incidental results-heading accessible name.
 
 ## Sticky navigation and edge controls (2026-10-19)
 

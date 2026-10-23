@@ -40,7 +40,7 @@ def check_context(
         raise IdentityError("INVALID_VISIT_PARTICIPANT", 422)
     if fields.deal_id:
         deal = session.get(Deal, fields.deal_id)
-        if deal is None or deal.contact_id != contact.id:
+        if deal is None or deal.contact_id != contact.id or deal.archived_at is not None:
             raise IdentityError("INVALID_VISIT_CONTEXT", 422)
     if fields.property_id:
         target = session.get(Property, fields.property_id)

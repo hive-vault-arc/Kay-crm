@@ -1,5 +1,11 @@
 export function frenchApiError(code: string): string {
   const messages: Record<string, string> = {
+    RECORD_ARCHIVED: "Ce dossier est archivé. Restaurez-le avant de le modifier.",
+    RECORD_ALREADY_ARCHIVED: "Ce dossier est déjà archivé. Actualisez la fiche.",
+    RECORD_NOT_ARCHIVED: "Ce dossier est déjà actif. Actualisez la fiche.",
+    RECORD_RESTORE_EXPIRED: "Le délai de restauration de 30 jours est dépassé. L’historique reste conservé.",
+    RECORD_ACTIVE_VISIT: "Une visite liée est encore active. Annulez-la ou terminez-la avant d’archiver cette affaire.",
+    RECORD_ACTIVE_TASK: "Une tâche liée est encore ouverte. Terminez-la ou annulez-la avant d’archiver cette affaire.",
     LANGUAGES_REQUIRED: "Renseignez au moins une langue dans la fiche du contact.",
     LEAD_CONVERTED: "Ce prospect est déjà converti. Ouvrez son affaire pour poursuivre.",
     LEAD_ALREADY_CONVERTED: "Ce prospect possède déjà une affaire active. Actualisez sa fiche.",
