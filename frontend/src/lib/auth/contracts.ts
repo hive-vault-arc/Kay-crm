@@ -22,5 +22,6 @@ export const changeSchema = z.object({
 
 const returnPaths = new Set(["/dashboard", "/leads", "/leads/new", "/deals", "/visits", "/projects", "/projects/new", "/projects/properties/new", "/settings", "/settings/users", "/settings/users/new"]);
 export function safeReturnPath(value: unknown): string {
+  if (typeof value === "string" && (value === "/help" || (value.length <= 86 && /^\/help\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)))) return value;
   return typeof value === "string" && (returnPaths.has(value) || /^\/projects\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}(\/edit)?$/.test(value) || /^\/settings\/users\/[a-f0-9-]{36}\/edit$/.test(value) || /^\/(leads|contacts)\/[a-f0-9-]{36}(\/edit)?$/.test(value) || /^\/projects\/properties\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}(\/edit)?$/.test(value)) ? value : "/dashboard";
 }

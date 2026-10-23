@@ -1,10 +1,11 @@
 import Link from "next/link";
 import type { ColumnDef } from "@tanstack/react-table";
-import { FinanceIcon, ForwardIcon, LocationIcon, PasswordIcon } from "@/components/icons";
+import { FinanceIcon, LocationIcon, PasswordIcon } from "@/components/icons";
 import { DataTable } from "@/components/shared/data-table";
 import { InventoryThumbnail } from "@/features/files/inventory-thumbnail";
 import { categoryLabels, kindLabels, type Offering, type PropertySummary } from "./contracts";
 import { InventoryStatus, Price } from "./states";
+import { InventoryCardFooter } from "./inventory-card-footer";
 
 export function PropertyCampaign({ kind, offerings }: { kind: Offering["kind"]; offerings: Offering[] }) {
   const offering = offerings.find(value => value.kind === kind);
@@ -19,14 +20,14 @@ export function PropertyCampaign({ kind, offerings }: { kind: Offering["kind"]; 
 export function PropertyCard({ property }: { property: PropertySummary }) {
   const href = `/projects/properties/${property.id}`, name = property.marketing_name || property.reference;
   const location = property.location || property.listing_details.city || "Localisation non renseignée";
-  return <article className="project-card overflow-hidden rounded-md border bg-card" data-property-category={property.category}>
+  return <article className="project-card flex h-full flex-col overflow-hidden rounded-md border bg-card" data-property-category={property.category}>
     <div className="project-card-media relative"><InventoryThumbnail kind="property" id={property.id} /><span className="project-category" data-property-category={property.category}><span aria-hidden="true" className="project-category-dot" />{categoryLabels[property.category]}</span></div>
-    <div className="project-card-content grid min-w-0 gap-1 p-3">
-      <h2 className="font-sans text-base leading-snug font-semibold wrap-anywhere" title={property.reference}>{name}</h2>
-      <p className="flex min-w-0 items-start gap-2 text-sm text-muted-foreground"><LocationIcon aria-hidden="true" className="size-4 shrink-0" /><span className="wrap-anywhere">{location}</span></p>
+    <div className="project-card-content flex min-w-0 flex-1 flex-col gap-1 p-3">
+      <h2 className="project-card-title line-clamp-2 font-sans text-base leading-snug font-semibold wrap-anywhere" title={`${name} (${property.reference})`}>{name}</h2>
+      <p className="project-card-location flex min-w-0 items-start gap-2 text-sm text-muted-foreground"><LocationIcon aria-hidden="true" className="size-4 shrink-0" /><span className="line-clamp-2 wrap-anywhere" title={location}>{location}</span></p>
       <div className="grid min-w-0 gap-2 border-t pt-3"><h3 className="font-sans text-xs font-semibold">Prix demandés</h3><div className="grid min-w-0 grid-cols-2 gap-3">{(["sale", "rental", ...(property.offerings.some(item => item.kind === "holiday") ? ["holiday" as const] : [])] as const).map(kind => <PropertyCampaign key={kind} kind={kind} offerings={property.offerings} />)}</div></div>
-      <Link className="project-card-link inline-flex min-h-control items-center gap-3 justify-self-start text-sm font-semibold text-link hover:underline" href={href} aria-label={`Ouvrir la fiche ${name} (${property.reference})`}>Ouvrir la fiche<ForwardIcon aria-hidden="true" className="size-4" /></Link>
     </div>
+    <InventoryCardFooter href={href} name={`${name} (${property.reference})`} />
   </article>;
 }
 const columns: ColumnDef<PropertySummary>[] = [

@@ -1882,3 +1882,111 @@ The broad local backend run passes948 (recovery excluded locally, covered hosted
 Full local Chrome was interrupted after60 completed cases to focus failures;
 it is not a complete pass. Final exact-commit full hosted rerun remains required.
 
+## Project card footers: local only (2026-10-23)
+
+On `codex/project-card-footer` in the existing managed integration checkout,
+using its private Node24.22.1 runtime: `npm.cmd run lint`, `npm.cmd run typecheck`,
+`npm.cmd run test:unit` (92/92) and `npm.cmd run build` pass. The one scoped
+Impeccable layout detector returns `[]`. Final compiled headed Chrome command:
+`KAY_E2E_PRODUCTION=1; npm.cmd run test:chrome -- tests/e2e/project-card-layout.spec.ts
+tests/e2e/projects-reference.spec.ts --grep 'project cards:|programme cards|eight real synthetic photos'
+--max-failures=2 --reporter=list` passes3/3 in1.7m, against the leased disposable
+PostgreSQL/ClamAV stack. New assertions cover equal dimensions across rows,
+edge-to-edge bottom actions, hover color, inset keyboard focus/Enter, touch,
+320–1920px widths, long title/location and visible populated price. The existing
+eight-photo/filter/native200% scenario passes unchanged. Final synthetic desktop,
+mobile and programme captures were opened. Early fixture-data failures were
+corrected to the existing actor-prefix and explicit offer currency/period
+contracts, without changing guards. No backend/business source, migration,
+production data or remote Git change. No commit or push. Original dirty checkout
+preserved. See [scope](03-planning/project-card-footers.md) and
+[AFTER051](../anti-slop/audit-051-2026-10-23.md) for the unselected inherited
+LOW price-wrapping observation; human design review remains pending.
+
+## Property edit parity: local only (2026-10-23)
+
+Same managed checkout/branch, private Node24.22.1 and explicit backend venv.
+`npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run test:unit` (92/92)
+and `npm.cmd run build` pass. With `APP_ENVIRONMENT=test` and the owned leased
+PostgreSQL target on55439, `backend/.venv/Scripts/python.exe -m pytest
+backend/tests/test_property_listing_unit.py backend/tests/test_property_listing_db.py
+backend/tests/test_property_initial_price.py backend/tests/test_inventory.py
+backend/tests/test_developments.py -q --tb=short --maxfail=1` passes72/72 in57.85s.
+Database tests finish before the browser supervisor takes its isolated lease.
+
+Final compiled visible Chrome command, with the same explicit test target and
+`KAY_E2E_PRODUCTION=1`: `npm.cmd run test:chrome --
+tests/e2e/property-edit-wizard.spec.ts tests/e2e/property-listing-wizard.spec.ts
+tests/e2e/project-permissions.spec.ts tests/e2e/inventory.spec.ts --grep
+'property edit:|holiday riad|narrow land|agent creates and edits|lost acknowledgement|current version comparison'
+--max-failures=1 --reporter=list` passes8/8 in2.1m. It covers rich prefill and
+save/reopen, a legacy title above50 characters, zero floor, holiday facts,
+Maps validation, amenities/dependent-field clearing, unchanged offers, nullable
+legacy land, cancel without writes, agent edits, preserved unit hierarchy and
+disabled placement controls, real outage/lost acknowledgement/exactly-once retry,
+current-version full-detail comparison, role revocation and creation regression.
+Shared geometry assertions cover320/390/768/1024/1440px, no overflow, controls≥44px
+and contrast≥4.5:1. Native200% zoom verifies doubled devicePixelRatio in a private
+Chrome profile; keyboard Enter and a separate native-touch context pass. The
+temporary authenticated zoom profile is validated and deleted by the test.
+
+The initial browser start lacked the explicit isolated target and correctly
+refused cleanup. Test-only corrections then scope a navigation button to the
+new edit form, honor omitted optional JSON fields and assert the actual disabled
+children/fieldset attribute instead of an unsupported fieldset matcher. No
+application guard or assertion threshold is weakened. A native-zoom capture is
+retaken through Chrome's viewport screenshot path, avoiding full-page clipping.
+Final desktop/mobile/native-zoom synthetic captures are opened and inspected.
+One scoped Impeccable layout detector on4 UI modules returns[]. Documentation
+validator and `git diff --check` pass. See [scope](03-planning/property-edit-parity.md)
+and [AFTER052](../anti-slop/audit-052-2026-10-23.md). No backend/business source,
+migration, dependency, production access, commit or push. This is focused local
+acceptance, not a full-product/production test claim or human design approval.
+
+## KAY Help centre: local only (2026-10-23)
+
+Managed checkout `codex/project-card-footer`; original dirty checkout preserved.
+Private Node24.22.1: `npm.cmd run lint`, `npm.cmd run typecheck`,
+`npm.cmd run test:unit` (99/99) and `npm.cmd run build` pass. With
+`APP_ENVIRONMENT=test` and `TEST_DATABASE_URL` targeting the owned synthetic
+PostgreSQL database `kayrealestate_test` on127.0.0.1:55439,
+`backend/.venv/Scripts/python.exe -m pytest backend/tests/test_auth.py -q
+--tb=short --maxfail=1` passes19/19 in24.74s, serial before browser fixtures.
+
+Final compiled visible Chrome command: `npm.cmd run test:chrome --
+tests/e2e/help.spec.ts tests/e2e/shell.spec.ts --max-failures=1 --reporter=list`
+passes12/12 in2.9m. Environment: `KAY_E2E_PRODUCTION=1`,
+`KAY_E2E_API_PORT=8110`, `KAY_E2E_FRONTEND_PORT=3110`,
+`KAY_E2E_CONTROL_PORT=8111`, `KAY_E2E_SIMULATOR_PORT=8112`, plus the same explicit
+test database. Existing AkarFlow listeners8100/3100 are identified read-only
+and not stopped. Validated alternate ports preserve existing defaults, TLS,
+loopback, exact Origin and exclusive database lease/fixture guards.
+
+Coverage: authenticated login return, all28 agent guide links, role-filtered
+manager/admin guidance and copied-link denial, revoked-session denial, accent
+and full-content search, category counts/reset/empty state, no dirty-business-form
+marker, article contents/action links, keyboard and mobile touch. Geometry checks
+cover320–1440px, controls≥44px, contrast≥4.5:1 and no horizontal overflow. Native
+200% Chrome zoom verifies doubled devicePixelRatio and keyboard navigation; its
+temporary authenticated profile is validated and removed. Expanded/collapsed
+footer, long synthetic administrator identity, heights960–600px, short-screen
+drawer, fixed non-scrolling desktop rail, Sheet focus/Escape and unknown-route
+recovery pass. The real720px footer clipping is fixed using compact token spacing;
+targets and assertion thresholds are not weakened.
+
+Initial browser startup refused occupied default ports; no unrelated server was
+terminated. Test corrections account for Next streamed not-found responses and
+duplicate noindex tags, checking denied content itself. Mobile directory capture
+now waits for its heading/search after navigation rather than capturing the
+previous article. One scoped Impeccable layout detector returns[]. See
+[scope](03-planning/help-centre.md) and [AFTER053](../anti-slop/audit-053-2026-10-23.md).
+No backend business change, migration, dependency, production access, commit,
+push or deployment. This is focused local evidence; human product review remains
+pending. Prior local project-card/property-edit work remains intact.
+
+Capture-only synchronization rerun: same environment, `npm.cmd run test:chrome --
+tests/e2e/help.spec.ts --grep 'mobile touch' --max-failures=1 --reporter=list`
+passes1/1 in29.5s. Final desktop/article/mobile/native200% screenshots inspected;
+repository validator passes1214 links and `git diff --check` passes. Owned
+synthetic PostgreSQL55439 and `kay-realtime-tests` ClamAV are stopped afterward.
+

@@ -1,5 +1,30 @@
 # KAY agent lessons
 
+## Help and parallel local apps need explicit boundaries (2026-10-23)
+
+Check listener ownership before starting a guarded browser stack. A process on
+8100/3100 can belong to another project; never stop it just to free the usual
+test ports. Use the four validated KAY_E2E port overrides together and retain
+the isolated database lease, loopback binding and exact HTTPS frontend Origin.
+
+Next's streamed notFound can have HTTP200 and duplicate noindex metadata from
+layout/route boundaries. Test the actual missing-page UI, no restricted article
+or action and noindex presence, not an exact tag count or HTTP status alone.
+Role-denial assertions must not be removed to accommodate that framework detail.
+Use a search landmark rather than a business-edit form for local guide search,
+so the live-update dirty-form handler does not mistake a help query for CRM edits.
+
+## Stage-form assertions must target the new form (2026-10-23)
+
+After a Next navigation, await the named edit form before asserting a generic
+« Suivant » button; the still-rendered record can contain several disabled
+pagination buttons with that name. For a native disabled fieldset, verify its
+attribute and the disabled child controls: Playwright's enabled/disabled matcher
+does not treat the fieldset itself as a supported interactive control. Do not
+change real permission gates to satisfy that matcher. Optional listing values
+cleared on save are omitted by the existing API serializer, not necessarily
+returned as explicit JSON null; compare the actual declared response shape.
+
 ## Shared uploaders need their own control group (2026-10-23)
 
 A hidden file input must remain associated with its visible44px chooser when

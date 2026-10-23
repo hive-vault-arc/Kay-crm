@@ -147,7 +147,7 @@ test("Riviera desktop rail collapses without hiding destinations or search @shel
 
 test("Riviera rail fits the viewport and gives short windows the drawer @shell", async ({ page }) => {
   await mkdir("output/playwright/sidebar", { recursive: true });
-  for (const height of [900, 768, 700]) {
+  for (const height of [900, 800, 768, 720]) {
     await page.setViewportSize({ width: 1440, height });
     await page.goto("/dashboard");
     const sidebar = page.locator("aside[data-sidebar]");
@@ -168,7 +168,7 @@ test("Riviera rail fits the viewport and gives short windows the drawer @shell",
     expect(await content.evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
     await expect(sidebar.getByRole("button", { name: "Se déconnecter" })).toBeInViewport();
   }
-  await page.setViewportSize({ width: 1440, height: 640 });
+  await page.setViewportSize({ width: 1440, height: 700 });
   await page.goto("/dashboard");
   await expect(page.locator("aside[data-sidebar]")).toBeHidden();
   const trigger = page.getByRole("button", { name: "Ouvrir la navigation" });

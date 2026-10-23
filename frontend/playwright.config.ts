@@ -1,10 +1,14 @@
 import { defineConfig, devices } from "@playwright/test";
+import { testPorts } from "./scripts/test-ports.mjs";
 
 // AI error snapshots can expose password values even with traces/screenshots off.
 process.env.PLAYWRIGHT_NO_COPY_PROMPT = "1";
 
 const externalServer = process.env.PLAYWRIGHT_BASE_URL;
 const productionSmoke = process.env.KAY_E2E_PRODUCTION === "1";
+const ports = testPorts();
+const frontendOrigin = `https://localhost:${ports.frontend}`;
+const apiOrigin = `https://localhost:${ports.api}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -16,7 +20,7 @@ export default defineConfig({
   reporter: [["./scripts/private-reporter.ts"], ["list"], ["html", { open: "never" }]],
   outputDir: "test-results",
   use: {
-    baseURL: externalServer ?? "https://localhost:3100",
+    baseURL: externalServer ?? frontendOrigin,
     ignoreHTTPSErrors: true, // Disposable synthetic contexts only; server TLS stays verified.
     locale: "fr-FR",
     timezoneId: "Africa/Casablanca",
@@ -37,16 +41,16 @@ export default defineConfig({
     ? undefined
     : [{
         command: "node scripts/test-api.mjs",
-        url: "https://localhost:8100/api/v1/health/live",
+        url: `${apiOrigin}/api/v1/health/live`,
         ignoreHTTPSErrors: true,
         reuseExistingServer: false,
         timeout: 60_000,
       }, {
-        command: productionSmoke ? "npm run start -- --port 3100" : "npm run dev -- --port 3100",
-        url: "https://localhost:3100/login",
+        command: productionSmoke ? `npm run start -- --port ${ports.frontend}` : `npm run dev -- --port ${ports.frontend}`,
+        url: `${frontendOrigin}/login`,
         ignoreHTTPSErrors: true,
         reuseExistingServer: false,
         timeout: 120_000,
-        env: { KAY_UI_CHECKS: productionSmoke ? "0" : "1", NEXT_TELEMETRY_DISABLED: "1", API_BASE_URL: "https://localhost:8100", FRONTEND_ORIGIN: "https://localhost:3100" },
+        env: { KAY_UI_CHECKS: productionSmoke ? "0" : "1", NEXT_TELEMETRY_DISABLED: "1", API_BASE_URL: apiOrigin, FRONTEND_ORIGIN: frontendOrigin },
       }],
 });

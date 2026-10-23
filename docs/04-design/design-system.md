@@ -1,5 +1,48 @@
 # KAY interface design system
 
+## Help centre and footer entry: owner request, 2026-10-23
+
+Aide sits immediately above the signed-in identity in AccountFooter. Existing
+sidebar current/hover/focus styling, compact icon labels and mobile heading-focus
+handoff are reused. The added minimum44px target raises the short-height desktop
+drawer threshold to44rem and short-window spacing/brand size compact using the
+existing scale; desktop navigation still never becomes a scroll region.
+Help uses a full-width searchable guide directory with a desktop category rail
+and mobile select, plus prose-reading widths within articles. Chapter numbering
+means ordered actions, not decorative page chrome. All UI stays French and uses
+Riviera/shadcn/Tailwind/Iconsax; no new palette, type or geometry token. See the
+[help contract](../03-planning/help-centre.md) for role/content and security limits.
+
+## Property editing parity: owner correction, 2026-10-23
+
+Standalone creation and property editing share the five-stage listing wizard:
+identity, location, type-specific facts, amenities/description and review. Editing
+prefills every saved listing field (including numeric zero) and preserves unknown
+legacy values as empty; it does not impose new-listing completeness on old records.
+The same controls, option labels and hints are reused, with existing titles up to
+the schema's160-character limit retained. Unit edits keep their programme/floor/
+type references and campaign-related placement lock. A new standalone listing
+still creates a priced draft; an edit shows existing prices without changing
+offer kind, price, state or permissions. Offer changes use the existing separate
+workflow. Version-conflict comparison includes all listing facts before explicit
+retry. This supersedes the historical direct-edit form note below, not programme
+editor or campaign rules. No new layout token, package or database migration.
+
+## Project card footers: owner correction, 2026-10-23
+
+The Projects directory's property and programme cards use equal-height grid
+tracks and a shared full-width bottom navigation action. The action reuses
+shadcn Button/Next Link, the existing Iconsax forward icon and Riviera muted,
+honey hover/pressed and keyboard-focus roles. It stays attached to the card's
+bottom edge, with an inset visible focus outline and at least44px height.
+Name and location summaries occupy at most two lines, with their full text
+retained for assistive technology/title and on the detail record. Price and
+campaign states are not truncated; the grid can grow uniformly to fit them.
+The two-line minimum uses local `lh` geometry rather than a fixed pixel card
+height, preserving text zoom. This explicit equal-size request supersedes the
+older content-sized card note only on these directory cards. No data, route,
+permission, upload or list-table behavior changes. Local only; no publication.
+
 ## Lead and Deal record density: owner correction, 2026-10-22
 
 On Lead and Deal details, the contact information now forms a compact full-width

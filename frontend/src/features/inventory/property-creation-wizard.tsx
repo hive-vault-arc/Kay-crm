@@ -17,7 +17,7 @@ import { InventoryWizardSteps } from "./inventory-wizard-steps";
 import { LevelPicker } from "./level-picker";
 import { InventoryError } from "./states";
 import { useInventoryCommand } from "./use-command";
-import { StandalonePropertyWizard } from "./standalone-property-wizard";
+import { PropertyListingWizard } from "./property-listing-wizard";
 
 type Values = { reference: string; category: Property["category"]; marketing_name: string; location: string; area_sqm: string; rooms: string; offer_kind: "sale" | "rental"; price: string; period: "month" | "year" };
 const steps = [
@@ -28,7 +28,7 @@ const steps = [
 const hasRooms = (category: Property["category"]) => category === "apartment" || category === "villa" || category === "house";
 
 export function PropertyCreationWizard({ developmentId }: { developmentId?: string }) {
-  return developmentId ? <DevelopmentPropertyWizard developmentId={developmentId} /> : <StandalonePropertyWizard />;
+  return developmentId ? <DevelopmentPropertyWizard developmentId={developmentId} /> : <PropertyListingWizard />;
 }
 
 function DevelopmentPropertyWizard({ developmentId }: { developmentId: string }) {

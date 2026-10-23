@@ -11,6 +11,7 @@ import {
   ContactsIcon,
   ContactIcon,
   ChevronDownIcon,
+  AlertIcon,
 } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
@@ -69,5 +70,13 @@ export function SettingsNavigationItem({ compact = false, onNavigate }: { compac
     <span className="navigation-icon"><SettingsIcon aria-hidden="true" className="size-5" /></span>
     <span className={compact ? "sr-only" : "min-w-0 wrap-break-word"}>Paramètres</span>
     <ChevronDownIcon aria-hidden="true" className={cn("navigation-chevron size-4 shrink-0 -rotate-90", compact && "sr-only")} />
+  </Link>;
+}
+
+export function HelpNavigationItem({ compact = false, onNavigate }: { compact?: boolean; onNavigate?: (href: string) => void }) {
+  const pathname = usePathname();
+  const active = pathname === "/help" || pathname.startsWith("/help/");
+  return <Link href="/help" prefetch={false} onClick={() => onNavigate?.("/help")} aria-current={active ? "page" : undefined} aria-label="Aide" title={compact ? "Aide" : undefined} className={cn("nav-item flex min-h-control items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", active && "bg-sidebar-accent text-sidebar-accent-foreground")}>
+    <span className="navigation-icon"><AlertIcon aria-hidden="true" className="size-5 shrink-0" /></span><span className={compact ? "sr-only" : "min-w-0 wrap-break-word"}>Aide</span><ChevronDownIcon aria-hidden="true" className={cn("navigation-chevron size-4 shrink-0 -rotate-90", compact && "sr-only")} />
   </Link>;
 }
