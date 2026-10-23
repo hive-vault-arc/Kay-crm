@@ -84,3 +84,15 @@ Sources: [Brotli release](https://github.com/google/brotli/releases/tag/v1.2.1)
 and [Node security release](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases).
 Candidate3eae9b7's hosted run is superseded, not accepted; all required and manual
 integration checks must pass on the final dependency-patched candidate.
+
+Candidate04da10c passes required CI,92 frontend units and4 focused compiled
+Chrome cases on Node24.22.1. Full integration attempt1 stops backend after375
+passes when the existing Windows worker-kill test reports process-not-found;
+the unchanged case passes5 consecutive local repeats. No production timeout or
+assertion is relaxed. The independent full browser run identifies an obsolete
+October2026 UTC+1 expectation: Node's updated tzdata2026e and Python's current
+`Africa/Casablanca` both resolve that instant at09:00, not10:00. The display test
+now checks the10:00 pre-transition and09:00 post-transition values, following
+[IANA's2026c change](https://www.iana.org/time-zones/releases). This changes only
+test expectations, not the application's timezone or stored timestamps. The
+partially completed hosted run is superseded, not a successful release gate.
