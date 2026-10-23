@@ -76,6 +76,30 @@ existing undated deal/outcome model. Legacy rows receive an empty JSON object;
 the migration does not touch credentials, files or protected history. Isolated
 test data only; no production, real-data import/export, retention or external
 publisher call is part of this implementation.
+## Automatic Lead/Deal history wording (2026-10-22)
+
+Creation, status/stage change and conversion still append through the existing
+authorized, atomic commands with the true actor. Current Lead/Deal scope is
+rechecked before either history table is read. Conversion no longer exposes
+its Lead-origin marker as a Deal activity; legacy dual-linked markers stay
+stored and are only omitted from that Deal view. French text and dates for
+older blank/code-valued notes are read-only projections, not data rewrites.
+No new route, write permission, external message, retention job or migration
+is introduced. Tests used synthetic isolated PostgreSQL and private headed
+Chrome; no production or development data was accessed.
+
+## Lead/Deal catalogue project links (2026-10-22)
+
+Each page/count and mutation rechecks the current authenticated Lead/Deal and
+contact scope. Writes use the existing facade Origin/CSRF/session guards,
+strict UUID/idempotency inputs and a parent row lock; database checks/FKs and
+partial uniqueness defend concurrent and malformed links. Catalogue targets
+must exist and be active. No private owner/developer data is copied: the link
+contains only a shared catalogue name snapshot. Removal is reversible by
+re-adding, preserves creator/remover and immutable timeline actor, and does not
+alter visits, offerings, reservations or stock. The new migration is additive;
+non-test downgrade refuses any populated link/history. Synthetic isolated
+PostgreSQL and browser data only; no real-data migration or external message.
 
 ## Generated Lead/Deal document drafts (2026-10-20)
 
@@ -1211,6 +1235,24 @@ private exceptions. No public clock override or external send is added.
 [SP-15 evidence](03-planning/sprints/sp-15-execution.md) records actual negative,
 race, retry, migration, browser and privacy checks. Test cleanup requires the
 verified isolated target, advisory lease and synthetic-only account guard.
+
+## 0032 proactive-work security review (2026-10-22)
+
+New task/visit context is validated against the current scoped, same-contact
+Lead or Deal; multiple active Leads cannot be silently assigned by contact name.
+The database permits only one typed context and preserves nullable legacy rows.
+An unchanged historical Lead link may be retained when current contact authority
+moves to another agent, even if that Lead is no longer independently visible;
+this does not authorize choosing a new hidden Lead.
+The visit `not_completed` command requires a reason and an elapsed visit end,
+retains actor/version/history and invalidates future alerts. The worker's new
+J−1/H−1 and end+2h events contain only typed IDs, kind, due time and version;
+delivery rechecks active state, current owner/participant scope, schedule
+version and dedupe. The follow-up is suppressed after resolution or seven days
+of delay. Notification reads continue to scope before counts/pages, with no
+external message or clock override. The additive migration was exercised only
+against a verified separate synthetic PostgreSQL database; production access
+and schema changes were not undertaken in this task.
 
 ## SP-16 finance security boundary
 

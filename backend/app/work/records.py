@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.contacts.access import has_scope, readable_contact
 from app.contacts.history import record
 from app.contacts.models import Contact
+from app.contacts.work_context import enquiry_context
 from app.deals.models import Deal
 from app.identity.models import User
 from app.identity.security import IdentityError
@@ -33,7 +34,9 @@ def authorized(
     return row
 
 
-def check_context(session: Session, row: Task, fields: TaskFields) -> None:
+def check_context(
+    session: Session, identity: CurrentIdentity, row: Task, fields: TaskFields, *, new: bool
+) -> UUID | None:
     contact = session.get(Contact, row.contact_id)
     if contact is None or contact.archived_at:
         raise IdentityError("CONTACT_ARCHIVED", 409)
@@ -45,6 +48,15 @@ def check_context(session: Session, row: Task, fields: TaskFields) -> None:
             raise IdentityError("INVALID_TASK_CONTEXT", 422)
     if fields.property_id and session.get(Property, fields.property_id) is None:
         raise IdentityError("INVALID_TASK_CONTEXT", 422)
+    return enquiry_context(
+        session,
+        identity,
+        row.contact_id,
+        fields.enquiry_id or (row.enquiry_id if not new and not fields.deal_id else None),
+        fields.deal_id,
+        required=new,
+        current_enquiry_id=None if new else row.enquiry_id,
+    )
 
 
 def snapshot(row: Task) -> dict[str, object]:
@@ -52,6 +64,7 @@ def snapshot(row: Task) -> dict[str, object]:
         "contact_id": str(row.contact_id),
         "origin_contact_id": str(row.origin_contact_id),
         "deal_id": str(row.deal_id) if row.deal_id else None,
+        "enquiry_id": str(row.enquiry_id) if row.enquiry_id else None,
         "property_id": str(row.property_id) if row.property_id else None,
         "owner_user_id": str(row.owner_user_id),
         "title": row.title,
@@ -74,7 +87,16 @@ def append_event(session: Session, identity: CurrentIdentity, row: Task, action:
             snapshot=snapshot(row),
         )
     )
-    record(session, identity, row.contact_id, f"tasks.{action}", body=row.title, reason=row.outcome)
+    record(
+        session,
+        identity,
+        row.contact_id,
+        f"tasks.{action}",
+        body=row.title,
+        reason=row.outcome,
+        enquiry_id=row.enquiry_id,
+        deal_id=row.deal_id,
+    )
 
 
 def view(session: Session, row: Task) -> dict[str, object]:

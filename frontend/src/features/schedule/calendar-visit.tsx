@@ -6,7 +6,7 @@ import { VisitAction } from "./visit-record";
 
 export const visitIcons: Record<Visit["type"], KayIconComponent> = { office: DevelopmentIcon, without_company_car: ContactsIcon, company_car: CarIcon };
 export function VisitStatus({ status }: { status: Visit["status"] }) {
-  const Icon = status === "confirmed" || status === "completed" ? CompletedIcon : status === "cancelled" ? CloseIcon : ClockIcon;
+  const Icon = status === "confirmed" || status === "completed" ? CompletedIcon : status === "cancelled" || status === "not_completed" ? CloseIcon : ClockIcon;
   return <span className="calendar-status" data-status={status}><Icon aria-hidden="true" className="size-4" /><span>{status === "draft" ? "Brouillon" : statusLabels[status]}</span></span>;
 }
 export function CalendarVisit({ visit, onChanged }: { visit: Visit; onChanged?: () => void }) {

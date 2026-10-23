@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ClockIcon, CompletedIcon } from "@/components/icons";
+import { ClockIcon, CompletedIcon, CloseIcon } from "@/components/icons";
 import { civilLabel, monthShift, monthWeeks, weekStart } from "./calendar-model";
 import { statusLabels, typeLabels, visitStatusOrder, visitTypeOrder, type Policy, type Visit, type VisitPage } from "./contracts";
 import { visitIcons } from "./calendar-visit";
@@ -47,7 +47,7 @@ export function CalendarSidebar({ date, today, choose, policy, value, types, sta
       return <label key={type} className="calendar-filter min-h-control" data-visit-kind={type}><Checkbox checked={types.includes(type)} onCheckedChange={() => toggleType(type)} aria-label={typeLabels[type]} /><Icon aria-hidden="true" className="calendar-kind-icon size-5" /><span className="min-w-0 flex-1">{typeLabels[type]}</span><span className="text-xs tabular-nums text-muted-foreground">{value ? value.type_counts[type] : "…"}</span></label>;
     })}</fieldset>
     <fieldset className="calendar-filter-group"><legend>Statut</legend>{visitStatusOrder.filter(status => !value || status === "scheduled" || status === "confirmed" || value.status_counts[status] > 0).map(status => {
-      const Icon = status === "confirmed" || status === "completed" ? CompletedIcon : ClockIcon;
+      const Icon = status === "confirmed" || status === "completed" ? CompletedIcon : status === "cancelled" || status === "not_completed" ? CloseIcon : ClockIcon;
       return <label key={status} className="calendar-filter min-h-control" data-calendar-status={status}><Checkbox checked={statuses.includes(status)} onCheckedChange={() => toggleStatus(status)} aria-label={status === "draft" ? "Brouillon" : statusLabels[status]} /><Icon aria-hidden="true" className="calendar-status-icon size-5" /><span className="min-w-0 flex-1">{status === "draft" ? "Brouillon" : statusLabels[status]}</span><span className="text-xs tabular-nums text-muted-foreground">{value ? value.status_counts[status] : "…"}</span></label>;
     })}</fieldset>
     <section className="calendar-lunch rounded-md border bg-muted p-3"><div className="flex gap-3"><ClockIcon aria-hidden="true" className="size-6 shrink-0 text-link" /><div className="grid min-w-0 gap-1"><h3 className="font-sans text-sm font-semibold">Pause déjeuner</h3>{!policy ? <p className="text-xs">Chargement des règles…</p> : !policy.lunch_breaks.length ? <p className="text-xs">Pas de pause configurée.</p> : lunchRows(policy).map(row => <p key={row} className="text-xs wrap-anywhere">{row}</p>)}</div></div><Button action="settings" variant="ghost" className="mt-3 w-full justify-start border-t text-link" onClick={rules}>Règles et disponibilités</Button></section>

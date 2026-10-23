@@ -149,6 +149,13 @@ def cancel(
     return mutate(request, token, key, body, vid, "cancelled")
 
 
+@router.post("/visits/{vid}/not-completed")
+def not_completed(
+    request: Request, token: Proof, key: RetryKey, vid: UUID, body: FinishVisit
+) -> dict[str, object]:
+    return mutate(request, token, key, body, vid, "not_completed")
+
+
 @router.get("/calendar/free-busy")
 def free_busy(
     request: Request, token: Proof, query: Annotated[CalendarQuery, Query()]

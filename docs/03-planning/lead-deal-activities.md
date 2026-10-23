@@ -1,5 +1,17 @@
 # Lead and Deal activity histories
 
+## Dated automatic entries (2026-10-22)
+
+New Lead creation writes « Prospect créé le … » with the server event instant
+in Africa/Casablanca. A changed Lead status writes the old/new French labels
+and date in the same immutable update event; an ordinary edit keeps its normal
+label. Deal stage changes similarly record the French old/new stages and date.
+Conversion adds a Lead-origin event and a distinct dated Deal-created
+event. Deal activities exclude the legacy dual-linked conversion marker, while
+old blank creation/conversion notes and old status-code notes receive a French
+read projection. Stored older history, IDs, actors and timestamps are untouched.
+No schema migration or real-data backfill is required.
+
 2026-10-18. Status: scoped implementation and technical checks passed;
 development migration0025 approved/applied; product review pending.
 

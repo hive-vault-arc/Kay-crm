@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.contacts.access import ContactConflict, scoped_contact
 from app.contacts.history import record
+from app.contacts.history_text import conversion_note
 from app.contacts.models import Enquiry
 from app.contacts.queries import enquiry_in_scope
 from app.deals.contracts import ConvertLead
@@ -62,7 +63,23 @@ def convert(session: Session, identity: CurrentIdentity, eid: UUID, body: Conver
     enquiry.version += 1
     enquiry.updated_at = now
     session.flush()
-    append_event(session, identity, row, "created", None)
-    record(session, identity, contact.id, "enquiries.converted", enquiry_id=eid, deal_id=did)
+    append_event(
+        session,
+        identity,
+        row,
+        "created",
+        None,
+        body=conversion_note(now),
+        occurred_at=now,
+    )
+    record(
+        session,
+        identity,
+        contact.id,
+        "enquiries.converted",
+        enquiry_id=eid,
+        body=conversion_note(now),
+        occurred_at=now,
+    )
     session.flush()
     return row

@@ -19,6 +19,11 @@ export async function openTasks(page: Page, cid: string) {
   await page.goto(`/contacts/${cid}`); await page.getByRole("tab", { name: "Tâches", exact: true }).click();
   await expect(page.getByRole("button", { name: "Créer une tâche", exact: true })).toBeEnabled();
 }
+export async function selectFirstProspect(page: Page) {
+  const select = page.getByLabel("Prospect concerné", { exact: true });
+  await expect.poll(() => select.locator("option").count()).toBeGreaterThan(1);
+  await select.selectOption({ index: 1 });
+}
 export async function setTaskDue(page: Page, local: string) {
   const response = page.waitForResponse(r => r.url().includes("/api/v1/calendar/local-time?") && r.request().method() === "GET" && r.status() === 200);
   await page.getByLabel("Échéance de la tâche (heure de Casablanca)", { exact: true }).fill(local);
@@ -27,6 +32,7 @@ export async function setTaskDue(page: Page, local: string) {
 }
 export async function createTaskUi(page: Page, cid: string, due: Date, title = "SP15 tâche synthétique") {
   await openTasks(page, cid); await page.getByRole("button", { name: "Créer une tâche", exact: true }).click();
+  await selectFirstProspect(page);
   await page.getByLabel("Titre de la tâche", { exact: true }).fill(title);
   const localResponse = await page.request.get(`/api/v1/calendar/local-time?local=${encodeURIComponent(due.toISOString().slice(0, 16))}`);
   expect(localResponse.status()).toBe(200);

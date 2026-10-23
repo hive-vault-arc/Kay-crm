@@ -11,7 +11,14 @@ from app.files.models import Job, OutboxEvent
 from app.schedule.models import Visit
 from app.work.models import Task
 
-KINDS = ("visit.reminder.day", "visit.reminder.hour", "task.due")
+KINDS = (
+    "visit.reminder.day",
+    "visit.reminder.hour",
+    "visit.follow_up",
+    "task.reminder.day",
+    "task.reminder.hour",
+    "task.due",
+)
 
 
 def synchronize(session: Session, row: Visit | Task) -> None:
@@ -45,9 +52,14 @@ def synchronize(session: Session, row: Visit | Task) -> None:
         [
             ("visit.reminder.day", row.start_at - timedelta(days=1)),
             ("visit.reminder.hour", row.start_at - timedelta(hours=1)),
+            ("visit.follow_up", row.end_at + timedelta(hours=2)),
         ]
         if isinstance(row, Visit)
-        else [("task.due", row.due_at)]
+        else [
+            ("task.reminder.day", row.due_at - timedelta(days=1)),
+            ("task.reminder.hour", row.due_at - timedelta(hours=1)),
+            ("task.due", row.due_at),
+        ]
     )
     for kind, due in due_times:
         session.execute(

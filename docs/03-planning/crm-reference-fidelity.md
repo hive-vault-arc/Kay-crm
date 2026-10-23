@@ -1,5 +1,11 @@
 # CRM screenshot fidelity correction
 
+2026-10-22 owner correction: the Lead/Deal detail layout below is historical.
+The owner reported excessive blank space and downgraded contact searches.
+The current local record composition uses a compact full-width contact band,
+single-column Lead work sequence, and a collapsed contact-search disclosure
+after the history. See the [current design-system rule](../04-design/design-system.md#lead-and-deal-record-density-owner-correction-2026-10-22).
+
 2026-10-18. Status: local reference implementation and scoped verification
 complete; Khalid's product review remains pending.
 The owner rejected the previous directory/detail refinement as insufficiently

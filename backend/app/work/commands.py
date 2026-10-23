@@ -55,7 +55,7 @@ def apply(
         elif (row.due_at, row.owner_user_id) != (body.due_at, body.owner_user_id):
             row.schedule_version += 1
     if isinstance(body, (NewTask, EditTask)):
-        check_context(session, row, body)
+        row.enquiry_id = check_context(session, identity, row, body, new=isinstance(body, NewTask))
         for name in ("title", "notes", "due_at", "owner_user_id", "deal_id", "property_id"):
             setattr(row, name, getattr(body, name))
     row.updated_by_user_id, row.updated_at = identity.user.id, datetime.now(UTC)

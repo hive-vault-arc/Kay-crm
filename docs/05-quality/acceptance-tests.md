@@ -47,6 +47,13 @@ denied/outage/retry and secret-safe captures.
 
 ## Lead/Deal activity extension (2026-10-18)
 
+Automatic-entry follow-up: assert dated French Lead creation from both manual
+and web intake, exact old/new Lead status and Deal stage wording only on real
+transitions, and
+separate immutable Lead-origin versus Deal-created conversion entries. Historic
+dual-linked conversion markers may not appear twice on a Deal. Existing actor,
+time, notes, current scope and replay rules continue to apply.
+
 Extend AT-04/05/23/24/39 with exact Lead-to-Deal activity lineage: append all
 manual kinds/metadata, convert, then append Deal-only notes. Original Lead IDs,
 authors, timestamps and text must be unchanged in the separate origin table;
@@ -265,7 +272,7 @@ review remains pending Khalid.
 | AT-14 | C09 BR-14 | A deal closes without commission or a blocking warning; fixed and percentage commissions identify their base; agent financial read/write is denied. |
 | AT-15 | C09 BR-15 | Manager recognizes `10000.00`, records `2500.00`, and sees `7500.00` remaining; a `7500.01` receipt fails; correction retains original row, reason, actor, replacement, and exact recalculation. |
 | AT-16 | C07 BR-16 | Two visits overlap: warning and confirmation with a reason succeed, without a reason fail; colleague sees only free/busy interval. A blank slot is labelled CRM availability only. |
-| AT-17 | C06,C07 BR-17 | One-day, one-hour, and task-due events each produce one notification; worker retry creates no duplicate. Reschedule/cancellation invalidates old reminders; overdue work appears without a second visit. |
+| AT-17 | C06,C07 BR-17 | Visit and task J−1/H−1 alerts, task-due alert and visit end+2h follow-up each produce one scoped notification; worker retry creates no duplicate. Reschedule/cancellation/outcome invalidates old reminders. A past non-held visit records a distinct reasoned terminal state, and task/visit history attaches only to its selected Lead or Deal. Overdue work appears without a second visit. |
 | AT-18 | C10 BR-18 | After transfer, portfolio moves to the new primary agent; an already closed outcome stays with the agent at closing; collaborative activity counts toward the true actor. A private aggregate is invisible to an unrelated agent. |
 | AT-19 | C10 BR-19 | Available inventory without reconfirmation is flagged at 30 days; active deal without relevant activity is flagged at 14 days. No alert at 29/13 days and no automatic state change. |
 | AT-20 | C11 BR-20 | CSV with a valid row, an existing phone, and an invalid row previews skipped/error rows and blocks approval. After correction, only new rows commit, each row's agent is respected, and an ordinary agent cannot import. |

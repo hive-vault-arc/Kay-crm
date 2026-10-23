@@ -15,20 +15,24 @@ import { activitiesSchema, activityKinds, directionLabels, kindLabels, type Acti
 import { ActivityForm } from "./activity-form";
 
 const labels: Record<string, string> = { ...activityLabels, ...dealActivityLabels, ...kindLabels, "enquiries.converted": "Conversion en affaire" };
+function typeLabel(activity: Activity): string {
+  if (activity.action === "enquiries.updated" && /^(Statut du prospect modifié|Statut :)/.test(activity.body)) return "Changement de statut";
+  return labels[activity.action] ?? "Événement";
+}
 const columns: ColumnDef<Activity>[] = [
   { id: "date", header: "Date", cell: ({ row }) => <time dateTime={row.original.occurred_at} className="block min-w-table-text tabular-nums">{formatInstant(row.original.occurred_at)}</time> },
-  { id: "type", header: "Type", cell: ({ row }) => <span className="block min-w-table-text">{labels[row.original.action] ?? "Événement"}</span> },
+  { id: "type", header: "Type", cell: ({ row }) => <span className="block min-w-table-text">{typeLabel(row.original)}</span> },
   { id: "duration", header: "Durée", cell: ({ row }) => row.original.duration_minutes ? `${row.original.duration_minutes} min` : "Non précisée" },
   { id: "direction", header: "Sens", cell: ({ row }) => row.original.direction ? directionLabels[row.original.direction] : "Non précisé" },
   { id: "projects", header: "Projets évoqués", cell: ({ row }) => <span className="block min-w-table-text whitespace-pre-wrap wrap-anywhere">{row.original.projects.join("\n") || "Non précisés"}</span> },
-  { id: "notes", header: "Notes de suivi", cell: ({ row }) => <div className="grid min-w-table-text gap-2 whitespace-pre-wrap wrap-anywhere">{row.original.body ? <p>{row.original.body}</p> : null}{row.original.reason ? <p>Motif : {row.original.reason}</p> : null}{!row.original.body && !row.original.reason ? <p>{labels[row.original.action] ?? "Événement enregistré"}</p> : null}</div> },
+  { id: "notes", header: "Notes de suivi", cell: ({ row }) => <div className="grid min-w-table-text gap-2 whitespace-pre-wrap wrap-anywhere">{row.original.body ? <p>{row.original.body}</p> : null}{row.original.reason ? <p>Motif : {row.original.reason}</p> : null}{!row.original.body && !row.original.reason ? <p>{typeLabel(row.original)}</p> : null}</div> },
   { id: "actor", header: "Auteur", cell: ({ row }) => <span className="block min-w-table-text wrap-anywhere">{row.original.actor.display_name}</span> },
 ];
 
 export function ActivityHistory({ scope, id, origin = false, writable = false, revision }: { scope: "enquiries" | "deals"; id: string; origin?: boolean; writable?: boolean; revision?: number }) {
   const [page, setPage] = useState(1), [kind, setKind] = useState(""), [adding, setAdding] = useState(false), [notice, setNotice] = useState("");
   const selectId = useId(), addButton = useRef<HTMLButtonElement>(null);
-  const title = origin ? "Historique du Lead d’origine" : scope === "enquiries" ? "Historique du Lead" : "Activités de l’affaire";
+  const title = origin ? "Historique du prospect d’origine" : scope === "enquiries" ? "Historique du prospect" : "Activités de l’affaire";
   const path = `${scope}/${id}/${origin ? "origin-activities" : "activities"}`;
   const query = useQuery(queryPath(path, { page, page_size: 20, kind }), activitiesSchema, revision);
   function close() { setAdding(false); addButton.current?.focus(); }

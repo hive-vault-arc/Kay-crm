@@ -1,6 +1,6 @@
 """Private inbox projections authorize current parents before counts and pagination."""
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 from sqlalchemy import ColumnElement, SQLColumnExpression, and_, func, or_, select, text
@@ -92,7 +92,11 @@ def view(session: Session, row: Notification) -> dict[str, object]:
         if task is None:
             raise IdentityError("NOT_FOUND", 404)
         title, context, due = (
-            "Échéance de tâche",
+            {
+                "task.reminder.day": "Rappel de tâche : J-1",
+                "task.reminder.hour": "Rappel de tâche : H-1",
+                "task.due": "Échéance de tâche",
+            }[row.kind],
             task.title,
             task.due_at.astimezone(ZONE).isoformat(),
         )
@@ -109,11 +113,15 @@ def view(session: Session, row: Notification) -> dict[str, object]:
             "Rappel de visite : J-1"
             if row.kind == "visit.reminder.day"
             else "Rappel de visite : H-1"
+            if row.kind == "visit.reminder.hour"
+            else "Compte rendu de visite à renseigner"
         )
         context, href, due = (
             visit.title,
             f"/visits/{visit.id}",
-            visit.start_at.astimezone(ZONE).isoformat(),
+            (visit.end_at + timedelta(hours=2) if row.kind == "visit.follow_up" else visit.start_at)
+            .astimezone(ZONE)
+            .isoformat(),
         )
     elif row.document_id:
         document = session.get(Document, row.document_id)

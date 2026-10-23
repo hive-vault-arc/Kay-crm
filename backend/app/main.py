@@ -36,6 +36,7 @@ from app.intake.router import router as intake_router
 from app.inventory.hierarchy_router import router as hierarchy_router
 from app.inventory.router import router as inventory_router
 from app.realtime.router import router as realtime_router
+from app.project_links.router import router as project_links_router
 from app.recovery.maintenance import MaintenanceMiddleware
 from app.reports.router import router as reports_router
 from app.requirements.router import router as requirements_router
@@ -103,6 +104,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(generated_router)
     application.include_router(requirements_router)
     application.include_router(deals_router)
+    application.include_router(project_links_router)
     application.include_router(activities_router)
     application.include_router(finance_router)
     application.include_router(work_router)

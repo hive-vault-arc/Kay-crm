@@ -126,3 +126,29 @@ identity/history and monotonic read state, enforce schedule-version transitions,
 atomic matching outbox and stale-version invalidation. Downgrade refuses development
 and retained task/reminder history. Only the existing verified isolated synthetic
 fixture escape removes test rows; development is never reset or seeded.
+
+## 0032 proactive-work extension (2026-10-22)
+
+This additive extension keeps the existing worker, dedupe keys and typed internal
+inbox. An open task has J−1, H−1 and due events; a scheduled/confirmed visit has
+J−1, H−1 and end+2h follow-up events. Offsets are elapsed UTC hours, not
+Casablanca wall-clock arithmetic. A visit follow-up is deliverable only while
+unresolved and no later than seven days after its end; this cap is a technical
+proposal to avoid old backfill floods. No external message is sent.
+
+New tasks and visits select an exact enquiry or same-contact deal. With multiple
+active enquiries and no deal, omission fails with ENQUIRY_CONTEXT_REQUIRED; a
+single active enquiry may be inferred for older callers. The UI always asks on
+contact/calendar creation. Typed nullable links preserve existing work without
+rewriting its old history. An unchanged link survives contact ownership transfer
+or Lead archival; new selections still need current scope. New true-actor
+task/visit events enter only the chosen Lead/Deal timeline. A not_completed
+visit needs a reason after its scheduled end
+and is terminal, distinct from cancellation. The worker requests the outcome;
+only the explicit visit command records it.
+
+0032 adds the links, widens visit.status, extends typed queue/notification/action
+constraints and reminder SQL guard, and backfills only current unresolved event
+kinds. No contact content or credentials enter queue rows. Production migration
+and deployment require separate authorization and are not implied by synthetic
+test success.

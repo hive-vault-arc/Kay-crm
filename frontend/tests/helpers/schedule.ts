@@ -33,6 +33,9 @@ export async function fillVisit(page: Page, cid: string, kind="company_car", sta
   await page.goto(`/visits/new?contact_id=${cid}`);
   const form = page.getByRole("form",{name:"Nouvelle visite",exact:true});
   await expect(form.getByLabel("Titre de la visite",{exact:true})).toBeEnabled();
+  const prospect = form.getByLabel("Prospect concerné", { exact: true });
+  await expect.poll(() => prospect.locator("option").count()).toBeGreaterThan(1);
+  await prospect.selectOption({ index: 1 });
   await form.getByLabel("Titre de la visite",{exact:true}).fill(title);
   await form.getByLabel("Lieu de la visite",{exact:true}).fill("SP14 lieu synthétique uniquement");
   await form.getByLabel("Type de visite",{exact:true}).selectOption(kind);

@@ -35,6 +35,9 @@ def process(clock, crash=False):
 def test_actual_worker_process_stop_restart_after_effect_has_one_notification(settings, database):
     uid, token, contact, _ = setup(settings, database)
     run(settings, database, token, new(uid, contact))
+    assert json.loads(process(CLOCK - timedelta(days=1, seconds=1)).stdout) == {"processed": 0}
+    assert json.loads(process(CLOCK - timedelta(days=1)).stdout) == {"processed": 1}
+    assert json.loads(process(CLOCK - timedelta(hours=1)).stdout) == {"processed": 1}
     assert json.loads(process(CLOCK - timedelta(seconds=1)).stdout) == {"processed": 0}
     assert process(CLOCK, crash=True).returncode == 87
     assert json.loads(process(CLOCK).stdout) == {"processed": 0}
@@ -42,22 +45,23 @@ def test_actual_worker_process_stop_restart_after_effect_has_one_notification(se
     assert restarted.returncode == 0 and json.loads(restarted.stdout) == {"processed": 1}
     assert json.loads(process(CLOCK + timedelta(minutes=2)).stdout) == {"processed": 0}
     with database.session() as session:
-        assert session.scalar(select(func.count()).select_from(Notification)) == 1
+        assert session.scalar(select(func.count()).select_from(Notification)) == 3
 
 
 def test_actual_cli_worker_once_delivers_due_task(settings, database):
     uid, token, contact, _ = setup(settings, database)
     run(settings, database, token, new(uid, contact, due_at="2000-01-01T00:00:00Z"))
-    result = subprocess.run(
-        [sys.executable, "-m", "app.cli.worker", "--once"],
-        cwd=BACKEND_ROOT,
-        env={**os.environ, "APP_ENVIRONMENT": "test"},
-        capture_output=True,
-        text=True,
-        timeout=30,
-        check=False,
-    )
-    assert result.returncode == 0
+    for _ in range(3):
+        result = subprocess.run(
+            [sys.executable, "-m", "app.cli.worker", "--once"],
+            cwd=BACKEND_ROOT,
+            env={**os.environ, "APP_ENVIRONMENT": "test"},
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        assert result.returncode == 0
     with database.session() as session:
         assert session.scalar(select(func.count()).select_from(Notification)) == 1
     status = subprocess.run(
@@ -71,7 +75,11 @@ def test_actual_cli_worker_once_delivers_due_task(settings, database):
     )
     assert status.returncode == 0
     assert json.loads(status.stdout) == {
-        "jobs": [{"kind": "task.due", "state": "done", "count": 1}],
+        "jobs": [
+            {"kind": "task.due", "state": "done", "count": 1},
+            {"kind": "task.reminder.day", "state": "invalidated", "count": 1},
+            {"kind": "task.reminder.hour", "state": "invalidated", "count": 1},
+        ],
         "undispatched": 0,
     }
 
@@ -81,12 +89,14 @@ def test_populated_0016_migration_preserves_visit_actor_history_and_backfills_ou
 ):
     from tests.contact_support import actor
     from tests.legacy_support import contact as legacy_contact
+    from tests.legacy_support import enquiry as legacy_enquiry
 
     uid, token = actor(settings, database)
     assert migrate("downgrade", "0016_visit_calendar").returncode == 0
     vid = uuid4()
     try:
         contact = legacy_contact(database, uid)
+        legacy_enquiry(database, uid, contact)
         with database.engine.begin() as connection:
             connection.execute(text("SET LOCAL kay.visit_action='created'"))
             connection.execute(
@@ -125,7 +135,8 @@ def test_populated_0016_migration_preserves_visit_actor_history_and_backfills_ou
             current = connection.execute(
                 text("SELECT to_jsonb(v) FROM visit v WHERE id=:id"), dict(id=vid)
             ).scalar_one()
-            assert current.pop("schedule_version") == 1 and current == old_visit
+            assert current.pop("schedule_version") == 1
+            assert current.pop("enquiry_id") is None and current == old_visit
             assert (
                 connection.execute(
                     text("SELECT to_jsonb(e) FROM visit_event e WHERE visit_id=:id"), dict(id=vid)
@@ -133,7 +144,7 @@ def test_populated_0016_migration_preserves_visit_actor_history_and_backfills_ou
                 == old_event
             )
         with database.session() as session:
-            assert session.scalar(select(func.count()).select_from(OutboxEvent)) == 2
+            assert session.scalar(select(func.count()).select_from(OutboxEvent)) == 3
         assert migrate("downgrade", "0016_visit_calendar").returncode != 0
         run(settings, database, token, new(uid, contact))
     finally:

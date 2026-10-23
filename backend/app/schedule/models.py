@@ -80,7 +80,7 @@ class Visit(Base):
             "type IN ('company_car','without_company_car','office')", name="visit_type"
         ),
         CheckConstraint(
-            "status IN ('draft','scheduled','confirmed','completed','cancelled')",
+            "status IN ('draft','scheduled','confirmed','completed','not_completed','cancelled')",
             name="visit_status",
         ),
         CheckConstraint(
@@ -91,6 +91,7 @@ class Visit(Base):
         ),
         CheckConstraint("version > 0 AND policy_version > 0", name="visit_version"),
         CheckConstraint("schedule_version>0", name="visit_schedule_version"),
+        CheckConstraint("num_nonnulls(enquiry_id,deal_id)<=1", name="visit_single_context"),
         Index("ix_visit_start_end_id", "start_at", "end_at", "id"),
         Index("ix_visit_type_status_time", "type", "status", "start_at", "end_at"),
         Index("ix_visit_contact_id", "contact_id", "id"),
@@ -99,11 +100,14 @@ class Visit(Base):
     contact_id: Mapped[UUID] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
     origin_contact_id: Mapped[UUID] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
     deal_id: Mapped[UUID | None] = mapped_column(ForeignKey("deal.id", ondelete="RESTRICT"))
+    enquiry_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("enquiry.id", ondelete="RESTRICT"), index=True
+    )
     property_id: Mapped[UUID | None] = mapped_column(ForeignKey("property.id", ondelete="RESTRICT"))
     organizer_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     title: Mapped[str] = mapped_column(String(160))
     type: Mapped[str] = mapped_column(String(24))
-    status: Mapped[str] = mapped_column(String(12))
+    status: Mapped[str] = mapped_column(String(16))
     start_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     end_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     location: Mapped[str] = mapped_column(String(1000))
@@ -151,7 +155,7 @@ class VisitEvent(Base):
     __table_args__ = (
         CheckConstraint(
             "action IN ('created','updated','confirmed','rescheduled','completed',"
-            "'cancelled','contact_merged')",
+            "'cancelled','not_completed','contact_merged')",
             name="visit_event_action",
         ),
         CheckConstraint("version > 0", name="visit_event_version"),

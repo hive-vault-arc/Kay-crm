@@ -1,5 +1,23 @@
 # HTTP contracts for `/api/v1`
 
+## Lead/Deal catalogue project links (2026-10-22)
+
+`GET /enquiries/{id}/project-links` and `GET /deals/{id}/project-links` require
+`kind=discussed|visited`, with unique `page` (1–1000000) and `page_size`
+(1–50, default 25). The response is a numbered page of active links (`id`,
+`kind`, nullable `development_id`/`property_id`, captured `name`, `created_at`),
+with total and next/previous flags. The server scopes before counting and
+paginates under one repeatable-read snapshot. No entire catalogue is loaded.
+
+`POST` to either collection accepts `kind` and exactly one existing,
+non-archived catalogue UUID. `DELETE /{collection}/{link_id}` accepts `{}`.
+Both return `{id}`, require current parent/contact authority and the existing
+session/facade, Origin, CSRF and UUID idempotency guards. Same-key replay after
+authority check is safe; changed payload is 409. Duplicate active link is 409;
+unknown/foreign parents or targets are 404. Removal leaves the audit and
+business timeline intact; the same target may subsequently be re-added. These
+links are not qualification interests, appointments, offers or stock commands.
+
 ## Property category selection and facets (2026-10-18)
 
 D39 extends only `GET /properties` with optional `categories`, a≤40-character
@@ -52,7 +70,10 @@ current contact/Lead authority apply to every read, count and replay.
 rechecking origin authority. It returns the original entries/IDs/authors/times,
 not copies or all Leads for a contact. An authorized manual Deal without origin
 returns an empty page with null origin. There is no origin write/edit/delete
-route. Conversion's immutable linking event appears in both relevant histories;
+route. Conversion retains an immutable Lead-origin event and writes a separate
+dated Deal-created event. Existing dual-linked conversion events remain stored
+but are shown only in the Lead origin table; legacy blank creation/transition
+notes receive a read-only French display projection without rewriting records;
 manual Lead and Deal entries each have exactly one context. Contact-only legacy
 notes are not inferred into either history. Existing version/outcome histories
 and authorization remain unchanged.
@@ -907,6 +928,18 @@ GET /realtime/status, under /api/v1. Existing facade/session/Origin/CSRF rules
 remain authoritative. Tickets authenticate the first frame, never the URL;
 messages contain only topic invalidations/heartbeats, not business commands or
 records. The browser facade relays only tickets/push, not operator diagnostics.
+## 0032 proactive-work API extension
+
+Task and visit create/edit bodies add nullable `enquiry_id` alongside `deal_id`;
+both cannot be set. New contact-only work must resolve to one accessible active
+prospect or an explicit same-contact deal. `ENQUIRY_CONTEXT_REQUIRED` (422)
+requests selection when multiple or no active prospects exist. Visit POST
+`/visits/{id}/not-completed` requires `expected_version` and nonempty `reason`,
+and returns the normal versioned result. It requires an active visit whose end
+has passed; `VISIT_NOT_ENDED` (409) leaves it unchanged. Calendar facets and
+visit history include `not_completed`. Notification kinds add
+`task.reminder.day`, `task.reminder.hour`, `visit.follow_up`; existing `task.due`
+remains. All routes preserve session/CSRF/Origin/idempotency/no-store behavior.
 
 ## SP-16 commission boundary
 

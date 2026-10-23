@@ -8,7 +8,8 @@ import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { CalendarIcon, ContactsIcon, EnquiryIcon, InboxIcon, RadioIndicatorIcon } from "@/components/icons";
 import { formatInstant } from "@/lib/format";
-import { RequirementPanel } from "@/features/requirements/requirement-panel";
+import { ContactSearchDisclosure } from "@/features/requirements/contact-search-disclosure";
+import { ProjectLinksPanel } from "@/features/project-links/project-links-panel";
 import { ConvertLead } from "@/features/deals/convert-lead";
 import { enquirySchema, receivedSourceLabels as sourceLabels, statusLabels, type StaffRole } from "./contracts";
 import { useQuery } from "./use-query";
@@ -23,6 +24,7 @@ import { RecordLifecycleAction } from "@/features/discovery/record-lifecycle-act
 
 export function LeadRecord({ id, edit = false, role = "agent", actorId }: { id: string; edit?: boolean; role?: StaffRole; actorId?: string }) {
   const [saved, setSaved] = useState(false);
+  const [historyRevision, setHistoryRevision] = useState(0);
   const { value: enquiry, error, refresh } = useQuery(`/api/v1/enquiries/${id}`, enquirySchema);
   const returnLink = <Button action="back" asChild variant="quiet" size="compact" className="crm-record-back justify-self-start"><Link href="/leads">Retour aux prospects</Link></Button>;
   const heading = !edit ? <div className="grid min-w-0 justify-items-start gap-2">{returnLink}<PageHeader title="Détail du Lead" description="La demande et les coordonnées accessibles de son contact." route={`/leads/${id}`} /></div> : null;
@@ -55,16 +57,17 @@ export function LeadRecord({ id, edit = false, role = "agent", actorId }: { id: 
             <section className="crm-panel crm-message-panel" aria-label="Message de la demande"><SectionHeading compact icon={EnquiryIcon}>Message de la demande</SectionHeading><p className="whitespace-pre-wrap wrap-anywhere">{enquiry.message || "Aucun message renseigné."}</p></section>
           </div>
           <div className="crm-record-primary">
-            {writable ? <LeadFollowUp contactId={enquiry.contact.id} /> : null}
+            {writable ? <LeadFollowUp contactId={enquiry.contact.id} enquiryId={enquiry.id} /> : null}
             {saved ? <p role="status" className="text-success">Attribution enregistrée.</p> : null}
             {role !== "agent" && writable ? <EnquiryAssignment key={enquiry.version} enquiry={enquiry} saved={() => { setSaved(true); refresh(); }} /> : null}
           </div>
         </div>
-        <RequirementPanel key={enquiry.contact.id} contactId={enquiry.contact.id} writable={writable} />
         {enquiry.converted_at ? <p className="text-xs text-muted-foreground">Prospect converti le {formatInstant(enquiry.converted_at)}. Son origine et son historique sont conservés.</p> : null}
       </div>
     </div>
-    <ActivityHistory key={id} scope="enquiries" id={id} writable={writable} revision={enquiry.version} />
+    <ProjectLinksPanel scope="enquiries" id={id} writable={writable} onChanged={() => setHistoryRevision(current => current + 1)} />
+    <ActivityHistory key={id} scope="enquiries" id={id} writable={writable} revision={enquiry.version + historyRevision} />
     <Link className="inline-flex min-h-control items-center justify-self-start text-link underline" href={`/contacts/${enquiry.contact.id}`}>Ouvrir le contact et son historique</Link>
+    <ContactSearchDisclosure contactId={enquiry.contact.id} writable={writable} />
   </div>;
 }

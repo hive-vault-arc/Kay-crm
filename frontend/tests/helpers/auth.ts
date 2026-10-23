@@ -27,7 +27,10 @@ export async function signIn(page: Page, actor: TestActor, returnTo?: string) {
     await page.getByLabel("Adresse e-mail", { exact: true }).fill(actor.email);
     await page.getByLabel("Mot de passe", { exact: true }).fill(actor.password);
   } catch { throw new Error("SYNTHETIC_LOGIN_INPUT_FAILED"); }
+  const loginResponse = page.waitForResponse(response => response.url().includes("/api/v1/auth/login") && response.request().method() === "POST");
   await page.getByRole("button", { name: "Se connecter", exact: true }).click();
+  const loginStatus = (await loginResponse).status();
+  if (loginStatus !== 200) throw new Error(`SYNTHETIC_LOGIN_HTTP_${loginStatus}`);
   // Poll a primitive: page matchers can attach secret-bearing input snapshots.
   await expect.poll(() => /\/(dashboard|leads|deals|visits|projects|change-password)$/.test(page.url())).toBe(true);
   await page.waitForLoadState("load");

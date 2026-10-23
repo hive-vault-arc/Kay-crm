@@ -25,6 +25,7 @@ class Task(Base):
         CheckConstraint("status IN ('open','completed','cancelled')", name="task_status"),
         CheckConstraint("version>0 AND schedule_version>0", name="task_versions"),
         CheckConstraint("length(btrim(title))>0", name="task_title"),
+        CheckConstraint("num_nonnulls(enquiry_id,deal_id)<=1", name="task_single_context"),
         Index("ix_task_owner_due_status", "owner_user_id", "due_at", "status", "id"),
         Index("ix_task_contact_due", "contact_id", "due_at", "id"),
     )
@@ -32,6 +33,9 @@ class Task(Base):
     contact_id: Mapped[UUID] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
     origin_contact_id: Mapped[UUID] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
     deal_id: Mapped[UUID | None] = mapped_column(ForeignKey("deal.id", ondelete="RESTRICT"))
+    enquiry_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("enquiry.id", ondelete="RESTRICT"), index=True
+    )
     property_id: Mapped[UUID | None] = mapped_column(ForeignKey("property.id", ondelete="RESTRICT"))
     owner_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     created_by_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))

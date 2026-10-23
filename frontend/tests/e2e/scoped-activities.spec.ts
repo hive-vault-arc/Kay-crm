@@ -34,8 +34,21 @@ test("activities: Lead notes survive conversion as a separate read-only origin; 
     await signIn(page, actor);
     const eid = await createLead(page);
     await page.goto(`/leads/${eid}`);
-    const lead = page.getByRole("region", { name: "Historique du Lead", exact: true });
+    const lead = page.getByRole("region", { name: "Historique du prospect", exact: true });
     await expect(lead.getByRole("table")).toBeVisible();
+    await expect(lead.getByText(/Prospect créé le \d{2}\/\d{2}\/\d{4}/)).toBeVisible();
+    const statusChange = await staffCommand(page, `enquiries/${eid}`, {
+      expected_version: 1,
+      message: "Demande synthétique avant conversion",
+      status: "in_progress",
+      initial_budget: "500000",
+      campaign_source: "facebook",
+      rating: "cold",
+    }, "PATCH");
+    expect(statusChange.status()).toBe(200);
+    await page.reload();
+    await expect(lead.getByRole("cell", { name: "Changement de statut" })).toBeVisible();
+    await expect(lead.getByText(/Statut du prospect modifié de « Nouveau » à « Contacté » le \d{2}\/\d{2}\/\d{4}/)).toBeVisible();
     await lead.getByRole("button", { name: "Ajouter une activité", exact: true }).click();
     const form = lead.getByRole("form", { name: "Nouvelle activité" });
     await expect(form.getByLabel("Notes de suivi", { exact: true })).toBeFocused();
@@ -52,7 +65,9 @@ test("activities: Lead notes survive conversion as a separate read-only origin; 
     await lead.scrollIntoViewIfNeeded(); await geometry(page); await capture(page, "lead-desktop");
     const did = await convertLead(page);
     const own = page.getByRole("region", { name: "Activités de l’affaire", exact: true });
-    const origin = page.getByRole("region", { name: "Historique du Lead d’origine", exact: true });
+    const origin = page.getByRole("region", { name: "Historique du prospect d’origine", exact: true });
+    await expect(origin.getByText(/Prospect converti en affaire le \d{2}\/\d{2}\/\d{4}/)).toBeVisible();
+    await expect(own.getByText(/Prospect converti en affaire le \d{2}\/\d{2}\/\d{4}/)).toBeVisible();
     await expect(origin.getByText("Note Lead synthétique, à conserver après conversion.", { exact: true })).toBeVisible();
     await expect(origin.getByRole("button", { name: "Ajouter une activité", exact: true })).toHaveCount(0);
     await expect(own.getByText("Note Lead synthétique, à conserver après conversion.", { exact: true })).toHaveCount(0);
@@ -91,7 +106,7 @@ test("activities: pagination, validation, current-scope denial and interruption-
     await signIn(page, actor); const eid = await createLead(page);
     for (let index = 0; index < 22; index++) expect((await staffCommand(page, `enquiries/${eid}/activities`, { body: `Note synthétique ${index}`, kind: "note" })).status()).toBe(200);
     await page.goto(`/leads/${eid}`);
-    const region = page.getByRole("region", { name: "Historique du Lead", exact: true });
+    const region = page.getByRole("region", { name: "Historique du prospect", exact: true });
     await region.getByLabel("Filtrer les activités").selectOption("note");
     await expect(region.locator("tbody tr")).toHaveCount(20);
     await region.getByRole("button", { name: "Suivant", exact: true }).click();
@@ -139,7 +154,7 @@ test("activities: loading, unavailable retry and archived read-only history", as
       return route.continue();
     });
     await page.goto(`/leads/${eid}`);
-    const region = page.getByRole("region", { name: "Historique du Lead", exact: true });
+    const region = page.getByRole("region", { name: "Historique du prospect", exact: true });
     await expect(region.getByRole("status")).toHaveText("Chargement de l’historique…");
     mode = "fail"; hold.resolve();
     await expect(region.getByRole("alert")).toBeVisible();

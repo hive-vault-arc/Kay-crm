@@ -17,6 +17,20 @@ archived owner rows retain lineage. Current links have null `archived_at`;
 former links keep their archived timestamp. A contact tagged owner without a
 linked asset remains discoverable for later assignment. Private contact scope
 is applied before directory counts and portfolio detail.
+## Lead/Deal catalogue project links (2026-10-22)
+
+Additive `0031_project_links` adds `project_link`. Exactly one parent is an
+`enquiry` or a `deal`; exactly one target is a `development` or physical
+`property` (including a unit). `kind` is `discussed` or `visited`. The table
+retains a shared catalogue name snapshot, true creator/time, and optional
+remover/time; removal is soft, with a separate immutable contextual
+`timeline_event`. Partial unique indexes prohibit duplicate active links for
+one parent/kind/target while allowing removal and later re-addition. Parent,
+kind, time and ID indexes support unbounded, stable numbered pages. The Lead and
+Deal lists are separate even after conversion; existing qualification interests
+and appointment visits are not inferred or rewritten. Current parent/contact
+authority is checked on every read and command. No real data is backfilled.
+Production and development migrations are **not** applied by this local slice.
 
 ## Staff deletion (2026-10-18)
 
@@ -577,6 +591,16 @@ and monotonic read state. One notification per(user_id,event_key) is enforced.
 Lease fences, retry/backoff and retained invalidated jobs reuse SP-09 tables.
 Development/history-bearing downgrade is refused. See [the concrete contract](tasks-reminders-local.md)
 and [isolated migration evidence](../03-planning/sprints/sp-15-execution.md).
+
+## 0032 proactive-work physical extension
+
+`task.enquiry_id` and `visit.enquiry_id` are nullable foreign keys; new commands
+bind at most one of enquiry_id/deal_id to the same contact, while legacy rows stay
+unchanged. `visit.status` widens to 16 characters for `not_completed`; status,
+visit-event and timeline constraints include that terminal state. Outbox and
+notification typed checks include task J−1/H−1 and visit end+2h, keyed by
+schedule_version. Existing events are not rewritten; active parents receive
+only missing new outbox kinds.
 
 ## SP-16 physical finance extension
 

@@ -1,6 +1,7 @@
 """History attribution is captured at the command, never inferred from ownership."""
 
 from collections.abc import Sequence
+from datetime import datetime
 from typing import cast
 from uuid import UUID, uuid4
 
@@ -30,25 +31,27 @@ def record(
     duration_minutes: int | None = None,
     direction: str | None = None,
     projects: list[str] | None = None,
+    occurred_at: datetime | None = None,
 ) -> UUID:
     eid = uuid4()
-    session.add(
-        TimelineEvent(
-            id=eid,
-            contact_id=cid,
-            actor_user_id=identity.user.id,
-            actor_name=identity.user.display_name,
-            action=action,
-            body=body,
-            reason=reason,
-            enquiry_id=enquiry_id,
-            related_contact_id=related,
-            deal_id=deal_id,
-            duration_minutes=duration_minutes,
-            direction=direction,
-            activity_projects=projects or [],
-        )
+    event = TimelineEvent(
+        id=eid,
+        contact_id=cid,
+        actor_user_id=identity.user.id,
+        actor_name=identity.user.display_name,
+        action=action,
+        body=body,
+        reason=reason,
+        enquiry_id=enquiry_id,
+        related_contact_id=related,
+        deal_id=deal_id,
+        duration_minutes=duration_minutes,
+        direction=direction,
+        activity_projects=projects or [],
     )
+    if occurred_at is not None:
+        event.occurred_at = occurred_at
+    session.add(event)
     session.add(
         AuditEvent(
             actor_user_id=identity.user.id,

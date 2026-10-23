@@ -18,11 +18,13 @@ import { apiCommand } from "@/lib/api/command";
 import { availabilitySchema, colleaguesSchema, editVisitSchema, newVisitSchema, policySchema, resultSchema, typeLabels, type Visit } from "./contracts";
 import { LocalTimeField } from "./local-time-field";
 import { localLabel } from "./time";
+import { WorkContextSelect, type WorkContext } from "@/features/work/work-context-select";
 
 const textSchema = z.object({ title: z.string().trim().min(1,"Nommez cette visite.").max(160), location: z.string().trim().min(1,"Indiquez le lieu.").max(1000), overlap_reason: z.string().trim().max(1000) });
 export function VisitForm({ contactId, contactName, actorId, value, saved, cancel }: { contactId: string; contactName: string; actorId: string; value?: Visit; saved: (id: string) => void; cancel?: () => void }) {
   const form = useForm<z.infer<typeof textSchema>>({ resolver: zodResolver(textSchema), defaultValues: { title: value?.title ?? "", location: value?.location ?? "", overlap_reason: "" } });
   const [type, setType] = useState<Visit["type"]>(value?.type ?? "company_car"), [status, setStatus] = useState<"draft" | "scheduled">("scheduled");
+  const [context, setContext] = useState<WorkContext>({ enquiry_id: value?.enquiry_id ?? null, deal_id: value?.deal_id ?? null });
   const [startLocal, setStartLocal] = useState(value?.start_local.slice(0,16) ?? ""), [endLocal, setEndLocal] = useState(value?.end_local.slice(0,16) ?? "");
   const [start, setStart] = useState(value?.start_at ?? ""), [end, setEnd] = useState(value?.end_at ?? ""), [selected, setSelected] = useState<string[]>(value?.participant_ids ?? [actorId]);
   const [preview, setPreview] = useState<z.infer<typeof availabilitySchema>>(), [error, setError] = useState<ApiError>(), [checking, setChecking] = useState(false);
@@ -39,7 +41,8 @@ export function VisitForm({ contactId, contactName, actorId, value, saved, cance
   }
   async function submit(text: z.infer<typeof textSchema>) {
     setError(undefined);
-    const fields = { ...text, type, start_at: start, end_at: end, participant_ids: [...selected].sort(), deal_id: value?.deal_id ?? null, property_id: value?.property_id ?? null };
+    if (!value && !context.enquiry_id && !context.deal_id) { setError(new ApiError("ENQUIRY_CONTEXT_REQUIRED", 422)); return; }
+    const fields = { ...text, type, start_at: start, end_at: end, participant_ids: [...selected].sort(), ...context, property_id: value?.property_id ?? null };
     const body = value ? editVisitSchema.safeParse({ ...fields, expected_version: expectedVersion }) : newVisitSchema.safeParse({ ...fields, contact_id: contactId, status });
     if (!body.success || !availabilityPath || (status !== "draft" && (!preview || previewKey !== availabilityPath))) { setError(new ApiError("VALIDATION_ERROR",422)); return; }
     const serialized = JSON.stringify(body.data); if (attempt.current.body !== serialized) attempt.current = { body: serialized, key: crypto.randomUUID() };
@@ -49,6 +52,7 @@ export function VisitForm({ contactId, contactName, actorId, value, saved, cance
   if (error && ["NOT_FOUND","FORBIDDEN","UNAUTHENTICATED","CONTACT_ARCHIVED"].includes(error.code)) return <RecordError error={error} />;
   const activePreview = previewKey === availabilityPath ? preview : undefined;
   return <Form {...form}><form noValidate aria-label={value ? "Modifier la visite" : "Nouvelle visite"} className="form-surface grid min-w-0 max-w-reading gap-6" onSubmit={e => void form.handleSubmit(submit)(e)}><p className="wrap-anywhere">Contact : {contactName}</p><fieldset disabled={!hydrated || busy} className="grid min-w-0 gap-6">
+    {!value ? <WorkContextSelect contactId={contactId} value={context} change={setContext} /> : null}
     <FormField control={form.control} name="title" render={({ field }) => <FormItem><FormLabel>Titre de la visite</FormLabel><FormControl><Input {...field} maxLength={160} /></FormControl><FormMessage /></FormItem>} />
     <div className="grid gap-2"><Label htmlFor={`${id}-type`}>Type de visite</Label><NativeSelect id={`${id}-type`} value={type} onChange={e => setType(e.target.value as Visit["type"])}>{Object.entries(typeLabels).map(([key,label]) => <option key={key} value={key}>{label}</option>)}</NativeSelect></div>
     <FormField control={form.control} name="location" render={({ field }) => <FormItem><FormLabel>Lieu de la visite</FormLabel><FormControl><Textarea {...field} maxLength={1000} /></FormControl><FormMessage /></FormItem>} />

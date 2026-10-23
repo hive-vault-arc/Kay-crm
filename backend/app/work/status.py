@@ -23,8 +23,11 @@ def queue_status(database: Database) -> dict[str, object]:
                         [
                             "file.scan",
                             "task.due",
+                            "task.reminder.day",
+                            "task.reminder.hour",
                             "visit.reminder.day",
                             "visit.reminder.hour",
+                            "visit.follow_up",
                             "export.generate",
                             "website.process",
                         ]

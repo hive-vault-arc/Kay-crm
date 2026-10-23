@@ -1,6 +1,7 @@
 """Real PostgreSQL proves separate immutable activities and exact conversion lineage."""
 
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 from uuid import UUID, uuid4
 
 import pytest
@@ -11,11 +12,15 @@ from sqlalchemy.orm import Session
 
 from app.activities.contracts import MANUAL_KINDS, ActivityQuery, NewActivity
 from app.activities.service import append_activity, read_activities
+from app.contacts.commands import command as contact_command
+from app.contacts.contracts import EditEnquiry
 from app.contacts.history import read_history
 from app.contacts.history_models import TimelineEvent
+from app.contacts.history_text import conversion_note, created_note, deal_stage_note, status_note
 from app.contacts.ownership import mutate
 from app.contacts.ownership_contracts import EnquiryAssignment, NewNote
 from app.contacts.queries import read_detail as read_contact_detail
+from app.deals.contracts import Transition
 from app.deals.queries import read_detail
 from app.identity.security import IdentityError, csrf_token
 from app.main import create_app
@@ -54,6 +59,122 @@ def test_additive_migration_preserves_existing_history(settings, database):
     assert migrate("upgrade", "head").returncode == 0
     assert history(database, token, "enquiries", eid) == before
     assert migrate("check").returncode == 0
+
+
+def test_created_status_and_conversion_have_separate_dated_histories(settings, database):
+    uid, token = actor(settings, database)
+    lead = create_lead(settings, database, token)
+    eid = UUID(lead["id"])
+    first = history(database, token, "enquiries", eid)
+    created = next(item for item in first["items"] if item["action"] == "enquiries.created")
+    assert created["body"] == created_note(datetime.fromisoformat(created["occurred_at"]))
+    assert created["actor"]["id"] == str(uid)
+
+    edit = EditEnquiry(
+        expected_version=1,
+        message=lead["message"],
+        status="in_progress",
+        initial_budget="500000",
+        campaign_source="facebook",
+        rating="cold",
+    )
+    contact_command(
+        database, token, settings.facade_secret.get_secret_value(), uuid4(), "enquiries", edit, eid
+    )
+    changed = history(database, token, "enquiries", eid)
+    status = next(item for item in changed["items"] if item["action"] == "enquiries.updated")
+    assert status["body"] == status_note(
+        "new", "in_progress", datetime.fromisoformat(status["occurred_at"])
+    )
+    assert status["actor"]["id"] == str(uid)
+
+    unchanged = edit.model_copy(update={"expected_version": 2, "message": "Note actualisée"})
+    contact_command(
+        database,
+        token,
+        settings.facade_secret.get_secret_value(),
+        uuid4(),
+        "enquiries",
+        unchanged,
+        eid,
+    )
+    updated = history(database, token, "enquiries", eid)
+    plain_edit = next(item for item in updated["items"] if item["action"] == "enquiries.updated")
+    assert plain_edit["body"] == ""
+
+    did = UUID(run(settings, database, token, conversion(version=3), eid)["id"])
+    origin = read_activities(database, token, "deals", did, ActivityQuery(), origin=True)
+    own = history(database, token, "deals", did)
+    assert created in origin["items"] and status in origin["items"]
+    converted = next(item for item in origin["items"] if item["action"] == "enquiries.converted")
+    assert converted["body"] == conversion_note(datetime.fromisoformat(converted["occurred_at"]))
+    assert converted["actor"]["id"] == str(uid)
+    assert own["total"] == 1
+    assert own["items"][0]["action"] == "deals.created"
+    assert own["items"][0]["body"] == conversion_note(
+        datetime.fromisoformat(own["items"][0]["occurred_at"])
+    )
+    own_ids = {item["id"] for item in own["items"]}
+    assert own_ids.isdisjoint({item["id"] for item in origin["items"]})
+
+    run(
+        settings,
+        database,
+        token,
+        Transition(expected_version=1, stage="negotiation", reason="Étape synthétique"),
+        did,
+    )
+    stage_event = history(database, token, "deals", did)["items"][0]
+    assert stage_event["action"] == "deals.transition"
+    assert stage_event["body"] == deal_stage_note(
+        "new", "negotiation", datetime.fromisoformat(stage_event["occurred_at"])
+    )
+
+
+def test_legacy_dual_linked_conversion_is_read_only_in_lead_origin(settings, database):
+    uid, token = actor(settings, database)
+    lead = create_lead(settings, database, token)
+    eid = UUID(lead["id"])
+    did = UUID(run(settings, database, token, conversion(), eid)["id"])
+    cid = UUID(lead["contact"]["id"])
+    legacy_conversion, legacy_deal = uuid4(), uuid4()
+    with database.session() as session, session.begin():
+        session.add_all(
+            [
+                TimelineEvent(
+                    id=legacy_conversion,
+                    contact_id=cid,
+                    actor_user_id=uid,
+                    actor_name="Agent synthétique",
+                    action="enquiries.converted",
+                    enquiry_id=eid,
+                    deal_id=did,
+                    body="",
+                    reason="",
+                ),
+                TimelineEvent(
+                    id=legacy_deal,
+                    contact_id=cid,
+                    actor_user_id=uid,
+                    actor_name="Agent synthétique",
+                    action="deals.created",
+                    deal_id=did,
+                    body="",
+                    reason="",
+                ),
+            ]
+        )
+    own = history(database, token, "deals", did)
+    origin = read_activities(database, token, "deals", did, ActivityQuery(), origin=True)
+    assert str(legacy_conversion) not in {item["id"] for item in own["items"]}
+    legacy_origin = next(item for item in origin["items"] if item["id"] == str(legacy_conversion))
+    assert legacy_origin["body"] == conversion_note(
+        datetime.fromisoformat(legacy_origin["occurred_at"])
+    )
+    projected_deal = next(item for item in own["items"] if item["id"] == str(legacy_deal))
+    assert projected_deal["body"] == conversion_note(
+        datetime.fromisoformat(projected_deal["occurred_at"])
+    )
 
 
 def test_conversion_preserves_exact_lead_entries_and_separate_deal_notes(settings, database):

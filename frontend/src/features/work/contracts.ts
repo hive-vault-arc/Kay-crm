@@ -9,20 +9,20 @@ export const taskActionLabels = { created: "Tâche créée", updated: "Tâche mo
 export const bucketLabels = { today: "Aujourd’hui", overdue: "En retard", upcoming: "À venir", all: "Toutes", completed: "Terminées", cancelled: "Annulées" } as const;
 const fields = {
   title: z.string().trim().min(1).max(160), notes: z.string().trim().max(1000),
-  owner_user_id: z.uuid(), due_at: instant, deal_id: z.uuid().nullable(), property_id: z.uuid().nullable(),
+  owner_user_id: z.uuid(), due_at: instant, deal_id: z.uuid().nullable(), enquiry_id: z.uuid().nullable().optional(), property_id: z.uuid().nullable(),
 };
 export const newTaskSchema = z.object({ ...fields, contact_id: z.uuid() }).strict();
 export const editTaskSchema = z.object({ ...fields, expected_version: version }).strict();
 export const taskActionSchema = z.object({ expected_version: version, reason: z.string().trim().max(1000) }).strict();
 export const resultSchema = z.object({ id: z.uuid(), version }).strict();
-const snapshot = z.object({ ...fields, contact_id: z.uuid(), origin_contact_id: z.uuid(), status: z.enum(["open", "completed", "cancelled"]), outcome: z.string().max(1000), schedule_version: version }).strict();
+const snapshot = z.object({ ...fields, enquiry_id: z.uuid().nullable().optional(), contact_id: z.uuid(), origin_contact_id: z.uuid(), status: z.enum(["open", "completed", "cancelled"]), outcome: z.string().max(1000), schedule_version: version }).strict();
 export const taskSchema = snapshot.extend({ id: z.uuid(), version, contact_name: z.string().max(160), contact_archived: z.boolean(), owner_name: z.string().max(160), owner_eligible: z.boolean(), due_local: instant, created_by_user_id: z.uuid(), updated_by_user_id: z.uuid(), created_at: instant, updated_at: instant });
 const clock = { now: instant, today: z.iso.date(), time_zone: z.literal("Africa/Casablanca") };
 export const workContextSchema = z.object(clock).strict();
 export const tasksSchema = numberedPage(taskSchema).extend(clock);
 export const taskHistorySchema = numberedPage(z.object({ id: z.uuid(), version, action: z.enum(Object.keys(taskActionLabels) as [keyof typeof taskActionLabels, ...(keyof typeof taskActionLabels)[]]), actor: agentSchema, snapshot, occurred_at: instant, occurred_local: instant }).strict());
 const href = z.string().max(250).regex(/^\/(contacts|deals|visits|projects(?:\/properties)?)\/[a-f0-9-]{36}(?:\?task=[a-f0-9-]{36})?$/);
-export const notificationSchema = z.object({ id: z.uuid(), kind: z.enum(["file.scanned", "visit.reminder.day", "visit.reminder.hour", "task.due"]), title: z.string().max(160), context: z.string().max(160), href, due_local: instant.nullable(), created_at: instant, read_at: instant.nullable() }).strict();
+export const notificationSchema = z.object({ id: z.uuid(), kind: z.enum(["file.scanned", "visit.reminder.day", "visit.reminder.hour", "visit.follow_up", "task.reminder.day", "task.reminder.hour", "task.due"]), title: z.string().max(160), context: z.string().max(160), href, due_local: instant.nullable(), created_at: instant, read_at: instant.nullable() }).strict();
 export const notificationsSchema = numberedPage(notificationSchema).extend({ unread_total: z.number().int().nonnegative() });
 export const readSchema = z.object({ read: z.literal(true) }).strict();
 export const followUpSchema = numberedPage(visitSchema.omit({ review_code: true })).extend(clock);

@@ -53,6 +53,7 @@ from app.inventory.models import InventoryEvent, InventoryReceipt, Offering, Pro
 from app.inventory.outcome_models import StockEffect, StockOutcome, StockReversal
 from app.inventory.reservation_models import Reservation
 from app.realtime.models import PushDelivery, PushSubscription, RealtimePresence, RealtimeTicket
+from app.project_links.models import ProjectLink
 from app.requirements.models import (
     Requirement,
     RequirementCriterion,
@@ -160,6 +161,7 @@ def clear_identity(settings: Settings, database: Database) -> None:
             DealStageEvent,
             CustomerOffer,
             DealProject,
+            ProjectLink,
             Deal,
             RequirementReceipt,
             ShortlistEntry,
@@ -282,6 +284,22 @@ def delete_actor_business(session: Session, user_id: UUID) -> None:
         )
     )
     session.execute(text("SET LOCAL kay.synthetic_cleanup='on'"))
+    session.execute(
+        delete(ProjectLink).where(
+            or_(
+                ProjectLink.enquiry_id.in_(
+                    select(Enquiry.id).where(Enquiry.contact_id.in_(contacts))
+                ),
+                ProjectLink.deal_id.in_(
+                    actor_deal_ids(session, user_id, contacts, properties, developments)
+                ),
+                ProjectLink.property_id.in_(properties),
+                ProjectLink.development_id.in_(developments),
+                ProjectLink.created_by_user_id == user_id,
+                ProjectLink.removed_by_user_id == user_id,
+            )
+        )
+    )
     export_ids = select(ExportJob.id).where(ExportJob.author_user_id == user_id)
     export_events = select(OutboxEvent.id).where(OutboxEvent.export_id.in_(export_ids))
     session.execute(delete(Job).where(Job.outbox_id.in_(export_events)))

@@ -84,6 +84,92 @@ screenshots were inspected, `impeccable detect --json` returned `[]`, and the
 AFTER audit is [042](../anti-slop/audit-042-2026-10-22.md). These local gates
 do not imply production migration, publication, a full 900-case regression,
 or Khalid's product approval.
+## Dated Lead/Deal history - 2026-10-22
+
+On a disposable PostgreSQL 16 container at localhost:55432, migration state
+was `0032_proactive_work (head)`; `alembic check` found no new operations. The
+Lead/Deal/contact/intake/scoped-activity regression passed 90/90, followed by
+24/24 scoped-activity passes and 14/14 scoped/Deal passes after exact stage-event
+timestamp alignment. These cover
+new and web Lead creation, old/new Lead status, unchanged edits, Deal stage
+change, distinct conversion histories, legacy dual-linked projection, scope,
+retry, merge and migration preservation. Ruff lint/format on affected Python,
+`mypy app` (199 source files), frontend lint, typecheck, optimized build and
+78/78 unit tests passed. Headed real Chrome against the compiled Next.js app
+and isolated FastAPI/PostgreSQL passed 2/2 selected journeys: creation/status/
+conversion and adjacent project-link placement. Desktop Lead/Deal/origin and
+mobile Deal captures were inspected; the Impeccable detector returned `[]`.
+No real database migration, production access, publication or full-product
+regression was performed. Human product review remains pending.
+
+## Lead/Deal detail density and contact-search placement — 2026-10-22
+
+On the isolated synthetic PostgreSQL 16 target at localhost:55432 (not the
+development or production database), the current Lead/Deal UI refinement passed
+`npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`, and
+`npm.cmd run test:unit` (78/78). Headed Chrome ran
+`npm.cmd run test:chrome -- tests/e2e/project-links.spec.ts
+tests/e2e/record-facts.spec.ts tests/e2e/requirements.spec.ts` with 5/5 passes:
+desktop/mobile geometry, keyboard/touch, 200% zoom, existing searches,
+empty-state navigation and recovery. The scoped project-link journey was then
+rerun with explicit keyboard opening and Deal bottom-placement assertions.
+Synthetic desktop/mobile captures in ignored `frontend/output/playwright/`
+were opened; the Impeccable detector returned `[]`. No real migration,
+production access or publication belongs to this UI-only change. Khalid's
+product/design review remains pending.
+
+## Contextual work and proactive visit outcomes — 2026-10-22
+
+Disposable PostgreSQL 16 on localhost:55432 held only synthetic development and
+isolated test databases. In `backend/`, explicit `.venv/Scripts/python.exe`
+Alembic `current` and `heads` both reported `0032_proactive_work (head)`;
+`alembic check` reported no new upgrade operations. The focused work,
+schedule, context/history, migration and project-link pytest selection passed
+84/84 in 144.31 s. Ruff check/format on changed backend files and `mypy app`
+passed. No real development or production database was migrated.
+
+In `frontend/`, lint, typecheck, optimized build and 78/78 unit tests passed.
+The headed real Chrome stack used the same isolated lease, explicit
+`API_CA_FILE` pointing to this worktree's local certificate and no saved auth
+trace/screenshots. Ten work/calendar journeys passed, including J−1/H−1
+reminders, process retry, permissions, end+2h follow-up, “Non réalisée” and
+the exact Lead history. A separate narrow-screen keyboard journey passed at
+390 px and 320 px without horizontal overflow. Initial Chrome attempts
+returned 503 because this isolated worktree had no local `API_CA_FILE` value;
+after supplying it, both runs passed. Product review and full-suite/production
+acceptance remain pending. This worktree's `0031_project_links` branch still
+needs reconciliation with the primary checkout's separate unmerged
+`0031_property_listing_details` before publication.
+
+## Lead/Deal catalogue project links — 2026-10-22
+
+All database/browser checks used a disposable, isolated PostgreSQL 16 target
+on port 55432, not KAY's development or production database. Additive
+`0031_project_links` upgraded that synthetic target; `alembic current`
+reported `0031_project_links (head)` and `alembic check` reported no new
+operations. From `backend/`,
+`./.venv/Scripts/python.exe -m pytest tests/test_project_links.py
+tests/test_lead_conversion.py tests/test_scoped_activities.py
+tests/test_ownership.py -q --tb=short --maxfail=1` passed 50/50;
+after the property-target test was added, `test_project_links.py` passed 3/3.
+Ruff lint/format and mypy passed (197 app source files).
+
+From `frontend/`, lint, typecheck, build and 78/78 unit tests passed. A headed
+isolated Chrome Lead → Deal journey passed 1/1 in both development and final
+compiled production mode, including independent lists,
+remove/re-add, contextual history, compact bottom contact-search disclosure
+and 390px no-overflow. Its safe synthetic desktop/mobile captures in ignored
+`frontend/output/playwright/project-links/` were opened; the Impeccable
+detector returned `[]`. [AFTER042](../anti-slop/audit-042-2026-10-22.md) holds
+the aesthetic audit without applying unselected findings. The Next.js patch
+release was advanced from 16.4.0 to 16.4.1 after the build security warning;
+runtime dependency audit then found zero vulnerabilities. The full dependency
+check still reports nine dev-only findings under its dated existing exception.
+This is scoped technical evidence,
+not a full-product, production or human-design acceptance. No real migration,
+production access, external message or publication occurred. The isolated
+worktree's revision must be reconciled with the primary checkout's separate
+unmerged `0031_property_listing_details` before combining branches.
 
 ## Generated Lead/Deal PDF preparations — 2026-10-20
 

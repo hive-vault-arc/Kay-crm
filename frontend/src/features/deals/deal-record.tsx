@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { CrmRecordHeader, CrmStatusBadge, CrmStatusBoard } from "@/components/shared/crm-presentation";
 import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
 import { SectionHeading } from "@/components/shared/section-heading";
-import { DealIcon, EnquiryIcon, FinanceIcon, InboxIcon, PropertyIcon, RadioIndicatorIcon, SearchIcon, TaskIcon } from "@/components/icons";
+import { DealIcon, EnquiryIcon, FinanceIcon, InboxIcon, PropertyIcon, RadioIndicatorIcon, TaskIcon } from "@/components/icons";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -31,9 +31,12 @@ import { paymentLabels } from "./qualification-contracts";
 import { ContactProfilePanel } from "@/features/contacts/contact-profile-panel";
 import { ActivityHistory } from "@/features/activities/activity-history";
 import { RecordLifecycleAction } from "@/features/discovery/record-lifecycle-action";
+import { ProjectLinksPanel } from "@/features/project-links/project-links-panel";
+import { ContactSearchDisclosure } from "@/features/requirements/contact-search-disclosure";
 
 export function DealRecord({ id, initialTask, role = "agent", actorId, initialTab }: { id: string; initialTask?: string; role?: StaffRole; actorId?: string; initialTab?: string }) {
   const query = useQuery(`/api/v1/deals/${id}`, dealSchema); const [fresh, setFresh] = useState<Deal>(); const [editing, setEditing] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState<ApiError>(); const [comparison, setComparison] = useState<Deal>(); const [notice, setNotice] = useState("");
+  const [historyRevision, setHistoryRevision] = useState(0);
   const lock = useRef(false); const attempt = useRef({ fingerprint: "", key: "" }); const focusEdit = useRef(false); const hydrated = useHydrated(); const value = currentRecord(query.value, fresh, id);
   const restoreFocus = useCallback((node: HTMLButtonElement | null) => { if (node && focusEdit.current) { focusEdit.current = false; node.focus(); } }, []);
   function endEdit() { focusEdit.current = true; setEditing(false); }
@@ -68,13 +71,13 @@ export function DealRecord({ id, initialTask, role = "agent", actorId, initialTa
       <RecordFact icon={PropertyIcon} label="Nombre de pièces">{value.number_of_rooms ?? "Non renseigné"}</RecordFact>
       <RecordFact icon={DealIcon} label="Étape actuelle"><strong>{stageLabels[value.stage]}</strong> · version {value.version}</RecordFact>
       <RecordFact icon={EnquiryIcon} label="Demande d’origine">{value.enquiry_id ? <Link className="inline-flex min-h-control items-center wrap-anywhere text-link underline" href={`/leads/${value.enquiry_id}`}>Voir la demande d’origine conservée</Link> : "Sans demande d’origine liée."}</RecordFact>
-      {value.requirement_id ? <RecordFact icon={SearchIcon} label="Recherche liée"><Link className="inline-flex min-h-control items-center wrap-anywhere text-link underline" href={`/contacts/${value.contact.id}`}>Voir les recherches du contact (recherche liée conservée)</Link></RecordFact> : null}
       {!value.offering ? <RecordFact icon={PropertyIcon} label="Offre d’inventaire">Aucune offre d’inventaire liée.</RecordFact> : null}
     </RecordFacts></section>
     {value.contact.archived_at ? <p role="status">Contact archivé : affaire et propositions conservées en lecture seule.</p> : null}{value.archived_at ? <p role="status">Affaire archivée. Restauration possible pendant 30 jours ; son historique reste consultable.</p> : null}
     {value.offering ? <section className="surface grid min-w-0 gap-4" aria-label="Cible actuelle de l’affaire"><SectionHeading compact as="h3" icon={PropertyIcon} tone="teal">Offre d’inventaire liée</SectionHeading><OfferingFacts offering={value.offering} /></section> : null}</div></div>
+    <ProjectLinksPanel scope="deals" id={id} writable={!value.contact.archived_at && !value.archived_at} onChanged={() => setHistoryRevision(current => current + 1)} />
     <DealFinanceTabs role={role} deal={value} initialTab={initialTab}>
-    <ActivityHistory key={`activities:${value.id}`} scope="deals" id={value.id} writable={!value.contact.archived_at && !value.archived_at} revision={value.version} />
+    <ActivityHistory key={`activities:${value.id}`} scope="deals" id={value.id} writable={!value.contact.archived_at && !value.archived_at} revision={value.version + historyRevision} />
     {value.enquiry_id ? <ActivityHistory key={`origin:${value.id}`} scope="deals" id={value.id} origin /> : null}
     {notice && !editing ? <p role="status" className="text-success">{notice}</p> : null}
     {error ? <section className="grid gap-4" aria-label="Échec de la modification"><RecordError error={error} /><p>Votre saisie reste affichée. Une réponse interrompue peut avoir été enregistrée : réessayez la même action sans la modifier. En cas de conflit, comparez la version actuelle avant une nouvelle tentative.</p><Button action="compare" type="button" variant="outline" className="justify-self-start" disabled={busy} onClick={() => void compare()}>Comparer la version actuelle</Button>{comparison ? <div className="grid gap-4 border-y py-4"><p className="wrap-anywhere">Version actuelle {comparison.version} : {comparison.title} · {stageLabels[comparison.stage]}</p><p className="whitespace-pre-wrap wrap-anywhere">Prochaine action actuelle : {comparison.next_action || "Non renseignée"}</p><p>Le chargement remplacera les formulaires affichés. Copiez votre brouillon si vous souhaitez le conserver.</p><Button action="refresh" type="button" variant="outline" className="h-auto min-h-control justify-self-start whitespace-normal" onClick={() => { setFresh(comparison); setComparison(undefined); setError(undefined); }}>Charger cette version et réinitialiser les formulaires</Button></div> : null}</section> : null}
@@ -85,5 +88,6 @@ export function DealRecord({ id, initialTask, role = "agent", actorId, initialTa
     <OutcomeHistory key={`outcomes:${value.id}`} id={value.id} revision={value.version} /><DealHistory key={`history:${value.id}`} id={value.id} revision={value.version} /><FilePanel parentKind="deal" parentId={value.id} writable={writable && !busy} />
     </DealFinanceTabs>
     <Button action="back" asChild variant="outline" className="justify-self-start"><Link href="/deals">Toutes les affaires</Link></Button>
+    <ContactSearchDisclosure contactId={value.contact.id} writable={!value.contact.archived_at && !value.archived_at} />
   </div>;
 }

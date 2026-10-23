@@ -54,7 +54,7 @@ function facade(response) {
 }
 const emptyPage = { items: [], total: 0, page: 1, page_size: 50, has_previous: false, has_next: false,
   type_counts: { office: 0, company_car: 0, without_company_car: 0 },
-  status_counts: { draft: 0, scheduled: 0, confirmed: 0, completed: 0, cancelled: 0 }, unfiltered_total: 0,
+  status_counts: { draft: 0, scheduled: 0, confirmed: 0, completed: 0, not_completed: 0, cancelled: 0 }, unfiltered_total: 0,
 };
 test("calendar facade forwards exact filters/current session and requires complete authoritative facets", async () => {
   const { relay, calls, origin } = facade({ status: 200, body: emptyPage });
