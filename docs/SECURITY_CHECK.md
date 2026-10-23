@@ -1,5 +1,16 @@
 # KAY security check for changes
 
+## Hosted push-test certificate follow-up (2026-10-23)
+
+Only the disposable persistent Chrome push-test profile pins the SHA256 SPKI of
+the generated localhost leaf certificate. Its baseURL must equal the isolated
+https://localhost:3100. No OS trust store, personal profile, application launcher,
+provider mock, production TLS validation or consent/delivery assertion changes.
+Diagnostic output is capability/configuration booleans and safe error names;
+neither exception text nor provider endpoints/keys are logged. Full manual
+integration on the final candidate remains mandatory; previous902+119+2 passes
+do not turn the failed push aggregate into a release pass.
+
 ## Realtime/Web Push implementation (2026-10-22)
 
 Ticket proof remains server-mediated; no backend session reaches browser JS or

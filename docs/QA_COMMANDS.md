@@ -1,5 +1,20 @@
 # KAY QA command register
 
+## Release follow-up,2026-10-23
+
+- Hosted manual39874538779 at1788a49: backend902/902, compiled Chromium119/119,
+  real WSS2/2 pass; real push setup fails on the runner's fresh certificate.
+  This aggregate failed and is not a release pass.
+- Fresh disposable local CA reproduces the same missing push control and
+  SecurityError with configured/supported push. The persistent test profile now
+  pins only the generated localhost leaf's public SPKI, without OS trust changes
+  or production TLS bypasses. `npm.cmd run test:realtime -- --grep 'browser push
+  requires opt-in' --max-failures=1` passes1/1 in2.2m with real provider delivery.
+- `npm.cmd run lint` and `npm.cmd run typecheck` pass after the test-only fix.
+  Final exact-candidate integration and production evidence belong to the
+  [PR24 check/release record](https://github.com/hive-vault-arc/Kay-crm/pull/24).
+  No earlier scoped pass replaces that gate.
+
 ## Realtime and Web Push,2026-10-22
 
 Use the explicit project venv in the isolated realtime worktree, not global

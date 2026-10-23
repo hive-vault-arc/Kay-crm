@@ -17,6 +17,23 @@ The actual managed launcher is sh scripts/start-api.sh, not the direct command
 in the runbook. It now explicitly selects wsproto and512-byte/four-frame bounds;
 packaging tests assert those transport options on the deployed entry point.
 
+Manual39874538779 at1788a49 passes902 backend and119 compiled Chromium cases,
+plus both real WSS cases. Its final push case fails before consent because the
+fresh hosted localhost certificate is not trusted for service-worker registration.
+The same missing-control/SecurityError reproduces locally with a new disposable
+CA, despite enabled configuration and supported browser APIs. Pinning only that
+certificate's public SPKI in the disposable Chrome test profile passes the genuine
+provider/opt-in/opt-out test (1/1,2.2m). No OS trust store, production launcher,
+runtime TLS validation, browser-provider mock or test skip is changed. The test
+refuses any origin other than the isolated https://localhost:3100.
+
+Sanitized setup diagnostics include booleans/error names only, never endpoint,
+key, credential or exception text. The manual workflow runs bundle scanning and
+the focused WSS/push suite before the unchanged full Chromium suite for earlier
+feedback; both remain serial, mandatory and part of the same release aggregate.
+The final replacement run and production acceptance are recorded on PR24; the
+previous failed run is not relabelled passed.
+
 ## Scope and isolation
 
 Owner-approved WebSocket invalidations and opt-in Web Push implement the

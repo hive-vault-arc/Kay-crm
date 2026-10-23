@@ -3,6 +3,8 @@ import { createLead, staffCommand } from "../helpers/leads";
 import { createTaskApi } from "../helpers/work";
 import { apiProcess } from "../helpers/api-process";
 import { dealBody } from "../helpers/deals";
+import { createHash, X509Certificate } from "node:crypto";
+import { readFileSync } from "node:fs";
 
 test("live Lead detail/list refresh and protected draft over real WSS", async ({ page }) => {
   test.setTimeout(150_000);
@@ -90,9 +92,14 @@ test("authenticated consultation routes retain live delivery on desktop and mobi
 
 test("browser push requires opt-in, delivers a generic alert and can be disabled", async ({ playwright, baseURL }) => {
   test.setTimeout(240_000);
+  if (baseURL !== "https://localhost:3100") throw new Error("ISOLATED_PUSH_ORIGIN_REQUIRED");
+  const certificate = new X509Certificate(readFileSync("../backend/.local-data/certificates/localhost.pem"));
+  const pin = createHash("sha256").update(certificate.publicKey.export({ type: "spki", format: "der" })).digest("base64");
   // Chrome does not support PushManager in the usual incognito test context.
   const context = await playwright.chromium.launchPersistentContext("", {
     channel: "chrome", headless: false, ignoreHTTPSErrors: true, baseURL,
+    // Service-worker fetches need the exact disposable certificate, not page-level TLS overrides.
+    args: [`--ignore-certificate-errors-spki-list=${pin}`],
     locale: "fr-FR", timezoneId: "Africa/Casablanca",
     ignoreDefaultArgs: ["--disable-background-networking"],
   });
@@ -103,7 +110,21 @@ test("browser push requires opt-in, delivers a generic alert and can be disabled
     await signIn(page, actor, "/leads");
     await page.goto("/notifications");
     const enable = page.getByRole("button", { name: "Activer les notifications système", exact: true });
-    await expect(enable).toBeEnabled({ timeout: 30_000 });
+    try { await expect(enable).toBeEnabled({ timeout: 30_000 }); }
+    catch (error) {
+      const config = await (await page.request.get("/api/v1/realtime/push")).json();
+      console.log("Push setup diagnostic:", { enabled: config.enabled, keyPresent: Boolean(config.public_key), ...await page.evaluate(async () => {
+        const capable = "serviceWorker" in navigator && "PushManager" in window;
+        let registrationError = "none", certificateError = false;
+        if (capable) try { await navigator.serviceWorker.register("/kay-push.js", { updateViaCache: "none" }); }
+        catch (reason) {
+          registrationError = reason instanceof DOMException ? reason.name : "unknown";
+          certificateError = (reason instanceof Error || reason instanceof DOMException) && /certificate|ssl/i.test(reason.message);
+        }
+        return { capable, secure: isSecureContext, registrationError, certificateError };
+      }) });
+      throw error;
+    }
     expect((await (await page.request.get("/api/v1/realtime/push")).json()).subscribed).toBe(false);
     await page.evaluate(() => {
       const original = PushManager.prototype.subscribe;

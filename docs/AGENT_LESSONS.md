@@ -1,5 +1,16 @@
 # KAY agent lessons
 
+## Service-worker certificate trust in disposable Chrome (2026-10-23)
+
+- A page-level HTTPS error override does not establish service-worker certificate
+  trust. Reproduce with a fresh CA, not a workstation's previously trusted one.
+  Pin only the exact generated localhost leaf's SPKI in the disposable push-test
+  profile; refuse non-isolated origins. Never change production TLS or OS trust
+  to make this test pass, and keep genuine provider delivery mandatory.
+- Diagnose missing optional controls using capability/configuration booleans and
+  safe error names. DOMException is not necessarily an Error subclass; check both
+  without logging raw exception messages, endpoints or encryption keys.
+
 ## Canonical identity and additive recovery counts (2026-10-23)
 
 - A merged contact resolves to a different canonical ID. Compare local snapshot
