@@ -17,7 +17,7 @@
     "test:realtime": "playwright test --config=playwright.realtime.config.ts --headed --workers=1"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.9.1",
+    "@hookform/resolvers": "5.9.2",
     "@number-flow/react": "0.6.2",
     "@tanstack/react-table": "8.21.3",
     "@visx/event": "4.0.0",
@@ -46,7 +46,7 @@
     "@types/react-dom": "19.3.0",
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.2",
-    "postcss": "8.5.30",
+    "postcss": "8.5.31",
     "shadcn": "4.21.5",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3"
