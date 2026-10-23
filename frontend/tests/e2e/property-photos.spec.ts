@@ -4,6 +4,7 @@ import { clearActorContext, createActor, expect, removeActor, signIn, test } fro
 import { staffCommand } from "../helpers/leads";
 import { testControl } from "../helpers/api-process";
 import { createBlock, createDevelopment, createFloor, createType, createUnit } from "../helpers/developments";
+import { geometry } from "../helpers/report-review";
 
 test("property photos: private viewer, browser WebP conversion, ten slots, archive and agent upload", async ({ page }) => {
   test.setTimeout(240_000);
@@ -138,11 +139,15 @@ test("agent automatically uploads project and physical apartment photos without 
     const galleryWidth = await gallery.evaluate(element => element.getBoundingClientRect().width);
     const headerWidth = await page.getByRole("heading", { name: project.reference, exact: true }).evaluate(element => element.closest("header")!.getBoundingClientRect().width);
     expect(headerWidth).toBeGreaterThanOrEqual(galleryWidth - 2);
+    await geometry(page);
     await gallery.locator('input[type="file"]').setInputFiles(path.resolve("tests/fixtures/projects-reference/patio.png"));
     await expect(gallery.getByText("1 / 10 photos")).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Ouvrir la photo patio.webp" })).toBeVisible({ timeout: 60_000 });
     await expect(page.getByRole("button", { name: "Envoyer le fichier", exact: true })).toHaveCount(0);
     await expect(gallery.getByRole("button", { name: "Archiver", exact: true })).toHaveCount(0);
+    await page.setViewportSize({ width: 360, height: 1000 });
+    await geometry(page);
+    await page.setViewportSize({ width: 1440, height: 900 });
     await mkdir("output/playwright/property-photos", { recursive: true });
     await page.screenshot({ path: "output/playwright/property-photos/agent-project-desktop.png", fullPage: true });
     await createBlock(page); await createFloor(page); await createType(page);

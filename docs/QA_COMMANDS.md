@@ -2,6 +2,12 @@
 
 ## Agent inventory photos, 2026-10-23
 
+After the development uploader gained its own fieldset/legend, compiled headed
+Chrome `tests/e2e/property-photos.spec.ts tests/e2e/riviera.spec.ts tests/e2e/action-buttons.spec.ts --grep 'property photos:|agent automatically|Riviera:|Action buttons: real CRM'`
+passes4/4 in3.9m, retaining the unchanged shared geometry/contrast/touch guards.
+This confirms both hosted geometry failures before the final full hosted rerun;
+the preceding127/129 hosted browser result is not a passing release gate.
+
 From the integration worktree's `backend/`, with the guarded test environment,
 `./.venv/Scripts/python.exe -m pytest tests/test_property_photos.py tests/test_files.py tests/test_file_edges.py -q --tb=short --maxfail=1`
 passes36/36; expanded property/project photo selection passes9/9 and

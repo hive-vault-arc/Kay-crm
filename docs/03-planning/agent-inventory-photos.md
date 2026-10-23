@@ -58,5 +58,18 @@ the header and gallery full-width. The corrected compiled agent project/unit
 scenario passes1/1 with a new desktop capture. Ordinary inventory attachment
 choosers direct all images to Photos, including developments.
 Protected exact-candidate hosted checks and deployment verification are pending.
+Hosted candidate `dd10af2` passes969 backend tests and127/129 browser cases;
+two broad action/branding checks correctly reject the new development gallery's
+ungrouped1px hidden input. A local fieldset/legend now associates the input with
+its44px chooser, matching the existing file-upload pattern without changing
+the size/contrast assertions. Busy cancellation remains outside any fieldset
+disable state. The agent-gallery case also invokes the shared geometry guard at
+desktop/mobile widths. This failed run is not release acceptance; fresh final
+checks remain mandatory.
+Focused confirmation: compiled headed Chrome action-buttons route families,
+both photo cases and Riviera branding all pass4/4 in3.9m, with the original
+geometry/contrast/touch assertions intact. Lint/typecheck/build and repository-
+only documentation validation pass again. A fresh exact-candidate hosted run is
+required before production.
 Test data must remain synthetic and isolated; do not add sample photos to real
 client records. Keep Web Push disabled and existing private Spaces configuration.
