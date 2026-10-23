@@ -6,8 +6,8 @@ from sqlalchemy.dialects.postgresql import JSONB
 from alembic import op
 from app.settings import load_settings
 
-revision = "0031_property_listing_details"
-down_revision = "0030_generated_documents"
+revision = "0032_property_listing_details"
+down_revision = "0031_realtime"
 branch_labels = None
 depends_on = None
 

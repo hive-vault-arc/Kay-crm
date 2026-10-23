@@ -15,6 +15,7 @@ from app.inventory.commands import command
 from app.inventory.contracts import CreateProperty, InventoryQuery, NewOffering
 from app.inventory.queries import read_detail, read_list
 from tests.contact_support import actor
+from tests.test_isolation_migrations import HEAD
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
@@ -152,9 +153,7 @@ def test_holiday_and_regular_rental_are_independent_current_offers(settings, dat
 
 def test_sql_guards_new_categories_and_periods(settings, database) -> None:
     with database.session() as session:
-        assert session.scalar(text("SELECT version_num FROM alembic_version")) == (
-            "0031_property_listing_details"
-        )
+        assert session.scalar(text("SELECT version_num FROM alembic_version")) == HEAD
     _, token = actor(settings, database, "manager")
     result = run(
         settings,

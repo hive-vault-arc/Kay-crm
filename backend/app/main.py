@@ -35,8 +35,8 @@ from app.imports.router import transfers as import_transfers
 from app.intake.router import router as intake_router
 from app.inventory.hierarchy_router import router as hierarchy_router
 from app.inventory.router import router as inventory_router
-from app.realtime.router import router as realtime_router
 from app.project_links.router import router as project_links_router
+from app.realtime.router import router as realtime_router
 from app.recovery.maintenance import MaintenanceMiddleware
 from app.reports.router import router as reports_router
 from app.requirements.router import router as requirements_router

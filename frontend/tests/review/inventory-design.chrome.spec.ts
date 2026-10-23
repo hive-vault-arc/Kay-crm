@@ -22,7 +22,7 @@ test("inventory forms and records use the workspace width without losing their a
     const propertyReference = `UI-${randomUUID().slice(0, 8)}`.toUpperCase();
     await propertyForm.locator("#property-reference").fill(propertyReference);
     await propertyForm.locator("#property-marketing_name").fill("Bien de contrôle synthétique");
-    await propertyForm.locator("#property-price_mad").fill("1350000");
+    await propertyForm.locator("#property-price_mad").fill("900000.01");
     await expect(propertyForm.getByText("Étape 1 sur 5")).toBeVisible();
     await expect(propertyForm.locator("#property-area_sqm")).toHaveCount(0);
     await page.screenshot({ path: path.join(evidence, "property-create-desktop.png") });
@@ -97,8 +97,8 @@ test("inventory forms and records use the workspace width without losing their a
     await expect(mobilePage.getByRole("button", { name: "Suivant", exact: true })).toBeEnabled();
     expect(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     await mobilePage.screenshot({ path: path.join(evidence, "property-create-mobile.png") });
-    await mobilePage.getByLabel("Prix de vente demandé en MAD", { exact: true }).scrollIntoViewIfNeeded();
-    await expect(mobilePage.getByLabel("Prix de vente demandé en MAD", { exact: true })).toBeVisible();
+    await mobilePage.locator("#property-price_mad").scrollIntoViewIfNeeded();
+    await expect(mobilePage.locator("#property-price_mad")).toBeVisible();
     await mobilePage.screenshot({ path: path.join(evidence, "property-price-mobile.png") });
     await mobilePage.setViewportSize({ width: 320, height: 640 });
     const labels = await Promise.all(["Offre", "Adresse", "Détails", "Options", "Vérifier"].map(label => mobilePage.getByRole("navigation", { name: "Progression de la création" }).getByText(label, { exact: true }).boundingBox()));

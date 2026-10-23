@@ -17,7 +17,8 @@ Google Maps links are HTTPS and allowlisted to Google Maps hosts; the overview
 opens the exact supplied link in a new tab. No third-party request is sent while
 editing.
 
-Migration `0031_property_listing_details` adds bounded JSONB property details,
+Migration `0032_property_listing_details` (renumbered during integration after
+the deployed `0031_realtime`) adds bounded JSONB property details,
 extends independent-property categories and adds a third `holiday` offering kind
 with day/week/month periods. Legacy rows receive `{}` and retain their existing
 prices, sessions, files and history. An agent may create the first priced **draft**

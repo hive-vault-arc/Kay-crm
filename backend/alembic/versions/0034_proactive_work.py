@@ -7,8 +7,8 @@ import sqlalchemy as sa
 from alembic import op
 from app.settings import load_settings
 
-revision = "0032_proactive_work"
-down_revision = "0031_project_links"
+revision = "0034_proactive_work"
+down_revision = "0033_project_links"
 branch_labels = None
 depends_on = None
 
@@ -177,7 +177,7 @@ def downgrade() -> None:
     from alembic.script import ScriptDirectory
 
     script = ScriptDirectory.from_config(op.get_context().config)
-    previous_links = script.get_revision("0031_project_links").module
+    previous_links = script.get_revision("0033_project_links").module
     previous_outbox = script.get_revision("0020_search_export_lifecycle").module
     previous_links.timeline_constraint(
         previous_links.PREVIOUS_ACTIONS + previous_links.LINK_ACTIONS

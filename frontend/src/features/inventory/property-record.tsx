@@ -20,7 +20,6 @@ import { InventoryThumbnail } from "@/features/files/inventory-thumbnail";
 import { ClockIcon, ColumnsIcon, ContactsIcon, DashboardIcon, DealIcon, FinanceIcon, LocationIcon, PropertyIcon } from "@/components/icons";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { InventoryFact, InventoryTab } from "./record-details";
-import { formatMAD } from "@/lib/format";
 
 export function PropertyRecord({ id, role, edit = false, initialTab }: { id: string; role: StaffRole; edit?: boolean; initialTab?: string }) {
   const { value: property, error, refresh } = useQuery(`/api/v1/properties/${id}`, propertySchema);

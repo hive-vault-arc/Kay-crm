@@ -52,8 +52,8 @@ from app.inventory.hierarchy_models import Block, Development, DevelopmentOwner,
 from app.inventory.models import InventoryEvent, InventoryReceipt, Offering, Property, PropertyOwner
 from app.inventory.outcome_models import StockEffect, StockOutcome, StockReversal
 from app.inventory.reservation_models import Reservation
-from app.realtime.models import PushDelivery, PushSubscription, RealtimePresence, RealtimeTicket
 from app.project_links.models import ProjectLink
+from app.realtime.models import PushDelivery, PushSubscription, RealtimePresence, RealtimeTicket
 from app.requirements.models import (
     Requirement,
     RequirementCriterion,

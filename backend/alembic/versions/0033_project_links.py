@@ -5,8 +5,8 @@ import sqlalchemy as sa
 from alembic import op
 from app.settings import load_settings
 
-revision = "0031_project_links"
-down_revision = "0030_generated_documents"
+revision = "0033_project_links"
+down_revision = "0032_property_listing_details"
 branch_labels = None
 depends_on = None
 
@@ -65,6 +65,10 @@ PREVIOUS_ACTIONS = (
     "meeting",
     "other",
     "enquiries.assign",
+    "enquiries.archive",
+    "enquiries.restore",
+    "deals.archived",
+    "deals.restored",
 )
 
 

@@ -115,7 +115,11 @@ def test_lead_and_deal_are_independent_and_catalogue_validated(settings, databas
     assert list_for(database, token, "enquiries", eid)["total"] == 1
     property_id = property_draft(settings, database, token)
     property_link = change(
-        settings, database, token, "deals", did,
+        settings,
+        database,
+        token,
+        "deals",
+        did,
         NewLink(kind="discussed", property_id=property_id),
     )
     assert list_for(database, token, "deals", did)["items"][0]["id"] == property_link["id"]

@@ -1,6 +1,6 @@
 # Remaining CRM integration and production release
 
-Status: preparation, not tested or released.
+Status: combined locally; focused checks underway, not released.
 
 Owner request: publish all prepared owners, property forms, project links,
 reminders, histories, initial prices and record-removal workflows. Preserve the
@@ -58,14 +58,38 @@ than overwriting live-update/version/conflict handling.
    source hashes, schema drift, Spaces retention and public WSS/browser behavior.
    A generic Healthy badge or app-spec save is not source-version proof.
 
-## Push provisioning boundary
+## Off-CRM notifications cancelled (owner decision, 2026-10-23)
 
-The owner requests VAPID setup. Do not generate a key into chat, screenshots,
-tracked files or public diagnostics. Browser credential creation/entry/submission
-requires a human handoff. The technical contact is a monitored team email, not a
-notification recipient. `itteam@kayrealestate.ma` was proposed to the owner;
-monitoring confirmation remains pending. Keep Web Push off until complete runtime
-configuration and consent/provider validation. WSS/in-app inbox remain enabled.
+The owner cancelled VAPID provisioning and all off-CRM notifications. The CRM
+account email addresses do not represent monitored inboxes. Do not generate keys,
+request an email contact, enable Web Push, or provision SMTP as part of this
+release. Keep `WEB_PUSH_ENABLED=false` for both backend and worker. Preserve
+WebSocket live updates and the database-backed in-app inbox while the CRM is open;
+reminder records remain available in the inbox when an agent returns. This
+supersedes the earlier request to configure VAPID. Removing the dormant push
+implementation or its database history is not required by this decision.
+
+## Combined candidate evidence
+
+All four recoverable snapshots are integrated by three-way cherry-picks. Shared
+facades retain PDF routes, record archives, owner portfolios and project links;
+consultation panels retain stable identity/revision handling from live main.
+The additive chain is `0031_realtime` (unchanged) ->
+`0032_property_listing_details` -> `0033_project_links` -> `0034_proactive_work`.
+The frozen project-link timeline vocabulary also preserves existing archive
+actions. New project-link changes invalidate both contact and deal live views.
+
+On the isolated loopback55439 test database, upgrade to the combined head and
+`alembic check` pass. Python units291/291, frontend units91/91, frontend types,
+production build, lint, backend Ruff/format/mypy pass. Dependency audit reports
+zero runtime advisories and the existing approved dev-only exception. Repository
+indexed-path/size/ignore checks pass. These are scoped results, not release gates.
+The first database selection stopped at39 passes on a realtime test that assumed
+one task outbox job; tasks now have three. The test now drains all three, asserts
+the queue is empty, and retains provider/session/deduplication assertions. The
+expanded database rerun, visible browser checks and exact-commit hosted full
+integration remain required before merge. No production schema/deployment writes
+have been made during this integration.
 
 Record actual commands, results, remaining risks and production read-back here
 and in the QA/security registers as the work proceeds; no pass is inferred from

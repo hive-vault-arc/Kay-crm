@@ -112,20 +112,21 @@ def test_legacy_incomplete_property_retry_keeps_its_receipt(settings, database):
         PropertyFields(reference=reference, category="land"),
         key=key,
     )
-    assert run(
-        settings,
-        database,
-        token,
-        "create-property",
-        CreateProperty(reference=reference, category="land"),
-        key=key,
-    ) == original
+    assert (
+        run(
+            settings,
+            database,
+            token,
+            "create-property",
+            CreateProperty(reference=reference, category="land"),
+            key=key,
+        )
+        == original
+    )
 
 
 @pytest.mark.anyio
-async def test_agent_http_initial_price_creates_draft_and_denials_stay_closed(
-    settings, database
-):
+async def test_agent_http_initial_price_creates_draft_and_denials_stay_closed(settings, database):
     _, token = actor(settings, database)
     headers = {
         **authority(settings),
