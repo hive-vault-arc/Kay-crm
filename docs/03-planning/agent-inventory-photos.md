@@ -96,3 +96,16 @@ now checks the10:00 pre-transition and09:00 post-transition values, following
 [IANA's2026c change](https://www.iana.org/time-zones/releases). This changes only
 test expectations, not the application's timezone or stored timestamps. The
 partially completed hosted run is superseded, not a successful release gate.
+
+Candidateef0b62d passes required CI but the hosted backend encounters a distinct
+Windows pseudo-terminal cleanup race in `test_real_hidden_tty[mismatch]`, after
+the expected bootstrap result and hidden-input assertion succeed. `close(force)`
+tries to signal an already-exiting process. The test now waits at most10seconds
+for natural termination and asserts its exact success/error exit code before
+closing; failure cleanup remains forced. No bootstrap/product code, credential
+logging, deadline for receiving prompts, or database assertion changes. The broad
+local backend run was interrupted at67% to validate this correction and is not a
+complete pass. Fresh final hosted acceptance remains required.
+Focused follow-up passes17/17 bootstrap/interruption tests, Ruff check/format,
+frontend lint/typecheck and the compiled headed Chrome display-helper case1/1
+on Node24.22.1. No secret-bearing terminal output is preserved.

@@ -1394,3 +1394,12 @@ create their own offering; keep no-offer cases for availability validation.
 Scope duplicate header/panel values to the intended region, and select expanding
 catalogue filters by stable accessible labels instead of positional locators.
 
+## Let completed terminal commands exit before forced cleanup (2026-10-23)
+
+Receiving a CLI's final status line does not mean its Windows process has exited.
+Forcing pseudo-terminal cleanup immediately can race with normal termination and
+raise an access-denied error after the actual assertions pass. Wait with a bound
+for natural exit, assert the intended exit code, then close the terminal; retain
+forced cleanup for genuine failure. Never solve this by ignoring all cleanup
+errors or weakening hidden-password checks.
+

@@ -8,7 +8,7 @@ import subprocess
 import sys
 import warnings
 from concurrent.futures import ThreadPoolExecutor
-from time import monotonic
+from time import monotonic, sleep
 
 import pytest
 from sqlalchemy import event, func, select
@@ -243,6 +243,11 @@ def test_real_hidden_tty(case: str, database: Database) -> None:
             until(expected)
         if password in captured or confirmation in captured:
             raise AssertionError("HIDDEN_INPUT_ECHOED")
+        deadline = monotonic() + 10
+        while process.pty.isalive() and monotonic() < deadline:
+            sleep(0.02)
+        assert not process.pty.isalive(), "BOOTSTRAP_DID_NOT_EXIT"
+        assert process.exitstatus == (0 if case in {"valid", "first_admin"} else 1)
     finally:
         process.close(force=True)
     assert count(database, User) == (
