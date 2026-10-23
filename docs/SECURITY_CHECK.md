@@ -47,6 +47,21 @@ unchanged. Additive0031 is tested only in the new isolated cluster. Production
 schema/flags/deployment are untouched; hosted WSS/idle/reconnect and actual
 target graph inspection remain mandatory before release. See
 [contract](04-design/realtime.md) and [execution](03-planning/realtime-execution.md).
+## Scoped owner directory (2026-10-22)
+
+No database migration, file transfer, external message, or production access is
+introduced. The directory is a filtered view of canonical contacts and both
+historical owner-link tables, not a public property join. Contact scope is
+applied before list counts; the portfolio endpoint calls `readable_contact`
+before selecting links and returns 404 for an inaccessible or unrelated
+contact. Shared inventory visibility never grants private owner phone, e-mail,
+notes or documents. Only safe asset facts and link periods cross the new API.
+The Next facade allowlists the route, status and numbered pagination, checks
+the complete strict response, and retains revocable-session/no-store handling.
+Create/edit reuse current Origin/CSRF/idempotency, duplicate-phone, agent
+assignment and version checks. Isolated synthetic tests cover other-agent
+denial, manager visibility, role-tagged and linked-only owners, current/past
+links and no phone in portfolio output. No real contact data was read or logged.
 
 ## Generated Lead/Deal document drafts (2026-10-20)
 

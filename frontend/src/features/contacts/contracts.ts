@@ -75,6 +75,7 @@ export const listQuerySchema = z.object({
   assigned_agent_id: z.uuid().optional(), received_from: z.iso.date().optional(), received_to: z.iso.date().optional(), contact_id: z.uuid().optional(),
   archive: z.enum(["active", "archived", "all"]).optional(),
   record_archive: z.enum(["active", "archived", "all"]).optional(),
+  owner_directory: z.literal("true").optional(),
   campaign_source: campaignSchema.optional(), rating: ratingSchema.optional(), country: z.string().regex(/^[A-Z]{2}$/).optional(), language: z.string().trim().min(1).max(60).optional(),
 }).strict().refine(value => !value.received_from || !value.received_to || value.received_from <= value.received_to);
 export type Contact = z.infer<typeof contactSchema>;
@@ -89,6 +90,7 @@ export function contactRoute(key: string, method: string) {
   if (key === "contacts/resolve-phone") return method === "POST";
   if (["contacts/assignment-options", "contacts/metadata"].includes(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/(timeline|assignment-events)$/.test(key)) return method === "GET";
+  if (/^contacts\/[a-f0-9-]{36}\/portfolio$/.test(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/collaborators$/.test(key)) return method === "PUT";
   if (/^contacts\/[a-f0-9-]{36}\/(preview|assign|archive|restore|merge|notes)$/.test(key)) return method === "POST";
   if (/^enquiries\/[a-f0-9-]{36}\/assign$/.test(key)) return method === "POST";

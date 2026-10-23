@@ -433,7 +433,8 @@ html[data-live-refresh="automatic"] [data-live-refresh="true"] {
 [data-crm-state="in_progress"], [data-crm-state="visit"] { --crm-state-color: var(--riviera-color-stage-cyan-fill); }
 [data-crm-state="follow_up"], [data-crm-state="negotiation"], [data-crm-state="hot"] { --crm-state-color: var(--riviera-color-stage-yellow-fill); }
 [data-crm-state="analysis"], [data-crm-state="documents"] { --crm-state-color: var(--riviera-color-stage-purple-fill); }
-[data-crm-state="qualified"], [data-crm-state="won"], [data-crm-state="converted"] { --crm-state-color: var(--riviera-color-stage-green-fill); }
+[data-crm-state="qualified"], [data-crm-state="won"], [data-crm-state="converted"], [data-crm-state="active"] { --crm-state-color: var(--riviera-color-stage-green-fill); }
+[data-crm-state="archived"] { --crm-state-color: var(--riviera-color-stage-slate-fill); }
 [data-crm-state="not_qualified"], [data-crm-state="reserved"] { --crm-state-color: var(--riviera-color-stage-orange-fill); }
 [data-crm-state="lost"] { --crm-state-color: var(--riviera-color-stage-red-fill); }
 [data-crm-state="junk_lead"] { --crm-state-color: var(--riviera-color-stage-pink-fill); }

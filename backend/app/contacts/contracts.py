@@ -183,6 +183,7 @@ class ListQuery(StrictBody):
     rating: LeadRating | None = None
     country: str | None = Field(default=None, min_length=2, max_length=2)
     language: str | None = Field(default=None, min_length=1, max_length=60)
+    owner_directory: bool = False
 
     @field_validator("country")
     @classmethod

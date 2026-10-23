@@ -36,6 +36,7 @@ References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs
 | Create/edit development facts and shared briefing, hierarchy, unit types, properties/units | Yes | Yes | Yes; developer selection requires current contact scope |
 | Change legal owners, inventory files, offerings, availability, external outcomes or archive/restore inventory | Yes | Yes | No, except one priced draft offering during property creation (D43) |
 | Read an owner/developer's private contact details/documents | All | All | Only if S for that contact |
+| Use the owner directory and read current/former property links | All contact owners | All contact owners | Only S contacts; property visibility alone grants no owner identity or telephone |
 | Create/edit a contact's visits, tasks, and deals | All | All | S |
 | Reserve, close, and reopen a contact's deal | All | All | S, subject to stock invariants |
 | Read/write commissions, recognition, and receipts | Yes | Yes | No |

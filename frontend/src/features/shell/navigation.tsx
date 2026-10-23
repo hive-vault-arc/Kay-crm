@@ -9,6 +9,7 @@ import {
   DashboardIcon,
   SettingsIcon,
   ContactsIcon,
+  ContactIcon,
   ChevronDownIcon,
 } from "@/components/icons";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ const destinations = [
   { href: "/deals", label: "Affaires", icon: DealIcon },
   { href: "/visits", label: "Calendrier des visites", icon: CalendarIcon },
   { href: "/projects", label: "Projets", icon: PropertyIcon },
+  { href: "/owners", label: "Propriétaires", icon: ContactIcon },
 ];
 
 export function Navigation({

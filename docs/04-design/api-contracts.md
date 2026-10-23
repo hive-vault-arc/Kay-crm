@@ -383,6 +383,8 @@ does not become a generic proxy. Private reads/errors are no-store.
 | Method and path | Strict input / output |
 |---|---|
 | GET `/contacts` | Numbered page of summaries: id, name, type, primary_agent `{id,display_name}`, primary_phone, nullable primary_email, version. |
+| GET `/contacts?owner_directory=true` | Same scoped contact projection, limited to contacts with `owner` role or any current/former property/development owner link. Search, archive and role scope apply before counts; no separate owner identity is created. |
+| GET `/contacts/{id}/portfolio?status=current\|past&page=1&page_size=20` | Contact-scope-checked numbered property/development owner-link periods (maximum 50 per page), with safe asset reference/name/category/location and link/unlink times. No private phone, document or other owner's identity is projected. A non-owner contact or an inaccessible contact returns 404. |
 | POST `/contacts` | Contact fields below, optional primary_agent_id; returns full contact. |
 | GET/PATCH `/contacts/{id}` | Detail adds phones/emails/roles, source, nullable source_submission_id, created_by_user_id, created_at, updated_at. PATCH is full editable contact fields plus expected_version; no ownership/provenance fields. |
 | POST `/contacts/resolve-phone` | `{phone}`; `{available:true}` or the safe duplicate/private 409 below. No writes or receipt. |

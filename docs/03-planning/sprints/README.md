@@ -92,6 +92,7 @@ The following mapping identifies first implementation/completion ownership, not 
 | AT-39 | [SP-03](03-bootstrap-login.md), [SP-04](04-user-administration.md), [SP-05](05-leads-contact-identity.md), [SP-11](11-deal-pipeline.md), [SP-17](17-dashboard-kpis.md) | Login/settings/leads/deals then role-scoped metrics |
 | AT-40 | [SP-14](14-visit-calendar-working-times.md) | Administrator work policy and company-car hourly cap |
 | AT-41 | [SP-08](08-development-hierarchy.md) | Optional safe shared briefing |
+| AT-42 | Post-roadmap owner directory (2026-10-22) | Scoped canonical owner contact, current/former legal links, private details and history |
 
 ## Local coverage and exclusions
 

@@ -1689,3 +1689,9 @@ pairs and 10 valid API examples; `git diff --check` exits 0. Production build wa
 not run while local Next.js development used the shared `.next` directory. No
 credential entry, database write, test actor, backend/API/session change or
 publication; product/design review remains pending.
+
+## Propriétaires directory (2026-10-22)
+
+In the isolated `owners-directory` worktree, with `APP_ENVIRONMENT=test`, `backend/.venv/Scripts/python.exe -m pytest backend/tests/test_contacts.py backend/tests/test_inventory.py backend/tests/test_developments.py backend/tests/test_owner_directory.py -q --tb=short --maxfail=1` passed 63/63 against the leased synthetic PostgreSQL database. Backend Ruff checks/format and mypy on the owner query passed. From `frontend/`, the owner module passed the real isolated Chrome scenario (1/1), including synthetic create/edit, portfolio/current-to-past history, denied cross-agent access and mobile width. Desktop/mobile captures were inspected. Frontend unit suite passed 78/78; lint, TypeScript and production build passed. `impeccable detect --json` returned `[]`; [AFTER042](../anti-slop/audit-042-2026-10-22.md) records the visual audit.
+
+The existing Next.js 16.4.0 pin failed the current runtime dependency policy with a critical advisory. The compatible 16.4.2 pin now passes `npm.cmd run security:check`: 0 runtime vulnerabilities; 9 development-only findings retain the existing approved exception until 2026-11-15. This is not a clean full dependency audit. No production database, account, or file storage was changed; no migration is required for this directory.

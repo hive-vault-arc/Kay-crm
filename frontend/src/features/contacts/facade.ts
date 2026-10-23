@@ -8,6 +8,7 @@ import { frenchApiError } from "@/lib/api/errors";
 import { agentsSchema, contactRoute, contactSchema, contactsSchema, duplicateSchema, editContactSchema, editEnquirySchema, enquiriesSchema, enquirySchema, listQuerySchema, newContactSchema, newEnquirySchema, privateConflictSchema, recordLifecycleResultSchema, recordLifecycleSchema, resolveSchema } from "./contracts";
 import { assignmentsSchema, commandResultSchema, confirmedChangeSchema, enquiryAssignmentSchema, intentSchema, noteSchema, previewSchema, timelineSchema } from "./ownership-contracts";
 import { qualificationMetadataSchema } from "./qualification-contracts";
+import { ownerPortfolioQuerySchema, ownerPortfolioSchema } from "@/features/owners/contracts";
 
 const known = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "INVALID_PHONE", "INVALID_ASSIGNEE", "PHONE_OWNED_ELSEWHERE", "DUPLICATE_CONFIRMATION_REQUIRED", "VERSION_CONFLICT", "SOURCE_SUBMISSION_CONFLICT", "IDEMPOTENCY_CONFLICT", "RATE_LIMITED", "OWNERSHIP_VERSION_CONFLICT", "IMPACT_CHANGED", "CONTACT_ARCHIVED", "CONTACT_NOT_ARCHIVED", "CONTACT_MERGED", "ASSIGNMENT_UNCHANGED", "PRIMARY_NOT_COLLABORATOR", "MERGE_LINKS_UNSUPPORTED", "MERGE_IDENTITY_LIMIT"]);
 export async function relayContacts(key: string, request: Request, requestId: string) {
@@ -16,12 +17,14 @@ export async function relayContacts(key: string, request: Request, requestId: st
   const url = new URL(request.url);
   const suffix = key.split("/")[2];
   const history = suffix === "timeline" || suffix === "assignment-events";
-  const list = ["contacts", "enquiries", "contacts/assignment-options"].includes(key) || history;
+  const portfolio = suffix === "portfolio";
+  const list = ["contacts", "enquiries", "contacts/assignment-options"].includes(key) || history || portfolio;
   const mutation = request.method !== "GET";
   const params = [...url.searchParams];
-  if ((url.search && (!list || mutation)) || new Set(params.map(([name]) => name)).size !== params.length || !listQuerySchema.safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
+  if ((url.search && (!list || mutation)) || new Set(params.map(([name]) => name)).size !== params.length || !(portfolio ? ownerPortfolioQuerySchema : listQuerySchema).safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (key === "contacts/assignment-options" && params.some(([name]) => !["q", "page", "page_size"].includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (history && params.some(([name]) => !["page", "page_size"].includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);
+  if (key === "enquiries" && params.some(([name]) => name === "owner_directory")) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (mutation && request.headers.get("Origin") !== frontendOrigin()) return facadeError(403, "FORBIDDEN", requestId);
   let body: string | undefined;
   const retryKey = request.headers.get("Idempotency-Key") ?? undefined;
@@ -47,7 +50,7 @@ export async function relayContacts(key: string, request: Request, requestId: st
       if (code === "VERSION_CONFLICT") details = z.object({ current: key.startsWith("contacts/") ? contactSchema : enquirySchema }).parse(upstream.body);
       return Response.json({ error: { code, message: frenchApiError(code), field_errors: {}, request_id: requestId }, ...details }, { status: code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
     }
-    const schema = suffix === "preview" ? previewSchema : suffix === "timeline" ? timelineSchema : suffix === "assignment-events" ? assignmentsSchema : key.startsWith("enquiries/") && (suffix === "archive" || suffix === "restore") ? recordLifecycleResultSchema : suffix ? commandResultSchema : key === "contacts/resolve-phone" ? z.object({ available: z.literal(true) }).strict() : key === "contacts/assignment-options" ? agentsSchema : request.method === "GET" && key === "contacts" ? contactsSchema : request.method === "GET" && key === "enquiries" ? enquiriesSchema : key.startsWith("contacts") ? contactSchema : enquirySchema;
+    const schema = suffix === "portfolio" ? ownerPortfolioSchema : suffix === "preview" ? previewSchema : suffix === "timeline" ? timelineSchema : suffix === "assignment-events" ? assignmentsSchema : key.startsWith("enquiries/") && (suffix === "archive" || suffix === "restore") ? recordLifecycleResultSchema : suffix ? commandResultSchema : key === "contacts/resolve-phone" ? z.object({ available: z.literal(true) }).strict() : key === "contacts/assignment-options" ? agentsSchema : request.method === "GET" && key === "contacts" ? contactsSchema : request.method === "GET" && key === "enquiries" ? enquiriesSchema : key.startsWith("contacts") ? contactSchema : enquirySchema;
     return Response.json((key === "contacts/metadata" ? qualificationMetadataSchema : schema).parse(upstream.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

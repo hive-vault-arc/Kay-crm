@@ -8,6 +8,15 @@ keys/session) and push_delivery (notification/subscription/original-session,
 unique delivery, state/attempt/availability/lease). Business tables/history and
 revocable sessions remain unchanged. These are not a replacement message broker
 or a new source of CRM truth. [Contract](realtime.md).
+## Propriétaires directory (2026-10-22)
+
+No new table or migration: the owner directory reuses canonical `contact` and
+`contact_role` plus historical `property_owner` and `development_owner` links.
+The `contact_id` is the current merged identity, while `origin_contact_id` and
+archived owner rows retain lineage. Current links have null `archived_at`;
+former links keep their archived timestamp. A contact tagged owner without a
+linked asset remains discoverable for later assignment. Private contact scope
+is applied before directory counts and portfolio detail.
 
 ## Staff deletion (2026-10-18)
 

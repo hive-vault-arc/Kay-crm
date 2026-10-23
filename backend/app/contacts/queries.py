@@ -10,13 +10,15 @@ from sqlalchemy.orm import Session
 
 from app.contacts.access import check_phones, contact_scope, readable_contact
 from app.contacts.contracts import EnquiryStatus, ListQuery
-from app.contacts.models import Contact, ContactEmail, ContactPhone, Enquiry
+from app.contacts.models import Contact, ContactEmail, ContactPhone, ContactRole, Enquiry
 from app.contacts.projections import contact_views, enquiry_views
 from app.contacts.qualification import qualification_catalogue
 from app.db.session import Database
 from app.identity.models import Credential, User
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity, require_role
+from app.inventory.hierarchy_models import DevelopmentOwner
+from app.inventory.models import PropertyOwner
 
 
 def enquiry_in_scope(session: Session, identity: CurrentIdentity, eid: UUID) -> Enquiry:
@@ -108,6 +110,20 @@ def list_in_session(
         contacts = contacts.where(Contact.country == query.country)
     if query.language:
         contacts = contacts.where(Contact.languages.contains([query.language]))
+    if query.owner_directory:
+        if kind != "contacts":
+            raise IdentityError("VALIDATION_ERROR", 422)
+        contacts = contacts.where(
+            or_(
+                select(ContactRole.contact_id)
+                .where(ContactRole.contact_id == Contact.id, ContactRole.role == "owner")
+                .exists(),
+                select(PropertyOwner.id).where(PropertyOwner.contact_id == Contact.id).exists(),
+                select(DevelopmentOwner.id)
+                .where(DevelopmentOwner.contact_id == Contact.id)
+                .exists(),
+            )
+        )
     if kind == "contacts":
         if (
             query.status
