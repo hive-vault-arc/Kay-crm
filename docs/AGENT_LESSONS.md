@@ -1,5 +1,16 @@
 # KAY agent lessons
 
+## Final Next must not become submission (2026-10-23)
+
+React can reuse a conditional button and change its type from button to submit
+during the same click's default-action phase. Prevent Next's default and give
+Next/Create distinct keys. Assert zero create requests after inspecting review,
+then exactly one after explicit confirmation. A screenshot showing the created
+record before the planned Create click indicates premature submission, not an
+intermittent locator timeout. Guard price formatting while input is incomplete
+or invalid; validation must not crash rendering. Synthetic phone fixtures should
+use assigned mobile prefixes, not random ranges that can fail real validation.
+
 ## Live consultation state and canonical projections (2026-10-23)
 
 - Do not key an entire paginated read panel by its parent's version: every live

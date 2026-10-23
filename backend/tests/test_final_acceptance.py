@@ -53,7 +53,12 @@ def test_cumulative_merge_all_current_links_origins_actors_rollback_retry_and_de
         old,
         NewRequirement(contact_id=source, title="Recherche SP22", intent="sale"),
     )
-    task_command(settings, database, old, new_task(UUID(data["agent"]["id"]), source))
+    task_command(
+        settings,
+        database,
+        old,
+        new_task(UUID(data["agent"]["id"]), source, enquiry_id=UUID(data["enquiry_id"])),
+    )
     with database.session() as session:
         verify_link_policies(session)
         version = session.get(Contact, source).version

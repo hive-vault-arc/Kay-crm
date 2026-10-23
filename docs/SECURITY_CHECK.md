@@ -1,5 +1,24 @@
 # KAY security check for changes
 
+## Remaining CRM integration, 2026-10-23
+
+Owners reuse scoped canonical contacts and private portfolio authorization;
+shared stock grants no private owner access. Project links retain parent scope,
+catalogue validation, captured actor history, numbered reads and idempotent
+writes. Tasks/visits require unambiguous prospect/deal context and retain the
+durable worker, notification scope, schedule invalidation and retries. Archive
+controls preserve protected history and30-day restore, with backend ownership
+authoritative. Unpublished migrations follow deployed0031 without rewriting it;
+frozen timeline checks retain archive actions. Focused82+7 PostgreSQL checks
+pass; full hosted regression remains required with no failure waived.
+
+New live hints contain no client records; REST rechecks scope and dirty-form
+deferral remains. The final-Next race is fixed so review is not an implicit
+business write. No real fixtures, retention purge, identity reset or private
+export runs in production. Production preflight reads only schema/configuration
+metadata: Spaces storage, realtime enabled, Web Push disabled. The owner cancelled
+VAPID/off-CRM alerts; do not provision keys, SMTP or a technical e-mail address.
+
 ## Consultation-state follow-up (2026-10-23)
 
 Read-panel identity keys retain pagination/filter state without introducing a

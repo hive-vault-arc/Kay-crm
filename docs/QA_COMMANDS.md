@@ -1,5 +1,42 @@
 # KAY QA command register
 
+## Remaining CRM integration, 2026-10-23 (PR25, release pending)
+
+Use this integration worktree's explicit backend venv and guarded loopback55439
+synthetic targets. Pytest and browser fixtures remain serial on the test target.
+
+- Backend `-m alembic heads`, `upgrade head`, `check`: one additive head
+  `0034_proactive_work` after unchanged0031_realtime; no drift.
+- Backend `-m pytest --unit-only -q`:291 passes. Ruff/check/format and mypy
+  (210 modules) pass. Frontend lint, typecheck and compiled build pass;
+  `npm.cmd run test:unit`:92 passes, including owner-invalidation coverage.
+- PostgreSQL selection: `test_owner_directory`, `test_property_initial_price`,
+  `test_property_listing_db`, `test_project_links`, `test_proactive_work`,
+  `test_record_archive`, `test_realtime`, `test_inventory_migration`, `test_work`,
+  `test_scoped_activities`:82 passes. Legacy discovery/qualification/work
+  migration selection:7 passes, including the empty-details default assertion.
+- `npm.cmd run test:chrome -- tests/e2e/owners.spec.ts
+  tests/e2e/property-listing-wizard.spec.ts tests/e2e/project-links.spec.ts
+  tests/e2e/record-removal.spec.ts`:7 journeys pass. The separate
+  `tests/review/inventory-design.chrome.spec.ts`:4/4 pass after the final-Next
+  default-submit fix, covering invalid price, explicit review before write,
+  desktop/mobile/320px, category changes and keyboard. Ignored synthetic images
+  under frontend/output/playwright were inspected; product approval is separate.
+- With `APP_ENVIRONMENT=benchmark`, `REALTIME_ENABLED=true`,
+  `KAY_BENCHMARK_REALTIME=1` and the isolated benchmark URL, project-venv
+  `-m benchmarks.run`:100 users/sockets,5607 requests,0 errors/disconnects,
+  p95 ordinary<=907.134ms/dashboard1303.557ms, unchanged1s/2s limits. Earlier
+  overlapping-browser attempt failed setup at99 ready users; not a pass.
+- Audit:0 runtime advisories; existing approved dev-only exception unchanged.
+  Repository/ignore checks and redacted full-history secret scan pass.
+
+Hosted39936891171 failed an old JSON preservation assertion;39939196901 then
+found a cumulative-merge task fixture missing the newly required explicit
+prospect context. Failures are retained, not waived. Broader local regression
+and a new exact-candidate hosted full run remain required. Final full integration,
+production migration/source and WSS evidence will be linked on
+[PR25](https://github.com/hive-vault-arc/Kay-crm/pull/25).
+
 ## Release follow-up,2026-10-23
 
 - Expanded consultation-state checks:83 frontend units, lint and types pass.
