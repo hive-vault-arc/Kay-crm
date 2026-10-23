@@ -187,6 +187,7 @@ async def test_transfer_notifies_both_owners_but_not_outsider(settings, database
 
 def test_protocol_allowlists() -> None:
     assert topics_for({"task"}) == {"tasks", "reports"}
+    assert topics_for({"project_link"}) == {"contacts", "deals", "reports"}
     assert topics_for({"file_permit", "realtime_presence"}) == set()
     assert validate_endpoint("https://web.push.apple.com/Q/example")
     for value in (
@@ -305,7 +306,9 @@ def test_push_inbox_scope_presence_dedup_and_retry(settings, database, monkeypat
         token,
         new(uid, cid, due_at=(now - timedelta(minutes=5)).replace(second=0, microsecond=0)),
     )
-    assert remind(database, now - timedelta(seconds=120))
+    for _ in range(3):
+        assert remind(database, now - timedelta(seconds=120))
+    assert not remind(database, now - timedelta(seconds=120))
     with database.session() as session, session.begin():
         sid = session.scalar(select(StaffSession.id).where(StaffSession.user_id == uid))
         session.add(

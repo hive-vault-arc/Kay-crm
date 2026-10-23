@@ -1,5 +1,24 @@
 # KAY security check for changes
 
+## Remaining CRM integration, 2026-10-23
+
+Owners reuse scoped canonical contacts and private portfolio authorization;
+shared stock grants no private owner access. Project links retain parent scope,
+catalogue validation, captured actor history, numbered reads and idempotent
+writes. Tasks/visits require unambiguous prospect/deal context and retain the
+durable worker, notification scope, schedule invalidation and retries. Archive
+controls preserve protected history and30-day restore, with backend ownership
+authoritative. Unpublished migrations follow deployed0031 without rewriting it;
+frozen timeline checks retain archive actions. Focused82+7 PostgreSQL checks
+pass; full hosted regression remains required with no failure waived.
+
+New live hints contain no client records; REST rechecks scope and dirty-form
+deferral remains. The final-Next race is fixed so review is not an implicit
+business write. No real fixtures, retention purge, identity reset or private
+export runs in production. Production preflight reads only schema/configuration
+metadata: Spaces storage, realtime enabled, Web Push disabled. The owner cancelled
+VAPID/off-CRM alerts; do not provision keys, SMTP or a technical e-mail address.
+
 ## Consultation-state follow-up (2026-10-23)
 
 Read-panel identity keys retain pagination/filter state without introducing a
@@ -47,6 +66,59 @@ unchanged. Additive0031 is tested only in the new isolated cluster. Production
 schema/flags/deployment are untouched; hosted WSS/idle/reconnect and actual
 target graph inspection remain mandatory before release. See
 [contract](04-design/realtime.md) and [execution](03-planning/realtime-execution.md).
+## Scoped owner directory (2026-10-22)
+
+No database migration, file transfer, external message, or production access is
+introduced. The directory is a filtered view of canonical contacts and both
+historical owner-link tables, not a public property join. Contact scope is
+applied before list counts; the portfolio endpoint calls `readable_contact`
+before selecting links and returns 404 for an inaccessible or unrelated
+contact. Shared inventory visibility never grants private owner phone, e-mail,
+notes or documents. Only safe asset facts and link periods cross the new API.
+The Next facade allowlists the route, status and numbered pagination, checks
+the complete strict response, and retains revocable-session/no-store handling.
+Create/edit reuse current Origin/CSRF/idempotency, duplicate-phone, agent
+assignment and version checks. Isolated synthetic tests cover other-agent
+denial, manager visibility, role-tagged and linked-only owners, current/past
+links and no phone in portfolio output. No real contact data was read or logged.
+## Independent-property listing fields (2026-10-22)
+
+Migration 0031 adds shared, bounded property facts; it does not move private
+owner/contact records or expose public phone numbers. Google Maps URLs are
+HTTPS host/path allowlisted server-side, with matching client validation and
+`noopener noreferrer` links. No map request occurs while entering data. Prices
+remain positive MAD decimal strings. The first priced offering is a draft
+created atomically under the agent's existing property-create authority and
+idempotency receipt; managers retain later campaign, availability and owner
+rights. Holiday offerings cannot be attached to a development or to the
+existing undated deal/outcome model. Legacy rows receive an empty JSON object;
+the migration does not touch credentials, files or protected history. Isolated
+test data only; no production, real-data import/export, retention or external
+publisher call is part of this implementation.
+## Automatic Lead/Deal history wording (2026-10-22)
+
+Creation, status/stage change and conversion still append through the existing
+authorized, atomic commands with the true actor. Current Lead/Deal scope is
+rechecked before either history table is read. Conversion no longer exposes
+its Lead-origin marker as a Deal activity; legacy dual-linked markers stay
+stored and are only omitted from that Deal view. French text and dates for
+older blank/code-valued notes are read-only projections, not data rewrites.
+No new route, write permission, external message, retention job or migration
+is introduced. Tests used synthetic isolated PostgreSQL and private headed
+Chrome; no production or development data was accessed.
+
+## Lead/Deal catalogue project links (2026-10-22)
+
+Each page/count and mutation rechecks the current authenticated Lead/Deal and
+contact scope. Writes use the existing facade Origin/CSRF/session guards,
+strict UUID/idempotency inputs and a parent row lock; database checks/FKs and
+partial uniqueness defend concurrent and malformed links. Catalogue targets
+must exist and be active. No private owner/developer data is copied: the link
+contains only a shared catalogue name snapshot. Removal is reversible by
+re-adding, preserves creator/remover and immutable timeline actor, and does not
+alter visits, offerings, reservations or stock. The new migration is additive;
+non-test downgrade refuses any populated link/history. Synthetic isolated
+PostgreSQL and browser data only; no real-data migration or external message.
 
 ## Generated Lead/Deal document drafts (2026-10-20)
 
@@ -67,6 +139,37 @@ The ReportLab dependency adds no remote rendering service. Its Pillow dependency
 is pinned to 13.0.0; the development CA bundle is constrained to certifi
 2026.10.19 or newer. Direct hash-locked runtime and development audits pass;
 CI scans the expanded locks rather than the compatibility redirect file.
+## D44 record removal controls (2026-10-20)
+
+Lead/deal removal is an individual archive, not a database delete. The current
+assigned Lead agent or current primary Deal agent may act on an accessible record;
+manager/administrator access is still scope-checked. Both commands require a
+reason, expected version, CSRF/origin-protected staff facade and stable
+idempotency key. A serialized transaction rechecks ownership and state, records
+the true actor, and preserves activity, contact, reservation and finance history.
+An active reservation, visit or task blocks Deal archive. Detail/history remain
+scoped; active lists/search/report counts omit archived records; mutations are
+denied until restore. Restore is rejected at 30 days; protected history is not
+purged. Existing project/property stock-guarded archive remains M/A-only, and
+calendar removal is reasoned visit cancellation, not erasure. No retention CLI,
+production access, real record or migration was used. Synthetic PostgreSQL tests
+cover ownership denial, invalid input, concurrent versions, interruption and
+idempotent retry; headed Chrome exercises the user controls on an isolated DB.
+
+## Initial property price (2026-10-20)
+
+D43 uses the existing `offering` table and positive bounded decimal validation;
+no schema migration or floating-point amount is introduced. A property creator,
+including an active agent, can supply exactly one initial sale/rental draft price
+inside `POST /properties`. It commits with the property, immutable true-actor
+events, and the existing idempotency receipt in one database transaction.
+Unpriced legacy retries retain the pre-extension receipt hash.
+Separate offering creation/edit, owner, availability, stock, file, and archive
+commands retain their manager/administrator checks. The ordinary facade still
+checks Origin, CSRF, session and idempotency key; malformed periods, currencies,
+unexpected stock fields and nonpositive prices are rejected. Price is shared
+inventory information, not a private contact field. Existing incomplete drafts
+remain readable, and no production data or migration is touched by this change.
 
 ## Production property-photo transfer (2026-10-20)
 
@@ -1151,6 +1254,24 @@ private exceptions. No public clock override or external send is added.
 [SP-15 evidence](03-planning/sprints/sp-15-execution.md) records actual negative,
 race, retry, migration, browser and privacy checks. Test cleanup requires the
 verified isolated target, advisory lease and synthetic-only account guard.
+
+## 0032 proactive-work security review (2026-10-22)
+
+New task/visit context is validated against the current scoped, same-contact
+Lead or Deal; multiple active Leads cannot be silently assigned by contact name.
+The database permits only one typed context and preserves nullable legacy rows.
+An unchanged historical Lead link may be retained when current contact authority
+moves to another agent, even if that Lead is no longer independently visible;
+this does not authorize choosing a new hidden Lead.
+The visit `not_completed` command requires a reason and an elapsed visit end,
+retains actor/version/history and invalidates future alerts. The worker's new
+J−1/H−1 and end+2h events contain only typed IDs, kind, due time and version;
+delivery rechecks active state, current owner/participant scope, schedule
+version and dedupe. The follow-up is suppressed after resolution or seven days
+of delay. Notification reads continue to scope before counts/pages, with no
+external message or clock override. The additive migration was exercised only
+against a verified separate synthetic PostgreSQL database; production access
+and schema changes were not undertaken in this task.
 
 ## SP-16 finance security boundary
 

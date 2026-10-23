@@ -15,6 +15,9 @@ const groups: Record<string, string[]> = {
   audit: ["contacts", "deals", "inventory", "visits", "tasks", "files", "finance", "imports", "exports", "identity"],
 };
 export function matchesTopics(path: string, topics: string[]) {
+  const ownerPortfolio = /^\/api\/v1\/contacts\/[a-f0-9-]{36}\/portfolio(?:\?|$)/.test(path);
+  const ownerDirectory = path.startsWith("/api/v1/contacts?") && new URLSearchParams(path.split("?")[1]).get("owner_directory") === "true";
+  if ((ownerPortfolio || ownerDirectory) && topics.includes("inventory")) return true;
   const domain = path.replace(/^\/api\/v1\//, "").split(/[/?]/)[0];
   return topics.includes("identity") || topics.some(topic => (groups[domain] ?? []).includes(topic));
 }

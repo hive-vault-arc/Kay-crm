@@ -1,5 +1,16 @@
 # KAY agent lessons
 
+## Final Next must not become submission (2026-10-23)
+
+React can reuse a conditional button and change its type from button to submit
+during the same click's default-action phase. Prevent Next's default and give
+Next/Create distinct keys. Assert zero create requests after inspecting review,
+then exactly one after explicit confirmation. A screenshot showing the created
+record before the planned Create click indicates premature submission, not an
+intermittent locator timeout. Guard price formatting while input is incomplete
+or invalid; validation must not crash rendering. Synthetic phone fixtures should
+use assigned mobile prefixes, not random ranges that can fail real validation.
+
 ## Live consultation state and canonical projections (2026-10-23)
 
 - Do not key an entire paginated read panel by its parent's version: every live
@@ -47,6 +58,45 @@
 - Coalesce pending ticket issuance across React Strict Mode remounts. Abandoned
   proofs otherwise accumulate toward the outstanding-ticket quota during fast
   navigation. Preserve that quota and use fresh proof after the pending call.
+## Archive-flow synthetic fixtures (2026-10-20)
+
+`tests.contact_support.create_lead` uses a fixed default phone. Creating a
+second Lead in the same fixture needs an explicit distinct synthetic phone;
+otherwise the duplicate-contact guard correctly rejects the test setup before
+the archive behavior is reached. For list-removal E2E, assert the scoped API
+total and the archive switch before asserting archive rows, rather than binding
+the test to an incidental results-heading accessible name.
+## Event time is not a mutable record's last-update time (2026-10-22)
+
+When adding dated timeline copy, capture one fresh instant for the append and
+use it for both the text and the immutable event. A Deal's `updated_at` can be
+old during a contact merge, so using it as the event timestamp would silently
+backdate a new merge event. Pass the conversion instant explicitly; otherwise
+take a fresh UTC instant at append time. Reuse it for both Deal stage-snapshot
+and contact timeline rows so their dates cannot drift at a minute boundary.
+Keep legacy wording as a read projection instead of editing protected history
+rows.
+
+## Reminder fan-out and retained work context (2026-10-22)
+
+When one task or visit gains additional scheduled events, update the worker's
+old single-event tests to drain each typed event at its actual clock, then
+exercise process replay on the due event. A current contact owner must still
+be able to resolve an already-linked task or visit after ownership transfer;
+validate any *new* Lead link against present scope, but retain an unchanged
+same-contact link for that historical work. Exercise old Alembic migration
+tests on a synthetic empty schema and preserve their no-data downgrade path.
+
+## Idempotent relationship controls must rotate after success (2026-10-22)
+
+Keep a command's UUID retry key stable while its response is uncertain, but
+clear it after a confirmed success. Otherwise adding a project, removing it,
+then adding the same project again can replay the first success without
+creating a new active link. Test that exact sequence in the browser. When
+another checkout has a different unmerged Alembic successor of the same
+revision, use a separate synthetic PostgreSQL target for this branch and
+reconcile the migration chain before combining branches; never point tests
+at the other checkout's database just because its URL is already configured.
 
 ## Sticky navigation and edge controls (2026-10-19)
 
@@ -1325,3 +1375,11 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
 - Prevention: audit `requirements.txt` and `requirements-dev.lock` directly with
   `--require-hashes`, then install and test both updated locks. CI now enforces
   both direct scans.
+# Integration fixture context (2026-10-23)
+
+When reconciling feature branches, do not assume an empty-property lifecycle
+fixture also creates a priced offer. Price-dependent cases must explicitly
+create their own offering; keep no-offer cases for availability validation.
+Scope duplicate header/panel values to the intended region, and select expanding
+catalogue filters by stable accessible labels instead of positional locators.
+

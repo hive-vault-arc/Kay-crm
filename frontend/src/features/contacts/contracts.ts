@@ -38,6 +38,8 @@ export const newEnquirySchema = z.object({
 }).strict().refine(value => Boolean(value.contact_id) !== Boolean(value.new_contact), "Choisissez un contact existant ou un nouveau contact.");
 export const editEnquirySchema = z.object({ expected_version: z.number().int().positive(), contact_fields: editContactSchema.optional(), message: z.string().trim().max(4000), status: writableStatusSchema, initial_budget: z.string().trim().min(1).max(160), campaign_source: campaignSchema, rating: ratingSchema }).strict();
 export const resolveSchema = z.object({ phone: z.string().trim().min(1).max(48) }).strict();
+export const recordLifecycleSchema = z.object({ expected_version: z.number().int().positive(), reason: z.string().trim().min(1).max(1000) }).strict();
+export const recordLifecycleResultSchema = z.object({ id: z.uuid(), version: z.number().int().positive() }).strict();
 export const contactSummarySchema = z.object({
   id: z.uuid(), name: z.string().min(1).max(160), type: z.enum(["person", "organization"]),
   primary_agent: agentSchema, primary_phone: z.string().regex(/^\+[1-9][0-9]{6,14}$/), primary_email: z.string().max(254).nullable(), version: z.number().int().positive(),
@@ -55,6 +57,7 @@ const enquiryFields = {
   origin_contact_id: z.uuid(),
   initial_budget: z.string().min(1).max(160).nullable(), campaign_source: campaignSchema, rating: ratingSchema,
   converted_deal_id: z.uuid().nullable(), converted_at: instant.nullable(),
+  archived_at: instant.nullable(),
 };
 export const enquirySchema = z.object({ ...enquiryFields, message: z.string().max(4000) }).strict();
 export const enquirySummarySchema = z.object({ ...enquiryFields, message_preview: z.string().max(160) }).strict();
@@ -71,6 +74,8 @@ export const listQuerySchema = z.object({
   q: z.string().trim().max(160).optional(), sort: z.enum(["-updated_at", "-received_at", "name"]).optional(), status: statusSchema.optional(), source: receivedSourceSchema.optional(),
   assigned_agent_id: z.uuid().optional(), received_from: z.iso.date().optional(), received_to: z.iso.date().optional(), contact_id: z.uuid().optional(),
   archive: z.enum(["active", "archived", "all"]).optional(),
+  record_archive: z.enum(["active", "archived", "all"]).optional(),
+  owner_directory: z.literal("true").optional(),
   campaign_source: campaignSchema.optional(), rating: ratingSchema.optional(), country: z.string().regex(/^[A-Z]{2}$/).optional(), language: z.string().trim().min(1).max(60).optional(),
 }).strict().refine(value => !value.received_from || !value.received_to || value.received_from <= value.received_to);
 export type Contact = z.infer<typeof contactSchema>;
@@ -85,8 +90,10 @@ export function contactRoute(key: string, method: string) {
   if (key === "contacts/resolve-phone") return method === "POST";
   if (["contacts/assignment-options", "contacts/metadata"].includes(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/(timeline|assignment-events)$/.test(key)) return method === "GET";
+  if (/^contacts\/[a-f0-9-]{36}\/portfolio$/.test(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/collaborators$/.test(key)) return method === "PUT";
   if (/^contacts\/[a-f0-9-]{36}\/(preview|assign|archive|restore|merge|notes)$/.test(key)) return method === "POST";
   if (/^enquiries\/[a-f0-9-]{36}\/assign$/.test(key)) return method === "POST";
+  if (/^enquiries\/[a-f0-9-]{36}\/(archive|restore)$/.test(key)) return method === "POST";
   return /^(contacts|enquiries)\/[a-f0-9-]{36}$/.test(key) && (method === "GET" || method === "PATCH");
 }

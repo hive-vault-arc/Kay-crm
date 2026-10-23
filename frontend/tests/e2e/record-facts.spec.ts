@@ -19,14 +19,9 @@ async function factsGeometry(page: Page, width: number) {
   const layout = page.locator(".crm-record-layout").first();
   const left = (await layout.locator(":scope > [data-record-contact]").boundingBox())!;
   const right = (await layout.locator(":scope > .crm-record-primary").boundingBox())!;
-  if (width >= 1280) {
-    expect(Math.abs(left.y - right.y)).toBeLessThanOrEqual(1);
-    expect(right.x).toBeGreaterThanOrEqual(left.x + left.width + 15);
-    expect(right.width).toBeGreaterThanOrEqual(left.width * 1.6);
-  } else {
-    expect(Math.abs(left.x - right.x)).toBeLessThanOrEqual(1);
-    expect(right.y).toBeGreaterThanOrEqual(left.y + left.height + 15);
-  }
+  expect(Math.abs(left.x - right.x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(left.width - right.width)).toBeLessThanOrEqual(1);
+  expect(right.y).toBeGreaterThanOrEqual(left.y + left.height + 15);
   const facts = page.locator(".record-facts:visible");
   for (const list of await facts.all()) {
     const stackedLabels = await list.evaluate(element => Boolean(element.closest(".crm-detail-facts")));

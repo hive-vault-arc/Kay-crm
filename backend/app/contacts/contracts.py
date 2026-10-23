@@ -178,10 +178,12 @@ class ListQuery(StrictBody):
     received_to: date | None = None
     contact_id: UUID | None = None
     archive: Literal["active", "archived", "all"] = "active"
+    record_archive: Literal["active", "archived", "all"] = "active"
     campaign_source: CampaignSource | None = None
     rating: LeadRating | None = None
     country: str | None = Field(default=None, min_length=2, max_length=2)
     language: str | None = Field(default=None, min_length=1, max_length=60)
+    owner_directory: bool = False
 
     @field_validator("country")
     @classmethod

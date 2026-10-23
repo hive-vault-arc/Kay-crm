@@ -33,6 +33,11 @@ test("live invalidations reach related views without refreshing unrelated financ
   assert.equal(matchesTopics("/api/v1/properties", ["finance"]), false);
   assert.ok(matchesTopics("/api/v1/properties", ["identity"]));
 });
+test("owner directories and portfolios reconcile legal-owner inventory changes", () => {
+  assert.ok(matchesTopics("/api/v1/contacts?owner_directory=true&page=2", ["inventory"]));
+  assert.ok(matchesTopics("/api/v1/contacts/00000000-0000-4000-8000-000000000001/portfolio?status=current", ["inventory"]));
+  assert.equal(matchesTopics("/api/v1/contacts?page=2", ["inventory"]), false);
+});
 test("live tickets and push bodies reject extra fields and malformed credentials", () => {
   assert.ok(ticketSchema.safeParse({ enabled: false }).success);
   assert.equal(ticketSchema.safeParse({ enabled: true, ticket: "bad", ws_url: "wss://example.test" }).success, false);

@@ -5,7 +5,9 @@ from uuid import UUID
 
 from pydantic import Field, field_validator
 
-from app.inventory.contracts import Amount, Category, StrictBody, Version
+from app.inventory.contracts import Amount, StrictBody, Version
+
+UnitCategory = Literal["villa", "house", "apartment", "land", "commercial"]
 
 
 class DevelopmentFields(StrictBody):
@@ -53,7 +55,7 @@ class TypeFields(StrictBody):
     development_id: UUID
     code: str = Field(min_length=1, max_length=40)
     label: str = Field(min_length=1, max_length=160)
-    category: Category
+    category: UnitCategory
     default_area_sqm: Amount | None = None
     default_rooms: Annotated[int, Field(strict=True, ge=1, le=1000)] | None = None
 

@@ -7,7 +7,7 @@ import { facadeError, upstreamRequest } from "@/lib/api/facade";
 import { editTaskSchema, followUpSchema, newTaskSchema, notificationQuerySchema, notificationsSchema, pageQuerySchema, readSchema, resultSchema, taskActionSchema, taskHistorySchema, taskQuerySchema, taskSchema, tasksSchema, workContextSchema } from "./contracts";
 
 const id = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}";
-const allowedErrors = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONTACT_ARCHIVED", "IDEMPOTENCY_CONFLICT", "VERSION_CONFLICT", "TASK_TERMINAL", "INVALID_TASK_OWNER", "INVALID_TASK_CONTEXT"]);
+const allowedErrors = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONTACT_ARCHIVED", "RECORD_ARCHIVED", "IDEMPOTENCY_CONFLICT", "VERSION_CONFLICT", "TASK_TERMINAL", "INVALID_TASK_OWNER", "INVALID_TASK_CONTEXT", "INVALID_WORK_CONTEXT", "ENQUIRY_CONTEXT_REQUIRED"]);
 export async function relayWork(key: string, request: Request, requestId: string) {
   const method = request.method, list = key === "tasks", inbox = key === "notifications", followup = key === "visits/follow-up", context = key === "work/context";
   const record = new RegExp(`^tasks/${id}$`).test(key), history = new RegExp(`^tasks/${id}/history$`).test(key), action = new RegExp(`^tasks/${id}/(complete|cancel)$`).test(key), read = new RegExp(`^notifications/${id}/read$`).test(key);

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { test, expect, createActor, removeActor, signIn, clearActorContext } from "../helpers/auth";
 import { createDevelopment, createBlock, createFloor, createType, createUnit, openDevelopment } from "../helpers/developments";
 import { createLead, staffCommand } from "../helpers/leads";
-import { addOwners, createCampaign, confirmCampaign } from "../helpers/inventory";
+import { addOwners, confirmCampaign } from "../helpers/inventory";
 import { apiProcess } from "../helpers/api-process";
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(20_000); page.setDefaultNavigationTimeout(30_000); });
@@ -51,9 +51,8 @@ test("SP08 AT-31/32/35/36/41: actual mixed units, template edit, filters, whole 
     const development = await createDevelopment(page);
     await createBlock(page); await createFloor(page); await createFloor(page, "B1", "F3"); await createBlock(page, "B2"); await createType(page);
     const first = await createUnit(page, development.id);
-    await addOwners(page, ["SP08 propriétaire privé synthétique"]); await createCampaign(page, "sale", "900000,01"); await confirmCampaign(page, "sale");
-    const second = await createUnit(page, development.id, "F3", "apartment", "81,50");
-    await createCampaign(page, "sale", "950000,02");
+    await addOwners(page, ["SP08 propriétaire privé synthétique"]); await confirmCampaign(page, "sale");
+    const second = await createUnit(page, development.id, "F3", "apartment", "81,50", "950000,02");
     const land = await createUnit(page, development.id, "", "land", "250,00");
     await openDevelopment(page, development.id, "Unités");
     await expect(page.getByText("1 unité(s) correspondante(s).", { exact: true })).toBeVisible();
@@ -161,6 +160,7 @@ test("SP08 AT-23/31: incomplete apartment input is retained and invalid template
     const navigation = unitForm.getByRole("group", { name: "Navigation du formulaire" });
     await page.getByLabel("Référence du bien", { exact: true }).fill("SP08-APARTMENT-INCOMPLETE");
     await expect(page.getByLabel("Catégorie", { exact: true })).toHaveValue("apartment");
+    await page.getByLabel("Prix de vente demandé en MAD", { exact: true }).fill("900000,01");
     await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
     await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
     await expect(page.getByRole("alert").filter({ hasText: "choisissez un bloc, un étage et un type" })).toBeVisible();

@@ -11,11 +11,13 @@ from app.activities.contracts import MANUAL_KINDS, ActivityQuery, NewActivity
 from app.contacts.access import readable_contact, scoped_contact
 from app.contacts.history import record
 from app.contacts.history_models import TimelineEvent
+from app.contacts.history_text import activity_body
 from app.contacts.models import IdempotencyRecord
 from app.contacts.ownership import locked_identity
 from app.contacts.queries import enquiry_in_scope
 from app.db.session import Database
 from app.deals.access import authorized
+from app.deals.models import Deal
 from app.identity.security import IdentityError, keyed_digest
 from app.identity.sessions import CurrentIdentity, current_identity
 
@@ -49,7 +51,14 @@ def append_activity(
     )
     with database.session() as session, session.begin():
         identity = locked_identity(session, token)
-        cid = context(session, identity, scope, target)
+        scoped_record = (
+            enquiry_in_scope(session, identity, target)
+            if scope == "enquiries"
+            else authorized(session, identity, target)
+        )
+        if scoped_record.archived_at is not None:
+            raise IdentityError("RECORD_ARCHIVED", 409)
+        cid = scoped_record.contact_id
         contact = readable_contact(session, identity, cid)
         previous = session.get(IdempotencyRecord, (identity.user.id, route, key))
         if previous:
@@ -111,7 +120,8 @@ def read_activities(
             predicate = (
                 TimelineEvent.enquiry_id == target
                 if scope == "enquiries"
-                else TimelineEvent.deal_id == target
+                else (TimelineEvent.deal_id == target)
+                & (TimelineEvent.action != "enquiries.converted")
             )
         base = select(TimelineEvent).where(predicate)
         if query.kind:
@@ -131,12 +141,23 @@ def read_activities(
             .offset((query.page - 1) * query.page_size)
             .limit(query.page_size)
         ).all()
+        linked_lead = (
+            session.scalar(select(Deal.enquiry_id).where(Deal.id == target))
+            if scope == "deals"
+            and any(row.action == "deals.created" and not row.body for row in rows)
+            else None
+        )
         return {
             "items": [
                 {
                     "id": str(row.id),
                     "action": row.action,
-                    "body": row.body,
+                    "body": activity_body(
+                        row.action,
+                        row.body,
+                        row.occurred_at,
+                        converted_deal=bool(linked_lead),
+                    ),
                     "reason": row.reason,
                     "occurred_at": row.occurred_at.isoformat(),
                     "actor": {

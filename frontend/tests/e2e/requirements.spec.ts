@@ -53,7 +53,7 @@ test("SP10 AT-07/08/36: independent searches, exact rents and real unit/whole of
     await expectCurrentSearch(page, "SP10 achat indépendant (achat, 0 offre(s))");
     await page.getByRole("button", { name: "SP10 recherche locative synthétique (location, 1 offre(s))", exact: true }).click();
     await expectCurrentSearch(page, "SP10 recherche locative synthétique (location, 1 offre(s))");
-    await page.goto(`/leads/${lead}`); await expect(page.getByRole("heading", { name: "Recherches du contact", exact: true })).toBeVisible();
+    await page.goto(`/leads/${lead}`); await page.getByText("Gérer les recherches du contact", { exact: true }).click(); await expect(page.getByRole("heading", { name: "Recherches du contact", exact: true })).toBeVisible();
     await clearActorContext(page); await signIn(page, outsider);
     expect((await page.request.get(`/api/v1/requirements/${first}`)).status()).toBe(404);
     expect((await page.request.get(`/api/v1/requirements?contact_id=${contact}`)).status()).toBe(404);

@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.contacts.access import has_scope
 from app.contacts.history_models import TimelineEvent
+from app.contacts.history_text import created_note
 from app.contacts.models import Contact, ContactEmail, ContactPhone, Enquiry
 from app.db.session import Database
 from app.files.models import Job, OutboxEvent
@@ -92,6 +93,7 @@ def apply(session: Session, source: WebsiteSource, row: WebsiteReceipt) -> None:
     )
     session.add(enquiry)
     session.flush()
+    created_at = datetime.now(UTC)
     for action in ("contacts.created", "enquiries.created") if fresh else ("enquiries.created",):
         session.add(
             TimelineEvent(
@@ -100,9 +102,10 @@ def apply(session: Session, source: WebsiteSource, row: WebsiteReceipt) -> None:
                 website_source_id=source.id,
                 actor_name="Source web : " + source.name[:140],
                 action=action,
-                body="",
+                body=created_note(created_at) if action == "enquiries.created" else "",
                 reason="",
                 enquiry_id=enquiry.id,
+                occurred_at=created_at,
             )
         )
         session.add(

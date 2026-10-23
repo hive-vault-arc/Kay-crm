@@ -5,6 +5,8 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, Request
 
+from app.archive.records import RecordLifecycle
+from app.archive.records import command as record_lifecycle
 from app.contacts.router import Proof, RetryKey, configuration, validate_query
 from app.deals.commands import Body, command
 from app.deals.contracts import (
@@ -76,6 +78,26 @@ def edit(
     request: Request, token: Proof, key: RetryKey, did: UUID, body: EditDeal
 ) -> dict[str, object]:
     return mutate(request, token, key, body, did)
+
+
+@router.post("/deals/{did}/archive")
+def archive_deal(
+    request: Request, token: Proof, key: RetryKey, did: UUID, body: RecordLifecycle
+) -> dict[str, object]:
+    if request.query_params:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    database, secret = configuration(request)
+    return record_lifecycle(database, token, secret, key, "deals", did, "archive", body)
+
+
+@router.post("/deals/{did}/restore")
+def restore_deal(
+    request: Request, token: Proof, key: RetryKey, did: UUID, body: RecordLifecycle
+) -> dict[str, object]:
+    if request.query_params:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    database, secret = configuration(request)
+    return record_lifecycle(database, token, secret, key, "deals", did, "restore", body)
 
 
 @router.post("/deals/{did}/transition")

@@ -36,6 +36,10 @@ def test_property_facets_precede_selection_and_pages_and_follow_other_filters(se
         "villa": 1,
         "house": 1,
         "commercial": 1,
+        "riad": 0,
+        "room": 0,
+        "office": 0,
+        "farm": 0,
     }
     selected = read_list(
         database, token, "properties", PropertiesQuery(categories="villa,apartment", page_size=1)

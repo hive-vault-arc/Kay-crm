@@ -266,7 +266,7 @@ full AT-26 acceptance is claimed. Product review remains pending.
 | BR-01 | C01,C14 | `agency.bootstrap_completed_at`, `user`, `credential`, `audit_event` | Server-local bootstrap script, `POST /users`, `/auth/login` | AT-01, AT-37, AT-38 |
 | BR-02 | C01,C14 | `session`, `credential`, `file_permit` | `/users/{id}/reset-password`, `/auth/change-password`, `/auth/logout` | AT-02, AT-26, AT-37, AT-38 |
 | BR-03 | C02 | `contact`, `contact_phone`, `contact_email` | `POST /contacts` | AT-03 |
-| BR-04 | C02 | `contact_phone`, `assignment_event` | `/contacts/resolve-phone`, `/contacts/{id}/merge` | AT-04 |
+| BR-04 | C02 | `contact_phone`, `assignment_event` | `/contacts/resolve-phone`, `/contacts/{id}/merge` | AT-04, AT-42 |
 | BR-05 | C02,C05,C10 | `contact_collaborator`, `assignment_event`, `timeline_event` | `/contacts/{id}/assign`, `/contacts/{id}/timeline` | AT-05, AT-18 |
 | BR-06 | C02,C04,C08 | `development`, `property`, `document`, `contact` | `GET /developments/{id}`, `GET /properties/{id}` | AT-06, AT-26, AT-35 |
 | BR-07 | C03 | `requirement`, `shortlist_entry` | `POST /requirements/{id}/shortlist` | AT-07 |
@@ -287,7 +287,7 @@ full AT-26 acceptance is claimed. Product review remains pending.
 | BR-22 | C13 | Interface states, record versions | Ordinary `/api/v1` routes (not connected in SP-01) | AT-23 setup [passed](../03-planning/sprints/sp-01-evidence.md); full-feature variants pending |
 | BR-23 | C14 | `contact.archived_at`, `audit_event`, `deal_outcome` | `/contacts/{id}/archive`, `/restore` | AT-24, AT-29 |
 | BR-24 | C14 | PostgreSQL/Spaces backups | Restore procedure | AT-25, AT-28 |
-| BR-25 | C02,C04 | `contact`, `development`, `property.category` | `POST /developments`, `POST /properties` | AT-31, AT-35 |
+| BR-25 | C02,C04 | `contact`, `development`, `property.category`, `property_owner`, `development_owner` | `POST /developments`, `POST /properties`, `GET /contacts/{id}/portfolio` | AT-31, AT-35, AT-42 |
 | BR-26 | C04 | `development`, `block`, `floor`, `unit_type`, `property` | `/developments/{id}/blocks`, `/blocks/{id}/floors`, `/developments/{id}/unit-types`, `POST /properties` | AT-31, AT-32, AT-36 |
 | BR-27 | C04,C08 | `offering`, `reservation`, `development`, `property` | `POST /offerings`, `/deals/{id}/reserve` | AT-33 |
 | BR-28 | C04,C08,C10 | `deal_outcome`, `offering`, `reservation`, `timeline_event` | `/deals/{id}/close`, `/reopen`, `/reports/exceptions` | AT-34, AT-36 |
@@ -316,7 +316,7 @@ Assumptions H-01/H-02/H-03 link to `property`, `property_owner`, `development_ow
 | C13 | BR-22/29/31, AT-23/36/39/41 |
 | C14 | BR-01/02/23/24, AT-02/24/25/26/28/29/30/35/37/38 |
 
-The accepted local defaults and later actual-website/expanded-commercial/real-data validations appear in the [decision register](../../decisions.md). The [sprint index coverage map](../03-planning/sprints/README.md#acceptance-coverage) assigns all AT-01–AT-41 variants to implementation stages and final regression. Any rule change must update its linked routes, model, and scenarios before a release.
+The accepted local defaults and later actual-website/expanded-commercial/real-data validations appear in the [decision register](../../decisions.md). The [sprint index coverage map](../03-planning/sprints/README.md#acceptance-coverage) assigns AT-01–AT-41 to the original implementation stages and final regression; AT-42 covers the post-roadmap owner directory. Any rule change must update its linked routes, model, and scenarios before a release.
 
 ## SP-09 executable traceability
 
@@ -408,3 +408,12 @@ This extends AT-16/17/23 variants, not whole-product acceptance or human approva
 [Concrete contract](../04-design/commissions-local.md) and
 [actual verification](../03-planning/sprints/sp-16-execution.md). Focused tests do
 not claim the complete final-acceptance suite or human product/design approval.
+
+## D44 record-level removal extension
+
+AT-06/23/24 now include visible project, Lead and Deal archive controls and
+30-day Lead/Deal restore. AT-16/17 include reasoned calendar cancellation.
+The executable cases are `backend/tests/test_record_archive.py`, the existing
+inventory/scheduling permission suites, and
+`frontend/tests/e2e/record-removal.spec.ts`. Archive preserves linked business
+history; this extension does not authorize the security retention CLI.

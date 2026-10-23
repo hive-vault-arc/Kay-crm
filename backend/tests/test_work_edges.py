@@ -36,7 +36,8 @@ def test_scope_removal_hides_existing_notifications_and_prevents_pending_deliver
     body, key = new(uid, contact), uuid4()
     saved = run(settings, database, token, body, key=key)
     tid = UUID(saved["id"])
-    run_once(database, CLOCK)
+    for _ in range(3):
+        assert run_once(database, CLOCK)
     nid = UUID(read_notifications(database, token, NotificationQuery())["items"][0]["id"])
     second = run(settings, database, token, new(uid, contact, due_at=CLOCK + timedelta(minutes=1)))
     change(settings, database, admin, contact, intent("assign", primary_agent_id=new_uid))
@@ -79,13 +80,15 @@ def test_task_interrupt_before_or_after_commit_is_atomic_and_retry_safe(
         if event.contains(Session, hook, interrupted):
             event.remove(Session, hook, interrupted)
     with database.session() as session:
-        for model in (Task, TaskEvent, OutboxEvent):
+        for model in (Task, TaskEvent):
             assert session.scalar(select(func.count()).select_from(model)) == int(committed)
+        assert session.scalar(select(func.count()).select_from(OutboxEvent)) == 3 * int(committed)
     saved = run(settings, database, token, body, key=key)
     assert run(settings, database, token, body, key=key) == saved
     with database.session() as session:
-        for model in (Task, TaskEvent, OutboxEvent):
+        for model in (Task, TaskEvent):
             assert session.scalar(select(func.count()).select_from(model)) == 1
+        assert session.scalar(select(func.count()).select_from(OutboxEvent)) == 3
 
 
 def test_merge_preview_task_versions_origins_actors_and_archive_read_only(settings, database):
@@ -184,9 +187,15 @@ def test_raw_sql_schedule_origin_history_outbox_and_notification_guards(settings
         "SELECT gen_random_uuid(),kind,task_id,schedule_version,due_at,'forged' "
         "FROM outbox_event WHERE task_id=:id",
     ):
-        with pytest.raises(IntegrityError), database.engine.begin() as connection:
-            connection.execute(text(statement), dict(id=tid))
-    assert run_once(database, CLOCK)
+        try:
+            with database.engine.begin() as connection:
+                connection.execute(text(statement), dict(id=tid))
+        except IntegrityError:
+            pass
+        else:
+            pytest.fail(f"Missing integrity guard: {statement}")
+    for _ in range(3):
+        assert run_once(database, CLOCK)
     with pytest.raises(IntegrityError), database.engine.begin() as connection:
         connection.execute(
             text("UPDATE notification SET user_id=:uid WHERE task_id=:id"),
@@ -226,10 +235,11 @@ def test_delivery_rechecks_scope_after_waiting_for_agency_lock(
     uid, token, contact, _ = setup(settings, database)
     run(settings, database, token, new(uid, contact))
     dispatch(database)
-    jid, fence = claim(database, CLOCK)
+    reminder_clock = CLOCK - timedelta(days=1)
+    jid, fence = claim(database, reminder_clock)
     with database.session() as blocker, blocker.begin(), ThreadPoolExecutor(2) as pool:
         blocker.scalar(select(Agency).where(Agency.id == AGENCY_ID).with_for_update())
-        pending = [pool.submit(deliver, database, jid, fence, CLOCK) for _ in range(2)]
+        pending = [pool.submit(deliver, database, jid, fence, reminder_clock) for _ in range(2)]
         observe_two_lock_waiters(database, "agency")
         if disable_recipient:
             blocker.get(User, uid).state = "disabled"

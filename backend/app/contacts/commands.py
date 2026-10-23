@@ -17,6 +17,7 @@ from app.contacts.access import (
 )
 from app.contacts.contracts import ContactFields, EditContact, EditEnquiry, NewContact, NewEnquiry
 from app.contacts.history import record
+from app.contacts.history_text import created_note, status_note
 from app.contacts.models import (
     Contact,
     ContactEmail,
@@ -138,7 +139,16 @@ def create_enquiry(session: Session, identity: CurrentIdentity, body: NewEnquiry
     )
     session.add(enquiry)
     session.flush()
-    record(session, identity, contact.id, "enquiries.created", enquiry_id=enquiry.id)
+    created_at = datetime.now(UTC)
+    record(
+        session,
+        identity,
+        contact.id,
+        "enquiries.created",
+        enquiry_id=enquiry.id,
+        body=created_note(created_at),
+        occurred_at=created_at,
+    )
     return enquiry
 
 
@@ -167,6 +177,8 @@ def apply_command(
         record(session, identity, contact.id, "contacts.updated")
         return contact.id, contact.id
     enquiry = enquiry_in_scope(session, identity, target)
+    if enquiry.archived_at is not None:
+        raise IdentityError("RECORD_ARCHIVED", 409)
     scoped_contact(session, identity, enquiry.contact_id)
     if enquiry.version != body.expected_version:
         raise ContactConflict(
@@ -183,8 +195,11 @@ def apply_command(
             ) from None
     if not scoped_contact(session, identity, enquiry.contact_id).languages:
         raise IdentityError("LANGUAGES_REQUIRED", 422)
-    status_note = (
-        f"Statut : {enquiry.status} → {body.status}." if enquiry.status != body.status else ""
+    changed_at = datetime.now(UTC)
+    change_note = (
+        status_note(enquiry.status, body.status, changed_at)
+        if enquiry.status != body.status
+        else ""
     )
     enquiry.message, enquiry.status = body.message, body.status
     enquiry.initial_budget, enquiry.campaign_source, enquiry.rating = (
@@ -193,14 +208,15 @@ def apply_command(
         body.rating,
     )
     enquiry.version += 1
-    enquiry.updated_at = datetime.now(UTC)
+    enquiry.updated_at = changed_at
     record(
         session,
         identity,
         enquiry.contact_id,
         "enquiries.updated",
         enquiry_id=enquiry.id,
-        body=status_note,
+        body=change_note,
+        occurred_at=changed_at,
     )
     return enquiry.id, enquiry.contact_id
 

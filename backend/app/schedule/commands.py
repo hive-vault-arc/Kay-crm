@@ -68,6 +68,7 @@ def fields_from_row(session: Session, row: Visit, reason: str) -> VisitFields:
                 "start_at",
                 "end_at",
                 "deal_id",
+                "enquiry_id",
                 "property_id",
             )
         }
@@ -104,7 +105,7 @@ def apply_visit(
         original_schedule = (row.start_at, row.end_at, row.status)
         if row.version != body.expected_version:
             raise IdentityError("VERSION_CONFLICT", 409)
-        if row.status in ("completed", "cancelled"):
+        if row.status in ("completed", "not_completed", "cancelled"):
             raise IdentityError("VISIT_TERMINAL", 409)
         row.version += 1
         fields = (
@@ -118,13 +119,15 @@ def apply_visit(
             if row.status == "confirmed":
                 raise IdentityError("VISIT_STATE_UNCHANGED", 409)
             row.status = "confirmed"
-        elif action in ("completed", "cancelled"):
+        elif action in ("completed", "not_completed", "cancelled"):
             if not isinstance(body, FinishVisit) or (
-                action == "completed" and row.status not in ACTIVE
+                action in ("completed", "not_completed") and row.status not in ACTIVE
             ):
                 raise IdentityError("INVALID_STATE", 422)
+            if action == "not_completed" and row.end_at > datetime.now(UTC):
+                raise IdentityError("VISIT_NOT_ENDED", 409)
             row.status, row.outcome = action, body.reason
-    check_context(session, identity, row, fields)
+    row.enquiry_id = check_context(session, identity, row, fields, new=isinstance(body, NewVisit))
     for name in (
         "title",
         "type",

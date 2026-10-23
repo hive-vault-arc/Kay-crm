@@ -49,7 +49,7 @@ export async function createType(page: Page, code = "T2", label = "T2 / 80 m²")
   await page.getByRole("button", { name: "Enregistrer le type réutilisable", exact: true }).click();
   await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
 }
-export async function createUnit(page: Page, did: string, floor = "F2", category = "apartment", area = "80,00") {
+export async function createUnit(page: Page, did: string, floor = "F2", category = "apartment", area = "80,00", price = "900000,01") {
   await openDevelopment(page, did, "Unités");
   await page.getByRole("button", { name: "Créer une unité physique", exact: true }).click();
   const form = page.getByRole("form", { name: "Créer une unité physique" });
@@ -57,6 +57,7 @@ export async function createUnit(page: Page, did: string, floor = "F2", category
   const reference = `SP08-U-${randomUUID().slice(0, 8)}`.toUpperCase();
   await page.getByLabel("Référence du bien", { exact: true }).fill(reference);
   await page.getByLabel("Catégorie", { exact: true }).selectOption(category);
+  await page.getByLabel("Prix de vente demandé en MAD", { exact: true }).fill(price);
   await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
   await expect(form.getByText("Étape 2 sur 3")).toBeVisible();
   await page.getByLabel(category === "land" ? "Surface du terrain en m² (facultative)" : category === "commercial" ? "Surface du local en m² (facultative)" : "Surface en m² (facultative)", { exact: true }).fill(area);

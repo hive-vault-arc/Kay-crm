@@ -18,7 +18,7 @@ from pydantic import (
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1000)]
 Reason = Annotated[str, StringConstraints(strip_whitespace=True, max_length=1000)]
 VisitType = Literal["company_car", "without_company_car", "office"]
-Status = Literal["draft", "scheduled", "confirmed", "completed", "cancelled"]
+Status = Literal["draft", "scheduled", "confirmed", "completed", "not_completed", "cancelled"]
 Version = Annotated[int, Field(strict=True, gt=0)]
 
 
@@ -95,6 +95,7 @@ class VisitFields(Period):
     participant_ids: Annotated[list[UUID], Field(min_length=1, max_length=100)]
     overlap_reason: Reason = ""
     deal_id: UUID | None = None
+    enquiry_id: UUID | None = None
     property_id: UUID | None = None
 
     @model_validator(mode="after")
@@ -149,7 +150,7 @@ class CalendarQuery(Period):
         allowed = (
             {"office", "company_car", "without_company_car"}
             if info.field_name == "types"
-            else {"draft", "scheduled", "confirmed", "completed", "cancelled"}
+            else {"draft", "scheduled", "confirmed", "completed", "not_completed", "cancelled"}
         )
         parts = value.split(",")
         if len(parts) != len(set(parts)) or not set(parts) <= allowed:

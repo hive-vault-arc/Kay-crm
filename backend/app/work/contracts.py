@@ -15,6 +15,7 @@ class TaskFields(Strict):
     owner_user_id: UUID
     due_at: AwareDatetime
     deal_id: UUID | None = None
+    enquiry_id: UUID | None = None
     property_id: UUID | None = None
 
     @field_validator("due_at")

@@ -21,7 +21,7 @@ import { RequirementPanel } from "@/features/requirements/requirement-panel";
 import { DealList } from "@/features/deals/deal-list";
 import { TaskPanel } from "@/features/work/task-panel";
 
-export function ContactRecord({ id, role, initialTask }: { id: string; role: StaffRole; initialTask?: string }) {
+export function ContactRecord({ id, role, actorId, initialTask }: { id: string; role: StaffRole; actorId?: string; initialTask?: string }) {
   const hydrated = useHydrated();
   const query = useQuery(`/api/v1/contacts/${id}`, contactSchema);
   const [edited, setEdited] = useState<Contact>();
@@ -64,12 +64,12 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
     </section>}
         {!editing && (!contact.archived_at || role !== "agent") ? <OwnershipControls key={`${contact.id}:${contact.version}`} contact={contact} role={role} changed={changed} /> : null}
       </TabsContent>
-      <TabsContent value="enquiries"><LeadList key={contact.id} role={role} contactId={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
+      <TabsContent value="enquiries"><LeadList key={contact.id} role={role} actorId={actorId} contactId={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
       <TabsContent value="timeline"><ContactTimeline key={contact.id} id={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
       <TabsContent value="assignments"><ContactAssignments key={contact.id} id={contact.id} revision={contact.version} /></TabsContent>
       <TabsContent value="documents"><FilePanel key={contact.id} parentKind="contact" parentId={contact.id} writable={!contact.archived_at} /></TabsContent>
       <TabsContent value="requirements"><RequirementPanel key={contact.id} contactId={contact.id} writable={!contact.archived_at} /></TabsContent>
-      <TabsContent value="deals"><DealList key={contact.id} role={role} contactId={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
+      <TabsContent value="deals"><DealList key={contact.id} role={role} actorId={actorId} contactId={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
       <TabsContent value="tasks"><TaskPanel key={contact.id} contactId={contact.id} writable={!contact.archived_at} initialTask={initialTask} /></TabsContent>
     </Tabs>
   </div>;

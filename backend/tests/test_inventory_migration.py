@@ -107,7 +107,12 @@ def test_commercial_category_upgrade_preserves_existing_and_refuses_lossy_downgr
     assert migrate("downgrade", "0027_record_archive").returncode == 0
     try:
         with database.session() as session:
-            assert session.get(Property, legacy_id).category == "land"
+            assert (
+                session.scalar(
+                    text("SELECT category FROM property WHERE id=:id"), {"id": legacy_id}
+                )
+                == "land"
+            )
         with pytest.raises(IntegrityError), database.session() as session, session.begin():
             session.execute(
                 text(

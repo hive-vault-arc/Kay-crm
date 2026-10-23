@@ -125,7 +125,11 @@ def deliver(database: Database, jid: UUID, fence: UUID, now: datetime | None = N
             valid = (
                 target is not None
                 and target.status in ("scheduled", "confirmed")
-                and target.start_at > clock
+                and (
+                    target.end_at + timedelta(hours=2) <= clock <= target.end_at + timedelta(days=7)
+                    if event.kind == "visit.follow_up"
+                    else target.start_at > clock
+                )
             )
             recipients = set(
                 session.scalars(
@@ -138,7 +142,11 @@ def deliver(database: Database, jid: UUID, fence: UUID, now: datetime | None = N
                 recipients.add(target.organizer_user_id)
         else:
             target = session.get(Task, event.task_id) if event.task_id else None
-            valid = target is not None and target.status == "open"
+            valid = (
+                target is not None
+                and target.status == "open"
+                and (event.kind == "task.due" or target.due_at > clock)
+            )
             recipients = {target.owner_user_id} if target else set()
         if (
             not valid

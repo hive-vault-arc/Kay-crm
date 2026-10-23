@@ -106,7 +106,8 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
                     "'languages'] FROM contact c WHERE id=:cid",
                     "SELECT to_jsonb(p)-'website_source_id' FROM contact_phone p "
                     "WHERE contact_id=:cid ORDER BY id",
-                    "SELECT to_jsonb(p)-'archived_at' FROM property p WHERE id=:pid",
+                    "SELECT to_jsonb(p)-ARRAY['archived_at','listing_details'] "
+                    "FROM property p WHERE id=:pid",
                     "SELECT to_jsonb(e) FROM inventory_event e WHERE property_id=:pid ORDER BY id",
                 )
             ]
@@ -120,6 +121,10 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
         assert migrate("check").returncode == 0
         assert facts() == before
         with database.engine.connect() as connection:
+            assert connection.scalar(
+                text("SELECT listing_details = '{}'::jsonb FROM property WHERE id=:pid"),
+                {"pid": pid},
+            )
             assert connection.scalar(
                 text("SELECT website_source_id IS NULL FROM contact WHERE id=:cid"), {"cid": cid}
             )

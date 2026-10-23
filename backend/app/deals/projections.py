@@ -89,6 +89,7 @@ def deal_views(session: Session, rows: Sequence[Deal]) -> list[dict[str, object]
                 "offering": offers.get(row.offering_id) if row.offering_id else None,
                 "next_action": row.next_action,
                 "stock_review_required": row.stock_review_required,
+                "archived_at": row.archived_at.isoformat() if row.archived_at else None,
                 "primary_agent_at_close_id": str(row.primary_agent_at_close_id)
                 if row.primary_agent_at_close_id
                 else None,

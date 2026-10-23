@@ -1,5 +1,23 @@
 # HTTP contracts for `/api/v1`
 
+## Lead/Deal catalogue project links (2026-10-22)
+
+`GET /enquiries/{id}/project-links` and `GET /deals/{id}/project-links` require
+`kind=discussed|visited`, with unique `page` (1–1000000) and `page_size`
+(1–50, default 25). The response is a numbered page of active links (`id`,
+`kind`, nullable `development_id`/`property_id`, captured `name`, `created_at`),
+with total and next/previous flags. The server scopes before counting and
+paginates under one repeatable-read snapshot. No entire catalogue is loaded.
+
+`POST` to either collection accepts `kind` and exactly one existing,
+non-archived catalogue UUID. `DELETE /{collection}/{link_id}` accepts `{}`.
+Both return `{id}`, require current parent/contact authority and the existing
+session/facade, Origin, CSRF and UUID idempotency guards. Same-key replay after
+authority check is safe; changed payload is 409. Duplicate active link is 409;
+unknown/foreign parents or targets are 404. Removal leaves the audit and
+business timeline intact; the same target may subsequently be re-added. These
+links are not qualification interests, appointments, offers or stock commands.
+
 ## Property category selection and facets (2026-10-18)
 
 D39 extends only `GET /properties` with optional `categories`, a≤40-character
@@ -52,7 +70,10 @@ current contact/Lead authority apply to every read, count and replay.
 rechecking origin authority. It returns the original entries/IDs/authors/times,
 not copies or all Leads for a contact. An authorized manual Deal without origin
 returns an empty page with null origin. There is no origin write/edit/delete
-route. Conversion's immutable linking event appears in both relevant histories;
+route. Conversion retains an immutable Lead-origin event and writes a separate
+dated Deal-created event. Existing dual-linked conversion events remain stored
+but are shown only in the Lead origin table; legacy blank creation/transition
+notes receive a read-only French display projection without rewriting records;
 manual Lead and Deal entries each have exactly one context. Contact-only legacy
 notes are not inferred into either history. Existing version/outcome histories
 and authorization remain unchanged.
@@ -155,6 +176,16 @@ SP-04 adds the account-administration contract; SP-05 adds scoped contacts and
 enquiries below. File permits and other business modules remain later work.
 
 ### SP-07 standalone inventory wire contract
+
+Current D43 creation extension (2026-10-20): `POST /properties` accepts
+`initial_offering:{kind:sale|rental,price_mad:positiveDecimalString,
+price_period:null|month|year,currency:MAD}`. The staff creation wizard requires it;
+sale has no period, rent requires month/year. The property and this one draft
+offering commit under the existing idempotency key and true-actor history in one
+transaction. An active agent may use this narrow create path but cannot invoke
+`POST/PATCH /offerings`, change owners or confirm availability. The wizard
+requires this field, while existing API callers may still create incomplete
+drafts. Existing records are not backfilled.
 
 All inventory routes reuse the current staff session/facade proof. All active
 staff read shared facts. Under D34, all active staff may POST/PATCH property
@@ -373,6 +404,8 @@ does not become a generic proxy. Private reads/errors are no-store.
 | Method and path | Strict input / output |
 |---|---|
 | GET `/contacts` | Numbered page of summaries: id, name, type, primary_agent `{id,display_name}`, primary_phone, nullable primary_email, version. |
+| GET `/contacts?owner_directory=true` | Same scoped contact projection, limited to contacts with `owner` role or any current/former property/development owner link. Search, archive and role scope apply before counts; no separate owner identity is created. |
+| GET `/contacts/{id}/portfolio?status=current\|past&page=1&page_size=20` | Contact-scope-checked numbered property/development owner-link periods (maximum 50 per page), with safe asset reference/name/category/location and link/unlink times. No private phone, document or other owner's identity is projected. A non-owner contact or an inaccessible contact returns 404. |
 | POST `/contacts` | Contact fields below, optional primary_agent_id; returns full contact. |
 | GET/PATCH `/contacts/{id}` | Detail adds phones/emails/roles, source, nullable source_submission_id, created_by_user_id, created_at, updated_at. PATCH is full editable contact fields plus expected_version; no ownership/provenance fields. |
 | POST `/contacts/resolve-phone` | `{phone}`; `{available:true}` or the safe duplicate/private 409 below. No writes or receipt. |
@@ -570,6 +603,7 @@ public URL, export or external delivery is added. See [SP-04 evidence](../03-pla
 | C02 | `GET/POST /contacts`, `GET/PATCH /contacts/{id}`, `POST /contacts/{id}/archive`, `POST /contacts/{id}/restore` | M/A or S; archive/restore M/A; name and phone required. |
 | C02 | `POST /contacts/resolve-phone`, `POST /contacts/{id}/merge`, `POST /contacts/{id}/assign`, `PUT /contacts/{id}/collaborators` | Explained resolution within scope; assignment and collaboration M/A; cross-portfolio merge M/A. |
 | C02 | `GET/POST /enquiries`, `GET/PATCH /enquiries/{id}`, `POST /enquiries/{id}/assign` | These are the UI Leads operations. M/A or S; unassigned queue M/A; assignment M/A and assignee must have current contact scope. A contact transfer clears/reassigns invalid enquiry assignments. A new lead links or creates a contact under the same phone/scope rules; no separate `lead` table. |
+| C02 | `POST /enquiries/{id}/archive`, `POST /enquiries/{id}/restore` | M/A or current assigned agent within contact scope; reason and `expected_version` required. Restore expires 30 days after archive. History and identity remain. |
 | C03 | `GET/POST /requirements`, `GET/PATCH /requirements/{id}`, `POST /requirements/{id}/shortlist`, `DELETE /requirements/{id}/shortlist/{offering_id}` | M/A or S for contact; inventory read under R. |
 | C04 | `GET /developments`, `GET /developments/{id}`, `GET /developments/{id}/inventory`, `GET /properties`, `GET /properties/{id}`, `GET /offerings` | R; shared project/physical inventory facts and allowed attachments. Development inventory groups blocks/floors/types/units and separates physical-unit counts from whole-development offerings. |
 | C04 | `POST /developments`, `PATCH /developments/{id}` | R under D34 for shared facts/briefing. Developer changes require current contact scope for agents; omitted `developer_contact_id` on PATCH preserves the existing association, explicit null requests removal. Hidden links cannot be removed/replaced by an unrelated agent. |
@@ -582,6 +616,7 @@ public URL, export or external delivery is added. See [SP-04 evidence](../03-pla
 | C07 | `GET/POST /visits`, `GET/PATCH /visits/{id}`, `POST /visits/{id}/confirm`, `POST /visits/{id}/reschedule`, `POST /visits/{id}/complete`, `POST /visits/{id}/cancel`, `GET /calendar/free-busy`, `GET /calendar/availability` | M/A or S; three visit types. Ordinary conflict confirmation requires a reason; colleague free/busy excludes private metadata. Off-site working-time and company-car capacity are hard server checks. |
 | C07 | `GET /visit-schedule/policy`, `POST /visit-schedule/policy/preview`, `PUT /visit-schedule/policy` | GET returns safe work windows, lunch breaks and company-car capacity to active staff; preview and PUT are administrator-only. PUT is versioned and audited. A changed policy reports affected existing future visits but never silently cancels them. |
 | C08 | `GET/POST /deals`, `GET/PATCH /deals/{id}`, `POST /deals/{id}/transition`, `POST /deals/{id}/reserve`, `POST /deals/{id}/close`, `POST /deals/{id}/reopen` | M/A or S; explicit transitions, stock locks, history events. |
+| C08 | `POST /deals/{id}/archive`, `POST /deals/{id}/restore` | M/A or current primary contact agent within scope; reason and `expected_version` required. Archive blocks on an active reservation, visit or open task. Restore expires after 30 days; historical outcomes/finance are preserved. |
 | C08 | `POST /deals/{id}/release-reservation` | M/A or S; reviewed deal/offering/target/parent versions, reason and idempotency key; release only this deal's active hold under stock locks, append actor/history, and never close the deal automatically. See [SP-12 local contract](reservations-local.md). |
 | C08 | `GET /deals/{id}/stock-review`, `GET /deals/{id}/outcomes` | Current contact scope; safe reviewed stock facts and numbered immutable private outcome/reopening history. See [SP-13 local contract](outcomes-local.md). |
 | C04 | `GET /properties/{id}/stock-review`, `GET /developments/{id}/stock-review`, corresponding `POST .../external-outcome` | M/A only; exact offering identity, complete reviewed stock versions/fingerprint, date and safe shared explanation. No KAY win, commission or income. See [SP-13 local contract](outcomes-local.md). |
@@ -597,6 +632,15 @@ Command `POST` routes accept documented JSON bodies, not a general `PATCH` that 
 First-administrator bootstrap remains server-local with no HTTP route. `POST /users` requires completed bootstrap and a current full administrator. Under D37, creation/reset accept a chosen initial password and return no-store user metadata only. New accounts are active without handoff; expired initial passwords and legacy pending/disabled/deleted accounts cannot sign in. A valid initial credential creates a restricted session. Own-password change clears the flag, revokes sessions and requires fresh login; temporary expiry is checked on every restricted request. Existing staff credentials/sessions are not bulk-changed. See the [runbook](../06-delivery-and-operations/admin-bootstrap.md).
 
 An offering's target (`property_id` versus `development_id`) is immutable once referenced by a deal or reservation. `PATCH /offerings/{id}` cannot turn a unit offer into a whole-development offer. Reparenting a committed unit or archiving a development with active child commitments returns `409 STOCK_REVIEW_REQUIRED`; history and child records never disappear through a parent command.
+
+For D44 record-level removal, archive and restore require an idempotency key,
+an exact version and a nonblank reason. `GET /enquiries` and `GET /deals` accept
+`record_archive=active|archived|all` (default `active`) independently of their
+existing contact `archive` filter. Detail/history links still resolve an archived
+record under current contact scope; writes reject `RECORD_ARCHIVED`. After 30 days
+restore returns `RECORD_RESTORE_EXPIRED` without erasing protected business or
+financial history. Project/physical-property archive and visit cancellation use
+their existing guarded routes; there is no hard-delete route for those records.
 
 ## Lead, project briefing, and visit-schedule additions
 
@@ -884,6 +928,18 @@ GET /realtime/status, under /api/v1. Existing facade/session/Origin/CSRF rules
 remain authoritative. Tickets authenticate the first frame, never the URL;
 messages contain only topic invalidations/heartbeats, not business commands or
 records. The browser facade relays only tickets/push, not operator diagnostics.
+## 0032 proactive-work API extension
+
+Task and visit create/edit bodies add nullable `enquiry_id` alongside `deal_id`;
+both cannot be set. New contact-only work must resolve to one accessible active
+prospect or an explicit same-contact deal. `ENQUIRY_CONTEXT_REQUIRED` (422)
+requests selection when multiple or no active prospects exist. Visit POST
+`/visits/{id}/not-completed` requires `expected_version` and nonempty `reason`,
+and returns the normal versioned result. It requires an active visit whose end
+has passed; `VISIT_NOT_ENDED` (409) leaves it unchanged. Calendar facets and
+visit history include `not_completed`. Notification kinds add
+`task.reminder.day`, `task.reminder.hour`, `visit.follow_up`; existing `task.due`
+remains. All routes preserve session/CSRF/Origin/idempotency/no-store behavior.
 
 ## SP-16 commission boundary
 
@@ -916,3 +972,19 @@ calculation_policy="MAD_FINAL_ROUND_HALF_UP_2": exact10.05×10/100=1.005,
 then final ROUND_HALF_UP once. Collected is0.00; recognized balance remains
 null until the separate recognition command. Neither the rate nor base is
 rounded to two decimals, and no JSON binary-float money is accepted.
+
+## Independent-property listing extension (0031)
+
+`POST /api/v1/properties` optionally accepts `listing_details` and an
+`initial_offering` (`sale`, `rental`, or `holiday`) in the same idempotent command.
+When listing details are supplied, reference, area, region, city, relevant
+category counts, and positive MAD initial price are mandatory. The returned
+property and offering IDs identify the atomic draft. Existing callers without
+listing details keep the older draft-only path. `PATCH /api/v1/properties/{id}`
+can update validated listing details with the normal optimistic version.
+Property GET/list responses include `listing_details` (empty `{}` for legacy
+rows). The optional `google_maps_url` accepts only HTTPS Google Maps URLs;
+the browser uses `noopener noreferrer` for opening them. New categories are
+standalone-only; holiday offerings are distinct from ordinary rental and do
+not enter existing Lead/Deal reservation or outcome flows. See the
+[field and scope contract](../03-planning/property-listing-fields-2026-10-22.md).

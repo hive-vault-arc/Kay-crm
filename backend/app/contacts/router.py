@@ -5,6 +5,8 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, Query, Request
 
+from app.archive.records import RecordLifecycle
+from app.archive.records import command as record_lifecycle
 from app.contacts.commands import command
 from app.contacts.contracts import (
     EditContact,
@@ -14,6 +16,7 @@ from app.contacts.contracts import (
     NewEnquiry,
     ResolvePhone,
 )
+from app.contacts.owner_portfolio import OwnerPortfolioQuery, read_owner_portfolio
 from app.contacts.queries import assignment_options, metadata, read_detail, read_list, resolve_phone
 from app.db.session import Database
 from app.identity.router import facade_authority, session_proof
@@ -80,6 +83,14 @@ def contact(target: UUID, request: Request, token: Proof) -> dict[str, object]:
     return read_detail(configuration(request)[0], token, "contacts", target)
 
 
+@router.get("/contacts/{target}/portfolio")
+def owner_portfolio(
+    target: UUID, request: Request, token: Proof, query: Annotated[OwnerPortfolioQuery, Query()]
+) -> dict[str, object]:
+    validate_query(request)
+    return read_owner_portfolio(configuration(request)[0], token, target, query)
+
+
 @router.get("/enquiries/{target}")
 def enquiry(target: UUID, request: Request, token: Proof) -> dict[str, object]:
     return read_detail(configuration(request)[0], token, "enquiries", target)
@@ -115,3 +126,23 @@ def edit_enquiry(
 ) -> dict[str, object]:
     database, secret = configuration(request)
     return command(database, token, secret, key, "enquiries", body, target)
+
+
+@router.post("/enquiries/{target}/archive")
+def archive_enquiry(
+    target: UUID, body: RecordLifecycle, request: Request, token: Proof, key: RetryKey
+) -> dict[str, object]:
+    if request.query_params:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    database, secret = configuration(request)
+    return record_lifecycle(database, token, secret, key, "enquiries", target, "archive", body)
+
+
+@router.post("/enquiries/{target}/restore")
+def restore_enquiry(
+    target: UUID, body: RecordLifecycle, request: Request, token: Proof, key: RetryKey
+) -> dict[str, object]:
+    if request.query_params:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    database, secret = configuration(request)
+    return record_lifecycle(database, token, secret, key, "enquiries", target, "restore", body)

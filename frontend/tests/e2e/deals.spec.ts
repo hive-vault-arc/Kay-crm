@@ -21,7 +21,13 @@ test("Qualified conversion from Lead, accepted proposal and stage skipping", asy
     const history = await (await page.request.get(`/api/v1/deals/${id}/history`)).json(); expect(history.items.map((r: { action: string }) => r.action)).toEqual(["transition", "customer_offer.created", "created"]); expect(history.items.every((r: { actor: { id: string } }) => r.actor.id === agent.id)).toBe(true);
     for (const stage of ["reserved", "won", "lost", "cancelled", "imaginary"]) expect((await staffCommand(page, `deals/${id}/transition`, { stage, expected_version: 3, reason: "SP11 interdit" })).status()).toBe(422);
     expect((await staffCommand(page, `deals/${id}`, { ...dealBody(before.contact.id), expected_version: 3, stage: "won" }, "PATCH")).status()).toBe(422);
-    await page.goto(`/contacts/${before.contact.id}`); await page.getByRole("tab", { name: "Historique", exact: true }).click(); await expect(page.getByRole("link", { name: "Voir l’affaire liée", exact: true })).toHaveCount(4);
+    const timeline = await (await page.request.get(`/api/v1/contacts/${before.contact.id}/timeline?page_size=25`)).json();
+    expect(timeline.items.filter((item: { deal_id: string | null }) => item.deal_id === id).map((item: { action: string }) => item.action)).toEqual(["deals.transition", "deals.customer_offer.created", "deals.created"]);
+    expect(timeline.items.find((item: { action: string }) => item.action === "enquiries.converted")).toMatchObject({ enquiry_id: lead, deal_id: null, body: expect.stringContaining("Prospect converti en affaire le") });
+    await page.goto(`/contacts/${before.contact.id}`); await page.getByRole("tab", { name: "Historique", exact: true }).click();
+    const dealLinks = page.getByRole("link", { name: "Voir l’affaire liée", exact: true }); await expect(dealLinks).toHaveCount(3);
+    for (const link of await dealLinks.all()) await expect(link).toHaveAttribute("href", `/deals/${id}`);
+    await expect(page.getByText(/Prospect converti en affaire le/)).toHaveCount(2);
   } finally { await clearActorContext(page); await removeActor(agent); }
 });
 

@@ -16,6 +16,7 @@ from sqlalchemy import (
     func,
     text,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -25,7 +26,8 @@ class Property(Base):
     __tablename__ = "property"
     __table_args__ = (
         CheckConstraint(
-            "category IN ('villa','house','apartment','land','commercial')",
+            "category IN ('villa','house','apartment','land','commercial',"
+            "'riad','room','office','farm')",
             name="property_category",
         ),
         CheckConstraint(
@@ -45,6 +47,9 @@ class Property(Base):
     category: Mapped[str] = mapped_column(String(20))
     marketing_name: Mapped[str | None] = mapped_column(String(160))
     location: Mapped[str | None] = mapped_column(String(500))
+    listing_details: Mapped[dict[str, object]] = mapped_column(
+        JSONB, nullable=False, server_default=text("'{}'::jsonb")
+    )
     area_sqm: Mapped[Decimal | None] = mapped_column(Numeric(18, 2))
     development_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("development.id", ondelete="RESTRICT"), index=True
@@ -103,7 +108,7 @@ class Offering(Base):
             unique=True,
             postgresql_where=text("is_current"),
         ),
-        CheckConstraint("kind IN ('sale','rental')", name="offering_kind"),
+        CheckConstraint("kind IN ('sale','rental','holiday')", name="offering_kind"),
         CheckConstraint(
             "state IN ('draft','available','reserved','withdrawn','sold','rented','review')",
             name="offering_state",
@@ -115,7 +120,8 @@ class Offering(Base):
         ),
         CheckConstraint(
             "(kind = 'sale' AND price_period IS NULL) OR (kind = 'rental' "
-            "AND price_period IN ('month','year') AND price_period IS NOT NULL)",
+            "AND price_period IN ('month','year')) OR (kind = 'holiday' "
+            "AND price_period IN ('day','week','month'))",
             name="offering_period",
         ),
         CheckConstraint("(state = 'withdrawn') = (NOT is_current)", name="offering_current_state"),

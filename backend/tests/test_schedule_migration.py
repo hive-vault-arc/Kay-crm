@@ -5,6 +5,7 @@ from sqlalchemy import text
 
 from tests.contact_support import actor
 from tests.legacy_support import contact as legacy_contact
+from tests.legacy_support import enquiry as legacy_enquiry
 from tests.test_isolation_migrations import migrate
 from tests.test_schedule import booking, run
 
@@ -16,6 +17,7 @@ def test_additive_0016_prior_rows_preserved_and_history_downgrade_refused(settin
     assert migrate("downgrade", "0015_outcomes_reopening").returncode == 0
     try:
         cid = legacy_contact(database, uid)
+        legacy_enquiry(database, uid, cid)
         with database.engine.connect() as connection:
             before = connection.scalar(
                 text("SELECT to_jsonb(c) FROM contact c WHERE id=:id"), dict(id=cid)

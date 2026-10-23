@@ -3,7 +3,7 @@ import { testControl } from "../helpers/api-process";
 import { staffCommand } from "../helpers/leads";
 import { dealBody } from "../helpers/deals";
 import { commandVisit, visitBody } from "../helpers/schedule";
-import { createTaskApi, createTaskUi, openTasks, runReminders, setTaskDue, workFixture } from "../helpers/work";
+import { createTaskApi, createTaskUi, openTasks, runReminders, selectFirstProspect, setTaskDue, workFixture } from "../helpers/work";
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(25_000); page.setDefaultNavigationTimeout(30_000); });
 
@@ -49,7 +49,7 @@ test("SP15 AT-17/23: task creation, overdue delivery/read and completion in curr
     const { contactId, now } = await workFixture(page, actors);
     const due = new Date(now.getTime() - 60_000), tid = await createTaskUi(page, contactId, due);
     const before = await (await page.request.get("/api/v1/notifications")).json(); expect(before.total).toBe(0);
-    expect((await runReminders(now)).processed).toBe(1); expect((await runReminders(now)).processed).toBe(0);
+    expect((await runReminders(now)).processed).toBe(3); expect((await runReminders(now)).processed).toBe(0);
     await page.goto("/dashboard"); await page.getByLabel("Période des tâches", { exact: true }).selectOption("overdue");
     await expect(page.getByRole("region", { name: "Travail à faire", exact: true }).getByRole("link", { name: "SP15 tâche synthétique", exact: true })).toBeVisible();
     const inbox = page.getByRole("region", { name: "Notifications internes", exact: true });
@@ -104,7 +104,7 @@ test("SP15 AT-17/16: actual visit reminders track reschedule, cancellation and u
 test("SP15 AT-23: committed response interruption retains task input and retry key", async ({ page }) => {
   test.setTimeout(180_000); const actors: TestActor[] = [];
   try {
-    const { contactId, now } = await workFixture(page, actors); await openTasks(page, contactId); await page.getByRole("button", { name: "Créer une tâche", exact: true }).click();
+    const { contactId, now } = await workFixture(page, actors); await openTasks(page, contactId); await page.getByRole("button", { name: "Créer une tâche", exact: true }).click(); await selectFirstProspect(page);
     await page.getByLabel("Titre de la tâche", { exact: true }).fill("SP15 tâche à réponse interrompue");
     const context = await (await page.request.get("/api/v1/work/context")).json(); await setTaskDue(page, `${context.today}T12:00`);
     let interrupted = false; await page.route("**/api/v1/tasks", async route => { if (route.request().method() !== "POST" || interrupted) return route.continue(); interrupted = true; const response = await route.fetch(); expect(response.status()).toBe(200); await route.abort("connectionfailed"); });
@@ -113,6 +113,56 @@ test("SP15 AT-23: committed response interruption retains task input and retry k
     await page.getByRole("button", { name: "Enregistrer la tâche", exact: true }).click(); await expect(page.getByRole("region", { name: "Tâche sélectionnée", exact: true })).toBeVisible(); await page.unroute("**/api/v1/tasks");
     const tasks = await (await page.request.get(`/api/v1/tasks?contact_id=${contactId}`)).json(); expect(tasks.total).toBe(1); expect((await (await page.request.get(`/api/v1/tasks/${tasks.items[0].id}/history`)).json()).total).toBe(1);
     await runReminders(now);
+  } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
+});
+
+test("Visit follow-up after two hours records a distinct missed outcome in the linked Lead", async ({ page }) => {
+  test.setTimeout(150_000); const actors: TestActor[] = [];
+  try {
+    const { agent, contactId, now } = await workFixture(page, actors);
+    const start = new Date(now.getTime() - 4 * 3600_000);
+    const end = new Date(now.getTime() - 3 * 3600_000);
+    const vid = await commandVisit(page, agent.id, contactId, { type: "office", start_at: start.toISOString(), end_at: end.toISOString() });
+    expect((await runReminders(now)).processed).toBe(3);
+    const notifications = await (await page.request.get("/api/v1/notifications")).json();
+    expect(notifications.total).toBe(1);
+    expect(notifications.items[0].kind).toBe("visit.follow_up");
+    await page.goto(`/visits/${vid}`);
+    await page.getByRole("button", { name: "Marquer non réalisée", exact: true }).click();
+    await page.getByRole("alertdialog").getByLabel("Pourquoi la visite n’a pas eu lieu (obligatoire)", { exact: true }).fill("Le client était absent au rendez-vous synthétique.");
+    await page.getByRole("alertdialog").getByRole("button", { name: "Marquer non réalisée", exact: true }).click();
+    await expect(page.getByRole("alertdialog")).not.toBeVisible();
+    const missed = await (await page.request.get(`/api/v1/visits/${vid}`)).json();
+    expect(missed.status).toBe("not_completed");
+    expect((await (await page.request.get("/api/v1/notifications")).json()).total).toBe(0);
+    const leads = await (await page.request.get(`/api/v1/enquiries?contact_id=${contactId}`)).json();
+    const history = await (await page.request.get(`/api/v1/enquiries/${leads.items[0].id}/activities`)).json();
+    expect(history.items.some((item: { action: string; reason: string }) => item.action === "visits.not_completed" && item.reason.includes("client était absent"))).toBe(true);
+    await page.goto("/visits");
+    await page.getByLabel("Semaine contenant le", { exact: true }).fill(missed.start_local.slice(0, 10));
+    await page.getByRole("tab", { name: "Agenda", exact: true }).click();
+    const missedCard = page.locator(".calendar-agenda-visit").filter({ has: page.locator(`a[href="/visits/${vid}"]`) });
+    await expect(missedCard).toBeVisible();
+    await expect(missedCard.getByRole("button", { name: "Annuler la visite", exact: true })).toHaveCount(0);
+  } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
+});
+
+test("Lead context chooser stays usable by keyboard on narrow screens", async ({ page }) => {
+  test.setTimeout(120_000); const actors: TestActor[] = [];
+  try {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const { contactId } = await workFixture(page, actors);
+    await openTasks(page, contactId);
+    await page.getByRole("button", { name: "Créer une tâche", exact: true }).click();
+    const chooser = page.getByLabel("Prospect concerné", { exact: true });
+    await expect.poll(() => chooser.locator("option").count()).toBeGreaterThan(1);
+    await chooser.focus(); await page.keyboard.press("ArrowDown"); await page.keyboard.press("Enter");
+    await expect(chooser).not.toHaveValue("");
+    for (const width of [390, 320]) {
+      await page.setViewportSize({ width, height: 844 });
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      expect(overflow).toBeLessThanOrEqual(1);
+    }
   } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
 });
 

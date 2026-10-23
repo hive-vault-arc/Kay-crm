@@ -15,6 +15,7 @@ import { relayReports } from "@/features/reports/facade";
 import { relayImports } from "@/features/imports/facade";
 import { relayActivities } from "@/features/activities/facade";
 import { relayGenerated } from "@/features/generated/facade";
+import { relayProjectLinks } from "@/features/project-links/facade";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,6 +27,7 @@ export async function DELETE(request: Request, context: { params: Promise<{ path
   const { path } = await context.params;
   const key = path.join("/");
   const requestId = randomUUID();
+  if (/^(enquiries|deals)\/[^/]+\/project-links\/[^/]+$/.test(key)) return relayProjectLinks(key, request, requestId);
   if (key === "users" || key.startsWith("users/")) return relayUsers(key, request, requestId);
   return relayRequirements(key, request, requestId);
 }
@@ -37,6 +39,7 @@ export async function GET(
   const requestId = randomUUID();
   const { path } = await context.params;
   const key = path.join("/");
+  if (/^(enquiries|deals)\/[^/]+\/project-links$/.test(key)) return relayProjectLinks(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
   if (/^(search|exports|audit)(\/|$)/.test(key)) return relayDiscovery(key, request, requestId);
   if (/^generated-documents(\/|$)/.test(key)) return relayGenerated(key, request, requestId);
@@ -61,6 +64,7 @@ export async function POST(request: Request, context: { params: Promise<{ path: 
   const requestId = randomUUID();
   const { path } = await context.params;
   const key = path.join("/");
+  if (/^(enquiries|deals)\/[^/]+\/project-links$/.test(key)) return relayProjectLinks(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
   if (/^enquiries\/[a-f0-9-]{36}\/convert$/.test(key)) return relayDeals(key, request, requestId);
   if (/^(search|exports|audit)(\/|$)/.test(key)) return relayDiscovery(key, request, requestId);

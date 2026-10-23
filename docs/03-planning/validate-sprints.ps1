@@ -144,8 +144,8 @@ foreach ($path in $documents) {
 }
 $index = Get-Content -LiteralPath (Join-Path $sprintRoot 'README.md') -Raw -Encoding UTF8
 $coverage = @([regex]::Matches($index, '(?m)^\| (AT-\d{2}) \|') | ForEach-Object { $_.Groups[1].Value })
-if ($coverage.Count -ne 41 -or @($coverage | Sort-Object -Unique).Count -ne 41) {
-    $issues.Add('Sprint index must map 41 unique acceptance IDs.')
+if ($coverage.Count -ne $knownTests.Count -or @($coverage | Sort-Object -Unique).Count -ne $knownTests.Count) {
+    $issues.Add("Sprint index must map $($knownTests.Count) unique acceptance IDs.")
 }
 foreach ($identifier in $knownTests) {
     if ($identifier -notin $coverage) { $issues.Add("Acceptance coverage missing: $identifier") }
@@ -187,7 +187,7 @@ if ($issues.Count) {
 Write-Output "PASS: 22 sprint specifications; required sections/owners/priorities/dependencies and source IDs valid."
 Write-Output 'PASS: required UI skill rules/evidence in all 22 sprints; database references in SP-02 through SP-22; private-note exclusion configured.'
 if ($RepositoryOnly) { Write-Output 'Repository-only mode: private credential note and approved external installed skills are not required in a clean checkout.' }
-Write-Output "PASS: $linkCount local file links/anchors (including $skillLinkCount approved installed-skill links); 41 unique acceptance mappings."
+Write-Output "PASS: $linkCount local file links/anchors (including $skillLinkCount approved installed-skill links); $($knownTests.Count) unique acceptance mappings."
 Write-Output "PASS: $mermaidCount embedded Mermaid sources synchronized; $jsonCount API JSON examples valid."
 Write-Output 'Documentation-only validation: application results are recorded separately in docs/QA_COMMANDS.md and sprint evidence.'
 

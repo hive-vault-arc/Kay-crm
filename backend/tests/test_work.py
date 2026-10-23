@@ -86,16 +86,23 @@ def test_task_lifecycle_due_read_once_versions_and_scoped_buckets(settings, data
     ):
         with pytest.raises(IdentityError, match="NOT_FOUND"):
             read()
+    assert run_once(database, CLOCK - timedelta(days=1))
+    assert run_once(database, CLOCK - timedelta(hours=1))
+    advance = read_notifications(database, token, NotificationQuery())
+    assert {item["kind"] for item in advance["items"]} == {
+        "task.reminder.day",
+        "task.reminder.hour",
+    }
     assert not run_once(database, CLOCK - timedelta(seconds=1))
     assert run_once(database, CLOCK)
     assert not run_once(database, CLOCK)
     inbox = read_notifications(database, token, NotificationQuery())
-    assert inbox["total"] == inbox["unread_total"] == 1
-    item = inbox["items"][0]
+    assert inbox["total"] == inbox["unread_total"] == 3
+    item = next(item for item in inbox["items"] if item["kind"] == "task.due")
     assert item["kind"] == "task.due" and str(tid) in item["href"]
     nid = UUID(item["id"])
     assert mark_read(database, token, nid) == mark_read(database, token, nid) == {"read": True}
-    assert read_notifications(database, token, NotificationQuery(state="unread"))["total"] == 0
+    assert read_notifications(database, token, NotificationQuery(state="unread"))["total"] == 2
     edit = EditTask.model_validate(
         body.model_dump(exclude={"contact_id"}) | dict(expected_version=1, title="Titre actualisé")
     )
@@ -107,7 +114,9 @@ def test_task_lifecycle_due_read_once_versions_and_scoped_buckets(settings, data
     assert read_notifications(database, token, NotificationQuery())["total"] == 0
     with pytest.raises(IdentityError, match="NOT_FOUND"):
         mark_read(database, token, nid)
-    assert run_once(database, CLOCK + timedelta(hours=2))
+    for _ in range(3):
+        assert run_once(database, CLOCK + timedelta(hours=2))
+    assert not run_once(database, CLOCK + timedelta(hours=2))
     run(
         settings,
         database,
@@ -124,7 +133,7 @@ def test_task_lifecycle_due_read_once_versions_and_scoped_buckets(settings, data
     assert read_notifications(database, token, NotificationQuery())["total"] == 0
     assert detail(database, token, tid, PageQuery())["total"] == 4
     with database.session() as session:
-        assert session.scalar(select(func.count()).select_from(Notification)) == 2
+        assert session.scalar(select(func.count()).select_from(Notification)) == 4
     with pytest.raises(IdentityError, match="TASK_TERMINAL"):
         run(settings, database, token, TaskAction(expected_version=4), tid, "cancelled")
 
@@ -196,10 +205,11 @@ def test_crash_after_effect_before_ack_expiry_fence_and_unique_notification(sett
     uid, token, cid, _ = setup(settings, database)
     run(settings, database, token, new(uid, cid))
     dispatch(database)
-    jid, old = claim(database, CLOCK)
-    assert deliver(database, jid, old, CLOCK)
-    assert claim(database, CLOCK) is None
-    later = CLOCK + timedelta(seconds=91)
+    alert = CLOCK - timedelta(days=1)
+    jid, old = claim(database, alert)
+    assert deliver(database, jid, old, alert)
+    assert claim(database, alert) is None
+    later = alert + timedelta(seconds=91)
     jid2, fresh = claim(database, later)
     assert jid == jid2 and fresh != old
     assert not deliver(database, jid, old, later)
@@ -216,6 +226,7 @@ def test_concurrent_workers_take_a_due_event_once_and_backoff_is_bounded(setting
     uid, token, cid, _ = setup(settings, database)
     run(settings, database, token, new(uid, cid))
     dispatch(database)
+    alert = CLOCK - timedelta(days=1)
     starting = Barrier(2)
     connections = set()
 
@@ -227,15 +238,15 @@ def test_concurrent_workers_take_a_due_event_once_and_backoff_is_bounded(setting
     event.listen(database.engine, "before_cursor_execute", synchronize_claim)
     try:
         with ThreadPoolExecutor(max_workers=2) as pool:
-            claims = list(pool.map(lambda _: claim(database, CLOCK), range(2)))
+            claims = list(pool.map(lambda _: claim(database, alert), range(2)))
     finally:
         event.remove(database.engine, "before_cursor_execute", synchronize_claim)
     assert len(connections) == 2
     assert sum(value is not None for value in claims) == 1
     jid, fence = next(value for value in claims if value)
-    assert acknowledge(database, jid, fence, CLOCK, error="WORKER_DELIVERY_FAILED")
-    assert claim(database, CLOCK + timedelta(seconds=1)) is None
-    clock = CLOCK + timedelta(seconds=2)
+    assert acknowledge(database, jid, fence, alert, error="WORKER_DELIVERY_FAILED")
+    assert claim(database, alert + timedelta(seconds=1)) is None
+    clock = alert + timedelta(seconds=2)
     for attempt in range(2, 6):
         _, fence = claim(database, clock)
         assert acknowledge(database, jid, fence, clock, error="WORKER_DELIVERY_FAILED")

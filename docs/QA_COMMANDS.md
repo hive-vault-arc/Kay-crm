@@ -1,5 +1,45 @@
 # KAY QA command register
 
+## Remaining CRM integration, 2026-10-23 (PR25, release pending)
+
+Use this integration worktree's explicit backend venv and guarded loopback55439
+synthetic targets. Pytest and browser fixtures remain serial on the test target.
+
+- Backend `-m alembic heads`, `upgrade head`, `check`: one additive head
+  `0034_proactive_work` after unchanged0031_realtime; no drift.
+- Backend `-m pytest --unit-only -q`:291 passes. Ruff/check/format and mypy
+  (210 modules) pass. Frontend lint, typecheck and compiled build pass;
+  `npm.cmd run test:unit`:92 passes, including owner-invalidation coverage.
+- PostgreSQL selection: `test_owner_directory`, `test_property_initial_price`,
+  `test_property_listing_db`, `test_project_links`, `test_proactive_work`,
+  `test_record_archive`, `test_realtime`, `test_inventory_migration`, `test_work`,
+  `test_scoped_activities`:82 passes. Legacy discovery/qualification/work
+  migration selection:7 passes, including the empty-details default assertion.
+- `npm.cmd run test:chrome -- tests/e2e/owners.spec.ts
+  tests/e2e/property-listing-wizard.spec.ts tests/e2e/project-links.spec.ts
+  tests/e2e/record-removal.spec.ts`:7 journeys pass. The separate
+  `tests/review/inventory-design.chrome.spec.ts`:4/4 pass after the final-Next
+  default-submit fix, covering invalid price, explicit review before write,
+  desktop/mobile/320px, category changes and keyboard. Ignored synthetic images
+  under frontend/output/playwright were inspected; product approval is separate.
+- With `APP_ENVIRONMENT=benchmark`, `REALTIME_ENABLED=true`,
+  `KAY_BENCHMARK_REALTIME=1` and the isolated benchmark URL, project-venv
+  `-m benchmarks.run`:100 users/sockets,5607 requests,0 errors/disconnects,
+  p95 ordinary<=907.134ms/dashboard1303.557ms, unchanged1s/2s limits. Earlier
+  overlapping-browser attempt failed setup at99 ready users; not a pass.
+- Audit:0 runtime advisories; existing approved dev-only exception unchanged.
+  Repository/ignore checks and redacted full-history secret scan pass.
+
+Hosted39936891171 failed an old JSON preservation assertion;39939196901 then
+found a cumulative-merge task fixture missing the newly required explicit
+prospect context and a calendar selector expecting an anchor around the whole
+agenda card. That selector now targets the card's actual visit link, keeping the
+cancel button separate. A missed-visit journey asserts terminal cards have no
+cancel action. Failures are retained, not waived. Broader local regression
+and a new exact-candidate hosted full run remain required. Final full integration,
+production migration/source and WSS evidence will be linked on
+[PR25](https://github.com/hive-vault-arc/Kay-crm/pull/25).
+
 ## Release follow-up,2026-10-23
 
 - Expanded consultation-state checks:83 frontend units, lint and types pass.
@@ -56,6 +96,120 @@ development/production target. Browser supervision and pytest stay serial.
 
 Read [execution and limits](03-planning/realtime-execution.md) before rollout.
 Production migrations and hosted WSS are not verified by these commands.
+## Independent-property listing fields and holiday draft — 2026-10-22
+
+Worktree-only migration `0031_property_listing_details` was applied to the
+guarded synthetic `kayrealestate_test` target (not development or production).
+Backend `.venv/Scripts/python.exe -m alembic current`, `heads`, and `check`
+show the same 0031 head and no pending model operations. The selected isolated
+PostgreSQL regression (`test_inventory`, `test_inventory_edges`,
+`test_inventory_migration`, `test_property_facets`,
+`test_property_listing_db`, `test_deal_links`, `test_requirements`) passes
+**79/79** with healthy local ClamAV. An earlier run stopped at a real-scan
+case while ClamAV was down; rerunning with the service healthy passed.
+The historical migration test was updated to use raw SQL before the new
+column exists and to expect the new transactional head on refused downgrade.
+The database-forbidden `tests.unit_runner` passes **291** cases; Ruff,
+format-check and inventory/deal mypy pass.
+
+Frontend `npm run typecheck`, lint, build, `test:unit` (**76/76**) and
+`security:check` pass. The audit reports zero runtime advisories and nine
+known dev-only advisories under the existing dated exception. Headed Chrome:
+new riad/holiday/Maps and 320 px land journeys **2/2**; existing inventory
+regressions **7/7**; revised creation visual and dynamic land/commercial
+reviews **1/1 each** when run individually. The combined visual/inventory run
+had one intermittent 180-second timeout after the seven inventory passes;
+the affected visual journey passed alone on rerun. Synthetic desktop/mobile
+screenshots were inspected, `impeccable detect --json` returned `[]`, and the
+AFTER audit is [042](../anti-slop/audit-042-2026-10-22.md). These local gates
+do not imply production migration, publication, a full 900-case regression,
+or Khalid's product approval.
+## Dated Lead/Deal history - 2026-10-22
+
+On a disposable PostgreSQL 16 container at localhost:55432, migration state
+was `0032_proactive_work (head)`; `alembic check` found no new operations. The
+Lead/Deal/contact/intake/scoped-activity regression passed 90/90, followed by
+24/24 scoped-activity passes and 14/14 scoped/Deal passes after exact stage-event
+timestamp alignment. These cover
+new and web Lead creation, old/new Lead status, unchanged edits, Deal stage
+change, distinct conversion histories, legacy dual-linked projection, scope,
+retry, merge and migration preservation. Ruff lint/format on affected Python,
+`mypy app` (199 source files), frontend lint, typecheck, optimized build and
+78/78 unit tests passed. Headed real Chrome against the compiled Next.js app
+and isolated FastAPI/PostgreSQL passed 2/2 selected journeys: creation/status/
+conversion and adjacent project-link placement. Desktop Lead/Deal/origin and
+mobile Deal captures were inspected; the Impeccable detector returned `[]`.
+No real database migration, production access, publication or full-product
+regression was performed. Human product review remains pending.
+
+## Lead/Deal detail density and contact-search placement — 2026-10-22
+
+On the isolated synthetic PostgreSQL 16 target at localhost:55432 (not the
+development or production database), the current Lead/Deal UI refinement passed
+`npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`, and
+`npm.cmd run test:unit` (78/78). Headed Chrome ran
+`npm.cmd run test:chrome -- tests/e2e/project-links.spec.ts
+tests/e2e/record-facts.spec.ts tests/e2e/requirements.spec.ts` with 5/5 passes:
+desktop/mobile geometry, keyboard/touch, 200% zoom, existing searches,
+empty-state navigation and recovery. The scoped project-link journey was then
+rerun with explicit keyboard opening and Deal bottom-placement assertions.
+Synthetic desktop/mobile captures in ignored `frontend/output/playwright/`
+were opened; the Impeccable detector returned `[]`. No real migration,
+production access or publication belongs to this UI-only change. Khalid's
+product/design review remains pending.
+
+## Contextual work and proactive visit outcomes — 2026-10-22
+
+Disposable PostgreSQL 16 on localhost:55432 held only synthetic development and
+isolated test databases. In `backend/`, explicit `.venv/Scripts/python.exe`
+Alembic `current` and `heads` both reported `0032_proactive_work (head)`;
+`alembic check` reported no new upgrade operations. The focused work,
+schedule, context/history, migration and project-link pytest selection passed
+84/84 in 144.31 s. Ruff check/format on changed backend files and `mypy app`
+passed. No real development or production database was migrated.
+
+In `frontend/`, lint, typecheck, optimized build and 78/78 unit tests passed.
+The headed real Chrome stack used the same isolated lease, explicit
+`API_CA_FILE` pointing to this worktree's local certificate and no saved auth
+trace/screenshots. Ten work/calendar journeys passed, including J−1/H−1
+reminders, process retry, permissions, end+2h follow-up, “Non réalisée” and
+the exact Lead history. A separate narrow-screen keyboard journey passed at
+390 px and 320 px without horizontal overflow. Initial Chrome attempts
+returned 503 because this isolated worktree had no local `API_CA_FILE` value;
+after supplying it, both runs passed. Product review and full-suite/production
+acceptance remain pending. This worktree's `0031_project_links` branch still
+needs reconciliation with the primary checkout's separate unmerged
+`0031_property_listing_details` before publication.
+
+## Lead/Deal catalogue project links — 2026-10-22
+
+All database/browser checks used a disposable, isolated PostgreSQL 16 target
+on port 55432, not KAY's development or production database. Additive
+`0031_project_links` upgraded that synthetic target; `alembic current`
+reported `0031_project_links (head)` and `alembic check` reported no new
+operations. From `backend/`,
+`./.venv/Scripts/python.exe -m pytest tests/test_project_links.py
+tests/test_lead_conversion.py tests/test_scoped_activities.py
+tests/test_ownership.py -q --tb=short --maxfail=1` passed 50/50;
+after the property-target test was added, `test_project_links.py` passed 3/3.
+Ruff lint/format and mypy passed (197 app source files).
+
+From `frontend/`, lint, typecheck, build and 78/78 unit tests passed. A headed
+isolated Chrome Lead → Deal journey passed 1/1 in both development and final
+compiled production mode, including independent lists,
+remove/re-add, contextual history, compact bottom contact-search disclosure
+and 390px no-overflow. Its safe synthetic desktop/mobile captures in ignored
+`frontend/output/playwright/project-links/` were opened; the Impeccable
+detector returned `[]`. [AFTER042](../anti-slop/audit-042-2026-10-22.md) holds
+the aesthetic audit without applying unselected findings. The Next.js patch
+release was advanced from 16.4.0 to 16.4.1 after the build security warning;
+runtime dependency audit then found zero vulnerabilities. The full dependency
+check still reports nine dev-only findings under its dated existing exception.
+This is scoped technical evidence,
+not a full-product, production or human-design acceptance. No real migration,
+production access, external message or publication occurred. The isolated
+worktree's revision must be reconciled with the primary checkout's separate
+unmerged `0031_property_listing_details` before combining branches.
 
 ## Generated Lead/Deal PDF preparations — 2026-10-20
 
@@ -101,6 +255,45 @@ redacted full-history Gitleaks pass; staged diff has no whitespace errors.
 Candidate CI,
 manual integration and production deployment are separate gates, not inferred
 from these local checks.
+## D44 record removal (2026-10-20)
+
+From `backend/`, the explicit `.venv` interpreter ran Ruff check/format,
+mypy for the changed app modules, and PostgreSQL pytest. The neighboring suite
+(`test_record_archive.py`, contacts, deals, conversion, activities, work,
+reports, schedule, calendar filters and project permissions) passed **144/144**.
+After adding interrupted-command and linked-task cases, the focused archive
+module passed **8/8**. The final activity/archive rerun after a query cleanup
+passed **30/30**. From `frontend/`, `npm.cmd run lint`, direct TypeScript
+check, `npm.cmd run test:unit` (**73/73**) and `npm.cmd run build` passed.
+`npm.cmd run test:chrome -- tests/e2e/record-removal.spec.ts --workers=1
+--max-failures=1` passed **3/3** in visible Chrome on the isolated synthetic
+database: Lead/deal archive/restore, project archive, and calendar cancellation.
+The final keyboard/focus and mobile visual/no-page-overflow pass is recorded in the task's
+AFTER audit. Existing migration 0027 already supplies record archive columns;
+no migration was created or applied in this slice. No production deployment or
+real-data retention operation is claimed.
+
+## Complete local operation guide (2026-10-20)
+
+[Run KAY locally](../RUN_LOCALLY.md) now separates first installation from
+daily 3100/8100 operation, with prerequisites, native PostgreSQL, private setup,
+Docker/ClamAV, verified local HTTPS, migrations, interactive bootstrap, worker,
+health checks and safe shutdown. README and the former startup entry point
+link to this single procedure. Plain-language copy rules kept commands and
+observed configuration distinct from unexecuted installation/release checks;
+no UI audit-only changes apply to this documentation task.
+
+Documentation verification: PowerShell's parser accepts all 30 PowerShell
+blocks with zero syntax errors; Markdown fences balance; local links/anchors
+resolve; `git diff --check` and
+`powershell -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly`
+pass. Read-only tool checks confirm Node24.13.1/npm11.8.0, Python3.14.3,
+PostgreSQL client18.2 and working Docker Compose. Ignored configuration checks
+confirm development mode, matching frontend3100/API8100 origins, equal facade
+secrets and a present CA file, without exposing secret values. No application
+service was started; no install, migration, bootstrap, database fixture cleanup
+or production access was performed. Fresh-machine installation and integration
+tests are **not executed**, not passed, for this documentation-only change.
 
 ## Full-size private property photo viewer — 2026-10-20
 
@@ -1650,3 +1843,24 @@ pairs and 10 valid API examples; `git diff --check` exits 0. Production build wa
 not run while local Next.js development used the shared `.next` directory. No
 credential entry, database write, test actor, backend/API/session change or
 publication; product/design review remains pending.
+
+## Propriétaires directory (2026-10-22)
+
+In the isolated `owners-directory` worktree, with `APP_ENVIRONMENT=test`, `backend/.venv/Scripts/python.exe -m pytest backend/tests/test_contacts.py backend/tests/test_inventory.py backend/tests/test_developments.py backend/tests/test_owner_directory.py -q --tb=short --maxfail=1` passed 63/63 against the leased synthetic PostgreSQL database. Backend Ruff checks/format and mypy on the owner query passed. From `frontend/`, the owner module passed the real isolated Chrome scenario (1/1), including synthetic create/edit, portfolio/current-to-past history, denied cross-agent access and mobile width. Desktop/mobile captures were inspected. Frontend unit suite passed 78/78; lint, TypeScript and production build passed. `impeccable detect --json` returned `[]`; [AFTER042](../anti-slop/audit-042-2026-10-22.md) records the visual audit.
+
+The existing Next.js 16.4.0 pin failed the current runtime dependency policy with a critical advisory. The compatible 16.4.2 pin now passes `npm.cmd run security:check`: 0 runtime vulnerabilities; 9 development-only findings retain the existing approved exception until 2026-11-15. This is not a clean full dependency audit. No production database, account, or file storage was changed; no migration is required for this directory.
+# Remaining-feature integration follow-up (2026-10-23)
+
+Exact candidate `d0de95e`: hosted run39944800692 passes964 real-PostgreSQL tests
+and5 WSS/push-consent browser tests; compiled Chromium completes125 passes and
+three failures from obsolete inventory fixture/filter assumptions. This is a
+failed release gate, not release approval. After explicit sale fixtures and
+stable/scoped selectors, `KAY_E2E_PRODUCTION=1; npm.cmd run test:chrome --
+tests/e2e/inventory.spec.ts tests/e2e/projects-reference.spec.ts --grep
+'held owner acknowledgement|manager standalone inventory|eight real synthetic photos'
+--max-failures=3` passes3/3 (2.6m), including desktop/mobile/touch/native zoom.
+No product logic, runtime guard, latency limit or assertion intent is weakened.
+The broad local backend run passes948 (recovery excluded locally, covered hosted).
+Full local Chrome was interrupted after60 completed cases to focus failures;
+it is not a complete pass. Final exact-commit full hosted rerun remains required.
+

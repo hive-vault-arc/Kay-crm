@@ -38,6 +38,11 @@ languages, budget, buying intent and one to three project interests; it does not
 convert or silently link an enquiry. Lead/deal editing can update canonical
 client facts and qualification atomically with both reviewed versions. Existing
 stock, proposal, outcome and permission commands retain their separate effects.
+Under D44, the exact assigned Lead agent or current primary Deal agent (and M/A)
+may archive that individual record with a reason. The default list omits it;
+the archive view and historical links retain it. Restore is accepted only during
+the first 30 days. Active reservations, visits and tasks must be resolved before
+archiving a deal; no protected business or financial history is hard-deleted.
 [Current contract](docs/04-design/deal-pipeline-local.md),
 [verification and open acceptance](docs/03-planning/leads-deals-immoworld-alignment.md).
 
@@ -59,12 +64,18 @@ developer contacts; an unchanged hidden developer link is preserved. Manager-onl
 legal-owner/file/campaign/availability/external-outcome/archive/restore actions
 and all stock constraints remain. This supersedes the original read-only-agent
 sentence in the historical workflow description below.
+Project and physical-property removal in the UI is the existing M/A-only archive,
+not a cascading delete; child/stock guards and historical references remain.
 
 A manager either creates a standalone villa, house, apartment, or land parcel, or creates a development with a protected developer contact and individual physical units. An apartment unit in a development is placed on a floor in a block; other categories may omit those levels. The manager defines reusable unit types within the development (for example T2/80 m²) and assigns a type to multiple actual units on different floors. A type has no stock or reservation; each unit does. A mixed-category development is allowed. The manager may add an optional shared project briefing; it contains no private developer/owner contact facts. The manager links owners to physical units, adds shared inventory attachments, and confirms price and availability under the accepted local H-01/H-02 price/owner defaults. Private owner/developer evidence stays on protected contact records. The whole development and each unit may have independent sale and rental offerings, but overlap conflicts are checked before reservation or closing. Availability not reconfirmed for 30 days appears on an exception list. An agent may read inventory and report a correction but cannot edit inventory directly.
 
 ## W05: organize a visit (C06, C07)
 
 The agent records one of `company_car`, `without_company_car`, or `office`, plus the contact, duration, participants, and location. Both off-site types are checked against the current agency working days/hours and lunch breaks; office visits can be booked at any time. Company-car visits additionally use the agency-wide hourly capacity, initially two and adjustable by an administrator. A full-capacity or out-of-hours slot is rejected, not bypassed by an overlap reason. The agent sees their own details and only free/busy intervals for colleagues. An ordinary appointment overlap opens a warning; proceeding requires a reason while all hard scheduling rules still hold. Internal reminders at one day and one hour before follow the current appointment. Rescheduling and cancellation keep the appointment identity and invalidate old reminders; overdue unresolved visits appear in a follow-up list. Accepted local Q-07 counts every clock-hour interval touched by [start,end), excluding the exact end boundary and distinguishing DST offsets.
+
+The calendar exposes cancellation directly in its agenda/type views; a week-grid
+visit opens the same detail action. A reason is required and the cancelled visit
+remains in history and in the optional cancelled-status filter.
 
 ## W06: collaborate or hand over (C02, C05)
 

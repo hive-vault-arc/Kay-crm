@@ -158,6 +158,7 @@ html[data-live-refresh="automatic"] [data-live-refresh="true"] {
 [data-calendar-status="confirmed"], [data-calendar-status="completed"] { --calendar-status-color: var(--status-success-foreground); }
 [data-calendar-status="scheduled"], [data-calendar-status="draft"] { --calendar-status-color: var(--status-neutral-foreground); }
 [data-calendar-status="cancelled"] { --calendar-status-color: var(--status-danger-foreground); }
+[data-calendar-status="not_completed"] { --calendar-status-color: var(--status-warning-foreground); }
 .calendar-status-icon { color: var(--calendar-status-color); }
 .calendar-visit { background: color-mix(in srgb, var(--calendar-type-fill) 10%, var(--surface-content)); color: var(--content-primary); border: 1px solid color-mix(in srgb, var(--calendar-type-fill) 20%, var(--neutral-border-subtle)); font-size: 0.8125rem; line-height: 1rem; }
 .calendar-visit::before { content: ""; position: absolute; inset-block: 0; left: 0; width: var(--layout-calendar-inset); border-radius: var(--radius-small) 0 0 var(--radius-small); background: var(--calendar-type-fill); }
@@ -167,6 +168,7 @@ html[data-live-refresh="automatic"] [data-live-refresh="true"] {
 .calendar-status { display: inline-flex; max-width: 100%; align-items: center; gap: calc(var(--spacing) / 2); border-radius: var(--radius-small); background: var(--status-neutral-background); color: var(--status-neutral-foreground); font-size: 0.8125rem; line-height: 1rem; white-space: nowrap; }
 .calendar-status[data-status="confirmed"], .calendar-status[data-status="completed"] { background: var(--status-success-background); color: var(--status-success-foreground); }
 .calendar-status[data-status="cancelled"] { background: var(--status-danger-background); color: var(--status-danger-foreground); }
+.calendar-status[data-status="not_completed"] { background: var(--status-warning-background); color: var(--status-warning-foreground); }
 .calendar-agenda-visit { border-inline-start: var(--layout-calendar-inset) solid var(--calendar-type-fill); background: color-mix(in srgb, var(--calendar-type-fill) 5%, var(--surface-content)); }
 @media (min-width: 80rem) {
   .calendar-workbench { grid-template-columns: var(--layout-calendar-rail) minmax(0, 1fr); gap: calc(var(--spacing) * 3); }
@@ -350,7 +352,7 @@ html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   }
 }
 @utility crm-record-layout {
-  @apply grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(18rem,0.35fr)_minmax(0,1fr)] 2xl:gap-5;
+  @apply grid min-w-0 items-start gap-4;
   & > * {
     @apply min-w-0;
   }
@@ -433,7 +435,8 @@ html[data-live-refresh="automatic"] [data-live-refresh="true"] {
 [data-crm-state="in_progress"], [data-crm-state="visit"] { --crm-state-color: var(--riviera-color-stage-cyan-fill); }
 [data-crm-state="follow_up"], [data-crm-state="negotiation"], [data-crm-state="hot"] { --crm-state-color: var(--riviera-color-stage-yellow-fill); }
 [data-crm-state="analysis"], [data-crm-state="documents"] { --crm-state-color: var(--riviera-color-stage-purple-fill); }
-[data-crm-state="qualified"], [data-crm-state="won"], [data-crm-state="converted"] { --crm-state-color: var(--riviera-color-stage-green-fill); }
+[data-crm-state="qualified"], [data-crm-state="won"], [data-crm-state="converted"], [data-crm-state="active"] { --crm-state-color: var(--riviera-color-stage-green-fill); }
+[data-crm-state="archived"] { --crm-state-color: var(--riviera-color-stage-slate-fill); }
 [data-crm-state="not_qualified"], [data-crm-state="reserved"] { --crm-state-color: var(--riviera-color-stage-orange-fill); }
 [data-crm-state="lost"] { --crm-state-color: var(--riviera-color-stage-red-fill); }
 [data-crm-state="junk_lead"] { --crm-state-color: var(--riviera-color-stage-pink-fill); }
@@ -522,8 +525,11 @@ html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   .crm-reference-filter-layout { --layout-filter-panel: var(--layout-crm-filter-panel); column-gap: 12px; }
   .crm-reference-filter-layout .filter-rail { top: 12px; max-height: calc(100dvh - 24px); }
   .crm-reference-filter-layout .crm-filter-submit { display: none; }
-  .crm-record-layout { grid-template-columns: var(--layout-crm-record-contact) minmax(0, 1fr); gap: 16px; }
-  .crm-lead-work-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+  .crm-record-layout .crm-contact-profile { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 20px; padding: 16px 20px; }
+  .crm-record-layout .crm-contact-profile > h2 { grid-column: 1 / -1; }
+  .crm-record-layout .crm-contact-profile dl { gap: 12px; }
+  .crm-record-layout .crm-profile-secondary, .crm-record-layout .crm-profile-agent { border-top: 0; padding-top: 0; border-left: 1px solid color-mix(in srgb, var(--content-link) 15%, transparent); padding-left: 20px; }
+  .crm-record-layout .crm-profile-agent { align-content: start; }
   .crm-detail-facts .record-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 39.999rem) {

@@ -22,6 +22,7 @@ TIMELINE_ACTIONS = (
     "visits.confirmed",
     "visits.rescheduled",
     "visits.completed",
+    "visits.not_completed",
     "visits.cancelled",
     "visits.contact_merged",
     "deals.closed",
@@ -44,6 +45,10 @@ TIMELINE_ACTIONS = (
     "enquiries.created",
     "enquiries.updated",
     "enquiries.converted",
+    "enquiries.project_link.added",
+    "enquiries.project_link.removed",
+    "deals.project_link.added",
+    "deals.project_link.removed",
     "contacts.assign",
     "contacts.collaborators",
     "contacts.archive",
@@ -55,6 +60,10 @@ TIMELINE_ACTIONS = (
     "meeting",
     "other",
     "enquiries.assign",
+    "enquiries.archive",
+    "enquiries.restore",
+    "deals.archived",
+    "deals.restored",
 )
 
 

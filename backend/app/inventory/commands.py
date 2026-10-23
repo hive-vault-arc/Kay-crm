@@ -18,11 +18,13 @@ from app.identity.security import IdentityError, keyed_digest
 from app.identity.sessions import CurrentIdentity, current_identity, require_role
 from app.inventory.contracts import (
     ConfirmAvailability,
+    CreateProperty,
     EditOffering,
     EditProperty,
     NewOffering,
     Owners,
     PropertyFields,
+    valid_price_period,
 )
 from app.inventory.hierarchy_contracts import (
     ArchiveDevelopment,
@@ -40,6 +42,7 @@ from app.inventory.queries import property_record
 
 Body = (
     PropertyFields
+    | CreateProperty
     | Owners
     | NewOffering
     | EditOffering
@@ -165,7 +168,7 @@ def set_owners(
 
 
 def property_values(body: PropertyFields) -> dict[str, object]:
-    return {
+    values: dict[str, object] = {
         "reference": body.reference.upper(),
         "category": body.category,
         "marketing_name": body.marketing_name,
@@ -176,6 +179,9 @@ def property_values(body: PropertyFields) -> dict[str, object]:
         "unit_type_id": body.unit_type_id,
         "rooms": body.rooms,
     }
+    if body.listing_details is not None:
+        values["listing_details"] = body.listing_details.model_dump(mode="json", exclude_none=True)
+    return values
 
 
 def execute(
@@ -227,6 +233,8 @@ def execute(
             item, Development
         ):
             raise IdentityError("DEAL_TARGET_CHANGED", 409)
+        if offering.kind == "holiday":
+            raise IdentityError("HOLIDAY_OUTCOME_NOT_SUPPORTED", 422)
         eid = close_stock(
             session, identity, offering, body.completed_on, explanation=body.explanation
         )
@@ -256,7 +264,23 @@ def execute(
         item = Property(**property_values(body), created_by_user_id=identity.user.id)
         session.add(item)
         session.flush()
-        return item, None, record(session, identity, item, "properties.created")
+        event_id = record(session, identity, item, "properties.created")
+        if isinstance(body, CreateProperty) and body.initial_offering is not None:
+            initial = body.initial_offering
+            offering = Offering(
+                property_id=item.id,
+                kind=initial.kind,
+                price_mad=Decimal(initial.price_mad),
+                price_period=initial.price_period,
+                currency=initial.currency,
+                conditions="",
+                created_by_user_id=identity.user.id,
+            )
+            session.add(offering)
+            session.flush()
+            bump(item)
+            event_id = record(session, identity, item, "offerings.created", offering)
+        return item, offering, event_id
     if isinstance(body, NewOffering):
         item = (
             property_record(session, body.property_id, lock=True)
@@ -269,6 +293,14 @@ def execute(
             else body.expected_development_version
         )
         check_version(item.version, expected or 0)
+        if body.kind == "holiday" and (
+            not isinstance(item, Property)
+            or item.development_id is not None
+            or item.category not in {"apartment", "house", "villa", "riad", "room"}
+        ):
+            raise IdentityError("VALIDATION_ERROR", 422)
+        if body.kind == "sale" and isinstance(item, Property) and item.category == "room":
+            raise IdentityError("VALIDATION_ERROR", 422)
         if isinstance(item, Property) and item.archived_at is not None:
             raise IdentityError("STOCK_REVIEW_REQUIRED", 409)
         if isinstance(item, Development) and item.archived_at is not None:
@@ -324,7 +356,7 @@ def execute(
             raise IdentityError("STOCK_REVIEW_REQUIRED", 409)
         if not offering.is_current:
             raise IdentityError("OFFERING_WITHDRAWN", 409)
-        if (offering.kind == "sale") != (body.price_period is None):
+        if not valid_price_period(offering.kind, body.price_period):
             raise IdentityError("VALIDATION_ERROR", 422)
         if body.state == "available" and offering.state != "available":
             raise IdentityError("CONFIRM_AVAILABILITY_REQUIRED", 422)
@@ -403,6 +435,8 @@ def command(
 ) -> dict[str, object]:
     route = f"{operation}/{target or ''}"
     payload = body.model_dump(mode="json")
+    if isinstance(body, CreateProperty) and body.initial_offering is None:
+        payload.pop("initial_offering")
     if isinstance(body, EditDevelopment) and "developer_contact_id" not in body.model_fields_set:
         payload.pop("developer_contact_id")
     digest = keyed_digest(

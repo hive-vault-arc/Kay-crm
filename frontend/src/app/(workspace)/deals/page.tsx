@@ -5,5 +5,5 @@ export const metadata = { title: "Affaires" };
 export default async function Page() {
   const identity = await requireIdentity("/deals");
   if (identity.state !== "authenticated") return <AuthUnavailable path="/deals" />;
-  return <DealList role={identity.profile.user.role} />;
+  return <DealList role={identity.profile.user.role} actorId={identity.profile.user.id} />;
 }

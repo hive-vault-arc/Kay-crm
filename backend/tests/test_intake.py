@@ -427,6 +427,10 @@ def test_website_merge_preserves_receipt_and_true_source_history(settings, datab
         assert row.contact_id == UUID(survivor) and row.origin_contact_id == origin
     history = read_history(database, token, UUID(survivor), "timeline", 1, 100)["items"]
     assert any(
+        item["action"] == "enquiries.created" and item["body"].startswith("Prospect créé le ")
+        for item in history
+    )
+    assert any(
         item["actor"]["id"] is None and item["actor"]["display_name"].startswith("Source web")
         for item in history
     )

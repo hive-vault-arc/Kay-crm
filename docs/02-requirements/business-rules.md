@@ -19,6 +19,13 @@ source never rewrites received provenance; project interest never reserves
 inventory. Current scope, version/retry guards, true actors and retained legacy
 facts remain authoritative. [Actual evidence and open acceptance](../03-planning/leads-deals-immoworld-alignment.md).
 
+The 2026-10-22 owner request adds independent, catalogue-backed “discussed” and
+“visited” project lists to each accessible Lead and Deal. Each list may exceed
+1,000 items; no client-side cap or copy into the one-to-three qualification
+interests is implied. Adding/removing a link preserves actor/history and does
+not create a visit appointment, offering or reservation. On both record pages,
+the history precedes the compact, bottom-of-page “Recherches du contact” panel.
+
 | ID | C | Confirmed rule |
 |---|---|---|
 | BR-01 | C01,C14 | One KAY team. The first administrator is created once by a script run locally on the deployed server by the intended administrator; later named accounts are created manually by an administrator. Roles are `administrator`, `manager`, and `agent`; administrators inherit managers' business rights. Passwords have at least 12 characters. No MFA, SMTP, email verification, or public sign-up. Q-04's proposed in-person initial-credential policy is detailed in the bootstrap runbook. |
@@ -37,7 +44,7 @@ facts remain authoritative. [Actual evidence and open acceptance](../03-planning
 | BR-14 | C09 | Commission is optional for every deal. It is fixed or proportional to an explicit base. Only managers/administrators read or change recognition, due dates, collections, and corrections. |
 | BR-15 | C09 | Recognition and every collection are confirmed separately. Partial collection is allowed; an amount above the remaining balance is rejected. A correction retains the original, its reason, actor, and any replacement. |
 | BR-16 | C06,C07 | An appointment conflict produces a warning; an authorized user may confirm with a reason. Colleagues see only free/busy, never title, contact, address, or details. An empty slot means only that no CRM appointment is recorded. |
-| BR-17 | C06,C07 | Internal visit reminders occur one day and one hour before; task due notifications and overdue lists are provided. Rescheduling, cancellation, or completion invalidates stale reminders. No external message is sent. |
+| BR-17 | C06,C07 | Internal visit and task/reminder alerts occur 24 hours and one hour before their scheduled start/due time; a task also retains its due notification. Two hours after a visit ends, an unresolved visit prompts its organizer/participants to record the outcome. A completed visit and a past visit that did not occur have distinct terminal states; cancellation remains separate. Rescheduling, cancellation, or completion invalidates stale reminders. New work is linked to its exact Lead or Deal history. No external message is sent. |
 | BR-18 | C10 | Portfolio is attributed to the current primary agent; outcomes to the primary agent at closing; activity to the true contributor. Period and access rules apply to both totals and drill-downs. |
 | BR-19 | C10 | An available physical property or whole-development offering without reconfirmation for 30 days triggers an alert; an active deal without relevant activity for 14 days triggers an alert. Alerts do not automatically withdraw or lose records. |
 | BR-20 | C11 | Managers/administrators import contact CSV files, with an active agent identified per row or an explicitly chosen fallback. An existing phone causes the entire row to be skipped and reported. Invalid rows must be corrected before approval. Eligible new rows are created in one atomic transaction. |
@@ -106,6 +113,16 @@ stateDiagram-v2
 ```
 
 A rental can remain active while a sale offering is open. BR-09 through BR-13 and BR-25 through BR-28 specify the effects of closing an offering and handling whole-development/unit overlap; AT-09 through AT-13 and AT-31 through AT-35 test them.
+
+For independent properties, owner-confirmed 2026-10-22 listing entry adds riad,
+room, office and farm plus a distinct holiday-rental offering. Holiday and
+ordinary rental campaigns may coexist on the same physical property. Prices
+remain in MAD and private contact phones do not become listing fields.
+Creation may atomically save an agent's positive first price as a draft;
+availability and later campaign management remain manager-controlled. An
+undated holiday offer cannot be linked to the existing Deal/reservation/outcome
+flow until a dated-stay contract is approved. See the
+[specific listing contract](../03-planning/property-listing-fields-2026-10-22.md).
 
 Each physical-property or whole-development offering has its own state. Restoring a won sale to availability requires reopening the deal and checking the target and any child-unit stock versions; the diagram does not promise an automatic restoration. [Mermaid source](../../diagrams/offering-states.mmd).
 

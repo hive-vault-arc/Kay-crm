@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.contacts.access import ContactConflict, scoped_contact
 from app.contacts.history import record
+from app.contacts.history_text import conversion_note
 from app.contacts.models import Enquiry
 from app.contacts.queries import enquiry_in_scope
 from app.deals.contracts import ConvertLead
@@ -21,6 +22,8 @@ from app.identity.sessions import CurrentIdentity
 def convert(session: Session, identity: CurrentIdentity, eid: UUID, body: ConvertLead) -> Deal:
     session.scalar(select(Enquiry).where(Enquiry.id == eid).with_for_update())
     enquiry = enquiry_in_scope(session, identity, eid)
+    if enquiry.archived_at is not None:
+        raise IdentityError("RECORD_ARCHIVED", 409)
     contact = scoped_contact(session, identity, enquiry.contact_id)
     if enquiry.version != body.expected_version:
         raise ContactConflict("VERSION_CONFLICT", {"current": {"version": enquiry.version}})
@@ -60,7 +63,23 @@ def convert(session: Session, identity: CurrentIdentity, eid: UUID, body: Conver
     enquiry.version += 1
     enquiry.updated_at = now
     session.flush()
-    append_event(session, identity, row, "created", None)
-    record(session, identity, contact.id, "enquiries.converted", enquiry_id=eid, deal_id=did)
+    append_event(
+        session,
+        identity,
+        row,
+        "created",
+        None,
+        body=conversion_note(now),
+        occurred_at=now,
+    )
+    record(
+        session,
+        identity,
+        contact.id,
+        "enquiries.converted",
+        enquiry_id=eid,
+        body=conversion_note(now),
+        occurred_at=now,
+    )
     session.flush()
     return row

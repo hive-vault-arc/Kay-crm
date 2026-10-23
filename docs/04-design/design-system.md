@@ -1,5 +1,18 @@
 # KAY interface design system
 
+## Lead and Deal record density: owner correction, 2026-10-22
+
+On Lead and Deal details, the contact information now forms a compact full-width
+band above the status and work sections from 1280px; narrower layouts stack it.
+The Lead request, message, follow-up and assignment sections follow in one
+reading column, avoiding an empty rail or an unequal pair of columns. This
+supersedes only the older 346px contact-rail and paired-work geometry described
+below; directory layouts and the underlying contact fields/actions are unchanged.
+Contact searches remain the final, collapsed section on both records, with a
+compact empty state and numbered navigation only when more than ten searches
+exist. They remain fully available when opened. Riviera tokens, 44px targets,
+French copy, permissions and the separate contact page are preserved.
+
 ## Inventory forms and records: local implementation, 2026-10-19
 
 The owner-requested property/programme form/detail refinement uses the existing

@@ -3,32 +3,24 @@ import type { Page } from "@playwright/test";
 import { expect } from "./auth";
 
 export async function createProperty(page: Page, category = "apartment", reference = `SP07-${randomUUID()}`) {
+  // Existing campaign-lifecycle tests need an empty property with no initial offer.
+  // The standalone UI now creates a priced draft; its own flow has dedicated coverage.
   await page.goto("/projects");
-  await page.getByRole("link", { name: "Créer un bien indépendant", exact: true }).click();
-  const form = page.getByRole("form", { name: "Créer un bien indépendant" });
-  const navigation = form.getByRole("group", { name: "Navigation du formulaire" });
-  await page.getByLabel("Référence du bien", { exact: true }).fill(reference);
-  await page.getByLabel("Catégorie", { exact: true }).selectOption(category);
-  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
-  await expect(form.getByText("Étape 2 sur 3")).toBeVisible();
-  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
-  await expect(form.getByText("Étape 3 sur 3")).toBeVisible();
-  try {
-    await navigation.getByRole("button", { name: "Créer le bien", exact: true }).click();
-  } catch (error) {
-    const state = await page.evaluate(() => ({
-      createPath: location.pathname === "/projects/properties/new",
-      detailPath: /^\/projects\/properties\/[a-f0-9-]{36}$/.test(location.pathname),
-      loginPath: location.pathname === "/login",
-      formPresent: Boolean(document.querySelector('form[aria-label="Créer un bien indépendant"]')),
-      step: document.querySelector('nav[aria-label="Progression de la création"] [role="status"]')?.textContent ?? null,
-      alertCount: document.querySelectorAll('[role="alert"]').length,
-    }));
-    throw new Error(`Property creation action disappeared; safe state ${JSON.stringify(state)}`, { cause: error });
-  }
-  await expect.poll(() => /^\/projects\/properties\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
+  const id = await page.evaluate(async ({ category, reference }) => {
+    const identity = await fetch("/api/v1/auth/me", { credentials: "same-origin" });
+    if (!identity.ok) throw new Error(`TEST_IDENTITY_${identity.status}`);
+    const { csrf_token } = await identity.json() as { csrf_token: string };
+    const response = await fetch("/api/v1/properties", {
+      method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf_token, "Idempotency-Key": crypto.randomUUID() },
+      body: JSON.stringify({ reference, category, marketing_name: null, location: null, area_sqm: null, rooms: null }),
+    });
+    if (!response.ok) throw new Error(`TEST_PROPERTY_CREATE_${response.status}`);
+    return (await response.json() as { property_id: string }).property_id;
+  }, { category, reference });
+  await page.goto(`/projects/properties/${id}`);
   await expect(page.getByRole("heading", { name: reference.toUpperCase(), exact: true })).toBeVisible();
-  return new URL(page.url()).pathname.split("/")[3];
+  return id;
 }
 export async function openProperty(page: Page, id: string, tab = "Aperçu") {
   await page.goto(`/projects/properties/${id}`);

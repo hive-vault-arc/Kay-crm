@@ -1,9 +1,12 @@
 """Each committed operation appends an exact snapshot and contact/audit link."""
 
+from datetime import UTC, datetime
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.contacts.history import record
+from app.contacts.history_text import deal_stage_note
 from app.deals.history_models import DealStageEvent
 from app.deals.models import CustomerOffer, Deal
 from app.deals.project_models import DealProject
@@ -19,8 +22,11 @@ def append_event(
     *,
     reason: str = "",
     offer: CustomerOffer | None = None,
+    body: str = "",
+    occurred_at: datetime | None = None,
 ) -> None:
     qualification = qualification_snapshot(session, row)
+    event_at = occurred_at or datetime.now(UTC)
     session.add(
         DealStageEvent(
             deal_id=row.id,
@@ -46,10 +52,11 @@ def append_event(
             expires_on=offer.expires_on if offer else None,
             offer_status=offer.status if offer else None,
             qualification=qualification,
+            occurred_at=event_at,
         )
     )
     status_note = (
-        f"Étape : {previous_stage} → {row.stage}."
+        deal_stage_note(previous_stage, row.stage, event_at)
         if previous_stage and previous_stage != row.stage
         else ""
     )
@@ -59,8 +66,9 @@ def append_event(
         row.contact_id,
         f"deals.{action}",
         reason=reason,
-        body=status_note,
+        body=body or status_note,
         deal_id=row.id,
+        occurred_at=event_at,
     )
 
 

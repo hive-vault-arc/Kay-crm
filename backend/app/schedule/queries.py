@@ -71,7 +71,7 @@ def read_visits(
             scoped = base.subquery()
             types = dict.fromkeys(("office", "without_company_car", "company_car"), 0)
             statuses = dict.fromkeys(
-                ("draft", "scheduled", "confirmed", "completed", "cancelled"), 0
+                ("draft", "scheduled", "confirmed", "completed", "not_completed", "cancelled"), 0
             )
             for kind, status, count in session.execute(
                 select(scoped.c.type, scoped.c.status, func.count()).group_by(

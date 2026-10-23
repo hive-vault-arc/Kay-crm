@@ -93,11 +93,13 @@ Repository publication, CI checks and protected-main workflow:
 [GitHub CI](docs/06-delivery-and-operations/github-ci.md), with
 [actual execution results](docs/06-delivery-and-operations/github-ci-execution.md).
 
-For current copy/paste PowerShell commands, optional local-CA browser trust,
-first login, worker and complete project-service shutdown, use
+For the complete Windows installation and operation guide, use
+[Run KAY locally](RUN_LOCALLY.md): required software, PostgreSQL preparation,
+private configuration, migrations, first administrator, Docker/ClamAV, API,
+worker, frontend, health checks and safe shutdown. Current manual ports are
+frontend3100 and API8100; older examples retain3000/8000.
+Historical HTTPS launcher/socket-loop checks remain linked from
 [Local startup and shutdown](docs/06-delivery-and-operations/local-startup.md).
-It records the warning-free HTTPS launcher and Windows socket-loop repairs;
-actual checks and remaining limits are linked separately.
 
 SP-11 adds the French Affaires list, single explicit create form, ordinary
 pipeline, next actions, separate customer proposals, true-actor history and

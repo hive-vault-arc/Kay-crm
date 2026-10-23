@@ -42,6 +42,8 @@ def validate_unit(session: Session, body: PropertyFields, current: Property | No
         if body.floor_id or body.unit_type_id:
             raise IdentityError("INVALID_HIERARCHY", 422)
         return
+    if body.category not in {"villa", "house", "apartment", "land", "commercial"}:
+        raise IdentityError("INVALID_HIERARCHY", 422)
     development = development_record(session, body.development_id, lock=True)
     if development.archived_at is not None:
         raise IdentityError("STOCK_REVIEW_REQUIRED", 409)

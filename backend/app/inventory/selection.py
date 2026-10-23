@@ -145,7 +145,7 @@ def select_offerings(
             Offering.kind == "rental",
             Offering.price_mad * case((Offering.price_period == "month", 12), else_=1),
         ),
-        else_=Offering.price_mad,
+        else_=case((Offering.kind == "sale", Offering.price_mad), else_=None),
     )
     if query.min_comparison_mad is not None:
         filters.append(comparison >= Decimal(query.min_comparison_mad))
