@@ -939,3 +939,19 @@ calculation_policy="MAD_FINAL_ROUND_HALF_UP_2": exact10.05×10/100=1.005,
 then final ROUND_HALF_UP once. Collected is0.00; recognized balance remains
 null until the separate recognition command. Neither the rate nor base is
 rounded to two decimals, and no JSON binary-float money is accepted.
+
+## Independent-property listing extension (0031)
+
+`POST /api/v1/properties` optionally accepts `listing_details` and an
+`initial_offering` (`sale`, `rental`, or `holiday`) in the same idempotent command.
+When listing details are supplied, reference, area, region, city, relevant
+category counts, and positive MAD initial price are mandatory. The returned
+property and offering IDs identify the atomic draft. Existing callers without
+listing details keep the older draft-only path. `PATCH /api/v1/properties/{id}`
+can update validated listing details with the normal optimistic version.
+Property GET/list responses include `listing_details` (empty `{}` for legacy
+rows). The optional `google_maps_url` accepts only HTTPS Google Maps URLs;
+the browser uses `noopener noreferrer` for opening them. New categories are
+standalone-only; holiday offerings are distinct from ordinary rental and do
+not enter existing Lead/Deal reservation or outcome flows. See the
+[field and scope contract](../03-planning/property-listing-fields-2026-10-22.md).

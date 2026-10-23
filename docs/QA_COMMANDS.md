@@ -56,6 +56,34 @@ development/production target. Browser supervision and pytest stay serial.
 
 Read [execution and limits](03-planning/realtime-execution.md) before rollout.
 Production migrations and hosted WSS are not verified by these commands.
+## Independent-property listing fields and holiday draft — 2026-10-22
+
+Worktree-only migration `0031_property_listing_details` was applied to the
+guarded synthetic `kayrealestate_test` target (not development or production).
+Backend `.venv/Scripts/python.exe -m alembic current`, `heads`, and `check`
+show the same 0031 head and no pending model operations. The selected isolated
+PostgreSQL regression (`test_inventory`, `test_inventory_edges`,
+`test_inventory_migration`, `test_property_facets`,
+`test_property_listing_db`, `test_deal_links`, `test_requirements`) passes
+**79/79** with healthy local ClamAV. An earlier run stopped at a real-scan
+case while ClamAV was down; rerunning with the service healthy passed.
+The historical migration test was updated to use raw SQL before the new
+column exists and to expect the new transactional head on refused downgrade.
+The database-forbidden `tests.unit_runner` passes **291** cases; Ruff,
+format-check and inventory/deal mypy pass.
+
+Frontend `npm run typecheck`, lint, build, `test:unit` (**76/76**) and
+`security:check` pass. The audit reports zero runtime advisories and nine
+known dev-only advisories under the existing dated exception. Headed Chrome:
+new riad/holiday/Maps and 320 px land journeys **2/2**; existing inventory
+regressions **7/7**; revised creation visual and dynamic land/commercial
+reviews **1/1 each** when run individually. The combined visual/inventory run
+had one intermittent 180-second timeout after the seven inventory passes;
+the affected visual journey passed alone on rerun. Synthetic desktop/mobile
+screenshots were inspected, `impeccable detect --json` returned `[]`, and the
+AFTER audit is [042](../anti-slop/audit-042-2026-10-22.md). These local gates
+do not imply production migration, publication, a full 900-case regression,
+or Khalid's product approval.
 
 ## Generated Lead/Deal PDF preparations — 2026-10-20
 

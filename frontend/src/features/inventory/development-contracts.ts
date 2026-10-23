@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { numberedPage } from "@/features/contacts/contracts";
-import { categorySchema, offeringSchema, propertySummarySchema } from "./contracts";
+import { offeringSchema, propertySummarySchema } from "./contracts";
 
 const version = z.number().int().positive();
 const date = z.iso.datetime({ offset: true });
@@ -16,12 +16,13 @@ const level = { id: z.uuid(), code: z.string().max(40), label: z.string().max(16
 export const blockSchema = z.object({ ...level, development_id: z.uuid(), display_order: z.number().int().nonnegative() }).strict();
 export const floorSchema = z.object({ ...level, block_id: z.uuid(), display_order: z.number().int().nonnegative() }).strict();
 const amount = z.string().regex(/^[0-9]{1,16}(\.[0-9]{1,2})?$/).refine(value => /[1-9]/.test(value));
-export const unitTypeSchema = z.object({ ...level, development_id: z.uuid(), category: categorySchema, default_area_sqm: amount.nullable(), default_rooms: z.number().int().min(1).max(1000).nullable() }).strict();
+export const unitCategorySchema = z.enum(["villa", "house", "apartment", "land", "commercial"]);
+export const unitTypeSchema = z.object({ ...level, development_id: z.uuid(), category: unitCategorySchema, default_area_sqm: amount.nullable(), default_rooms: z.number().int().min(1).max(1000).nullable() }).strict();
 export const blocksSchema = numberedPage(blockSchema);
 export const floorsSchema = numberedPage(floorSchema);
 export const unitTypesSchema = numberedPage(unitTypeSchema);
 export const structureFieldsSchema = z.object({ expected_version: version, code: z.string().trim().min(1).max(40), label: z.string().trim().min(1).max(160), display_order: z.number().int().min(0).max(1000000) }).strict();
-export const typeFieldsSchema = z.object({ expected_version: version, development_id: z.uuid(), code: z.string().trim().min(1).max(40), label: z.string().trim().min(1).max(160), category: categorySchema, default_area_sqm: amount.nullable(), default_rooms: z.number().int().min(1).max(1000).nullable() }).strict();
+export const typeFieldsSchema = z.object({ expected_version: version, development_id: z.uuid(), code: z.string().trim().min(1).max(40), label: z.string().trim().min(1).max(160), category: unitCategorySchema, default_area_sqm: amount.nullable(), default_rooms: z.number().int().min(1).max(1000).nullable() }).strict();
 export const inventoryPageSchema = numberedPage(propertySummarySchema).extend({ development: developmentSummarySchema });
 export const archiveDevelopmentSchema = z.object({ expected_version: version, reason: z.string().trim().min(1).max(1000) }).strict();
 export type Development = z.infer<typeof developmentSchema>;

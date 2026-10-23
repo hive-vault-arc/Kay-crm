@@ -596,3 +596,14 @@ rate10.00000000 and final amount1.01 MAD (10.05×10/100=1.005, rounded once
 ROUND_HALF_UP). Recognition appends a new revision with identical exact terms;
 a0.25 valid receipt leaves0.76 derived balance. Expected balance is null, not
 an independently editable zero. See the [matching API example](api-contracts.md#sp-16-commission-boundary).
+
+## Independent-property listing extension (0031)
+
+`property.listing_details` is non-null JSONB with `{}` for legacy rows. The
+application validates bounded, typed public/shared property facts before writing
+the object; private contact details remain outside it. `property.category` also
+accepts independent riad, room, office and farm, while development/unit type
+categories remain the original five. `offering.kind` adds `holiday` as a separate
+current slot on standalone residential property only, with day/week/month
+periods. Sale and ordinary rental retain their existing periods. Holiday prices
+have no annual-equivalent comparison. See the [listing boundary](../03-planning/property-listing-fields-2026-10-22.md).

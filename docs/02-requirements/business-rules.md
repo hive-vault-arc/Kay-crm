@@ -107,6 +107,16 @@ stateDiagram-v2
 
 A rental can remain active while a sale offering is open. BR-09 through BR-13 and BR-25 through BR-28 specify the effects of closing an offering and handling whole-development/unit overlap; AT-09 through AT-13 and AT-31 through AT-35 test them.
 
+For independent properties, owner-confirmed 2026-10-22 listing entry adds riad,
+room, office and farm plus a distinct holiday-rental offering. Holiday and
+ordinary rental campaigns may coexist on the same physical property. Prices
+remain in MAD and private contact phones do not become listing fields.
+Creation may atomically save an agent's positive first price as a draft;
+availability and later campaign management remain manager-controlled. An
+undated holiday offer cannot be linked to the existing Deal/reservation/outcome
+flow until a dated-stay contract is approved. See the
+[specific listing contract](../03-planning/property-listing-fields-2026-10-22.md).
+
 Each physical-property or whole-development offering has its own state. Restoring a won sale to availability requires reopening the deal and checking the target and any child-unit stock versions; the diagram does not promise an automatic restoration. [Mermaid source](../../diagrams/offering-states.mmd).
 
 ```mermaid

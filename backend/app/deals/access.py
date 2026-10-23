@@ -76,6 +76,8 @@ def check_links(
     offering = session.get(Offering, body.offering_id) if body.offering_id else None
     if body.offering_id and offering is None:
         raise IdentityError("NOT_FOUND", 404)
+    if offering and offering.kind == "holiday":
+        raise IdentityError("HOLIDAY_DEAL_NOT_SUPPORTED", 422)
     if offering and offering.version != body.expected_offering_version:
         raise IdentityError("OFFERING_VERSION_CONFLICT", 409)
     if requirement and offering and requirement.intent != offering.kind:

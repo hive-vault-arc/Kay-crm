@@ -11,9 +11,9 @@ import { confirmSchema, editOfferingSchema, kindLabels, newOfferingSchema, type 
 import { InventoryError } from "./states";
 import { useInventoryCommand } from "./use-command";
 
-type Values = { price: string; period: "month" | "year"; conditions: string; state: Offering["state"]; reason: string };
+type Values = { price: string; period: "day" | "week" | "month" | "year"; conditions: string; state: Offering["state"]; reason: string };
 export function OfferingEditor({ property, kind, offering, saved, cancel }: { property: InventoryTarget; kind: Offering["kind"]; offering?: Offering; saved: () => void; cancel: () => void }) {
-  const form = useForm<Values>({ defaultValues: { price: offering?.price_mad ?? "", period: offering?.price_period ?? "month", conditions: offering?.conditions ?? "", state: offering?.state ?? "draft", reason: "" } });
+  const form = useForm<Values>({ defaultValues: { price: offering?.price_mad ?? "", period: offering?.price_period ?? (kind === "holiday" ? "day" : "month"), conditions: offering?.conditions ?? "", state: offering?.state ?? "draft", reason: "" } });
   const [version, setVersion] = useState({ property: property.version, offering: offering?.version ?? 1 });
   const [validation, setValidation] = useState("");
   const command = useInventoryCommand();
@@ -22,7 +22,7 @@ export function OfferingEditor({ property, kind, offering, saved, cancel }: { pr
   useEffect(() => { setFocus("price"); }, [setFocus]);
   async function save(values: Values) {
     form.clearErrors();
-    const common = { price_mad: values.price.trim().replace(",", ".") || null, currency: "MAD", price_period: kind === "rental" ? values.period : null, conditions: values.conditions };
+    const common = { price_mad: values.price.trim().replace(",", ".") || null, currency: "MAD", price_period: kind === "sale" ? null : values.period, conditions: values.conditions };
     const body = offering ? editOfferingSchema.safeParse({ ...common, ...(property.inventoryLevel === "development" ? { expected_development_version: version.property } : { expected_property_version: version.property }), expected_version: version.offering, state: values.state, reason: values.reason }) : newOfferingSchema.safeParse({ ...common, ...(property.inventoryLevel === "development" ? { development_id: property.id } : { property_id: property.id }), ...(property.inventoryLevel === "development" ? { expected_development_version: version.property } : { expected_property_version: version.property }), kind });
     if (!body.success) { setValidation("Prix positif avec deux décimales maximum, ou vide si inconnu. Renseignez un motif pour une modification (1 000 caractères maximum)."); const fields = body.error.issues.map(issue => issue.path[0] === "price_mad" ? "price" : issue.path[0] === "price_period" ? "period" : issue.path[0]).filter((field): field is keyof Values => typeof field === "string" && ["price", "period", "conditions", "state", "reason"].includes(field)); fields.forEach(field => form.setError(field, { type: "validate" })); form.setFocus(fields[0] ?? "price"); return; }
     setValidation("");
@@ -32,7 +32,7 @@ export function OfferingEditor({ property, kind, offering, saved, cancel }: { pr
   return <form noValidate className="form-surface grid min-w-0 max-w-reading gap-6" aria-label={`${offering ? "Modifier" : "Créer"} la campagne ${kindLabels[kind].toLowerCase()}`} onSubmit={event => void form.handleSubmit(save)(event)} aria-busy={command.pending}>
     <fieldset className="grid min-w-0 gap-4 sm:grid-cols-2" disabled={!hydrated || command.pending}>
       <div className="grid gap-2"><Label htmlFor={`${prefix}-price`}>Prix {kind === "sale" ? "de vente" : "de location"} en MAD (facultatif)</Label><Input id={`${prefix}-price`} aria-invalid={Boolean(form.formState.errors.price)} aria-describedby={form.formState.errors.price ? `${prefix}-validation` : undefined} inputMode="decimal" maxLength={19} {...form.register("price")} /></div>
-      {kind === "rental" ? <div className="grid gap-2"><Label htmlFor={`${prefix}-period`}>Période du loyer d’origine</Label><NativeSelect id={`${prefix}-period`} {...form.register("period")}><option value="month">Par mois</option><option value="year">Par an</option></NativeSelect></div> : null}
+      {kind !== "sale" ? <div className="grid gap-2"><Label htmlFor={`${prefix}-period`}>{kind === "holiday" ? "Période du prix" : "Période du loyer d’origine"}</Label><NativeSelect id={`${prefix}-period`} {...form.register("period")}>{kind === "holiday" ? <><option value="day">Par jour</option><option value="week">Par semaine</option><option value="month">Par mois</option></> : <><option value="month">Par mois</option><option value="year">Par an</option></>}</NativeSelect></div> : null}
       <div className="grid gap-2 sm:col-span-2"><Label htmlFor={`${prefix}-conditions`}>Conditions d’origine (facultatives)</Label><Textarea id={`${prefix}-conditions`} aria-invalid={Boolean(form.formState.errors.conditions)} aria-describedby={form.formState.errors.conditions ? `${prefix}-validation` : undefined} maxLength={2000} {...form.register("conditions")} /></div>
       {offering ? <><div className="grid gap-2"><Label htmlFor={`${prefix}-state`}>Statut de la campagne</Label><NativeSelect id={`${prefix}-state`} {...form.register("state")}><option value="draft">Brouillon</option>{offering.state === "available" ? <option value="available">Disponible</option> : null}<option value="withdrawn">Retirée</option></NativeSelect></div><div className="grid gap-2 sm:col-span-2"><Label htmlFor={`${prefix}-reason`}>Motif de la modification de l’offre</Label><Textarea id={`${prefix}-reason`} required maxLength={1000} {...form.register("reason")} /></div></> : null}
     </fieldset>

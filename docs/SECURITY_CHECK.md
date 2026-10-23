@@ -62,6 +62,20 @@ Create/edit reuse current Origin/CSRF/idempotency, duplicate-phone, agent
 assignment and version checks. Isolated synthetic tests cover other-agent
 denial, manager visibility, role-tagged and linked-only owners, current/past
 links and no phone in portfolio output. No real contact data was read or logged.
+## Independent-property listing fields (2026-10-22)
+
+Migration 0031 adds shared, bounded property facts; it does not move private
+owner/contact records or expose public phone numbers. Google Maps URLs are
+HTTPS host/path allowlisted server-side, with matching client validation and
+`noopener noreferrer` links. No map request occurs while entering data. Prices
+remain positive MAD decimal strings. The first priced offering is a draft
+created atomically under the agent's existing property-create authority and
+idempotency receipt; managers retain later campaign, availability and owner
+rights. Holiday offerings cannot be attached to a development or to the
+existing undated deal/outcome model. Legacy rows receive an empty JSON object;
+the migration does not touch credentials, files or protected history. Isolated
+test data only; no production, real-data import/export, retention or external
+publisher call is part of this implementation.
 
 ## Generated Lead/Deal document drafts (2026-10-20)
 

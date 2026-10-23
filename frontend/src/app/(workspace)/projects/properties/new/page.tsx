@@ -7,5 +7,5 @@ export const metadata = { title: "Créer un bien indépendant" };
 export default async function Page() {
   const identity = await requireIdentity("/projects/properties/new");
   if (identity.state !== "authenticated") return <AuthUnavailable path="/projects/properties/new" />;
-  return <><PageHeader title="Créer un bien indépendant" description="Villa, maison, appartement, terrain ou local commercial : un bien physique, deux campagnes possibles." route="/projects/properties/new" /><PropertyEditor /></>;
+  return <><PageHeader title="Créer un bien indépendant" description="Un bien physique avec son prix, ses caractéristiques et une première offre brouillon." route="/projects/properties/new" /><PropertyEditor /></>;
 }

@@ -195,8 +195,8 @@ def effects_plan(session: Session, offering: Offering) -> list[tuple[Offering, s
         )
         child = bool(offering.development_id and other.property_id)
         parent_scope = bool(offering.property_id and other.development_id)
-        if (same and offering.kind == "sale" and other.kind == "rental") or (
-            child and (offering.kind == "sale" or other.kind == "rental")
+        if (same and offering.kind == "sale" and other.kind in {"rental", "holiday"}) or (
+            child and (offering.kind == "sale" or other.kind in {"rental", "holiday"})
         ):
             effects.append((other, "withdrawn"))
         elif parent_scope and other.state != "review":

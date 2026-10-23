@@ -24,6 +24,7 @@ from app.inventory.contracts import (
     NewOffering,
     Owners,
     PropertyFields,
+    valid_price_period,
 )
 from app.inventory.hierarchy_contracts import (
     ArchiveDevelopment,
@@ -167,7 +168,7 @@ def set_owners(
 
 
 def property_values(body: PropertyFields) -> dict[str, object]:
-    return {
+    values: dict[str, object] = {
         "reference": body.reference.upper(),
         "category": body.category,
         "marketing_name": body.marketing_name,
@@ -178,6 +179,9 @@ def property_values(body: PropertyFields) -> dict[str, object]:
         "unit_type_id": body.unit_type_id,
         "rooms": body.rooms,
     }
+    if body.listing_details is not None:
+        values["listing_details"] = body.listing_details.model_dump(mode="json", exclude_none=True)
+    return values
 
 
 def execute(
@@ -229,6 +233,8 @@ def execute(
             item, Development
         ):
             raise IdentityError("DEAL_TARGET_CHANGED", 409)
+        if offering.kind == "holiday":
+            raise IdentityError("HOLIDAY_OUTCOME_NOT_SUPPORTED", 422)
         eid = close_stock(
             session, identity, offering, body.completed_on, explanation=body.explanation
         )
@@ -287,6 +293,14 @@ def execute(
             else body.expected_development_version
         )
         check_version(item.version, expected or 0)
+        if body.kind == "holiday" and (
+            not isinstance(item, Property)
+            or item.development_id is not None
+            or item.category not in {"apartment", "house", "villa", "riad", "room"}
+        ):
+            raise IdentityError("VALIDATION_ERROR", 422)
+        if body.kind == "sale" and isinstance(item, Property) and item.category == "room":
+            raise IdentityError("VALIDATION_ERROR", 422)
         if isinstance(item, Property) and item.archived_at is not None:
             raise IdentityError("STOCK_REVIEW_REQUIRED", 409)
         if isinstance(item, Development) and item.archived_at is not None:
@@ -342,7 +356,7 @@ def execute(
             raise IdentityError("STOCK_REVIEW_REQUIRED", 409)
         if not offering.is_current:
             raise IdentityError("OFFERING_WITHDRAWN", 409)
-        if (offering.kind == "sale") != (body.price_period is None):
+        if not valid_price_period(offering.kind, body.price_period):
             raise IdentityError("VALIDATION_ERROR", 422)
         if body.state == "available" and offering.state != "available":
             raise IdentityError("CONFIRM_AVAILABILITY_REQUIRED", 422)

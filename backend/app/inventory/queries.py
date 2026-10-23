@@ -145,6 +145,7 @@ def properties_view(session: Session, items: Sequence[Property]) -> list[dict[st
             "category": item.category,
             "marketing_name": item.marketing_name,
             "location": item.location,
+            "listing_details": item.listing_details or {},
             "area_sqm": money(item.area_sqm),
             "version": item.version,
             "archived_at": item.archived_at.isoformat() if item.archived_at else None,
@@ -271,7 +272,20 @@ def read_list(
                 conditions.append(campaign.exists())
             if query.property_id:
                 conditions.append(Property.id == query.property_id)
-            counts = dict.fromkeys(("land", "apartment", "villa", "house", "commercial"), 0)
+            counts = dict.fromkeys(
+                (
+                    "land",
+                    "apartment",
+                    "villa",
+                    "house",
+                    "commercial",
+                    "riad",
+                    "room",
+                    "office",
+                    "farm",
+                ),
+                0,
+            )
             for category, count in session.execute(
                 select(Property.category, func.count())
                 .where(*conditions)

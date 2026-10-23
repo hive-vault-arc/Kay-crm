@@ -17,6 +17,7 @@ import { InventoryWizardSteps } from "./inventory-wizard-steps";
 import { LevelPicker } from "./level-picker";
 import { InventoryError } from "./states";
 import { useInventoryCommand } from "./use-command";
+import { StandalonePropertyWizard } from "./standalone-property-wizard";
 
 type Values = { reference: string; category: Property["category"]; marketing_name: string; location: string; area_sqm: string; rooms: string; offer_kind: "sale" | "rental"; price: string; period: "month" | "year" };
 const steps = [
@@ -27,6 +28,10 @@ const steps = [
 const hasRooms = (category: Property["category"]) => category === "apartment" || category === "villa" || category === "house";
 
 export function PropertyCreationWizard({ developmentId }: { developmentId?: string }) {
+  return developmentId ? <DevelopmentPropertyWizard developmentId={developmentId} /> : <StandalonePropertyWizard />;
+}
+
+function DevelopmentPropertyWizard({ developmentId }: { developmentId: string }) {
   const router = useRouter();
   const hydrated = useHydrated();
   const command = useInventoryCommand();
@@ -111,7 +116,7 @@ export function PropertyCreationWizard({ developmentId }: { developmentId?: stri
       <fieldset disabled={!hydrated || command.pending} className="grid min-w-0 gap-4">
         {step === 0 ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
           <div className="grid gap-2"><Label htmlFor="property-reference">Référence du bien</Label><Input id="property-reference" maxLength={80} required aria-invalid={Boolean(form.formState.errors.reference)} aria-describedby={form.formState.errors.reference ? "property-validation" : undefined} {...form.register("reference")} /></div>
-          <div className="grid gap-2"><Label htmlFor="property-category">Catégorie</Label><NativeSelect id="property-category" {...categoryField} onChange={event => { void categoryField.onChange(event); if (!hasRooms(event.target.value as Property["category"])) form.setValue("rooms", ""); if (event.target.value !== "apartment") setPlacement({ block_id: "", floor_id: "", unit_type_id: "" }); }}>{Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
+          <div className="grid gap-2"><Label htmlFor="property-category">Catégorie</Label><NativeSelect id="property-category" {...categoryField} onChange={event => { void categoryField.onChange(event); if (!hasRooms(event.target.value as Property["category"])) form.setValue("rooms", ""); if (event.target.value !== "apartment") setPlacement({ block_id: "", floor_id: "", unit_type_id: "" }); }}>{Object.entries(categoryLabels).filter(([value]) => ["villa", "house", "apartment", "land", "commercial"].includes(value)).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
           <div className="grid gap-2 sm:col-span-2"><Label htmlFor="property-name">Nom commercial (facultatif)</Label><Input id="property-name" maxLength={160} aria-invalid={Boolean(form.formState.errors.marketing_name)} aria-describedby={form.formState.errors.marketing_name ? "property-validation" : undefined} {...form.register("marketing_name")} /></div>
           <div className="grid gap-2"><Label htmlFor="property-offer-kind">Type d’offre initiale</Label><NativeSelect id="property-offer-kind" {...form.register("offer_kind")}><option value="sale">Vente</option><option value="rental">Location</option></NativeSelect></div>
           <div className="grid gap-2"><Label htmlFor="property-price">{draft.offer_kind === "rental" ? "Loyer demandé en MAD" : "Prix de vente demandé en MAD"}</Label><Input id="property-price" inputMode="decimal" maxLength={19} required aria-invalid={Boolean(form.formState.errors.price)} aria-describedby={form.formState.errors.price ? "property-validation" : undefined} {...form.register("price")} /></div>
