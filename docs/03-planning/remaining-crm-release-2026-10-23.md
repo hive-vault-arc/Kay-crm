@@ -91,6 +91,26 @@ expanded database rerun, visible browser checks and exact-commit hosted full
 integration remain required before merge. No production schema/deployment writes
 have been made during this integration.
 
+The expanded isolated selection passes82/82; legacy discovery/qualification/work
+migration tests pass7/7 after explicitly asserting the new empty details default
+while retaining all pre-existing JSON facts. Visible Chrome passes the seven
+owners/project-links/holiday/mobile/archive/calendar journeys. A random synthetic
+phone test used unassigned ranges; fixtures now use a valid Moroccan mobile
+prefix and assert the creation response. The long form review exposed a real
+final-Next/default-submit race, not a backend save failure: keyed button identities
+and preventDefault now keep review separate from creation, with an explicit
+zero-POST-before-review assertion. Price review uses guarded canonical MAD
+formatting, including invalid/over-precision input coverage. Owner portfolio and
+owner-directory queries also reconcile inventory invalidations without refreshing
+unrelated contact lists. These latest corrections require rerun on the new SHA.
+
+The first100-user attempt overlapped visible Chrome and failed connection setup
+(99 users ready, no steady request phase). This is a failed load gate, not a
+latency pass. Rerun serially with unchanged100-user/socket and1s/2s limits. Hosted
+run39936891171 failed its old preservation assertion after235 backend passes and
+was cancelled; it is not release evidence. Final full hosted integration and
+production verification will be linked on PR25, not inferred from previous runs.
+
 Record actual commands, results, remaining risks and production read-back here
 and in the QA/security registers as the work proceeds; no pass is inferred from
 individual feature checkouts' historical evidence.

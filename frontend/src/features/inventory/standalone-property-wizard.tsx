@@ -138,9 +138,11 @@ export function StandalonePropertyWizard() {
   }
   const category = values.category;
   const options = Object.entries(amenityLabels).filter(([key]) => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(key));
+  const reviewAmount = amountOrNull(values.price_mad);
+  const reviewPrice = reviewAmount && /^[0-9]{1,16}(\.[0-9]{1,2})?$/.test(reviewAmount) && /[1-9]/.test(reviewAmount) ? formatMAD(reviewAmount) : null;
   const facts = [
     { label: "Référence", value: trim(values.reference) }, { label: "Type", value: categoryLabels[category] }, { label: "Offre", value: kindLabels[values.market] },
-    { label: "Prix", value: values.price_mad ? `${formatMAD(values.price_mad)}${values.market === "sale" ? "" : ` / ${values.period === "day" ? "jour" : values.period === "week" ? "semaine" : values.period === "year" ? "an" : "mois"}`}` : null },
+    { label: "Prix", value: reviewPrice ? `${reviewPrice}${values.market === "sale" ? "" : ` / ${values.period === "day" ? "jour" : values.period === "week" ? "semaine" : values.period === "year" ? "an" : "mois"}`}` : null },
     { label: "Ville", value: trim(values.city) }, { label: "Surface", value: values.area_sqm ? `${values.area_sqm} m²` : null },
     { label: "Google Maps", value: values.google_maps_url ? "Lien renseigné" : null },
     { label: "Équipements", value: values.amenities.length ? `${values.amenities.length} sélectionné(s)` : null },
@@ -161,7 +163,7 @@ export function StandalonePropertyWizard() {
         {step === 4 ? <InventoryDraftSummary icon={PropertyIcon} title="Bien et offre à créer" facts={facts} onlyFilled wide next="L’offre restera en brouillon. Les photos (jusqu’à 10, converties en WebP), les propriétaires et les documents se gèrent ensuite depuis la fiche." /> : null}
       </fieldset>
       {error ? <p role="alert" className="text-danger">{error}</p> : null}<InventoryError error={command.error} />
-      <div role="group" aria-label="Navigation du formulaire" className="flex flex-wrap gap-2 border-t pt-4">{step > 0 ? <Button action="back" type="button" variant="outline" disabled={command.pending} onClick={() => focus(step - 1)}>Précédent</Button> : null}{step < 4 ? <Button action="forward" type="button" variant="creation" disabled={!hydrated || command.pending} onClick={() => { if (validate(step)) focus(step + 1); }}>Suivant</Button> : <Button action="create" type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : "Créer le bien"}</Button>}<Button action="cancel" variant="outline" asChild><Link href="/projects">Annuler</Link></Button></div>
+      <div role="group" aria-label="Navigation du formulaire" className="flex flex-wrap gap-2 border-t pt-4">{step > 0 ? <Button action="back" type="button" variant="outline" disabled={command.pending} onClick={() => focus(step - 1)}>Précédent</Button> : null}{step < 4 ? <Button key="next" action="forward" type="button" variant="creation" disabled={!hydrated || command.pending} onClick={event => { event.preventDefault(); if (validate(step)) focus(step + 1); }}>Suivant</Button> : <Button key="create" action="create" type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : "Créer le bien"}</Button>}<Button action="cancel" variant="outline" asChild><Link href="/projects">Annuler</Link></Button></div>
     </div>
   </form>;
 }
