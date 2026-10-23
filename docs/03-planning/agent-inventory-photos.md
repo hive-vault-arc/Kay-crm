@@ -73,3 +73,14 @@ only documentation validation pass again. A fresh exact-candidate hosted run is
 required before production.
 Test data must remain synthetic and isolated; do not add sample photos to real
 client records. Keep Web Push disabled and existing private Spaces configuration.
+
+The subsequent security gate found newly published `PYSEC-2026-4322` in the
+development-only Brotli dependency. Its exact pin and hash lock now use1.2.1;
+hash-checked installation, `pip check` and `pip_audit` pass. No unrelated Python
+dependency was upgraded. With Khalid's explicit approval, `.nvmrc` also advances
+within Node24 from24.13.1 to24.22.1, the vendor security patch. Local validation
+uses a SHA256-verified portable runtime, not a replacement global installation.
+Sources: [Brotli release](https://github.com/google/brotli/releases/tag/v1.2.1)
+and [Node security release](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases).
+Candidate3eae9b7's hosted run is superseded, not accepted; all required and manual
+integration checks must pass on the final dependency-patched candidate.
