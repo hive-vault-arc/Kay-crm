@@ -39,6 +39,9 @@ def main() -> None:
             ssl_certfile=str(certificate / "localhost.pem"),
             access_log=False,
             log_level="warning",
+            ws="wsproto",
+            ws_max_size=512,
+            ws_max_queue=4,
         )
     except Exception:
         print("API_START_FAILED: check local configuration, database and certificate setup.")

@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html[data-live-refresh="automatic"] [data-live-refresh="true"] {
+  display: none;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* Shared geometry plus semantic roles mapped from branding/riviera tokens. */

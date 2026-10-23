@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDownIcon, NotificationIcon } from "@/components/icons";
+import { ChevronDownIcon } from "@/components/icons";
+import { LiveNotificationIcon } from "@/features/realtime/notification-bell";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/features/auth/session-controls";
 import { NotificationPanel } from "@/features/work/notification-panel";
@@ -24,7 +25,7 @@ export function DashboardHeaderActions({ user }: { user: PublicIdentity["user"] 
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Ouvrir les notifications" disabled={!hydrated}>
-          <NotificationIcon aria-hidden="true" />
+          <LiveNotificationIcon />
         </Button>
       </SheetTrigger>
       <SheetContent closeLabel="Fermer les notifications" className="w-full overflow-y-auto p-5 sm:max-w-reading">

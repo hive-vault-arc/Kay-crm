@@ -876,6 +876,15 @@ ended visits. GET /work/context supplies backend now/today/Africa/Casablanca.
 There is no public clock override or external messaging endpoint.
 [Execution and current gate status](../03-planning/sprints/sp-15-execution.md).
 
+## Live invalidation and browser notification boundary
+
+The [realtime contract](realtime.md) defines POST /realtime/tickets, direct
+WSS /realtime/ws, GET/POST /realtime/push and the administrator-only aggregate
+GET /realtime/status, under /api/v1. Existing facade/session/Origin/CSRF rules
+remain authoritative. Tickets authenticate the first frame, never the URL;
+messages contain only topic invalidations/heartbeats, not business commands or
+records. The browser facade relays only tickets/push, not operator diagnostics.
+
 ## SP-16 commission boundary
 
 Strict optional commission commands and numbered reads are implemented in

@@ -18,6 +18,7 @@ from app.inventory import (
     reservation_models,  # noqa: F401
 )
 from app.inventory import models as inventory_models  # noqa: F401
+from app.realtime import models as realtime_models  # noqa: F401
 from app.requirements import models as requirement_models  # noqa: F401
 from app.schedule import models as schedule_models  # noqa: F401
 from app.work import models as work_models  # noqa: F401

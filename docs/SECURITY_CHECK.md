@@ -1,5 +1,53 @@
 # KAY security check for changes
 
+## Consultation-state follow-up (2026-10-23)
+
+Read-panel identity keys retain pagination/filter state without introducing a
+shared cross-user cache. Backend scope remains authoritative and a rejected GET
+still replaces private data with its denied/error state. Local saved snapshots
+cannot mask a different canonical identity; equal-version authoritative related
+projections win. Versioned command confirmations/form resets and dirty-detail
+deferral remain. No permission, session, data schema or production flag changes.
+
+## Hosted push-test certificate follow-up (2026-10-23)
+
+Only the disposable persistent Chrome push-test profile pins the SHA256 SPKI of
+the generated localhost leaf certificate. Its baseURL must equal the isolated
+https://localhost:3100. No OS trust store, personal profile, application launcher,
+provider mock, production TLS validation or consent/delivery assertion changes.
+Diagnostic output is capability/configuration booleans and safe error names;
+neither exception text nor provider endpoints/keys are logged. Full manual
+integration on the final candidate remains mandatory; previous902+119+2 passes
+do not turn the failed push aggregate into a release pass.
+
+## Realtime/Web Push implementation (2026-10-22)
+
+Ticket proof remains server-mediated; no backend session reaches browser JS or
+WSS URLs. Exact Origin, CSRF, atomic30-second digest tickets, current session/
+role validation, pending/tab/process quotas, transport/application bounds and
+short maintenance admission protect the new route. Socket messages only
+invalidate scoped REST projections. Former/new owner delivery and outsider
+exclusion are tested. One listener/process plus bounded publication/queues
+avoid per-socket database occupancy and commit-path network failures.
+
+Push is opt-in, inbox-only and generic. Current session and current inbox scope
+are rechecked at dispatch; foreground presence across the same user's sessions
+suppresses OS alerts. Delivery is durable/deduplicated with leases/bounded
+retries; provider410 disables obsolete subscriptions. Exact HTTPS provider
+allowlist, no redirects/environment proxies, bounded requests and TLS prevent
+arbitrary endpoint SSRF. Provider keys/endpoints, payloads and error bodies are
+not logged. Service worker does not cache private responses.
+
+Synthetic PostgreSQL realtime/capacity16/16 and earlier auth/work/foundation
+selection48/48 pass; real generic Chrome provider delivery passes separately.
+Final combined selection51/51, additive/legacy migration/photo/PDF31/31 and
+real scanner/crypto8/8 pass. The scanner's unavailable state was not bypassed.
+Runtime dependency audits report0; existing approved npm tooling exception is
+unchanged. Additive0031 is tested only in the new isolated cluster. Production
+schema/flags/deployment are untouched; hosted WSS/idle/reconnect and actual
+target graph inspection remain mandatory before release. See
+[contract](04-design/realtime.md) and [execution](03-planning/realtime-execution.md).
+
 ## Generated Lead/Deal document drafts (2026-10-20)
 
 The new routes require the existing facade authority, revocable session and

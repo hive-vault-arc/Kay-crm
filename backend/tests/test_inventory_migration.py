@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.inventory.models import InventoryEvent, Offering, Property
 from tests.contact_support import actor
-from tests.test_isolation_migrations import migrate
+from tests.test_isolation_migrations import HEAD, migrate
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
@@ -129,9 +129,6 @@ def test_commercial_category_upgrade_preserves_existing_and_refuses_lossy_downgr
         assert migrate("downgrade", "0027_record_archive").returncode != 0
         with database.session() as session:
             assert session.get(Property, commercial_id).category == "commercial"
-            assert (
-                session.scalar(text("SELECT version_num FROM alembic_version"))
-                == "0030_generated_documents"
-            )
+            assert session.scalar(text("SELECT version_num FROM alembic_version")) == HEAD
     finally:
         assert migrate("upgrade", "head").returncode == 0

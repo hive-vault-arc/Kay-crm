@@ -122,3 +122,5 @@ def test_both_managed_launchers_check_ca_before_loading_the_application(componen
     launcher = (BACKEND_ROOT / "scripts" / f"start-{component}.sh").read_text(encoding="utf-8")
     assert launcher.index("-m app.cli.check_postgres_ca") < launcher.index(f"-m {module}")
     assert "exec ./.heroku/python/bin/python" in launcher
+    if component == "api":
+        assert "--no-access-log --ws wsproto --ws-max-size 512 --ws-max-queue 4" in launcher

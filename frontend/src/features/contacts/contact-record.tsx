@@ -9,6 +9,7 @@ import { apiGet } from "@/lib/api/client";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { contactSchema, roleLabels, contactSourceLabels as sourceLabels, type Contact, type StaffRole } from "./contracts";
 import { useQuery } from "./use-query";
+import { currentRecord } from "@/features/realtime/current-record";
 import { RecordError } from "./record-states";
 import { ContactEditor } from "./contact-editor";
 import { LeadList } from "./lead-list";
@@ -28,10 +29,12 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
   const [tab, setTab] = useState(initialTask ? "tasks" : "identity");
   const [saved, setSaved] = useState(false);
   const [notice, setNotice] = useState("");
-  const contact = edited ?? query.value;
+  const contact = currentRecord(query.value, edited, id);
   async function changed(target: string, operation: Operation) {
     const fresh = await apiGet(`/api/v1/contacts/${target}`, contactSchema);
-    setEdited(fresh); setSaved(false); setNotice(`${operationLabels[operation]} : opération enregistrée.`);
+    if (target === id) setEdited(fresh);
+    else { setEdited(undefined); query.refreshQuietly(); }
+    setSaved(false); setNotice(`${operationLabels[operation]} : opération enregistrée.`);
   }
   const heading = <PageHeader title="Fiche contact" description="Identité, coordonnées et demandes dans votre périmètre." route={`/contacts/${id}`} />;
   if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
@@ -61,12 +64,12 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
     </section>}
         {!editing && (!contact.archived_at || role !== "agent") ? <OwnershipControls key={`${contact.id}:${contact.version}`} contact={contact} role={role} changed={changed} /> : null}
       </TabsContent>
-      <TabsContent value="enquiries"><LeadList key={`${contact.id}:${contact.version}`} role={role} contactId={contact.id} archived={Boolean(contact.archived_at)} /></TabsContent>
-      <TabsContent value="timeline"><ContactTimeline key={`${contact.id}:${contact.version}`} id={contact.id} archived={Boolean(contact.archived_at)} /></TabsContent>
-      <TabsContent value="assignments"><ContactAssignments key={`${contact.id}:${contact.version}`} id={contact.id} /></TabsContent>
+      <TabsContent value="enquiries"><LeadList key={contact.id} role={role} contactId={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
+      <TabsContent value="timeline"><ContactTimeline key={contact.id} id={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
+      <TabsContent value="assignments"><ContactAssignments key={contact.id} id={contact.id} revision={contact.version} /></TabsContent>
       <TabsContent value="documents"><FilePanel key={contact.id} parentKind="contact" parentId={contact.id} writable={!contact.archived_at} /></TabsContent>
       <TabsContent value="requirements"><RequirementPanel key={contact.id} contactId={contact.id} writable={!contact.archived_at} /></TabsContent>
-      <TabsContent value="deals"><DealList key={`${contact.id}:${contact.version}`} role={role} contactId={contact.id} archived={Boolean(contact.archived_at)} /></TabsContent>
+      <TabsContent value="deals"><DealList key={contact.id} role={role} contactId={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
       <TabsContent value="tasks"><TaskPanel key={contact.id} contactId={contact.id} writable={!contact.archived_at} initialTask={initialTask} /></TabsContent>
     </Tabs>
   </div>;

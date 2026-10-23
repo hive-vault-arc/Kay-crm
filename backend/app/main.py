@@ -35,6 +35,7 @@ from app.imports.router import transfers as import_transfers
 from app.intake.router import router as intake_router
 from app.inventory.hierarchy_router import router as hierarchy_router
 from app.inventory.router import router as inventory_router
+from app.realtime.router import router as realtime_router
 from app.recovery.maintenance import MaintenanceMiddleware
 from app.reports.router import router as reports_router
 from app.requirements.router import router as requirements_router
@@ -55,9 +56,31 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         dummy_hash()  # Equal verification work for unknown identities, including the first request.
         database = Database(config.selected_database_url())
         application.state.database = database
+        application.state.realtime_pending = 0
+        live_task = None
+        stop_publisher = None
+        if config.realtime_enabled:
+            import asyncio
+
+            from app.realtime.events import install
+            from app.realtime.transport import Hub
+
+            stop_publisher = install(database)
+            from app.recovery.maintenance import Admission
+
+            application.state.realtime = Hub(database, Admission(config))
+            live_task = asyncio.create_task(application.state.realtime.listen())
         try:
             yield
         finally:
+            if live_task:
+                import contextlib
+
+                live_task.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await live_task
+            if stop_publisher:
+                stop_publisher()
             database.close()
 
     application = FastAPI(
@@ -83,6 +106,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(activities_router)
     application.include_router(finance_router)
     application.include_router(work_router)
+    application.include_router(realtime_router)
     application.include_router(reports_router)
     application.include_router(imports_router)
     application.include_router(import_transfers)
@@ -121,6 +145,7 @@ async def request_context(
         if request.url.path.startswith(
             (
                 "/api/v1/auth/",
+                "/api/v1/realtime/",
                 "/api/v1/users",
                 "/api/v1/contacts",
                 "/api/v1/requirements",

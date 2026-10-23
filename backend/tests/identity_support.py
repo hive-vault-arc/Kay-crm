@@ -52,6 +52,7 @@ from app.inventory.hierarchy_models import Block, Development, DevelopmentOwner,
 from app.inventory.models import InventoryEvent, InventoryReceipt, Offering, Property, PropertyOwner
 from app.inventory.outcome_models import StockEffect, StockOutcome, StockReversal
 from app.inventory.reservation_models import Reservation
+from app.realtime.models import PushDelivery, PushSubscription, RealtimePresence, RealtimeTicket
 from app.requirements.models import (
     Requirement,
     RequirementCriterion,
@@ -117,6 +118,10 @@ def clear_identity(settings: Settings, database: Database) -> None:
             )
         )
         for model in (
+            PushDelivery,
+            PushSubscription,
+            RealtimePresence,
+            RealtimeTicket,
             ImportPreview,
             ImportRow,
             ImportBatch,
@@ -198,6 +203,11 @@ def clear_identity(settings: Settings, database: Database) -> None:
 
 def delete_actor_business(session: Session, user_id: UUID) -> None:
     """Called only after the private fixture validates its isolated synthetic actor."""
+    sessions = select(StaffSession.id).where(StaffSession.user_id == user_id)
+    session.execute(delete(PushDelivery).where(PushDelivery.session_id.in_(sessions)))
+    session.execute(delete(PushSubscription).where(PushSubscription.session_id.in_(sessions)))
+    session.execute(delete(RealtimePresence).where(RealtimePresence.session_id.in_(sessions)))
+    session.execute(delete(RealtimeTicket).where(RealtimeTicket.session_id.in_(sessions)))
     contacts = list(
         session.scalars(
             select(Contact.id).where(

@@ -6,6 +6,8 @@ import ts from "typescript";
 const root = path.resolve(import.meta.dirname, "..");
 const manifest = JSON.parse(await readFile(path.join(root, "../docs/reference/iconsax/assets.json"), "utf8"));
 const icons = new Set(manifest.icons.map(icon => icon.export));
+// This wrapper renders the existing NotificationIcon together with its live unread count.
+icons.add("LiveNotificationIcon");
 const dataControls = new Map([
   ["src/features/schedule/calendar-sidebar.tsx", "Mini-month week buttons show actual date values; month arrows use shared directional actions."],
   ["src/features/contacts/numbered-pages.tsx", "Numbered page identity; previous/next carry directional icons."],

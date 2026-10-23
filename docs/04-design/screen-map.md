@@ -308,6 +308,16 @@ tokens/layout are preserved. No new navigation destination, KPI/chart, external
 send or calendar integration is introduced. [Contract](tasks-reminders-local.md),
 [verification](../03-planning/sprints/sp-15-execution.md).
 
+## Authenticated live updates (2026-10-22)
+
+The shell owns one WSS connection/tab and a scoped live unread bell. Existing
+views keep numbered pages, filters and scroll while queries refetch quietly.
+Dirty record input defers replacement with a French notice. /notifications is
+the protected inbox destination for generic push alerts and the opt-in/out
+control, not a new public registration route. Ordinary refresh controls remain
+until the hosted gate/release flag; outages restore them. Retry, conflict and
+availability-review controls stay. [Contract](realtime.md).
+
 ## SP-16 local S08 extension
 
 The existing deal detail /deals/{id} keeps ordinary agent workflow unchanged.

@@ -14,6 +14,8 @@ def main() -> None:
     from app.discovery.export_worker import run_once as export_once
     from app.files.worker import run_once
     from app.intake.worker import run_once as intake_once
+    from app.realtime.events import install
+    from app.realtime.push import run_once as push_once
     from app.recovery.maintenance import Admission
     from app.settings import load_settings
     from app.work.status import queue_status
@@ -27,6 +29,9 @@ def main() -> None:
     settings = load_settings()
     assert_runtime_target(settings)
     database = Database(settings.selected_database_url())
+    stop_publisher = None
+    if settings.realtime_enabled:
+        stop_publisher = install(database)
     admission = Admission(settings)
     try:
         if args.status:
@@ -43,15 +48,18 @@ def main() -> None:
                 reminded = remind_once(database)
                 exported = export_once(database, settings)
                 received = intake_once(database)
+                pushed = push_once(database, settings)
             finally:
                 admission.leave()
             if args.once:
                 return
-            if not worked and not reminded and not exported and not received:
+            if not worked and not reminded and not exported and not received and not pushed:
                 time.sleep(0.5)
     except KeyboardInterrupt:
         pass
     finally:
+        if stop_publisher:
+            stop_publisher()
         database.close()
 
 

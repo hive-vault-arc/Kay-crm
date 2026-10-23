@@ -1,5 +1,11 @@
 # KEPVY core architecture
 
+The default-off [live update extension](realtime.md) adds one PostgreSQL LISTEN
+connection/API process and a bounded post-commit invalidation publisher, not a
+connection/socket or a new business-write channel. The browser uses direct WSS
+with a one-use facade ticket; revocable PostgreSQL sessions and scoped REST stay
+authoritative. Existing PostgreSQL worker dispatches private generic Web Push.
+
 SP-22 exposes the local API CLI's bounded --workers1..4 (default1). Multi-process
 mode uses the same app.main:create_app factory under Uvicorn spawn, real current
 PostgreSQL sessions and shared maintenance leases; it is not a second application

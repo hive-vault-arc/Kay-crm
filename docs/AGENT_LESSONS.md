@@ -1,5 +1,53 @@
 # KAY agent lessons
 
+## Live consultation state and canonical projections (2026-10-23)
+
+- Do not key an entire paginated read panel by its parent's version: every live
+  edit would remount it and reset filters/pages. Keep record identity as its key,
+  refetch quietly on revision, and scope versioned resets to command forms.
+  Preserve dependent-read refresh after successful writes with live flags off.
+- An entity's related contact/stock projection can change without its own
+  version advancing. REST wins equal-version ties; local snapshots win only
+  while strictly newer, and never across a requested/canonical identity change.
+
+## Service-worker certificate trust in disposable Chrome (2026-10-23)
+
+- A page-level HTTPS error override does not establish service-worker certificate
+  trust. Reproduce with a fresh CA, not a workstation's previously trusted one.
+  Pin only the exact generated localhost leaf's SPKI in the disposable push-test
+  profile; refuse non-isolated origins. Never change production TLS or OS trust
+  to make this test pass, and keep genuine provider delivery mandatory.
+- Diagnose missing optional controls using capability/configuration booleans and
+  safe error names. DOMException is not necessarily an Error subclass; check both
+  without logging raw exception messages, endpoints or encryption keys.
+
+## Canonical identity and additive recovery counts (2026-10-23)
+
+- A merged contact resolves to a different canonical ID. Compare local snapshot
+  versions only for the same ID; after merging, refetch the original route so
+  its canonical redirect notice and survivor history remain visible.
+- Adding bookkeeping tables also changes full recovery inventory counts. Update
+  the exact asserted schema count and rerun the full recovery regression, rather
+  than loosening restore verification or relying only on focused feature tests.
+
+## Real push and socket lifecycle tests (2026-10-22)
+
+- Chrome's ordinary Playwright contexts are incognito and do not support PushManager.
+  Use a fresh disposable persistent profile for genuine push checks, with no
+  user profile or credential-bearing traces. Do not mock success to hide an
+  AbortError. The persistent-profile test verifies real generic provider delivery.
+- Receive disconnects while waiting for notifications, not only after the next
+  heartbeat. Otherwise rapid full-page navigation temporarily exhausts a correct
+  session connection quota. Preserve the quota and fix lifecycle cleanup.
+- A heartbeat briefly borrowing a pool slot is not a per-socket held connection.
+  Capacity assertions should bound slots and verify return between operations,
+  not demand zero at an arbitrary concurrent instant.
+- Pass the intended isolated database URL explicitly on each writer invocation;
+  a fresh tool shell does not inherit a previous tool call's environment override.
+- Coalesce pending ticket issuance across React Strict Mode remounts. Abandoned
+  proofs otherwise accumulate toward the outstanding-ticket quota during fast
+  navigation. Preserve that quota and use fresh proof after the pending call.
+
 ## Sticky navigation and edge controls (2026-10-19)
 
 A later `.sidebar { position: relative }` rule silently overrode an earlier
