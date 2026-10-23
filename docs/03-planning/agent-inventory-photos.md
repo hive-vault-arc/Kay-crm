@@ -52,6 +52,11 @@ mobile viewer, keyboard arrows/Escape, ten slots, interrupted upload recovery,
 real scanner failure/recovery and unchanged private-file denial. Captures under
 ignored `frontend/output/playwright/property-photos/` are synthetic only.
 Impeccable's one mechanical detector returns `[]`; product review remains human.
+Desktop confirmation also checks that the shared photo panel does not create
+implicit columns in the development's one-column grid; its local wrapper keeps
+the header and gallery full-width. The corrected compiled agent project/unit
+scenario passes1/1 with a new desktop capture. Ordinary inventory attachment
+choosers direct all images to Photos, including developments.
 Protected exact-candidate hosted checks and deployment verification are pending.
 Test data must remain synthetic and isolated; do not add sample photos to real
 client records. Keep Web Push disabled and existing private Spaces configuration.

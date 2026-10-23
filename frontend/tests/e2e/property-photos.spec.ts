@@ -130,15 +130,21 @@ test("agent automatically uploads project and physical apartment photos without 
   const agent = await createActor("agent", false, "SP06 Photos agent");
   try {
     await signIn(page, agent);
+    await page.setViewportSize({ width: 1440, height: 900 });
     await testControl("worker-start");
     const project = await createDevelopment(page);
     const gallery = page.getByRole("region", { name: "Photos du bien" });
     await expect(gallery.getByText("0 / 10 photos")).toBeVisible();
+    const galleryWidth = await gallery.evaluate(element => element.getBoundingClientRect().width);
+    const headerWidth = await page.getByRole("heading", { name: project.reference, exact: true }).evaluate(element => element.closest("header")!.getBoundingClientRect().width);
+    expect(headerWidth).toBeGreaterThanOrEqual(galleryWidth - 2);
     await gallery.locator('input[type="file"]').setInputFiles(path.resolve("tests/fixtures/projects-reference/patio.png"));
     await expect(gallery.getByText("1 / 10 photos")).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Ouvrir la photo patio.webp" })).toBeVisible({ timeout: 60_000 });
     await expect(page.getByRole("button", { name: "Envoyer le fichier", exact: true })).toHaveCount(0);
     await expect(gallery.getByRole("button", { name: "Archiver", exact: true })).toHaveCount(0);
+    await mkdir("output/playwright/property-photos", { recursive: true });
+    await page.screenshot({ path: "output/playwright/property-photos/agent-project-desktop.png", fullPage: true });
     await createBlock(page); await createFloor(page); await createType(page);
     const unit = await createUnit(page, project.id);
     await expect(gallery.getByText("0 / 10 photos")).toBeVisible();
