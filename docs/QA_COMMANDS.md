@@ -2,6 +2,13 @@
 
 ## Release follow-up,2026-10-23
 
+- Expanded consultation-state checks:83 frontend units, lint and types pass.
+  Five-case compiled WSS/push selection passes5/5, including contact history
+  page2 and Deal activity page2/type-filter retention during parent revision.
+  Stable consultation keys use quiet revision dependencies; command form resets
+  remain explicit. The final exact-candidate run also rechecks disabled-feature
+  proposal/task workflows; its actual result is in the linked PR24 record.
+
 - Hosted manual39874538779 at1788a49: backend902/902, compiled Chromium119/119,
   real WSS2/2 pass; real push setup fails on the runner's fresh certificate.
   This aggregate failed and is not a release pass.

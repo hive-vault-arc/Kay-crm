@@ -1,5 +1,14 @@
 # KAY security check for changes
 
+## Consultation-state follow-up (2026-10-23)
+
+Read-panel identity keys retain pagination/filter state without introducing a
+shared cross-user cache. Backend scope remains authoritative and a rejected GET
+still replaces private data with its denied/error state. Local saved snapshots
+cannot mask a different canonical identity; equal-version authoritative related
+projections win. Versioned command confirmations/form resets and dirty-detail
+deferral remain. No permission, session, data schema or production flag changes.
+
 ## Hosted push-test certificate follow-up (2026-10-23)
 
 Only the disposable persistent Chrome push-test profile pins the SHA256 SPKI of

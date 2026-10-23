@@ -62,7 +62,7 @@ export function LeadRecord({ id, edit = false, role = "agent" }: { id: string; e
         {enquiry.converted_at ? <p className="text-xs text-muted-foreground">Prospect converti le {formatInstant(enquiry.converted_at)}. Son origine et son historique sont conservés.</p> : null}
       </div>
     </div>
-    <ActivityHistory key={id} scope="enquiries" id={id} writable={writable} />
+    <ActivityHistory key={id} scope="enquiries" id={id} writable={writable} revision={enquiry.version} />
     <Link className="inline-flex min-h-control items-center justify-self-start text-link underline" href={`/contacts/${enquiry.contact.id}`}>Ouvrir le contact et son historique</Link>
   </div>;
 }

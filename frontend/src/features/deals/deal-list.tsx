@@ -42,12 +42,12 @@ const columns: Record<ColumnId, ColumnDef<Deal>> = {
 };
 const defaults = { q: "", stage: "", assigned_agent_id: "", offering_kind: "", campaign_source: "", rating: "", country: "", language: "", updated_from: "", updated_to: "", archive: "active", sort: "-updated_at", page_size: 50 };
 
-export function DealList({ role, contactId, archived = false }: { role: StaffRole; contactId?: string; archived?: boolean }) {
+export function DealList({ role, contactId, archived = false, revision }: { role: StaffRole; contactId?: string; archived?: boolean; revision?: number }) {
   const { draft, setDraft, filters, page, setPage, invalid, apply, reset, activeCount } = useDirectoryFilters(defaults, "updated_from", "updated_to");
   const [agentLabel, setAgentLabel] = useState("");
   const hydrated = useHydrated();
   const { visible, change, notice } = useDealColumns();
-  const query = useQuery(queryPath("deals", { ...filters, contact_id: contactId, archive: archived ? "archived" : filters.archive, page }), dealsSchema);
+  const query = useQuery(queryPath("deals", { ...filters, contact_id: contactId, archive: archived ? "archived" : filters.archive, page }), dealsSchema, revision);
   function clearFilters() { reset(); setAgentLabel(""); }
   const toolbar = <CrmDirectoryToolbar primary={!archived ? <Button action="create" asChild variant="creation"><Link href={`/deals/new${contactId ? `?contact_id=${contactId}` : ""}`}>Créer une affaire</Link></Button> : null}>
     <Button action="contact" asChild variant="quiet" size="compact"><Link href="/leads?view=contacts">Contacts</Link></Button><DealColumns compact visible={visible} change={change} />

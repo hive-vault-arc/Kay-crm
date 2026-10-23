@@ -1,5 +1,15 @@
 # KAY agent lessons
 
+## Live consultation state and canonical projections (2026-10-23)
+
+- Do not key an entire paginated read panel by its parent's version: every live
+  edit would remount it and reset filters/pages. Keep record identity as its key,
+  refetch quietly on revision, and scope versioned resets to command forms.
+  Preserve dependent-read refresh after successful writes with live flags off.
+- An entity's related contact/stock projection can change without its own
+  version advancing. REST wins equal-version ties; local snapshots win only
+  while strictly newer, and never across a requested/canonical identity change.
+
 ## Service-worker certificate trust in disposable Chrome (2026-10-23)
 
 - A page-level HTTPS error override does not establish service-worker certificate

@@ -43,12 +43,12 @@ const columns: Record<ColumnId, ColumnDef<LeadSummary>> = {
 };
 const defaults = { q: "", status: "", campaign_source: "", source: "", rating: "", assigned_agent_id: "", received_from: "", received_to: "", country: "", language: "", sort: "-updated_at", page_size: 50 };
 
-export function LeadList({ role, contactId, archived = false }: { role: StaffRole; contactId?: string; archived?: boolean }) {
+export function LeadList({ role, contactId, archived = false, revision }: { role: StaffRole; contactId?: string; archived?: boolean; revision?: number }) {
   const hydrated = useHydrated();
   const { draft, setDraft, filters, page, setPage, invalid, apply, reset, activeCount } = useDirectoryFilters(defaults, "received_from", "received_to");
   const [agentLabel, setAgentLabel] = useState("");
   const { visible, change, notice } = useLeadColumns();
-  const { value: result, error, refresh } = useQuery(queryPath("enquiries", { ...filters, page, contact_id: contactId, archive: archived ? "archived" : undefined }), enquiriesSchema);
+  const { value: result, error, refresh } = useQuery(queryPath("enquiries", { ...filters, page, contact_id: contactId, archive: archived ? "archived" : undefined }), enquiriesSchema, revision);
   function clearFilters() { reset(); setAgentLabel(""); }
   const toolbar = <CrmDirectoryToolbar primary={<Button action="create" asChild variant="creation"><Link href="/leads/new">Nouveau prospect</Link></Button>}>
     <Button action="contact" asChild variant="quiet" size="compact"><Link href="/leads?view=contacts">Contacts</Link></Button>

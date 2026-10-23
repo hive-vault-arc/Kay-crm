@@ -38,9 +38,9 @@ function QualificationHistory({ value }: { value: z.infer<typeof qualificationSn
   return <details><summary className="flex min-h-control cursor-pointer items-center text-link underline">Qualification enregistrée avec cette version</summary><div className="py-3"><RecordFacts>{facts.map(([label, text]) => <RecordFact key={label} icon={factIcons[String(label)] ?? ContactIcon} label={String(label)}>{text}</RecordFact>)}</RecordFacts></div></details>;
 }
 
-export function DealHistory({ id }: { id: string }) {
+export function DealHistory({ id, revision }: { id: string; revision?: number }) {
   const [page, setPage] = useState(1);
-  const query = useQuery(queryPath(`deals/${id}/history`, { page, page_size: 20 }), historySchema);
+  const query = useQuery(queryPath(`deals/${id}/history`, { page, page_size: 20 }), historySchema, revision);
   return <section className="grid min-w-0 gap-4 border-t pt-6" aria-label="Historique de l’affaire"><h2 className="text-section font-medium">Historique de l’affaire</h2>
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement de l’historique…</p> : <>
       <p>{query.value.total} événement(s), auteurs et conditions d’origine conservés.</p>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
+import { currentRecord } from "@/features/realtime/current-record";
 import { apiGet, ApiError } from "@/lib/api/client";
 import { commissionSchema, mad, receiptsSchema, revisionLabels, revisionsSchema, type Commission, type Receipt } from "./contracts";
 import { FinanceConfirmation } from "./confirmation";
@@ -16,7 +17,7 @@ export function CommissionRecord({ id, contactId, dealVersion, writable, changed
   const query = useQuery(`/api/v1/commissions/${id}`, commissionSchema), [fresh, setFresh] = useState<Commission>(), [mode, setMode] = useState<"commission" | "receipt">(), [original, setOriginal] = useState<Receipt>(), [recognition, setRecognition] = useState(false), [expected, setExpected] = useState<number>(), [notice, setNotice] = useState("");
   const [historyPage, setHistoryPage] = useState(1), [receiptPage, setReceiptPage] = useState(1);
   const revisions = useQuery(`/api/v1/commissions/${id}/revisions?page=${historyPage}`, revisionsSchema), receipts = useQuery(`/api/v1/commissions/${id}/receipts?page=${receiptPage}`, receiptsSchema);
-  const heading = useRef<HTMLHeadingElement>(null), recognizeTrigger = useRef<HTMLButtonElement>(null), value = (fresh && (!query.value || fresh.version >= query.value.version) ? fresh : query.value);
+  const heading = useRef<HTMLHeadingElement>(null), recognizeTrigger = useRef<HTMLButtonElement>(null), value = currentRecord(query.value, fresh, id);
   useEffect(() => { heading.current?.focus(); }, [value?.id]);
   useEffect(() => { const problem = query.error ?? revisions.error ?? receipts.error; if (problem && ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED"].includes(problem.code)) denied(problem); }, [query.error, revisions.error, receipts.error, denied]);
   async function refresh() { try { setFresh(await apiGet(`/api/v1/commissions/${id}`, commissionSchema)); revisions.refreshQuietly(); receipts.refreshQuietly(); } catch (failure) { denied(failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); } }

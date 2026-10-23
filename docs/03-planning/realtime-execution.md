@@ -34,6 +34,24 @@ feedback; both remain serial, mandatory and part of the same release aggregate.
 The final replacement run and production acceptance are recorded on PR24; the
 previous failed run is not relabelled passed.
 
+The subsequent consultation-state follow-up replaces version-based keys on
+read panels with stable record keys plus an explicit quiet revision dependency.
+Contact sublists/attributions, Lead/Deal activities, Deal results/history/offers,
+and task/visit history retain their page/filter state when the parent changes.
+Own successful commands still refresh dependent reads with realtime disabled.
+Proposal selection is scoped to the Deal version and only the command form
+resets, not its paginated list. Other versioned command/confirmation keys remain.
+
+The shared currentRecord selector prefers authoritative REST on equal versions:
+related contact/stock projections can change without the enclosing record version.
+A newer local committed response survives an older in-flight GET; wrong-route
+and pre-merge snapshots cannot replace the canonical record. Three focused units
+cover those cases (83 frontend units pass). The expanded real-browser suite has
+five cases, including actual page2/filter retention after contact/Deal changes;
+the first expanded compiled run passes5/5. Final exact-candidate compiled and
+disabled-feature legacy results are recorded on PR24 without changing the
+candidate after its full gate. No further migration or visual styling is added.
+
 ## Scope and isolation
 
 Owner-approved WebSocket invalidations and opt-in Web Push implement the

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
+import { currentRecord } from "@/features/realtime/current-record";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { localLabel } from "@/features/schedule/time";
 import { useHydrated } from "@/hooks/use-hydrated";
@@ -18,7 +19,7 @@ export function TaskRecord({ id, contactId, dealId, writable, changed, close }: 
   const query = useQuery(`/api/v1/tasks/${id}`, taskSchema), hydrated = useHydrated();
   const [fresh, setFresh] = useState<Task>(), [editing, setEditing] = useState(false), [notice, setNotice] = useState("");
   const [reloadError, setReloadError] = useState<ApiError>();
-  const task = (fresh && (!query.value || fresh.version >= query.value.version) ? fresh : query.value), focusEdit = useRef(false), heading = useRef<HTMLHeadingElement>(null);
+  const task = currentRecord(query.value, fresh, id), focusEdit = useRef(false), heading = useRef<HTMLHeadingElement>(null);
   const initialFocus = useRef(true);
   useEffect(() => { if (task && initialFocus.current) { initialFocus.current = false; heading.current?.focus(); } }, [task]);
   const restore = useCallback((node: HTMLButtonElement | null) => { if (node && focusEdit.current) { focusEdit.current = false; node.focus(); } }, []);
@@ -39,7 +40,7 @@ export function TaskRecord({ id, contactId, dealId, writable, changed, close }: 
       <TaskFacts task={task} />{notice ? <p role="status" className="text-success">{notice}</p> : null}
       <Button liveRefresh action="refresh" type="button" variant="outline" className="justify-self-start" onClick={() => { void reload().catch(() => {}); }}>Actualiser la tâche</Button>
       <div className="flex flex-wrap gap-2">{canWrite ? <><Button action="edit" ref={restore} type="button" disabled={!hydrated} onClick={() => { setEditing(true); setNotice(""); }}>Modifier la tâche</Button>{(["completed", "cancelled"] as const).map(action => <TaskFinish key={`${task.version}:${action}`} task={task} action={action} saved={async () => { await reload(); setNotice(action === "completed" ? "Tâche terminée. Les rappels obsolètes sont invalidés." : "Tâche annulée. Les rappels obsolètes sont invalidés."); }} terminalFocus={() => heading.current?.focus()} />)}</> : <p>Tâche conservée en lecture seule. Son historique reste disponible.</p>}<Button action="close" type="button" variant="outline" onClick={close}>Fermer la tâche</Button></div>
-      <TaskHistory key={task.version} id={id} />
+      <TaskHistory key={id} id={id} revision={task.version} />
     </>}
   </section>;
 }
@@ -63,9 +64,9 @@ function TaskFinish({ task, action, saved, terminalFocus }: { task: Task; action
   return <AlertDialog open={open} onOpenChange={next => { if (!busy) setOpen(next); }}><AlertDialogTrigger asChild><Button action={action === "cancelled" ? "cancelRecord" : "complete"} type="button" variant={action === "cancelled" ? "destructive" : "outline"}>{label}</Button></AlertDialogTrigger><AlertDialogContent onOpenAutoFocus={e => { e.preventDefault(); titleRef.current?.focus(); }} onCloseAutoFocus={e => { if (terminal.current) { e.preventDefault(); terminalFocus(); } }}><AlertDialogTitle ref={titleRef} tabIndex={-1}>{label}</AlertDialogTitle><AlertDialogDescription>Cette action conserve la tâche et son auteur, puis invalide ses rappels non actuels. Aucun message externe n’est envoyé.</AlertDialogDescription><p className="wrap-anywhere font-medium">{task.title}</p><div className="grid gap-2"><Label htmlFor={id}>Compte rendu (facultatif)</Label><Textarea id={id} value={reason} maxLength={1000} disabled={busy} onChange={e => setReason(e.target.value)} /></div>{error ? <div className="grid gap-2"><RecordError error={error} /><p>La saisie est conservée. Réessayez la même action. En cas de conflit, fermez puis rechargez la tâche.</p></div> : null}<div className="flex flex-wrap gap-2"><AlertDialogCancel asChild><Button action="back" type="button" variant="outline" disabled={busy}>Revenir à la tâche</Button></AlertDialogCancel><Button action={action === "cancelled" ? "cancelRecord" : "complete"} type="button" variant={action === "cancelled" ? "destructive" : "default"} disabled={busy} onClick={() => void confirm()}>{busy ? "Enregistrement…" : label}</Button></div></AlertDialogContent></AlertDialog>;
 }
 
-function TaskHistory({ id }: { id: string }) {
+function TaskHistory({ id, revision }: { id: string; revision?: number }) {
   const [page, setPage] = useState(1);
-  const query = useQuery(`/api/v1/tasks/${id}/history?page=${page}`, taskHistorySchema);
+  const query = useQuery(`/api/v1/tasks/${id}/history?page=${page}`, taskHistorySchema, revision);
   return <section className="record-stack grid gap-4" aria-label="Historique de la tâche">
     <h4 className="font-medium">Historique de la tâche</h4>
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement de l’historique…</p> : <>

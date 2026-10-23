@@ -15,7 +15,7 @@ export function queryPath(kind: string, values: Record<string, string | number |
   for (const [key, value] of Object.entries(values)) if (value !== undefined && value !== "") query.set(key, String(value));
   return `/api/v1/${kind}?${query.toString().replace(/\+/g, "%20")}` as `/api/v1/${string}`;
 }
-export function useQuery<T>(path: `/api/v1/${string}`, schema: z.ZodType<T>) {
+export function useQuery<T>(path: `/api/v1/${string}`, schema: z.ZodType<T>, revision?: number) {
   const [state, setState] = useState<{ path: string; value?: T; error?: ApiError }>();
   const [retry, setRetry] = useState(0);
   const fetching = useRef(false), queued = useRef(false);
@@ -37,7 +37,7 @@ export function useQuery<T>(path: `/api/v1/${string}`, schema: z.ZodType<T>) {
       }
     });
     return () => { abort.abort(); fetching.current = false; };
-  }, [path, schema, retry]);
+  }, [path, schema, retry, revision]);
   const refresh = useCallback(() => { setState(undefined); setRetry(value => value + 1); }, []);
   const refreshQuietly = useCallback(() => setRetry(value => value + 1), []);
   useEffect(() => {

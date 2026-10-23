@@ -49,9 +49,9 @@ function NoteForm({ id, saved }: { id: string; saved: () => void }) {
   </form>;
 }
 
-export function ContactTimeline({ id, archived }: { id: string; archived: boolean }) {
+export function ContactTimeline({ id, archived, revision }: { id: string; archived: boolean; revision?: number }) {
   const [page, setPage] = useState(1);
-  const query = useQuery(queryPath(`contacts/${id}/timeline`, { page, page_size: 25 }), timelineSchema);
+  const query = useQuery(queryPath(`contacts/${id}/timeline`, { page, page_size: 25 }), timelineSchema, revision);
   return <div className="grid gap-8">
     <section className="grid gap-4"><h2 className="text-section font-medium">Historique du contact</h2>
       {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement de l’historique…</p> : <>
@@ -72,9 +72,9 @@ export function ContactTimeline({ id, archived }: { id: string; archived: boolea
   </div>;
 }
 
-export function ContactAssignments({ id }: { id: string }) {
+export function ContactAssignments({ id, revision }: { id: string; revision?: number }) {
   const [page, setPage] = useState(1);
-  const query = useQuery(queryPath(`contacts/${id}/assignment-events`, { page, page_size: 25 }), assignmentsSchema);
+  const query = useQuery(queryPath(`contacts/${id}/assignment-events`, { page, page_size: 25 }), assignmentsSchema, revision);
   return <section className="grid gap-4"><h2 className="text-section font-medium">Historique d’attribution</h2>
     <p className="text-sm text-muted-foreground">L’acteur de la décision ne remplace jamais l’auteur des contributions.</p>
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des attributions…</p> : <>

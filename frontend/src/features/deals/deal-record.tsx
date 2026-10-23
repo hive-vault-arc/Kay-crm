@@ -9,6 +9,7 @@ import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
+import { currentRecord } from "@/features/realtime/current-record";
 import { FilePanel } from "@/features/files/file-panel";
 import { OfferingFacts } from "@/features/requirements/offering-card";
 import { useHydrated } from "@/hooks/use-hydrated";
@@ -32,7 +33,7 @@ import { ActivityHistory } from "@/features/activities/activity-history";
 
 export function DealRecord({ id, initialTask, role = "agent", initialTab }: { id: string; initialTask?: string; role?: StaffRole; initialTab?: string }) {
   const query = useQuery(`/api/v1/deals/${id}`, dealSchema); const [fresh, setFresh] = useState<Deal>(); const [editing, setEditing] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState<ApiError>(); const [comparison, setComparison] = useState<Deal>(); const [notice, setNotice] = useState("");
-  const lock = useRef(false); const attempt = useRef({ fingerprint: "", key: "" }); const focusEdit = useRef(false); const hydrated = useHydrated(); const value = (fresh && (!query.value || fresh.version >= query.value.version) ? fresh : query.value);
+  const lock = useRef(false); const attempt = useRef({ fingerprint: "", key: "" }); const focusEdit = useRef(false); const hydrated = useHydrated(); const value = currentRecord(query.value, fresh, id);
   const restoreFocus = useCallback((node: HTMLButtonElement | null) => { if (node && focusEdit.current) { focusEdit.current = false; node.focus(); } }, []);
   function endEdit() { focusEdit.current = true; setEditing(false); }
   async function reload() { const current = await apiGet(`/api/v1/deals/${id}`, dealSchema); setFresh(current); return current; }
@@ -71,15 +72,15 @@ export function DealRecord({ id, initialTask, role = "agent", initialTab }: { id
     {value.contact.archived_at ? <p role="status">Contact archivé : affaire et propositions conservées en lecture seule.</p> : null}
     {value.offering ? <section className="surface grid min-w-0 gap-4" aria-label="Cible actuelle de l’affaire"><SectionHeading compact as="h3" icon={PropertyIcon} tone="teal">Offre d’inventaire liée</SectionHeading><OfferingFacts offering={value.offering} /></section> : null}</div></div>
     <DealFinanceTabs role={role} deal={value} initialTab={initialTab}>
-    <ActivityHistory key={`activities:${value.id}:${value.version}`} scope="deals" id={value.id} writable={!value.contact.archived_at} />
+    <ActivityHistory key={`activities:${value.id}`} scope="deals" id={value.id} writable={!value.contact.archived_at} revision={value.version} />
     {value.enquiry_id ? <ActivityHistory key={`origin:${value.id}`} scope="deals" id={value.id} origin /> : null}
     {notice && !editing ? <p role="status" className="text-success">{notice}</p> : null}
     {error ? <section className="grid gap-4" aria-label="Échec de la modification"><RecordError error={error} /><p>Votre saisie reste affichée. Une réponse interrompue peut avoir été enregistrée : réessayez la même action sans la modifier. En cas de conflit, comparez la version actuelle avant une nouvelle tentative.</p><Button action="compare" type="button" variant="outline" className="justify-self-start" disabled={busy} onClick={() => void compare()}>Comparer la version actuelle</Button>{comparison ? <div className="grid gap-4 border-y py-4"><p className="wrap-anywhere">Version actuelle {comparison.version} : {comparison.title} · {stageLabels[comparison.stage]}</p><p className="whitespace-pre-wrap wrap-anywhere">Prochaine action actuelle : {comparison.next_action || "Non renseignée"}</p><p>Le chargement remplacera les formulaires affichés. Copiez votre brouillon si vous souhaitez le conserver.</p><Button action="refresh" type="button" variant="outline" className="h-auto min-h-control justify-self-start whitespace-normal" onClick={() => { setFresh(comparison); setComparison(undefined); setError(undefined); }}>Charger cette version et réinitialiser les formulaires</Button></div> : null}</section> : null}
     <div className="crm-record-grid"><ReservationPanel deal={value} writable={writable && !editing} busy={busy} busyChanged={setBusy} saved={reload} />
     <OutcomePanel deal={value} writable={!value.contact.archived_at && !editing} busy={busy} busyChanged={setBusy} saved={reload} /></div>
-    <Pipeline key={`pipeline:${value.version}`} deal={value} writable={writable} busy={busy} mutate={mutate} /><CustomerOffers key={`offers:${value.version}`} deal={value} writable={writable} busy={busy} mutate={mutate} />
+    <Pipeline key={`pipeline:${value.version}`} deal={value} writable={writable} busy={busy} mutate={mutate} /><CustomerOffers key={`offers:${value.id}`} deal={value} writable={writable} busy={busy} mutate={mutate} />
     <TaskPanel key={value.id} contactId={value.contact.id} dealId={value.id} writable={!value.contact.archived_at} initialTask={initialTask} />
-    <OutcomeHistory key={`outcomes:${value.version}`} id={value.id} /><DealHistory key={`history:${value.version}`} id={value.id} /><FilePanel parentKind="deal" parentId={value.id} writable={writable && !busy} />
+    <OutcomeHistory key={`outcomes:${value.id}`} id={value.id} revision={value.version} /><DealHistory key={`history:${value.id}`} id={value.id} revision={value.version} /><FilePanel parentKind="deal" parentId={value.id} writable={writable && !busy} />
     </DealFinanceTabs>
     <Button action="back" asChild variant="outline" className="justify-self-start"><Link href="/deals">Toutes les affaires</Link></Button>
   </div>;

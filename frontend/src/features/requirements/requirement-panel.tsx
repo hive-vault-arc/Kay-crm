@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { RecordError } from "@/features/contacts/record-states";
 import { queryPath, useQuery } from "@/features/contacts/use-query";
+import { currentRecord } from "@/features/realtime/current-record";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { apiGet, ApiError } from "@/lib/api/client";
 import { apiCommand } from "@/lib/api/command";
@@ -33,7 +34,7 @@ export function RequirementPanel({ contactId, writable }: { contactId: string; w
 function RequirementDetail({ id, contactId, writable, close, changed }: { id: string; contactId: string; writable: boolean; close: () => void; changed: () => void }) {
   const query = useQuery(`/api/v1/requirements/${id}`, detailSchema);
   const [fresh, setFresh] = useState<Requirement>(); const [editing, setEditing] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState<ApiError>(); const [notice, setNotice] = useState("");
-  const attempt = useRef({ key: "", fingerprint: "" }); const value = (fresh && (!query.value || fresh.version >= query.value.version) ? fresh : query.value);
+  const attempt = useRef({ key: "", fingerprint: "" }); const value = currentRecord(query.value, fresh, id);
   const focusEdit = useRef(false);
   const restoreEditFocus = useCallback((node: HTMLButtonElement | null) => {
     if (node && focusEdit.current) { focusEdit.current = false; node.focus(); }

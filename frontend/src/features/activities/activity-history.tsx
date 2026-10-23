@@ -25,12 +25,12 @@ const columns: ColumnDef<Activity>[] = [
   { id: "actor", header: "Auteur", cell: ({ row }) => <span className="block min-w-table-text wrap-anywhere">{row.original.actor.display_name}</span> },
 ];
 
-export function ActivityHistory({ scope, id, origin = false, writable = false }: { scope: "enquiries" | "deals"; id: string; origin?: boolean; writable?: boolean }) {
+export function ActivityHistory({ scope, id, origin = false, writable = false, revision }: { scope: "enquiries" | "deals"; id: string; origin?: boolean; writable?: boolean; revision?: number }) {
   const [page, setPage] = useState(1), [kind, setKind] = useState(""), [adding, setAdding] = useState(false), [notice, setNotice] = useState("");
   const selectId = useId(), addButton = useRef<HTMLButtonElement>(null);
   const title = origin ? "Historique du Lead d’origine" : scope === "enquiries" ? "Historique du Lead" : "Activités de l’affaire";
   const path = `${scope}/${id}/${origin ? "origin-activities" : "activities"}`;
-  const query = useQuery(queryPath(path, { page, page_size: 20, kind }), activitiesSchema);
+  const query = useQuery(queryPath(path, { page, page_size: 20, kind }), activitiesSchema, revision);
   function close() { setAdding(false); addButton.current?.focus(); }
   return <section className="grid min-w-0 gap-4 border-t pt-6" aria-label={title}>
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-section font-medium">{title}</h2><div className="flex flex-wrap gap-2"><Button liveRefresh action="refresh" variant="quiet" onClick={query.refresh}>Actualiser l’historique</Button>{writable && !origin ? <Button action="create" ref={addButton} aria-expanded={adding} onClick={() => { setAdding(true); setNotice(""); }}>Ajouter une activité</Button> : null}</div></div>

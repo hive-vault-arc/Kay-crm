@@ -5,6 +5,25 @@ import { loadServer } from "./load-server.mjs";
 const { matchesTopics } = loadServer("src/features/realtime/query-topics.ts");
 const { ticketSchema, pushBodySchema } = loadServer("src/features/realtime/contracts.ts");
 const contracts = loadServer("src/features/realtime/contracts.ts");
+const { currentRecord } = loadServer("src/features/realtime/current-record.ts");
+
+test("authoritative same-version projections replace a local saved snapshot", () => {
+  const saved = { id: "one", version: 2, relatedName: "old" };
+  const remote = { id: "one", version: 2, relatedName: "current" };
+  assert.equal(currentRecord(remote, saved, "one"), remote);
+});
+test("a newer committed snapshot survives an older in-flight read until reconciliation", () => {
+  const local = { id: "one", version: 3 }, old = { id: "one", version: 2 }, latest = { id: "one", version: 4 };
+  assert.equal(currentRecord(old, local, "one"), local);
+  assert.equal(currentRecord(undefined, local, "one"), local);
+  assert.equal(currentRecord(latest, local, "one"), latest);
+});
+test("route and canonical identities prevent stale local records masking a new target", () => {
+  const old = { id: "old", version: 99 }, current = { id: "current", version: 1 };
+  assert.equal(currentRecord(current, old, "current"), current);
+  assert.equal(currentRecord(current, old, "old"), current);
+  assert.equal(currentRecord(undefined, old, "current"), undefined);
+});
 
 test("live invalidations reach related views without refreshing unrelated finance", () => {
   assert.ok(matchesTopics("/api/v1/deals?page=3", ["contacts"]));

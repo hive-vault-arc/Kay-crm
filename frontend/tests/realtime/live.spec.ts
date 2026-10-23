@@ -90,6 +90,47 @@ test("authenticated consultation routes retain live delivery on desktop and mobi
   }
 });
 
+for (const scope of ["contact", "deal"] as const) test(`live ${scope} revision retains history page and filters`, async ({ page }) => {
+  test.setTimeout(180_000);
+  const actor = await createActor("agent");
+  try {
+    await signIn(page, actor, "/leads");
+    const lid = await createLead(page, "Contact synthétique de pagination", "+212600004242");
+    const lead = await (await page.request.get(`/api/v1/enquiries/${lid}`)).json();
+    if (scope === "contact") {
+      for (let index = 0; index < 26; index++) expect((await staffCommand(page, `contacts/${lead.contact.id}/notes`, { kind: "note", body: `Pagination synthétique ${index}` })).status()).toBe(200);
+      await page.goto(`/contacts/${lead.contact.id}`);
+      await page.getByRole("tab", { name: "Historique", exact: true }).click();
+      const pages = page.getByRole("navigation", { name: "Pages de l’historique", exact: true });
+      await pages.getByRole("button", { name: "Page 2", exact: true }).click();
+      await expect(pages.getByRole("button", { name: "Page 2", exact: true })).toHaveAttribute("aria-current", "page");
+      const current = await (await page.request.get(`/api/v1/contacts/${lead.contact.id}`)).json();
+      const changed = await staffCommand(page, `contacts/${current.id}`, { expected_version: current.version, name: "Contact synthétique actualisé", type: current.type, phones: current.phones, emails: current.emails, roles: current.roles, country: current.country, nationality: current.nationality, languages: current.languages }, "PATCH");
+      expect(changed.status()).toBe(200);
+      await expect(page.getByRole("heading", { name: "Contact : Contact synthétique actualisé", exact: true })).toBeVisible();
+      await expect(pages.getByRole("button", { name: "Page 2", exact: true })).toHaveAttribute("aria-current", "page");
+      await expect(page.getByText("Chargement de l’historique…", { exact: true })).toHaveCount(0);
+    } else {
+      const created = await staffCommand(page, "deals", dealBody(lead.contact.id));
+      expect(created.status()).toBe(200);
+      const deal = await created.json();
+      for (let index = 0; index < 21; index++) expect((await staffCommand(page, `deals/${deal.id}/activities`, { kind: "note", body: `Pagination synthétique ${index}` })).status()).toBe(200);
+      await page.goto(`/deals/${deal.id}`);
+      const history = page.getByRole("region", { name: "Activités de l’affaire", exact: true });
+      await history.getByLabel("Filtrer les activités", { exact: true }).selectOption("note");
+      const pages = history.getByRole("navigation", { name: "Pages : Activités de l’affaire", exact: true });
+      await pages.getByRole("button", { name: "Page 2", exact: true }).click();
+      await expect(pages.getByRole("button", { name: "Page 2", exact: true })).toHaveAttribute("aria-current", "page");
+      const current = await (await page.request.get(`/api/v1/deals/${deal.id}`)).json();
+      expect((await staffCommand(page, `deals/${deal.id}/transition`, { expected_version: current.version, stage: "documents", reason: "Transition synthétique de pagination" })).status()).toBe(200);
+      await expect(page.getByRole("region", { name: "Pipeline de l’affaire", exact: true }).locator('li[aria-current="step"]')).toHaveText(/Documents/);
+      await expect(history.getByLabel("Filtrer les activités", { exact: true })).toHaveValue("note");
+      await expect(pages.getByRole("button", { name: "Page 2", exact: true })).toHaveAttribute("aria-current", "page");
+      await expect(history.getByText("Chargement de l’historique…", { exact: true })).toHaveCount(0);
+    }
+  } finally { await clearActorContext(page); await removeActor(actor); }
+});
+
 test("browser push requires opt-in, delivers a generic alert and can be disabled", async ({ playwright, baseURL }) => {
   test.setTimeout(240_000);
   if (baseURL !== "https://localhost:3100") throw new Error("ISOLATED_PUSH_ORIGIN_REQUIRED");
