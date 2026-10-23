@@ -32,7 +32,10 @@ synthetic targets. Pytest and browser fixtures remain serial on the test target.
 
 Hosted39936891171 failed an old JSON preservation assertion;39939196901 then
 found a cumulative-merge task fixture missing the newly required explicit
-prospect context. Failures are retained, not waived. Broader local regression
+prospect context and a calendar selector expecting an anchor around the whole
+agenda card. That selector now targets the card's actual visit link, keeping the
+cancel button separate. A missed-visit journey asserts terminal cards have no
+cancel action. Failures are retained, not waived. Broader local regression
 and a new exact-candidate hosted full run remain required. Final full integration,
 production migration/source and WSS evidence will be linked on
 [PR25](https://github.com/hive-vault-arc/Kay-crm/pull/25).

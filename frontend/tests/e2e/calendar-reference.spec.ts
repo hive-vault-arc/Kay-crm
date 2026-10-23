@@ -71,10 +71,10 @@ test("calendar reference: populated office, car and no-car visits", async ({ pag
     await expect(grid.locator("a[data-status=confirmed]")).toHaveCount(2);
     await page.getByRole("checkbox", { name: "Planifiée", exact: true }).check();
     await page.getByRole("tab", { name: "Agenda", exact: true }).click();
-    await expect(page.locator("a.calendar-agenda-visit")).toHaveCount(4);
+    await expect(page.locator(".calendar-agenda-visit")).toHaveCount(4);
     await page.getByRole("tab", { name: "Par type", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Avec véhicule de société", exact: true })).toBeVisible();
-    await expect(page.locator("a.calendar-agenda-visit")).toHaveCount(4);
+    await expect(page.locator(".calendar-agenda-visit")).toHaveCount(4);
     await page.getByRole("tab", { name: "Semaine", exact: true }).click();
     await page.getByRole("button", { name: "Règles et disponibilités", exact: true }).first().click();
     await expect(page.getByRole("dialog", { name: "Règles et disponibilités", exact: true })).toBeVisible();
@@ -119,8 +119,8 @@ test("calendar reference: populated office, car and no-car visits", async ({ pag
       await phone.getByRole("checkbox", { name: "Au bureau", exact: true }).tap();
       await expect(phone.getByRole("checkbox", { name: "Au bureau", exact: true })).not.toBeChecked();
       await phone.getByRole("button", { name: "Fermer les filtres", exact: true }).tap();
-      await expect(phone.locator("a.calendar-agenda-visit")).toHaveCount(2); await geometry(phone);
-      await phone.locator("a.calendar-agenda-visit").first().tap();
+      await expect(phone.locator(".calendar-agenda-visit")).toHaveCount(2); await geometry(phone);
+      await phone.locator(".calendar-agenda-visit").first().getByRole("link").tap();
       await expect(phone.getByRole("heading", { name: "Historique de la visite", exact: true })).toBeVisible();
     } finally { await touch.close(); }
     const profile = info.outputPath("calendar-zoom-profile");

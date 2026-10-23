@@ -17,6 +17,6 @@ export function CalendarVisit({ visit, onChanged }: { visit: Visit; onChanged?: 
     <p className="text-sm">{localLabel(visit.start_local)} à {localLabel(visit.end_local)}</p>
     <p className="text-sm text-muted-foreground">{typeLabels[visit.type]}</p>
     {visit.review_code ? <p className="text-sm text-warning">Règles de planification à revoir</p> : null}
-    {!visit.contact_archived && !["completed", "cancelled"].includes(visit.status) && onChanged ? <div className="justify-self-start"><VisitAction value={visit} action="cancel" saved={onChanged} /></div> : null}
+    {!visit.contact_archived && !["completed", "not_completed", "cancelled"].includes(visit.status) && onChanged ? <div className="justify-self-start"><VisitAction value={visit} action="cancel" saved={onChanged} /></div> : null}
   </div>;
 }

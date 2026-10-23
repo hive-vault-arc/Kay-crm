@@ -132,11 +132,18 @@ test("Visit follow-up after two hours records a distinct missed outcome in the l
     await page.getByRole("alertdialog").getByLabel("Pourquoi la visite n’a pas eu lieu (obligatoire)", { exact: true }).fill("Le client était absent au rendez-vous synthétique.");
     await page.getByRole("alertdialog").getByRole("button", { name: "Marquer non réalisée", exact: true }).click();
     await expect(page.getByRole("alertdialog")).not.toBeVisible();
-    expect((await (await page.request.get(`/api/v1/visits/${vid}`)).json()).status).toBe("not_completed");
+    const missed = await (await page.request.get(`/api/v1/visits/${vid}`)).json();
+    expect(missed.status).toBe("not_completed");
     expect((await (await page.request.get("/api/v1/notifications")).json()).total).toBe(0);
     const leads = await (await page.request.get(`/api/v1/enquiries?contact_id=${contactId}`)).json();
     const history = await (await page.request.get(`/api/v1/enquiries/${leads.items[0].id}/activities`)).json();
     expect(history.items.some((item: { action: string; reason: string }) => item.action === "visits.not_completed" && item.reason.includes("client était absent"))).toBe(true);
+    await page.goto("/visits");
+    await page.getByLabel("Semaine contenant le", { exact: true }).fill(missed.start_local.slice(0, 10));
+    await page.getByRole("tab", { name: "Agenda", exact: true }).click();
+    const missedCard = page.locator(".calendar-agenda-visit").filter({ has: page.locator(`a[href="/visits/${vid}"]`) });
+    await expect(missedCard).toBeVisible();
+    await expect(missedCard.getByRole("button", { name: "Annuler la visite", exact: true })).toHaveCount(0);
   } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
 });
 
