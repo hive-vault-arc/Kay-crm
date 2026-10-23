@@ -10,13 +10,15 @@ test("propriétaire: create, private scope, inventory history and former link", 
   const manager = await createActor("manager");
   const outsider = await createActor("agent");
   const name = `Propriétaire synthétique ${randomUUID().slice(0, 8)}`;
-  const phone = `+2126${String(Math.floor(Math.random() * 100_000_000)).padStart(8, "0")}`;
+  const phone = `+212611${String(Math.floor(Math.random() * 1_000_000)).padStart(6, "0")}`;
   try {
     await signIn(page, agent);
     await page.goto("/owners/new");
     await page.getByLabel("Nom du contact", { exact: true }).fill(name);
     await page.getByLabel("Téléphone 1 *", { exact: true }).fill(phone);
+    const created = page.waitForResponse(response => response.url().endsWith("/api/v1/contacts") && response.request().method() === "POST");
     await page.getByRole("button", { name: "Créer le propriétaire", exact: true }).click();
+    expect((await created).status()).toBe(200);
     await expect.poll(() => /^\/owners\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
     const ownerId = new URL(page.url()).pathname.split("/")[2];
     await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();

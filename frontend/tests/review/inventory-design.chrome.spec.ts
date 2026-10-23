@@ -126,12 +126,20 @@ test("an agent must enter a valid rental price before creating a priced draft", 
     await page.goto("/projects/properties/new");
     const form = page.getByRole("form", { name: "Créer un bien indépendant" });
     const reference = `RENT-${randomUUID().slice(0, 8)}`.toUpperCase();
-    await form.getByLabel("Référence du bien", { exact: true }).fill(reference);
-    await form.getByLabel("Type d’offre initiale", { exact: true }).selectOption("rental");
+    await form.locator("#property-reference").fill(reference);
+    await form.getByRole("radio", { name: "Location", exact: true }).check();
     await form.getByRole("button", { name: "Suivant", exact: true }).click();
-    await expect(form.getByRole("alert")).toContainText("prix positif");
-    await form.getByLabel("Loyer demandé en MAD", { exact: true }).fill("8000,50");
-    await form.getByLabel("Période du loyer", { exact: true }).selectOption("year");
+    await expect(form.getByRole("alert")).toContainText("prix en MAD");
+    await form.locator("#property-price_mad").fill("8000.50");
+    await form.locator("#property-period").selectOption("year");
+    await form.getByRole("button", { name: "Suivant", exact: true }).click();
+    await form.locator("#property-region").fill("Tanger-Tétouan-Al Hoceïma");
+    await form.locator("#property-city").fill("Tanger");
+    await form.getByRole("button", { name: "Suivant", exact: true }).click();
+    await form.locator("#property-area_sqm").fill("75");
+    await form.locator("#property-rooms").fill("3");
+    await form.locator("#property-bedrooms").fill("2");
+    await form.locator("#property-bathrooms").fill("1");
     await form.getByRole("button", { name: "Suivant", exact: true }).click();
     await form.getByRole("button", { name: "Suivant", exact: true }).click();
     await expect(form.getByRole("complementary", { name: "Aperçu du dossier" })).toContainText("8 000,50 MAD / an");
@@ -192,7 +200,7 @@ test("programme creation keeps its draft through keyboard navigation and optiona
   const contactOwner = await createActor("agent");
   try {
     await signIn(page, contactOwner);
-    await createLead(page, "Promoteur de contrôle synthétique", `+2126${Math.floor(Math.random() * 100_000_000).toString().padStart(8, "0")}`);
+    await createLead(page, "Promoteur de contrôle synthétique", `+212611${Math.floor(Math.random() * 1_000_000).toString().padStart(6, "0")}`);
     await clearActorContext(page);
     await signIn(page, manager);
     await page.goto("/projects/new");

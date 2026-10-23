@@ -10,6 +10,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { formatMAD } from "@/lib/format";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -139,7 +140,7 @@ export function StandalonePropertyWizard() {
   const options = Object.entries(amenityLabels).filter(([key]) => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(key));
   const facts = [
     { label: "Référence", value: trim(values.reference) }, { label: "Type", value: categoryLabels[category] }, { label: "Offre", value: kindLabels[values.market] },
-    { label: "Prix", value: values.price_mad ? `${values.price_mad} MAD${values.market === "sale" ? "" : ` / ${values.period === "day" ? "jour" : values.period === "week" ? "semaine" : values.period === "year" ? "an" : "mois"}`}` : null },
+    { label: "Prix", value: values.price_mad ? `${formatMAD(values.price_mad)}${values.market === "sale" ? "" : ` / ${values.period === "day" ? "jour" : values.period === "week" ? "semaine" : values.period === "year" ? "an" : "mois"}`}` : null },
     { label: "Ville", value: trim(values.city) }, { label: "Surface", value: values.area_sqm ? `${values.area_sqm} m²` : null },
     { label: "Google Maps", value: values.google_maps_url ? "Lien renseigné" : null },
     { label: "Équipements", value: values.amenities.length ? `${values.amenities.length} sélectionné(s)` : null },
