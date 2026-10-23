@@ -1,5 +1,13 @@
 # KAY screen map and navigation contract
 
+2026-10-23 owner-requested help: `/help` is an authenticated searchable,
+role-filtered French guide directory; `/help/{slug}` provides steps, explanations,
+contents anchors and related reading. Aide sits above the identity in the footer,
+including collapsed/mobile navigation. Article actions open existing routes with
+their ordinary authorization; no support sender or new business API. The shared
+short-desktop drawer switch is44rem high to keep the extra44px action reachable
+without a scrollable desktop rail. [Scope and evidence](../03-planning/help-centre.md).
+
 2026-10-20 generated documents: `/leads/{id}/documents` and
 `/deals/{id}/documents` open from a visible record-header action. A responsive
 model list sits beside the editable prefilled preparation form; a separate

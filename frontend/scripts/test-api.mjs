@@ -7,10 +7,12 @@ import { request as httpsRequest } from "node:https";
 import path from "node:path";
 import { setTimeout as pause } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
+import { testPorts } from "./test-ports.mjs";
 
 const backend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../backend");
 const token = randomBytes(32).toString("hex");
-const port = 8100;
+const ports = testPorts();
+const port = ports.api;
 let child;
 let worker;
 let simulator;
@@ -97,7 +99,7 @@ async function startSimulator() {
   if (simulator) return;
   simulatorExit = undefined; simulatorFailure = "";
   simulatorStarted = performance.now();
-  const running = spawn(path.join(backend, ".venv/Scripts/python.exe"), ["-m", "app.cli.website_simulator", "--environment", "test", "--port", "8102", "--api-port", "8100", "--frontend-port", "3100"], {
+  const running = spawn(path.join(backend, ".venv/Scripts/python.exe"), ["-m", "app.cli.website_simulator", "--environment", "test", "--port", String(ports.simulator), "--api-port", String(port), "--frontend-port", String(ports.frontend)], {
     cwd: backend, windowsHide: true, stdio: ["ignore", "ignore", "pipe"],
     env: { ...process.env, APP_ENVIRONMENT: "test" },
   });
@@ -121,7 +123,7 @@ async function waitForLive(running) {
     if (running.exitCode !== null || running.signalCode !== null) throw new Error("TEST_API_PROCESS_EXITED");
     if (child !== running) throw new Error("TEST_API_PROCESS_REPLACED");
     const live = await new Promise(resolve => {
-      const probe = httpsRequest("https://localhost:8100/api/v1/health/live", { ca, rejectUnauthorized: true, family: 4 }, response => {
+      const probe = httpsRequest(`https://localhost:${port}/api/v1/health/live`, { ca, rejectUnauthorized: true, family: 4 }, response => {
         const chunks = []; let size = 0;
         response.on("data", chunk => { size += chunk.length; if (size > 128) probe.destroy(); else chunks.push(chunk); });
         response.on("error", () => resolve(false));
@@ -142,7 +144,7 @@ async function waitForLive(running) {
 async function start() {
   child = spawn(path.join(backend, ".venv/Scripts/python.exe"), [
     "-m", "app.cli.serve", "--environment", activeEnvironment, "--port", String(port),
-  ], { cwd: backend, stdio: "inherit", windowsHide: true, env: { ...process.env, FRONTEND_ORIGIN: "https://localhost:3100" } });
+  ], { cwd: backend, stdio: "inherit", windowsHide: true, env: { ...process.env, FRONTEND_ORIGIN: `https://localhost:${ports.frontend}` } });
   child.on("error", () => { process.exitCode = 1; });
   child.once("exit", () => { child = undefined; });
   await waitForLive(child);
@@ -212,11 +214,11 @@ lease.once("exit", async () => {
     server.close(() => process.exit(1));
   }
 });
-server.listen(8101, "127.0.0.1", async () => {
+server.listen(ports.control, "127.0.0.1", async () => {
   const directory = path.join(backend, ".local-data");
   await mkdir(directory, { recursive: true });
   await writeFile(path.join(directory, "e2e-api-control.json"), JSON.stringify({
-    url: "http://127.0.0.1:8101", token,
+    url: `http://127.0.0.1:${ports.control}`, token,
   }));
   try {
     // Interrupted browser runs can leave synthetic actors; refuse any other data.

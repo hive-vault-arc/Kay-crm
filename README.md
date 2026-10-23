@@ -1,5 +1,9 @@
 # KEPVY for KAY: specification index
 
+The local [KAY help centre](docs/03-planning/help-centre.md) adds authenticated
+French usage guides and the footer Aide entry. It is not published; current
+verification is recorded separately from the historical release evidence below.
+
 [Live updates contract](docs/04-design/realtime.md) and
 [implementation/release gates](docs/03-planning/realtime-execution.md) describe
 the default-off WebSocket/Web Push slice. Hosted WSS validation remains required

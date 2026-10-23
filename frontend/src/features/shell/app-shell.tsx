@@ -154,7 +154,7 @@ export function AppShell({ children, identity }: { children: React.ReactNode; id
                     }}
                   />
                 </div>
-                <AccountFooter user={identity.user} />
+                <AccountFooter user={identity.user} onNavigate={href => { focusTarget.current = href; navigationClose.current = true; setOpen(false); }} />
               </SheetContent>
             </Sheet>
             <p className="hidden min-w-0 text-sm font-medium md:block lg:hidden">

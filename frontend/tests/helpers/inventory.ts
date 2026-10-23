@@ -2,6 +2,22 @@ import { randomUUID } from "node:crypto";
 import type { Page } from "@playwright/test";
 import { expect } from "./auth";
 
+export async function propertyEditStep(page: Page, target: number) {
+  const form = page.getByRole("form", { name: "Modifier le bien", exact: true });
+  const progress = form.getByRole("navigation", { name: "Progression de la modification", exact: true }).getByRole("status");
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const current = Number((await progress.textContent())?.match(/Étape (\d+)/)?.[1]) - 1;
+    if (current === target) return;
+    await form.getByRole("button", { name: current < target ? "Suivant" : "Précédent", exact: true }).click();
+  }
+  await expect(progress).toHaveText(`Étape ${target + 1} sur 5`);
+}
+
+export async function savePropertyEdit(page: Page) {
+  await propertyEditStep(page, 4);
+  await page.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+}
+
 export async function createProperty(page: Page, category = "apartment", reference = `SP07-${randomUUID()}`) {
   // Existing campaign-lifecycle tests need an empty property with no initial offer.
   // The standalone UI now creates a priced draft; its own flow has dedicated coverage.

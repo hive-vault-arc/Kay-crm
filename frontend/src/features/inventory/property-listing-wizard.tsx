@@ -14,10 +14,11 @@ import { formatMAD } from "@/lib/format";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { amenityLabels, categoryLabels, createPropertySchema, kindLabels, type Property } from "./contracts";
+import { amenityLabels, categoryLabels, createPropertySchema, editPropertySchema, kindLabels, type Property } from "./contracts";
 import { InventoryDraftSummary } from "./inventory-draft-summary";
 import { InventoryWizardSteps } from "./inventory-wizard-steps";
-import { InventoryError } from "./states";
+import { InventoryError, Price } from "./states";
+import { LevelPicker } from "./level-picker";
 import { useInventoryCommand } from "./use-command";
 
 type Category = Property["category"];
@@ -52,7 +53,17 @@ const numberOrNull = (value: string) => trim(value) ? Number(value) : null;
 const amountOrNull = (value: string) => trim(value).replace(",", ".") || null;
 const textOrNull = (value: string) => trim(value) || null;
 
-function buildPayload(values: Values) {
+function savedValues(property?: Property): Values {
+  if (!property) return initial;
+  const details = property.listing_details;
+  const values = { ...initial, category: property.category, reference: property.reference, marketing_name: property.marketing_name ?? "", location: property.location ?? "", area_sqm: property.area_sqm ?? "", rooms: property.rooms?.toString() ?? "", amenities: [...details.amenities] };
+  for (const key of Object.keys(details) as (keyof typeof details)[]) {
+    if (key !== "amenities") Object.assign(values, { [key]: details[key]?.toString() ?? "" });
+  }
+  return values;
+}
+
+function buildPayload(values: Values, editing = false) {
   const category = values.category;
   const options = values.amenities.filter(option => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(option));
   const details = {
@@ -60,8 +71,8 @@ function buildPayload(values: Values) {
     address: textOrNull(values.address), region: textOrNull(values.region), city: textOrNull(values.city), district: textOrNull(values.district), neighborhood: textOrNull(values.neighborhood), google_maps_url: textOrNull(values.google_maps_url),
     bedrooms: hasRooms(category) ? numberOrNull(values.bedrooms) : null,
     bathrooms: category === "land" || category === "farm" ? null : numberOrNull(values.bathrooms),
-    capacity: values.market === "holiday" ? numberOrNull(values.capacity) : null,
-    minimum_nights: values.market === "holiday" ? numberOrNull(values.minimum_nights) : null,
+    capacity: (editing && holidayCategories.has(category)) || values.market === "holiday" ? numberOrNull(values.capacity) : null,
+    minimum_nights: (editing && holidayCategories.has(category)) || values.market === "holiday" ? numberOrNull(values.minimum_nights) : null,
     age_band: category === "land" || category === "farm" ? null : textOrNull(values.age_band),
     floor_type: category === "land" || category === "farm" ? null : textOrNull(values.floor_type),
     unit_floor: floorCategories.has(category) ? numberOrNull(values.unit_floor) : null,
@@ -77,20 +88,30 @@ function buildPayload(values: Values) {
     description: textOrNull(values.description),
   };
   return {
-    reference: trim(values.reference), category, marketing_name: textOrNull(values.marketing_name), location: textOrNull(values.location) ?? textOrNull(values.city), area_sqm: amountOrNull(values.area_sqm), rooms: hasRooms(category) ? numberOrNull(values.rooms) : null,
+    reference: trim(values.reference), category, marketing_name: textOrNull(values.marketing_name), location: textOrNull(values.location) ?? (editing ? null : textOrNull(values.city)), area_sqm: amountOrNull(values.area_sqm), rooms: hasRooms(category) ? numberOrNull(values.rooms) : null,
     listing_details: details,
     initial_offering: { kind: values.market, price_mad: amountOrNull(values.price_mad), price_period: values.market === "sale" ? null : values.period, currency: "MAD" },
   };
 }
 
-export function StandalonePropertyWizard() {
+export function PropertyListingWizard({ property }: { property?: Property }) {
   const router = useRouter();
   const hydrated = useHydrated();
   const command = useInventoryCommand();
-  const [values, setValues] = useState<Values>(initial);
+  const [values, setValues] = useState<Values>(() => savedValues(property));
+  const [version, setVersion] = useState(property?.version ?? 1);
+  const [placement, setPlacement] = useState({ block_id: property?.hierarchy?.block?.id ?? "", floor_id: property?.floor_id ?? "", unit_type_id: property?.unit_type_id ?? "" });
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
+  const editing = Boolean(property);
+  const requiredDetails = !editing;
+  const holidayDetails = holidayCategories.has(values.category) && (editing || values.market === "holiday");
+  const wizardSteps = editing ? [{ ...steps[0], label: "Type et identité", mobileLabel: "Type" }, ...steps.slice(1)] : steps;
+  function payload() {
+    const { initial_offering, ...fields } = buildPayload(values, editing);
+    return property ? editPropertySchema.safeParse({ ...fields, expected_version: version, ...(property.development_id ? { development_id: property.development_id, floor_id: placement.floor_id || null, unit_type_id: placement.unit_type_id || null } : {}) }) : createPropertySchema.safeParse({ ...fields, initial_offering });
+  }
   const set = (field: Field, value: string) => setValues(previous => ({ ...previous, [field]: value }));
   const field = (name: Field, label: string, options?: { required?: boolean; type?: "number" | "url"; hint?: string; maxLength?: number }) => <div className="grid min-w-0 gap-2"><Label htmlFor={`property-${name}`}>{label}{options?.required ? " *" : ""}</Label><Input id={`property-${name}`} value={values[name]} onChange={event => set(name, event.target.value)} required={options?.required} type={options?.type ?? "text"} inputMode={options?.type === "number" ? "decimal" : undefined} min={options?.type === "number" ? 0 : undefined} step={options?.type === "number" ? "any" : undefined} maxLength={options?.maxLength} aria-describedby={options?.hint ? `hint-${name}` : undefined} />{options?.hint ? <p id={`hint-${name}`} className="text-xs text-muted-foreground">{options.hint}</p> : null}</div>;
   const select = (name: Field, label: string, options: Record<string, string>) => <div className="grid min-w-0 gap-2"><Label htmlFor={`property-${name}`}>{label}</Label><NativeSelect id={`property-${name}`} value={values[name]} onChange={event => set(name, event.target.value)}><option value="">Non renseigné</option>{Object.entries(options).map(([value, text]) => <option key={value} value={value}>{text}</option>)}</NativeSelect></div>;
@@ -102,8 +123,11 @@ export function StandalonePropertyWizard() {
   }
   function focus(next: number) { setStep(next); setError(""); requestAnimationFrame(() => heading.current?.focus()); }
   function validate(current: number): boolean {
-    const payload = buildPayload(values);
-    const required: [boolean, string][] = current === 0 ? [
+    const required: [boolean, string][] = current === 3 ? [
+      [!values.amenities.includes("garden") || Boolean(values.garden_area_sqm), "Indiquez la surface du jardin."],
+      [!values.amenities.includes("terrace") || Boolean(values.terrace_area_sqm), "Indiquez la surface de la terrasse."],
+      [!values.amenities.includes("garage") || Boolean(values.garage_spaces), "Indiquez le nombre de places de garage."],
+    ] : editing ? current === 0 ? [[Boolean(trim(values.reference)), "Saisissez la référence du bien."]] : [] : current === 0 ? [
       [Boolean(trim(values.reference)), "Saisissez la référence du bien."],
       [Boolean(amountOrNull(values.price_mad)), "Indiquez un prix en MAD."],
     ] : current === 1 ? [
@@ -113,14 +137,10 @@ export function StandalonePropertyWizard() {
       [!hasRooms(values.category) || Boolean(values.rooms && values.bedrooms && values.bathrooms), "Indiquez les pièces, chambres et salles de bain."],
       [values.category !== "room" && values.category !== "commercial" && values.category !== "office" || values.bathrooms !== "", "Indiquez le nombre de salles de bain."],
       [values.market !== "holiday" || Boolean(values.capacity && values.minimum_nights), "Indiquez la capacité et la durée minimale du séjour."],
-    ] : current === 3 ? [
-      [!values.amenities.includes("garden") || Boolean(values.garden_area_sqm), "Indiquez la surface du jardin."],
-      [!values.amenities.includes("terrace") || Boolean(values.terrace_area_sqm), "Indiquez la surface de la terrasse."],
-      [!values.amenities.includes("garage") || Boolean(values.garage_spaces), "Indiquez le nombre de places de garage."],
     ] : [];
     const missing = required.find(([valid]) => !valid);
     if (missing) { setError(missing[1]); return false; }
-    const parsed = createPropertySchema.safeParse(payload);
+    const parsed = payload();
     if (!parsed.success) {
       const section = current === 0 ? ["reference", "marketing_name", "initial_offering"] : current === 1 ? ["location", "region", "city", "google_maps_url", "address", "district", "neighborhood"] : current === 2 ? ["area_sqm", "rooms", "bedrooms", "bathrooms", "capacity", "minimum_nights", "condition", "age_band", "floor_type", "unit_floor", "building_floors", "orientation", "plot_area_sqm", "land_delivery", "land_status"] : current === 3 ? ["amenities", "garden_area_sqm", "terrace_area_sqm", "garage_spaces", "description"] : [];
       if (parsed.error.issues.some(issue => issue.path.some(path => section.includes(String(path))))) {
@@ -132,38 +152,53 @@ export function StandalonePropertyWizard() {
   }
   async function save() {
     for (let index = 0; index < 4; index++) if (!validate(index)) { setStep(index); requestAnimationFrame(() => heading.current?.focus()); return; }
-    const parsed = createPropertySchema.safeParse(buildPayload(values));
-    if (!parsed.success) { setError("Vérifiez les informations saisies avant de créer le bien."); return; }
-    await command.submit("/api/v1/properties", parsed.data, "POST", id => router.push(`/projects/properties/${id}`));
+    const parsed = payload();
+    if (!parsed.success) { setError("Vérifiez les informations saisies avant d’enregistrer le bien."); return; }
+    await command.submit(property ? `/api/v1/properties/${property.id}` : "/api/v1/properties", parsed.data, property ? "PATCH" : "POST", id => router.push(`/projects/properties/${id}`));
   }
   const category = values.category;
   const options = Object.entries(amenityLabels).filter(([key]) => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(key));
   const reviewAmount = amountOrNull(values.price_mad);
   const reviewPrice = reviewAmount && /^[0-9]{1,16}(\.[0-9]{1,2})?$/.test(reviewAmount) && /[1-9]/.test(reviewAmount) ? formatMAD(reviewAmount) : null;
   const facts = [
-    { label: "Référence", value: trim(values.reference) }, { label: "Type", value: categoryLabels[category] }, { label: "Offre", value: kindLabels[values.market] },
-    { label: "Prix", value: reviewPrice ? `${reviewPrice}${values.market === "sale" ? "" : ` / ${values.period === "day" ? "jour" : values.period === "week" ? "semaine" : values.period === "year" ? "an" : "mois"}`}` : null },
+    { label: "Référence", value: trim(values.reference) }, { label: "Type", value: categoryLabels[category] }, { label: "Titre", value: trim(values.marketing_name) },
+    ...(!editing ? [{ label: "Offre", value: kindLabels[values.market] }, { label: "Prix", value: reviewPrice ? `${reviewPrice}${values.market === "sale" ? "" : ` / ${values.period === "day" ? "jour" : values.period === "week" ? "semaine" : values.period === "year" ? "an" : "mois"}`}` : null }] : []),
     { label: "Ville", value: trim(values.city) }, { label: "Surface", value: values.area_sqm ? `${values.area_sqm} m²` : null },
     { label: "Google Maps", value: values.google_maps_url ? "Lien renseigné" : null },
     { label: "Équipements", value: values.amenities.length ? `${values.amenities.length} sélectionné(s)` : null },
   ];
-  return <form noValidate className="form-surface grid min-w-0 items-start gap-5 lg:grid-cols-[14rem_minmax(0,1fr)]" aria-label="Créer un bien indépendant" aria-busy={command.pending} onSubmit={event => { event.preventDefault(); if (step === 4) void save(); else if (validate(step)) focus(step + 1); }}>
-    <InventoryWizardSteps steps={steps} current={step} />
+  return <form noValidate className="form-surface grid min-w-0 items-start gap-5 lg:grid-cols-[14rem_minmax(0,1fr)]" aria-label={editing ? "Modifier le bien" : "Créer un bien indépendant"} aria-busy={command.pending} onSubmit={event => { event.preventDefault(); if (step === 4) void save(); else if (validate(step)) focus(step + 1); }}>
+    <InventoryWizardSteps steps={wizardSteps} current={step} label={editing ? "Progression de la modification" : undefined} />
     <div className="grid min-w-0 gap-5">
-      <div><h2 ref={heading} tabIndex={-1} className="sr-only">{steps[step].label}</h2><SectionHeading icon={steps[step].icon} tone="teal">{steps[step].label}</SectionHeading><p className="mt-2 text-sm text-muted-foreground">{step === 0 ? "Commencez par le type de bien et le prix de l’offre brouillon." : step === 1 ? "Situez le bien. Le lien Google Maps restera accessible sur sa fiche." : step === 2 ? "Seuls les champs utiles à ce type de bien sont affichés." : step === 3 ? "Ajoutez les équipements connus et une description courte." : "Relisez la fiche. Vous pourrez ajouter les photos après sa création."}</p></div>
+      <div><h2 ref={heading} tabIndex={-1} className="sr-only">{wizardSteps[step].label}</h2><SectionHeading icon={wizardSteps[step].icon} tone="teal">{wizardSteps[step].label}</SectionHeading><p className="mt-2 text-sm text-muted-foreground">{step === 0 ? editing ? "Modifiez les informations du bien. Les prix et les offres existantes restent inchangés." : "Commencez par le type de bien et le prix de l’offre brouillon." : step === 1 ? "Situez le bien. Le lien Google Maps restera accessible sur sa fiche." : step === 2 ? "Seuls les champs utiles à ce type de bien sont affichés." : step === 3 ? "Ajoutez les équipements connus et une description courte." : editing ? "Relisez les modifications avant de les enregistrer." : "Relisez la fiche. Vous pourrez ajouter les photos après sa création."}</p>{editing ? <p className="mt-2 text-xs text-muted-foreground">Les informations inconnues peuvent rester vides. Photos, propriétaires et documents sont conservés.</p> : null}</div>
       <fieldset disabled={!hydrated || command.pending} className="grid min-w-0 gap-5">
         {step === 0 ? <>
-          <div className="grid gap-4 sm:grid-cols-2">{field("reference", "Référence", { required: true, maxLength: 80 })}<div className="grid gap-2"><Label htmlFor="property-category">Type de bien *</Label><NativeSelect id="property-category" value={category} onChange={event => chooseCategory(event.target.value as Category)}>{Object.entries(categoryLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</NativeSelect></div><div className="sm:col-span-2">{field("marketing_name", "Titre de l’annonce (facultatif)", { maxLength: 50 })}</div></div>
+          <div className="grid gap-4 sm:grid-cols-2">{field("reference", "Référence", { required: true, maxLength: 80 })}<div className="grid gap-2"><Label htmlFor="property-category">Type de bien *</Label><NativeSelect id="property-category" value={category} onChange={event => chooseCategory(event.target.value as Category)}>{Object.entries(categoryLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</NativeSelect></div><div className="sm:col-span-2">{field("marketing_name", "Titre de l’annonce (facultatif)", { maxLength: editing ? 160 : 50 })}</div></div>
+          {!editing ? <>
           <div><Label id="property-market-label">Type d’offre *</Label><RadioGroup aria-labelledby="property-market-label" value={values.market} onValueChange={value => chooseMarket(value as Market)} className="mt-3 grid gap-2 sm:grid-cols-3">{(Object.entries(kindLabels) as [Market, string][]).filter(([key]) => key !== "holiday" || holidayCategories.has(category)).filter(([key]) => key !== "sale" || category !== "room").map(([key, label]) => <label key={key} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border bg-card px-3 py-2 text-sm"><RadioGroupItem value={key} />{label}</label>)}</RadioGroup></div>
           <div className="grid gap-4 sm:grid-cols-2">{field("price_mad", "Prix en MAD", { required: true, type: "number", hint: "Le prix crée une offre brouillon, sans publication automatique." })}{values.market !== "sale" ? <div className="grid gap-2"><Label htmlFor="property-period">Période *</Label><NativeSelect id="property-period" value={values.period} onChange={event => setValues(previous => ({ ...previous, period: event.target.value as Values["period"] }))}>{(values.market === "holiday" ? [["day", "Par jour"], ["week", "Par semaine"], ["month", "Par mois"]] : [["month", "Par mois"], ["year", "Par an"]]).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</NativeSelect></div> : null}</div>
+          </> : <section className="grid min-w-0 gap-3 rounded-md border p-4" aria-label="Offres conservées"><SectionHeading icon={FinanceIcon} tone="teal">Prix et offres</SectionHeading>{property?.offerings.length ? <dl className="grid min-w-0 gap-4 sm:grid-cols-3">{property.offerings.map(offer => <div key={offer.id} className="min-w-0"><dt className="text-sm text-muted-foreground">{kindLabels[offer.kind]}</dt><dd><Price offering={offer} /></dd></div>)}</dl> : <p className="text-sm text-muted-foreground">Aucune offre enregistrée.</p>}<p className="text-xs text-muted-foreground">Les prix se modifient dans l’onglet Offres, selon vos droits. Enregistrez ou annulez votre saisie avant de quitter ce formulaire.</p></section>}
         </> : null}
-        {step === 1 ? <div className="grid gap-4 sm:grid-cols-2">{field("region", "Région", { required: true, maxLength: 120 })}{field("city", "Ville", { required: true, maxLength: 120 })}{field("district", "Arrondissement", { maxLength: 120 })}{field("neighborhood", "Quartier", { maxLength: 120 })}<div className="sm:col-span-2">{field("address", "Adresse précise (facultative)", { maxLength: 500 })}</div><div className="sm:col-span-2">{field("location", "Repère ou localisation courte (facultatif)", { maxLength: 500 })}</div><div className="sm:col-span-2">{field("google_maps_url", "Lien Google Maps (facultatif)", { type: "url", maxLength: 2048, hint: "Collez un lien https://maps.google.com, https://www.google.com/maps ou https://maps.app.goo.gl." })}</div></div> : null}
-        {step === 2 ? <div className="grid gap-4 sm:grid-cols-2">{field("area_sqm", category === "land" ? "Surface du terrain en m²" : "Surface en m²", { required: true, type: "number" })}{plotCategories.has(category) ? field("plot_area_sqm", "Surface de la parcelle en m²", { type: "number" }) : null}{category !== "land" && category !== "farm" ? select("condition", "État du bien", conditionOptions) : null}{hasRooms(category) ? <>{field("rooms", "Nombre de pièces", { required: true, type: "number" })}{field("bedrooms", "Chambres", { required: true, type: "number" })}</> : null}{category !== "land" && category !== "farm" ? field("bathrooms", "Salles de bain", { required: true, type: "number" }) : null}{values.market === "holiday" ? <>{field("capacity", "Capacité d’accueil", { required: true, type: "number" })}{field("minimum_nights", "Séjour minimum (nuits)", { required: true, type: "number" })}</> : null}{category !== "land" && category !== "farm" ? <>{select("age_band", "Ancienneté", ageOptions)}{select("floor_type", "Revêtement du sol", floorOptions)}</> : null}{floorCategories.has(category) ? field("unit_floor", "Étage (0 à 20)", { type: "number" }) : null}{buildingCategories.has(category) ? field("building_floors", "Étages du bâtiment (1 à 4)", { type: "number" }) : null}{residential.has(category) && category !== "room" ? select("orientation", "Orientation", orientationOptions) : null}{category === "land" ? <>{select("land_delivery", "Livraison du terrain", { planned: "Prévue", titled: "Titré" })}{select("land_status", "Statut du terrain", { subdivided: "Lotissement", not_subdivided: "Non loti" })}</> : null}</div> : null}
+        {step === 1 ? <div className="grid gap-4 sm:grid-cols-2">{field("region", "Région", { required: requiredDetails, maxLength: 120 })}{field("city", "Ville", { required: requiredDetails, maxLength: 120 })}{field("district", "Arrondissement", { maxLength: 120 })}{field("neighborhood", "Quartier", { maxLength: 120 })}<div className="sm:col-span-2">{field("address", "Adresse précise (facultative)", { maxLength: 500 })}</div><div className="sm:col-span-2">{field("location", "Repère ou localisation courte (facultatif)", { maxLength: 500 })}</div><div className="sm:col-span-2">{field("google_maps_url", "Lien Google Maps (facultatif)", { type: "url", maxLength: 2048, hint: "Collez un lien https://maps.google.com, https://www.google.com/maps ou https://maps.app.goo.gl." })}</div></div> : null}
+        {step === 2 ? <div className="grid gap-4 sm:grid-cols-2">
+          {field("area_sqm", category === "land" ? "Surface du terrain en m²" : "Surface en m²", { required: requiredDetails, type: "number" })}
+          {plotCategories.has(category) ? field("plot_area_sqm", "Surface de la parcelle en m²", { type: "number" }) : null}
+          {category !== "land" && category !== "farm" ? select("condition", "État du bien", conditionOptions) : null}
+          {hasRooms(category) ? <>{field("rooms", "Nombre de pièces", { required: requiredDetails, type: "number" })}{field("bedrooms", "Chambres", { required: requiredDetails, type: "number" })}</> : null}
+          {category !== "land" && category !== "farm" ? field("bathrooms", "Salles de bain", { required: requiredDetails, type: "number" }) : null}
+          {holidayDetails ? <>{field("capacity", "Capacité d’accueil", { required: requiredDetails, type: "number", hint: editing ? "Pour une offre de location vacances (facultatif)." : undefined })}{field("minimum_nights", "Séjour minimum (nuits)", { required: requiredDetails, type: "number" })}</> : null}
+          {category !== "land" && category !== "farm" ? <>{select("age_band", "Ancienneté", ageOptions)}{select("floor_type", "Revêtement du sol", floorOptions)}</> : null}
+          {floorCategories.has(category) ? field("unit_floor", "Étage (0 à 20)", { type: "number" }) : null}
+          {buildingCategories.has(category) ? field("building_floors", "Étages du bâtiment (1 à 4)", { type: "number" }) : null}
+          {residential.has(category) && category !== "room" ? select("orientation", "Orientation", orientationOptions) : null}
+          {category === "land" ? <>{select("land_delivery", "Livraison du terrain", { planned: "Prévue", titled: "Titré" })}{select("land_status", "Statut du terrain", { subdivided: "Lotissement", not_subdivided: "Non loti" })}</> : null}
+          {property?.development_id ? <fieldset disabled={Boolean(property.offerings.length)} className="grid min-w-0 gap-4 sm:col-span-2"><legend className="mb-3 font-medium">Rattachement de l’unité</legend><LevelPicker parent={property.development_id} kind="blocks" label="Bloc de l’unité" value={placement.block_id} selectedLabel={property.hierarchy?.block?.label} change={value => setPlacement(previous => ({ ...previous, block_id: value, floor_id: "" }))} />{placement.block_id ? <LevelPicker key={placement.block_id} parent={placement.block_id} kind="floors" label="Étage de l’unité" value={placement.floor_id} selectedLabel={property.hierarchy?.floor?.label} change={value => setPlacement(previous => ({ ...previous, floor_id: value }))} /> : null}<LevelPicker parent={property.development_id} kind="unit-types" label="Type réutilisable de l’unité" value={placement.unit_type_id} selectedLabel={property.hierarchy?.unit_type?.label} change={value => setPlacement(previous => ({ ...previous, unit_type_id: value }))} /><p className="text-sm text-muted-foreground">Le rattachement d’un bien ayant une campagne nécessite une revue de stock. Les surfaces et pièces restent propres à cette unité.</p></fieldset> : null}
+        </div> : null}
         {step === 3 ? <><div><p className="text-sm font-medium">Équipements et atouts</p>{options.length ? <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">{options.map(([key, label]) => <label key={key} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border bg-card px-3 py-2 text-sm"><Checkbox checked={values.amenities.includes(key as keyof typeof amenityLabels)} onCheckedChange={checked => setValues(previous => ({ ...previous, amenities: checked ? [...previous.amenities, key as keyof typeof amenityLabels] : previous.amenities.filter(option => option !== key) }))} />{label}</label>)}</div> : <p className="mt-2 text-sm text-muted-foreground">Aucun équipement applicable à ce type de terrain.</p>}</div><div className="grid gap-4 sm:grid-cols-3">{values.amenities.includes("garden") ? field("garden_area_sqm", "Surface du jardin en m²", { required: true, type: "number" }) : null}{values.amenities.includes("terrace") ? field("terrace_area_sqm", "Surface de la terrasse en m²", { required: true, type: "number" }) : null}{values.amenities.includes("garage") ? field("garage_spaces", "Places de garage", { required: true, type: "number" }) : null}</div><div className="grid gap-2"><Label htmlFor="property-description">Description (facultative)</Label><Textarea id="property-description" value={values.description} onChange={event => set("description", event.target.value)} maxLength={5000} rows={5} /><p className="text-xs text-muted-foreground">{values.description.length} / 5 000 caractères. N’ajoutez pas de coordonnées privées.</p></div></> : null}
-        {step === 4 ? <InventoryDraftSummary icon={PropertyIcon} title="Bien et offre à créer" facts={facts} onlyFilled wide next="L’offre restera en brouillon. Les photos (jusqu’à 10, converties en WebP), les propriétaires et les documents se gèrent ensuite depuis la fiche." /> : null}
+        {step === 4 ? <InventoryDraftSummary icon={PropertyIcon} title={editing ? "Modifications du bien" : "Bien et offre à créer"} facts={facts} onlyFilled wide next={editing ? "Seules les informations du bien sont modifiées. Les offres, leurs prix, les photos, les propriétaires et les documents sont conservés." : "L’offre restera en brouillon. Les photos (jusqu’à 10, converties en WebP), les propriétaires et les documents se gèrent ensuite depuis la fiche."} /> : null}
       </fieldset>
-      {error ? <p role="alert" className="text-danger">{error}</p> : null}<InventoryError error={command.error} />
-      <div role="group" aria-label="Navigation du formulaire" className="flex flex-wrap gap-2 border-t pt-4">{step > 0 ? <Button action="back" type="button" variant="outline" disabled={command.pending} onClick={() => focus(step - 1)}>Précédent</Button> : null}{step < 4 ? <Button key="next" action="forward" type="button" variant="creation" disabled={!hydrated || command.pending} onClick={event => { event.preventDefault(); if (validate(step)) focus(step + 1); }}>Suivant</Button> : <Button key="create" action="create" type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : "Créer le bien"}</Button>}<Button action="cancel" variant="outline" asChild><Link href="/projects">Annuler</Link></Button></div>
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}<InventoryError error={command.error} id={property?.id} choose={current => { setVersion(current.version); command.clear(); }} />
+      <div role="group" aria-label="Navigation du formulaire" className="flex flex-wrap gap-2 border-t pt-4">{step > 0 ? <Button action="back" type="button" variant="outline" disabled={command.pending} onClick={() => focus(step - 1)}>Précédent</Button> : null}{step < 4 ? <Button key="next" action="forward" type="button" variant="creation" disabled={!hydrated || command.pending} onClick={event => { event.preventDefault(); if (validate(step)) focus(step + 1); }}>Suivant</Button> : <Button key="save" action={editing ? "save" : "create"} type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : editing ? "Enregistrer le bien" : "Créer le bien"}</Button>}<Button action="cancel" variant="outline" asChild><Link href={property ? `/projects/properties/${property.id}` : "/projects"}>Annuler</Link></Button></div>
     </div>
   </form>;
 }

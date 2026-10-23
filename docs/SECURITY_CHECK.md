@@ -1,5 +1,43 @@
 # KAY security check for changes
 
+## Authenticated help centre (2026-10-23)
+
+Help index/articles use current requireIdentity and the existing password-change
+gate. Catalog filtering and copied-slug denial happen on the server; only the
+current role's static guides reach the client. Related links use the same filter.
+Guide strings are React-escaped; no HTML renderer, external support sender,
+provider search, private CRM lookup or localStorage cache is added. Search input
+does not become an unsaved business form. Existing business links retain their
+own authorization and make no write merely by appearing in a guide.
+
+safeReturnPath accepts only the bounded internal Help routes; traversal, external,
+encoded and query-bearing variants remain rejected. Unit tests cover these cases,
+and synthetic browser checks cover anonymous/agent/manager/administrator access,
+missing/restricted articles and session revocation. A streamed notFound can have
+HTTP200 and multiple noindex tags; absence of restricted content is still required.
+No backend/business model, migration, dependency, credential, push setup or real
+record changes. Current inbox-only guidance does not enable Web Push.
+
+The optional browser test ports are distinct validated high integers and remain
+loopback-only with the same CA/Origin/lease/fixture guards. AkarFlow's existing
+listeners are left untouched. Verification and limits are in the
+[help execution record](03-planning/help-centre.md) and QA register; this is not a
+complete production security audit.
+
+## Property edit form parity (2026-10-23)
+
+The shared rich wizard uses the existing property PATCH facade, current session,
+CSRF/origin checks, expected version and stable retry identity. It explicitly
+excludes creation-only `initial_offering`; no offer/price/state or legal-owner
+write is introduced. Existing unit placement locks and backend authority remain.
+All listing facts are available in the current-version comparison before the
+user explicitly keeps their draft on a newer version. React escapes description,
+address and other text; Maps still passes the approved HTTPS-host validator.
+No migration, dependency, file-storage, credential or production change occurs.
+Focused real-database and synthetic-browser evidence is in the
+[execution record](03-planning/property-edit-parity.md) and QA register, not a
+claim of a full-product or production security audit.
+
 ## Agent inventory photographs (2026-10-23)
 
 Photo upload permission is separate from ordinary inventory file administration.

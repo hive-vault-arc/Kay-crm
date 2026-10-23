@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { clearActorContext, test, expect, createActor, removeActor, signIn, changeActor } from "../helpers/auth";
 import { createLead, staffCommand } from "../helpers/leads";
-import { addOwners, confirmCampaign, createCampaign, createProperty, openProperty } from "../helpers/inventory";
+import { addOwners, confirmCampaign, createCampaign, createProperty, openProperty, propertyEditStep, savePropertyEdit } from "../helpers/inventory";
 import { apiProcess } from "../helpers/api-process";
 
 test.beforeEach(({ page }) => { page.setDefaultNavigationTimeout(30_000); page.setDefaultTimeout(20_000); });
@@ -192,24 +192,27 @@ test("SP07 AT-23: lost acknowledgement and real outage preserve draft, retry is 
   try {
     await signIn(page, manager); const id = await createProperty(page);
     await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
-    await page.getByLabel("Nom commercial (facultatif)", { exact: true }).fill("SP07 accusé interrompu");
+    await page.getByLabel("Titre de l’annonce (facultatif)", { exact: true }).fill("SP07 accusé interrompu");
     await page.route(`**/api/v1/properties/${id}`, async route => { if (route.request().method() === "PATCH") { await route.fetch(); await route.abort("failed"); } else await route.continue(); }, { times: 1 });
-    await page.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+    await savePropertyEdit(page);
     await expect(page.getByRole("alert").filter({ hasText: "service local est indisponible" })).toBeVisible();
-    await expect(page.getByLabel("Nom commercial (facultatif)", { exact: true })).toHaveValue("SP07 accusé interrompu");
-    await page.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+    await propertyEditStep(page, 0);
+    await expect(page.getByLabel("Titre de l’annonce (facultatif)", { exact: true })).toHaveValue("SP07 accusé interrompu");
+    await savePropertyEdit(page);
     await expect(page.getByRole("link", { name: "Modifier le bien", exact: true })).toBeVisible();
     const history = await (await page.request.get(`/api/v1/properties/${id}/history`)).json();
     expect(history.items.filter((event: { action: string }) => event.action === "properties.updated")).toHaveLength(1);
     await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
-    await page.getByLabel("Localisation (facultatif)", { exact: true }).fill("SP07 saisie pendant panne");
+    await propertyEditStep(page, 1);
+    await page.getByLabel("Repère ou localisation courte (facultatif)", { exact: true }).fill("SP07 saisie pendant panne");
     await apiProcess("stop"); stopped = true;
-    await page.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+    await savePropertyEdit(page);
     await expect(page.getByRole("alert").filter({ hasText: "service local est indisponible" })).toBeVisible();
-    await expect(page.getByLabel("Localisation (facultatif)", { exact: true })).toHaveValue("SP07 saisie pendant panne");
+    await propertyEditStep(page, 1);
+    await expect(page.getByLabel("Repère ou localisation courte (facultatif)", { exact: true })).toHaveValue("SP07 saisie pendant panne");
     await apiProcess("start"); stopped = false;
     await expect.poll(async () => (await page.request.get("/api/v1/health/ready")).status()).toBe(200);
-    await page.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+    await savePropertyEdit(page);
     await expect(page.getByText("SP07 saisie pendant panne", { exact: true })).toBeVisible();
   } finally { if (stopped) await apiProcess("start"); await removeActor(manager); }
 });
@@ -220,15 +223,18 @@ test("SP07 AT-23: current version comparison preserves edits and revoked role ca
   try {
     await signIn(page, manager); const id = await createProperty(page);
     await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
-    await expect(page.getByRole("button", { name: "Enregistrer le bien", exact: true })).toBeEnabled();
-    await page.getByLabel("Nom commercial (facultatif)", { exact: true }).fill("SP07 saisie conservée");
+    await expect(page.getByRole("form", { name: "Modifier le bien", exact: true }).getByRole("button", { name: "Suivant", exact: true })).toBeEnabled();
+    await page.getByLabel("Titre de l’annonce (facultatif)", { exact: true }).fill("SP07 saisie conservée");
     const current = await (await page.request.get(`/api/v1/properties/${id}`)).json();
-    expect((await staffCommand(page, `properties/${id}`, { reference: current.reference, category: current.category, marketing_name: "SP07 version concurrente", location: current.location, area_sqm: current.area_sqm, expected_version: current.version }, "PATCH")).status()).toBe(200);
-    await page.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+    expect((await staffCommand(page, `properties/${id}`, { reference: current.reference, category: current.category, marketing_name: "SP07 version concurrente", location: current.location, area_sqm: current.area_sqm, listing_details: { ...current.listing_details, city: "Ville concurrente synthétique", unit_floor: 0 }, expected_version: current.version }, "PATCH")).status()).toBe(200);
+    await savePropertyEdit(page);
     await expect(page.getByRole("region", { name: "Version actuelle du bien", exact: true })).toContainText("SP07 version concurrente");
-    await expect(page.getByLabel("Nom commercial (facultatif)", { exact: true })).toHaveValue("SP07 saisie conservée");
+    await page.getByText("Comparer les caractéristiques actuelles", { exact: true }).click();
+    await expect(page.getByRole("region", { name: "Version actuelle du bien", exact: true })).toContainText("Ville concurrente synthétique");
+    await propertyEditStep(page, 0);
+    await expect(page.getByLabel("Titre de l’annonce (facultatif)", { exact: true })).toHaveValue("SP07 saisie conservée");
     await page.getByRole("button", { name: "Conserver ma saisie sur cette version", exact: true }).click();
-    await page.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+    await savePropertyEdit(page);
     await expect(page.getByRole("heading", { name: /SP07 saisie conservée/ })).toBeVisible();
     await changeActor(manager, "role");
     const denied = await staffCommand(page, "properties", { reference: `SP07-${randomUUID()}`, category: "land" }).catch(() => null);
