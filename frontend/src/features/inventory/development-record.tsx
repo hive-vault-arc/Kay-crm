@@ -1,7 +1,7 @@
 "use client";
 import { LifecyclePanel } from "@/features/discovery/lifecycle-panel";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import type { StaffRole } from "@/features/contacts/contracts";
@@ -19,12 +19,15 @@ import { categoryLabels, stateLabels } from "./contracts";
 import { PageHeader } from "@/components/shared/page-header";
 import { InventoryThumbnail } from "@/features/files/inventory-thumbnail";
 import { FilePanel } from "@/features/files/file-panel";
+import { PropertyPhotos } from "@/features/files/property-photos";
 import { ClockIcon, ColumnsIcon, ContactsIcon, DashboardIcon, DealIcon, DevelopmentIcon, EnquiryIcon, LocationIcon, PropertyIcon } from "@/components/icons";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { InventoryFact, InventoryTab } from "./record-details";
 
 export function DevelopmentRecord({ id, role, edit = false, initialTab = "facts", blockId, floorId, unitTypeId }: { id: string; role: StaffRole; edit?: boolean; initialTab?: string; blockId?: string; floorId?: string; unitTypeId?: string }) {
   const result = useQuery(`/api/v1/developments/${id}`, developmentSchema);
+  const [photoRevision, setPhotoRevision] = useState(0);
+  const photoChanged = useCallback(() => setPhotoRevision(value => value + 1), []);
   const [tab, setTab] = useState(["units", "briefing", "hierarchy", "types", "owners", "offerings", "history"].includes(initialTab) ? initialTab : "facts");
   const [editingOwners, setEditingOwners] = useState(false); const [busy, setBusy] = useState(false); const [notice, setNotice] = useState(""); const writable = role !== "agent" && !result.value?.archived_at;
   if (edit && result.value?.archived_at) return <p role="alert">Dossier archivé : restaurez-le avant de le modifier.</p>;
@@ -36,11 +39,12 @@ export function DevelopmentRecord({ id, role, edit = false, initialTab = "facts"
   function saved() { setEditingOwners(false); setNotice("Inventaire enregistré."); setTab("facts"); result.refresh(); }
   return <div className="grid min-w-0 gap-4">
     <nav aria-label="Fil d’Ariane du programme"><ol className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-muted-foreground"><li><Link href="/projects" className="inline-flex min-h-control items-center text-link underline">Projets</Link></li><li className="wrap-anywhere" aria-current="page">/ {development.reference}</li></ol></nav>
-    <header className="surface flex min-w-0 flex-wrap items-center gap-4"><InventoryThumbnail kind="development" id={id} compact />
+    <header className="surface flex min-w-0 flex-wrap items-center gap-4"><InventoryThumbnail key={photoRevision} kind="development" id={id} compact />
       <div className="grid min-w-0 flex-1 basis-64 gap-1"><p className="text-xs font-medium text-muted-foreground">Programme immobilier</p><h1 data-route={`/projects/${id}`} tabIndex={-1} className="wrap-anywhere text-page font-semibold">{development.reference}</h1><p className="wrap-anywhere font-medium">{development.name}</p><p className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground wrap-anywhere"><LocationIcon aria-hidden="true" className="size-4 shrink-0" />{development.location ?? "Localisation non renseignée"}</p></div>
       <dl data-summary className="order-2 grid w-full min-w-0 shrink-0 grid-cols-2 gap-x-5 gap-y-3 border-t pt-4 sm:grid-cols-4"><div><dt className="text-xs text-muted-foreground">Unités physiques</dt><dd className="text-lg font-semibold tabular-nums">{development.unit_count}</dd></div><div><dt className="text-xs text-muted-foreground">Unités disponibles</dt><dd className="text-lg font-semibold text-success tabular-nums">{development.available_unit_count}</dd></div>{(["sale", "rental"] as const).map(kind => <div key={kind}><dt className="text-xs text-muted-foreground">{kind === "sale" ? "Vente du programme entier" : "Location du programme entier"}</dt><dd className="text-sm font-medium">{development.offerings.find(offer => offer.kind === kind) ? stateLabels[development.offerings.find(offer => offer.kind === kind)!.state] : "Aucune campagne actuelle"}</dd></div>)}</dl>
       <div className="order-1 flex flex-wrap gap-2">{!development.archived_at ? <Button action="edit" variant="outline" asChild><Link href={`/projects/${id}/edit`}>Modifier le programme</Link></Button> : null}{role !== "agent" ? <Button action={development.archived_at ? "restore" : "archive"} variant="outline" asChild><a href="#inventory-lifecycle">{development.archived_at ? "Restaurer le projet" : "Archiver le projet"}</a></Button> : null}</div>
     </header>
+    {tab === "facts" && !development.archived_at ? <PropertyPhotos propertyId={id} parentKind="development" writable={writable} uploadable onChanged={photoChanged} /> : null}
     {notice ? <p role="status" className="text-success">{notice}</p> : null}{busy ? <p role="status">Enregistrement en cours, veuillez patienter…</p> : null}
     <InventoryBusyContext.Provider value={pending => { setBusy(pending); if (pending) setNotice(""); }}><fieldset disabled={busy} className="grid min-w-0 gap-6" aria-busy={busy}><legend className="sr-only">Fiche du programme et commandes d’inventaire</legend><Tabs value={tab} onValueChange={setTab}><TabsList aria-label="Fiche du programme"><InventoryTab value="facts" icon={DashboardIcon}>Aperçu</InventoryTab><InventoryTab value="units" icon={PropertyIcon}>Unités</InventoryTab><InventoryTab value="hierarchy" icon={DevelopmentIcon}>Blocs et étages</InventoryTab><InventoryTab value="types" icon={ColumnsIcon}>Types réutilisables</InventoryTab><InventoryTab value="briefing" icon={EnquiryIcon}>Présentation</InventoryTab><InventoryTab value="owners" icon={ContactsIcon}>Propriétaires</InventoryTab><InventoryTab value="offerings" icon={DealIcon}>Offres du programme</InventoryTab><InventoryTab value="history" icon={ClockIcon}>Historique</InventoryTab></TabsList>
       <TabsContent value="facts" className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(22rem,1fr)]"><section className="surface grid min-w-0 content-start gap-5"><SectionHeading icon={DevelopmentIcon}>Informations du programme</SectionHeading><dl className="grid min-w-0 gap-4 sm:grid-cols-2"><InventoryFact icon={DevelopmentIcon} label="Catégorie du programme" tone="info">{development.category === "mixed" ? "Mixte" : categoryLabels[development.category]}</InventoryFact><InventoryFact icon={PropertyIcon} label="Unités physiques (hors modèles)" tone="info">{development.available_unit_count} disponibles / {development.unit_count} unités</InventoryFact><InventoryFact icon={LocationIcon} label="Localisation" wide tone="info">{development.location ?? "Non renseignée"}</InventoryFact></dl><SafeLink link={development.developer} label="Promoteur" /><Button action="inventory" className="justify-self-start" variant="outline" onClick={() => setTab("units")}>Voir les unités disponibles</Button>{development.archived_at ? <p>Lecture seule : restaurez ce dossier pour le modifier.</p> : null}</section><div className="surface min-w-0 [&>section:first-child]:border-t-0 [&>section:first-child]:pt-0">{!development.archived_at ? <FilePanel parentKind="development" parentId={id} writable={writable} /> : <p>Documents indisponibles tant que le dossier est archivé.</p>}</div></TabsContent>

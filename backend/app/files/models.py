@@ -32,7 +32,8 @@ class Document(Base):
         CheckConstraint("version>0", name="document_version_positive"),
         CheckConstraint(
             "purpose IN ('attachment','photo','generated') AND "
-            "(purpose<>'photo' OR (property_id IS NOT NULL AND mime_type='image/webp')) AND "
+            "(purpose<>'photo' OR ((property_id IS NOT NULL OR development_id IS NOT NULL) "
+            "AND mime_type='image/webp')) AND "
             "(purpose<>'generated' OR (template_code IS NOT NULL AND mime_type='application/pdf' "
             "AND (enquiry_id IS NOT NULL OR deal_id IS NOT NULL))) AND "
             "(purpose='generated' OR template_code IS NULL)",

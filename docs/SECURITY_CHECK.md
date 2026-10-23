@@ -1,5 +1,17 @@
 # KAY security check for changes
 
+## Agent inventory photographs (2026-10-23)
+
+Photo upload permission is separate from ordinary inventory file administration.
+Agent permits require their own photo document, current revocable identity and
+active shared parent at every transfer boundary. Other authors' photo writes,
+ordinary attachments and photo archive/retry commands remain denied. CSRF,
+Origin, session-bound one-use permits, WebP byte validation, real antivirus,
+idempotency, ten-slot serialization and private Spaces storage are unchanged.
+Additive0035 changes only a CHECK; no staff, private contact data, file bytes,
+credentials or push configuration are modified. See the
+[verification record](03-planning/agent-inventory-photos.md).
+
 ## Remaining CRM integration, 2026-10-23
 
 Owners reuse scoped canonical contacts and private portfolio authorization;

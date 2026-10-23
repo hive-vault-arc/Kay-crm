@@ -1,5 +1,15 @@
 # HTTP contracts for `/api/v1`
 
+## Agent inventory photo uploads (2026-10-23)
+
+Existing document/permit/transfer routes now admit agent-created `purpose=photo`
+WebP documents for `property` and `development`. Current identity and active
+parent are checked at create, permit issue/consumption and upload publication.
+Agents cannot upload versions of another author's photo or ordinary inventory
+attachments; archive and scan-retry commands remain M/A-only. Photo filters,
+private downloads and the ten-image cap apply to both parent kinds. See the
+[permission boundary](../03-planning/agent-inventory-photos.md).
+
 ## Lead/Deal catalogue project links (2026-10-22)
 
 `GET /enquiries/{id}/project-links` and `GET /deals/{id}/project-links` require

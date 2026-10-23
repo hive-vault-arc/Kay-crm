@@ -1,5 +1,17 @@
 # KAY QA command register
 
+## Agent inventory photos, 2026-10-23
+
+From the integration worktree's `backend/`, with the guarded test environment,
+`./.venv/Scripts/python.exe -m pytest tests/test_property_photos.py tests/test_files.py tests/test_file_edges.py -q --tb=short --maxfail=1`
+passes36/36; expanded property/project photo selection passes9/9 and
+`./.venv/Scripts/python.exe -m alembic check` reports no new operations. From
+`frontend/`, lint/typecheck/build and92 unit tests pass. With
+`KAY_E2E_PRODUCTION=1`, `npm.cmd run test:chrome -- tests/e2e/property-photos.spec.ts tests/e2e/files.spec.ts --max-failures=2 --reporter=list`
+passes4/4 compiled visible Chrome scenarios. Runtime advisories0; existing
+dev-only advisory exception unchanged. See the
+[scope/evidence](03-planning/agent-inventory-photos.md) for remaining gates.
+
 ## Remaining CRM integration, 2026-10-23 (PR25, release pending)
 
 Use this integration worktree's explicit backend venv and guarded loopback55439

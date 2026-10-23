@@ -55,7 +55,13 @@ def locked_identity(
 
 
 def authorize(
-    session: Session, identity: CurrentIdentity, kind: str, target: UUID, *, write: bool = False
+    session: Session,
+    identity: CurrentIdentity,
+    kind: str,
+    target: UUID,
+    *,
+    write: bool = False,
+    photo_upload: bool = False,
 ) -> None:
     if kind == "contact":
         (scoped_contact if write else readable_contact)(session, identity, target)
@@ -75,7 +81,7 @@ def authorize(
     model = {"development": Development, "property": Property}.get(kind)
     if model is None:
         raise IdentityError("VALIDATION_ERROR", 422)
-    if write:
+    if write and not photo_upload:
         require_role(identity, {"manager"})
     item = cast(Development | Property | None, session.get(model, target))
     if item is None or item.archived_at is not None:
@@ -102,7 +108,8 @@ def authorized_document(
         and identity.user.role == "agent"
     ):
         raise IdentityError("NOT_FOUND", 404)
-    authorize(session, identity, *parent(document), write=write)
+    photo_upload = document.purpose == "photo" and document.created_by_user_id == identity.user.id
+    authorize(session, identity, *parent(document), write=write, photo_upload=photo_upload)
     return document
 
 
@@ -175,7 +182,7 @@ def list_documents(
     with database.session() as session:
         identity = current_identity(session, token)
         authorize(session, identity, kind, pid)
-        if purpose == "photo" and kind != "property":
+        if purpose == "photo" and kind not in {"property", "development"}:
             raise IdentityError("VALIDATION_ERROR", 422)
         column = {
             "contact": Document.contact_id,
@@ -192,7 +199,7 @@ def list_documents(
                 | (Document.template_code.not_in(("10", "11")))
             )
         if purpose is not None:
-            if kind == "property":
+            if kind in {"property", "development"}:
                 statement = statement.where(
                     Document.mime_type.in_(PHOTO_MIMES)
                     if purpose == "photo"
@@ -235,16 +242,25 @@ def document_command(
         receipt = session.get(FileReceipt, (identity.user.id, key))
         if receipt:
             document = authorized_document(session, identity, receipt.document_id, write=True)
+            if operation != "create" and (document.property_id or document.development_id):
+                require_role(identity, {"manager"})
             if receipt.operation != f"{operation}:{did}" or receipt.request_hash != digest:
                 raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
             return view(session, document)
         if isinstance(body, NewDocument):
-            authorize(session, identity, body.parent_kind, body.parent_id, write=True)
+            authorize(
+                session,
+                identity,
+                body.parent_kind,
+                body.parent_id,
+                write=True,
+                photo_upload=body.purpose == "photo",
+            )
             if FORMATS[PurePosixPath(body.filename).suffix.lower()] != body.mime_type:
                 raise IdentityError("UNSUPPORTED_MEDIA_TYPE", 415)
             if body.purpose == "photo":
                 if (
-                    body.parent_kind != "property"
+                    body.parent_kind not in {"property", "development"}
                     or body.mime_type != "image/webp"
                     or PurePosixPath(body.filename).suffix.lower() != ".webp"
                 ):
@@ -254,7 +270,7 @@ def document_command(
                         select(func.count())
                         .select_from(Document)
                         .where(
-                            Document.property_id == body.parent_id,
+                            getattr(Document, f"{body.parent_kind}_id") == body.parent_id,
                             Document.mime_type.in_(PHOTO_MIMES),
                             Document.archived_at.is_(None),
                         )
@@ -263,7 +279,7 @@ def document_command(
                 )
                 if used >= MAX_PROPERTY_PHOTOS:
                     raise IdentityError("PROPERTY_PHOTO_LIMIT", 409)
-            elif body.parent_kind == "property" and body.mime_type in PHOTO_MIMES:
+            elif body.parent_kind in {"property", "development"} and body.mime_type in PHOTO_MIMES:
                 raise IdentityError("PROPERTY_PHOTO_WEBP_REQUIRED", 415)
             document = Document(
                 id=uuid4(),
@@ -281,6 +297,8 @@ def document_command(
         else:
             assert did is not None  # noqa: S101
             document = authorized_document(session, identity, did, write=True)
+            if document.property_id or document.development_id:
+                require_role(identity, {"manager"})
             if document.purpose == "generated":
                 raise IdentityError("FORBIDDEN", 403)
             if document.version != body.expected_version:

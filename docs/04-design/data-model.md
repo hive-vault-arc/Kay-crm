@@ -1,5 +1,9 @@
 # Data model: dictionary, conceptual, logical, and physical views
 
+Migration `0035_project_photos` widens `document_purpose` so a WebP photo may
+reference a development as well as a physical property. One-parent, generated
+PDF and template-code checks are preserved. No record/file rewrite occurs.
+
 ## Additive realtime bookkeeping (2026-10-22)
 
 0031_realtime adds realtime_ticket (digest/session/expiry), realtime_presence
