@@ -5,6 +5,7 @@ import { test, expect, createActor, removeActor, signIn, clearActorContext } fro
 import { staffCommand } from "../helpers/leads";
 import { apiProcess, testControl } from "../helpers/api-process";
 import { geometry } from "../helpers/report-review";
+import { categoryLabels } from "../../src/features/inventory/contracts";
 
 const fixtures = [
   ["oliviers", "Terrain des Oliviers", "land", "Secteur Ouest"],
@@ -70,7 +71,10 @@ test("projects reference: eight real synthetic photos, cards and filters", async
     await page.getByRole("button", { name: "Réinitialiser", exact: true }).click();
     await expect(page.locator("article")).toHaveCount(8);
     const noCategories = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === "/api/v1/properties" && url.searchParams.get("categories") === ""; }, { timeout: 15_000 });
-    for (const name of ["Terrain", "Appartement", "Villa", "Local commercial"]) await page.getByRole("checkbox", { name, exact: true }).uncheck();
+    const categoryGroup = page.getByRole("group", { name: "Catégorie", exact: true });
+    const categories = categoryGroup.getByRole("checkbox");
+    await expect(categories).toHaveCount(Object.keys(categoryLabels).length - 1); // Empty house category is intentionally hidden.
+    for (const name of Object.values(categoryLabels).filter(name => name !== "Maison")) await categoryGroup.getByRole("checkbox", { name, exact: true }).uncheck();
     expect((await noCategories).status()).toBe(200); await expect(page.getByRole("heading", { name: "Aucun bien correspondant", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Réinitialiser", exact: true }).click(); await expect(page.locator("article")).toHaveCount(8);
     await page.getByRole("tab", { name: "Liste", exact: true }).click();

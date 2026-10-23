@@ -1849,3 +1849,18 @@ publication; product/design review remains pending.
 In the isolated `owners-directory` worktree, with `APP_ENVIRONMENT=test`, `backend/.venv/Scripts/python.exe -m pytest backend/tests/test_contacts.py backend/tests/test_inventory.py backend/tests/test_developments.py backend/tests/test_owner_directory.py -q --tb=short --maxfail=1` passed 63/63 against the leased synthetic PostgreSQL database. Backend Ruff checks/format and mypy on the owner query passed. From `frontend/`, the owner module passed the real isolated Chrome scenario (1/1), including synthetic create/edit, portfolio/current-to-past history, denied cross-agent access and mobile width. Desktop/mobile captures were inspected. Frontend unit suite passed 78/78; lint, TypeScript and production build passed. `impeccable detect --json` returned `[]`; [AFTER042](../anti-slop/audit-042-2026-10-22.md) records the visual audit.
 
 The existing Next.js 16.4.0 pin failed the current runtime dependency policy with a critical advisory. The compatible 16.4.2 pin now passes `npm.cmd run security:check`: 0 runtime vulnerabilities; 9 development-only findings retain the existing approved exception until 2026-11-15. This is not a clean full dependency audit. No production database, account, or file storage was changed; no migration is required for this directory.
+# Remaining-feature integration follow-up (2026-10-23)
+
+Exact candidate `d0de95e`: hosted run39944800692 passes964 real-PostgreSQL tests
+and5 WSS/push-consent browser tests; compiled Chromium completes125 passes and
+three failures from obsolete inventory fixture/filter assumptions. This is a
+failed release gate, not release approval. After explicit sale fixtures and
+stable/scoped selectors, `KAY_E2E_PRODUCTION=1; npm.cmd run test:chrome --
+tests/e2e/inventory.spec.ts tests/e2e/projects-reference.spec.ts --grep
+'held owner acknowledgement|manager standalone inventory|eight real synthetic photos'
+--max-failures=3` passes3/3 (2.6m), including desktop/mobile/touch/native zoom.
+No product logic, runtime guard, latency limit or assertion intent is weakened.
+The broad local backend run passes948 (recovery excluded locally, covered hosted).
+Full local Chrome was interrupted after60 completed cases to focus failures;
+it is not a complete pass. Final exact-commit full hosted rerun remains required.
+

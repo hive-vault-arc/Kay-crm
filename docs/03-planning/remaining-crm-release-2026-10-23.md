@@ -124,3 +124,17 @@ compiled Chrome rerun passes1/1. The local broad PostgreSQL run also passes948
 (recovery excluded locally; covered by the hosted964 run). The full browser gate
 now accumulates up to5 failures for useful diagnostics, still requiring zero
 failures to release. No business rule or test is skipped to obtain a pass.
+
+Run39944800692 passes964 backend and5 WSS tests; compiled Chromium completes
+125/128, with three legacy inventory-test failures. The empty-property lifecycle
+fixture deliberately has no initial offering: price-dependent cases now create
+their own900000.01 MAD sale draft. Duplicate header/campaign price text is checked
+inside its intended tab panel. The project reference test must clear all eight
+rendered categories (the empty House category stays hidden), using stable labels
+rather than a four-category list or index-based locators during refetch. Local
+compiled Chrome reproductions retain all prior price, permission, availability,
+privacy, retry and layout assertions. Full local Chrome was stopped after60
+completed cases to focus these failures; its developer-only component-guide
+failure under production mode is not an application/release pass. Production CI
+already excludes that unpublished guide. A final complete hosted rerun remains
+required; no production schema/deployment write has occurred.

@@ -62,6 +62,7 @@ test("SP07 AT-23: held owner acknowledgement locks tabs and clears the prior suc
   let release = () => {};
   try {
     await signIn(page, manager); const id = await createProperty(page);
+    await createCampaign(page, "sale", "900000,01");
     await expect(page.getByLabel("Prix demandés")).toContainText("900 000,01 MAD");
     await createCampaign(page, "rental");
     await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
@@ -76,7 +77,7 @@ test("SP07 AT-23: held owner acknowledgement locks tabs and clears the prior suc
     release();
     await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
     await page.getByRole("tab", { name: "Offres", exact: true }).click();
-    await expect(page.getByText("Comparaison annuelle : 14 814,72 MAD / an", { exact: true })).toBeVisible();
+    await expect(page.getByRole("tabpanel", { name: "Offres", exact: true }).getByText("Comparaison annuelle : 14 814,72 MAD / an", { exact: true })).toBeVisible();
   } finally { release(); await removeActor(manager); }
 });
 
@@ -95,6 +96,7 @@ test("SP07 AT-06/08/27/31: manager standalone inventory, separate prices and unr
     await createLead(agent, "SP07 second propriétaire privé synthétique", "+212600000002");
     await signIn(page, manager);
     const id = await createProperty(page);
+    await createCampaign(page, "sale", "900000,01");
     await expect(page.getByLabel("Prix demandés")).toContainText("900 000,01 MAD");
     await page.getByRole("tab", { name: "Offres", exact: true }).click();
     const sale = page.getByRole("region", { name: "Vente", exact: true });
@@ -105,7 +107,7 @@ test("SP07 AT-06/08/27/31: manager standalone inventory, separate prices and unr
     await createCampaign(page, "rental");
     await confirmCampaign(page, "sale"); await confirmCampaign(page, "rental");
     await expect(page.getByRole("tabpanel", { name: "Aperçu" }).getByText("1 234,56 MAD / mois", { exact: true })).toBeVisible();
-    await expect(page.getByText("Comparaison annuelle : 14 814,72 MAD / an", { exact: true })).toBeVisible();
+    await expect(page.getByRole("tabpanel", { name: "Aperçu", exact: true }).getByText("Comparaison annuelle : 14 814,72 MAD / an", { exact: true })).toBeVisible();
     await expect(page.getByLabel("Prix demandés").getByText("900 000,01 MAD", { exact: true })).toBeVisible();
     await expect(page.getByRole("region", { name: "Pièces jointes", exact: true }).getByText("Aucune pièce jointe sur cette page. Ajoutez un fichier pour commencer.", { exact: true })).toBeVisible();
     await clearActorContext(agent); await signIn(agent, unrelated); await openProperty(agent, id, "Propriétaires");

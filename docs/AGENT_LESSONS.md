@@ -1375,3 +1375,11 @@ evidence. Final matrix acceptance remains separately recorded in SP-14 execution
 - Prevention: audit `requirements.txt` and `requirements-dev.lock` directly with
   `--require-hashes`, then install and test both updated locks. CI now enforces
   both direct scans.
+# Integration fixture context (2026-10-23)
+
+When reconciling feature branches, do not assume an empty-property lifecycle
+fixture also creates a priced offer. Price-dependent cases must explicitly
+create their own offering; keep no-offer cases for availability validation.
+Scope duplicate header/panel values to the intended region, and select expanding
+catalogue filters by stable accessible labels instead of positional locators.
+
