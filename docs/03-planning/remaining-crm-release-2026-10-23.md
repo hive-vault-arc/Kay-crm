@@ -114,3 +114,13 @@ production verification will be linked on PR25, not inferred from previous runs.
 Record actual commands, results, remaining risks and production read-back here
 and in the QA/security registers as the work proceeds; no pass is inferred from
 individual feature checkouts' historical evidence.
+
+Final-candidate run39941972537 passed964 backend tests and5 real-WSS browser
+tests, but stopped after25 compiled CRM passes on an obsolete conversion-link
+count. The conversion remains one Lead event and three Deal events; the test now
+asserts their exact actions/context/targets and both dated French descriptions,
+instead of expecting the Lead conversion to be a fourth Deal event. Its visible
+compiled Chrome rerun passes1/1. The local broad PostgreSQL run also passes948
+(recovery excluded locally; covered by the hosted964 run). The full browser gate
+now accumulates up to5 failures for useful diagnostics, still requiring zero
+failures to release. No business rule or test is skipped to obtain a pass.

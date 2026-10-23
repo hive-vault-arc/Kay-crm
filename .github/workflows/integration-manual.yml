@@ -104,7 +104,7 @@ jobs:
         working-directory: frontend
         env:
           KAY_E2E_PRODUCTION: '1'
-        run: npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=1
+        run: npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=5
       - name: Safe scanner diagnostics on failure
         if: failure()
         run: |
