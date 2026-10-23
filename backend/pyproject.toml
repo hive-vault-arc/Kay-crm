@@ -41,6 +41,7 @@ dev = [
   "httpx2==2.16.0",
   "websocket-client==1.9.2",
   "locust>=2.43,<3",
+  "brotli==1.2.1",
   "trustme>=1.2,<2",
   "pip-audit>=2.10,<3",
   "certifi>=2026.10.19,<2027",

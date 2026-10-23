@@ -1,5 +1,10 @@
 # KEPVY: roles and permissions
 
+2026-10-23 owner override: agents may upload their own WebP photographs to active
+shared properties (including units) and developments. Inventory photo archive,
+other authors' upload versions and ordinary attachments remain M/A-only. Private
+contact/document scope is unchanged. [Boundary and evidence](docs/03-planning/agent-inventory-photos.md).
+
 D35 Lead/Deal qualification introduces no new role grant. Accessible Lead
 conversion, manual deal creation and canonical profile edits use the current
 contact responsible/collaborator scope and active identity. Assignment remains

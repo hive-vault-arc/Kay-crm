@@ -20,7 +20,7 @@ export function InventoryThumbnail({ kind, id, compact = false }: { kind: "prope
     const controller = new AbortController();
     async function load() {
       try {
-        const result = await apiGet(`/api/v1/documents?parent_kind=${kind}&parent_id=${id}${kind === "property" ? "&purpose=photo" : ""}&page=1&page_size=20`, documentsSchema, controller.signal);
+        const result = await apiGet(`/api/v1/documents?parent_kind=${kind}&parent_id=${id}&purpose=photo&page=1&page_size=20`, documentsSchema, controller.signal);
         const document = result.items.find(item => !item.archived && item.mime_type.startsWith("image/") && item.versions[0]?.state === "clean");
         if (!active) return;
         if (!document) { setState("Aperçu photographique non disponible"); return; }

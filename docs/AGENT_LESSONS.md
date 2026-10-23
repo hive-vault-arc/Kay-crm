@@ -1,5 +1,16 @@
 # KAY agent lessons
 
+## Shared uploaders need their own control group (2026-10-23)
+
+A hidden file input must remain associated with its visible44px chooser when
+the uploader moves outside a record's surrounding fieldset. Give the reusable
+uploader its own fieldset/legend, matching the standard FilePanel pattern; do not
+inflate the invisible input or weaken the shared geometry assertion. Keep the
+cancel action usable during transfer rather than disabling its enclosing group.
+When reusing a grid-spanning panel, isolate its column span from one-column
+parents and check both the header width and the standard desktop/mobile geometry
+guard. A successful upload alone does not prove the host page's control geometry.
+
 ## Final Next must not become submission (2026-10-23)
 
 React can reuse a conditional button and change its type from button to submit
@@ -1382,4 +1393,13 @@ fixture also creates a priced offer. Price-dependent cases must explicitly
 create their own offering; keep no-offer cases for availability validation.
 Scope duplicate header/panel values to the intended region, and select expanding
 catalogue filters by stable accessible labels instead of positional locators.
+
+## Let completed terminal commands exit before forced cleanup (2026-10-23)
+
+Receiving a CLI's final status line does not mean its Windows process has exited.
+Forcing pseudo-terminal cleanup immediately can race with normal termination and
+raise an access-denied error after the actual assertions pass. Wait with a bound
+for natural exit, assert the intended exit code, then close the terminal; retain
+forced cleanup for genuine failure. Never solve this by ignoring all cleanup
+errors or weakening hidden-password checks.
 

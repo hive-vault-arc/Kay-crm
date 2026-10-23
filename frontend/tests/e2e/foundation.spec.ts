@@ -71,7 +71,8 @@ test("exact display helpers and preference metadata reject invalid data", () => 
   expect(() => formatMAD("12.123")).toThrow("INVALID_MONEY");
   expect(formatBusinessDate("2026-10-14")).toBe("14 oct. 2026");
   expect(() => formatBusinessDate("2026-02-30")).toThrow("INVALID_DATE");
-  expect(formatInstant("2026-10-14T09:00:00Z")).toContain("10:00");
+  expect(formatInstant("2026-09-19T09:00:00Z")).toContain("10:00");
+  expect(formatInstant("2026-10-14T09:00:00Z")).toContain("09:00");
   expect(() => formatInstant("2026-10-14T09:00:00")).toThrow("INVALID_INSTANT");
   expect(formatPhone("+212600000001")).toBe("+212600000001");
   expect(

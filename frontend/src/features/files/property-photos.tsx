@@ -44,10 +44,10 @@ export async function convertPropertyPhoto(file: File): Promise<File> {
   } finally { bitmap.close(); }
 }
 
-export function PropertyPhotos({ propertyId, writable, onChanged }: { propertyId: string; writable: boolean; onChanged: () => void }) {
+export function PropertyPhotos({ propertyId, parentKind = "property", writable, uploadable = writable, onChanged }: { propertyId: string; parentKind?: "property" | "development"; writable: boolean; uploadable?: boolean; onChanged: () => void }) {
   const hydrated = useHydrated();
   const [page, setPage] = useState(1);
-  const query = useQuery(`/api/v1/documents?parent_kind=property&parent_id=${propertyId}&purpose=photo&page=${page}&page_size=10`, documentsSchema);
+  const query = useQuery(`/api/v1/documents?parent_kind=${parentKind}&parent_id=${propertyId}&purpose=photo&page=${page}&page_size=10`, documentsSchema);
   const [file, setFile] = useState<File>();
   const [resume, setResume] = useState<ProtectedDocument>();
   const [busy, setBusy] = useState(false);
@@ -89,7 +89,7 @@ export function PropertyPhotos({ propertyId, writable, onChanged }: { propertyId
       attempt.current.converted = converted;
       if (controller.signal.aborted) throw new ApiError("FILE_TRANSFER_INTERRUPTED", 503);
       if (resume && (resume.filename !== converted.name || resume.size_bytes !== converted.size || resume.mime_type !== converted.type)) throw new ApiError("FILE_SIZE_MISMATCH", 422);
-      const metadata = { parent_kind: "property", parent_id: propertyId, purpose: "photo", filename: converted.name, mime_type: converted.type, size_bytes: converted.size };
+      const metadata = { parent_kind: parentKind, parent_id: propertyId, purpose: "photo", filename: converted.name, mime_type: converted.type, size_bytes: converted.size };
       let document: ProtectedDocument;
       const existingId = resume?.id ?? attempt.current.documentId;
       if (existingId) document = await apiGet(`/api/v1/documents/${existingId}`, documentSchema, controller.signal);
@@ -109,10 +109,11 @@ export function PropertyPhotos({ propertyId, writable, onChanged }: { propertyId
   return <section aria-label="Photos du bien" className="surface grid min-w-0 gap-5 xl:col-span-2">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><div className="grid gap-1"><h2 ref={heading} tabIndex={-1} className="text-section font-medium"><UploadIcon aria-hidden="true" className="mr-2 inline size-5 align-[-0.15em]" />Photos du bien</h2><p className="text-sm text-muted-foreground">JPEG, PNG ou WebP convertis en WebP avant l’envoi. Les photos sont partagées avec l’équipe après analyse.</p></div><p className="text-sm font-medium" aria-live="polite">{query.value ? `${query.value.total} / ${photoLimit} photos` : "Chargement…"}</p></div>
     {query.error ? <RecordError error={query.error} retry={refresh} /> : <>
-      {writable && (resume || (query.value && query.value.total < photoLimit)) ? <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+      {uploadable && (resume || (query.value && query.value.total < photoLimit)) ? <fieldset className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+        <legend className="sr-only">Envoi d’une photo</legend>
         <div className="grid min-w-0 gap-2"><Label htmlFor={inputId}>{resume ? "Reprendre cette photo" : "Ajouter une photo"}</Label><Input ref={input} id={inputId} type="file" accept=".jpg,.jpeg,.png,.webp" className="sr-only left-0 top-0 h-px w-px border-0 p-0" tabIndex={-1} disabled={!hydrated || busy} onChange={event => { const selected = event.target.files?.[0]; if (!selected) return; setFile(selected); setError(undefined); setNotice(""); attempt.current = { key: "", documentId: "" }; void upload(selected); }} /><Button ref={chooser} action="file" type="button" variant="outline" className="justify-self-start" disabled={!hydrated || busy} onClick={() => input.current?.click()}>Choisir une image</Button><p className="wrap-anywhere text-sm text-muted-foreground" aria-live="polite">{busy ? "Préparation et envoi automatique…" : file?.name ?? "Aucune image sélectionnée"} · 20 Mo maximum par image</p>{resume ? <p className="text-sm text-muted-foreground">Sélectionnez à nouveau la même image source pour reprendre {resume.filename}.</p> : null}</div>
         <div className="flex flex-wrap gap-2">{busy ? <Button action="cancel" type="button" variant="outline" onClick={() => abort.current?.abort()}>Interrompre</Button> : error && file ? <Button action="retry" type="button" variant="outline" onClick={() => void upload(file)}>Réessayer l’envoi</Button> : resume ? <Button action="cancel" type="button" variant="outline" onClick={() => { setResume(undefined); setFile(undefined); attempt.current = { key: "", documentId: "" }; if (input.current) input.current.value = ""; }}>Annuler la reprise</Button> : null}</div>
-      </div> : null}
+      </fieldset> : null}
       {progress !== undefined ? <p role="status">Transfert WebP : {progress} %. Analyse antivirus à suivre.</p> : null}
       {error ? <p role="alert" className="text-danger">{error.message}</p> : null}{notice ? <p role="status" className="text-info">{notice}</p> : null}
       {!query.value ? <p role="status">Chargement des photos…</p> : query.value.items.length ? <ul className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">{query.value.items.map(photo => <PhotoCard key={`${photo.id}:${photo.version}`} photo={photo} writable={writable && !busy} refresh={() => { setPage(1); refresh(); }} onChanged={onChanged} openPreview={trigger => { previewTrigger.current = trigger; setSelectedPhotoId(photo.id); }} resume={() => { setResume(photo); setFile(undefined); setError(undefined); attempt.current = { key: "", documentId: "" }; chooser.current?.focus(); }} />)}</ul> : <p className="text-sm text-muted-foreground">Aucune photo sur ce bien.</p>}
