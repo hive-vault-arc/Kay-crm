@@ -116,7 +116,10 @@ export function PropertyListingWizard({ property }: { property?: Property }) {
   const field = (name: Field, label: string, options?: { required?: boolean; type?: "number" | "url"; hint?: string; maxLength?: number }) => <div className="grid min-w-0 gap-2"><Label htmlFor={`property-${name}`}>{label}{options?.required ? " *" : ""}</Label><Input id={`property-${name}`} value={values[name]} onChange={event => set(name, event.target.value)} required={options?.required} type={options?.type ?? "text"} inputMode={options?.type === "number" ? "decimal" : undefined} min={options?.type === "number" ? 0 : undefined} step={options?.type === "number" ? "any" : undefined} maxLength={options?.maxLength} aria-describedby={options?.hint ? `hint-${name}` : undefined} />{options?.hint ? <p id={`hint-${name}`} className="text-xs text-muted-foreground">{options.hint}</p> : null}</div>;
   const select = (name: Field, label: string, options: Record<string, string>) => <div className="grid min-w-0 gap-2"><Label htmlFor={`property-${name}`}>{label}</Label><NativeSelect id={`property-${name}`} value={values[name]} onChange={event => set(name, event.target.value)}><option value="">Non renseigné</option>{Object.entries(options).map(([value, text]) => <option key={value} value={value}>{text}</option>)}</NativeSelect></div>;
   function chooseCategory(category: Category) {
-    setValues(previous => ({ ...previous, category, market: previous.market === "holiday" && !holidayCategories.has(category) ? "sale" : category === "room" && previous.market === "sale" ? "rental" : previous.market, amenities: previous.amenities.filter(option => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(option)) }));
+    setValues(previous => {
+      const market = previous.market === "holiday" && !holidayCategories.has(category) ? "sale" : category === "room" && previous.market === "sale" ? "rental" : previous.market;
+      return { ...previous, category, market, period: market === previous.market ? previous.period : market === "rental" ? "month" : "", amenities: previous.amenities.filter(option => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(option)) };
+    });
   }
   function chooseMarket(market: Market) {
     setValues(previous => ({ ...previous, market, period: market === "sale" ? "" : market === "holiday" ? "day" : "month" }));

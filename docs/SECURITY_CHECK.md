@@ -1,5 +1,51 @@
 # KAY security check for changes
 
+## Publication audit follow-up (2026-10-25)
+
+The exact-candidate hosted audit for PR31 rejects pypdf6.21.1 for three newly
+reported advisories. Review the [maintainer patch release](https://github.com/py-pdf/pypdf/releases/tag/6.21.2)
+and pin6.21.2, regenerating runtime/development locks with the project venv.
+The subsequent full development audit also rejects filelock4.1.2 and
+setuptools84.0.0. Use compatible4.2.1/84.1.0 resolutions within existing dev
+ranges; [filelock advisory](https://github.com/tox-dev/filelock/security/advisories/GHSA-2g95-wg33-c5x2),
+[setuptools advisory](https://github.com/pypa/setuptools/security/advisories/GHSA-xmj3-9gf7-h52w).
+No audit exception, threshold reduction, schema change or public file access.
+Regenerated hashes, installation health, both audits, actual PDF behavior and
+fresh hosted release gates must pass before merge. Superseded runs do not count.
+
+## Local recovery/archived-contact corrections (2026-10-24)
+
+Scanner follow-up uses the existing digest-pinned KAY Compose container and
+signature volume, bound only to127.0.0.1:3310. Docker is now available; require
+healthy status and an actual version/signature reply before file verification.
+No scanner fallback, bypass, public port, production access or migration is
+introduced. Browser interrupted-transfer injection now uses the existing
+validated isolated test port helper; the application transfer path is unchanged.
+Actual clean/rejected/quarantine test results belong in the QA follow-up.
+
+Lead PDF generation now requires an active writable canonical contact, not only
+an active Lead. The same guard covers entry, receipt replay and final publication
+after rendering. Managers/admins retain authorized archived history/document
+reads, not generation rights. A synthetic archive-during-render regression
+checks the final guard and successful retry after restoration.
+
+Photo responses disclose only an optional current `can_upload` boolean, never
+the original creator ID. Resume controls are separated from M/A archive/scan
+commands. Original-author permit checks, current sessions/parents, private file
+transfer, quarantine and ten-slot enforcement remain. The input schema refuses
+client-supplied capabilities. Reusing a reserved slot does not create a new
+document. No identity/permission relaxation, migration or production change.
+The fixed server-side metadata opt-in preserves strict older facade responses;
+it does not forward arbitrary browser headers, grant rights or alter transfers.
+See [scope and rollout boundary](03-planning/local-bug-sweep-2026-10-24.md).
+
+Fresh audits flag fast-uri3.1.8 and development-tool dependencies. Compatible
+updates include fast-uri3.1.9, shadcn4.22.1/registry0.2.0, body-parser2.4.0 and
+undici7.30.1; nested Zod deduplicates onto existing4.6.7. Related qs6.16.1 and
+systeminformation5.33.16 remain development tooling. Registry integrity and direct
+framework/runtime pins are retained. No audit failure is suppressed: final
+runtime/full audit reports zero vulnerabilities and zero exceptions used.
+
 ## Authenticated help centre (2026-10-23)
 
 Help index/articles use current requireIdentity and the existing password-change

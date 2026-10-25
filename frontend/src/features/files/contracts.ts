@@ -18,7 +18,7 @@ export const versionSchema = z.object({
   scan_error: z.enum(["ANTIVIRUS_UNAVAILABLE", "FILE_STORAGE_UNAVAILABLE", "FILE_INTEGRITY_ERROR", "WORKER_INTERRUPTED", "FILE_TRANSFER_INTERRUPTED"]).nullable(),
   created_at: z.iso.datetime({ offset: true }),
 }).strict();
-export const documentSchema = z.object({ id: z.uuid(), filename: z.string().min(1).max(180), mime_type: z.string().max(120), purpose: z.enum(["attachment", "photo"]), size_bytes: z.number().int().positive().max(maxFileBytes), version: z.number().int().positive(), archived: z.boolean(), versions: z.array(versionSchema).max(50) }).strict();
+export const documentSchema = z.object({ id: z.uuid(), filename: z.string().min(1).max(180), mime_type: z.string().max(120), purpose: z.enum(["attachment", "photo"]), size_bytes: z.number().int().positive().max(maxFileBytes), version: z.number().int().positive(), archived: z.boolean(), can_upload: z.boolean().optional(), versions: z.array(versionSchema).max(50) }).strict();
 export const documentsSchema = z.object({ items: z.array(documentSchema).max(100), page: z.number().int().positive(), page_size: z.number().int().min(1).max(100), total: z.number().int().nonnegative(), has_next: z.boolean(), has_previous: z.boolean() }).strict();
 export const permitRequestSchema = z.object({ action: z.enum(["upload", "download"]), document_id: z.uuid(), expected_version: z.number().int().positive(), version_id: z.uuid().optional() }).strict();
 export const permitSchema = z.object({ permit_id: z.uuid(), token: z.string().regex(/^[a-zA-Z0-9_-]{43}$/), expires_at: z.iso.datetime({ offset: true }), version_id: z.uuid(), document_version: z.number().int().positive(), transfer_url: z.url() }).strict();

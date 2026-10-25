@@ -60,6 +60,17 @@ test("local HTTPS accepts the explicit local CA", async t => {
   assert.equal((await facade.relayHealth("/api/v1/health/live", "synthetic-id")).status, 200);
 });
 
+test("photo capability negotiation is opt-in and restricted to document metadata paths", async t => {
+  const port = await server(t, (incoming, response) => response.end('{}'));
+  const { facade, observed } = facadeFor(port);
+  for (const [pathname, expected] of [["/api/v1/documents", "1"], ["/api/v1/documents?page=1", "1"], ["/api/v1/documents/synthetic", "1"], ["/api/v1/files/permits", undefined], ["/api/v1/health/live", undefined]]) {
+    await facade.upstreamRequest(pathname, "synthetic-id", { photoCapabilities: true });
+    assert.equal(observed.at(-1).headers["X-Kay-Photo-Capabilities"], expected);
+  }
+  await facade.upstreamRequest("/api/v1/documents", "synthetic-id");
+  assert.equal(observed.at(-1).headers["X-Kay-Photo-Capabilities"], undefined);
+});
+
 for (const scenario of ["untrusted certificate", "wrong hostname", "wrong local CA", "missing local CA file"]) {
   test(`TLS remains fail-closed: ${scenario}`, async t => {
     let received = 0;

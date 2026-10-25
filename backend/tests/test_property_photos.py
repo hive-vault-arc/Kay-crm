@@ -136,6 +136,14 @@ def test_agent_photo_upload_is_narrow_and_revalidated(settings, database, kind):
     _, colleague = actor(settings, database, "agent")
     target = (property_draft if kind == "property" else development)(settings, database, manager)
     document = photo(database, agent, target, kind=kind)
+    assert document["can_upload"] is True
+    assert read_document(database, agent, UUID(document["id"]))["can_upload"] is True
+    assert read_document(database, colleague, UUID(document["id"]))["can_upload"] is False
+    assert read_document(database, manager, UUID(document["id"]))["can_upload"] is True
+    assert (
+        list_documents(database, colleague, kind, target, 1, 10, "photo")["items"][0]["can_upload"]
+        is False
+    )
     assert grant(database, agent, document)["permit_id"]
     for token in (agent, colleague):
         with pytest.raises(IdentityError, match="FORBIDDEN"):
@@ -204,6 +212,40 @@ def test_project_photo_additive_migration_preserves_files(settings, database):
         )
     finally:
         assert migrate("upgrade", "head").returncode == 0
+
+
+@pytest.mark.anyio
+@pytest.mark.parametrize("kind", ["property", "development"])
+async def test_photo_capabilities_are_opt_in_for_older_facades(settings, database, kind):
+    _, manager = actor(settings, database, "manager")
+    _, agent = actor(settings, database)
+    _, colleague = actor(settings, database)
+    target = (property_draft if kind == "property" else development)(settings, database, manager)
+    created = photo(database, agent, target, kind=kind)
+    headers = {"X-Kay-Facade-Secret": settings.facade_secret.get_secret_value()}
+    async with client_for(create_app(settings)) as client:
+        for token, allowed in ((agent, True), (colleague, False), (manager, True)):
+            authority = {**headers, "X-Kay-Session": token}
+            for route in (
+                f"/api/v1/documents/{created['id']}",
+                f"/api/v1/documents?parent_kind={kind}&parent_id={target}&purpose=photo",
+            ):
+                for flag in (None, "0", "1"):
+                    response = await client.get(
+                        route,
+                        headers={
+                            **authority,
+                            **({"X-Kay-Photo-Capabilities": flag} if flag is not None else {}),
+                        },
+                    )
+                    assert response.status_code == 200
+                    result = response.json()
+                    item = result["items"][0] if "items" in result else result
+                    assert "created_by_user_id" not in item
+                    if flag == "1":
+                        assert item["can_upload"] is allowed
+                    else:
+                        assert "can_upload" not in item
 
 
 @pytest.mark.anyio

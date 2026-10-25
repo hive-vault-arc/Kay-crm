@@ -1,6 +1,7 @@
 """Synthetic real-PostgreSQL scope, idempotency and private clean transfer."""
 
 from concurrent.futures import ThreadPoolExecutor
+from datetime import UTC, datetime
 from io import BytesIO
 from uuid import UUID, uuid4
 
@@ -8,10 +9,12 @@ import pytest
 from pypdf import PdfReader
 from sqlalchemy import text
 
+from app.contacts.models import Contact, Enquiry
 from app.files.contracts import ArchiveDocument, PermitRequest
 from app.files.models import DocumentVersion
 from app.files.service import document_command, issue_permit, list_documents, read_document
 from app.files.storage import PrivateStorage
+from app.generated import service as generated_service
 from app.generated.contracts import GenerateRequest
 from app.generated.service import context, generate, history
 from app.identity.security import IdentityError, csrf_token
@@ -22,6 +25,53 @@ from tests.test_foundation import client_for
 from tests.test_isolation_migrations import HEAD, migrate
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
+
+
+@pytest.mark.parametrize("role", ["manager", "administrator"])
+def test_archived_contact_prevents_new_lead_pdfs_and_receipt_replay(settings, database, role):
+    _, owner = actor(settings, database)
+    lead = create_lead(settings, database, owner)
+    eid = UUID(lead["id"])
+    _, token = actor(settings, database, role)
+    body = GenerateRequest(parent_kind="enquiry", parent_id=eid, template_code="01", values={})
+    key = uuid4()
+    created = generate(database, settings, token, key, body)
+    with database.session() as session, session.begin():
+        enquiry = session.get(Enquiry, eid)
+        session.get(Contact, enquiry.contact_id).archived_at = datetime.now(UTC)
+    for command_key in (key, uuid4()):
+        with pytest.raises(IdentityError, match="NOT_FOUND|CONTACT_ARCHIVED"):
+            generate(database, settings, token, command_key, body)
+    assert history(database, token, "enquiry", eid, 1)["items"][0]["id"] == created["id"]
+    assert read_document(database, token, UUID(created["id"]))["id"] == created["id"]
+
+
+def test_contact_archived_while_pdf_renders_is_rechecked_before_publication(
+    settings, database, monkeypatch
+):
+    _, owner = actor(settings, database)
+    eid = UUID(create_lead(settings, database, owner)["id"])
+    _, token = actor(settings, database, "manager")
+    body = GenerateRequest(parent_kind="enquiry", parent_id=eid, template_code="01", values={})
+    key = uuid4()
+    original = generated_service.render_pdf
+
+    def render_then_archive(*args):
+        payload = original(*args)
+        with database.session() as session, session.begin():
+            enquiry = session.get(Enquiry, eid)
+            session.get(Contact, enquiry.contact_id).archived_at = datetime.now(UTC)
+        return payload
+
+    monkeypatch.setattr(generated_service, "render_pdf", render_then_archive)
+    with pytest.raises(IdentityError, match="NOT_FOUND|CONTACT_ARCHIVED"):
+        generate(database, settings, token, key, body)
+    assert history(database, token, "enquiry", eid, 1)["total"] == 0
+    monkeypatch.setattr(generated_service, "render_pdf", original)
+    with database.session() as session, session.begin():
+        enquiry = session.get(Enquiry, eid)
+        session.get(Contact, enquiry.contact_id).archived_at = None
+    assert generate(database, settings, token, key, body)["id"]
 
 
 def test_lead_pdf_history_private_download_and_retry(settings, database):

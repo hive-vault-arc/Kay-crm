@@ -2,6 +2,18 @@
 
 ## Agent inventory photo uploads (2026-10-23)
 
+Local correction2026-10-24: photo document reads/create acknowledgements add an
+optional response-only `can_upload` boolean derived from current identity and
+the original author (M/A may upload; an agent only their own photo). No creator
+ID is disclosed. This supports resuming metadata-only or interrupted uploads
+after reload, including at the ten-photo cap. It grants no archive/scan-retry
+authority; permit and publication checks remain authoritative. New facades accept
+older responses without this field; agents fail closed when it is absent.
+Metadata responses emit this field only when the server-side facade sends
+`X-Kay-Photo-Capabilities: 1`. Missing/unknown values preserve the old response
+shape. This fixed opt-in applies only to document metadata, not transfer permits;
+it is not authorization. Either frontend/backend deployment order remains safe.
+
 Existing document/permit/transfer routes now admit agent-created `purpose=photo`
 WebP documents for `property` and `development`. Current identity and active
 parent are checked at create, permit issue/consumption and upload publication.
