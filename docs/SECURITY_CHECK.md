@@ -1,5 +1,18 @@
 # KAY security check for changes
 
+## Publication audit follow-up (2026-10-25)
+
+The exact-candidate hosted audit for PR31 rejects pypdf6.21.1 for three newly
+reported advisories. Review the [maintainer patch release](https://github.com/py-pdf/pypdf/releases/tag/6.21.2)
+and pin6.21.2, regenerating runtime/development locks with the project venv.
+The subsequent full development audit also rejects filelock4.1.2 and
+setuptools84.0.0. Use compatible4.2.1/84.1.0 resolutions within existing dev
+ranges; [filelock advisory](https://github.com/tox-dev/filelock/security/advisories/GHSA-2g95-wg33-c5x2),
+[setuptools advisory](https://github.com/pypa/setuptools/security/advisories/GHSA-xmj3-9gf7-h52w).
+No audit exception, threshold reduction, schema change or public file access.
+Regenerated hashes, installation health, both audits, actual PDF behavior and
+fresh hosted release gates must pass before merge. Superseded runs do not count.
+
 ## Local recovery/archived-contact corrections (2026-10-24)
 
 Scanner follow-up uses the existing digest-pinned KAY Compose container and

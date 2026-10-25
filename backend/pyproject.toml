@@ -20,7 +20,7 @@ dependencies = [
   "argon2-cffi==25.1.0",
   "phonenumbers==9.0.41",
   "Pillow==13.0.0",
-  "pypdf==6.21.1",
+  "pypdf==6.21.2",
   "reportlab==5.0.1",
   "boto3>=1.40,<2",
   "tzdata==2026.5",

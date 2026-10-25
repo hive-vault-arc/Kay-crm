@@ -88,3 +88,9 @@ PR, and require real automatic CI plus the exact-candidate synthetic backend/
 browser integration workflow before merging. Do not bypass failed checks or
 claim local tests as a hosted result. No production data or configuration needs
 changing for these corrections.
+
+The first hosted runtime audit rejects newly reported pypdf6.21.1 advisories.
+Use reviewed patch6.21.2 and regenerate both hash locks with the project venv.
+The full dev audit additionally requires compatible filelock4.2.1 and
+setuptools84.1.0. Do not bypass the failure or count the cancelled superseded
+integration run; repeat local PDF checks and hosted gates on the corrected head.

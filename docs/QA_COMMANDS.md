@@ -1,5 +1,34 @@
 # KAY QA command register
 
+## Bug-sweep publication audit, 2026-10-25
+
+PR31 initial candidatef96490d passes hosted repository/frontend/managed runtime,
+but automatic run40194313644 fails the runtime audit on three pypdf6.21.1
+advisories. Its aggregate correctly fails; no merge/bypass occurs. Synthetic
+integration40194319649 is cancelled as superseded, not counted as passed.
+
+Pin pypdf6.21.2 and use backend explicit-venv `-m piptools compile --allow-unsafe
+--strip-extras --generate-hashes --upgrade-package pypdf --output-file
+requirements.txt pyproject.toml`, then the dev equivalent (`--extra dev`, output
+requirements-dev.lock). Full dev audit subsequently identifies filelock4.1.2
+and setuptools84.0.0. Recompile dev with `--upgrade-package filelock==4.2.1
+--upgrade-package setuptools==84.1.0`. Review confirms only these three versions/
+hashes change. No framework, Python baseline, schema or audit-policy changes.
+Install hash-locked dev requirements, refresh editable metadata without dependencies/
+build isolation; `-m pip check` and both `-m pip_audit -r requirements.txt` /
+`requirements-dev.lock --require-hashes --disable-pip` pass with no known issues.
+Backend Ruff/format/mypy pass. A bundle scan initially invoked from root refuses
+missing scan configuration; rerun from frontend succeeds:4 roots/172 JS/zero
+configured secret occurrences. Frontend102 units and runtime/full audits pass;
+both audit vulnerability counts0, exceptions_used0. Repository guard8546 files/
+zero forbidden, workflow lint,16 policy cases and1216-link validator pass.
+
+Docker was stopped again after the previous day's work. Start Docker Desktop
+hidden, reuse the pinned `kay-realtime-tests` Compose container and require
+healthy scanner; restart only the owned PostgreSQL cluster5544. Local file/PDF
+regressions and a new exact-candidate hosted automatic/manual integration run
+remain required before promotion; final results belong to the PR/release evidence.
+
 ## Agent inventory photos, 2026-10-23
 
 After the development uploader gained its own fieldset/legend, compiled headed
