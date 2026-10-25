@@ -32,7 +32,7 @@ export async function relayFiles(key: string, request: Request, requestId: strin
   }
   try {
     const jar = await cookies();
-    const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: request.method as "GET" | "POST", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: write ? frontendOrigin() : undefined, idempotencyKey: retryKey, maxResponseBytes: 2 * 1024 * 1024 });
+    const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: request.method as "GET" | "POST", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: write ? frontendOrigin() : undefined, idempotencyKey: retryKey, maxResponseBytes: 2 * 1024 * 1024, photoCapabilities: true });
     if (upstream.status !== 200) {
       const result = z.object({ error: z.object({ code: z.string() }) }).safeParse(upstream.body);
       const code = result.success && known.has(result.data.error.code) ? result.data.error.code : "DEPENDENCY_UNAVAILABLE";

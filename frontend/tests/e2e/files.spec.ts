@@ -5,6 +5,7 @@ import { createDevelopment } from "../helpers/developments";
 import { downloadFile, syntheticFile, uploadFile } from "../helpers/files";
 import { testControl } from "../helpers/api-process";
 import { manage, previewOperation, confirmOperation } from "../helpers/ownership";
+import { testPorts } from "../../scripts/test-ports.mjs";
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(20000); });
 
@@ -68,11 +69,12 @@ test("SP09: interrupted network transfer and unavailable scanner recover without
   try {
     await signIn(page, manager); await createProperty(page);
     const file = await syntheticFile("clean-document");
-    await page.route("https://localhost:8100/api/v1/transfers/**", route => route.abort("connectionfailed"));
+    const transferRoute = `https://localhost:${testPorts().api}/api/v1/transfers/**`;
+    await page.route(transferRoute, route => route.abort("connectionfailed"));
     await page.getByLabel("Fichier à ajouter", { exact: true }).setInputFiles(file);
     await page.getByRole("button", { name: "Envoyer le fichier", exact: true }).click();
     await expect(page.getByRole("alert").filter({ hasText: "Transfert interrompu" })).toBeVisible();
-    await page.unroute("https://localhost:8100/api/v1/transfers/**");
+    await page.unroute(transferRoute);
     await testControl("worker-unavailable");
     const publication = page.waitForResponse(response => response.request().method() === "PUT" && new URL(response.url()).pathname.startsWith("/api/v1/transfers/"));
     await page.getByRole("button", { name: "Réessayer le transfert", exact: true }).click();

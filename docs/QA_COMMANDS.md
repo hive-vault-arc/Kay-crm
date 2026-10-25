@@ -1990,3 +1990,164 @@ passes1/1 in29.5s. Final desktop/article/mobile/native200% screenshots inspected
 repository validator passes1214 links and `git diff --check` passes. Owned
 synthetic PostgreSQL55439 and `kay-realtime-tests` ClamAV are stopped afterward.
 
+## Local bug sweep (2026-10-24, unpublished)
+
+Scope: [review/corrections](03-planning/local-bug-sweep-2026-10-24.md) and
+[AFTER054](../anti-slop/audit-054-2026-10-24.md). The original dirty checkout is
+preserved; work uses the existing managed checkout on `codex/local-bug-sweep`
+from integrated09a9702. No commit, push, PR, deployment or production operation.
+
+Private Node24.22.1; explicit `backend/.venv/Scripts/python.exe` throughout.
+`APP_ENVIRONMENT=test` and `TEST_DATABASE_URL` select only the owned loopback
+`kayrealestate_test` on5544. The existing owned cluster could not bind55439
+after restart, so pg_ctl receives a runtime-only5544/127.0.0.1 override; shared
+PostgreSQL5432/configuration is unchanged. Database-writing pytest and browser
+fixtures remain serial under their existing exclusive lease. Browser ports are
+`KAY_E2E_API_PORT=8110`, `KAY_E2E_FRONTEND_PORT=3110`,
+`KAY_E2E_CONTROL_PORT=8111`, `KAY_E2E_SIMULATOR_PORT=8112`.
+
+The new archived-contact test initially fails because generation/replay does not
+raise. The writable canonical-contact guard fixes it. Test-fixture correction:
+read the Enquiry model rather than assuming a command receipt contains contact_id.
+Final regression also archives the contact during real PDF rendering, checks no
+history publication, then restores and retries successfully. Old archived PDFs
+remain readable to current managers/admins.
+
+Backend `./backend/scripts/kay.ps1 -Task check -Environment test` passes Ruff,
+format and strict mypy210 modules. With the explicit test environment,
+`backend/.venv/Scripts/python.exe -m pytest` over `test_generated_documents`,
+`test_auth`, `test_contacts`, `test_ownership`, `test_deals`, `test_inventory`,
+`test_developments`, `test_schedule`, `test_schedule_edges`, `test_schedule_http`,
+`test_work`, `test_proactive_work`, `test_realtime`, `test_realtime_capacity`
+(`backend/tests/`, `.py`, `-q --tb=short --maxfail=1`) passes177 in273.62s. Earlier
+inventory/project-links/owner/history/archive selection passes50 in82.54s; these
+overlapping selections are not additive unique-test totals.
+
+Final focused `-m pytest backend/tests/test_generated_documents.py
+backend/tests/test_property_photos.py -q --tb=short --maxfail=1 -k
+'not webp_photo_private_transfer_scan_and_wrong_bytes_denied'` passes18,
+explicitly deselects2, in59.72s. The unfiltered attempt has17 passes/1 failure:
+the real WebP scan remains pending instead of clean while local ClamAV is
+unavailable. Docker Desktop was started hidden, but its daemon did not become
+usable; the owned stalled info probe was stopped. No scanner verdict, original
+clean-file assertion, permission or quarantine rule is bypassed. Clean upload/
+download scanning is **not verified** in this task.
+
+Compiled visible Chrome first passes9 cases in2.9m across
+`property-listing-wizard`, `generated-documents`, `owners`, `project-links` and
+`record-removal` specs. Final functional sweep, `KAY_E2E_PRODUCTION=1;
+npm.cmd run test:chrome -- tests/e2e/photo-resume.spec.ts
+tests/e2e/property-listing-wizard.spec.ts tests/e2e/generated-documents.spec.ts
+tests/e2e/schedule.spec.ts tests/e2e/work.spec.ts tests/e2e/reports.spec.ts
+tests/e2e/leads.spec.ts tests/e2e/deals.spec.ts tests/e2e/scoped-activities.spec.ts
+--grep 'choosing a room|category changes|holiday riad|narrow land|photo recovery:|Lead and Deal generate|all three visit types|task creation, overdue|Visit follow-up after|real Bklit/API|outage retry and optimistic|Qualified conversion|activities: Lead notes|activities: loading'
+--max-failures=1 --reporter=list`, passes14 in5.3m. These are representative
+workflows, not the complete application/browser suite. Initial pre-rebuild
+browser attempts time out and are not passes; standalone browser startup and
+the rebuilt compiled application subsequently pass.
+
+Recovery proves automatic WebP metadata creation, failed permit handoff, reload,
+same-document retry with all10 slots occupied, keyboard chooser focus and denied
+colleague/allowed-manager controls. It deliberately stops before byte transfer,
+not a fake successful scan. Room creation saves a monthly priced rental without
+touching the period; category changes preserve an explicitly chosen year.
+1440/360px captures are inspected in one batch, with no overflow, existing44px
+controls and contrast checks. One scoped Impeccable layout detector returns[].
+
+The initial dependency audit refuses fast-uri3.1.8, not silently excepted. Its
+first compatible3.1.9 update changes three lockfile lines. The subsequent full
+audit also flags development tooling; the final reviewed update includes
+shadcn4.22.1/registry0.2.0, body-parser2.4.0 and undici7.30.1, deduplicating Zod
+onto existing4.6.7, with compatible qs6.16.1/systeminformation5.33.16 tooling
+resolutions. Framework/runtime pins and audit policy remain unchanged. Backend hash-locked
+`-m pip_audit -r requirements.lock --require-hashes --disable-pip` reports no known
+vulnerabilities.
+
+After metadata capability negotiation and the final dependency updates:
+
+- `./backend/scripts/kay.ps1 -Task check -Environment test`: Ruff passes,
+  374 files formatted, mypy210 source modules pass.
+- Explicit backend venv `-m pytest backend/tests/test_generated_documents.py
+  backend/tests/test_property_photos.py backend/tests/test_file_edges.py -q
+  --tb=short --maxfail=1 -k 'not webp_photo_private_transfer_scan_and_wrong_bytes_denied
+  and not retry_exhaustion_explicit_retry_and_immutable_clean_version'`:
+  27 passed,3 explicitly deselected,87.35s. Includes real archive-during-render,
+  both inventory kinds and old/new metadata clients; scanner-dependent cases
+  remain excluded for the stated environment limitation.
+- Portable Node24.22.1, `npm.cmd run test:unit`:102 passed,0 skipped/failed.
+  Covers fixed metadata-only opt-in header, old/new responses and response-only
+  capabilities. `npm.cmd run security:check`: runtime0/full0 vulnerabilities,
+  exceptions_used0. `npm.cmd ls shadcn @shadcn/registry zod fast-uri body-parser
+  undici` confirms reviewed resolutions, including deduplicated Zod4.6.7.
+- `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`: pass;
+  production routes compile. No generated components or application framework
+  versions changed.
+
+Final compiled visible Chrome command uses the same isolated environment and
+ports, `npm.cmd run test:chrome -- tests/e2e/photo-resume.spec.ts
+tests/e2e/property-listing-wizard.spec.ts tests/e2e/generated-documents.spec.ts
+tests/e2e/reports.spec.ts tests/e2e/help.spec.ts --grep
+'photo recovery:|choosing a room|category changes|holiday riad|narrow land|Lead and Deal generate|real Bklit/API|native 200 percent'
+--max-failures=1 --reporter=list`:8 passed in3.0m. This confirms final facade/
+backend negotiation in the actual recovery flow, room/holiday/land creation,
+private generated documents, scoped chart/table parity and native200% zoom.
+Earlier overlapping browser/backend selections remain separate evidence, not
+summed unique totals. This is not a full-product or production test pass.
+
+Final repository-only validator passes1216 links/anchors,22 sprints,42 acceptance
+mappings,13 Mermaid pairs and12 JSON samples. `git diff --check` passes. The
+owned PostgreSQL cluster at the verified worktree data directory is stopped
+with `pg_ctl -m fast -w stop`; no listeners remain on3110/8110/8111/8112/5544.
+Other projects/shared5432 are untouched. All edits remain unstaged/local on
+`codex/local-bug-sweep`; no commit, push, deployment or migration is required.
+
+## ClamAV upload follow-up (2026-10-24, local only)
+
+The owner confirmed Docker had been stopped and requested the missing upload
+verification, explicitly without publication. Docker now answers version29.7.2.
+Verified the stopped `kay-realtime-tests-clamav-1` container belongs to this
+worktree, then ran root `docker compose -p kay-realtime-tests -f
+backend/compose.clamav.yaml up -d`. Existing digest pin/signature volume are
+retained; private3310 binding only. Docker reports healthy and the actual ClamD
+VERSION command returns `ClamAV 1.5.4/28162/Fri Oct 23 06:24:08 2026` at readiness.
+Freshclam also downloads/tests daily28163. No verdict or quarantine bypass.
+
+The owned PostgreSQL cluster is started on5544 with its prior verified worktree
+data directory; no shared/development database is used. Explicit test environment,
+`TEST_DATABASE_URL=postgresql+psycopg://postgres@127.0.0.1:5544/kayrealestate_test`,
+`ANTIVIRUS_HOST=127.0.0.1`, `ANTIVIRUS_PORT=3310`, backend explicit venv:
+`-m pytest backend/tests/test_files.py backend/tests/test_file_edges.py
+backend/tests/test_property_photos.py backend/tests/test_generated_documents.py
+-q --tb=short --maxfail=1`: **51 passed in142.06s**, no skipped/deselected tests.
+This supersedes the scanner verification limitation above for these modules.
+Real six-format clean scans, controlled antivirus rejection, private transfers,
+immutable clean versions, retry exhaustion/recovery, malformed bytes, property/
+development photos and generated PDFs are covered. It is not a full CRM suite.
+
+Review found the interrupted-upload Chrome case still hard-coded8100 while the
+isolated test stack uses8110. Change only that test to use the existing validated
+`testPorts().api` for route/unroute. Portable Node24.22.1 frontend `npm.cmd run
+lint` and `npm.cmd run typecheck` pass. Application/antivirus source and scanner
+policy are unchanged by this follow-up; no schema migration is needed.
+
+After backend completion, the same isolated environment/validated8110/3110/8111/
+8112 overrides, `KAY_E2E_PRODUCTION=1`, portable Node and frontend
+`npm.cmd run test:chrome -- tests/e2e/files.spec.ts
+tests/e2e/property-photos.spec.ts tests/e2e/photo-resume.spec.ts
+tests/e2e/projects-reference.spec.ts --max-failures=1 --reporter=list`:
+**7 passed in6.9m**, no excluded cases. Actual compiled headed Chrome verifies
+private/shared clean downloads, controlled rejected bytes, quarantine access
+denial, interrupted transfer and scanner-outage recovery, reserved-slot resume,
+eight clean project-card photos/filters, WebP conversion, ten-photo cap/archive,
+viewer arrows/mobile display and agent project/apartment uploads without broader
+document rights. The recovery case retains its existing90-second fenced lease;
+no timing/security assertion is weakened. Desktop agent gallery and mobile
+viewer captures are inspected; synthetic fixtures only.
+
+Repository-only validation passes1216 links/anchors and `git diff --check`
+passes. The test supervisor exits and the owned PostgreSQL cluster is stopped;
+3110/8110/8111/8112/5544 have no listeners. Leave Docker and the repaired local
+ClamAV dependency running/healthy on loopback3310 for local uploads. Other
+containers/shared5432 are untouched. All changes remain local/unstaged on
+`codex/local-bug-sweep`; no commit, push, merge, production access or migration.
+

@@ -75,8 +75,10 @@ def authorize(
         return
     if kind == "enquiry":
         enquiry = enquiry_in_scope(session, identity, target)
-        if write and enquiry.archived_at is not None:
-            raise IdentityError("NOT_FOUND", 404)
+        if write:
+            scoped_contact(session, identity, enquiry.contact_id)
+            if enquiry.archived_at is not None:
+                raise IdentityError("NOT_FOUND", 404)
         return
     model = {"development": Development, "property": Property}.get(kind)
     if model is None:
@@ -127,7 +129,7 @@ def audit(session: Session, identity: CurrentIdentity, document: Document, actio
     )
 
 
-def view(session: Session, document: Document) -> dict[str, object]:
+def view(session: Session, document: Document, identity: CurrentIdentity) -> dict[str, object]:
     versions = session.scalars(
         select(DocumentVersion)
         .where(DocumentVersion.document_id == document.id)
@@ -153,6 +155,16 @@ def view(session: Session, document: Document) -> dict[str, object]:
         "size_bytes": document.size_bytes,
         "version": document.version,
         "archived": document.archived_at is not None,
+        **(
+            {
+                "can_upload": document.archived_at is None
+                and (
+                    identity.user.role != "agent" or document.created_by_user_id == identity.user.id
+                )
+            }
+            if document.purpose == "photo"
+            else {}
+        ),
         "versions": [
             {
                 "id": str(v.id),
@@ -167,7 +179,8 @@ def view(session: Session, document: Document) -> dict[str, object]:
 
 def read_document(database: Database, token: str, did: UUID) -> dict[str, object]:
     with database.session() as session:
-        return view(session, authorized_document(session, current_identity(session, token), did))
+        identity = current_identity(session, token)
+        return view(session, authorized_document(session, identity, did), identity)
 
 
 def list_documents(
@@ -216,7 +229,7 @@ def list_documents(
             .limit(page_size)
         ).all()
         return {
-            "items": [view(session, row) for row in rows],
+            "items": [view(session, row, identity) for row in rows],
             "page": page,
             "page_size": page_size,
             "total": total,
@@ -246,7 +259,7 @@ def document_command(
                 require_role(identity, {"manager"})
             if receipt.operation != f"{operation}:{did}" or receipt.request_hash != digest:
                 raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
-            return view(session, document)
+            return view(session, document, identity)
         if isinstance(body, NewDocument):
             authorize(
                 session,
@@ -319,7 +332,7 @@ def document_command(
             )
         )
         session.flush()
-        return view(session, document)
+        return view(session, document, identity)
 
 
 def retry_scan(session: Session, document: Document) -> None:

@@ -44,12 +44,20 @@ def resources(request: Request) -> tuple[Database, Settings]:
     return cast(Database, request.app.state.database), cast(Settings, request.app.state.settings)
 
 
+def metadata_response(request: Request, result: dict[str, object]) -> dict[str, object]:
+    if request.headers.get("X-Kay-Photo-Capabilities") != "1":
+        rows = cast(list[dict[str, object]], result["items"]) if "items" in result else [result]
+        for row in rows:
+            row.pop("can_upload", None)
+    return result
+
+
 @router.post("/documents")
 def create_document(
     request: Request, token: Proof, key: RetryKey, body: NewDocument
 ) -> dict[str, object]:
     validate_query(request, set())
-    return document_command(resources(request)[0], token, key, body)
+    return metadata_response(request, document_command(resources(request)[0], token, key, body))
 
 
 @router.get("/documents")
@@ -63,15 +71,18 @@ def documents(
     page_size: Annotated[int, Query(ge=1, le=100)] = 50,
 ) -> dict[str, object]:
     validate_query(request, {"parent_kind", "parent_id", "purpose", "page", "page_size"})
-    return list_documents(
-        resources(request)[0], token, parent_kind, parent_id, page, page_size, purpose
+    return metadata_response(
+        request,
+        list_documents(
+            resources(request)[0], token, parent_kind, parent_id, page, page_size, purpose
+        ),
     )
 
 
 @router.get("/documents/{did}")
 def document(request: Request, token: Proof, did: UUID) -> dict[str, object]:
     validate_query(request, set())
-    return read_document(resources(request)[0], token, did)
+    return metadata_response(request, read_document(resources(request)[0], token, did))
 
 
 @router.post("/documents/{did}/archive")
@@ -79,7 +90,9 @@ def archive_document(
     request: Request, token: Proof, key: RetryKey, did: UUID, body: ArchiveDocument
 ) -> dict[str, object]:
     validate_query(request, set())
-    return document_command(resources(request)[0], token, key, body, did)
+    return metadata_response(
+        request, document_command(resources(request)[0], token, key, body, did)
+    )
 
 
 @router.post("/files/permits")
@@ -99,7 +112,9 @@ def retry_document(
     request: Request, token: Proof, key: RetryKey, did: UUID, body: ArchiveDocument
 ) -> dict[str, object]:
     validate_query(request, set())
-    return document_command(resources(request)[0], token, key, body, did, "retry-scan")
+    return metadata_response(
+        request, document_command(resources(request)[0], token, key, body, did, "retry-scan")
+    )
 
 
 def transfer_proof(request: Request) -> str:

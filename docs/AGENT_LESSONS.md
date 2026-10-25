@@ -1,11 +1,28 @@
 # KAY agent lessons
 
+## Recovery controls must match the backend capability (2026-10-24)
+
+- Do not reuse an archive/manager flag for resuming an agent-owned upload.
+  Project only the minimal current capability, keep permit checks authoritative,
+  and test a failed metadata-to-permit handoff with no version row, a reload and
+  all ten slots occupied. Preserve the slot/document rather than creating another.
+- A readable archived contact is not writable. Check both the linked record and
+  canonical contact before document generation, replay and post-render commit;
+  test a real archive between rendering and publication without hiding history.
+- Strict response facades make new fields a rollout concern. Negotiate additions
+  through a fixed server-side opt-in, preserve old response shapes without it,
+  accept old payloads and fail closed on absent capabilities. Test both deployment
+  orders, rather than requiring coordinated releases. Local code is not deployed here.
+
 ## Help and parallel local apps need explicit boundaries (2026-10-23)
 
 Check listener ownership before starting a guarded browser stack. A process on
 8100/3100 can belong to another project; never stop it just to free the usual
 test ports. Use the four validated KAY_E2E port overrides together and retain
 the isolated database lease, loopback binding and exact HTTPS frontend Origin.
+Fault-injection routes must derive the API port from the same validated
+`testPorts()` helper. A hard-coded8100 upload interceptor silently misses an
+8110 isolated stack and can misdiagnose a test setup error as upload recovery.
 
 Next's streamed notFound can have HTTP200 and duplicate noindex metadata from
 layout/route boundaries. Test the actual missing-page UI, no restricted article
