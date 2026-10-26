@@ -8,6 +8,7 @@
 @import "./workspace-kanban.css";
 @import "./workspace-calendar.css";
 @import "./workspace-inline.css";
+@import "./workspace-forms.css";
 
 html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   display: none;

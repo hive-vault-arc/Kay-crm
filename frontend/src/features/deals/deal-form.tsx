@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ContactIcon, DealIcon } from "@/components/icons";
-import { SectionHeading } from "@/components/shared/section-heading";
+import { DossierFormHeader, useDossierDraft } from "@/components/shared/dossier-form";
+import { RecordSection } from "@/components/shared/record-workspace";
+import { RecordHeader } from "@/components/shared/record-header";
+import { useUnsavedGuard } from "@/components/shared/unsaved-guard";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form } from "@/components/ui/form";
@@ -49,8 +52,7 @@ export function DealForm(props: Props) {
   const { denied } = props;
   const metadata = useQuery("/api/v1/contacts/metadata", qualificationMetadataSchema);
   useEffect(() => { if (metadata.error && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED"].includes(metadata.error.code)) denied?.(metadata.error); }, [metadata.error, denied]);
-  if (metadata.error) return <RecordError error={metadata.error} retry={metadata.refresh} />;
-  if (!metadata.value) return <p role="status">Chargement des champs de qualification…</p>;
+  if (metadata.error || !metadata.value) return <><RecordHeader title={props.value ? "Modifier l’affaire" : "Nouvelle affaire"} route={props.value ? `/deals/${props.value.id}` : "/deals/new"} backHref="/deals" />{metadata.error ? <RecordError error={metadata.error} retry={metadata.refresh} /> : <p role="status">Chargement des champs de qualification…</p>}</>;
   return props.value ? <EditClientLoader {...props} metadata={metadata.value} contactId={props.value.contact.id} /> : <DealEditorForm {...props} metadata={metadata.value} />;
 }
 function EditClientLoader(props: Props & { metadata: QualificationMetadata; contactId: string }) {
@@ -80,6 +82,11 @@ function DealEditorForm({ contact, role = "agent", context = {}, offering = null
   const submitButton = useRef<HTMLButtonElement>(null);
   const validationSummary = useRef<HTMLDivElement>(null);
   const hydrated = useHydrated();
+  const router = useRouter();
+  const lock = useRef(false);
+  const clientDraft = useWatch({ control: client.control });
+  const draft = useDossierDraft({ client: clientDraft, mode, contact: selectedContact?.id, agent, fields, projects, selectedOffering, stage });
+  const guard = useUnsavedGuard();
   useEffect(() => { if (validation.length) validationSummary.current?.focus(); }, [validation]);
   function change(patch: Partial<DealFields>) { setFields(previous => ({ ...previous, ...patch })); setValidation([]); }
   async function reuse(id: string) {
@@ -96,11 +103,14 @@ function DealEditorForm({ contact, role = "agent", context = {}, offering = null
       if (![...ordinaryStages, "reserved"].includes(deal.stage)) { setError(new ApiError("DEAL_DEDICATED_COMMAND_REQUIRED", 409)); return; }
       setFields(dealValues(deal)); setProjects(projectValues(deal)); setSelectedOffering(deal.offering); setSelectedContact(deal.contact);
       client.reset(clientValues(freshClient)); baseline.current = JSON.stringify(clientValues(freshClient)); setVersions({ deal: deal.version, contact: freshClient.version }); setCurrent(undefined); setError(undefined);
+      draft.accept({ client: clientValues(freshClient), mode, contact: deal.contact.id, agent, fields: dealValues(deal), projects: projectValues(deal), selectedOffering: deal.offering, stage });
     } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
     finally { setReloading(false); }
   }
   async function submit(event: React.FormEvent) {
-    event.preventDefault(); if (busy || reloading) return;
+    event.preventDefault(); if (lock.current || busy || reloading) return;
+    lock.current = true;
+    try {
     setError(undefined); setValidation([]);
     if ((value || mode === "new") && !(await client.trigger(undefined, { shouldFocus: true }))) return;
     if ((value || mode === "new") && !client.getValues("languages")?.length) { client.setError("languages", { message: "Choisissez au moins une langue." }, { shouldFocus: true }); return; }
@@ -115,7 +125,7 @@ function DealEditorForm({ contact, role = "agent", context = {}, offering = null
     const serialized = JSON.stringify(parsed.data);
     if (attempt.current.body !== serialized) attempt.current = { body: serialized, key: crypto.randomUUID() };
     setBusy(true); busyChanged?.(true);
-    try { const result = await apiCommand(value ? `/api/v1/deals/${value.id}` : "/api/v1/deals", parsed.data, resultSchema, attempt.current.key, value ? "PATCH" : "POST"); await saved(result.id); }
+    try { const result = await apiCommand(value ? `/api/v1/deals/${value.id}` : "/api/v1/deals", parsed.data, resultSchema, attempt.current.key, value ? "PATCH" : "POST"); draft.accept(); await saved(result.id); }
     catch (reason) {
       const failure = reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503); setError(failure);
       if (["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED", "CONTACT_ARCHIVED"].includes(failure.code)) denied?.(failure);
@@ -124,35 +134,40 @@ function DealEditorForm({ contact, role = "agent", context = {}, offering = null
         catch (comparison) { if (comparison instanceof ApiError && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED"].includes(comparison.code)) setError(comparison); }
       }
     } finally { setBusy(false); busyChanged?.(false); }
+    } finally { lock.current = false; }
   }
   if (error && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED", "CONTACT_ARCHIVED", "DEAL_DEDICATED_COMMAND_REQUIRED"].includes(error.code)) return <RecordError error={error} />;
-  const projectFields = (project: ProjectDraft, index: number) => <section key={project.id} className={`grid min-w-0 content-start gap-2 border-b pb-4${index > 0 && projects.length === 2 ? " lg:col-span-2" : ""}`} aria-label={`Projet ${index + 1}`}><ProjectPicker selected={project.selected} choose={selected => { setProjects(previous => previous.map(item => item.id === project.id ? { ...item, selected } : item)); setValidation([]); }} />{projects.length > 1 ? <Button action="release" type="button" variant="outline" className="justify-self-start" onClick={() => setProjects(previous => previous.filter(item => item.id !== project.id))}>Retirer le projet {index + 1}</Button> : null}</section>;
-  return <Form {...client}><form noValidate aria-label={value ? "Modifier l’affaire" : "Nouvelle affaire"} aria-busy={busy || reloading} className="crm-form" onSubmit={event => void submit(event)}>
-    <fieldset disabled={!hydrated || busy || reloading} className="crm-form-grid">
-      <section className="form-surface grid min-w-0 gap-4"><SectionHeading compact icon={ContactIcon}>Client</SectionHeading>
-        {!value && !contact ? <div className="grid gap-2"><Label htmlFor="deal-client-mode">Client de l’affaire</Label><NativeSelect id="deal-client-mode" value={mode} onChange={event => { setMode(event.target.value); setError(undefined); }}><option value="new">Nouveau contact</option><option value="existing">Contact existant</option></NativeSelect></div> : null}
-        {value || mode === "new" ? <><ContactFields form={client} metadata={metadata} requireLanguages compact />{!value && role !== "agent" ? <AgentPicker value={agent} change={setAgent} /> : null}</> : selectedContact ? <div className="grid gap-2"><p className="font-medium wrap-anywhere">{selectedContact.name}</p><p>{selectedContact.primary_phone} · Responsable : {selectedContact.primary_agent.display_name}</p><Link href={`/contacts/${selectedContact.id}`} className="inline-flex min-h-control items-center text-link underline">Consulter le profil du contact</Link>{!selectedContact.languages.length ? <p className="text-warning">Renseignez ses langues dans sa fiche avant de créer l’affaire.</p> : null}{!contact ? <Button action="contact" type="button" variant="outline" className="justify-self-start" onClick={() => setSelectedContact(undefined)}>Changer de contact</Button> : null}</div> : <ContactSelector choose={setSelectedContact} />}
-      </section>
-      <section className="form-surface grid min-w-0 gap-4"><SectionHeading compact icon={DealIcon} tone="purple">Qualification et projets</SectionHeading>
-        <div className="grid min-w-0 gap-4 @5xl:grid-cols-2"><div className="grid min-w-0 content-start gap-4">
-          <div className="grid min-w-0 gap-4 sm:grid-cols-2"><div className="grid gap-2"><Label htmlFor="deal-budget">Budget *</Label><BudgetInput id="deal-budget" metadata={metadata} value={fields.initial_budget} onChange={initial_budget => change({ initial_budget })} /></div>
-          <div className="grid gap-2"><Label htmlFor="deal-source">Source</Label><NativeSelect id="deal-source" value={fields.campaign_source} onChange={event => change({ campaign_source: event.target.value as DealFields["campaign_source"] })}>{Object.entries(campaignLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</NativeSelect></div>
-          <div className="grid gap-2"><Label htmlFor="deal-rating">Qualification</Label><NativeSelect id="deal-rating" value={fields.rating} onChange={event => change({ rating: event.target.value as DealFields["rating"] })}>{Object.entries(ratingLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</NativeSelect></div>
-          {!value ? <div className="grid gap-2"><Label htmlFor="initial-stage">Étape initiale</Label><NativeSelect id="initial-stage" value={stage} onChange={event => setStage(event.target.value as typeof stage)}>{ordinaryStages.map(code => <option key={code} value={code}>{stageLabels[code]}</option>)}</NativeSelect></div> : null}</div>
-          <fieldset className="grid gap-2"><legend className="mb-2 font-medium">Motifs d’achat *</legend><div className="grid gap-1 sm:grid-cols-2">{metadata.purchase_reasons.map(reason => <Label key={reason.value} className="flex min-h-control items-center gap-2"><Checkbox checked={fields.purchase_reasons.includes(reason.value as DealFields["purchase_reasons"][number])} onCheckedChange={checked => change({ purchase_reasons: checked ? [...fields.purchase_reasons, reason.value as DealFields["purchase_reasons"][number]] : fields.purchase_reasons.filter(code => code !== reason.value) })} />{reason.label}</Label>)}</div></fieldset>
-          <div className="grid gap-2"><Label htmlFor="deal-notes">Notes</Label><Textarea id="deal-notes" rows={3} maxLength={4000} value={fields.notes} onChange={event => change({ notes: event.target.value })} /></div>
-        </div><div className="grid min-w-0 content-start gap-4">{projectFields(projects[0], 0)}
-          <div className="grid gap-4 sm:grid-cols-2"><div className="grid gap-2"><Label htmlFor="deal-payment">Financement (facultatif)</Label><NativeSelect id="deal-payment" value={fields.payment_method ?? ""} onChange={event => change({ payment_method: event.target.value as DealFields["payment_method"] || null })}><option value="">Non renseigné</option>{Object.entries(paymentLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</NativeSelect></div><div className="grid gap-2"><Label htmlFor="deal-rooms">Nombre de pièces (facultatif)</Label><Input id="deal-rooms" inputMode="numeric" type="number" min={0} max={50} value={fields.number_of_rooms ?? ""} onChange={event => change({ number_of_rooms: event.target.value === "" ? null : Number(event.target.value) })} /></div></div>
-          <div className="grid gap-2"><Label htmlFor="deal-next-action">Prochaine action</Label><Textarea id="deal-next-action" maxLength={1000} rows={3} value={fields.next_action} onChange={event => change({ next_action: event.target.value })} /></div>
-        </div></div>
-        {projects.length > 1 ? <div className="grid min-w-0 gap-4 lg:grid-cols-2">{projects.slice(1).map((project, index) => projectFields(project, index + 1))}</div> : null}
-        {projects.length < 3 ? <Button action="create" type="button" variant="outline" className="justify-self-start" onClick={() => setProjects(previous => [...previous, { id: crypto.randomUUID() }])}>Ajouter un projet (maximum 3)</Button> : null}
-      </section>
-      <details className="form-surface"><summary className="min-h-control cursor-pointer py-3">Recherche et offre d’inventaire liées (facultatif)</summary><div className="grid min-w-0 gap-5 pt-4 lg:grid-cols-2">{selectedContact ? <RequirementPicker contactId={selectedContact.id} selected={fields.requirement_id} choose={requirement_id => change({ requirement_id })} /> : <p>Les recherches seront disponibles après la création du contact.</p>}<OfferingPicker selected={selectedOffering} choose={setSelectedOffering} /></div></details>
+  const projectFields = (project: ProjectDraft, index: number) => <section key={project.id} className="kay-form-project" aria-label={`Projet ${index + 1}`}><h3 className="text-sm font-medium">{index ? `Projet ${index + 1}` : "Projet principal"}</h3><ProjectPicker selected={project.selected} choose={selected => { setProjects(previous => previous.map(item => item.id === project.id ? { ...item, selected } : item)); setValidation([]); }} />{projects.length > 1 ? <Button action="release" type="button" variant="ghost" className="justify-self-start" onClick={() => setProjects(previous => previous.filter(item => item.id !== project.id))}>Retirer le projet {index + 1}</Button> : null}</section>;
+  return <Form {...client}><form noValidate aria-label={value ? "Modifier l’affaire" : "Nouvelle affaire"} aria-busy={busy || reloading} className="kay-dossier-form" data-draft-managed data-live-dirty={draft.dirty ? "true" : undefined} onSubmit={event => void submit(event)}>
+    <DossierFormHeader title={value ? "Modifier l’affaire" : "Nouvelle affaire"} route={value ? `/deals/${value.id}` : "/deals/new"} backHref={value ? `/deals/${value.id}` : "/deals"} description={value?.contact.name ?? "Contact et dossier"} actions={<><Button action="cancel" type="button" variant="outline" disabled={busy || reloading} onClick={() => guard.request(() => { if (cancel) cancel(); else router.push("/deals"); })}>Annuler</Button><Button action={value ? "save" : "create"} ref={submitButton} type="submit" disabled={!hydrated || busy || reloading || Boolean(current)}>{busy ? "Enregistrement…" : value ? "Enregistrer" : "Créer l’affaire"}</Button></>} />
+    <fieldset disabled={!hydrated || busy || reloading} className="kay-form-sheet kay-surface">
+      <RecordSection title="Contact">
+        {!value && !contact ? <div className="kay-form-context"><div className="grid gap-2"><Label htmlFor="deal-client-mode">Client de l’affaire</Label><NativeSelect id="deal-client-mode" value={mode} onChange={event => { setMode(event.target.value); setError(undefined); }}><option value="new">Nouveau contact</option><option value="existing">Contact existant</option></NativeSelect></div>{mode === "new" && role !== "agent" ? <AgentPicker value={agent} change={setAgent} /> : null}</div> : null}
+        {value || mode === "new" ? <ContactFields form={client} metadata={metadata} requireLanguages compact workspace /> : selectedContact ? <div className="kay-contact-choice"><p className="font-medium wrap-anywhere">{selectedContact.name}</p><div className="kay-contact-choice-meta"><span>{selectedContact.primary_phone}</span><span>Responsable : {selectedContact.primary_agent.display_name}</span><Link href={`/contacts/${selectedContact.id}`} className="inline-flex min-h-control items-center text-link underline">Fiche du contact</Link></div>{!selectedContact.languages.length ? <p className="text-warning">Renseignez ses langues dans sa fiche avant de créer l’affaire.</p> : null}{!contact ? <Button action="contact" type="button" variant="outline" className="justify-self-start" onClick={() => setSelectedContact(undefined)}>Changer de contact</Button> : null}</div> : <ContactSelector choose={setSelectedContact} />}
+      </RecordSection>
+      <RecordSection title="Projet et budget">
+        <div className="kay-form-columns"><div className="kay-form-column">{projects.map(projectFields)}{projects.length < 3 ? <Button action="create" type="button" variant="outline" className="justify-self-start" onClick={() => setProjects(previous => [...previous, { id: crypto.randomUUID() }])}>Ajouter un projet</Button> : null}</div>
+          <div className="kay-form-column"><div className="kay-form-field"><Label htmlFor="deal-budget">Budget *</Label><BudgetInput id="deal-budget" metadata={metadata} value={fields.initial_budget} onChange={initial_budget => change({ initial_budget })} /></div>
+            <details className="kay-form-disclosure"><summary>Recherche et offre liées (facultatif)</summary><div className="grid min-w-0 gap-5 pt-4">{selectedContact ? <RequirementPicker contactId={selectedContact.id} selected={fields.requirement_id} choose={requirement_id => change({ requirement_id })} /> : <p className="text-sm text-muted-foreground">Les recherches seront disponibles après la création du contact.</p>}<OfferingPicker selected={selectedOffering} choose={setSelectedOffering} /></div></details>
+          </div>
+        </div>
+      </RecordSection>
+      <RecordSection title="Qualification de l’affaire"><div className="kay-form-columns"><div className="kay-form-column">
+        <div className="kay-form-field"><Label htmlFor="deal-rating">Qualification</Label><NativeSelect id="deal-rating" value={fields.rating} onChange={event => change({ rating: event.target.value as DealFields["rating"] })}>{Object.entries(ratingLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</NativeSelect></div>
+        <div className="kay-form-field"><Label htmlFor="deal-payment">Financement</Label><NativeSelect id="deal-payment" value={fields.payment_method ?? ""} onChange={event => change({ payment_method: event.target.value as DealFields["payment_method"] || null })}><option value="">Non renseigné</option>{Object.entries(paymentLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</NativeSelect></div>
+        <div className="kay-form-field"><Label htmlFor="deal-rooms">Pièces</Label><Input id="deal-rooms" inputMode="numeric" type="number" min={0} max={50} value={fields.number_of_rooms ?? ""} onChange={event => change({ number_of_rooms: event.target.value === "" ? null : Number(event.target.value) })} /></div>
+        <div className="kay-form-field"><Label htmlFor="deal-next-action">Action prévue</Label><Textarea id="deal-next-action" maxLength={1000} rows={3} value={fields.next_action} onChange={event => change({ next_action: event.target.value })} /></div>
+      </div><div className="kay-form-column">
+        <div className="kay-form-field"><Label htmlFor="deal-source">Campagne</Label><NativeSelect id="deal-source" value={fields.campaign_source} onChange={event => change({ campaign_source: event.target.value as DealFields["campaign_source"] })}>{Object.entries(campaignLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</NativeSelect></div>
+        {!value ? <div className="kay-form-field"><Label htmlFor="initial-stage">Étape initiale</Label><NativeSelect id="initial-stage" value={stage} onChange={event => setStage(event.target.value as typeof stage)}>{ordinaryStages.map(code => <option key={code} value={code}>{stageLabels[code]}</option>)}</NativeSelect></div> : null}
+        <fieldset className="grid gap-2"><legend className="mb-2 text-sm font-medium">Motifs d’achat *</legend><div className="flex flex-wrap gap-x-5 gap-y-1">{metadata.purchase_reasons.map(reason => <Label key={reason.value} className="flex min-h-control items-center gap-2"><Checkbox checked={fields.purchase_reasons.includes(reason.value as DealFields["purchase_reasons"][number])} onCheckedChange={checked => change({ purchase_reasons: checked ? [...fields.purchase_reasons, reason.value as DealFields["purchase_reasons"][number]] : fields.purchase_reasons.filter(code => code !== reason.value) })} />{reason.label}</Label>)}</div></fieldset>
+        <div className="kay-form-field"><Label htmlFor="deal-notes">Notes</Label><Textarea id="deal-notes" rows={3} maxLength={4000} value={fields.notes} onChange={event => change({ notes: event.target.value })} /></div>
+      </div></div></RecordSection>
     </fieldset>
-    {validation.length ? <div ref={validationSummary} tabIndex={-1} role="alert" className="grid gap-2 text-danger"><p>Complétez la qualification avant d’enregistrer.</p><ul className="list-inside list-disc">{validation.map(message => <li key={message}>{message}</li>)}</ul></div> : null}
-    <CommandError error={error} record="affaire" reuse={!value ? id => void reuse(id) : undefined} dismiss={() => setError(undefined)} returnFocus={submitButton} />
-    {current ? <section aria-label="Version actuelle de l’affaire" className="grid gap-3 border-y py-4"><h3 className="font-medium">Version actuelle {current.version}</h3><p className="wrap-anywhere">{current.title} · {stageLabels[current.stage]}</p><p>Votre brouillon est conservé. Charger la version actuelle remplacera les champs affichés.</p><Button action="refresh" type="button" variant="outline" className="justify-self-start" disabled={busy || reloading} onClick={() => void loadCurrent()}>Charger la version actuelle</Button></section> : null}
-    <div className="crm-form-actions"><Button action={value ? "save" : "create"} ref={submitButton} type="submit" disabled={!hydrated || busy || reloading || Boolean(current)}>{busy ? "Enregistrement…" : value ? "Enregistrer l’affaire" : "Créer l’affaire"}</Button>{cancel ? <Button action="cancel" type="button" variant="outline" disabled={busy || reloading} onClick={cancel}>Annuler les modifications</Button> : <Button action="back" asChild variant="outline"><Link href="/deals">Retour aux affaires</Link></Button>}</div>
+    <div className="kay-form-feedback">
+      {validation.length ? <div ref={validationSummary} tabIndex={-1} role="alert" className="grid gap-2 text-danger"><p>Complétez la qualification avant d’enregistrer.</p><ul className="list-inside list-disc">{validation.map(message => <li key={message}>{message}</li>)}</ul></div> : null}
+      <CommandError error={error} record="affaire" reuse={!value ? id => void reuse(id) : undefined} dismiss={() => setError(undefined)} returnFocus={submitButton} />
+      {current ? <section aria-label="Version actuelle de l’affaire" className="grid gap-3 border-y py-4"><h3 className="font-medium">Version actuelle {current.version}</h3><p className="wrap-anywhere">{current.title} · {stageLabels[current.stage]}</p><p>Votre brouillon est conservé. Charger la version actuelle remplacera les champs affichés.</p><Button action="refresh" type="button" variant="outline" className="justify-self-start" disabled={busy || reloading} onClick={() => void loadCurrent()}>Charger la version actuelle</Button></section> : null}
+    </div>{guard.dialog}
   </form></Form>;
 }

@@ -28,7 +28,7 @@ export function WorkspaceNavigationGuard() {
     function dirty(event: Event) {
       if (!(event.target instanceof Element) || event.target.closest("[data-filter-panel]")) return;
       const form = event.target.closest<HTMLElement>("form, [role=dialog], [role=alertdialog]");
-      if (!form || form.querySelector('[data-action="filter"]')) return;
+      if (!form || form.hasAttribute("data-draft-managed") || form.querySelector('[data-action="filter"]')) return;
       if (form.querySelector('[data-action="search"]') && !form.querySelector('[data-action="save"], [data-action="confirm"], [data-action="create"], [data-action="upload"]')) return;
       form.dataset.liveDirty = "true";
     }
@@ -36,9 +36,11 @@ export function WorkspaceNavigationGuard() {
     const clicked = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0 || !(event.target instanceof Element)) return;
       const link = event.target.closest<HTMLAnchorElement>("a[href]");
-      if (!link || !document.querySelector('[data-live-dirty="true"]')) return;
+      if (!link) return;
       const next = navigationIntent({ href: link.href, current: location.href, target: link.target, download: link.hasAttribute("download"), modified: event.ctrlKey || event.metaKey || event.shiftKey || event.altKey });
       if (!next) return;
+      if (document.querySelector('form[data-draft-managed][aria-busy="true"]')) { event.preventDefault(); event.stopPropagation(); return; }
+      if (!document.querySelector('[data-live-dirty="true"]')) return;
       event.preventDefault(); event.stopPropagation();
       request(() => { const url = new URL(next); if (url.origin === location.origin) router.push(`${url.pathname}${url.search}${url.hash}`); else location.assign(url.href); });
     };

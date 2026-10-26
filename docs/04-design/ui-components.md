@@ -1,5 +1,12 @@
 # KAY interface components: shadcn/ui working guide
 
+2026-10-26 selected full dossier forms reuse RecordHeader/RecordSection, one
+continuous panel and a single header action row. Shared workspace field geometry
+uses wide label/value rows, top labels in narrow panels and one phone column.
+useDossierDraft owns actual editable values and successful/reloaded baselines;
+picker search is excluded. Existing arrays, scoped pickers, versions, retry keys
+and guarded cancellation remain. [Execution](../03-planning/design-prototype-migration-execution.md).
+
 ## Current selected dossier fields (2026-10-26)
 
 The owner-selected migration uses InlineEditScope/InlineRecordField/InlineFieldForm

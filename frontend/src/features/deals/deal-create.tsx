@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { RecordHeader } from "@/components/shared/record-header";
 import { Button } from "@/components/ui/button";
 import { contactSchema, type ContactSummary, type StaffRole } from "@/features/contacts/contracts";
 import { RecordError } from "@/features/contacts/record-states";
@@ -14,13 +15,13 @@ import { DealForm } from "./deal-form";
 
 export function DealCreate({ context, role }: { context: DealContext; role: StaffRole }) {
   const router = useRouter();
-  if (context.enquiry_id) return <section className="grid gap-3"><p>Pour reprendre ce prospect, utilisez la conversion depuis sa fiche. Son projet, son budget et son motif d’achat seront enregistrés ensemble.</p><Button action="show" asChild className="justify-self-start"><Link href={`/leads/${context.enquiry_id}`}>Ouvrir le prospect à convertir</Link></Button></section>;
+  if (context.enquiry_id) return <><RecordHeader title="Nouvelle affaire" route="/deals/new" backHref="/deals" /><section className="grid gap-3"><p>Pour reprendre ce prospect, utilisez la conversion depuis sa fiche. Son projet, son budget et son motif d’achat seront enregistrés ensemble.</p><Button action="show" asChild className="justify-self-start"><Link href={`/leads/${context.enquiry_id}`}>Ouvrir le prospect à convertir</Link></Button></section></>;
   return context.contact_id ? <PrefilledContact context={context} role={role} /> : <DealForm role={role} saved={async id => { router.push(`/deals/${id}`); }} />;
 }
 function PrefilledContact({ context, role }: { context: DealContext; role: StaffRole }) {
   const query = useQuery(`/api/v1/contacts/${context.contact_id}`, contactSchema);
-  if (query.error) return <RecordError error={query.error} retry={query.refresh} />;
-  return query.value ? <CreateForContact key={query.value.id} contact={query.value} context={context} role={role} /> : <p role="status">Vérification du contact…</p>;
+  if (query.error) return <><RecordHeader title="Nouvelle affaire" route="/deals/new" backHref="/deals" /><RecordError error={query.error} retry={query.refresh} /></>;
+  return query.value ? <CreateForContact key={query.value.id} contact={query.value} context={context} role={role} /> : <><RecordHeader title="Nouvelle affaire" route="/deals/new" backHref="/deals" /><p role="status">Vérification du contact…</p></>;
 }
 function CreateForContact({ contact, context, role, change }: { contact: ContactSummary; context: DealContext; role: StaffRole; change?: () => void }) {
   const router = useRouter(); const [busy, setBusy] = useState(false); const [retry, setRetry] = useState(0);
@@ -41,5 +42,5 @@ function CreateForContact({ contact, context, role, change }: { contact: Contact
     void load(); return () => controller.abort();
   }, [contact.id, requirementId, offeringId, retry]);
   if (contact.archived_at) return <p role="status">Contact archivé. Restaurez-le avant de créer une affaire.</p>;
-  return <div className="grid min-w-0 gap-6">{change ? <Button action="contact" type="button" variant="outline" className="justify-self-start" disabled={busy} onClick={change}>Changer de contact</Button> : null}{error ? <RecordError error={error} retry={() => setRetry(v => v + 1)} /> : !loaded ? <p role="status">Vérification du contexte de l’affaire…</p> : <DealForm contact={contact} context={context} role={role} offering={loaded.offering} busyChanged={setBusy} saved={async id => { router.push(`/deals/${id}`); }} />}</div>;
+  return <div className="grid min-w-0 gap-6">{change ? <Button action="contact" type="button" variant="outline" className="justify-self-start" disabled={busy} onClick={change}>Changer de contact</Button> : null}{error || !loaded ? <RecordHeader title="Nouvelle affaire" route="/deals/new" backHref="/deals" /> : null}{error ? <RecordError error={error} retry={() => setRetry(v => v + 1)} /> : !loaded ? <p role="status">Vérification du contexte de l’affaire…</p> : <DealForm contact={contact} context={context} role={role} offering={loaded.offering} busyChanged={setBusy} saved={async id => { router.push(`/deals/${id}`); }} />}</div>;
 }

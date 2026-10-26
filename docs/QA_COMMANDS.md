@@ -1,5 +1,13 @@
 # KAY QA command register
 
+Latest full Contact/Lead/Deal form slice (2026-10-26): lint/typecheck/build and172
+frontend units pass (62 semantic glyphs/415 Button sites/zero violations). Ten
+new component/controller cases cover full atomic payloads, scoped contact reuse,
+version/retry/draft baselines, concurrent validation and pending navigation.
+Form CSS parses with32 rules/4 existing roles;254 prototype input hashes match.
+Native/real-stack acceptance remains pending.
+Evidence: [forms](03-planning/design-migration-evidence/forms-2026-10-26.json).
+
 Latest dossier-field slice (2026-10-26): frontend lint/typecheck/build and162
 units pass;62 glyphs/418 Button sites/zero inventory violations. Eleven new
 inline component/controller/SSR cases and four actual query-hook cases cover

@@ -44,7 +44,7 @@ export function LeadRecord({ id, edit = false, role = "agent", actorId }: { id: 
   if (error) return <>{heading}<RecordError error={error} retry={refresh} /></>;
   if (scopeError) return <>{heading}<RecordError error={scopeError} retry={() => { setScopeError(undefined); refresh(); }} /></>;
   if (!enquiry) return <>{heading}<p role="status">Chargement du prospect…</p></>;
-  if (edit && !enquiry.contact.archived_at && !enquiry.archived_at) return <>{heading}<LeadEditor key={id} enquiry={enquiry} /></>;
+  if (edit && !enquiry.contact.archived_at && !enquiry.archived_at) return <LeadEditor key={id} enquiry={enquiry} />;
   const writable = !enquiry.contact.archived_at && !enquiry.archived_at;
   const canArchive = !enquiry.contact.archived_at && (role !== "agent" || (actorId && enquiry.assigned_agent?.id === actorId));
   const inline = { enquiry, writable, saved: (value: Enquiry) => { setEdited(value); setNotice("Prospect enregistré."); refreshQuietly(); }, denied: setScopeError };

@@ -1,5 +1,26 @@
 # KAY security check for changes
 
+## Full dossier form migration, 2026-10-26
+
+The selected create/edit presentation retains strict contact/enquiry/deal DTOs,
+canonical contact reuse, current scoped reads, M/A attribution, required languages/
+budget/project/intent, linked offering/version and complete phone/email collections.
+No title, provenance, stage/stock or authority bypass was introduced. Synchronous
+locks now cover validation and command submission; same-body retries retain their
+key. Explicit conflict reloads replace both reviewed form/version baselines;
+failures retain drafts. Managed form values remain transient React state only,
+without new persistence, logs, external transmission or data exposure.
+
+The generic draft listener defers to managed form ownership so picker text is not
+a false business edit. Pending managed commands block page links even without a
+dirty marker. Existing guarded cancel, unload handling, session/CSRF/facade and
+backend permissions remain. Back/Forward coverage is still pending. Ten new
+actual-controller cases plus the existing synthetic suite pass (172 total), as do
+lint/typecheck/build. Real database/race/current-authority/native security checks
+are not claimed. No backend/facade/dependency/private-transfer change is included.
+
+[Evidence](03-planning/design-migration-evidence/forms-2026-10-26.json).
+
 ## Inline dossier fields and retained draft reads, 2026-10-26
 
 Inline controls reuse strict full contact/enquiry/deal edit schemas and current

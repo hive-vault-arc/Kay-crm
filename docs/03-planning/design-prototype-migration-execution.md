@@ -23,10 +23,10 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | --- | --- | --- |
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to62 source-pinned glyphs and selected status palette | Native review later |
-| P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields and click/unload draft guards implemented | Remaining full-form parity, Back/Forward handling, responsive focus and native interaction checks |
-| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban and per-value contact/prospect editing implemented | Remaining full-form/document parity, browser selector migration and native review |
+| P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields and click/unload draft guards implemented | Remaining inventory/work/admin form parity, Back/Forward handling, responsive focus and native interaction checks |
+| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
-| P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value qualification/notes/action editing and role-gated Finance drawer composed from real controllers | Remaining exact offer/full-form/PDF layouts and provenance; final native security/stock/focus checks |
+| P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda and date-only booking context implemented; current commands retained | Detailed visit/task/activity forms, inbox/settings refinements and native workflow review |
 | P7 remaining surfaces | Help topic hub, side-by-side guide cards and balanced reader implemented; other existing behavior retained | Dashboard/report/search/audit/jobs/settings compositions and native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
@@ -464,3 +464,53 @@ Dense CRM/form scope retains the existing system; missing original-machine UI
 skills and AFTER timing remain as previously recorded.
 
 [Inline evidence](design-migration-evidence/inline-2026-10-26.json) records exact source hashes and command results.
+
+
+## Full Contact/Lead/Deal forms
+
+The selected creation sheet now replaces the old parallel card composition.
+Prospect and affair create/edit forms have one continuous panel, separated
+Contact/Qualification or Contact/Projet et budget/Qualification sections and one
+save/cancel action row beside the title. Duplicate route/editor headings and
+bottom action strips were removed. The shared form field recipe uses horizontal
+labels in wide panels, labels above controls in narrower panels and one column
+on phones or narrow drawers. The contact editor uses the same field spacing.
+Phone methods and residence sit opposite email methods, languages, nationality
+and roles. The live arrays retain every label and explicit primary selection.
+
+Contact reuse remains explicit and scoped. Picker results are compact full-width
+choices with name, primary phone and responsible agent; Enter in picker search
+searches rather than submitting the enclosing dossier. Existing numbered pages
+remain, with no inactive single-page controls. Programme/property/external project
+choices, one-to-three qualification projects, exact budget strings, optional
+linked search/offering versions, initial ordinary stage and zero rooms remain.
+The prototype's relance and immutable source fields still use their real existing
+workflows; no unsupported date/provenance mutation was added.
+
+Managed draft tracking now compares only editable business values; typing picker
+search text does not mark a dossier changed. Successful writes and explicit
+current-version reloads accept a new baseline. Failed/interrupted writes retain
+it. Shared input tracking respects that ownership, and link navigation is blocked
+while a managed command is pending even if it had no dirty fields. Explicit
+cancel uses the existing discard dialog. Synchronous locks cover async validation
+as well as the original versioned commands; unchanged-body retries keep their
+original key. Lead edits reset both form baselines only after success.
+
+Ten actual component/controller cases cover these boundaries, including contact
+reuse/assignment, complete atomic bodies, collection/zero retention, double
+submit, interrupted retry, conflict retention/reload, managed picker input and
+pending-command navigation. The first two test failures were an incorrect mock
+export for NativeSelect; that fixture was corrected. Initial lint also found the
+now-unused DealIcon import after removing a duplicate heading; it was removed.
+Final lint/typecheck and the pinned Next16.4.2 production build pass;172 frontend
+units pass. Form CSS parses as32 rules with4 existing role references, all found.
+All254 frozen prototype inputs still match their recorded hashes.
+
+These are source/synthetic checks, not rendered geometry, focus/zoom or real
+record/security acceptance. The original-machine mandatory UI skill paths remain
+unavailable; dense CRM/product forms remain outside design-taste's marketing
+workflow, and AFTER timing stays unchanged. Native/product review follows the
+remaining implementation. No backend, facade, dependency, storage, database,
+worker, main, push or merge change is included.
+
+[Full-form evidence](design-migration-evidence/forms-2026-10-26.json).
