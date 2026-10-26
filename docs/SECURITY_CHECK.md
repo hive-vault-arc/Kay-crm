@@ -1,5 +1,20 @@
 # KAY security check for changes
 
+## Selected Help composition and navigation, 2026-10-26
+
+The hub still receives only the current authenticated role's static guides and
+categories. Restricted article slugs retain the existing server notFound gate.
+Topic/query/page values are bounded; unknown/repeated topic inputs fall back to
+the allowed catalog. Query URLs use URLSearchParams and React-escaped text.
+Search is a read-only local-guide GET, not a private CRM search or an external
+sender. No auth-return allowlist expansion, backend/data/dependency change,
+client authority or sensitive persistence is introduced.
+
+125 frontend units, lint/typecheck and production build pass. New synthetic
+route and SSR cases cover current-role filtering, copied topics, input bounds,
+query escaping and full guide-content retention. Native copied-URL/session,
+keyboard/focus/zoom and final release checks remain pending.
+
 ## Document presentation and narrow collections, 2026-10-26
 
 The selected file picker is presentation only. Existing bounded metadata,

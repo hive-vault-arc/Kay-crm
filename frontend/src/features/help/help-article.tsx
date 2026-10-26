@@ -1,30 +1,32 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
-import { ForwardIcon } from "@/components/icons";
+import { AlertIcon, ForwardIcon } from "@/components/icons";
 import { helpCategoryIcons } from "./category-icon";
+import { helpDirectoryPath } from "./navigation";
 import type { HelpArticle as Article } from "./types";
+
+const locations: Record<string, string> = { "/dashboard": "Tableau de bord", "/leads/new": "Prospects → Nouveau prospect", "/leads": "Prospects → Ouvrir une fiche", "/deals": "Affaires → Ouvrir une fiche", "/projects": "Projets", "/projects/properties/new": "Projets → Nouveau bien", "/owners": "Propriétaires", "/visits": "Calendrier des visites", "/settings/users": "Paramètres → Utilisateurs", "/notifications": "Cloche → Notifications" };
 
 export function HelpArticle({ article, category, related }: { article: Article; category: string; related: Article[] }) {
   const Icon = helpCategoryIcons[article.category];
-  return <div className="grid min-w-0 gap-4">
-    <nav aria-label="Fil d’Ariane de l’aide"><ol className="flex min-w-0 flex-wrap items-center gap-x-2 text-sm"><li><Link href="/help" className="inline-flex min-h-control items-center text-link underline">Aide KAY</Link></li><li aria-hidden="true">/</li><li className="text-muted-foreground">{category}</li></ol></nav>
-    <PageHeader title={article.title} description={article.summary} route={`/help/${article.slug}`} icon={Icon} actions={<Button action="back" variant="outline" asChild><Link href="/help">Tous les guides</Link></Button>} />
-    <div className="grid min-w-0 items-start gap-4 lg:grid-cols-4">
-      <aside className="surface grid min-w-0 gap-4" aria-label="Repères du guide">
-        <nav aria-label="Sommaire du guide"><h2 className="font-semibold">Dans ce guide</h2><ol className="mt-2 grid gap-1 text-sm">{article.sections.map((section, index) => <li key={section.title}><a href={`#section-${index + 1}`} className="flex min-h-control items-center py-2 text-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring">{section.title}</a></li>)}</ol></nav>
-        {article.action ? <div className="grid min-w-0 gap-2 border-t pt-4"><p className="text-xs text-muted-foreground">Passer à la pratique</p><Button action="forward" variant="outline" asChild className="w-full text-left"><Link href={article.action.href}>{article.action.label}</Link></Button></div> : null}
-        <p className="border-t pt-3 text-xs text-muted-foreground">Ce guide explique le fonctionnement de KAY. Les actions et les données disponibles dépendent toujours de vos droits actuels.</p>
-      </aside>
-      <article aria-label={article.title} className="surface grid min-w-0 gap-6 lg:col-span-3">
-        {article.sections.map((section, index) => <section key={section.title} aria-labelledby={`section-${index + 1}`} className="grid min-w-0 gap-3 border-b pb-6 last:border-b-0 last:pb-0">
-          <h2 id={`section-${index + 1}`} tabIndex={-1} className="scroll-mt-4 text-section font-medium outline-offset-2">{section.title}</h2>
-          {section.paragraphs?.map(paragraph => <p key={paragraph} className="max-w-reading text-sm leading-relaxed wrap-anywhere">{paragraph}</p>)}
-          {section.steps ? <ol className="grid max-w-reading list-decimal gap-3 pl-6 text-sm leading-relaxed">{section.steps.map(step => <li key={step} className="pl-1 wrap-anywhere">{step}</li>)}</ol> : null}
-          {section.note ? <p className="max-w-reading rounded-sm bg-warning-background p-4 text-sm leading-relaxed text-warning wrap-anywhere">{section.note}</p> : null}
-        </section>)}
+  function section(section: Article["sections"][number], index: number) {
+    return <section key={section.title} aria-labelledby={"section-" + (index + 1)} className="kay-help-guide-section"><h3 id={"section-" + (index + 1)} tabIndex={-1}>{section.title}</h3>
+      {section.paragraphs?.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+      {section.steps ? <ol className="kay-help-instructions">{section.steps.map(step => <li key={step}><span>{step}</span></li>)}</ol> : null}
+      {section.note ? <div className="kay-help-note"><AlertIcon size={16} aria-hidden="true" /><p>{section.note}</p></div> : null}
+    </section>;
+  }
+  return <div className="kay-help-page">
+    <PageHeader title="Centre d’aide" description="Les bons repères pour utiliser KAY." route={"/help/" + article.slug} />
+    <section className="kay-help-reader kay-surface"><div className="kay-help-reading-scroll" role="region" aria-label="Lecture du guide" tabIndex={0}>
+      <article aria-labelledby="help-guide-title">
+        <Button action="back" variant="quiet" className="kay-help-back" asChild><Link href={helpDirectoryPath({ topic: article.category })}>Retour aux guides</Link></Button>
+        <header className="kay-help-guide-heading"><span className="kay-help-topic-icon"><Icon size={20} aria-hidden="true" /></span><div><span className="kay-help-category">{category}</span><h2 id="help-guide-title" tabIndex={-1}>{article.title}</h2><p>{article.summary}</p></div>{article.action ? <Button action="forward" variant="outline" asChild><Link href={article.action.href}>{article.action.label}</Link></Button> : null}</header>
+        {article.action && locations[article.action.href] ? <p className="kay-help-location"><span>Où aller</span><strong>{locations[article.action.href]}</strong></p> : null}
+        <div className="kay-help-reader-columns"><div>{article.sections.slice(0, 1).map(section)}</div><div>{article.sections.slice(1).map((entry, index) => section(entry, index + 1))}</div></div>
+        {related.length ? <footer className="kay-help-related"><h3>À lire aussi</h3><ul>{related.map(item => <li key={item.slug}><Link href={"/help/" + item.slug} prefetch={false}><span>{item.title}</span><ForwardIcon size={16} aria-hidden="true" /></Link></li>)}</ul></footer> : null}
       </article>
-    </div>
-    {related.length ? <section className="surface grid min-w-0 gap-3" aria-labelledby="help-related"><h2 id="help-related" className="text-section font-medium">Pour continuer</h2><ul className="grid min-w-0 gap-x-6 sm:grid-cols-2 xl:grid-cols-3">{related.map(item => <li key={item.slug} className="min-w-0 border-t"><Link href={`/help/${item.slug}`} prefetch={false} className="flex min-h-control items-center justify-between gap-3 py-3 text-sm font-medium text-link underline-offset-4 hover:underline"><span className="min-w-0">{item.title}</span><ForwardIcon aria-hidden="true" className="size-4 shrink-0" /></Link></li>)}</ul></section> : null}
+    </div></section>
   </div>;
 }

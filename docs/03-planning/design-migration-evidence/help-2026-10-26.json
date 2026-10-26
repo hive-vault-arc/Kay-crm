@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "previous": "cf3616e",
+  "scope": "Selected Help Home/topic cards, reproducible role-filtered catalog URLs and balanced full-content reader; migration still in progress",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "result": "passed; 59 icons / 392 Button sites / zero violations"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:unit",
+      "result": "125 passed"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed; pinned Next 16.4.2 including fresh TypeScript"
+    },
+    {
+      "command": "node --test tests/unit/help.test.mjs (final query-escaping assertion)",
+      "result": "8 passed"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "frontend/src/app/(workspace)/help/page.tsx",
+      "sha256": "3e1a1e85eec163ac7e403fbd1313020e9329ae87c4e3aeb95cf9f77803f96ce5"
+    },
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "7864c83a917c22540d1d6f79a86b5214a530c3b7097f2c3aaf41da6dc06f0371"
+    },
+    {
+      "path": "frontend/src/app/workspace-help.css",
+      "sha256": "d8f623f2e1a8eaafd127befe000b6f430f7006538f9f80b3d5c9727deb6bde78"
+    },
+    {
+      "path": "frontend/src/features/help/category-icon.tsx",
+      "sha256": "eb9629461462cd09ef7448cda0646ebb024b08d502b3e190edab0cd5ed586ade"
+    },
+    {
+      "path": "frontend/src/features/help/help-article.tsx",
+      "sha256": "aa16ca09371506068db29a75010a5908893764498fed10b6ac0d50ef90da7c8b"
+    },
+    {
+      "path": "frontend/src/features/help/help-directory.tsx",
+      "sha256": "b3bacd8a0eea1d613f43967b651dd581db59ee0ad2992a99a9b976aac469584c"
+    },
+    {
+      "path": "frontend/src/features/help/navigation.ts",
+      "sha256": "fb827e8d0d286a9bfa8920f86aa3ac5ec4158e1c6a3d034efbee54c5d76fd207"
+    },
+    {
+      "path": "frontend/tests/unit/help.test.mjs",
+      "sha256": "379fb9cc9d2f3417c98ec45be9b12b65aaddc6f6e2a576100d473082b0ed44e7"
+    }
+  ],
+  "security": "Current-role static catalog, restricted-slug denial and bounded escaped query navigation retained; no backend/auth-return/dependency change",
+  "limitations": [
+    "No app HTTP or native browser access",
+    "No native no-scroll/short-screen/zoom/keyboard/focus acceptance",
+    "Other module, form and PDF implementation incomplete",
+    "No push/main change/merge"
+  ]
+}

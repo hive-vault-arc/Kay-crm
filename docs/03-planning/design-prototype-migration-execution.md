@@ -28,7 +28,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu and role-gated Finance drawer composed from real controllers | Remaining exact inline/offer/form/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Existing application behavior retained | Selected calendar/task/activity/inbox presentation and full context flows |
-| P7 remaining surfaces | Existing application behavior retained | Dashboard/report/search/audit/jobs/settings/help compositions |
+| P7 remaining surfaces | Help topic hub, side-by-side guide cards and balanced reader implemented; other existing behavior retained | Dashboard/report/search/audit/jobs/settings compositions and native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -275,3 +275,29 @@ not prove native dialogs, real private-byte/scanner behavior, focus or visual
 fidelity. No backend/facade/dependency/storage/permission contract changed.
 
 [Document batch evidence](design-migration-evidence/files-2026-10-26.json) records the source hashes and scoped commands.
+
+## Help workspace batch
+
+The approved Home composition now uses compact search and topic cards with two
+direct guide links and a current-role count per topic. No removed FAQ section is
+reintroduced. The topic/search catalog uses parallel guide cards and the selected
+20-item numbered static page size. The reader places the first instruction
+section beside supporting sections, retaining every paragraph, step, note and
+related permitted link. It keeps the existing current-role static catalog and
+server copied-slug denial; no prototype demo article replaces real guidance.
+
+Topic/query/page URLs are bounded and role-filtered on the server; browser
+navigation can reproduce them. Search has a native GET fallback and remains
+outside the business draft guard. Short/mobile viewports retain normal native
+overflow instead of clipping guide links to force a fixed screenshot. The desktop
+frame uses its available height; exact target-size no-scroll/zoom behavior still
+requires final native verification.
+
+Lint/typecheck and the pinned production build pass;125 frontend units pass.
+Actual-component SSR checks home/catalog routing, safe query text and preservation
+of every section/instruction/note. Additional route/query/page tests cover copied
+restricted topics and current-role guide filtering. A first SSR fixture omitted
+icon stubs and failed; the fixture was corrected, with no production gate removed.
+Native reading, keyboard, Back/Forward focus and visual acceptance remain pending.
+
+[Help batch evidence](design-migration-evidence/help-2026-10-26.json) records source hashes and checks.

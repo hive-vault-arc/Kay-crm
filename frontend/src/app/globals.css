@@ -3,6 +3,7 @@
 @import "./workspace-collections.css";
 @import "./workspace-status.css";
 @import "./workspace-files.css";
+@import "./workspace-help.css";
 
 html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   display: none;

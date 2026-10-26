@@ -1,5 +1,10 @@
 # KAY QA command register
 
+Latest selected Help slice (2026-10-26): frontend lint/typecheck/build pass,
+125 units pass;59 semantic icons/392 Button sites/zero violations. New SSR/route
+cases cover current-role topic filtering, bounded URLs/static pages, query
+escaping and complete guide-content retention. Native review remains pending.
+
 ## Selected workspace redesign branch, 2026-10-26
 
 Branch `codex/redesign`, base/main `e0bdc09`; foundation `fed7ded`, first records
