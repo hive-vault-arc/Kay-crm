@@ -1,7 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
+import { usePhoneLayout } from "@/hooks/use-phone-layout";
+import { DirectoryViewSwitch, useDirectoryView } from "@/components/shared/directory-view-switch";
+import type { ApiError } from "@/lib/api/client";
+import { DealKanban } from "./deal-kanban";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,13 +55,21 @@ export function DealList({ role, actorId, contactId, archived = false, revision 
   const hydrated = useHydrated();
   const { visible, change, notice } = useDealColumns();
   const query = useQuery(queryPath("deals", { ...filters, contact_id: contactId, archive: archived ? "archived" : filters.archive, record_archive: recordArchive, page }), dealsSchema, revision);
+  const phone = usePhoneLayout(), preference = useDirectoryView("deals"), listRef = useRef<HTMLButtonElement>(null);
+  const [boardVisited, setBoardVisited] = useState(false), [boardEpoch, setBoardEpoch] = useState(0), [boardFailure, setBoardFailure] = useState<ApiError>();
+  const board = !contactId && !phone && preference.value === "kanban";
+  if (board && !boardVisited) setBoardVisited(true);
+  const refreshBoard = query.refresh;
+  const boardDenied = useCallback((reason: ApiError) => { setBoardFailure(reason); refreshBoard(); }, [refreshBoard]);
+  const scopeDenied = query.error && ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED"].includes(query.error.code);
+  const viewControl = <DirectoryViewSwitch value={preference.value} phone={phone} listRef={listRef} change={value => { if (value === "list") { setBoardEpoch(epoch => epoch + 1); setBoardFailure(undefined); } preference.change(value); }} />;
   function clearFilters() { reset(); setAgentLabel(""); }
   const toolbar = <CrmDirectoryToolbar primary={!archived ? <Button action="create" asChild variant="creation"><Link href={`/deals/new${contactId ? `?contact_id=${contactId}` : ""}`}>Créer une affaire</Link></Button> : null}>
     <Button action="contact" asChild variant="quiet" size="compact"><Link href="/contacts">Contacts</Link></Button><Button action={recordArchive === "active" ? "archive" : "back"} variant="quiet" size="compact" aria-pressed={recordArchive === "archived"} onClick={() => { setRecordArchive(value => value === "active" ? "archived" : "active"); setPage(1); }}>{recordArchive === "active" ? "Archives des affaires" : "Affaires actives"}</Button><DealColumns compact visible={visible} change={change} />
   </CrmDirectoryToolbar>;
   return <div className={!contactId ? "crm-directory" : "grid min-w-0 gap-3"}>
     {!contactId ? <CrmDirectoryHeader title="Affaires" count={query.value?.total} noun="affaires" description="Suivez vos projets et préparez les prochaines étapes de vos affaires." route="/deals" actions={toolbar} /> : null}
-    <FilterResultsLayout title="Filtres des affaires" inline={Boolean(contactId)} reference={!contactId} active={activeCount > 0} activeCount={activeCount} reset={clearFilters} filters={close => <form className="crm-directory-filter-form" aria-label="Recherche et filtres des affaires" onSubmit={event => { event.preventDefault(); apply(close); }}>
+    <FilterResultsLayout leadingControl={!contactId && phone ? viewControl : undefined} title="Filtres des affaires" inline={Boolean(contactId)} reference={!contactId} active={activeCount > 0} activeCount={activeCount} reset={clearFilters} filters={close => <form className="crm-directory-filter-form" aria-label="Recherche et filtres des affaires" onSubmit={event => { event.preventDefault(); apply(close); }}>
       <fieldset disabled={!hydrated} className="grid min-w-0 gap-5">
         <div className="grid gap-2"><Label htmlFor="deal-search">Rechercher</Label><div className="crm-search-input"><SearchIcon aria-hidden="true" /><Input placeholder="Affaire, contact ou action" aria-label="Rechercher une affaire, un contact ou une action" id="deal-search" maxLength={160} value={draft.q} onChange={event => setDraft({ ...draft, q: event.target.value })} /></div></div>
         <CrmStatusFilter label="Étape" labels={stageLabels} counts={query.value?.stage_counts} value={draft.stage} change={stage => setDraft({ ...draft, stage })} />
@@ -73,12 +85,17 @@ export function DealList({ role, actorId, contactId, archived = false, revision 
         {invalid ? <p role="alert" className="text-danger">{invalid}</p> : null}<div className="crm-filter-submit"><Button action="filter" type="submit" variant="outline">Appliquer</Button><Button action="reset" type="button" variant="quiet" onClick={clearFilters}>Réinitialiser</Button></div>
       </fieldset><p className="crm-filter-note">Les filtres sont appliqués automatiquement.</p>
     </form>}>
+      {!contactId && !phone ? viewControl : null}
       {contactId ? toolbar : null}{notice ? <p role="status">{notice}</p> : null}
+      {boardFailure && board ? <RecordError error={boardFailure} retry={() => { setBoardFailure(undefined); setBoardEpoch(epoch => epoch + 1); query.refresh(); }} /> : null}
       {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des affaires…</p> : <>
         <h2 className="crm-results-title" role="status">{recordArchive === "archived" ? "Archives · " : ""}{query.value.total} affaire{query.value.total > 1 ? "s" : ""}</h2>
+        <div hidden={board}>
         {query.value.items.length ? <ScrollableResultsTable><DataTable mobileCard={(deal, selection) => <DirectoryRecordCard title={deal.title} href={`/deals/${deal.id}`} agent={deal.contact.primary_agent.display_name} status={<CrmStatusBadge kind="deal" state={deal.stage}>{stageLabels[deal.stage]}</CrmStatusBadge>} phone={deal.contact.primary_phone} selection={selection} metadata={<><CrmStatusBadge dot={false} state={deal.rating}>{ratingLabels[deal.rating]}</CrmStatusBadge><strong>{deal.initial_budget || "À qualifier"}</strong></>} details={[{ label: "Contact", value: deal.contact.name }, { label: "E-mail", value: deal.contact.primary_email ?? "Non renseigné" }, { label: "Projets", value: deal.projects.map(project => project.name).join(" · ") || "Non renseignés" }, { label: "Source", value: campaignLabels[deal.campaign_source] }, { label: "Pays", value: countryLabel(deal.contact.country) }, { label: "Langues", value: deal.contact.languages.map(code => languageLabels[code] ?? code).join(", ") || "Non renseignées" }, { label: "Prochaine action", value: deal.next_action || "Non renseignée" }, { label: "Modifié le", value: formatInstant(deal.updated_at) }]} />} className="crm-directory-table min-w-table" scrollLabel="Tableau des affaires, défilement horizontal" rows={query.value.items} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} selectionAction={(selected, clear) => selected.length === 1 && (role !== "agent" || selected[0].contact.primary_agent.id === actorId) ? <RecordLifecycleAction kind="deals" id={selected[0].id} version={selected[0].version} archivedAt={selected[0].archived_at} label={selected[0].title} onChanged={() => { clear(); query.refresh(); }} /> : <span className="text-xs text-muted-foreground">{selected.length > 1 ? "Archivez une fiche à la fois." : "Seul l’agent responsable peut archiver cette fiche."}</span>} footerCaption columns={visible.map(id => ({ ...columns[id], id, ...(id === "name" || id === "updatedAt" ? { header: () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" onClick={() => setDraft({ ...draft, sort: id === "name" ? "contact_name" : "-updated_at" })}>{id === "name" ? "Contact" : "Modifié le"}</Button> } : {}) }))} caption="Une affaire explicite par ligne. Le responsable suit la fiche contact." emptyLabel="Aucune affaire." /></ScrollableResultsTable> : <p>{recordArchive === "archived" ? "Aucune affaire archivée dans cette sélection." : "Aucune affaire sur cette page ou dans ces filtres. Créez une affaire, réinitialisez les filtres ou revenez à la première page."}</p>}
         <NumberedPages compact={!contactId} label="Pages des affaires" page={page} total={query.value.total} size={query.value.page_size} change={setPage} />
+        </div>
       </>}
+      {boardVisited && !contactId && !scopeDenied && !boardFailure ? <DealKanban key={boardEpoch} active={board && Boolean(query.value) && !query.error} filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : filters.archive, record_archive: recordArchive }} revision={revision} changed={query.refreshQuietly} denied={boardDenied} returnFocus={listRef} /> : null}
     </FilterResultsLayout>
   </div>;
 }

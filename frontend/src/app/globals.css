@@ -5,6 +5,7 @@
 @import "./workspace-files.css";
 @import "./workspace-help.css";
 @import "./workspace-work.css";
+@import "./workspace-kanban.css";
 
 html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   display: none;

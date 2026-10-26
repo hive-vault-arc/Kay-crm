@@ -1,5 +1,24 @@
 # KAY security check for changes
 
+## Desktop paged Kanban, 2026-10-26
+
+Existing enquiry/deal list schemas and scoped backend endpoints own every lane,
+total, filter and numbered page. Board dragging accepts only an internal editable
+row; it does not parse outside drag text or optimistically mutate records. All
+writes reuse the original session/CSRF/version/idempotency/reason/stock-review
+controllers. Release/reopen followed by an ordinary stage requires a separate
+confirmation against the newly loaded version; conversion retains its required
+project/budget/purchase reasons. Current archive/authority checks remain, and a
+current scope denial removes the board. Non-sensitive finite display cookies
+contain no record IDs, names, authentication or private data.
+
+The shared Deal command preserves same-body retry identity after interrupted
+reload and serializes submissions. Card rendering remains React escaped. Original
+private file, finance, worker, API, dependency and backend contracts are unchanged.
+Lint/build/fresh TypeScript, synthetic controller/SSR cases and the dependency
+audit pass (runtime0/full0/zero exceptions). No real stock/session/database race,
+native dragging/focus or final security acceptance is claimed.
+
 ## Work-entry and pagination presentation, 2026-10-26
 
 Existing scoped task/notification read schemas and commands are reused. New card

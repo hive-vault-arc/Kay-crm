@@ -1,5 +1,13 @@
 # KAY QA command register
 
+Latest desktop Kanban slice (2026-10-26): lint and pinned Next16.4.2 build
+(including fresh TypeScript) pass;62 semantic glyphs/401 Button sites/zero
+violations;138 units pass. `npm run security:check` reports runtime0/full0/zero exceptions.
+New synthetic cases exercise per-column complete query/page/total, internal-only
+drag, guarded phone/list behavior, original retry/version boundaries and explicit
+second confirmation after reopening. Final native/full-stack review remains pending.
+Evidence: [Kanban](03-planning/design-migration-evidence/kanban-2026-10-26.json).
+
 Latest work-entry/pagination slice (2026-10-26): frontend lint/typecheck/build
 pass,128 units pass;59 semantic icons/392 Button sites/zero violations. Added
 supplied-clock/terminal task, notification current-denial and shrinking-page

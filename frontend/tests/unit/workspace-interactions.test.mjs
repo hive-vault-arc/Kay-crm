@@ -322,9 +322,9 @@ test("Deal stage menu delegates stock actions and preserves the reviewed ordinar
     react: harness.react, "react/jsx-runtime": runtime, "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" },
     "@/components/ui/alert-dialog": { AlertDialog: "Dialog", AlertDialogCancel: "Cancel", AlertDialogContent: "Content", AlertDialogDescription: "Description", AlertDialogTitle: "Title" },
     "@/components/shared/crm-presentation": { CrmStatusBadge: "Badge" }, "@/components/shared/record-status-menu": { RecordStatusMenu: "StatusMenu" }, "@/features/contacts/record-states": { RecordError: "Error" },
-    "@/hooks/use-hydrated": { useHydrated: () => true }, "./contracts": contracts, "./reservation-panel": { ReservationPanel: "Reservation" }, "./outcome-panel": { OutcomePanel: "Outcome" },
+    "@/hooks/use-hydrated": { useHydrated: () => true }, "./contracts": contracts, "./deal-stage-policy": loadServer("src/features/deals/deal-stage-policy.ts", { modules: { "./contracts": contracts } }), "./reservation-panel": { ReservationPanel: "Reservation" }, "./outcome-panel": { OutcomePanel: "Outcome" },
   } });
-  const reviewed = { id: randomUUID(), version: 7, title: "Synthetic deal", stage: "new", offering: {}, active_reservation: null };
+  const reviewed = { id: randomUUID(), version: 7, title: "Synthetic deal", stage: "new", archived_at: null, contact: { archived_at: null }, offering: {}, active_reservation: null };
   let deal = reviewed, accepted = false;
   const props = { writable: true, busy: false, busyChanged() {}, mutate: async (...args) => { calls.push(args); return accepted; }, saved: async () => {} };
   const render = () => harness.render(() => DealStageMenu({ ...props, deal }));

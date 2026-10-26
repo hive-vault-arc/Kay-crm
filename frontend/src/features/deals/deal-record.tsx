@@ -9,24 +9,18 @@ import { useQuery } from "@/features/contacts/use-query";
 import type { StaffRole } from "@/features/contacts/contracts";
 import { currentRecord } from "@/features/realtime/current-record";
 import { apiGet, ApiError } from "@/lib/api/client";
-import { apiCommand } from "@/lib/api/command";
-import { dealSchema, ordinaryStages, resultSchema, stageLabels, type Deal } from "./contracts";
+import { useDealCommand } from "./use-deal-command";
+import { dealSchema, ordinaryStages, stageLabels, type Deal } from "./contracts";
 import { DealForm } from "./deal-form";
 import { DealWorkspace } from "./deal-workspace";
 
 export function DealRecord({ id, initialTask, role = "agent", actorId, initialTab }: { id: string; initialTask?: string; role?: StaffRole; actorId?: string; initialTab?: string }) {
-  const query = useQuery(`/api/v1/deals/${id}`, dealSchema); const [fresh, setFresh] = useState<Deal>(); const [editing, setEditing] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState<ApiError>(); const [comparison, setComparison] = useState<Deal>(); const [notice, setNotice] = useState("");
-  const lock = useRef(false); const attempt = useRef({ fingerprint: "", key: "" }); const focusEdit = useRef(false); const value = currentRecord(query.value, fresh, id);
+  const query = useQuery(`/api/v1/deals/${id}`, dealSchema);
+  const [editing, setEditing] = useState(false), [comparison, setComparison] = useState<Deal>();
+  const { fresh, setFresh, busy, setBusy, error, setError, notice, setNotice, reload, mutate } = useDealCommand(id, () => setComparison(undefined));
+  const focusEdit = useRef(false), value = currentRecord(query.value, fresh, id);
   const restoreFocus = useCallback((node: HTMLButtonElement | null) => { if (node && focusEdit.current) { focusEdit.current = false; node.focus(); } }, []);
   function endEdit() { focusEdit.current = true; setEditing(false); }
-  async function reload() { const current = await apiGet(`/api/v1/deals/${id}`, dealSchema); setFresh(current); return current; }
-  async function mutate(path: `/api/v1/${string}`, body: unknown, method: "POST" | "PATCH" = "POST") {
-    if (lock.current) return false; lock.current = true; setBusy(true); setError(undefined); setNotice(""); setComparison(undefined);
-    const fingerprint = JSON.stringify({ path, body, method }); if (attempt.current.fingerprint !== fingerprint) attempt.current = { fingerprint, key: crypto.randomUUID() };
-    try { await apiCommand(path, body, resultSchema, attempt.current.key, method); await reload(); setNotice("Modification enregistrée. L’historique conserve son auteur."); return true; }
-    catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); return false; }
-    finally { lock.current = false; setBusy(false); }
-  }
   async function compare() { setBusy(true); try { setComparison(await apiGet(`/api/v1/deals/${id}`, dealSchema)); } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); } finally { setBusy(false); } }
   const returnLink = <Button action="back" asChild variant="quiet" size="compact" className="justify-self-start"><Link href="/deals">Retour aux affaires</Link></Button>;
   const heading = <div className="grid min-w-0 justify-items-start gap-2">{returnLink}<PageHeader title="Affaire" description="Pipeline, prochaine action, propositions client et historique." route={`/deals/${id}`} /></div>;

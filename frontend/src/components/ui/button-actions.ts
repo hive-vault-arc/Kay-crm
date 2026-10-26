@@ -1,7 +1,7 @@
 import type { KayIconComponent } from "@/components/icons";
 import {
   AddIcon, ArchiveIcon, BackIcon, CalendarIcon, ChevronDownIcon, CloseIcon,
-  ColumnsIcon, CompareIcon, CompletedIcon, ContactIcon, ContactsIcon, DealIcon,
+  ColumnsIcon, ListIcon, KanbanIcon, CompareIcon, CompletedIcon, ContactIcon, ContactsIcon, DealIcon,
   DeleteIcon, DownloadIcon, EditIcon, FileIcon, EnquiryIcon, FinanceIcon,
   FilterIcon, ForwardIcon, HidePasswordIcon, PasswordIcon, PropertyIcon,
   RefreshIcon, RestoreIcon, SearchIcon, SettingsIcon, ShowPasswordIcon,
@@ -16,6 +16,8 @@ export type ActionDefinition = {
 };
 
 export const buttonActions = {
+  list: { icon: ListIcon, tone: "neutral", variant: "outline" },
+  board: { icon: KanbanIcon, tone: "neutral", variant: "outline" },
   create: { icon: AddIcon, tone: "warning", variant: "creation" },
   add: { icon: AddIcon, tone: "warning", variant: "outline" },
   save: { icon: CompletedIcon, tone: "success", variant: "success" },
@@ -58,6 +60,7 @@ export const buttonActions = {
   phone: { icon: PhoneIcon, tone: "neutral", variant: "outline" },
   email: { icon: EmailIcon, tone: "neutral", variant: "outline" },
   enquiry: { icon: EnquiryIcon, tone: "purple", variant: "outline" },
+  activity: { icon: TaskIcon, tone: "info", variant: "outline" },
   task: { icon: TaskIcon, tone: "info", variant: "outline" },
   deal: { icon: DealIcon, tone: "warning", variant: "outline" },
   inventory: { icon: PropertyIcon, tone: "teal", variant: "outline" },

@@ -38,6 +38,7 @@ try {
     "tests/unit/theme.test.mjs",
     "tests/unit/workspace.test.mjs",
     "tests/unit/workspace-interactions.test.mjs",
+    "tests/unit/kanban.test.mjs",
     "tests/unit/realtime.test.mjs",
     "tests/unit/help.test.mjs",
     "tests/unit/files.test.mjs",

@@ -1639,6 +1639,132 @@
         ]
       ],
       "sha256": "ae8ac48ef77ff46aba6676c31ed76f1dd4f741530709514b578db303342c3186"
+    },
+    {
+      "export": "ListIcon",
+      "name": "list",
+      "source": "List",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M3 5h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 12h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 19h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 5h13"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 12h13"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 19h13"
+          }
+        ]
+      ],
+      "sha256": "2509e885fc347e824a475bf98b2ffc16cac1d21186caa3a17150d61f30574037"
+    },
+    {
+      "export": "KanbanIcon",
+      "name": "kanban",
+      "source": "Kanban",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M5 3v14"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 3v8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M19 3v18"
+          }
+        ]
+      ],
+      "sha256": "ab696f7767a491b0ba582bcc6eebbcdd55246c0508e77f4ff2eaab7827c2eb48"
+    },
+    {
+      "export": "GripIcon",
+      "name": "grip",
+      "source": "GripVertical",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "9",
+            "cy": "12",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "9",
+            "cy": "5",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "9",
+            "cy": "19",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "15",
+            "cy": "12",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "15",
+            "cy": "5",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "15",
+            "cy": "19",
+            "r": "1"
+          }
+        ]
+      ],
+      "sha256": "4d6361e64fa67dc57c314af06da71a7b66c13aece034abe85ce6b6ff685d8792"
     }
   ]
 }

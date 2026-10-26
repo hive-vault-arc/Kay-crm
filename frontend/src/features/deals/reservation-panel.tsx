@@ -15,9 +15,9 @@ import { apiCommand } from "@/lib/api/command";
 import { formatInstant } from "@/lib/format";
 import { dealSchema, releaseSchema, reserveSchema, resultSchema, type Deal } from "./contracts";
 
-export function ReservationPanel({ deal, writable, busy, busyChanged, saved, dialogOnly = false, closed, returnFocus }: {
+export function ReservationPanel({ deal, writable, busy, busyChanged, saved, dialogOnly = false, closed, returnFocus, nextStageLabel }: {
   deal: Deal; writable: boolean; busy: boolean; busyChanged: (value: boolean) => void; saved: () => Promise<unknown>;
-  dialogOnly?: boolean; closed?: () => void; returnFocus?: RefObject<HTMLButtonElement | null>;
+  dialogOnly?: boolean; closed?: () => void; returnFocus?: RefObject<HTMLButtonElement | null>; nextStageLabel?: string;
 }) {
   const [open, setOpen] = useState(dialogOnly);
   const [review, setReview] = useState(deal);
@@ -63,9 +63,9 @@ export function ReservationPanel({ deal, writable, busy, busyChanged, saved, dia
     {deal.reservation_conflict ? <p role="status" className="text-warning">{deal.reservation_conflict === "DEVELOPMENT_OVERLAP" ? "Une réservation du même type couvre déjà le programme entier ou une de ses unités." : "Cette offre est déjà réservée par une autre affaire."} Faites vérifier le stock par un responsable. Aucun autre dossier privé n’est affiché.</p> : null}
     {!deal.offering ? <p>Liez une offre d’inventaire précise avant de réserver.</p> : !writable ? <p>Réservation en lecture seule.</p> : <AlertDialog open={open} onOpenChange={next => { if (!lock.current) { setOpen(next); if (!next) closed?.(); if (next) { setReview(deal); setError(undefined); setInvalid(""); } } }}>
       {!dialogOnly ? <AlertDialogTrigger asChild><Button action={releasing ? "release" : "reserve"} type="button" className="justify-self-start" variant={releasing ? "outline" : "default"} disabled={!hydrated || busy}>{action}</Button></AlertDialogTrigger> : null}
-      <AlertDialogContent onCloseAutoFocus={event => { if (returnFocus) { event.preventDefault(); returnFocus.current?.focus(); } }}>
+      <AlertDialogContent aria-busy={busy} onCloseAutoFocus={event => { if (returnFocus) { event.preventDefault(); returnFocus.current?.focus(); } }}>
         <AlertDialogTitle>{action}</AlertDialogTitle>
-        <AlertDialogDescription>{releasing ? "La libération rend cette offre disponible. Son motif et son auteur sont conservés." : "Cette action bloque uniquement l’offre et le périmètre indiqués. Elle ne gagne pas l’affaire et ne crée aucune commission."}</AlertDialogDescription>
+        <AlertDialogDescription>{releasing ? "La libération rend cette offre disponible. Son motif et son auteur sont conservés." : "Cette action bloque uniquement l’offre et le périmètre indiqués. Elle ne gagne pas l’affaire et ne crée aucune commission."}</AlertDialogDescription>{releasing && nextStageLabel ? <p className="text-sm text-muted-foreground">Après la libération, vous confirmerez le passage à « {nextStageLabel} ».</p> : null}
         {offering && target ? <div className="grid min-w-0 gap-2"><p className="wrap-anywhere font-medium">{target.reference} : {targetLabels[target.level]}</p><p>{kindLabels[offering.kind]} : {stateLabels[offering.state]}</p><p className="wrap-anywhere">{target.label}</p>{target.level === "unit" ? <p className="wrap-anywhere">Programme {target.development_reference}, bloc {target.block_code ?? "non renseigné"}, étage {target.floor_code ?? "non renseigné"}. Le type n’est pas une cible réservable.</p> : null}<p>Affaire version {review.version}, cible version {target.version}, offre version {offering.version}.</p></div> : <p role="alert">La cible actuelle ne peut pas être vérifiée.</p>}
         <p>Aucune expiration automatique. Le serveur vérifie à nouveau vos droits et les réservations concurrentes.</p>
         {releasing ? <div className="grid gap-2"><Label htmlFor="release-reason">Motif de la libération</Label><Textarea id="release-reason" maxLength={1000} value={reason} disabled={busy} onChange={event => setReason(event.target.value)} aria-invalid={Boolean(invalid)} aria-describedby={invalid ? "release-invalid" : undefined} /></div> : null}

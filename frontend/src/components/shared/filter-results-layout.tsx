@@ -9,7 +9,7 @@ const desktopQuery = "(min-width: 831px)";
 const desktopSnapshot = () => window.matchMedia(desktopQuery).matches;
 const serverSnapshot = () => true;
 
-export function FilterResultsLayout({ title, filters, children, active = false, inline = false, widePanel = false, reference = false, activeCount = 0, reset, className, panelHeading, mode = "rail", searchControl, surface = true }: {
+export function FilterResultsLayout({ title, filters, children, active = false, inline = false, widePanel = false, reference = false, activeCount = 0, reset, className, panelHeading, mode = "rail", searchControl, surface = true, leadingControl }: {
   title: string;
   filters: (close: () => void) => ReactNode;
   children: ReactNode;
@@ -24,6 +24,7 @@ export function FilterResultsLayout({ title, filters, children, active = false, 
   mode?: "rail" | "drawer";
   searchControl?: ReactNode;
   surface?: boolean;
+  leadingControl?: ReactNode;
 }) {
   const hydrated = useHydrated();
   const [open, setOpen] = useState(false);
@@ -69,6 +70,7 @@ export function FilterResultsLayout({ title, filters, children, active = false, 
         </aside>
       ) : (
         <div className="kay-list-controls">
+          {leadingControl ? <div className="kay-list-leading">{leadingControl}</div> : null}
           {searchControl ? <div className="kay-list-search" data-filter-panel="search">{searchControl}</div> : null}
           <Sheet open={open} onOpenChange={setOpen}>
             {!searchControl ? <SheetTrigger asChild><Button action="search" size="icon" variant="outline" disabled={!hydrated} aria-label="Rechercher dans cette liste" onClick={() => setSearching(true)}><span className="sr-only">Rechercher</span></Button></SheetTrigger> : null}

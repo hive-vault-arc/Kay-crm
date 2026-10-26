@@ -1,7 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
+import { usePhoneLayout } from "@/hooks/use-phone-layout";
+import { DirectoryViewSwitch, useDirectoryView } from "@/components/shared/directory-view-switch";
+import type { ApiError } from "@/lib/api/client";
+import { LeadKanban } from "./lead-kanban";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -51,7 +55,14 @@ export function LeadList({ role, actorId, contactId, archived = false, revision 
   const [agentLabel, setAgentLabel] = useState("");
   const [recordArchive, setRecordArchive] = useState<"active" | "archived">("active");
   const { visible, change, notice } = useLeadColumns();
-  const { value: result, error, refresh } = useQuery(queryPath("enquiries", { ...filters, page, contact_id: contactId, archive: archived ? "archived" : undefined, record_archive: recordArchive }), enquiriesSchema, revision);
+  const { value: result, error, refresh, refreshQuietly } = useQuery(queryPath("enquiries", { ...filters, page, contact_id: contactId, archive: archived ? "archived" : undefined, record_archive: recordArchive }), enquiriesSchema, revision);
+  const phone = usePhoneLayout(), preference = useDirectoryView("leads"), listRef = useRef<HTMLButtonElement>(null);
+  const [boardVisited, setBoardVisited] = useState(false), [boardEpoch, setBoardEpoch] = useState(0), [boardFailure, setBoardFailure] = useState<ApiError>();
+  const board = !contactId && !phone && preference.value === "kanban";
+  if (board && !boardVisited) setBoardVisited(true);
+  const boardDenied = useCallback((reason: ApiError) => { setBoardFailure(reason); refresh(); }, [refresh]);
+  const scopeDenied = error && ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED"].includes(error.code);
+  const viewControl = <DirectoryViewSwitch value={preference.value} phone={phone} listRef={listRef} change={value => { if (value === "list") { setBoardEpoch(epoch => epoch + 1); setBoardFailure(undefined); } preference.change(value); }} />;
   function clearFilters() { reset(); setAgentLabel(""); }
   const toolbar = <CrmDirectoryToolbar primary={<Button action="create" asChild variant="creation"><Link href="/leads/new">Nouveau prospect</Link></Button>}>
     <Button action="contact" asChild variant="quiet" size="compact"><Link href="/contacts">Contacts</Link></Button>
@@ -62,7 +73,7 @@ export function LeadList({ role, actorId, contactId, archived = false, revision 
   </CrmDirectoryToolbar>;
   return <div className={!contactId ? "crm-directory" : "grid min-w-0 gap-3"}>
     {!contactId ? <CrmDirectoryHeader title="Prospects" count={result?.total} noun="demandes" description="Qualifiez vos prospects et préparez vos prochaines affaires." route="/leads" actions={toolbar} /> : <h2 className="text-section font-medium">Demandes liées</h2>}
-    <FilterResultsLayout title="Filtres des Leads" inline={Boolean(contactId)} reference={!contactId} active={activeCount > 0} activeCount={activeCount} reset={clearFilters} filters={close => <form onSubmit={event => { event.preventDefault(); apply(close); }} className="crm-directory-filter-form" aria-label="Recherche et filtres des Leads">
+    <FilterResultsLayout leadingControl={!contactId && phone ? viewControl : undefined} title="Filtres des Leads" inline={Boolean(contactId)} reference={!contactId} active={activeCount > 0} activeCount={activeCount} reset={clearFilters} filters={close => <form onSubmit={event => { event.preventDefault(); apply(close); }} className="crm-directory-filter-form" aria-label="Recherche et filtres des Leads">
       <fieldset disabled={!hydrated} className="grid min-w-0 gap-5">
         <div className="grid gap-2"><Label htmlFor="lead-search">Rechercher</Label><div className="crm-search-input"><SearchIcon aria-hidden="true" /><Input placeholder="Nom, téléphone, e-mail" id="lead-search" aria-label="Rechercher un nom, téléphone ou e-mail" value={draft.q} maxLength={160} onChange={event => setDraft({ ...draft, q: event.target.value })} /></div></div>
         <CrmStatusFilter label="Statut" labels={statusLabels} counts={result?.status_counts} value={draft.status} change={status => setDraft({ ...draft, status })} />
@@ -80,13 +91,18 @@ export function LeadList({ role, actorId, contactId, archived = false, revision 
       </fieldset>
       <p className="crm-filter-note">Les filtres sont appliqués automatiquement.</p>
     </form>}>
+      {!contactId && !phone ? viewControl : null}
       {notice ? <p role="status">{notice}</p> : null}
+      {boardFailure && board ? <RecordError error={boardFailure} retry={() => { setBoardFailure(undefined); setBoardEpoch(epoch => epoch + 1); refresh(); }} /> : null}
       {error ? <RecordError error={error} retry={refresh} /> : !result ? <p role="status">Chargement des Leads…</p> : <>
         {role !== "agent" && contactId ? <ExportAction kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
         <h2 className="crm-results-title" role="status">{recordArchive === "archived" ? "Archives · " : ""}{result.total} demande{result.total > 1 ? "s" : ""}</h2>
+        <div hidden={board}>
         {!result.items.length ? <p>{recordArchive === "archived" ? "Aucun prospect archivé dans cette sélection." : activeCount ? "Aucune demande ne correspond à vos filtres." : "Aucune demande sur cette page. Créez un Lead ou revenez à la première page."}</p> : <ScrollableResultsTable><DataTable mobileCard={(lead, selection) => <DirectoryRecordCard title={lead.contact.name} href={`/leads/${lead.id}`} agent={lead.assigned_agent?.display_name ?? "File du responsable"} status={<CrmStatusBadge state={lead.status}>{statusLabels[lead.status]}</CrmStatusBadge>} phone={lead.contact.primary_phone} selection={selection} metadata={<><CrmStatusBadge dot={false} state={lead.rating}>{ratingLabels[lead.rating]}</CrmStatusBadge><strong>{lead.initial_budget ?? "À qualifier"}</strong><span>{campaignLabels[lead.campaign_source]}</span></>} details={[{ label: "E-mail", value: lead.contact.primary_email ?? "Non renseigné" }, { label: "Provenance", value: sourceLabels[lead.source] }, { label: "Pays", value: countryLabel(lead.contact.country) }, { label: "Langues", value: lead.contact.languages.map(code => languageLabels[code] ?? code).join(", ") || "Non renseignées" }, { label: "Réception", value: formatInstant(lead.received_at) }, { label: "Modifié le", value: formatInstant(lead.updated_at) }, { label: "Demande", value: lead.message_preview || "Non renseignée" }]} />} className="crm-directory-table min-w-table" scrollLabel="Tableau des Leads, défilement horizontal" rows={result.items} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} selectionAction={(selected, clear) => selected.length === 1 && (role !== "agent" || selected[0].assigned_agent?.id === actorId) ? <RecordLifecycleAction kind="enquiries" id={selected[0].id} version={selected[0].version} archivedAt={selected[0].archived_at} label={selected[0].contact.name} onChanged={() => { clear(); refresh(); }} /> : <span className="text-xs text-muted-foreground">{selected.length > 1 ? "Archivez une fiche à la fois." : "Seul l’agent attribué peut archiver cette fiche."}</span>} footerCaption columns={visible.map(id => ({ ...columns[id], id, ...(id === "name" || id === "updatedAt" ? { header: () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" onClick={() => setDraft({ ...draft, sort: id === "name" ? "name" : "-updated_at" })}>{id === "name" ? "Contact" : "Modifié le"}</Button> } : {}) }))} caption="Une ligne par demande, même si le contact est déjà connu." emptyLabel="Aucune demande." /></ScrollableResultsTable>}
         <NumberedPages compact={!contactId} page={page} total={result.total} size={result.page_size} change={setPage} />
+        </div>
       </>}
+      {boardVisited && !contactId && !scopeDenied && !boardFailure ? <LeadKanban key={boardEpoch} active={board && Boolean(result) && !error} filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined, record_archive: recordArchive }} revision={revision} changed={refreshQuietly} denied={boardDenied} returnFocus={listRef} /> : null}
     </FilterResultsLayout>
   </div>;
 }

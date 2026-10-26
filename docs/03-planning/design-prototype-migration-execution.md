@@ -22,9 +22,9 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | Phase | Source state | Remaining acceptance/work |
 | --- | --- | --- |
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
-| P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to59 source-pinned glyphs and selected status palette | Native review later |
+| P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to62 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers and click/unload draft guards implemented | Exact inline-field/form parity, Back/Forward handling, responsive focus and native interaction checks |
-| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement implemented | Desktop-only Kanban, exact inline editing, remaining form/document parity, browser selector migration and native review |
+| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban implemented | Exact inline editing, remaining form/document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu and role-gated Finance drawer composed from real controllers | Remaining exact inline/offer/form/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task cards/shared tonal entries, authoritative due state and notification entries implemented; current commands retained | Calendar/agenda, detailed task/activity forms, inbox/settings refinements and native workflow review |
@@ -330,3 +330,40 @@ navigation. Native time/input/focus/resize and real task/reminder/database tests
 remain pending. This is not the completed calendar/dashboard or whole branch.
 
 [Work-entry batch evidence](design-migration-evidence/work-2026-10-26.json) records source hashes and scoped checks.
+
+## Desktop directory Kanban batch
+
+The selected List/Kanban pills now operate on the real Lead/Deal directories.
+Phones retain List beside search/filter icons and never mount/read the lanes;
+the allowlisted non-sensitive cookie preserves only the desktop display mode.
+Contact-embedded lists keep their existing numbered table/cards. Each Kanban
+column has its own scoped API status filter, ten-row numbered page and server
+total. All applied search/assignment/archive/date/sort filters survive. A selected
+status fills the available result width instead of leaving blank neighboring
+columns. No current-page grouping is presented as the complete pipeline.
+
+Cards preserve real contact/phone, assignment, budget, project and offering
+context, source-pinned icons and tonal columns. Internal editable-card dragging
+only requests a review; outside/button/same-stage/cancelled drags never write.
+Lead transitions fetch the full current enquiry before reusing the original
+versioned status/conversion forms. Deal cards reuse the ordinary stage, stock
+reservation, release, outcome and reopening controllers. Releasing/reopening
+for an ordinary target first completes that reviewed operation, then asks for
+a second ordinary transition using the newly loaded version and a new reason.
+There is no optimistic or silently chained stock mutation.
+
+The original DealRecord command boundary is shared with the board: identical
+request bodies retain their retry identity even when the response/reload is
+interrupted; concurrent submissions are locked. Editors are owned outside the
+filter-keyed lanes, so filtering and phone resizing do not recreate their drafts.
+Explicit List navigation uses the existing unsaved/busy guard. Current scope
+denial removes the board; private IDs/names are never persisted in preferences.
+
+Lint, standalone typecheck, production build with fresh TypeScript, dependency
+security check and138 frontend units pass. First new tests exposed a synthetic parent/child
+hook-state collision and a missing default Link stub; the fixtures were corrected,
+not the shipping behavior or gates. Native drag/autoscroll, keyboard/focus, exact
+visual fidelity and real stock/database race tests remain for final verification.
+This batch does not finish the remaining forms/calendar/report/PDF migration.
+
+[Kanban evidence](design-migration-evidence/kanban-2026-10-26.json) records exact hashes and command results.

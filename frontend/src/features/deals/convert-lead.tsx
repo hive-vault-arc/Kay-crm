@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, type RefObject } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -19,14 +19,14 @@ import { resultSchema } from "./contracts";
 import { convertLeadSchema } from "./qualification-contracts";
 import { ProjectPicker, type ProjectSelection } from "./project-picker";
 
-export function ConvertLead({ enquiry, onRefresh }: { enquiry: Enquiry; onRefresh?: () => void }) {
-  const [open, setOpen] = useState(false);
+export function ConvertLead({ enquiry, onRefresh, dialogOnly = false, closed, returnFocus }: { enquiry: Enquiry; onRefresh?: () => void; dialogOnly?: boolean; closed?: () => void; returnFocus?: RefObject<HTMLButtonElement | null> }) {
+  const [open, setOpen] = useState(dialogOnly);
   const [busy, setBusy] = useState(false);
   const hydrated = useHydrated();
   if (enquiry.converted_deal_id) return <Button action="show" asChild><Link href={`/deals/${enquiry.converted_deal_id}`}>Ouvrir l’affaire</Link></Button>;
-  return <AlertDialog open={open} onOpenChange={value => { if (!busy) setOpen(value); }}>
-    <AlertDialogTrigger asChild><Button action="create" disabled={!hydrated || Boolean(enquiry.contact.archived_at)}>Convertir en affaire</Button></AlertDialogTrigger>
-    <AlertDialogContent onEscapeKeyDown={event => { if (busy) event.preventDefault(); }}><AlertDialogTitle>Convertir le prospect en affaire</AlertDialogTitle><AlertDialogDescription>{enquiry.contact.name}. Confirmez le projet, le budget et le motif d’achat. Les coordonnées et la source seront conservées.</AlertDialogDescription>
+  return <AlertDialog open={open} onOpenChange={value => { if (!busy) { setOpen(value); if (!value) closed?.(); } }}>
+    {!dialogOnly ? <AlertDialogTrigger asChild><Button action="create" disabled={!hydrated || Boolean(enquiry.contact.archived_at)}>Convertir en affaire</Button></AlertDialogTrigger> : null}
+    <AlertDialogContent onCloseAutoFocus={event => { if (returnFocus) { event.preventDefault(); returnFocus.current?.focus(); } }} onEscapeKeyDown={event => { if (busy) event.preventDefault(); }}><AlertDialogTitle>Convertir le prospect en affaire</AlertDialogTitle><AlertDialogDescription>{enquiry.contact.name}. Confirmez le projet, le budget et le motif d’achat. Les coordonnées et la source seront conservées.</AlertDialogDescription>
       {open ? <ConversionBody enquiry={enquiry} busyChanged={setBusy} onRefresh={onRefresh} /> : null}
     </AlertDialogContent>
   </AlertDialog>;
@@ -55,7 +55,7 @@ function ConversionForm({ enquiry, metadata, busyChanged, onRefresh }: { enquiry
     try { const result = await apiCommand(`/api/v1/enquiries/${enquiry.id}/convert`, parsed.data, resultSchema, attempt.current.key); router.push(`/deals/${result.id}`); }
     catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); setBusy(false); busyChanged(false); }
   }
-  return <form noValidate onSubmit={event => void convert(event)} className="grid min-w-0 gap-4" aria-busy={busy}>
+  return <form noValidate data-live-dirty={project || reasons.length || budget !== (enquiry.initial_budget ?? "") ? "true" : undefined} onSubmit={event => void convert(event)} className="grid min-w-0 gap-4" aria-busy={busy}>
     <fieldset disabled={busy} className="grid min-w-0 gap-4"><ProjectPicker selected={project} choose={choice => { setProject(choice); setValidation(""); }} />
       <div className="grid gap-2"><Label htmlFor={`${id}-budget`}>Budget *</Label><BudgetInput id={`${id}-budget`} value={budget} metadata={metadata} onChange={value => { setBudget(value); setValidation(""); }} /></div>
       <fieldset className="grid gap-2"><legend className="mb-2 font-medium">Motif d’achat *</legend><div className="grid gap-1 sm:grid-cols-2">{metadata.purchase_reasons.map(reason => <Label key={reason.value} className="flex min-h-control cursor-pointer items-center gap-2"><Checkbox checked={reasons.includes(reason.value)} onCheckedChange={checked => { setReasons(current => checked ? [...current, reason.value] : current.filter(value => value !== reason.value)); setValidation(""); }} />{reason.label}</Label>)}</div></fieldset>

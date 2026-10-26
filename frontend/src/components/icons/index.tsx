@@ -90,3 +90,7 @@ export const RejectedLeadIcon = createPrototypeIcon("rejected-lead");
 export const NegotiationIcon = createPrototypeIcon("negotiation");
 
 export const FlagIcon = createPrototypeIcon("flag");
+
+export const ListIcon = createPrototypeIcon("list");
+export const KanbanIcon = createPrototypeIcon("kanban");
+export const GripIcon = createPrototypeIcon("grip");

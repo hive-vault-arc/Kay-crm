@@ -25,7 +25,7 @@ export function ActivityForm({ path, saved, cancel }: { path: `/api/v1/${string}
     catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
     finally { lock.current = false; setBusy(false); }
   }
-  return <form onSubmit={submit} aria-label="Nouvelle activité" className="grid gap-4 rounded-md border bg-card p-4">
+  return <form onSubmit={submit} aria-busy={busy} aria-label="Nouvelle activité" className="grid gap-4 rounded-md border bg-card p-4">
     <div className="grid gap-4 md:grid-cols-3">
       <div className="grid gap-2"><Label htmlFor={`${id}-kind`}>Type d’activité</Label><NativeSelect id={`${id}-kind`} name="kind" disabled={busy}>{activityKinds.map(kind => <option key={kind} value={kind}>{kindLabels[kind]}</option>)}</NativeSelect></div>
       <div className="grid gap-2"><Label htmlFor={`${id}-duration`}>Durée (minutes, facultative)</Label><Input id={`${id}-duration`} name="duration" type="number" min={1} max={1440} step={1} disabled={busy} /></div>
