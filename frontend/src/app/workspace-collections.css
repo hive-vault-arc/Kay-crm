@@ -23,15 +23,15 @@
 .kay-shell [data-slot=table-row]:hover { background:var(--workspace-hover); }
 .kay-shell .crm-directory-table tbody tr:nth-child(even) { background:transparent; }
 .kay-shell .crm-directory-table tbody tr:hover { background:var(--workspace-hover); }
-.kay-shell .crm-status-badge { gap:5px; padding:3px 7px; border-radius:999px; font-size:12px; line-height:1.4; }
-.kay-shell .crm-status-dot { width:6px; height:6px; }
+:root .crm-status-badge { gap:5px; padding:3px 7px; border-radius:999px; font-size:12px; line-height:1.4; }
+:root .crm-status-dot { width:6px; height:6px; }
 .kay-shell .crm-selection-toolbar { gap:8px; padding:8px 12px; border-radius:14px; background:var(--workspace-selected); }
-.kay-shell .record-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 40px; margin:0; }
-.kay-shell .record-facts[data-columns="1"] { grid-template-columns:minmax(0,1fr); }
-.kay-shell .record-facts > .kay-record-fact { display:grid; grid-template-columns:148px minmax(0,1fr); align-content:start; align-items:start; gap:8px 20px; min-width:0; padding:6px 0; }
+:root .record-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 40px; margin:0; }
+:root .record-facts[data-columns="1"] { grid-template-columns:minmax(0,1fr); }
+:root .record-facts > .kay-record-fact { display:grid; grid-template-columns:148px minmax(0,1fr); align-content:start; align-items:start; gap:8px 20px; min-width:0; padding:6px 0; }
 .kay-record-fact dt { display:flex; align-items:start; gap:8px; color:var(--workspace-muted); font-size:13px; line-height:1.5; }
 .kay-record-fact dt svg { flex:none; margin-top:2px; }
-.kay-shell .record-facts > .kay-record-fact dd { padding:0; min-width:0; font-size:14px; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere; }
+:root .record-facts > .kay-record-fact dd { padding:0; min-width:0; font-size:14px; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere; }
 .kay-record-heading { display:flex; align-items:center; flex-wrap:wrap; gap:12px 16px; min-width:0; padding-block:10px 16px; }
 .kay-record-heading-copy { display:grid; gap:4px; flex:1; min-width:0; }
 .kay-record-heading h1 { margin:0; font-size:23px; line-height:1.3; font-weight:650; letter-spacing:-.025em; overflow-wrap:anywhere; }
@@ -124,7 +124,7 @@
   .kay-record-tabs [data-slot=tabs-trigger] { padding-inline:9px; }
 }
 @container kay-dossier (max-width:800px) {
-  .kay-shell .record-facts { grid-template-columns:minmax(0,1fr); }
+  :root .record-facts { grid-template-columns:minmax(0,1fr); }
 }
 @media(max-width:830px) {
   .kay-directory-header .kay-page-actions { flex:none; }
@@ -148,10 +148,10 @@
   .kay-record-tabs [data-slot=tabs-trigger] { flex:1; min-width:0; padding:8px 3px; font-size:12px; }
   .kay-tab-count { display:none; }
   .kay-record-aside { padding:16px; }
-  .kay-shell .record-facts { grid-template-columns:minmax(0,1fr); gap:12px; }
-  .kay-shell .record-facts > .kay-record-fact { grid-template-columns:minmax(0,1fr); gap:4px; padding:0; }
+  :root .record-facts { grid-template-columns:minmax(0,1fr); gap:12px; }
+  :root .record-facts > .kay-record-fact { grid-template-columns:minmax(0,1fr); gap:4px; padding:0; }
   .kay-record-fact dt { font-size:12px; }
-  .kay-shell .record-facts > .kay-record-fact dd { font-size:14px; }
+  :root .record-facts > .kay-record-fact dd { font-size:14px; }
   .kay-record-drawer .kay-drawer-head { padding:16px 64px 20px 16px; }
   .kay-drawer-head [data-slot=sheet-title] { font-size:18px; }
   .kay-drawer-body { padding:0 16px max(16px,env(safe-area-inset-bottom)); }

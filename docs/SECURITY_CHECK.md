@@ -1,5 +1,38 @@
 # KAY security check for changes
 
+## Selected workspace branch source review, 2026-10-26
+
+Task: owner-selected prototype migration on `codex/redesign`, including C03/C04/
+C05/C06 record presentation. Reviewed identity/role/object, input/history,
+reservation/outcome and private-file boundaries against current contracts and
+the checklist below. No backend, facade, session, CSRF, permit, schema, worker,
+finance/import authority or production configuration is changed by these batches.
+
+New status entry points call existing typed edit/transition services. Lead edit
+retains reviewed expected_version, message, budget, source category and rating,
+without contact/source-provenance/assignment replacement. Deal stock/result
+actions delegate to existing panels, including authoritative stock review,
+reviewed versions, confirmations and stable same-body retry keys. Role-gated
+Finance is not mounted for agents; backend checks remain authoritative. Read
+errors replace data through current scoped query handling. No uploaded text/HTML,
+demo authority, public file URL or alternate transfer path is introduced.
+
+Positive/negative/retry evidence is scoped:112 frontend units pass, including
+existing facade origin/session/invalid-input checks and new interrupted Lead
+status/reviewed Deal transition/delegation cases; lint and production TypeScript/
+build pass. The existing pinned dependency audit reports0 vulnerabilities and
+0 exceptions, without a package change. No data/permission race, PostgreSQL,
+scanner/private-byte or native browser case was run for this UI batch because
+backend behavior is unchanged and current app-access restriction remains binding.
+Those final real-stack checks remain required; copied-ID denial and native
+dialog/focus/zoom behavior are not accepted by source inference.
+
+Privacy review: only synthetic controller values in tests; no private records,
+credentials, screenshots, exported business data, logs or browser storage added.
+The allowlisted appearance cookie is non-sensitive and unrelated to sessions.
+Security checked: **yes, source/contract boundary only**, not release acceptance.
+See [execution and limits](03-planning/design-prototype-migration-execution.md).
+
 ## Publication audit follow-up (2026-10-25)
 
 The exact-candidate hosted audit for PR31 rejects pypdf6.21.1 for three newly

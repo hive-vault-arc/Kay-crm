@@ -2,7 +2,7 @@ import type { KayIconComponent } from "@/components/icons";
 import {
   AddIcon, ArchiveIcon, BackIcon, CalendarIcon, ChevronDownIcon, CloseIcon,
   ColumnsIcon, CompareIcon, CompletedIcon, ContactIcon, ContactsIcon, DealIcon,
-  DeleteIcon, DownloadIcon, EditIcon, EmptyFolderIcon, EnquiryIcon, FinanceIcon,
+  DeleteIcon, DownloadIcon, EditIcon, FileIcon, EnquiryIcon, FinanceIcon,
   FilterIcon, ForwardIcon, HidePasswordIcon, PasswordIcon, PropertyIcon,
   RefreshIcon, RestoreIcon, SearchIcon, SettingsIcon, ShowPasswordIcon,
   SignOutIcon, TaskIcon, UploadIcon, PhoneIcon, EmailIcon,
@@ -46,7 +46,7 @@ export const buttonActions = {
   export: { icon: DownloadIcon, tone: "teal", variant: "outline" },
   download: { icon: DownloadIcon, tone: "teal", variant: "outline" },
   upload: { icon: UploadIcon, tone: "teal", variant: "outline" },
-  file: { icon: EmptyFolderIcon, tone: "teal", variant: "outline" },
+  file: { icon: FileIcon, tone: "teal", variant: "outline" },
   columns: { icon: ColumnsIcon, tone: "purple", variant: "outline" },
   preview: { icon: ShowPasswordIcon, tone: "info", variant: "outline" },
   signout: { icon: SignOutIcon, tone: "danger", variant: "outline" },

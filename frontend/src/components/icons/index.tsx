@@ -74,3 +74,19 @@ export const HelpIcon = createPrototypeIcon("help");
 export const OwnerIcon = createPrototypeIcon("owner");
 
 export const MoreIcon = createPrototypeIcon("more");
+
+export const FileIcon = createPrototypeIcon("file");
+
+export const BlockIcon = createPrototypeIcon("block");
+
+export const FailureIcon = createPrototypeIcon("failure");
+
+export const NewLeadIcon = createPrototypeIcon("new-lead");
+
+export const QualifiedLeadIcon = createPrototypeIcon("qualified-lead");
+
+export const RejectedLeadIcon = createPrototypeIcon("rejected-lead");
+
+export const NegotiationIcon = createPrototypeIcon("negotiation");
+
+export const FlagIcon = createPrototypeIcon("flag");

@@ -1403,6 +1403,242 @@
         ]
       ],
       "sha256": "9c981baf4eb4ba9dbd33b4d1d274f8085907d6f9d21b1ae757600203de09bbbe"
+    },
+    {
+      "export": "FileIcon",
+      "name": "file",
+      "source": "FileText",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M14 2v5a1 1 0 0 0 1 1h5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M10 9H8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 13H8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 17H8"
+          }
+        ]
+      ],
+      "sha256": "3736b6a310328a969af9a64e8f1ff879c9905560a35ad80c30bdc545cd7aa679"
+    },
+    {
+      "export": "BlockIcon",
+      "name": "block",
+      "source": "Ban",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M4.929 4.929 19.07 19.071"
+          }
+        ]
+      ],
+      "sha256": "606a1907c40977898ac793935f173949f0ae594f5e4ce8685a15caa4f9f5a140"
+    },
+    {
+      "export": "FailureIcon",
+      "name": "failure",
+      "source": "CircleX",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m15 9-6 6"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m9 9 6 6"
+          }
+        ]
+      ],
+      "sha256": "8e70d5ff720e29f27ed48307f48e1c571b5283be4f0f53ba9ae5f45918b03bfc"
+    },
+    {
+      "export": "NewLeadIcon",
+      "name": "new-lead",
+      "source": "UserRoundPlus",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M2 21a8 8 0 0 1 13.292-6"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "10",
+            "cy": "8",
+            "r": "5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M19 16v6"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M22 19h-6"
+          }
+        ]
+      ],
+      "sha256": "3ee5b82117e5fb68101f875bbe83880b4d50409c9a61d271cb378bdccb644ebb"
+    },
+    {
+      "export": "QualifiedLeadIcon",
+      "name": "qualified-lead",
+      "source": "UserRoundCheck",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M2 21a8 8 0 0 1 13.292-6"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "10",
+            "cy": "8",
+            "r": "5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m16 19 2 2 4-4"
+          }
+        ]
+      ],
+      "sha256": "2868de47665ec63442bc6278186031d2fb247374e2df3688ac05a47657147a06"
+    },
+    {
+      "export": "RejectedLeadIcon",
+      "name": "rejected-lead",
+      "source": "UserRoundX",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m16.5 16.5 5 5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M2 21a8 8 0 0 1 11.531-7.18"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m21.5 16.5-5 5"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "10",
+            "cy": "8",
+            "r": "5"
+          }
+        ]
+      ],
+      "sha256": "0842fbfa8b219faa0126054d20abb2b19962ac8421a346fcf84e3f1160aa5a26"
+    },
+    {
+      "export": "NegotiationIcon",
+      "name": "negotiation",
+      "source": "Handshake",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m11 17 2 2a1 1 0 1 0 3-3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m21 3 1 11h-2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 4h8"
+          }
+        ]
+      ],
+      "sha256": "5bb3b19d31bfad523d24d56dde938d64611d31f96da64877e1cdace67f644552"
+    },
+    {
+      "export": "FlagIcon",
+      "name": "flag",
+      "source": "Flag",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"
+          }
+        ]
+      ],
+      "sha256": "ae8ac48ef77ff46aba6676c31ed76f1dd4f741530709514b578db303342c3186"
     }
   ]
 }

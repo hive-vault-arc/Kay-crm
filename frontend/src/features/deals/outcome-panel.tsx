@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { useRouter } from "next/navigation";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -17,10 +17,10 @@ import { apiGet, ApiError } from "@/lib/api/client";
 import { apiCommand } from "@/lib/api/command";
 import { resultSchema, type Deal } from "./contracts";
 
-export function OutcomePanel({ deal, writable, busy, busyChanged, saved }: { deal: Deal; writable: boolean; busy: boolean; busyChanged: (value: boolean) => void; saved: () => Promise<unknown> }) {
-  const [open, setOpen] = useState(false);
+export function OutcomePanel({ deal, writable, busy, busyChanged, saved, dialogOnly = false, initialOutcome, closed, returnFocus }: { deal: Deal; writable: boolean; busy: boolean; busyChanged: (value: boolean) => void; saved: () => Promise<unknown>; dialogOnly?: boolean; initialOutcome?: "won" | "lost" | "cancelled"; closed?: () => void; returnFocus?: RefObject<HTMLButtonElement | null> }) {
+  const [open, setOpen] = useState(dialogOnly);
   const [review, setReview] = useState<DealStockReview>();
-  const [outcome, setOutcome] = useState<"won" | "lost" | "cancelled">(deal.offering ? "won" : "lost");
+  const [outcome, setOutcome] = useState<"won" | "lost" | "cancelled">(initialOutcome ?? (deal.offering ? "won" : "lost"));
   const [amount, setAmount] = useState("");
   const [completedOn, setCompletedOn] = useState("");
   const [reason, setReason] = useState("");
@@ -36,6 +36,13 @@ export function OutcomePanel({ deal, writable, busy, busyChanged, saved }: { dea
   const hydrated = useHydrated(); const router = useRouter();
   const reopening = ["won", "lost", "cancelled"].includes(deal.stage);
   const action = reopening ? "Rouvrir l’affaire" : "Clôturer l’affaire";
+
+  useEffect(() => {
+    if (!dialogOnly) return;
+    const abort = new AbortController();
+    apiGet(`/api/v1/deals/${deal.id}/stock-review`, dealStockReviewSchema, abort.signal).then(value => { if (!abort.signal.aborted) setReview(value); }).catch(failure => { if (!abort.signal.aborted) setError(failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); });
+    return () => abort.abort();
+  }, [dialogOnly, deal.id]);
 
   async function refresh() {
     if (lock.current) return;
@@ -58,16 +65,16 @@ export function OutcomePanel({ deal, writable, busy, busyChanged, saved }: { dea
     const fingerprint = JSON.stringify({ path, body: parsed.data });
     if (attempt.current.fingerprint !== fingerprint) attempt.current = { fingerprint, key: crypto.randomUUID() };
     lock.current = true; busyChanged(true); setError(undefined); setInvalid(""); setNotice("");
-    try { await apiCommand(path, parsed.data, resultSchema, attempt.current.key); await saved(); router.refresh(); setOpen(false); setReason(""); setNotice("Événement enregistré dans l’historique. L’étape et le stock actuels sont affichés ci-dessus."); }
+    try { await apiCommand(path, parsed.data, resultSchema, attempt.current.key); await saved(); router.refresh(); setOpen(false); setReason(""); closed?.(); setNotice("Événement enregistré dans l’historique. L’étape et le stock actuels sont affichés ci-dessus."); }
     catch (failure) { setError(failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
     finally { lock.current = false; busyChanged(false); }
   }
-  return <section className="grid min-w-0 gap-4 border-y py-6" aria-label="Clôture et réouverture"><h2 className="text-section font-medium">Clôture et réouverture</h2>
+  return <section hidden={dialogOnly} className={dialogOnly ? "hidden" : "grid min-w-0 gap-4 border-y py-6"} aria-label="Clôture et réouverture"><h2 className="text-section font-medium">Clôture et réouverture</h2>
     {deal.stock_review_required ? <p role="status" className="text-warning">Le stock lié a changé. Faites vérifier cette affaire par un responsable. Elle n’a pas été clôturée automatiquement.</p> : null}
     <p>La commission est facultative. Clôturer ou rouvrir n’enregistre aucun encaissement et n’efface aucune donnée financière.</p>
-    {!writable ? <p>Résultats conservés en lecture seule.</p> : <AlertDialog open={open} onOpenChange={next => { if (!lock.current) { setOpen(next); if (next) { setReview(undefined); setError(undefined); setInvalid(""); void refresh(); } } }}>
-      <AlertDialogTrigger asChild><Button action={reopening ? "restore" : "outcome"} type="button" className="justify-self-start" disabled={!hydrated || busy}>{action}</Button></AlertDialogTrigger>
-      <AlertDialogContent onOpenAutoFocus={event => { event.preventDefault(); titleInput.current?.focus(); }}><AlertDialogTitle ref={titleInput} tabIndex={-1}>{action}</AlertDialogTitle><AlertDialogDescription>{reopening ? "Le résultat d’origine reste conservé. Le serveur vérifie les engagements actuels avant toute restauration du stock. Une ancienne réservation ne renaît pas." : "Confirmez le résultat réel et les effets sur l’offre exacte. Accepter une proposition ne suffit pas ; aucune commission n’est obligatoire."}</AlertDialogDescription>
+    {!writable ? <p>Résultats conservés en lecture seule.</p> : <AlertDialog open={open} onOpenChange={next => { if (!lock.current) { setOpen(next); if (!next) closed?.(); if (next) { setReview(undefined); setError(undefined); setInvalid(""); void refresh(); } } }}>
+      {!dialogOnly ? <AlertDialogTrigger asChild><Button action={reopening ? "restore" : "outcome"} type="button" className="justify-self-start" disabled={!hydrated || busy}>{action}</Button></AlertDialogTrigger> : null}
+      <AlertDialogContent onCloseAutoFocus={event => { if (returnFocus) { event.preventDefault(); returnFocus.current?.focus(); } }} onOpenAutoFocus={event => { event.preventDefault(); titleInput.current?.focus(); }}><AlertDialogTitle ref={titleInput} tabIndex={-1}>{action}</AlertDialogTitle><AlertDialogDescription>{reopening ? "Le résultat d’origine reste conservé. Le serveur vérifie les engagements actuels avant toute restauration du stock. Une ancienne réservation ne renaît pas." : "Confirmez le résultat réel et les effets sur l’offre exacte. Accepter une proposition ne suffit pas ; aucune commission n’est obligatoire."}</AlertDialogDescription>
         {(review ? review.offering : deal.offering) ? <OfferingFacts offering={(review ? review.offering : deal.offering)!} /> : <p>Aucune offre liée : seuls les résultats perdue ou annulée sont possibles.</p>}
         {!review && !error ? <p role="status">Vérification du périmètre et des effets…</p> : null}
         {review?.stock ? <StockReviewFacts review={review.stock} affectsStock={reopening ? deal.stage === "won" : outcome === "won"} /> : null}

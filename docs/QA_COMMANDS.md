@@ -2,10 +2,11 @@
 
 ## Selected workspace redesign branch, 2026-10-26
 
-Branch `codex/redesign`, base/main `e0bdc09`; foundation checkpoint `fed7ded`.
+Branch `codex/redesign`, base/main `e0bdc09`; foundation `fed7ded`, first records
+checkpoint `ac2001e`.
 From `frontend/`, `npm run lint`, `npm run typecheck`, `npm run test:unit` and
-`npm run build` pass for the shared-interaction/Lead/Contact source batch:
-51 semantic icons,392 Button sites, zero inventory violations,111 unit cases,
+`npm run build` pass for the shared-interaction/Lead/Contact/Deal source batches:
+latest59 semantic icons,394 Button sites, zero inventory violations,112 unit cases,
 pinned Next16.4.2 production build. New cases exercise navigation exclusions,
 interrupted status retries and reviewed versions, retained tab drafts and
 cancel/busy/discard boundaries. These are synthetic source/controller/facade
@@ -26,7 +27,8 @@ product approval follow implementation; old browser selectors need updating.
 No push, main change, merge or deployment. Details, corrections and limits:
 [execution](03-planning/design-prototype-migration-execution.md),
 [foundation evidence](03-planning/design-migration-evidence/foundation-2026-10-26.json),
-[record evidence](03-planning/design-migration-evidence/records-2026-10-26.json).
+[record evidence](03-planning/design-migration-evidence/records-2026-10-26.json),
+[Deal evidence](03-planning/design-migration-evidence/deals-2026-10-26.json).
 
 ## Bug-sweep publication audit, 2026-10-25
 

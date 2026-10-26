@@ -42,3 +42,7 @@ surfaces and wire-role mapping. `workspace-status.css` consumes those values.
 The deal context explicitly maps `new` to proposition/Nouvelle while enquiries
 retain not-contacted/Nouveau. `kay-glyphs.json` adds the exact frozen Ellipsis
 nodes as MoreIcon, bringing the semantic registry to51; original notices apply.
+
+The Deal workspace batch adds8 further frozen aliases (FileText, Ban, CircleX,
+UserRoundPlus/Check/X, Handshake and Flag), registry59. This also separates the
+document action from the Search glyph retained for empty-state semantics.

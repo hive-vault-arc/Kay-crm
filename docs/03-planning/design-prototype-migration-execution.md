@@ -22,11 +22,11 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | Phase | Source state | Remaining acceptance/work |
 | --- | --- | --- |
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
-| P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; second batch adds the51st source-pinned glyph and selected status palette | Native review later |
+| P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to59 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers and click/unload draft guards implemented | Exact inline-field/form parity, Back/Forward handling, responsive focus and native interaction checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement implemented | Exact inline editing, remaining form/document parity, browser selector migration and native review |
 | P4 inventory/owners | Existing application behavior retained | Selected cards/forms/Units drawers/details/Patrimoine/photo presentation |
-| P5 Deals/finance/PDF | Existing application behavior retained | Selected detail/status/reservation/outcome/finance/document layouts and provenance |
+| P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu and role-gated Finance drawer composed from real controllers | Remaining exact inline/offer/form/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Existing application behavior retained | Selected calendar/task/activity/inbox presentation and full context flows |
 | P7 remaining surfaces | Existing application behavior retained | Dashboard/report/search/audit/jobs/settings/help compositions |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
@@ -151,8 +151,38 @@ eight Contact tabs require migration during the remaining implementation.
 
 ## Next work
 
-Continue through shared directory/record/drawer/form components and the complete
-Lead/Contact slice, preserving the current typed services and current authority.
+Continue the inventory/owner slice and remaining shared inline/form/PDF patterns,
+preserving the current typed services and current authority.
 Use the coverage ledger to prevent omission of a moved or less-visible action.
 Do not stop at a token-only restyle or call the whole branch complete while
 feature layouts remain unported.
+
+## Deal workspace batch
+
+After `ac2001e`, the Deal record uses the same4-tab dossier and natural support
+rail as Leads. Next action/tasks, visits and M/A-only Finance are on the support
+side. Contact facts, qualification, notes, linked offer and client proposals stay
+in Aperçu; linked projects and both activity histories have their own sections.
+Documents retains the existing protected file panel and PDF route. Existing
+comparison, archive ownership, live snapshot reconciliation and editing remain.
+Twenty-row directory defaults now match the selected prototype, within the
+existing bounded numbered API; optional larger sizes remain available.
+
+The compact stage menu snapshots ordinary transitions and delegates reservation,
+release, close and reopen to the existing ReservationPanel/OutcomePanel commands.
+Their dialog-only entry reuses the original versioned payload, stock review,
+confirmation, required reasons and retry identity; it adds no alternate mutation
+path. Outcome dialog entry loads the authoritative existing stock-review endpoint
+and aborts its read if closed. Menu/dialog focus ownership and return targets are
+explicit. Eight more selected source glyph aliases distinguish file, blocked,
+failed, new/qualified/rejected contact, handshake and flag states; registry59.
+The document action now uses FileText rather than the empty-state Search glyph.
+Badge/fact styling also applies to Radix portals outside the shell DOM.
+
+All112 frontend units pass. The additional Deal menu case checks stock-action
+delegation, reviewed-version preservation after a newer projection, failed retry
+draft retention, terminal reopening and read-only presentation. Lint passes with
+59 icons/394 Button sites/zero violations. The pinned Next16.4.2 build, including
+fresh TypeScript, passes. [Deal batch evidence](design-migration-evidence/deals-2026-10-26.json)
+records source hashes and the scoped security review. No backend/DB/native pass
+or completed whole-branch fidelity is implied.

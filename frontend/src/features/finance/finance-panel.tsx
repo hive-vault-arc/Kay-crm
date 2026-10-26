@@ -17,7 +17,7 @@ export function DealFinanceTabs({ role, deal, initialTab, children, actions }: {
   if (role === "agent") return <>{actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}{children}</>;
   return <Tabs value={tab} onValueChange={setTab} className="grid min-w-0 gap-4"><div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><TabsList aria-label="Rubriques de l’affaire"><TabsTrigger value="dossier">Dossier</TabsTrigger><TabsTrigger value="finance">Finance</TabsTrigger></TabsList>{tab === "dossier" ? actions : null}</div><TabsContent value="dossier" className="record-stack grid min-w-0 gap-8">{children}</TabsContent><TabsContent value="finance" className="record-stack"><FinancePanel key={deal.id} deal={deal} /></TabsContent></Tabs>;
 }
-function FinancePanel({ deal }: { deal: Deal }) {
+export function FinancePanel({ deal }: { deal: Deal }) {
   const [page, setPage] = useState(1), [selected, setSelected] = useState<string>(), [creating, setCreating] = useState(false), [denial, setDenial] = useState<ApiError>();
   const heading = useRef<HTMLHeadingElement>(null), deny = useCallback((error: ApiError) => setDenial(error), []);
   const query = useQuery(`/api/v1/deals/${deal.id}/commissions?page=${page}`, commissionsSchema);

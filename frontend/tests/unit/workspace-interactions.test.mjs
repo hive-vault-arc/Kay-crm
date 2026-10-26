@@ -98,3 +98,37 @@ test("Unsaved guard retains drafts on cancel, blocks pending commands and discar
   assert.equal(ran, 1); assert.equal(dirty.dataset.liveDirty, undefined); assert.equal(render().dialog.props.open, false);
   render().request(() => ran++, scope); assert.equal(ran, 2);
 });
+
+test("Deal stage menu delegates stock actions and preserves the reviewed ordinary-transition version", async () => {
+  const vocabulary = loadServer("src/features/contacts/qualification-contracts.ts");
+  const conversion = loadServer("src/features/deals/qualification-contracts.ts", { modules: { "@/features/contacts/qualification-contracts": vocabulary } });
+  const contacts = loadServer("src/features/contacts/contracts.ts", { modules: { "./qualification-contracts": vocabulary } });
+  const inventory = loadServer("src/features/inventory/contracts.ts", { modules: { "@/features/contacts/contracts": contacts } });
+  const requirements = loadServer("src/features/requirements/contracts.ts", { modules: { "@/features/contacts/contracts": contacts, "@/features/inventory/contracts": inventory } });
+  const contracts = loadServer("src/features/deals/contracts.ts", { modules: { "@/features/contacts/contracts": contacts, "@/features/contacts/qualification-contracts": vocabulary, "@/features/inventory/contracts": inventory, "@/features/requirements/contracts": requirements, "./qualification-contracts": conversion } });
+  const harness = stateHarness(), calls = [];
+  const { DealStageMenu } = loadServer("src/features/deals/deal-stage-menu.tsx", { modules: {
+    react: harness.react, "react/jsx-runtime": runtime, "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" },
+    "@/components/ui/alert-dialog": { AlertDialog: "Dialog", AlertDialogCancel: "Cancel", AlertDialogContent: "Content", AlertDialogDescription: "Description", AlertDialogTitle: "Title" },
+    "@/components/shared/crm-presentation": { CrmStatusBadge: "Badge" }, "@/components/shared/record-status-menu": { RecordStatusMenu: "StatusMenu" }, "@/features/contacts/record-states": { RecordError: "Error" },
+    "@/hooks/use-hydrated": { useHydrated: () => true }, "./contracts": contracts, "./reservation-panel": { ReservationPanel: "Reservation" }, "./outcome-panel": { OutcomePanel: "Outcome" },
+  } });
+  const reviewed = { id: randomUUID(), version: 7, title: "Synthetic deal", stage: "new", offering: {}, active_reservation: null };
+  let deal = reviewed, accepted = false;
+  const props = { writable: true, busy: false, busyChanged() {}, mutate: async (...args) => { calls.push(args); return accepted; }, saved: async () => {} };
+  const render = () => harness.render(() => DealStageMenu({ ...props, deal }));
+  find(render(), "StatusMenu")[0].props.choose("reserved"); let view = render();
+  assert.equal(calls.length, 0); assert.equal(find(view, "Reservation")[0].props.deal, reviewed); assert.equal(find(view, "Reservation")[0].props.dialogOnly, true);
+  find(view, "Reservation")[0].props.closed(); find(render(), "StatusMenu")[0].props.choose("lost"); view = render();
+  assert.equal(find(view, "Outcome")[0].props.initialOutcome, "lost"); assert.equal(calls.length, 0);
+  find(view, "Outcome")[0].props.closed(); find(render(), "StatusMenu")[0].props.choose("visit");
+  find(render(), "Input")[0].props.onChange({ target: { value: "Synthetic transition reason" } });
+  deal = { ...reviewed, version: 9 }; find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
+  assert.equal(calls[0][0], `/api/v1/deals/${deal.id}/transition`); assert.deepEqual(JSON.parse(JSON.stringify(calls[0][1])), { expected_version: 7, stage: "visit", reason: "Synthetic transition reason" });
+  assert.equal(find(render(), "Input")[0].props.value, "Synthetic transition reason");
+  accepted = true; find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
+  assert.equal(find(render(), "Dialog")[0].props.open, false);
+  deal = { ...deal, stage: "won" }; const groups = find(render(), "StatusMenu")[0].props.groups;
+  assert.equal(groups.length, 1); assert.equal(groups[0].items[0].id, "reopen");
+  props.writable = false; assert.equal(render().type, "Badge");
+});

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type RefObject } from "react";
 import { useRouter } from "next/navigation";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -15,10 +15,11 @@ import { apiCommand } from "@/lib/api/command";
 import { formatInstant } from "@/lib/format";
 import { dealSchema, releaseSchema, reserveSchema, resultSchema, type Deal } from "./contracts";
 
-export function ReservationPanel({ deal, writable, busy, busyChanged, saved }: {
+export function ReservationPanel({ deal, writable, busy, busyChanged, saved, dialogOnly = false, closed, returnFocus }: {
   deal: Deal; writable: boolean; busy: boolean; busyChanged: (value: boolean) => void; saved: () => Promise<unknown>;
+  dialogOnly?: boolean; closed?: () => void; returnFocus?: RefObject<HTMLButtonElement | null>;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(dialogOnly);
   const [review, setReview] = useState(deal);
   const [reason, setReason] = useState("");
   const [error, setError] = useState<ApiError>();
@@ -51,18 +52,18 @@ export function ReservationPanel({ deal, writable, busy, busyChanged, saved }: {
     lock.current = true; busyChanged(true); setError(undefined); setInvalid(""); setNotice("");
     try {
       await apiCommand(path, parsed.data, resultSchema, attempt.current.key);
-      await saved(); router.refresh(); setOpen(false); setReason("");
+      await saved(); router.refresh(); setOpen(false); setReason(""); closed?.();
       setNotice(releasing ? "Libération enregistrée dans l’historique. L’état actuel du stock est affiché ci-dessus." : "Réservation enregistrée dans l’historique. L’état actuel du stock est affiché ci-dessus.");
     } catch (failure) { setError(failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
     finally { lock.current = false; busyChanged(false); }
   }
-  return <section className="grid min-w-0 gap-4 border-y py-6" aria-label="Réservation de l’affaire">
+  return <section hidden={dialogOnly} className={dialogOnly ? "hidden" : "grid min-w-0 gap-4 border-y py-6"} aria-label="Réservation de l’affaire">
     <h2 className="text-section font-medium">Réservation</h2>
     {deal.active_reservation ? <p>Réservation active depuis le {formatInstant(deal.active_reservation.created_at)}. Aucune expiration automatique.</p> : <p>Aucune réservation active pour cette affaire.</p>}
     {deal.reservation_conflict ? <p role="status" className="text-warning">{deal.reservation_conflict === "DEVELOPMENT_OVERLAP" ? "Une réservation du même type couvre déjà le programme entier ou une de ses unités." : "Cette offre est déjà réservée par une autre affaire."} Faites vérifier le stock par un responsable. Aucun autre dossier privé n’est affiché.</p> : null}
-    {!deal.offering ? <p>Liez une offre d’inventaire précise avant de réserver.</p> : !writable ? <p>Réservation en lecture seule.</p> : <AlertDialog open={open} onOpenChange={next => { if (!lock.current) { setOpen(next); if (next) { setReview(deal); setError(undefined); setInvalid(""); } } }}>
-      <AlertDialogTrigger asChild><Button action={releasing ? "release" : "reserve"} type="button" className="justify-self-start" variant={releasing ? "outline" : "default"} disabled={!hydrated || busy}>{action}</Button></AlertDialogTrigger>
-      <AlertDialogContent>
+    {!deal.offering ? <p>Liez une offre d’inventaire précise avant de réserver.</p> : !writable ? <p>Réservation en lecture seule.</p> : <AlertDialog open={open} onOpenChange={next => { if (!lock.current) { setOpen(next); if (!next) closed?.(); if (next) { setReview(deal); setError(undefined); setInvalid(""); } } }}>
+      {!dialogOnly ? <AlertDialogTrigger asChild><Button action={releasing ? "release" : "reserve"} type="button" className="justify-self-start" variant={releasing ? "outline" : "default"} disabled={!hydrated || busy}>{action}</Button></AlertDialogTrigger> : null}
+      <AlertDialogContent onCloseAutoFocus={event => { if (returnFocus) { event.preventDefault(); returnFocus.current?.focus(); } }}>
         <AlertDialogTitle>{action}</AlertDialogTitle>
         <AlertDialogDescription>{releasing ? "La libération rend cette offre disponible. Son motif et son auteur sont conservés." : "Cette action bloque uniquement l’offre et le périmètre indiqués. Elle ne gagne pas l’affaire et ne crée aucune commission."}</AlertDialogDescription>
         {offering && target ? <div className="grid min-w-0 gap-2"><p className="wrap-anywhere font-medium">{target.reference} : {targetLabels[target.level]}</p><p>{kindLabels[offering.kind]} : {stateLabels[offering.state]}</p><p className="wrap-anywhere">{target.label}</p>{target.level === "unit" ? <p className="wrap-anywhere">Programme {target.development_reference}, bloc {target.block_code ?? "non renseigné"}, étage {target.floor_code ?? "non renseigné"}. Le type n’est pas une cible réservable.</p> : null}<p>Affaire version {review.version}, cible version {target.version}, offre version {offering.version}.</p></div> : <p role="alert">La cible actuelle ne peut pas être vérifiée.</p>}
