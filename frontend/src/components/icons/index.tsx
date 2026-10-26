@@ -72,3 +72,5 @@ export const RestoreIcon = createPrototypeIcon("restore");
 export const CompareIcon = createPrototypeIcon("compare");
 export const HelpIcon = createPrototypeIcon("help");
 export const OwnerIcon = createPrototypeIcon("owner");
+
+export const MoreIcon = createPrototypeIcon("more");

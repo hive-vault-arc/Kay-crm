@@ -18,6 +18,7 @@ import {
 import { useState, type ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { usePhoneLayout } from "@/hooks/use-phone-layout";
 
 export function DataTable<T>({
   columns,
@@ -30,6 +31,7 @@ export function DataTable<T>({
   rowSelectionLabel,
   selectionAction,
   footerCaption = false,
+  mobileCard,
 }: {
   columns: ColumnDef<T>[];
   rows: T[];
@@ -41,10 +43,12 @@ export function DataTable<T>({
   rowSelectionLabel?: (row: T) => string;
   selectionAction?: (rows: T[], clear: () => void) => ReactNode;
   footerCaption?: boolean;
+  mobileCard?: (row: T, selection: ReactNode) => ReactNode;
 }) {
   "use no memo";
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [onlySelected, setOnlySelected] = useState(false);
+  const phone = usePhoneLayout();
   // TanStack v8 exposes mutable table functions; keep this boundary outside React Compiler.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -61,7 +65,10 @@ export function DataTable<T>({
   return (
     <div className="grid min-w-0 gap-2">
     {rowSelectionLabel && selected.length ? <div className="crm-selection-toolbar"><p>{selected.length} sélectionné(s) sur cette page</p>{selectionAction?.(selected.map(row => row.original), () => { table.resetRowSelection(); setOnlySelected(false); })}<Button action="filter" variant="quiet" size="compact" onClick={() => setOnlySelected(value => !value)}>{onlySelected ? "Afficher toute la page" : "Afficher la sélection"}</Button><Button action="reset" variant="quiet" size="compact" onClick={() => { table.resetRowSelection(); setOnlySelected(false); }}>Effacer la sélection</Button></div> : null}
-    <Table className={className} scrollLabel={scrollLabel}>
+    {phone && mobileCard ? <div className="kay-mobile-collection" aria-label={caption}>
+      {rowSelectionLabel && rows.length ? <label className="kay-select-page"><Checkbox aria-label="Sélectionner toutes les lignes de cette page" checked={table.getIsAllRowsSelected() ? true : table.getIsSomeRowsSelected() ? "indeterminate" : false} onCheckedChange={checked => table.toggleAllRowsSelected(Boolean(checked))} /><span>Sélectionner la page</span></label> : null}
+      {displayedRows.length ? <ul className="kay-directory-cards">{displayedRows.map(row => <li key={row.id} data-state={row.getIsSelected() ? "selected" : undefined}>{mobileCard(row.original, rowSelectionLabel ? <label className="kay-card-select"><Checkbox aria-label={`Sélectionner ${rowSelectionLabel(row.original)}`} checked={row.getIsSelected()} onCheckedChange={checked => row.toggleSelected(Boolean(checked))} /></label> : null)}</li>)}</ul> : <p>{emptyLabel}</p>}
+    </div> : <Table className={className} scrollLabel={scrollLabel}>
       <TableCaption className={footerCaption ? "sr-only" : undefined}>{caption}</TableCaption>
       <TableHeader>
         {table.getHeaderGroups().map((group) => (
@@ -98,7 +105,7 @@ export function DataTable<T>({
           </TableRow>
         )}
       </TableBody>
-    </Table>
+    </Table>}
     {footerCaption ? <p className="crm-table-caption" aria-hidden="true">{caption}</p> : null}
     </div>
   );

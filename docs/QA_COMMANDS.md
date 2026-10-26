@@ -1,5 +1,33 @@
 # KAY QA command register
 
+## Selected workspace redesign branch, 2026-10-26
+
+Branch `codex/redesign`, base/main `e0bdc09`; foundation checkpoint `fed7ded`.
+From `frontend/`, `npm run lint`, `npm run typecheck`, `npm run test:unit` and
+`npm run build` pass for the shared-interaction/Lead/Contact source batch:
+51 semantic icons,392 Button sites, zero inventory violations,111 unit cases,
+pinned Next16.4.2 production build. New cases exercise navigation exclusions,
+interrupted status retries and reviewed versions, retained tab drafts and
+cancel/busy/discard boundaries. These are synthetic source/controller/facade
+checks, not browser/real-database acceptance. The registered unit runner includes
+synthetic TLS fixture servers and browser test discovery, without app access.
+
+Initially installed Next16.4.0 did not match the existing16.4.2 lock pin; its
+build guard correctly failed. `npm ci` restored the existing lock without a
+manifest change; subsequent production builds pass. `npm run security:check`
+reports runtime0/full0 vulnerabilities and0 exceptions. No blanket install-script
+approval was issued. Repository guard and repository-only sprint validation pass
+at the foundation checkpoint; latest scoped evidence is linked below.
+
+No app HTTP/native browser access, backend/DB/worker/scanner operation or native
+visual/keyboard/touch/zoom verification occurred in this branch batch. Previous
+automatic approval restriction remains binding. Final verification and owner
+product approval follow implementation; old browser selectors need updating.
+No push, main change, merge or deployment. Details, corrections and limits:
+[execution](03-planning/design-prototype-migration-execution.md),
+[foundation evidence](03-planning/design-migration-evidence/foundation-2026-10-26.json),
+[record evidence](03-planning/design-migration-evidence/records-2026-10-26.json).
+
 ## Bug-sweep publication audit, 2026-10-25
 
 PR31 initial candidatef96490d passes hosted repository/frontend/managed runtime,

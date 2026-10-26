@@ -17,10 +17,10 @@ import { commandResultSchema, intentSchema, operationLabels, previewSchema, type
 import { OwnershipImpact } from "./ownership-impact";
 import { RecordError } from "./record-states";
 
-export function OwnershipControls({ contact, role, changed }: { contact: Contact; role: StaffRole; changed: (id: string, operation: Operation) => Promise<void> }) {
+export function OwnershipControls({ contact, role, changed, embedded = false }: { contact: Contact; role: StaffRole; changed: (id: string, operation: Operation) => Promise<void>; embedded?: boolean }) {
   const hydrated = useHydrated();
   const control = useId();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(embedded);
   const [current, setCurrent] = useState(contact);
   const [operation, setOperation] = useState<Operation>(contact.archived_at ? "restore" : role === "agent" ? "merge" : "assign");
   const [agent, setAgent] = useState("");
@@ -65,7 +65,7 @@ export function OwnershipControls({ contact, role, changed }: { contact: Contact
     finally { setBusy(false); }
   }
   return <section className="grid max-w-reading gap-4" aria-label="Gestion du contact">
-    <Button action={role === "agent" ? "compare" : "settings"} className="justify-self-start" variant="outline" disabled={!hydrated} aria-expanded={open} aria-controls={`${control}-panel`} onClick={() => setOpen(!open)}>{role === "agent" ? "Fusionner ce contact" : "Gérer le contact"}</Button>
+    {!embedded ? <Button action={role === "agent" ? "compare" : "settings"} className="justify-self-start" variant="outline" disabled={!hydrated} aria-expanded={open} aria-controls={`${control}-panel`} onClick={() => setOpen(!open)}>{role === "agent" ? "Fusionner ce contact" : "Gérer le contact"}</Button> : null}
     {open ? <form id={`${control}-panel`} className="grid min-w-0 gap-6 border-t pt-6" aria-busy={busy} onSubmit={event => void prepare(event)}>
       <h3 className="text-section font-medium">Attribution et conservation</h3>
       <p className="wrap-anywhere text-sm">Version utilisée : {current.version} · Responsable : {current.primary_agent.display_name}</p>

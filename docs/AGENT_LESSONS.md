@@ -1445,3 +1445,10 @@ for natural exit, assert the intended exit code, then close the terminal; retain
 forced cleanup for genuine failure. Never solve this by ignoring all cleanup
 errors or weakening hidden-password checks.
 
+## Resolve route-source paths before reading (2026-10-26)
+
+During the redesign migration, guessed feature folders and PowerShell bracket
+globbing caused repeated missing-file reads. Locate actual files with `rg --files`
+first, use the matching repository as the working directory, and pass Next route
+paths containing `[id]` to `Get-Content -LiteralPath`. Keep source inspections
+bounded so minified or long JSX lines do not hide the relevant output.

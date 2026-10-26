@@ -1,7 +1,10 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { CalendarIcon, EmailIcon, PhoneIcon } from "@/components/icons";
+import { CalendarIcon, EmailIcon, PhoneIcon, MoreIcon } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { SectionHeading } from "./section-heading";
 import type { ContactSummary } from "@/features/contacts/contracts";
 
@@ -12,28 +15,28 @@ export function ContactAvatar({ name, size = "small" }: { name: string; size?: "
   return <span aria-hidden="true" data-size={size} className="crm-avatar">{initials || "?"}</span>;
 }
 
-export function CrmStatusBadge({ state, children, dot = true }: { state: string; children: ReactNode; dot?: boolean }) {
-  return <span className="crm-status-badge" data-crm-state={state}>{dot ? <span className="crm-status-dot" aria-hidden="true" /> : null}{children}</span>;
+export function CrmStatusBadge({ state, children, dot = true, kind }: { state: string; children: ReactNode; dot?: boolean; kind?: "enquiry" | "deal" }) {
+  return <span className="crm-status-badge" data-crm-state={state} data-crm-kind={kind}>{dot ? <span className="crm-status-dot" aria-hidden="true" /> : null}{children}</span>;
 }
 
-export function CrmDirectoryHeader({ title, count, noun, description, route }: { title: string; count?: number; noun: string; description: string; route: string }) {
-  return <header className="crm-directory-hero">
-    <Image src="/images/crm-coast.png" alt="" fill sizes="(min-width: 1024px) 85vw, 100vw" className="crm-directory-hero-image" preload />
-    <div className="crm-directory-hero-copy"><h1 tabIndex={-1} data-route={route}>{title}</h1><p className="crm-directory-count">{count === undefined ? "Chargement…" : `${count} ${count > 1 ? noun : noun.replace(/s$/, "")}`}</p><p>{description}</p></div>
+export function CrmDirectoryHeader({ title, count, noun, description, route, actions }: { title: string; count?: number; noun: string; description: string; route: string; actions?: ReactNode }) {
+  return <header className="kay-directory-header kay-page-header">
+    <div className="kay-page-heading"><h1 tabIndex={-1} data-route={route}>{title}</h1><p aria-label={description}>{count === undefined ? "Chargement…" : `${count} ${count > 1 ? noun : noun.replace(/s$/, "")}`}</p></div>
+    {actions ? <div className="kay-page-actions">{actions}</div> : null}
   </header>;
 }
 
 export function CrmDirectoryToolbar({ children, primary }: { children: ReactNode; primary: ReactNode }) {
-  return <div className="crm-directory-toolbar"><div role="group" aria-label="Actions secondaires" className="crm-directory-tools">{children}</div>{primary}</div>;
+  return <div className="kay-directory-tools">{primary}<Popover><PopoverTrigger asChild><Button variant="outline" size="icon" aria-label="Autres actions de la liste"><MoreIcon aria-hidden="true" size={20} /></Button></PopoverTrigger><PopoverContent align="end" className="kay-directory-utilities" aria-label="Actions de la liste">{children}</PopoverContent></Popover></div>;
 }
 
-export function CrmRecordHeader({ contact, title, route, badges, actions }: { contact: ContactSummary; title: string; route: string; badges: ReactNode; actions?: ReactNode }) {
-  return <header className="crm-record-heading">
-    <ContactAvatar name={contact.name} size="large" />
-    <div className="crm-record-heading-copy"><div className="crm-record-title-row"><h1 tabIndex={-1} data-route={route}>{title}</h1><div className="crm-record-heading-badges">{badges}</div></div>
-      <div className="crm-record-contact-line"><a href={`tel:${contact.primary_phone}`}><PhoneIcon aria-hidden="true" />{contact.primary_phone}</a>{contact.primary_email ? <a href={`mailto:${contact.primary_email}`}><EmailIcon aria-hidden="true" />{contact.primary_email}</a> : <span><EmailIcon aria-hidden="true" />E-mail non renseigné</span>}</div>
+export function CrmRecordHeader({ contact, title, route, badges, actions, backHref, reference, showContact = true }: { contact: ContactSummary; title: string; route: string; badges: ReactNode; actions?: ReactNode; backHref?: string; reference?: ReactNode; showContact?: boolean }) {
+  return <header className="kay-record-heading" data-crm-kind={route.startsWith("/deals/") ? "deal" : "enquiry"}>
+    {backHref ? <Button action="back" asChild size="icon" variant="outline"><Link href={backHref} aria-label="Retour à la liste"><span className="sr-only">Retour</span></Link></Button> : null}
+    <div className="kay-record-heading-copy"><h1 tabIndex={-1} data-route={route}>{title}</h1><div className="kay-record-meta">{reference ? <span>{reference}</span> : null}{badges}
+      {showContact ? <><a href={`tel:${contact.primary_phone}`}><PhoneIcon aria-hidden="true" size={16} />{contact.primary_phone}</a>{contact.primary_email ? <a href={`mailto:${contact.primary_email}`}><EmailIcon aria-hidden="true" size={16} />{contact.primary_email}</a> : null}</> : null}</div>
     </div>
-    {actions ? <div className="crm-record-heading-actions">{actions}</div> : null}
+    {actions ? <div className="kay-record-heading-actions">{actions}</div> : null}
   </header>;
 }
 

@@ -1371,6 +1371,38 @@
         ]
       ],
       "sha256": "e953ba3c3258efa64b5b475f193b1b219a8696009b7f81c4b4acde8f52c105e6"
+    },
+    {
+      "export": "MoreIcon",
+      "name": "more",
+      "source": "Ellipsis",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "19",
+            "cy": "12",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "5",
+            "cy": "12",
+            "r": "1"
+          }
+        ]
+      ],
+      "sha256": "9c981baf4eb4ba9dbd33b4d1d274f8085907d6f9d21b1ae757600203de09bbbe"
     }
   ]
 }

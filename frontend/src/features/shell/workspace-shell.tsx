@@ -17,6 +17,7 @@ import type { PublicIdentity } from "@/lib/auth/contracts";
 import { HelpNavigationItem, Navigation, SettingsNavigationItem } from "./navigation";
 import { ThemeControl } from "./theme-control";
 import { WorkspaceAccount } from "./workspace-account";
+import { WorkspaceNavigationGuard } from "@/components/shared/unsaved-guard";
 
 export function AppShell({ children, identity }: { children: ReactNode; identity: PublicIdentity }) {
   const pathname = usePathname(), hydrated = useHydrated();
@@ -39,6 +40,7 @@ export function AppShell({ children, identity }: { children: ReactNode; identity
   function navigate(path: string) { destination.current = path; closeForNavigation.current = true; setOpen(false); }
   return <div data-app-shell data-kay-workspace className="kay-shell">
     <SessionMonitor expiresAt={identity.expires_at} />
+    <WorkspaceNavigationGuard />
     <a href="#main-content" className="sr-only fixed left-4 top-4 z-100 rounded-full bg-card px-4 py-3 text-sm focus:not-sr-only">Aller au contenu</a>
     <header className="kay-global-bar" aria-label="Espace KAY">
       <div className="kay-global-brand">

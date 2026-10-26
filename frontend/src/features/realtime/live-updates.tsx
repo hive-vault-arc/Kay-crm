@@ -78,6 +78,7 @@ export function LiveUpdates() {
     document.addEventListener("input", dirty);
     document.addEventListener("change", dirty);
     window.addEventListener("kay:command-saved", saved);
+    window.addEventListener("kay:draft-cleared", saved);
     return () => {
       stopped = true; clearTimeout(reconnect); clearInterval(safety); clearInterval(watchdog); socket?.close();
       delete document.documentElement.dataset.liveRefresh;
@@ -85,14 +86,15 @@ export function LiveUpdates() {
       document.removeEventListener("visibilitychange", focused);
       document.removeEventListener("input", dirty); document.removeEventListener("change", dirty);
       window.removeEventListener("kay:command-saved", saved);
+      window.removeEventListener("kay:draft-cleared", saved);
     };
   }, []);
   useEffect(() => {
     const deferred = () => setPendingRoute(route);
     const saved = () => setPendingRoute(document.querySelector("[data-live-dirty]") ? route : undefined);
-    window.addEventListener("kay:live-deferred", deferred); window.addEventListener("kay:command-saved", saved);
+    window.addEventListener("kay:live-deferred", deferred); window.addEventListener("kay:command-saved", saved); window.addEventListener("kay:draft-cleared", saved);
     return () => {
-      window.removeEventListener("kay:live-deferred", deferred); window.removeEventListener("kay:command-saved", saved);
+      window.removeEventListener("kay:live-deferred", deferred); window.removeEventListener("kay:command-saved", saved); window.removeEventListener("kay:draft-cleared", saved);
     };
   }, [route]);
   if (status === "disabled") return null;

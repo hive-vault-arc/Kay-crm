@@ -22,9 +22,9 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | Phase | Source state | Remaining acceptance/work |
 | --- | --- | --- |
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
-| P1 foundation | Selected theme, Inter/assets, core controls, pill tabs, compact shell/auth framing,50 source-pinned glyphs and real Contacts entry implemented | Remaining page/shared interaction parity; native review later |
-| P2 shared interactions | In progress: Radix/shadcn menu/popover and existing sheet composition updated | Record/tab/inline-field/directory/drawer presenters and unsaved navigation |
-| P3 Leads/Contacts | Existing real controllers retained; dedicated authenticated Contacts route added | Port complete selected directory and detail compositions |
+| P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; second batch adds the51st source-pinned glyph and selected status palette | Native review later |
+| P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers and click/unload draft guards implemented | Exact inline-field/form parity, Back/Forward handling, responsive focus and native interaction checks |
+| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement implemented | Exact inline editing, remaining form/document parity, browser selector migration and native review |
 | P4 inventory/owners | Existing application behavior retained | Selected cards/forms/Units drawers/details/Patrimoine/photo presentation |
 | P5 Deals/finance/PDF | Existing application behavior retained | Selected detail/status/reservation/outcome/finance/document layouts and provenance |
 | P6 work/schedule | Existing application behavior retained | Selected calendar/task/activity/inbox presentation and full context flows |
@@ -94,6 +94,60 @@ browser-access restriction and unavailable original-machine mandatory skill
 files remain recorded. Native fidelity/input/zoom/accessibility, real-stack
 security, AFTER audit and product acceptance are pending; source/model checks
 do not establish them. The owner selected final verification after implementation.
+
+## Shared interactions and first records batch
+
+Source implementation now uses the selected compact headers, pearl dossier and
+support rail, internal section rules and44px pill tabs. Contacts has only Aperçu
+and Activités. Dossiers liés sits below Responsabilité; Recherches opens its
+existing authoritative panel. Tasks/documents/management use supporting drawers,
+with the actual versioned forms, file permits and confirmation flows retained.
+Leads has Aperçu, Projets, Activités and Documents, with shared contact facts and
+compact grouped status options. Direct edit/document routes remain available.
+
+The selected status palette is frozen separately, including the owner’s later
+soft badge surfaces and light/dark variants. The same `new` wire identifier has
+an explicit deal context so Nouvelle does not inherit Nouveau’s rose surface.
+All51 glyph shapes remain source-hashed; no package dependency was added.
+
+Directory headers no longer use the coastal hero. Phone search/filter controls
+are icons opening a real Sheet; utilities use the current compact popover. Real
+numbered result sets become short entity cards on phones, retaining selection
+in the table controller. Détails shares the metadata row rather than occupying
+an unconditional extra row. Linked projects have a shared hover region and
+separation between entries. Contact/activity mobile presenters retain the full
+authored details rather than discarding fields to shorten the preview.
+
+Visited record panels stay mounted; unvisited panels load lazily. New guarded
+drawers distinguish cancellation from successful closure. Click navigation and
+reload/unload use the shared dirty boundary; tracking also works when live
+updates are disabled. Discard releases deferred nonmutating live refreshes.
+Back/Forward interception and responsive focus restoration remain explicit P2
+work, not inferred passed behavior.
+
+The lead status command uses the existing full edit schema and PATCH facade.
+It snapshots the reviewed version and other lead fields, preserves the same
+retry key after an interrupted result, and never sends contact/source/assignment
+replacement fields. A missing required budget is qualified before confirmation.
+Existing backend authorization remains authoritative. No backend/schema changed.
+
+Two interface adaptations are proposals necessitated by current read contracts:
+the CRM pages contact-linked prospects and affairs separately, so Dossiers liés
+keeps two accurate pagers instead of inventing a merged page; visits uses an
+explicit month and its current total, with initial civil date and both month
+boundaries resolved by the existing Casablanca backend endpoints. Neither is a
+new business rule or an unbounded portfolio/visit count.
+
+Validation: lint passes with51 semantic icons and392 Button sites, zero inventory
+violations; fresh type checking passes; all111 frontend units pass; pinned
+Next16.4.2 production build passes. Four new synthetic interaction cases cover
+navigation exclusions, reviewed-version/retry preservation, retained tab drafts
+and cancel/busy/discard behavior. No browser or real-stack pass is claimed.
+The first lint run caught a render-callback/ref boundary in the drawer; the
+handler now resolves its unique content element when invoked, without disabling
+the React rule. [Batch evidence](design-migration-evidence/records-2026-10-26.json)
+records scope and source hashes. Historical browser selectors still expecting
+eight Contact tabs require migration during the remaining implementation.
 
 ## Next work
 

@@ -35,3 +35,10 @@ The old Iconsax manifest/notices remain historical provenance.
 
 This records implementation source, not native visual/accessibility/product
 acceptance. See the [execution record](../../docs/03-planning/design-prototype-migration-execution.md).
+## Record status additions, 2026-10-26
+
+`kay-status.tokens.json` freezes the selected prototype's later soft status
+surfaces and wire-role mapping. `workspace-status.css` consumes those values.
+The deal context explicitly maps `new` to proposition/Nouvelle while enquiries
+retain not-contacted/Nouveau. `kay-glyphs.json` adds the exact frozen Ellipsis
+nodes as MoreIcon, bringing the semantic registry to51; original notices apply.

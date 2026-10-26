@@ -10,7 +10,7 @@ const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 const require = createRequire(import.meta.url);
 
 // Compile the actual server modules in memory; only Next request-context hooks are substituted.
-export function loadServer(relative, { env = {}, modules = {} } = {}) {
+export function loadServer(relative, { env = {}, modules = {}, globals = {} } = {}) {
   const filename = path.join(frontend, relative);
   const source = readFileSync(filename, "utf8");
   const compiled = ts.transpileModule(source, {
@@ -27,6 +27,7 @@ export function loadServer(relative, { env = {}, modules = {} } = {}) {
     throw new Error("UNEXPECTED_SERVER_TEST_IMPORT");
   }
   runInNewContext(compiled, {
+    ...globals,
     exports: loadedModule.exports, module: loadedModule, require: scopedRequire,
     process: { env }, Buffer, URL, URLSearchParams, Response, setTimeout, clearTimeout,
   }, { filename });

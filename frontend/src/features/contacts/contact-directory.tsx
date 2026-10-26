@@ -1,36 +1,42 @@
 "use client";
-import { PageHeader } from "@/components/shared/page-header";
-import { ListHeaderActions } from "@/components/shared/list-header-actions";
-import { FilterResultsLayout } from "@/components/shared/filter-results-layout";
-import { ExportAction } from "@/features/discovery/export-action";
+
 import Link from "next/link";
 import { useState } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { contactsSchema, type StaffRole } from "./contracts";
 import { NativeSelect } from "@/components/ui/native-select";
+import { CrmAgent, CrmContactCell, CrmDirectoryHeader, CrmDirectoryToolbar, CrmStatusBadge } from "@/components/shared/crm-presentation";
+import { DirectoryRecordCard } from "@/components/shared/directory-record-card";
+import { DataTable } from "@/components/shared/data-table";
+import { FilterResultsLayout } from "@/components/shared/filter-results-layout";
+import { ExportAction } from "@/features/discovery/export-action";
+import { useHydrated } from "@/hooks/use-hydrated";
+import { contactsSchema, type ContactSummary, type StaffRole } from "./contracts";
 import { queryPath, useQuery } from "./use-query";
 import { RecordError } from "./record-states";
 import { NumberedPages } from "./numbered-pages";
-import { useHydrated } from "@/hooks/use-hydrated";
+import { countryLabel } from "./qualification-inputs";
+import { languageLabels } from "./qualification-contracts";
+
+const columns: ColumnDef<ContactSummary>[] = [
+  { id: "name", header: "Contact", cell: ({ row }) => <CrmContactCell contact={row.original} href={`/contacts/${row.original.id}`} describedBy={`contact-phone-${row.original.id}`} /> },
+  { id: "agent", header: "Agent responsable", cell: ({ row }) => <CrmAgent name={row.original.primary_agent.display_name} /> },
+  { id: "email", header: "E-mail", cell: ({ row }) => row.original.primary_email ?? "Non renseigné" },
+  { id: "country", header: "Pays", cell: ({ row }) => countryLabel(row.original.country) },
+  { id: "languages", header: "Langues", cell: ({ row }) => row.original.languages.map(code => languageLabels[code] ?? code).join(", ") || "Non renseignées" },
+  { id: "status", header: "Statut", cell: ({ row }) => <CrmStatusBadge state={row.original.archived_at ? "archived" : "active"}>{row.original.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge> },
+];
 
 export function ContactDirectory({ role }: { role: StaffRole }) {
   const hydrated = useHydrated();
-  const [text, setText] = useState("");
-  const [q, setQ] = useState("");
-  const [page, setPage] = useState(1);
-  const [archive, setArchive] = useState("active");
+  const [text, setText] = useState(""), [q, setQ] = useState(""), [page, setPage] = useState(1), [archive, setArchive] = useState("active");
   const { value, error, refresh } = useQuery(queryPath("contacts", { q, page, page_size: 50, archive }), contactsSchema);
-  return <div className="grid min-w-0 gap-3"><PageHeader title="Contacts" description="Une identité commune à plusieurs demandes." route="/leads" actions={
-    <ListHeaderActions primary={<Button action="create" asChild variant="creation"><Link href="/leads/new">Créer un Lead et son contact</Link></Button>}>
-      <Button action="enquiry" asChild variant="quiet" size="compact"><Link href="/leads">Demandes</Link></Button>
-      {role !== "agent" && value ? <ExportAction compact kind="contacts" filters={{ q, archive }} total={value.total} /> : null}
-    </ListHeaderActions>
-  } />
-    <FilterResultsLayout title="Filtres des contacts" active={Boolean(q || archive !== "active")} filters={close => <form aria-label="Recherche et filtres des contacts" className="filter-toolbar flex flex-wrap items-center gap-3" onSubmit={event => { event.preventDefault(); setQ(text); setPage(1); close(); }}><div className="grid min-w-0 gap-2"><Label className="sr-only" htmlFor="directory-search">Rechercher un nom, téléphone ou e-mail</Label><Input placeholder="Nom, téléphone ou e-mail" id="directory-search" disabled={!hydrated} value={text} maxLength={160} onChange={event => setText(event.target.value)} /></div><Button action="search" disabled={!hydrated} variant="outline" type="submit">Rechercher</Button>
-    {role !== "agent" ? <div className="grid min-w-0 gap-2"><Label className="sr-only" htmlFor="directory-archive">État des contacts</Label><NativeSelect id="directory-archive" disabled={!hydrated} value={archive} onChange={event => { setArchive(event.target.value); setPage(1); }}><option value="active">Actifs</option><option value="archived">Archivés</option><option value="all">Actifs et archivés</option></NativeSelect></div> : null}</form>}>
-    {error ? <RecordError error={error} retry={refresh} /> : !value ? <p role="status">Chargement des contacts…</p> : <><p role="status">{value.total} contact(s) accessible(s).</p>{value.items.length ? <ul className="grid gap-4">{value.items.map(contact => <li className="grid min-w-0 gap-2 border-b pb-4 sm:grid-cols-2" key={contact.id}><div className="grid gap-2"><Link className="inline-flex min-h-control items-center wrap-anywhere font-medium text-link underline" href={`/contacts/${contact.id}`}>{contact.name}</Link>{contact.archived_at ? <span className="text-neutral">Archivé</span> : null}<span>{contact.primary_phone}</span>{contact.primary_email ? <span className="wrap-anywhere">{contact.primary_email}</span> : null}</div><p className="wrap-anywhere">Agent responsable : {contact.primary_agent.display_name}</p></li>)}</ul> : <p>{q ? "Aucun contact accessible ne correspond." : archive === "archived" ? "Aucun contact archivé sur cette page." : "Aucun contact sur cette page. Créez un Lead pour ajouter un contact."}</p>}<NumberedPages label="Pages des contacts" page={page} total={value.total} size={value.page_size} change={setPage} /></>}
+  function reset() { setText(""); setQ(""); setArchive("active"); setPage(1); }
+  return <div className="crm-directory"><CrmDirectoryHeader title="Contacts" count={value?.total} noun="contacts" description="Une identité commune à plusieurs dossiers." route="/contacts" actions={<CrmDirectoryToolbar primary={<Button action="create" asChild><Link href="/leads/new">Nouveau prospect</Link></Button>}><Button action="enquiry" asChild variant="quiet"><Link href="/leads">Prospects</Link></Button>{role !== "agent" && value ? <ExportAction compact kind="contacts" filters={{ q, archive }} total={value.total} /> : null}</CrmDirectoryToolbar>} />
+    <FilterResultsLayout title="Filtres des contacts" active={Boolean(q || archive !== "active")} activeCount={Number(Boolean(q)) + Number(archive !== "active")} reference reset={reset} filters={close => <form aria-label="Recherche et filtres des contacts" onSubmit={event => { event.preventDefault(); setQ(text); setPage(1); close(); }}><fieldset disabled={!hydrated} className="grid gap-4"><div className="grid gap-2"><Label htmlFor="directory-search">Rechercher</Label><Input placeholder="Nom, téléphone ou e-mail" id="directory-search" value={text} maxLength={160} onChange={event => setText(event.target.value)} /></div>{role !== "agent" ? <div className="grid gap-2"><Label htmlFor="directory-archive">Statut</Label><NativeSelect id="directory-archive" value={archive} onChange={event => { setArchive(event.target.value); setPage(1); }}><option value="active">Actifs</option><option value="archived">Archivés</option><option value="all">Tous les contacts</option></NativeSelect></div> : null}<Button action="search" type="submit" variant="outline">Rechercher</Button><Button action="reset" type="button" variant="quiet" onClick={reset}>Réinitialiser</Button></fieldset></form>}>
+      {error ? <RecordError error={error} retry={refresh} /> : !value ? <p role="status">Chargement des contacts…</p> : <><p className="text-sm text-muted-foreground" role="status">{value.total} contact(s) accessible(s)</p><DataTable rows={value.items} columns={columns} getRowId={contact => contact.id} className="crm-directory-table" caption="Contacts accessibles et agents responsables" emptyLabel={q ? "Aucun contact ne correspond à votre recherche." : archive === "archived" ? "Aucun contact archivé." : "Aucun contact. Créez un prospect pour ajouter son contact."} footerCaption mobileCard={contact => <DirectoryRecordCard title={contact.name} href={`/contacts/${contact.id}`} agent={contact.primary_agent.display_name} phone={contact.primary_phone} status={<CrmStatusBadge state={contact.archived_at ? "archived" : "active"}>{contact.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge>} metadata={countryLabel(contact.country)} details={[{ label: "E-mail", value: contact.primary_email ?? "Non renseigné" }, { label: "Langues", value: contact.languages.map(code => languageLabels[code] ?? code).join(", ") || "Non renseignées" }]} />} /><NumberedPages compact label="Pages des contacts" page={page} total={value.total} size={value.page_size} change={setPage} /></>}
     </FilterResultsLayout>
   </div>;
 }
