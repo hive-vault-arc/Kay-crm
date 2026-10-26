@@ -5,7 +5,8 @@ import ts from "typescript";
 
 const root = path.resolve(import.meta.dirname, "..");
 const manifest = JSON.parse(await readFile(path.join(root, "../docs/reference/iconsax/assets.json"), "utf8"));
-const icons = new Set(manifest.icons.map(icon => icon.export));
+const selected = JSON.parse(await readFile(path.join(root, "../branding/prototype/kay-glyphs.json"), "utf8"));
+const icons = new Set([...manifest.icons, ...selected.icons].map(icon => icon.export));
 // This wrapper renders the existing NotificationIcon together with its live unread count.
 icons.add("LiveNotificationIcon");
 const dataControls = new Map([

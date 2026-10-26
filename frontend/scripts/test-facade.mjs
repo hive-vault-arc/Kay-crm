@@ -36,6 +36,7 @@ try {
     "tests/unit/generated-documents.test.mjs",
     "tests/unit/project-links.test.mjs",
     "tests/unit/theme.test.mjs",
+    "tests/unit/workspace.test.mjs",
     "tests/unit/realtime.test.mjs",
     "tests/unit/help.test.mjs",
     "tests/unit/files.test.mjs",

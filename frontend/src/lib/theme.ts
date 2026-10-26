@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import tokens from "../../../branding/kay-ui-tokens.json";
 import riviera from "../../../branding/riviera/kay-riviera.tokens.json";
+import workspace from "../../../branding/prototype/kay-workspace.tokens.json";
 
 type Variables = CSSProperties & Record<`--${string}`, string>;
 const kebab = (value: string) =>
@@ -112,3 +113,36 @@ for (const [name, value] of Object.entries(rivieraRoles))
 themeVariables["--radius-small"] = "var(--riviera-radius-icon-tile)";
 themeVariables["--radius-medium"] = "var(--riviera-radius-control)";
 themeVariables["--radius-large"] = "var(--riviera-radius-panel)";
+
+// Current owner-selected workspace. Keep historical Riviera exports for provenance,
+// while the existing semantic component API resolves to the selected design.
+for (const mode of ["light", "dark"] as const)
+  for (const [name, value] of Object.entries(workspace[mode]))
+    themeVariables[`--workspace-${mode}-${kebab(name)}`] = value;
+for (const [name, value] of Object.entries(workspace.geometry))
+  themeVariables[`--workspace-geometry-${kebab(name)}`] = value;
+for (const [name, value] of Object.entries(workspace.motion))
+  themeVariables[`--motion-${kebab(name)}`] = value;
+const workspaceRoles: Record<string, string> = {
+  "surface-canvas": "canvas", "surface-content": "panel", "surface-overlay": "menu",
+  "surface-sidebar": "sidebar", "surface-sidebar-foreground": "ink",
+  "content-primary": "ink", "content-secondary": "muted", "content-link": "ink",
+  "neutral-border-subtle": "line", "neutral-border-strong": "line", "neutral-surface-muted": "field",
+  "selection-background": "selected", "selection-foreground": "ink",
+  "navigation-selected-background": "primary", "navigation-selected-foreground": "on-primary",
+  "action-primary-background": "primary", "action-primary-hover": "primary-hover", "action-primary-pressed": "primary-pressed", "action-primary-foreground": "on-primary",
+  "action-creation-background": "primary", "action-creation-hover": "primary-hover", "action-creation-pressed": "primary-pressed", "action-creation-foreground": "on-primary",
+  "action-secondary-background": "field", "action-secondary-hover": "hover", "action-secondary-foreground": "ink", "action-focus-ring": "focus",
+  "status-neutral-foreground": "neutral", "status-neutral-background": "neutral-background",
+  "status-info-foreground": "info", "status-info-background": "info-background", "status-info-border": "info",
+  "status-success-foreground": "success", "status-success-background": "success-background",
+  "status-warning-foreground": "warning", "status-warning-background": "warning-background",
+  "status-danger-foreground": "danger", "status-danger-background": "danger-background",
+  "status-purple-foreground": "purple", "status-purple-background": "purple-background",
+  "status-teal-foreground": "teal", "status-teal-background": "teal-background"
+};
+for (const [name, value] of Object.entries(workspaceRoles)) themeVariables[`--${name}`] = `var(--workspace-${value})`;
+themeVariables["--radius-small"] = "var(--workspace-geometry-inset-radius)";
+themeVariables["--radius-medium"] = "var(--workspace-geometry-pill-radius)";
+themeVariables["--radius-large"] = "var(--workspace-geometry-panel-radius)";
+themeVariables["--control-input-touch"] = "2.75rem";

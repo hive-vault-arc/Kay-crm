@@ -1,5 +1,22 @@
 # Third-party notices
 
+## Selected workspace assets
+
+The owner-selected screen uses Inter Variable, distributed under SIL OFL1.1.
+The original font notice is retained in `public/licenses/workspace/Inter-OFL.txt`.
+Brand/atmosphere assets are copied from the owner's frozen KAY prototype and
+listed by checksum in the migration inventory, not assigned to business records.
+
+The selected workspace glyphs are frozen vector nodes from `lucide@1.59.0`, under its
+ISC license with applicable Feather notices. The complete original license is
+retained in `public/licenses/workspace/lucide-LICENSE.txt`. Only selected shapes
+are integrated into the typed semantic icon layer; no runtime icon package or
+loose icon pack is installed. `branding/prototype/kay-glyphs.json` records their
+provenance and hashes. The owner's current prototype-fidelity instruction governs
+these glyphs. All45 prior semantic exports retain their names and behavior via
+this selected visual family; additional Help/Owner/theme aliases share the same
+source. Existing Iconsax source notices/manifests remain as historical provenance.
+
 ## Riviera variable fonts: SIL Open Font License 1.1
 
 Fraunces 1.000, Manrope 4.505 and DM Sans 4.004 use the SIL Open Font License 1.1

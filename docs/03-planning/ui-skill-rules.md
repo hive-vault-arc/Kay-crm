@@ -1,5 +1,16 @@
 # Mandatory UI skill rules for KAY sprints
 
+Current migration instruction,2026-10-26: the owner requests the frozen selected
+prototype's appearance and intentional UX organization on `codex/redesign`.
+See the [current DESIGN override](../../DESIGN.md) and
+[execution record](design-prototype-migration-execution.md). This supersedes
+conflicting older visual defaults below, including exact selected glyphs now
+source-pinned in the typed registry; it does not permit arbitrary icon imports,
+raw SVG outside the semantic layer, another component/chart kit or weakened
+accessibility/authorization. Original-machine mandatory skill paths remain
+unavailable here and are not claimed executed. Keep AFTER timing and the dense
+CRM exclusions; final owner verification follows implementation as requested.
+
 Current visual-brand override,2026-10-18: Khalid selected
 [Riviera](../../branding/riviera/README.md) for shared colors, typography and
 component styling. Existing CRM layouts, Iconsax, shadcn/Tailwind/Bklit and

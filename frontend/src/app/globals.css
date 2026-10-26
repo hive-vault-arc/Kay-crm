@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./workspace.css";
 
 html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   display: none;
@@ -8,9 +9,9 @@ html[data-live-refresh="automatic"] [data-live-refresh="true"] {
 
 /* Shared geometry plus semantic roles mapped from branding/riviera tokens. */
 @theme inline {
-  --font-sans: var(--font-manrope), Arial, sans-serif;
-  --font-serif: var(--font-fraunces), Georgia, serif;
-  --font-metadata: var(--font-dm-sans), Arial, sans-serif;
+  --font-sans: var(--font-inter), Inter, system-ui, sans-serif;
+  --font-serif: var(--font-inter), Inter, system-ui, sans-serif;
+  --font-metadata: var(--font-inter), Inter, system-ui, sans-serif;
   --color-background: var(--surface-canvas);
   --color-foreground: var(--content-primary);
   --color-card: var(--surface-content);
@@ -76,10 +77,10 @@ html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   --container-workspace: var(--layout-content-max-width);
   --container-reading: 52rem;
   --container-entry: 32rem;
-  --text-page: clamp(2rem, 1.6rem + 1vw, 2.75rem);
-  --text-page--line-height: 1.1;
-  --text-section: 1.5rem;
-  --text-section--line-height: 1.25;
+  --text-page: 1.25rem;
+  --text-page--line-height: 1.35;
+  --text-section: 1rem;
+  --text-section--line-height: 1.4;
   --text-xs: 0.8125rem;
   --text-xs--line-height: 1.125rem;
   --spacing-chart: 16rem;

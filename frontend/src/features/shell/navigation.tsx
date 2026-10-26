@@ -10,8 +10,8 @@ import {
   SettingsIcon,
   ContactsIcon,
   ContactIcon,
-  ChevronDownIcon,
-  AlertIcon,
+  HelpIcon,
+  OwnerIcon,
 } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
@@ -20,8 +20,9 @@ const destinations = [
   { href: "/leads", label: "Prospects", icon: ContactsIcon },
   { href: "/deals", label: "Affaires", icon: DealIcon },
   { href: "/visits", label: "Calendrier des visites", icon: CalendarIcon },
+  { href: "/contacts", label: "Contacts", icon: ContactIcon },
+  { href: "/owners", label: "Propriétaires", icon: OwnerIcon },
   { href: "/projects", label: "Projets", icon: PropertyIcon },
-  { href: "/owners", label: "Propriétaires", icon: ContactIcon },
 ];
 
 export function Navigation({
@@ -36,9 +37,9 @@ export function Navigation({
   settingsPlacement?: "inline" | "external";
 }) {
   const pathname = usePathname();
-  const active = (href: string) => pathname === href || pathname.startsWith(`${href}/`) || (href === "/leads" && pathname.startsWith("/contacts/"));
+  const active = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
   return (
-    <nav id={onNavigate ? "mobile-navigation" : "main-navigation"} aria-label="Navigation principale" className="grid gap-1">
+    <nav id={onNavigate ? "mobile-navigation" : "main-navigation"} aria-label="Navigation principale" className="kay-navigation">
       {destinations.map(({ href, label, icon: Icon }) => (
         <Link
           key={href}
@@ -48,15 +49,11 @@ export function Navigation({
           aria-current={active(href) ? "page" : undefined}
           aria-label={label}
           title={compact ? label : undefined}
-          className={cn(
-            "nav-item flex min-h-control items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-            active(href) &&
-              "bg-sidebar-accent text-sidebar-accent-foreground",
-          )}
+          data-compact={compact}
+          className="kay-nav-link"
         >
-          <span className="navigation-icon"><Icon aria-hidden="true" className="size-5 shrink-0" /></span>
+          <Icon aria-hidden="true" className="size-5 shrink-0" />
           <span className={cn("min-w-0 wrap-break-word", compact && "sr-only")}>{label}</span>
-          <ChevronDownIcon aria-hidden="true" className={cn("navigation-chevron size-4 shrink-0 -rotate-90", compact && "sr-only")} />
         </Link>
       ))}
       {administrator && settingsPlacement === "inline" ? <div className="mt-6 grid gap-2 border-t border-sidebar-foreground/20 pt-6 text-sm"><SettingsNavigationItem compact={compact} onNavigate={onNavigate} /></div> : null}
@@ -66,17 +63,16 @@ export function Navigation({
 
 export function SettingsNavigationItem({ compact = false, onNavigate }: { compact?: boolean; onNavigate?: (href: string) => void }) {
   const pathname = usePathname();
-  return <Link href="/settings" prefetch={false} onClick={() => onNavigate?.("/settings")} aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label="Paramètres" title={compact ? "Paramètres" : undefined} className={cn("nav-item flex min-h-control items-center gap-3 rounded-sm px-3 py-3 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", pathname.startsWith("/settings") && "bg-sidebar-accent text-sidebar-accent-foreground")}>
+  return <Link href="/settings" prefetch={false} onClick={() => onNavigate?.("/settings")} aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label="Paramètres" title={compact ? "Paramètres" : undefined} data-compact={compact} className="kay-nav-link">
     <span className="navigation-icon"><SettingsIcon aria-hidden="true" className="size-5" /></span>
     <span className={compact ? "sr-only" : "min-w-0 wrap-break-word"}>Paramètres</span>
-    <ChevronDownIcon aria-hidden="true" className={cn("navigation-chevron size-4 shrink-0 -rotate-90", compact && "sr-only")} />
   </Link>;
 }
 
 export function HelpNavigationItem({ compact = false, onNavigate }: { compact?: boolean; onNavigate?: (href: string) => void }) {
   const pathname = usePathname();
   const active = pathname === "/help" || pathname.startsWith("/help/");
-  return <Link href="/help" prefetch={false} onClick={() => onNavigate?.("/help")} aria-current={active ? "page" : undefined} aria-label="Aide" title={compact ? "Aide" : undefined} className={cn("nav-item flex min-h-control items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", active && "bg-sidebar-accent text-sidebar-accent-foreground")}>
-    <span className="navigation-icon"><AlertIcon aria-hidden="true" className="size-5 shrink-0" /></span><span className={compact ? "sr-only" : "min-w-0 wrap-break-word"}>Aide</span><ChevronDownIcon aria-hidden="true" className={cn("navigation-chevron size-4 shrink-0 -rotate-90", compact && "sr-only")} />
+  return <Link href="/help" prefetch={false} onClick={() => onNavigate?.("/help")} aria-current={active ? "page" : undefined} aria-label="Aide" title={compact ? "Aide" : undefined} data-compact={compact} className="kay-nav-link">
+    <HelpIcon aria-hidden="true" className="size-5 shrink-0" /><span className={compact ? "sr-only" : "min-w-0 wrap-break-word"}>Aide</span>
   </Link>;
 }

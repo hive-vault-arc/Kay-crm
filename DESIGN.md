@@ -1,29 +1,29 @@
 ---
-name: KAY Riviera
-description: Owner-selected Riviera styling for KAY's existing French operational CRM.
+name: KAY Selected Workspace
+description: Owner-selected frozen prototype presentation, ported onto the existing French operational CRM.
 colors:
-  primary: "#D8AA45"
-  primary-hover: "#E4BC62"
-  primary-pressed: "#CC9C36"
-  canvas: "#FAF8F4"
-  surface: "#FFFDF8"
-  ink: "#272727"
-  muted: "#6B6257"
-  gold-text: "#765A13"
+  primary: "#20221E"
+  primary-hover: "#383B32"
+  primary-pressed: "#181A16"
+  canvas: "#F6F7F9"
+  surface: "#FFFFFF"
+  ink: "#181918"
+  muted: "#4C5562"
+  gold-text: "#181918"
   inverse: "#FFFFFF"
-  sidebar: "#121512"
-  sidebar-active: "#252D24"
-  sidebar-label: "#F8F7F0"
-  control-border: "#858779"
-  divider: "#E5E0D6"
-  success: "#235D37"
-  success-background: "#E8F5DD"
-  warning: "#825A14"
-  warning-background: "#FFF1CF"
-  danger: "#994A40"
-  danger-background: "#FBEDEA"
-  info: "#35647E"
-  info-background: "#E8F1F7"
+  sidebar: "#F6F7F9"
+  sidebar-active: "#20221E"
+  sidebar-label: "#4C5562"
+  control-border: "#C9D1DC"
+  divider: "#C9D1DC"
+  success: "#2D7653"
+  success-background: "#ECFDF5"
+  warning: "#73570C"
+  warning-background: "#FFF7D6"
+  danger: "#B24B55"
+  danger-background: "#FFF1F2"
+  info: "#2563EB"
+  info-background: "#EFF6FF"
   stage-blue: "#3B82F6"
   stage-cyan: "#06B6D4"
   stage-yellow: "#FACC15"
@@ -35,37 +35,36 @@ colors:
   stage-slate: "#64748B"
 typography:
   display:
-    fontFamily: "Fraunces, Georgia, serif"
-    fontSize: "clamp(2rem, 1.6rem + 1vw, 2.75rem)"
-    fontWeight: 550
-    lineHeight: 1.1
-    letterSpacing: "-0.01em"
-    fontVariation: "'opsz' 40, 'SOFT' 0, 'WONK' 0"
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "20px"
+    fontWeight: 650
+    lineHeight: 1.3
+    letterSpacing: "-0.025em"
   title:
-    fontFamily: "Fraunces, Georgia, serif"
-    fontSize: "24px"
-    fontWeight: 550
-    lineHeight: 1.25
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "20px"
+    fontWeight: 650
+    lineHeight: 1.3
     letterSpacing: "-0.01em"
   body:
-    fontFamily: "Manrope, Arial, sans-serif"
-    fontSize: "15px"
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "14px"
     fontWeight: 400
-    lineHeight: "22.5px"
+    lineHeight: "21px"
   label:
-    fontFamily: "Manrope, Arial, sans-serif"
+    fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "14px"
     fontWeight: 500
     lineHeight: "20px"
   metadata:
-    fontFamily: "DM Sans, Arial, sans-serif"
-    fontSize: "13px"
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "12px"
     fontWeight: 400
     lineHeight: "18px"
 rounded:
-  icon: "8px"
-  control: "10px"
-  panel: "12px"
+  icon: "999px"
+  control: "999px"
+  panel: "24px"
 spacing:
   unit: "4px"
   icon: "8px"
@@ -77,7 +76,7 @@ spacing:
 components:
   button-creation:
     backgroundColor: "{colors.primary}"
-    textColor: "{colors.ink}"
+    textColor: "{colors.inverse}"
     rounded: "{rounded.control}"
     padding: "8px 16px"
   button-outline:
@@ -90,7 +89,7 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.control}"
     padding: "8px 12px"
-    height: "48px"
+    height: "44px"
   navigation-current:
     backgroundColor: "{colors.sidebar-active}"
     textColor: "{colors.inverse}"
@@ -109,6 +108,27 @@ components:
 ---
 
 # KAY interface design direction
+
+## Current owner-selected workspace: 2026-10-26
+
+The owner explicitly selected the frozen prototype as the visual AND UX
+authority for this migration, including intentional differences from the old
+repository. Implement on `codex/redesign`, preserve the selected design, and
+integrate missing real capabilities there. Merge remains subject to final
+verification and explicit owner confirmation.
+
+Current color/geometry/motion definitions are in
+[`branding/prototype`](branding/prototype/kay-workspace.tokens.json);
+the [migration execution](docs/03-planning/design-prototype-migration-execution.md)
+records progress and pending gates. Use Inter, pearl/frosted surfaces, graphite
+pill controls, the compact96px icon rail and selected mobile cards/flow. Reuse
+shadcn/Tailwind/Bklit and authoritative API rules. Selected glyphs remain in the
+typed, source-pinned registry; no arbitrary icon package or raw interface SVG.
+
+The remaining Riviera paragraphs below are historical appearance references,
+superseded by this owner instruction where they conflict. Original assets/tokens
+and their notices are retained; business/security/accessibility rules continue.
+This update records the branch implementation, not native or product acceptance.
 
 ## Overview
 

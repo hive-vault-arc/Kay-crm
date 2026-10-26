@@ -14,7 +14,8 @@ export function loadServer(relative, { env = {}, modules = {} } = {}) {
   const filename = path.join(frontend, relative);
   const source = readFileSync(filename, "utf8");
   const compiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    fileName: filename,
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
   }).outputText;
   const loadedModule = { exports: {} };
   function scopedRequire(name) {
