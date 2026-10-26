@@ -23,10 +23,10 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | --- | --- | --- |
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to62 source-pinned glyphs and selected status palette | Native review later |
-| P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers and click/unload draft guards implemented | Exact inline-field/form parity, Back/Forward handling, responsive focus and native interaction checks |
-| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban implemented | Exact inline editing, remaining form/document parity, browser selector migration and native review |
+| P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields and click/unload draft guards implemented | Remaining full-form parity, Back/Forward handling, responsive focus and native interaction checks |
+| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban and per-value contact/prospect editing implemented | Remaining full-form/document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
-| P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu and role-gated Finance drawer composed from real controllers | Remaining exact inline/offer/form/PDF layouts and provenance; final native security/stock/focus checks |
+| P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value qualification/notes/action editing and role-gated Finance drawer composed from real controllers | Remaining exact offer/full-form/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda and date-only booking context implemented; current commands retained | Detailed visit/task/activity forms, inbox/settings refinements and native workflow review |
 | P7 remaining surfaces | Help topic hub, side-by-side guide cards and balanced reader implemented; other existing behavior retained | Dashboard/report/search/audit/jobs/settings compositions and native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
@@ -411,3 +411,56 @@ claimed. The branch still needs remaining forms, record inline editing, PDF,
 report/admin/search surfaces and final owner-directed verification.
 
 [Calendar evidence](design-migration-evidence/calendar-2026-10-26.json) records source hashes and commands.
+
+## Inline dossier fields and draft-read retention batch
+
+Contact, prospect and affair values now use the selected quiet value/hover/edit
+pattern, with short local controls, explicit save/revert and the same fact-row
+spacing. A shared scope allows one inline field at a time and guards switching
+away from a draft or pending command. Escape/revert restores the saved value;
+loading/error states can be cancelled. The ordinary full Modifier forms remain.
+Values have an accessible current-value description; call/mail links remain
+separate native actions rather than nested links inside buttons.
+
+Contact fields reuse the existing full schema, canonical contact PATCH and field
+arrays. Names, type, roles, country, nationality, languages, all phone/email rows,
+labels and exact primary selection survive. Main Lead/Deal rows keep primary
+methods stable; secondary methods load only when Autres coordonnées is opened.
+Changing a field does not persist provenance, assignment or unrelated profile
+changes. Conflict recovery shows the current field and can reload it or rebase
+only the edited field onto current unrelated values; kept input stays dirty.
+Current denial removes prior content. Empty/unmatched calling-code metadata
+keeps a full international input rather than assuming another country or crashing.
+
+Prospect edits preserve the reviewed message/status/qualification/version and
+stable retry identity. A missing legacy budget remains explicitly required;
+converted/archived qualification stays read-only. Affair edits reuse the original
+atomic full-edit command, complete project choices, linked offering/version and
+reviewed version. Missing budget/motifs/projects must be completed, zero rooms
+remain zero, and no stage/reservation/stock/outcome command is substituted. A
+failed command retains its draft; the existing explicit compare/reset now really
+remounts displayed affair forms and cannot run while its command is pending.
+
+Review found that a transient quiet read could tear down a dirty editor. Quiet
+refreshes now use the established deferral path for detail/field metadata. Only
+an existing same-path validated projection may be held on a transient5xx read
+while a draft is dirty. Current401/403/404 errors still clear it; initial/new-record
+reads, list failures and explicit hard refresh are not hidden. Existing deferred
+refresh notices are reused. No new cache/storage, endpoint, authorization,
+worker, database, session, dependency or business rule is introduced.
+
+Source/controller checks cover single-field switching/cancel/busy, complete
+collection preservation and primary selection, same-key interrupted retries,
+contact conflict rebase without unrelated overwrite, current denial, required
+legacy qualification, exact affair edit boundary, lazy secondary methods and
+metadata failure fallback. Four actual-hook cases additionally cover transient
+draft reads, authority loss, list/hard reads and first/different-record loading.
+Lint/typecheck/build pass and162 frontend units pass (62 glyphs/418 Button
+sites/zero inventory violations). A new hook harness initially violated the
+component naming lint rule; the fixture was corrected without relaxing the gate.
+These are synthetic/source checks; native focus, breakpoint geometry, keyboard,
+zoom and real record/security races remain in the final verification stage.
+Dense CRM/form scope retains the existing system; missing original-machine UI
+skills and AFTER timing remain as previously recorded.
+
+[Inline evidence](design-migration-evidence/inline-2026-10-26.json) records exact source hashes and command results.

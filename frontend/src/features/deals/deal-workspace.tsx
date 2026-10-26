@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState, type ReactNode, type Ref } from "react";
+import { DealInlineField } from "./deal-inline-field";
+import { InlineEditScope } from "@/components/shared/inline-record-field";
 import { Button } from "@/components/ui/button";
 import { CrmRecordHeader, CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
@@ -31,32 +33,33 @@ import { CustomerOffers } from "./customer-offers";
 import { DealHistory } from "./deal-history";
 import { OutcomeHistory } from "./outcome-history";
 
-export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChanged, mutate, reload, error, notice, commandState, onEdit, editRef, initialTask, initialTab }: {
+export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChanged, mutate, reload, error, notice, commandState, onEdit, editRef, initialTask, initialTab, contactChanged, denied }: {
   deal: Deal; role: StaffRole; writable: boolean; canArchive: boolean; busy: boolean; busyChanged: (value: boolean) => void; mutate: MutateDeal;
-  reload: () => Promise<unknown>; error?: ApiError; notice?: string; commandState?: ReactNode; onEdit: () => void; editRef?: Ref<HTMLButtonElement>; initialTask?: string; initialTab?: string;
+  reload: () => Promise<unknown>; error?: ApiError; notice?: string; commandState?: ReactNode; onEdit: () => void; editRef?: Ref<HTMLButtonElement>; initialTask?: string; initialTab?: string; contactChanged?: () => void; denied?: (error: ApiError) => void;
 }) {
   const [historyRevision, setHistoryRevision] = useState(0);
   const { request, dialog } = useUnsavedGuard();
   const canAct = !deal.contact.archived_at && !deal.archived_at;
   const edit = () => request(onEdit);
-  return <div className="kay-record-page">
+  const inline = { deal, writable, busy, mutate, error, denied };
+  return <InlineEditScope><div className="kay-record-page">
     <CrmRecordHeader contact={deal.contact} title={deal.title} route={`/deals/${deal.id}`} backHref="/deals" badges={<><DealStageMenu deal={deal} writable={canAct} busy={busy} busyChanged={busyChanged} mutate={mutate} saved={reload} error={error} /><CrmStatusBadge state={deal.rating} dot={false}>{ratingLabels[deal.rating]}</CrmStatusBadge>{deal.archived_at ? <CrmStatusBadge state="archived">Archivée</CrmStatusBadge> : null}</>} actions={<>{writable ? <Button action="edit" ref={editRef} variant="outline" disabled={busy} onClick={edit}>Modifier</Button> : null}{canArchive ? <RecordActions><RecordLifecycleAction kind="deals" id={deal.id} version={deal.version} archivedAt={deal.archived_at} label={deal.title} onChanged={() => void reload()} /></RecordActions> : null}</>} />
     {!canAct ? <p role="status" className="mb-3 text-sm text-muted-foreground">{deal.contact.archived_at ? "Contact archivé : dossier conservé en lecture seule." : "Affaire archivée : historique conservé, restauration possible pendant 30 jours."}</p> : null}
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{commandState}
     <RecordWorkspace label="Rubriques de l’affaire" tabs={[
       { id: "overview", label: "Aperçu", content: <>
-        <ContactProfilePanel contact={deal.contact} />
+        <ContactProfilePanel contact={deal.contact} writable={writable} changed={contactChanged} denied={denied} />
         <RecordSection title="Qualification" action={<RecordDrawer label="Recherches" action="search" description="Critères de recherche liés au contact."><RequirementPanel contactId={deal.contact.id} writable={canAct} /></RecordDrawer>}><RecordFacts>
-          <RecordFact icon={FinanceIcon} label="Budget">{deal.initial_budget || "À qualifier"}</RecordFact>
-          <RecordFact icon={RadioIndicatorIcon} label="Qualification">{ratingLabels[deal.rating]}</RecordFact>
-          <RecordFact icon={DealIcon} label="Motifs d’achat">{deal.purchase_reasons.map(code => purchaseReasonLabels[code]).join(", ") || "Non renseignés"}</RecordFact>
-          <RecordFact icon={FinanceIcon} label="Financement">{deal.payment_method ? paymentLabels[deal.payment_method as keyof typeof paymentLabels] ?? deal.payment_method : "Non renseigné"}</RecordFact>
-          <RecordFact icon={PropertyIcon} label="Projets">{deal.projects.map(project => project.name).join(" · ") || "Non renseignés"}</RecordFact>
-          <RecordFact icon={PropertyIcon} label="Pièces">{deal.number_of_rooms ?? "Non renseigné"}</RecordFact>
-          <RecordFact icon={InboxIcon} label="Source">{campaignLabels[deal.campaign_source]}</RecordFact>
+          <DealInlineField {...inline} icon={FinanceIcon} label="Budget" field="initial_budget" display={deal.initial_budget || "À qualifier"} />
+          <DealInlineField {...inline} icon={RadioIndicatorIcon} label="Qualification" field="rating" display={ratingLabels[deal.rating]} />
+          <DealInlineField {...inline} icon={DealIcon} label="Motifs d’achat" field="purchase_reasons" display={deal.purchase_reasons.map(code => purchaseReasonLabels[code]).join(", ") || "Non renseignés"} />
+          <DealInlineField {...inline} icon={FinanceIcon} label="Financement" field="payment_method" display={deal.payment_method ? paymentLabels[deal.payment_method as keyof typeof paymentLabels] ?? deal.payment_method : "Non renseigné"} />
+          <DealInlineField {...inline} icon={PropertyIcon} label="Projets" field="projects" display={deal.projects.map(project => project.name).join(" · ") || "Non renseignés"} />
+          <DealInlineField {...inline} icon={PropertyIcon} label="Pièces" field="number_of_rooms" display={deal.number_of_rooms ?? "Non renseigné"} />
+          <DealInlineField {...inline} icon={InboxIcon} label="Source" field="campaign_source" display={campaignLabels[deal.campaign_source]} />
           <RecordFact icon={EnquiryIcon} label="Prospect d’origine">{deal.enquiry_id ? <Link className="inline-flex min-h-control items-center hover:underline" href={`/leads/${deal.enquiry_id}`}>Voir le prospect</Link> : "Aucun prospect lié"}</RecordFact>
         </RecordFacts></RecordSection>
-        <RecordSection title="Notes"><p className="whitespace-pre-wrap wrap-anywhere text-sm leading-relaxed">{deal.notes || "Aucune note renseignée."}</p></RecordSection>
+        <RecordSection title="Notes"><RecordFacts columns={1}><DealInlineField {...inline} icon={InboxIcon} label="Notes" field="notes" display={<span className="whitespace-pre-wrap">{deal.notes || "Aucune note renseignée."}</span>} /></RecordFacts></RecordSection>
         <RecordSection title="Offre d’inventaire liée">{deal.offering ? <OfferingFacts offering={deal.offering} /> : <p className="text-sm text-muted-foreground">Aucune offre d’inventaire liée.</p>}</RecordSection>
         <div className="mt-6 border-t pt-5"><CustomerOffers key={deal.id} deal={deal} writable={writable} busy={busy} mutate={mutate} /></div>
       </> },
@@ -64,10 +67,10 @@ export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChan
       { id: "activity", label: "Activités", content: <><ActivityHistory scope="deals" id={deal.id} writable={canAct} revision={deal.version + historyRevision} />{deal.enquiry_id ? <ActivityHistory scope="deals" id={deal.id} origin /> : null}<details className="kay-contact-more"><summary>Historique de l’affaire</summary><DealHistory id={deal.id} revision={deal.version} /></details><details className="kay-contact-more"><summary>Résultats, clôture et réouverture</summary><OutcomeHistory id={deal.id} revision={deal.version} /></details></> },
       { id: "documents", label: "Documents", content: <><RecordSection title="Documents de l’affaire" action={<Button action="file" variant="outline" asChild><Link href={`/deals/${deal.id}/documents`}>Préparer un PDF</Link></Button>}><p className="text-sm text-muted-foreground">Pièces jointes privées et documents préparés pour ce dossier.</p></RecordSection><FilePanel parentKind="deal" parentId={deal.id} writable={writable && !busy} /></> },
     ]} aside={<>
-      <RecordSection title="Suivi" action={writable ? <Button action="edit" variant="quiet" size="icon" disabled={busy} onClick={edit} aria-label="Modifier la prochaine action"><span className="sr-only">Modifier</span></Button> : undefined}><p className="whitespace-pre-wrap wrap-anywhere text-sm leading-relaxed">{deal.next_action || "Aucune prochaine action renseignée."}</p><RecordDrawer label="Voir les tâches" title="Tâches de l’affaire" action="task" description="Échéances et responsables de cette affaire." initialOpen={Boolean(initialTask)}><TaskPanel contactId={deal.contact.id} dealId={deal.id} writable={canAct} initialTask={initialTask} /></RecordDrawer></RecordSection>
+      <RecordSection title="Suivi"><RecordFacts columns={1}><DealInlineField {...inline} icon={DealIcon} label="Action prévue" field="next_action" display={<span className="whitespace-pre-wrap">{deal.next_action || "Aucune prochaine action renseignée."}</span>} /></RecordFacts><RecordDrawer label="Voir les tâches" title="Tâches de l’affaire" action="task" description="Échéances et responsables de cette affaire." initialOpen={Boolean(initialTask)}><TaskPanel contactId={deal.contact.id} dealId={deal.id} writable={canAct} initialTask={initialTask} /></RecordDrawer></RecordSection>
       <ContactVisits contactId={deal.contact.id} writable={canAct} />
       <RecordSection title="Réservation"><p className="text-sm text-muted-foreground">{deal.active_reservation ? "Une réservation est active sur l’offre liée. Gérez-la depuis le menu Étape." : "Aucune réservation active. Réservez une offre depuis le menu Étape."}</p></RecordSection>
       {role !== "agent" ? <RecordSection title="Finance" action={<RecordDrawer label="Voir la finance" action="finance" description="Commissions et encaissements autorisés pour cette affaire." initialOpen={initialTab === "finance"}><FinancePanel deal={deal} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Commissions et encaissements facultatifs.</p></RecordSection> : null}
     </>} />{dialog}
-  </div>;
+  </div></InlineEditScope>;
 }

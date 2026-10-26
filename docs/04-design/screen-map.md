@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+2026-10-26 selected dossier editing: Contacts keeps Aperçu/Activités with linked
+dossiers below Responsabilité; Lead/Deal keeps Aperçu/Projets/Activités/Documents.
+Quiet value editors use current canonical/versioned commands. Assignment, source
+provenance, stage/stock and relance retain their existing dedicated workflows.
+Primary method rows remain stable; additional contact methods load on disclosure.
+[Current execution](../03-planning/design-prototype-migration-execution.md).
+
 2026-10-26 selected-design migration: S09 retains its protected routes and real
 scheduling controllers, now presenting seven day columns, compact visit cards,
 drawer filters and phone agenda instead of the historical D38 hourly rail. Day

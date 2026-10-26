@@ -1,5 +1,30 @@
 # KAY security check for changes
 
+## Inline dossier fields and retained draft reads, 2026-10-26
+
+Inline controls reuse strict full contact/enquiry/deal edit schemas and current
+scoped endpoints. Reviewed identity/version/body and stable same-body retry keys
+remain; synchronous locks serialize duplicate submissions. Contact collection
+editing preserves every method/label/primary flag. Explicit conflict recovery
+keeps only that field against current unrelated values, with current authority
+and archive checks. Native call/mail actions use only scoped response values.
+Secondary methods load through the existing contact endpoint after disclosure.
+No source/assignment change, contact/deal linkage inference or stock command is
+added. Missing legacy qualification remains required rather than fabricated.
+
+Transient quiet5xx reads may retain only an existing same-path validated detail/
+metadata projection during a dirty draft. Current401/403/404 and other non5xx
+errors still replace it. Initial/different-record reads, lists and explicit hard
+refresh keep their existing behavior. Data is not restored from a stale cache,
+persisted in browser storage, logged or sent externally. Current role/session/
+CSRF/backend permissions and real command checks remain authoritative.
+
+Lint/typecheck/build and162 synthetic frontend cases pass. Added cases exercise
+actual command adapters and query hooks, including role-loss removal and the
+absence of stock/stage writes during ordinary inline edits. No native browser,
+real database/concurrency, production data, worker, dependency or release-security
+pass is claimed.
+
 ## Selected calendar presentation and booking context, 2026-10-26
 
 The current scheduling/facade/authority contracts remain unchanged. The calendar

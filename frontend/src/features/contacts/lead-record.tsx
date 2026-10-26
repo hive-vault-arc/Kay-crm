@@ -2,6 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { currentRecord } from "@/features/realtime/current-record";
+import { LeadInlineField } from "./lead-inline-field";
+import { InlineEditScope } from "@/components/shared/inline-record-field";
+import type { ApiError } from "@/lib/api/client";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { CrmRecordHeader, CrmStatusBadge } from "@/components/shared/crm-presentation";
@@ -20,7 +24,7 @@ import { FilePanel } from "@/features/files/file-panel";
 import { TaskForm } from "@/features/work/task-form";
 import { TaskPanel } from "@/features/work/task-panel";
 import { ContactVisits } from "@/features/schedule/contact-visits";
-import { enquirySchema, receivedSourceLabels as sourceLabels, type StaffRole } from "./contracts";
+import { enquirySchema, receivedSourceLabels as sourceLabels, type Enquiry, type StaffRole } from "./contracts";
 import { useQuery } from "./use-query";
 import { RecordError } from "./record-states";
 import { LeadEditor } from "./lead-editor";
@@ -30,31 +34,36 @@ import { ContactProfilePanel } from "./contact-profile-panel";
 import { LeadStatusMenu } from "./lead-status-menu";
 
 export function LeadRecord({ id, edit = false, role = "agent", actorId }: { id: string; edit?: boolean; role?: StaffRole; actorId?: string }) {
+  const [edited, setEdited] = useState<Enquiry>();
+  const [scopeError, setScopeError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
   const [historyRevision, setHistoryRevision] = useState(0);
-  const { value: enquiry, error, refresh, refreshQuietly } = useQuery(`/api/v1/enquiries/${id}`, enquirySchema);
+  const { value: remote, error, refresh, refreshQuietly } = useQuery(`/api/v1/enquiries/${id}`, enquirySchema);
+  const enquiry = currentRecord(remote, edited, id);
   const heading = <PageHeader title={edit ? "Modifier le prospect" : "Prospect"} description="Coordonnées, qualification et suivi." route={`/leads/${id}`} />;
   if (error) return <>{heading}<RecordError error={error} retry={refresh} /></>;
+  if (scopeError) return <>{heading}<RecordError error={scopeError} retry={() => { setScopeError(undefined); refresh(); }} /></>;
   if (!enquiry) return <>{heading}<p role="status">Chargement du prospect…</p></>;
   if (edit && !enquiry.contact.archived_at && !enquiry.archived_at) return <>{heading}<LeadEditor key={id} enquiry={enquiry} /></>;
   const writable = !enquiry.contact.archived_at && !enquiry.archived_at;
   const canArchive = !enquiry.contact.archived_at && (role !== "agent" || (actorId && enquiry.assigned_agent?.id === actorId));
-  return <div className="kay-record-page">
+  const inline = { enquiry, writable, saved: (value: Enquiry) => { setEdited(value); setNotice("Prospect enregistré."); refreshQuietly(); }, denied: setScopeError };
+  return <InlineEditScope><div className="kay-record-page">
     <CrmRecordHeader contact={enquiry.contact} title={enquiry.contact.name} route={`/leads/${id}`} backHref="/leads" badges={<><LeadStatusMenu enquiry={enquiry} writable={writable} changed={saved => { setNotice(saved ? "Statut enregistré." : "Version actualisée."); refreshQuietly(); }} /><CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge>{enquiry.archived_at ? <CrmStatusBadge state="archived">Archivé</CrmStatusBadge> : null}</>} actions={<>{writable && enquiry.status !== "converted" ? <Button action="edit" asChild variant="outline"><Link href={`/leads/${id}/edit`}>Modifier</Link></Button> : null}<RecordActions>{writable ? <ConvertLead enquiry={enquiry} onRefresh={refreshQuietly} /> : null}{canArchive ? <RecordLifecycleAction kind="enquiries" id={id} version={enquiry.version} archivedAt={enquiry.archived_at} label={enquiry.contact.name} onChanged={refreshQuietly} /> : null}</RecordActions></>} />
     {!writable ? <p role="status" className="mb-3 text-sm text-muted-foreground">{enquiry.contact.archived_at ? "Contact archivé : restaurez-le pour modifier ce prospect." : "Prospect archivé : historique conservé, restauration possible pendant 30 jours."}</p> : null}
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}
     <RecordWorkspace label="Rubriques du prospect" tabs={[
       { id: "overview", label: "Aperçu", content: <>
-        <ContactProfilePanel contact={enquiry.contact} />
+        <ContactProfilePanel contact={enquiry.contact} writable={writable && enquiry.status !== "converted"} changed={refreshQuietly} denied={setScopeError} />
         <RecordSection title="Qualification" action={<RecordDrawer label="Recherches" action="search" description="Critères de recherche liés à ce contact."><RequirementPanel contactId={enquiry.contact.id} writable={writable} /></RecordDrawer>}><RecordFacts>
-          <RecordFact icon={FinanceIcon} label="Budget">{enquiry.initial_budget ?? "À qualifier"}</RecordFact>
-          <RecordFact icon={RadioIndicatorIcon} label="Qualification">{ratingLabels[enquiry.rating]}</RecordFact>
-          <RecordFact icon={InboxIcon} label="Source du prospect">{campaignLabels[enquiry.campaign_source]}</RecordFact>
+          <LeadInlineField {...inline} field="initial_budget" icon={FinanceIcon} label="Budget" display={enquiry.initial_budget ?? "À qualifier"} />
+          <LeadInlineField {...inline} field="rating" icon={RadioIndicatorIcon} label="Qualification" display={<CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge>} />
+          <LeadInlineField {...inline} field="campaign_source" icon={InboxIcon} label="Source du prospect" display={campaignLabels[enquiry.campaign_source]} />
           <RecordFact icon={ContactsIcon} label="Attribué à">{enquiry.assigned_agent?.display_name ?? "File du responsable"}</RecordFact>
           <RecordFact icon={InboxIcon} label="Provenance initiale">{sourceLabels[enquiry.source]}</RecordFact>
           <RecordFact icon={CalendarIcon} label="Reçu le">{formatInstant(enquiry.received_at)}</RecordFact>
         </RecordFacts>{enquiry.source_submission_id ? <details className="kay-contact-more"><summary>Référence initiale</summary><p className="wrap-anywhere text-sm">{enquiry.source_submission_id}</p></details> : null}</RecordSection>
-        <RecordSection title="Message"><p className="whitespace-pre-wrap wrap-anywhere text-sm leading-relaxed">{enquiry.message || "Aucun message renseigné."}</p></RecordSection>
+        <RecordSection title="Message"><RecordFacts columns={1}><LeadInlineField {...inline} field="message" icon={InboxIcon} label="Description" display={<span className="whitespace-pre-wrap">{enquiry.message || "Aucun message renseigné."}</span>} /></RecordFacts></RecordSection>
         {enquiry.converted_at ? <RecordSection title="Conversion"><p className="text-sm text-muted-foreground">Converti le {formatInstant(enquiry.converted_at)}. L’origine et l’historique sont conservés.</p>{enquiry.converted_deal_id ? <Button action="forward" variant="outline" asChild><Link href={`/deals/${enquiry.converted_deal_id}`}>Voir l’affaire</Link></Button> : null}</RecordSection> : null}
       </> },
       { id: "projects", label: "Projets", content: <ProjectLinksPanel scope="enquiries" id={id} writable={writable} onChanged={() => setHistoryRevision(value => value + 1)} /> },
@@ -64,5 +73,5 @@ export function LeadRecord({ id, edit = false, role = "agent", actorId }: { id: 
       <RecordSection title="Suivi" action={writable ? <RecordDrawer label="Planifier une relance" action="task" description="Créer une tâche reliée à ce prospect et à son contact.">{(close, saved) => <TaskForm contactId={enquiry.contact.id} enquiryId={enquiry.id} saved={async () => { saved(); setNotice("Relance planifiée."); }} cancel={close} />}</RecordDrawer> : undefined}><RecordDrawer label="Voir les tâches du contact" title="Tâches du contact" action="task" description="Tâches partagées entre les dossiers de ce contact."><TaskPanel contactId={enquiry.contact.id} writable={writable} /></RecordDrawer>{role !== "agent" && writable ? <RecordDrawer label="Attribuer le prospect" action="assign" description="Choisissez un agent autorisé sur le contact.">{(_close, saved) => <EnquiryAssignment key={enquiry.version} enquiry={enquiry} saved={() => { saved(); setNotice("Attribution enregistrée."); refreshQuietly(); }} />}</RecordDrawer> : null}</RecordSection>
       <ContactVisits contactId={enquiry.contact.id} writable={writable} />
     </>} />
-  </div>;
+  </div></InlineEditScope>;
 }

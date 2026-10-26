@@ -39,6 +39,8 @@ try {
     "tests/unit/theme.test.mjs",
     "tests/unit/workspace.test.mjs",
     "tests/unit/workspace-interactions.test.mjs",
+    "tests/unit/inline-editing.test.mjs",
+    "tests/unit/query-drafts.test.mjs",
     "tests/unit/kanban.test.mjs",
     "tests/unit/realtime.test.mjs",
     "tests/unit/help.test.mjs",

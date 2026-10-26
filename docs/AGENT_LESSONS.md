@@ -1461,3 +1461,12 @@ globbing caused repeated missing-file reads. Locate actual files with `rg --file
 first, use the matching repository as the working directory, and pass Next route
 paths containing `[id]` to `Get-Content -LiteralPath`. Keep source inspections
 bounded so minified or long JSX lines do not hide the relevant output.
+
+## Preserve native-command failure boundaries (2026-10-26)
+
+PowerShell can continue into a passing check after a failed Node codemod, masking
+the earlier failure in the final exit code. Keep mutations and dependent checks
+in separate tool calls, inspect each result, or explicitly exit on a nonzero
+native status before proceeding. Keep single-file codemods scoped; use let only
+for intentionally reassigned task variables. A later green check does not prove
+that every earlier edit in a combined command ran.

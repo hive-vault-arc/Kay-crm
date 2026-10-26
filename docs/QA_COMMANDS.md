@@ -1,5 +1,14 @@
 # KAY QA command register
 
+Latest dossier-field slice (2026-10-26): frontend lint/typecheck/build and162
+units pass;62 glyphs/418 Button sites/zero inventory violations. Eleven new
+inline component/controller/SSR cases and four actual query-hook cases cover
+reviewed complete payloads/retries, primary/collection retention, field-only
+conflict rebase, denial, legacy qualification and safe background draft reads.
+Inline CSS parses with27 rules/6 role references/zero missing roles. Native and
+real record/security verification remain pending.
+Evidence: [inline fields](03-planning/design-migration-evidence/inline-2026-10-26.json).
+
 Latest selected calendar slice (2026-10-26): frontend lint/typecheck/build
 pass;147 units pass,62 semantic glyphs/404 Button sites/zero inventory violations.
 Nine new actual-component/controller/SSR cases cover complete day placement,

@@ -1,5 +1,19 @@
 # KAY interface components: shadcn/ui working guide
 
+## Current selected dossier fields (2026-10-26)
+
+The owner-selected migration uses InlineEditScope/InlineRecordField/InlineFieldForm
+for quiet values and one active local editor. Existing shadcn controls, complete
+wire schemas, reviewed versions, stable retry keys and canonical commands remain.
+ContactFields can render one requested group while preserving the whole validated
+contact draft. Phone/email collections retain primary selection and labels.
+Contact conflict recovery rebases only that field; other current values survive.
+Header Modifier remains the full editor. Current authority denial hides old data.
+
+The current calendar migration also supersedes the historical D38 geometry below:
+day columns/drawer filters/phone agenda retain real safe queries and server time.
+[Current execution and limits](../03-planning/design-prototype-migration-execution.md).
+
 ## Projects directory composition: D39
 
 `PropertyDirectory` retains shadcn Tabs and the shared FilterResultsLayout/Sheet.

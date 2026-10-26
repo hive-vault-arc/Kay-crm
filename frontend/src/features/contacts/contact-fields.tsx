@@ -15,7 +15,7 @@ import type { QualificationMetadata } from "./qualification-contracts";
 import { countryOptions, InternationalPhoneInput, LanguagePicker } from "./qualification-inputs";
 
 export const blankContact: Values = { name: "", type: "person", phones: [{ number: "", label: "", is_primary: true }], emails: [], roles: ["buyer"], country: "", nationality: "", languages: [] };
-export function ContactFields({ form, metadata, requireLanguages = false, compact = false, requiredRole }: { form: UseFormReturn<Values>; metadata: QualificationMetadata; requireLanguages?: boolean; compact?: boolean; requiredRole?: "owner" }) {
+export function ContactFields({ form, metadata, requireLanguages = false, compact = false, requiredRole, only }: { form: UseFormReturn<Values>; metadata: QualificationMetadata; requireLanguages?: boolean; compact?: boolean; requiredRole?: "owner"; only?: keyof Values }) {
   const groupId = useId();
   const phones = useFieldArray({ control: form.control, name: "phones" });
   const emails = useFieldArray({ control: form.control, name: "emails" });
@@ -30,12 +30,12 @@ export function ContactFields({ form, metadata, requireLanguages = false, compac
     if (remaining.length && !remaining.some(value => value.is_primary)) remaining[0].is_primary = true;
     if (kind === "phones") phones.replace(remaining as Values["phones"]); else emails.replace(remaining as Values["emails"]);
   }
-  return <div className={`grid min-w-0 items-start gap-6 ${compact ? "@5xl:grid-cols-2" : "lg:grid-cols-2"}`}><div className="grid min-w-0 gap-4">
-    <div className="grid gap-4 sm:grid-cols-2">
-      <FormField control={form.control} name="name" render={({ field }) => <FormItem><FormLabel>Nom du contact</FormLabel><FormControl><Input {...field} maxLength={160} autoComplete="name" /></FormControl><FormMessage /></FormItem>} />
-      <FormField control={form.control} name="type" render={({ field }) => <FormItem><FormLabel>Type de contact</FormLabel><FormControl><NativeSelect {...field}><option value="person">Personne</option><option value="organization">Organisation</option></NativeSelect></FormControl><FormMessage /></FormItem>} />
-    </div>
-    <fieldset className="grid min-w-0 gap-4"><legend className="mb-4"><SectionHeading as="span" icon={PhoneIcon} tone="teal">Téléphones</SectionHeading></legend>
+  return <div className={`grid min-w-0 items-start gap-6 ${only ? "" : compact ? "@5xl:grid-cols-2" : "lg:grid-cols-2"}`}>{!only || ["name", "type", "phones", "emails"].includes(only) ? <div className="grid min-w-0 gap-4">
+    {!only || only === "name" || only === "type" ? <div className={`grid gap-4 ${only ? "" : "sm:grid-cols-2"}`}>
+      {!only || only === "name" ? <FormField control={form.control} name="name" render={({ field }) => <FormItem><FormLabel>Nom du contact</FormLabel><FormControl><Input {...field} maxLength={160} autoComplete="name" /></FormControl><FormMessage /></FormItem>} /> : null}
+      {!only || only === "type" ? <FormField control={form.control} name="type" render={({ field }) => <FormItem><FormLabel>Type de contact</FormLabel><FormControl><NativeSelect {...field}><option value="person">Personne</option><option value="organization">Organisation</option></NativeSelect></FormControl><FormMessage /></FormItem>} /> : null}
+    </div> : null}
+    {!only || only === "phones" ? <fieldset className="grid min-w-0 gap-4"><legend className="mb-4"><SectionHeading as="span" icon={PhoneIcon} tone="teal">Téléphones</SectionHeading></legend>
       <p className="text-xs text-muted-foreground" id={`${groupId}-phone-help`}>Choisissez l’indicatif, puis saisissez le numéro national. Le format international est vérifié à l’enregistrement.</p>
       <RadioGroup aria-label="Téléphone principal" value={String(selectedPhones.findIndex(value => value.is_primary))} onValueChange={value => primary("phones", Number(value))}>
         {phones.fields.map((phone, index) => <div key={phone.id} className="grid min-w-0 gap-2 border-b pb-4">
@@ -45,8 +45,8 @@ export function ContactFields({ form, metadata, requireLanguages = false, compac
       </RadioGroup>
       {form.formState.errors.phones?.root?.message || form.formState.errors.phones?.message ? <p role="alert" className="text-danger">{form.formState.errors.phones.root?.message ?? form.formState.errors.phones.message}</p> : null}
       <Button action="add" type="button" variant="outline" className="justify-self-start" disabled={phones.fields.length >= 10} onClick={() => phones.append({ number: "", label: "", is_primary: false })}>Ajouter un téléphone</Button>
-    </fieldset>
-    <fieldset className="grid min-w-0 gap-4"><legend className={compact && !emails.fields.length ? "sr-only" : "mb-4"}><SectionHeading as="span" icon={EmailIcon} tone="purple">E-mails (facultatif)</SectionHeading></legend>
+    </fieldset> : null}
+    {!only || only === "emails" ? <fieldset className="grid min-w-0 gap-4"><legend className={compact && !emails.fields.length ? "sr-only" : "mb-4"}><SectionHeading as="span" icon={EmailIcon} tone="purple">E-mails (facultatif)</SectionHeading></legend>
       {emails.fields.length ? <RadioGroup aria-label="E-mail principal" value={String(selectedEmails.findIndex(value => value.is_primary))} onValueChange={value => primary("emails", Number(value))}>
         {emails.fields.map((email, index) => <div key={email.id} className="grid min-w-0 gap-2 border-b pb-4"><div className="grid gap-4 sm:grid-cols-2">
           <FormField control={form.control} name={`emails.${index}.email`} render={({ field }) => <FormItem><FormLabel>E-mail {index + 1}</FormLabel><FormControl><Input {...field} type="email" autoComplete="email" maxLength={254} autoCapitalize="none" /></FormControl><FormMessage /></FormItem>} />
@@ -55,10 +55,10 @@ export function ContactFields({ form, metadata, requireLanguages = false, compac
         </div>)}
       </RadioGroup> : compact ? null : <p className="text-sm text-muted-foreground">Aucun e-mail renseigné.</p>}
       <Button action="add" type="button" variant="outline" className="justify-self-start" disabled={emails.fields.length >= 10} onClick={() => emails.append({ email: "", label: "", is_primary: !emails.fields.length })}>Ajouter un e-mail</Button>
-    </fieldset>
-    </div><div className="grid min-w-0 gap-4">
-      <div className="grid min-w-0 gap-4 sm:grid-cols-2">{(["country", "nationality"] as const).map(name => <FormField key={name} control={form.control} name={name} render={({ field }) => <FormItem><FormLabel>{name === "country" ? "Pays de résidence" : "Nationalité (pays)"}</FormLabel><FormControl><NativeSelect {...field} value={field.value ?? ""}><option value="">Non renseigné</option>{countries.map(country => <option key={country.code} value={country.code}>{country.label}</option>)}</NativeSelect></FormControl><FormMessage /></FormItem>} />)}</div>
-      <FormField control={form.control} name="languages" render={({ field, fieldState }) => <FormItem><FormLabel htmlFor={`${groupId}-languages`}>Langues parlées{requireLanguages ? " *" : ""}</FormLabel><LanguagePicker ref={field.ref} metadata={metadata} id={`${groupId}-languages`} value={field.value ?? []} onChange={values => { field.onChange(values); if (values.length) form.clearErrors("languages"); }} onBlur={field.onBlur} aria-invalid={Boolean(fieldState.error)} aria-describedby={fieldState.error ? `${groupId}-languages-error` : undefined} /><FormMessage id={`${groupId}-languages-error`} /></FormItem>} />
-      <FormField control={form.control} name="roles" render={({ field }) => <fieldset className="grid gap-2"><legend className="mb-2 font-medium">Rôles du contact</legend><div className="flex flex-wrap gap-x-4 gap-y-1">{Object.entries(roleLabels).map(([value, label]) => <Label key={value} className="flex min-h-control cursor-pointer items-center gap-2"><Checkbox checked={field.value.includes(value as Values["roles"][number]) || value === requiredRole} disabled={value === requiredRole} onCheckedChange={checked => field.onChange(checked ? [...field.value, value] : field.value.filter(role => role !== value))} />{label}</Label>)}</div><FormMessage /></fieldset>} />
-    </div></div>;
+    </fieldset> : null}
+    </div> : null}{!only || ["country", "nationality", "languages", "roles"].includes(only) ? <div className="grid min-w-0 gap-4">
+      {!only || only === "country" || only === "nationality" ? <div className={`grid min-w-0 gap-4 ${only ? "" : "sm:grid-cols-2"}`}>{(["country", "nationality"] as const).filter(name => !only || only === name).map(name => <FormField key={name} control={form.control} name={name} render={({ field }) => <FormItem><FormLabel>{name === "country" ? "Pays de résidence" : "Nationalité (pays)"}</FormLabel><FormControl><NativeSelect {...field} value={field.value ?? ""}><option value="">Non renseigné</option>{countries.map(country => <option key={country.code} value={country.code}>{country.label}</option>)}</NativeSelect></FormControl><FormMessage /></FormItem>} />)}</div> : null}
+      {!only || only === "languages" ? <FormField control={form.control} name="languages" render={({ field, fieldState }) => <FormItem><FormLabel htmlFor={`${groupId}-languages`}>Langues parlées{requireLanguages ? " *" : ""}</FormLabel><LanguagePicker ref={field.ref} metadata={metadata} id={`${groupId}-languages`} value={field.value ?? []} onChange={values => { field.onChange(values); if (values.length) form.clearErrors("languages"); }} onBlur={field.onBlur} aria-invalid={Boolean(fieldState.error)} aria-describedby={fieldState.error ? `${groupId}-languages-error` : undefined} /><FormMessage id={`${groupId}-languages-error`} /></FormItem>} /> : null}
+      {!only || only === "roles" ? <FormField control={form.control} name="roles" render={({ field }) => <fieldset className="grid gap-2"><legend className="mb-2 font-medium">Rôles du contact</legend><div className="flex flex-wrap gap-x-4 gap-y-1">{Object.entries(roleLabels).map(([value, label]) => <Label key={value} className="flex min-h-control cursor-pointer items-center gap-2"><Checkbox checked={field.value.includes(value as Values["roles"][number]) || value === requiredRole} disabled={value === requiredRole} onCheckedChange={checked => field.onChange(checked ? [...field.value, value] : field.value.filter(role => role !== value))} />{label}</Label>)}</div><FormMessage /></fieldset>} /> : null}
+    </div> : null}</div>;
 }
