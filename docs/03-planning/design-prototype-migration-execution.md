@@ -27,7 +27,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
-| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda and date-only booking context implemented; current commands retained | Detailed visit/task/activity forms, inbox/settings refinements and native workflow review |
+| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task forms and guarded activity creation drawer implemented; current commands retained | Detailed visit forms, inbox/settings refinements and native workflow review |
 | P7 remaining surfaces | Help topic hub, side-by-side guide cards and balanced reader implemented; other existing behavior retained | Dashboard/report/search/audit/jobs/settings compositions and native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
@@ -514,3 +514,50 @@ remaining implementation. No backend, facade, dependency, storage, database,
 worker, main, push or merge change is included.
 
 [Full-form evidence](design-migration-evidence/forms-2026-10-26.json).
+
+
+## Task/activity drawers and physical-property task context
+
+Activity creation now opens in the selected shared RecordDrawer instead of an
+inline card inside the history. Cancel, Escape and close use its existing guarded
+exit; successful save closes the form and refreshes the numbered history. Type,
+full notes, duration/direction and three optional contextual project labels use
+shared controls, consistent insets and section spacing. Cancel then save matches
+the other drawer forms. Current authority loss removes the draft/history rather
+than retaining previous private content. Controls stay disabled until hydration;
+the native fallback method is POST, never a query string carrying typed notes.
+
+Task create/edit now uses the drawer width without a reading cap or nested card.
+Title and instructions precede the paired Casablanca due-time/authorized owner,
+then dossier context and an optional physical-property link. Follow-up keeps its
+compact existing presentation. Managed draft ownership includes real controlled
+fields, protects cancel and marks commands busy; the existing lock, exact
+versioned payload/retry identity, scope, compare and reminder flow remain.
+
+The selected task design included a property context that the existing API
+already accepts but the form omitted. WorkPropertySelect uses only the shared
+physical properties endpoint (standalone assets and units), active inventory,
+scoped detail reads and numbered25-row pages. It preserves the current UUID when
+filtering/paging, reads an off-page saved link through a separate mounted loader
+and changes the body only after explicit selection/removal. It never chooses an
+offering, reserves stock or changes availability. Archived/missing linked records
+remain explained without silently clearing the task's saved link. This exposes
+an existing field, without a backend/facade/schema or permission change.
+
+Initial type checking rejected a speculative optional useQuery path. The hook's
+real contract requires an API path; the off-page summary now mounts its own
+proper scoped read while the parent search/control stays mounted. A codemod's
+literal interpolation markers were found in the immediate render read and
+replaced with the original complete fields before checks. Lint later identified
+an unused path in one test fixture; the fixture now uses its stable path.
+
+Final lint/typecheck and the pinned Next16.4.2 production build pass;178 frontend
+units pass (62 glyphs/415 Button sites/zero violations). Form CSS parses as37
+rules/4 existing roles with no missing role.
+
+Six new actual-controller cases cover resolved-time-only writes, reviewed task
+versions/property context, busy/duplicate/retry/draft behavior, activity context,
+hydration/POST fallback, denial, drawer ownership and selected-property pagination.
+Native focus/layout/touch/zoom and real current-authority/worker/database acceptance
+remain pending. Detailed visit/finance/admin forms and other migration phases are
+not declared complete by this slice. [Evidence](design-migration-evidence/work-forms-2026-10-26.json).

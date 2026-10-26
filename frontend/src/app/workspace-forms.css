@@ -40,3 +40,10 @@
 @container(max-width:700px) {
   .kay-form-columns,.kay-form-context { grid-template-columns:minmax(0,1fr); gap:20px; }
 }
+
+/* Table-free drawer forms share the overlay inset; no nested card or reading cap. */
+.kay-drawer-form { display:grid; min-width:0; gap:20px; container-type:inline-size; }
+.kay-form-pair { display:grid; min-width:0; align-items:start; gap:16px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.kay-drawer-form-section { min-width:0; padding-top:20px; border-top:1px solid var(--workspace-line); }
+.kay-form-footer { display:flex; flex-wrap:wrap; justify-content:flex-end; min-width:0; gap:8px; padding-top:20px; border-top:1px solid var(--workspace-line); }
+@container(max-width:520px) { .kay-form-pair { grid-template-columns:minmax(0,1fr); } }

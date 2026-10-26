@@ -1470,3 +1470,12 @@ in separate tool calls, inspect each result, or explicitly exit on a nonzero
 native status before proceeding. Keep single-file codemods scoped; use let only
 for intentionally reassigned task variables. A later green check does not prove
 that every earlier edit in a combined command ran.
+
+
+## Typed query contracts must remain real in controller tests (2026-10-26)
+
+A permissive mock accepted an undefined query path that the real useQuery API
+rejects. Read the actual hook signature before composing an optional read. Mount
+a small loader only when its real scoped path exists; keep parent search/form
+state mounted and never send a dummy path or UUID. Component-controller fixtures
+are useful behavioral evidence, but TypeScript/build checks are still required.

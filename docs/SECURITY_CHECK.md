@@ -1,5 +1,22 @@
 # KAY security check for changes
 
+## Task/activity form composition and existing property context, 2026-10-26
+
+Task/property selection reuses strict existing task DTOs and authorized physical
+inventory list/detail reads. It neither infers a contact/owner grant nor chooses
+an offering or stock command. Selected IDs remain explicit across numbered pages;
+current scope, eligibility, version and local-time authority remain backend rules.
+No mutation endpoint, permission, schema, transfer, worker or database changed.
+
+Activity creation is owned by the shared guarded drawer. Inputs/submit stay
+hydration-gated; its native fallback uses POST rather than serializing notes into
+a URL. Current401/403/404 removes prior form/history content. Complete original
+activity bodies and same-key interrupted retries remain, with a synchronous lock.
+Task controlled values now use the shared transient draft owner and busy guard;
+explicit cancel can discard, while failed writes keep their values. Source/
+controller checks do not certify real scope races, reminder delivery or native
+focus. See [evidence](03-planning/design-migration-evidence/work-forms-2026-10-26.json).
+
 ## Full dossier form migration, 2026-10-26
 
 The selected create/edit presentation retains strict contact/enquiry/deal DTOs,

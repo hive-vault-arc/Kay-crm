@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
+import { RecordDrawer } from "@/components/shared/record-drawer";
 import { DataTable } from "@/components/shared/data-table";
 import { ScrollableResultsTable } from "@/components/shared/scrollable-results-table";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
@@ -35,11 +36,11 @@ export function ActivityHistory({ scope, id, origin = false, writable = false, r
   const title = origin ? "Historique du prospect d’origine" : scope === "enquiries" ? "Historique du prospect" : "Activités de l’affaire";
   const path = `${scope}/${id}/${origin ? "origin-activities" : "activities"}`;
   const query = useQuery(queryPath(path, { page, page_size: 20, kind }), activitiesSchema, revision);
-  function close() { setAdding(false); addButton.current?.focus(); }
+  if (query.error && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED"].includes(query.error.code)) return <RecordError error={query.error} retry={query.refresh} />;
   return <section className="grid min-w-0 gap-4 border-t pt-6" aria-label={title}>
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-section font-medium">{title}</h2><div className="flex flex-wrap gap-2"><Button liveRefresh action="refresh" variant="quiet" onClick={query.refresh}>Actualiser l’historique</Button>{writable && !origin ? <Button action="create" ref={addButton} aria-expanded={adding} onClick={() => { setAdding(true); setNotice(""); }}>Ajouter une activité</Button> : null}</div></div>
     {origin ? <p className="text-sm text-muted-foreground">Notes et échanges de la demande liée, conservés avec leur auteur et leur date d’origine. Lecture seule depuis l’affaire.</p> : null}
-    {adding ? <ActivityForm path={`/api/v1/${scope}/${id}/activities`} cancel={close} saved={() => { close(); setNotice("Activité enregistrée."); setPage(1); query.refresh(); }} /> : null}
+    {adding && writable && !origin ? <RecordDrawer initialOpen hideTrigger label="Ajouter une activité" title="Ajouter une activité" description={scope === "enquiries" ? "Consignez un échange ou une note sur ce prospect." : "Consignez un échange ou une note sur cette affaire."} returnFocus={addButton} onClosed={() => setAdding(false)}>{(close, saved) => <ActivityForm path={`/api/v1/${scope}/${id}/activities`} cancel={close} saved={() => { saved(); setNotice("Activité enregistrée."); setPage(1); query.refreshQuietly(); }} />}</RecordDrawer> : null}
     {notice ? <p role="status" className="text-success">{notice}</p> : null}
     <div className="grid gap-2 sm:w-64"><Label htmlFor={selectId}>Filtrer les activités</Label><NativeSelect id={selectId} value={kind} onChange={event => { setKind(event.target.value); setPage(1); }}><option value="">Toutes les activités</option>{activityKinds.map(code => <option key={code} value={code}>{kindLabels[code]}</option>)}<option value="system">Événements automatiques</option></NativeSelect></div>
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <div className="grid gap-2" role="status"><p>Chargement de l’historique…</p><div className="h-control rounded-md bg-muted" /></div> : <>

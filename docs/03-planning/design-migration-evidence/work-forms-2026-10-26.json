@@ -1,0 +1,116 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "base": "bf7b82b",
+  "scope": "Selected guarded activity drawer, compact task forms and existing physical-property task context",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 415,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 178,
+      "failed": 0
+    },
+    {
+      "command": "node --test tests/unit/work-forms.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8632,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "localLinks": 1230,
+      "sprints": 22,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --check",
+      "cwd": ".",
+      "exitCode": 0
+    }
+  ],
+  "sourceAnalysis": {
+    "formCssRules": 37,
+    "existingRoles": 4,
+    "missingRoles": 0
+  },
+  "sources": [
+    {
+      "path": "frontend/scripts/test-facade.mjs",
+      "sha256": "b6138684874eae98e1b97c31c4bd98fc47578d33f9bc5e155842fcde40110e36"
+    },
+    {
+      "path": "frontend/src/app/workspace-forms.css",
+      "sha256": "3b015b4a1654dab377a662009ca45f19573d788cce406b4f08b181de4c4de862"
+    },
+    {
+      "path": "frontend/src/features/activities/activity-form.tsx",
+      "sha256": "1097109112a7cd806af8fde5440450cc0a5e1c10208f8688dca51be697d0efbc"
+    },
+    {
+      "path": "frontend/src/features/activities/activity-history.tsx",
+      "sha256": "35df1be5d8217f90a396dd448bd500181186c82a91e6b6f1a51fb40a7fc90c9f"
+    },
+    {
+      "path": "frontend/src/features/contacts/contact-editor.tsx",
+      "sha256": "9b69f9e5d286aa719b71597866ef5c51637c8128c6d86416e41cc0f53ccec3e1"
+    },
+    {
+      "path": "frontend/src/features/work/task-form.tsx",
+      "sha256": "4ac873051bf4310d60a3ead4289c856ef95018167c905baf7330d815b956cc29"
+    },
+    {
+      "path": "frontend/src/features/work/work-property-select.tsx",
+      "sha256": "a8452ec1425df9a7bbeba1ae953330204da32958d26ef5788caef4a27ba45059"
+    },
+    {
+      "path": "frontend/tests/unit/work-forms.test.mjs",
+      "sha256": "287b7a0827d837ace55b9a916382c503bed20aa7cb486c1dea1dddcfc470733f"
+    }
+  ],
+  "security": "Existing strict scoped task/activity commands; resolved due instant, exact context/owner/version, same-key retry lock; physical-property read/selection only; no stock write or read grant; hydration/POST fallback; current denial removes activity form/history",
+  "adaptations": [
+    "Existing physical property_id is now explicitly selectable/removable, preserving off-page saved links",
+    "Casablanca resolver, authorized owners, terminal-task rules and internal-only reminders remain unchanged",
+    "Guarded shared drawer replaces the inline activity card; pure form geometry is shared with existing contact editors"
+  ],
+  "limitations": [
+    "No app HTTP/browser/CDP/native access or workaround",
+    "No real database, concurrency, reminder/worker, scope-race, viewport/focus/touch/zoom or product acceptance",
+    "Remaining visit/inventory/finance/PDF/report/admin/search/Back-Forward migration and final verification incomplete",
+    "Original-machine mandatory skills unavailable; dense CRM/form exclusions and AFTER timing retained",
+    "No backend/facade/dependency/session/private-transfer/worker/database/main/push/merge change"
+  ]
+}

@@ -1,5 +1,13 @@
 # KAY QA command register
 
+Latest task/activity form slice (2026-10-26): lint/typecheck/build and178 frontend
+units pass (62 glyphs/415 Button sites/zero violations). Form CSS parses with37
+rules/4 existing roles. Six new synthetic component/controller
+cases cover typed existing commands, resolved time, optional physical-property
+context, preserved page selections, guarded drafts and hydration/denial boundaries.
+Native/real-stack workflow, current-authority and reminder acceptance remain pending.
+Latest command results are recorded in [work form evidence](03-planning/design-migration-evidence/work-forms-2026-10-26.json).
+
 Latest full Contact/Lead/Deal form slice (2026-10-26): lint/typecheck/build and172
 frontend units pass (62 semantic glyphs/415 Button sites/zero violations). Ten
 new component/controller cases cover full atomic payloads, scoped contact reuse,
