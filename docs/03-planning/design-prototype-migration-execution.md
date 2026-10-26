@@ -25,7 +25,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to59 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers and click/unload draft guards implemented | Exact inline-field/form parity, Back/Forward handling, responsive focus and native interaction checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement implemented | Exact inline editing, remaining form/document parity, browser selector migration and native review |
-| P4 inventory/owners | Existing application behavior retained | Selected cards/forms/Units drawers/details/Patrimoine/photo presentation |
+| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu and role-gated Finance drawer composed from real controllers | Remaining exact inline/offer/form/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Existing application behavior retained | Selected calendar/task/activity/inbox presentation and full context flows |
 | P7 remaining surfaces | Existing application behavior retained | Dashboard/report/search/audit/jobs/settings/help compositions |
@@ -186,3 +186,54 @@ draft retention, terminal reopening and read-only presentation. Lint passes with
 fresh TypeScript, passes. [Deal batch evidence](design-migration-evidence/deals-2026-10-26.json)
 records source hashes and the scoped security review. No backend/DB/native pass
 or completed whole-branch fidelity is implied.
+
+## Inventory and owner batch
+
+Programme and standalone property records now share the real dossier header,
+top Documents/Modifier actions and natural-height Photos/Propriétaires rail.
+Programme keeps Aperçu/Unités; property facts, present listing details and offers
+stay together. Every listing field is accounted for; zero floors/garage values
+remain visible. Offer creation sits beside its section heading and delegates to
+the existing versioned commands. Protected party names still require the current
+Contacts projection. No photo count or commercialisation state is invented.
+
+Units uses a short search/action row and a criteria drawer; all current category,
+offering, block, floor, reusable type and archive filters remain real and bounded.
+The existing available-offers default is retained and labeled. Unsupported
+prototype unit sort/price criteria are not shown as fake controls. Project cards
+use the selected280px auto-fit grid and80px left image on phones. Phone Projects
+always uses cards while retaining the desktop view selection. Owners keeps one
+Patrimoine area on the right with retained current/past pagers, no duplicated
+main tab and no zero-result pager.
+
+All inventory steppers use the selected quiet horizontal track, short labels and
+number circles. Every step is directly reachable without committing or clearing
+drafts; final save still validates skipped sections. The shared Button inventory
+admits only this specifically identified numeric step control as a reviewed data
+control; other action/icon requirements remain enforced. Controlled record links
+also retain their outgoing visited panel.
+
+One source draft initially applied an overly broad manager flag. It was corrected
+before commit: D34 active agents retain programme facts, hierarchy, briefing and
+unit editing. Offers, owners, ordinary attachments and archive retain M/A gating;
+photo upload/resume keeps its separate authoritative capability. A test of the
+actual programme view exercises each role and the archived boundary.
+
+A genuine pre-existing query mismatch rejected mixed programmes despite their
+valid stored/create category. A development-only query model/facade now accepts
+the programme enum; properties/units retain their original category validation.
+Only the development list route uses it. Shared numbered-page construction uses
+the common query fields. No database, mutation, permission, public URL or worker
+contract changes. The documented list contract is explicit and scoped positive,
+negative, duplicate/unknown-filter and property-isolation cases pass.
+
+Validation: frontend lint/typecheck/build pass,59 semantic icons/391 Button sites,
+zero inventory violations,118 frontend units. Backend Ruff/check/format and
+inventory mypy pass. The first broad unit collection exposed a stale environment
+missing ReportLab. Installing the existing hash-locked development requirements
+then refreshing editable package metadata restored the current pins; pip check
+passes, with manifests/locks unchanged. The fail-closed unit runner (DB connections
+denied) passes292,683 deselected. No app HTTP/native browser/DB/security race or
+full-product verification is claimed. Final review remains after implementation.
+
+[Inventory batch evidence](design-migration-evidence/inventory-2026-10-26.json) records the exact source hashes and scoped commands.

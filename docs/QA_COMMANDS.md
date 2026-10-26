@@ -3,10 +3,10 @@
 ## Selected workspace redesign branch, 2026-10-26
 
 Branch `codex/redesign`, base/main `e0bdc09`; foundation `fed7ded`, first records
-checkpoint `ac2001e`.
+checkpoint `ac2001e`, Deal checkpoint `bbd9f09`.
 From `frontend/`, `npm run lint`, `npm run typecheck`, `npm run test:unit` and
 `npm run build` pass for the shared-interaction/Lead/Contact/Deal source batches:
-latest59 semantic icons,394 Button sites, zero inventory violations,112 unit cases,
+latest inventory batch59 semantic icons,391 Button sites, zero inventory violations,118 unit cases,
 pinned Next16.4.2 production build. New cases exercise navigation exclusions,
 interrupted status retries and reviewed versions, retained tab drafts and
 cancel/busy/discard boundaries. These are synthetic source/controller/facade

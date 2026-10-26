@@ -12,6 +12,7 @@ icons.add("LiveNotificationIcon");
 const dataControls = new Map([
   ["src/features/schedule/calendar-sidebar.tsx", "Mini-month week buttons show actual date values; month arrows use shared directional actions."],
   ["src/features/contacts/numbered-pages.tsx", "Numbered page identity; previous/next carry directional icons."],
+  ["src/features/inventory/inventory-wizard-steps.tsx", "Selected source stepper uses an explicit step-number circle and full accessible label; navigation never submits."],
   ["src/features/reports/kpi-summary.tsx", "Exact KPI value; its metric label already has a semantic icon."],
   ["src/features/reports/metric-chart.tsx", "Contributor label with chart series marker, not an extra action glyph."],
   ["src/features/reports/report-dashboard.tsx", "Exact tabular metric drill-down value."],
@@ -44,7 +45,8 @@ for (const file of (await walk(path.join(root, "src"))).filter(file => file.ends
         const metricValue = ["src/features/reports/kpi-summary.tsx", "src/features/reports/report-dashboard.tsx"].includes(relative) && body.startsWith("{metric.unit ===") && attribute("variant")?.initializer?.getText(ast) === '"link"';
         const seriesMarker = relative.endsWith("reports/metric-chart.tsx") && body.startsWith('<span aria-hidden="true" className="size-3');
         const calendarWeek = relative === "src/features/schedule/calendar-sidebar.tsx" && attribute("aria-pressed") && attribute("className")?.initializer?.getText(ast).includes("calendar-month-choice");
-        const exception = !action && !existingIcon && (numericPage || metricValue || seriesMarker || calendarWeek) && dataControls.get(relative);
+        const numberedStep = relative === "src/features/inventory/inventory-wizard-steps.tsx" && attribute("type")?.initializer?.getText(ast) === '"button"' && attribute("aria-label") && attribute("aria-current") && body.includes('className="kay-stepper-number" aria-hidden="true">{index + 1}</span>');
+        const exception = !action && !existingIcon && (numericPage || metricValue || seriesMarker || calendarWeek || numberedStep) && dataControls.get(relative);
         if (!action && !existingIcon && !exception) violations.push({ file: relative, line, reason: "Action needs an explicit semantic icon mapping." });
         sites.push({ file: relative, line, action: action ?? null, existingIcon, exception: exception || null });
       }

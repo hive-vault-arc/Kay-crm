@@ -12,7 +12,7 @@ from app.contacts.models import Contact
 from app.db.session import Database
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
-from app.inventory.contracts import InventoryQuery
+from app.inventory.contracts import DevelopmentQuery, InventoryQuery
 from app.inventory.hierarchy_models import Block, Development, DevelopmentOwner, Floor, UnitType
 from app.inventory.hierarchy_rules import development_record
 from app.inventory.models import InventoryEvent, Offering, Property
@@ -150,7 +150,11 @@ def level_view(row: Block | Floor | UnitType) -> dict[str, object]:
 
 
 def read_hierarchy(
-    database: Database, token: str, operation: str, target: UUID | None, query: InventoryQuery
+    database: Database,
+    token: str,
+    operation: str,
+    target: UUID | None,
+    query: InventoryQuery | DevelopmentQuery,
 ) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))

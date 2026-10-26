@@ -286,7 +286,8 @@ applicable. A development command receipt returns
 compatible. Replays recheck current authority and return no cached contact data.
 
 - `GET /developments`: numbered page/page_size (default50/max100), escaped `q`
-  over reference/name/location, category, offering_kind, state and stable sort
+  over reference/name/location, category=mixed|villa|house|apartment|land|commercial,
+  offering_kind, state and stable sort
   reference|-updated_at. Active summaries include separate `unit_count` and
   `available_unit_count` (each physical unit counted once), plus at most two
   current whole-development campaigns. Types and developments are not unit rows.

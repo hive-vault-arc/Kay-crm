@@ -77,6 +77,97 @@ test("Dossier tabs retain visited controls and draft objects; unvisited panels s
   assert.equal(find(view, "Panel")[0].props.hidden, false); assert.equal(find(view, "Panel")[0].props.children.value, "synthetic unsaved value");
 });
 
+test("Controlled dossier links retain the outgoing panel after an external selection", () => {
+  const harness = stateHarness();
+  const { RecordWorkspace } = loadServer("src/components/shared/record-workspace.tsx", { modules: {
+    react: harness.react, "react/jsx-runtime": runtime,
+    "@/components/ui/tabs": { Tabs: "Tabs", TabsContent: "Panel", TabsList: "List", TabsTrigger: "Tab" },
+    "@/hooks/use-hydrated": { useHydrated: () => true },
+  } });
+  const draft = { q: "synthetic unit filter" }, tabs = [{ id: "overview", label: "Aperçu", content: "facts" }, { id: "units", label: "Unités", content: draft }];
+  let activeTab = "overview";
+  const render = () => harness.render(() => RecordWorkspace({ tabs, activeTab, label: "Programme" }));
+  assert.equal(find(render(), "Panel").length, 1);
+  activeTab = "units"; render(); activeTab = "overview";
+  const units = find(render(), "Panel").find(panel => panel.props.value === "units");
+  assert.equal(units.props.hidden, true); assert.equal(units.props.children, draft);
+});
+
+test("Programme presentation keeps agent fact/unit editing separate from managed offers, files and legal owners", () => {
+  const harness = stateHarness();
+  let development = { id: randomUUID(), name: "Synthetic programme", reference: "SYN-P1", version: 1, category: "mixed", location: null, unit_count: 0, available_unit_count: 0, archived_at: null, offerings: [], owners: [], developer: { marketing_display: null, contact: null }, briefing_text: null };
+  const { DevelopmentRecord } = loadServer("src/features/inventory/development-record.tsx", { modules: {
+    react: harness.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" },
+    "@/components/ui/button": { Button: "Button" }, "@/components/ui/tabs": { Tabs: "Tabs", TabsContent: "Panel", TabsList: "List", TabsTrigger: "Tab" },
+    "@/components/shared/record-header": { RecordHeader: "Header" }, "@/components/shared/record-facts": { RecordFact: "Fact", RecordFacts: "Facts" },
+    "@/components/shared/record-workspace": { RecordSection: "Section", RecordWorkspace: "Workspace" }, "@/components/shared/record-drawer": { RecordDrawer: "Drawer" },
+    "@/components/shared/record-actions": { RecordActions: "Actions" }, "@/components/shared/crm-presentation": { CrmStatusBadge: "Badge" },
+    "@/components/shared/page-header": { PageHeader: "PageHeader" }, "@/components/icons": {},
+    "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": { useQuery: () => ({ value: development, refreshQuietly() {} }) },
+    "@/features/discovery/lifecycle-panel": { LifecyclePanel: "Lifecycle" }, "@/features/files/file-panel": { FilePanel: "Files" },
+    "./development-contracts": {}, "./development-editor": { DevelopmentEditor: "Editor" }, "./hierarchy-panel": { HierarchyPanel: "Hierarchy" },
+    "./unit-directory": { UnitDirectory: "Units" }, "./owner-editor": { OwnerEditor: "OwnerEditor" }, "./inventory-history": { InventoryHistory: "History" },
+    "./use-command": { InventoryBusyContext: { Provider: "Provider" } }, "./contracts": { categoryLabels: {} },
+    "./inventory-support": { InventoryPhotoRail: "Photos", InventoryParty: "Party" }, "./inventory-offer-section": { InventoryOfferSection: "Offers" },
+  } });
+  const render = (role, edit = false) => harness.render(() => DevelopmentRecord({ id: development.id, role, edit }));
+  for (const role of ["agent", "manager", "administrator"]) {
+    const view = render(role), workspace = find(view, "Workspace")[0];
+    assert.equal(render(role, true).type, "Editor");
+    assert.equal(workspace.props.tabs[1].content.props.writable, true);
+    assert.ok(find(workspace.props.tabs[1].content.props.structureAction, "Hierarchy").every(node => node.props.writable));
+    assert.equal(find(workspace.props.tabs[0].content, "Offers")[0].props.writable, role !== "agent");
+    assert.equal(find(workspace.props.aside, "Photos")[0].props.writable, role !== "agent");
+    const header = find(view, "Header")[0];
+    assert.equal(find(header.props.actions, "Files")[0].props.writable, role !== "agent");
+    const owners = find(workspace.props.aside, "Section").find(section => section.props.title === "Propriétaires");
+    assert.equal(Boolean(owners.props.action), role !== "agent");
+    assert.equal(find(header.props.actions, "Lifecycle").length, role === "agent" ? 0 : 1);
+  }
+  development = { ...development, archived_at: "2026-10-26T00:00:00Z" };
+  const archived = render("manager"), workspace = find(archived, "Workspace")[0];
+  assert.equal(find(render("agent", true), "Editor").length, 0);
+  assert.equal(workspace.props.tabs[1].content.props.writable, false);
+  assert.equal(find(workspace.props.tabs[0].content, "Offers")[0].props.writable, false);
+  assert.equal(find(find(archived, "Header")[0].props.actions, "Files").length, 0);
+});
+
+test("Inventory step buttons navigate directly without submitting and expose the current step accessibly", () => {
+  const { InventoryWizardSteps } = loadServer("src/features/inventory/inventory-wizard-steps.tsx", { modules: {
+    "react/jsx-runtime": runtime, "@/components/ui/button": { Button: "Button" },
+  } });
+  const calls = [], steps = [{ label: "Bien et offre", mobileLabel: "Bien" }, { label: "Vérification", mobileLabel: "Résumé" }];
+  const view = InventoryWizardSteps({ steps, current: 0, disabled: false, change: value => calls.push(value) });
+  const buttons = find(view, "Button");
+  for (const button of buttons) { assert.equal(button.props.type, "button"); assert.equal(button.props.disabled, false); button.props.onClick(); }
+  assert.deepEqual(calls, [0, 1]); assert.equal(buttons[0].props["aria-current"], "step");
+  assert.equal(buttons[1].props["aria-label"], "Étape 2 sur 2 : Vérification");
+  assert.ok(find(InventoryWizardSteps({ steps, current: 1, disabled: true, change() {} }), "Button").every(button => button.props.disabled));
+});
+
+test("Jumping around the property wizard preserves entered fields and final save still validates skipped sections", async () => {
+  const harness = stateHarness(), calls = [];
+  const qualification = loadServer("src/features/contacts/qualification-contracts.ts");
+  const contacts = loadServer("src/features/contacts/contracts.ts", { modules: { "./qualification-contracts": qualification } });
+  const contracts = loadServer("src/features/inventory/contracts.ts", { modules: { "@/features/contacts/contracts": contacts } });
+  const { PropertyListingWizard } = loadServer("src/features/inventory/property-listing-wizard.tsx", { globals: { requestAnimationFrame: callback => callback() }, modules: {
+    react: harness.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" }, "next/navigation": { useRouter: () => ({ push: path => calls.push(path) }) },
+    "@/components/icons": {}, "@/components/shared/section-heading": { SectionHeading: "Heading" },
+    "@/components/ui/button": { Button: "Button" }, "@/components/ui/checkbox": { Checkbox: "Checkbox" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" },
+    "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/radio-group": { RadioGroup: "Radio", RadioGroupItem: "RadioItem" }, "@/components/ui/textarea": { Textarea: "Textarea" },
+    "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/format": { formatMAD: value => value },
+    "./contracts": contracts, "./inventory-draft-summary": { InventoryDraftSummary: "Summary" }, "./inventory-wizard-steps": { InventoryWizardSteps: "Steps" }, "./states": { InventoryError: "Error", Price: "Price" },
+    "./level-picker": { LevelPicker: "Picker" }, "./use-command": { useInventoryCommand: () => ({ pending: false, submit: (...args) => calls.push(args) }) },
+  } });
+  const render = () => harness.render(() => PropertyListingWizard({}));
+  find(render(), "Input").find(field => field.props.id === "property-reference").props.onChange({ target: { value: "SYN-DRAFT" } });
+  find(render(), "Steps")[0].props.change(3); find(render(), "Steps")[0].props.change(0);
+  assert.equal(find(render(), "Input").find(field => field.props.id === "property-reference").props.value, "SYN-DRAFT");
+  find(render(), "Steps")[0].props.change(4); find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
+  assert.equal(calls.length, 0); assert.equal(find(render(), "Steps")[0].props.current, 0);
+  assert.ok(find(render(), "p").some(node => node.props.role === "alert"));
+});
+
 test("Unsaved guard retains drafts on cancel, blocks pending commands and discards only after confirmation", () => {
   const harness = stateHarness();
   class Element { dataset = {}; focus() {} }

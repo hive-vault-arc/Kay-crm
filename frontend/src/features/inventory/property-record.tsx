@@ -1,72 +1,64 @@
 "use client";
-import { LifecyclePanel } from "@/features/discovery/lifecycle-panel";
+
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
+import { RecordHeader } from "@/components/shared/record-header";
+import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
+import { RecordSection, RecordWorkspace } from "@/components/shared/record-workspace";
+import { RecordDrawer } from "@/components/shared/record-drawer";
+import { RecordActions } from "@/components/shared/record-actions";
+import { CrmStatusBadge } from "@/components/shared/crm-presentation";
+import { PageHeader } from "@/components/shared/page-header";
+import { ColumnsIcon, DevelopmentIcon, LocationIcon, PropertyIcon } from "@/components/icons";
 import type { StaffRole } from "@/features/contacts/contracts";
 import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
-import { amenityLabels, categoryLabels, kindLabels, propertySchema } from "./contracts";
-import { InventoryStatus, Price } from "./states";
+import { LifecyclePanel } from "@/features/discovery/lifecycle-panel";
+import { FilePanel } from "@/features/files/file-panel";
+import { categoryLabels, propertySchema } from "./contracts";
 import { PropertyEditor } from "./property-editor";
 import { OwnerEditor } from "./owner-editor";
-import { Campaign } from "./campaign";
 import { InventoryHistory } from "./inventory-history";
 import { InventoryBusyContext } from "./use-command";
-import { FilePanel } from "@/features/files/file-panel";
-import { PropertyPhotos } from "@/features/files/property-photos";
-import { InventoryThumbnail } from "@/features/files/inventory-thumbnail";
-import { ClockIcon, ColumnsIcon, ContactsIcon, DashboardIcon, DealIcon, FinanceIcon, LocationIcon, PropertyIcon } from "@/components/icons";
-import { SectionHeading } from "@/components/shared/section-heading";
-import { InventoryFact, InventoryTab } from "./record-details";
+import { InventoryPhotoRail, InventoryParty } from "./inventory-support";
+import { InventoryOfferSection } from "./inventory-offer-section";
+import { PropertyListingDetails } from "./property-listing-details";
 
 export function PropertyRecord({ id, role, edit = false, initialTab }: { id: string; role: StaffRole; edit?: boolean; initialTab?: string }) {
-  const { value: property, error, refresh } = useQuery(`/api/v1/properties/${id}`, propertySchema);
-  const [editingOwners, setEditingOwners] = useState(false);
-  const [notice, setNotice] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [photoRevision, setPhotoRevision] = useState(0);
+  const query = useQuery(`/api/v1/properties/${id}`, propertySchema);
+  const [notice, setNotice] = useState(""), [busy, setBusy] = useState(false), [photoRevision, setPhotoRevision] = useState(0);
   const photoChanged = useCallback(() => setPhotoRevision(value => value + 1), []);
-  const writable = role !== "agent" && !property?.archived_at;
-  if (edit && property?.archived_at) return <p role="alert">Dossier archivé : restaurez-le avant de le modifier.</p>;
-  if (error) return <RecordError error={error} retry={refresh} />;
-  if (!property) return <p role="status">Chargement du bien…</p>;
-  if (edit) return <PropertyEditor property={property} />;
-  function saved() { setEditingOwners(false); setNotice("Inventaire enregistré."); refresh(); }
-  const details = property.listing_details;
-  const campaignKinds = property.development_id || !["apartment", "house", "villa", "riad", "room"].includes(property.category) ? (["sale", "rental"] as const) : property.category === "room" ? (["rental", "holiday"] as const) : (["sale", "rental", "holiday"] as const);
-  return <div className="grid min-w-0 gap-4">
-    <nav aria-label={property.hierarchy ? "Fil d’Ariane de l’unité" : "Fil d’Ariane du bien"}><ol className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-muted-foreground"><li><Link className="inline-flex min-h-control items-center text-link underline" href="/projects">Projets</Link></li>{property.hierarchy ? <><li><Link className="inline-flex min-h-control items-center text-link underline wrap-anywhere" href={`/projects/${property.development_id}`}>/ {property.hierarchy.development.reference}</Link></li>{property.hierarchy.block ? <li className="wrap-anywhere">/ {property.hierarchy.block.code}</li> : null}{property.hierarchy.floor ? <li><Link className="inline-flex min-h-control items-center text-link underline wrap-anywhere" href={`/projects/${property.development_id}?tab=units&block_id=${property.hierarchy.block?.id}&floor_id=${property.floor_id}`}>/ {property.hierarchy.floor.code}</Link></li> : null}</> : null}<li className="wrap-anywhere" aria-current="page">/ {property.reference}</li></ol></nav>
-    <header className="surface flex min-w-0 flex-wrap items-center gap-4">
-      <InventoryThumbnail key={photoRevision} kind="property" id={id} compact />
-      <div className="grid min-w-0 flex-1 basis-64 gap-2">
-        <p className="text-xs font-medium text-muted-foreground">{property.development_id ? "Unité physique" : "Bien indépendant"}</p>
-        <h1 data-route={`/projects/properties/${id}`} tabIndex={-1} className="wrap-anywhere text-page font-semibold">{property.reference}</h1>
-        {property.marketing_name ? <h2 className="wrap-anywhere font-medium">{property.marketing_name}</h2> : null}
-        <p className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground"><PropertyIcon aria-hidden="true" className="size-4 shrink-0" />{categoryLabels[property.category]}<span aria-hidden="true">·</span><LocationIcon aria-hidden="true" className="size-4 shrink-0" />{property.location || details.city || "Localisation non renseignée"}</p>
-        <div aria-label="Prix demandés" className="flex min-w-0 flex-wrap gap-x-6 gap-y-2 border-t pt-3">
-          {campaignKinds.map(kind => { const offer = property.offerings.find(item => item.kind === kind); const Icon = kind === "sale" ? FinanceIcon : PropertyIcon; return <div key={kind} className="flex min-w-0 items-center gap-2"><Icon aria-hidden="true" className="size-4 shrink-0 text-info" /><span className="text-xs text-muted-foreground">{kind === "sale" ? "Prix de vente" : kind === "holiday" ? "Location de vacances" : "Loyer"}</span>{offer ? <Price offering={offer} /> : <strong className="text-sm">Non renseigné</strong>}</div>; })}
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-2">{!property.archived_at ? <Button action="edit" asChild variant="outline"><Link href={`/projects/properties/${id}/edit`}>Modifier le bien</Link></Button> : null}{role !== "agent" ? <Button action={property.archived_at ? "restore" : "archive"} asChild variant="outline"><a href="#inventory-lifecycle">{property.archived_at ? "Restaurer le bien" : "Archiver le bien"}</a></Button> : null}</div>
-    </header>
-    {notice ? <p role="status" className="text-success">{notice}</p> : null}
-    {busy ? <p role="status">Enregistrement en cours, veuillez patienter…</p> : null}
-    <InventoryBusyContext.Provider value={pending => { setBusy(pending); if (pending) setNotice(""); }}><fieldset disabled={busy} className="grid min-w-0 gap-6" aria-busy={busy}><legend className="sr-only">Fiche du bien et commandes d’inventaire</legend><Tabs defaultValue={["facts", "owners", "offerings", "history"].includes(initialTab ?? "") ? initialTab : "facts"}><TabsList aria-label="Fiche du bien"><InventoryTab value="facts" icon={DashboardIcon}>Aperçu</InventoryTab><InventoryTab value="owners" icon={ContactsIcon}>Propriétaires</InventoryTab><InventoryTab value="offerings" icon={DealIcon}>Offres</InventoryTab><InventoryTab value="history" icon={ClockIcon}>Historique</InventoryTab></TabsList>
-      <TabsContent value="facts" className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(22rem,1fr)]">
-        {!property.archived_at ? <PropertyPhotos propertyId={id} writable={writable} uploadable onChanged={photoChanged} /> : null}
-        <section className="surface grid min-w-0 content-start gap-5"><SectionHeading icon={PropertyIcon} tone="teal">Caractéristiques du bien</SectionHeading><dl className="grid min-w-0 gap-4 sm:grid-cols-2"><InventoryFact icon={PropertyIcon} label="Catégorie">{categoryLabels[property.category]} · {property.development_id ? "Unité physique d’un programme" : "Bien indépendant"}</InventoryFact><InventoryFact icon={ColumnsIcon} label="Surface">{property.area_sqm ? `${property.area_sqm.replace(".", ",")} m²` : "Non renseignée"}</InventoryFact>{!["land", "farm", "commercial", "office", "room"].includes(property.category) ? <InventoryFact icon={DashboardIcon} label="Nombre de pièces">{property.rooms ?? "Non renseigné"}</InventoryFact> : null}<InventoryFact icon={LocationIcon} label="Localisation">{[details.neighborhood, details.city, details.region].filter(Boolean).join(", ") || property.location || "Non renseignée"}</InventoryFact>{details.google_maps_url ? <InventoryFact icon={LocationIcon} label="Carte"><a className="inline-flex min-h-control items-center text-link underline" href={details.google_maps_url} target="_blank" rel="noopener noreferrer">Ouvrir dans Google Maps ↗</a></InventoryFact> : null}{details.bedrooms !== null && details.bedrooms !== undefined ? <InventoryFact icon={PropertyIcon} label="Chambres">{details.bedrooms}</InventoryFact> : null}{details.bathrooms !== null && details.bathrooms !== undefined ? <InventoryFact icon={PropertyIcon} label="Salles de bain">{details.bathrooms}</InventoryFact> : null}{details.capacity ? <InventoryFact icon={ContactsIcon} label="Capacité d’accueil">{details.capacity} personne(s)</InventoryFact> : null}{details.minimum_nights ? <InventoryFact icon={ClockIcon} label="Séjour minimum">{details.minimum_nights} nuit(s)</InventoryFact> : null}{details.plot_area_sqm ? <InventoryFact icon={ColumnsIcon} label="Parcelle">{details.plot_area_sqm.replace(".", ",")} m²</InventoryFact> : null}</dl>
-          {details.amenities.length ? <div className="border-t pt-4"><h3 className="mb-2 font-medium">Équipements</h3><ul className="flex flex-wrap gap-2">{details.amenities.map(option => <li key={option} className="rounded-md border bg-card px-2.5 py-1 text-sm">{amenityLabels[option]}</li>)}</ul></div> : null}
-          {details.description ? <div className="border-t pt-4"><h3 className="mb-2 font-medium">Description</h3><p className="whitespace-pre-wrap wrap-anywhere text-sm">{details.description}</p></div> : null}
-          <div className="grid min-w-0 gap-3 border-t pt-4"><h3 className="flex items-center gap-2 font-medium"><DealIcon aria-hidden="true" className="size-5 text-info" />Campagnes actuelles</h3><div className="grid min-w-0 gap-4 md:grid-cols-2">{campaignKinds.map(kind => { const offer = property.offerings.find(item => item.kind === kind); const Icon = kind === "sale" ? FinanceIcon : PropertyIcon; return <section className="grid min-w-0 content-start gap-2" key={kind}><h4 className="flex items-center gap-2 font-medium"><Icon aria-hidden="true" className={`size-4 ${kind === "sale" ? "text-info" : "text-purple"}`} />{kindLabels[kind]}</h4>{offer ? <><InventoryStatus state={offer.state} occupied={offer.occupied} conflict={offer.reservation_conflict} /><Price offering={offer} /></> : <p className="text-sm text-muted-foreground">Aucune campagne actuelle.</p>}</section>; })}</div></div>
-        </section>
-        <div className="surface min-w-0 [&>section:first-child]:border-t-0 [&>section:first-child]:pt-0">{!property.archived_at ? <FilePanel parentKind="property" parentId={id} writable={writable} /> : <p>Documents indisponibles tant que le dossier est archivé.</p>}</div>
-      </TabsContent>
-      <TabsContent value="owners" className="surface grid min-w-0 gap-6">{editingOwners && writable ? <OwnerEditor property={property} saved={saved} cancel={() => setEditingOwners(false)} /> : <><h2 className="text-section font-medium">Propriétaires légaux</h2>{property.owners.length ? <ul className="grid min-w-0 gap-4">{property.owners.map((owner, index) => <li className="grid min-w-0 gap-2 border-b pb-4" key={index}><p className="wrap-anywhere">{owner.marketing_display ?? "Libellé commercial non renseigné"}</p>{owner.contact ? <Link className="inline-flex min-h-control items-center justify-self-start text-link underline wrap-anywhere" href={`/contacts/${owner.contact.id}`}>{owner.contact.name}</Link> : <p className="text-sm text-muted-foreground">Identité privée protégée par les droits Contacts.</p>}</li>)}</ul> : <p>Propriétaires non renseignés. Les offres ne peuvent pas devenir disponibles.</p>}<p className="text-sm text-muted-foreground">Lire ce bien n’accorde aucun accès aux coordonnées, notes ou documents privés des contacts.</p>{writable ? <Button action="edit" className="justify-self-start" onClick={() => setEditingOwners(true)}>Modifier les propriétaires</Button> : null}</>}</TabsContent>
-      <TabsContent value="offerings" className="record-stack grid min-w-0 items-start gap-4 xl:grid-cols-2">{campaignKinds.map(kind => <Campaign key={kind} kind={kind} property={property} writable={writable} saved={saved} />)}</TabsContent>
-      <TabsContent value="history"><InventoryHistory id={id} /></TabsContent>
-    </Tabs>{role !== "agent" ? <div id="inventory-lifecycle" className="surface min-w-0 scroll-mt-6 [&>section:first-child]:border-t-0 [&>section:first-child]:pt-0"><LifecyclePanel kind="properties" id={id} version={property.version} reference={property.reference} archived={!!property.archived_at} saved={refresh} /></div> : null}</fieldset></InventoryBusyContext.Provider><Button action="back" asChild variant="outline" className="justify-self-start"><Link href="/projects">Tous les biens indépendants</Link></Button>
-  </div>;
+  const heading = <PageHeader title="Fiche du bien" description="Informations, offres et propriétaires accessibles." route={`/projects/properties/${id}`} />;
+  if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
+  if (!query.value) return <>{heading}<p role="status">Chargement du bien…</p></>;
+  const property = query.value, archived = Boolean(property.archived_at), managedWritable = role !== "agent" && !archived;
+  if (edit) return !archived ? <PropertyEditor property={property} /> : <>{heading}<p role="alert">Restaurez ce dossier avant de le modifier.</p></>;
+  function saved() { setNotice("Inventaire enregistré."); query.refreshQuietly(); }
+  const kinds = property.development_id || !["apartment", "house", "villa", "riad", "room"].includes(property.category) ? (["sale", "rental"] as const) : property.category === "room" ? (["rental", "holiday"] as const) : (["sale", "rental", "holiday"] as const);
+  const back = property.development_id ? `/projects/${property.development_id}?tab=units` : "/projects?kind=biens";
+  return <InventoryBusyContext.Provider value={pending => { setBusy(pending); if (pending) setNotice(""); }}><fieldset disabled={busy} aria-busy={busy} className="kay-record-page"><legend className="sr-only">Bien et commandes d’inventaire</legend>
+    <RecordHeader title={property.marketing_name || property.reference} route={`/projects/properties/${id}`} kind="inventory" backHref={back} reference={`${property.reference} · ${property.development_id ? "Unité physique" : "Bien indépendant"}`} badges={archived ? <CrmStatusBadge state="archived">Archivé</CrmStatusBadge> : undefined} actions={<><RecordDrawer label="Documents" action="file" busy={busy} description="Pièces jointes partagées de ce bien.">{!archived ? <FilePanel parentKind="property" parentId={id} writable={managedWritable} /> : <p className="text-sm text-muted-foreground">Restaurez le dossier pour accéder aux documents.</p>}</RecordDrawer>{!archived ? <Button action="edit" variant="outline" asChild><Link href={`/projects/properties/${id}/edit`}>Modifier</Link></Button> : null}<RecordActions initialOpen={initialTab === "history"}><RecordDrawer label="Historique" action="read" busy={busy} initialOpen={initialTab === "history"} description="Historique des faits, offres et états de ce bien."><InventoryHistory id={id} /></RecordDrawer>{role !== "agent" ? <RecordDrawer label="Gérer le dossier" action="settings" busy={busy} description="Archivage et restauration du bien."><LifecyclePanel kind="properties" id={id} version={property.version} reference={property.reference} archived={archived} saved={query.refreshQuietly} /></RecordDrawer> : null}</RecordActions></>} />
+    {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{archived ? <p role="status" className="mb-3 text-sm text-muted-foreground">Bien archivé : les informations restent consultables.</p> : null}
+    <RecordWorkspace hideSingleTab label="Informations du bien" tabs={[{ id: "overview", label: "Aperçu", content: <>
+      <RecordSection title="Informations du bien"><RecordFacts>
+        <RecordFact icon={PropertyIcon} label="Référence">{property.reference}</RecordFact>
+        <RecordFact icon={LocationIcon} label="Localisation">{property.location || property.listing_details.city || "Non renseignée"}</RecordFact>
+        <RecordFact icon={PropertyIcon} label="Type de bien">{categoryLabels[property.category]}</RecordFact>
+        <RecordFact icon={ColumnsIcon} label="Surface">{property.area_sqm ? `${property.area_sqm.replace(".", ",")} m²` : "Non renseignée"}</RecordFact>
+        {!["land", "farm", "commercial", "office", "room"].includes(property.category) ? <RecordFact icon={PropertyIcon} label="Pièces">{property.rooms ?? "Non renseigné"}</RecordFact> : null}
+      </RecordFacts></RecordSection>
+      <InventoryOfferSection target={property} kinds={[...kinds]} writable={managedWritable} busy={busy} saved={saved} />
+      <PropertyListingDetails property={property} />
+      {property.hierarchy ? <RecordSection title="Rattachement au programme"><RecordFacts>
+        <RecordFact icon={DevelopmentIcon} label="Programme"><Link className="inline-flex min-h-control items-center hover:underline" href={`/projects/${property.hierarchy.development.id}`}>{property.hierarchy.development.name} · {property.hierarchy.development.reference}</Link></RecordFact>
+        <RecordFact icon={PropertyIcon} label="Bloc">{property.hierarchy.block ? <Link className="inline-flex min-h-control items-center hover:underline" href={`/projects/${property.hierarchy.development.id}?tab=units&block_id=${property.hierarchy.block.id}`}>{property.hierarchy.block.code} · {property.hierarchy.block.label}</Link> : "Rattachement direct"}</RecordFact>
+        <RecordFact icon={PropertyIcon} label="Étage">{property.hierarchy.floor?.label ?? "Sans étage"}</RecordFact>
+        <RecordFact icon={ColumnsIcon} label="Type réutilisable">{property.hierarchy.unit_type?.label ?? "Sans type"}</RecordFact>
+      </RecordFacts></RecordSection> : null}
+    </> }]} aside={<>
+      <InventoryPhotoRail id={id} kind="property" writable={managedWritable} archived={archived} revision={photoRevision} changed={photoChanged} />
+      <RecordSection title="Propriétaires" action={managedWritable ? <RecordDrawer label="Modifier" action="edit" busy={busy} initialOpen={initialTab === "owners"} description="Propriétaires légaux de ce bien.">{(close, done) => <OwnerEditor property={property} saved={() => { saved(); done(); }} cancel={close} />}</RecordDrawer> : undefined}>{property.owners.length ? property.owners.map((owner, index) => <InventoryParty key={index} link={owner} />) : <p className="text-sm text-muted-foreground">Aucun propriétaire renseigné. Les offres ne peuvent pas devenir disponibles.</p>}</RecordSection>
+    </>} />
+  </fieldset></InventoryBusyContext.Provider>;
 }
-

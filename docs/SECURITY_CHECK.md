@@ -1,5 +1,27 @@
 # KAY security check for changes
 
+## Inventory redesign source/read-contract review, 2026-10-26
+
+The inventory/owner batch keeps D34 active-agent fact, hierarchy and unit editing
+separate from M/A offers, owners, attachments and archive. Original-author photo
+upload/resume uses the existing minimal capability and private permits. Full
+listing-field coverage, role/archived view boundaries and retained drafts are
+tested with synthetic values. Nothing in the new card/rail discloses a protected
+contact unless supplied by the current scoped response.
+
+The development list now validates its actual six-category enum, including mixed,
+in a dedicated query model and exact facade route. Properties/units still reject
+mixed. Duplicate/unknown/invalid queries remain denied before upstream; sessions,
+CSRF, mutation schemas, limits and backend authorization are unchanged. There is
+no migration, raw query, real record, public transfer URL or worker operation.
+
+Evidence:118 frontend units,292 DB-denied backend units (683 deselected), scoped
+Ruff/format/mypy, lint/typecheck and production build pass. The existing locked
+environment was restored after missing PDF dependencies prevented collection;
+hash locks/manifests did not change and pip check passes. This is source/contract
+evidence only. Real database/read-scope, private-byte, stock-race, native-input and
+release checks remain pending. No production access or main promotion occurred.
+
 ## Selected workspace branch source review, 2026-10-26
 
 Task: owner-selected prototype migration on `codex/redesign`, including C03/C04/

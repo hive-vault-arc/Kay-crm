@@ -6,7 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, Request
 
 from app.identity.router import facade_authority
-from app.inventory.contracts import ConfirmAvailability, InventoryQuery, Owners
+from app.inventory.contracts import ConfirmAvailability, DevelopmentQuery, InventoryQuery, Owners
 from app.inventory.hierarchy_contracts import (
     ArchiveDevelopment,
     DevelopmentFields,
@@ -25,7 +25,9 @@ PAGE = {"page", "page_size"}
 
 
 @router.get("/developments")
-def developments(request: Request, token: Proof, query: PageQuery) -> dict[str, object]:
+def developments(
+    request: Request, token: Proof, query: Annotated[DevelopmentQuery, Query()]
+) -> dict[str, object]:
     validate_query(request, PAGE | {"q", "category", "offering_kind", "state", "sort", "archive"})
     return read_hierarchy(database(request), token, "developments", None, query)
 

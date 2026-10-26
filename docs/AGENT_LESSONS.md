@@ -1,5 +1,14 @@
 # KAY agent lessons
 
+## Recheck domain permissions before reusing a presentation flag (2026-10-26)
+
+D34 permits active agents to edit shared programme facts and create units. Keep
+that flag separate from M/A offering, legal-owner, attachment and archive rights;
+photo upload/resume also has its own current capability. A programme view test
+now exercises those distinctions and archived read-only behavior. A response
+enum does not establish a list filter: inspect the actual query model and route
+before exposing a choice such as mixed programmes in both UI and facade.
+
 ## Recovery controls must match the backend capability (2026-10-24)
 
 - Do not reuse an archive/manager flag for resuming an agent-owned upload.

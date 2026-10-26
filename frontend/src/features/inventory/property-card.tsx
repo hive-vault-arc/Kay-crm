@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { ColumnDef } from "@tanstack/react-table";
-import { FinanceIcon, LocationIcon, PasswordIcon } from "@/components/icons";
+import { FinanceIcon, PasswordIcon } from "@/components/icons";
 import { DataTable } from "@/components/shared/data-table";
 import { InventoryThumbnail } from "@/features/files/inventory-thumbnail";
 import { categoryLabels, kindLabels, type Offering, type PropertySummary } from "./contracts";
 import { InventoryStatus, Price } from "./states";
-import { InventoryCardFooter } from "./inventory-card-footer";
+import { InventoryCard } from "./inventory-card";
 
 export function PropertyCampaign({ kind, offerings }: { kind: Offering["kind"]; offerings: Offering[] }) {
   const offering = offerings.find(value => value.kind === kind);
@@ -20,15 +20,7 @@ export function PropertyCampaign({ kind, offerings }: { kind: Offering["kind"]; 
 export function PropertyCard({ property }: { property: PropertySummary }) {
   const href = `/projects/properties/${property.id}`, name = property.marketing_name || property.reference;
   const location = property.location || property.listing_details.city || "Localisation non renseignée";
-  return <article className="project-card flex h-full flex-col overflow-hidden rounded-md border bg-card" data-property-category={property.category}>
-    <div className="project-card-media relative"><InventoryThumbnail kind="property" id={property.id} /><span className="project-category" data-property-category={property.category}><span aria-hidden="true" className="project-category-dot" />{categoryLabels[property.category]}</span></div>
-    <div className="project-card-content flex min-w-0 flex-1 flex-col gap-1 p-3">
-      <h2 className="project-card-title line-clamp-2 font-sans text-base leading-snug font-semibold wrap-anywhere" title={`${name} (${property.reference})`}>{name}</h2>
-      <p className="project-card-location flex min-w-0 items-start gap-2 text-sm text-muted-foreground"><LocationIcon aria-hidden="true" className="size-4 shrink-0" /><span className="line-clamp-2 wrap-anywhere" title={location}>{location}</span></p>
-      <div className="grid min-w-0 gap-2 border-t pt-3"><h3 className="font-sans text-xs font-semibold">Prix demandés</h3><div className="grid min-w-0 grid-cols-2 gap-3">{(["sale", "rental", ...(property.offerings.some(item => item.kind === "holiday") ? ["holiday" as const] : [])] as const).map(kind => <PropertyCampaign key={kind} kind={kind} offerings={property.offerings} />)}</div></div>
-    </div>
-    <InventoryCardFooter href={href} name={`${name} (${property.reference})`} />
-  </article>;
+  return <InventoryCard reference={property.reference} name={name} category={property.category} location={location} href={href} offerings={property.offerings} area={property.area_sqm} />;
 }
 const columns: ColumnDef<PropertySummary>[] = [
   { id: "name", header: "Bien", cell: ({ row: { original: item } }) => <div className="flex min-w-0 items-center gap-3"><InventoryThumbnail kind="property" id={item.id} compact /><div className="grid min-w-0 gap-1"><Link className="inline-flex min-h-control items-center font-semibold text-link underline" href={`/projects/properties/${item.id}`}>{item.marketing_name || item.reference}</Link><span className="text-xs text-muted-foreground">{item.reference}</span></div></div> },
@@ -39,5 +31,5 @@ const columns: ColumnDef<PropertySummary>[] = [
   { id: "holiday", header: "Vacances", cell: ({ row }) => row.original.offerings.some(item => item.kind === "holiday") ? <PropertyCampaign kind="holiday" offerings={row.original.offerings} /> : "—" },
 ];
 export function PropertyList({ properties }: { properties: PropertySummary[] }) {
-  return <DataTable columns={columns} rows={properties} caption="Biens indépendants" scrollLabel="Liste des biens indépendants, défilement horizontal" emptyLabel="Aucun bien sur cette page." footerCaption />;
+  return <DataTable columns={columns} rows={properties} getRowId={property => property.id} caption="Biens indépendants" scrollLabel="Liste des biens indépendants, défilement horizontal" emptyLabel="Aucun bien sur cette page." footerCaption mobileCard={property => <PropertyCard property={property} />} />;
 }

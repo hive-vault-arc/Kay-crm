@@ -6,12 +6,14 @@ export function PageHeader({
   description,
   route,
   actions,
+  navigation,
   icon: Icon,
 }: {
   title: ReactNode;
   description: string;
   route: string;
   actions?: ReactNode;
+  navigation?: ReactNode;
   icon?: KayIconComponent;
 }) {
   return (
@@ -27,6 +29,7 @@ export function PageHeader({
         </h1>
         <p>{description}</p>
       </div>
+      {navigation ? <div className="kay-page-navigation">{navigation}</div> : null}
       {actions ? <div className="kay-page-actions">{actions}</div> : null}
     </header>
   );

@@ -1,6 +1,6 @@
 import { propertyCategoryOrder } from "./contracts";
 
-export const propertyDefaults = { archive: "active", q: "", categories: propertyCategoryOrder.join(","), offering_kind: "", state: "", sort: "-updated_at", page_size: 50 };
+export const propertyDefaults = { archive: "active", q: "", categories: propertyCategoryOrder.join(","), offering_kind: "", state: "", sort: "-updated_at", page_size: 20 };
 export type PropertyFilters = typeof propertyDefaults;
 export function togglePropertyCategory(selection: string, category: typeof propertyCategoryOrder[number], emptyHouseHidden = false) {
   const selected = selection ? selection.split(",") : [];

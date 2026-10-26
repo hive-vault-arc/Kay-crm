@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self
 from urllib.parse import urlsplit
 from uuid import UUID
 
@@ -373,7 +373,7 @@ class ConfirmAvailability(StrictBody):
     reason: str = Field(min_length=1, max_length=1000)
 
 
-class InventoryQuery(BaseModel):
+class InventoryQueryFields(BaseModel):
     model_config = ConfigDict(extra="forbid")
     page: int = Field(default=1, ge=1, le=1_000_000)
     page_size: int = Field(default=50, ge=1, le=100)
@@ -383,7 +383,6 @@ class InventoryQuery(BaseModel):
     max_comparison_mad: ComparisonAmount | None = None
     min_area_sqm: Amount | None = None
     min_rooms: int | None = Field(default=None, ge=1, le=1000)
-    category: Category | None = None
     kind: Literal["sale", "rental", "holiday"] | None = None
     offering_kind: Literal["sale", "rental", "holiday"] | None = None
     target_level: Literal["property", "development", "standalone", "unit"] | None = None
@@ -400,11 +399,19 @@ class InventoryQuery(BaseModel):
     sort: Literal["reference", "-updated_at"] = "-updated_at"
 
     @model_validator(mode="after")
-    def comparison_range(self) -> InventoryQuery:
+    def comparison_range(self) -> Self:
         if self.min_comparison_mad is not None and self.max_comparison_mad is not None:
             if Decimal(self.min_comparison_mad) > Decimal(self.max_comparison_mad):
                 raise ValueError("INVALID_COMPARISON_RANGE")
         return self
+
+
+class InventoryQuery(InventoryQueryFields):
+    category: Category | None = None
+
+
+class DevelopmentQuery(InventoryQueryFields):
+    category: Literal["mixed", "villa", "house", "apartment", "land", "commercial"] | None = None
 
 
 class PropertiesQuery(InventoryQuery):

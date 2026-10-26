@@ -342,7 +342,11 @@
     "not_completed": "follow-up",
     "draft": "neutral",
     "open": "follow-up",
-    "available": "available"
+    "available": "available",
+    "sold": "closed-won",
+    "rented": "converted",
+    "withdrawn": "neutral",
+    "review": "follow-up"
   },
   "contextRoles": {
     "deal": {

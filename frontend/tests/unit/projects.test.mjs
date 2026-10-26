@@ -79,6 +79,35 @@ test("property facade rejects duplicate/ambiguous filters and category selection
   for (const route of ["offerings", "developments"]) assert.equal((await relay(route, new Request(`https://synthetic.invalid/api/v1/${route}?categories=land`), "request")).status, 422);
   assert.equal(calls.length, 0);
 });
+
+test("mixed programme filtering stays scoped to the development list and retains strict query guards", async () => {
+  const page = { items: [], total: 0, page: 2, page_size: 20, has_previous: true, has_next: false };
+  const { relay, calls } = facade({ status: 200, body: page });
+  const target = "/api/v1/developments?category=mixed&page=2&page_size=20&sort=reference";
+  assert.equal((await relay("developments", new Request("https://synthetic.invalid" + target), "request")).status, 200);
+  assert.equal(calls[0][0], target); assert.equal(calls[0][2].token, "synthetic-session");
+  for (const suffix of ["category=castle", "category=room", "category=mixed&category=land", "category=mixed&private_owner=1"]) assert.equal((await relay("developments", new Request("https://synthetic.invalid/api/v1/developments?" + suffix), "request")).status, 422);
+  for (const route of ["properties", "offerings", "developments/00000000-0000-4000-8000-000000000001/inventory"]) assert.equal((await relay(route, new Request(`https://synthetic.invalid/api/v1/${route}?category=mixed`), "request")).status, 422);
+  assert.equal(calls.length, 1);
+});
+
+test("property detail groups cover every listing field and preserve zero, empty and translated values", () => {
+  const formatter = loadServer("src/features/inventory/listing-field-format.ts", { modules: { "./contracts": contracts } });
+  const { listingDetailGroups } = loadServer("src/features/inventory/property-listing-details.tsx", { modules: {
+    "react/jsx-runtime": { jsx: () => null, jsxs: () => null }, "@/components/icons": {},
+    "@/components/shared/record-facts": {}, "@/components/shared/record-workspace": {},
+    "./contracts": contracts, "./listing-field-format": formatter,
+  } });
+  const displayed = [...Object.values(listingDetailGroups).flat(), "amenities", "description"];
+  assert.equal(new Set(displayed).size, displayed.length);
+  assert.deepEqual([...displayed].sort(), Object.keys(contracts.listingDetailsSchema.shape).sort());
+  const property = { listing_details: { unit_floor: 0, garage_spaces: 0, city: null, amenities: ["sea_view", "elevator"], condition: "good" } };
+  assert.equal(formatter.formatListingField(property, "unit_floor"), "0");
+  assert.equal(formatter.formatListingField(property, "garage_spaces"), "0");
+  assert.equal(formatter.formatListingField(property, "city"), null);
+  assert.equal(formatter.formatListingField(property, "condition"), "Bon état");
+  assert.equal(formatter.formatListingField(property, "amenities"), "Vue sur mer, Ascenseur");
+});
 test("property facade relays an initial holiday draft and rejects a foreign map host", async () => {
   const id = "00000000-0000-4000-8000-000000000001";
   const { relay, calls } = facade({ status: 200, body: { property_id: id, offering_id: id, version: 2, event_id: id } });

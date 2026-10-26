@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
 import { type ApiError } from "@/lib/api/client";
@@ -9,12 +10,12 @@ import { categoryLabels, kindLabels, propertySchema, stateLabels, type Offering,
 import { developmentSchema } from "./development-contracts";
 import { PropertyConflictDetails } from "./property-conflict-details";
 
-export function InventoryStatus({ state, conflict, occupied }: { state: Offering["state"]; conflict?: Offering["reservation_conflict"]; occupied?: boolean }) {
-  return <span className="grid gap-1"><Badge className="justify-self-start" variant={state === "available" && !conflict ? "success" : state === "review" || conflict ? "warning" : state === "reserved" ? "teal" : state === "sold" || state === "rented" ? "purple" : "neutral"}>{stateLabels[state]}</Badge>{occupied ? <span className="text-warning">Occupation locative enregistrée ; la vente peut rester active.</span> : null}{state === "review" ? <span className="text-warning">Périmètre à vérifier par un responsable.</span> : null}{conflict === "DEVELOPMENT_OVERLAP" ? <span className="text-warning">Réservation en chevauchement : revue du stock nécessaire.</span> : null}</span>;
+export function InventoryStatus({ state, conflict, occupied, compact = false }: { state: Offering["state"]; conflict?: Offering["reservation_conflict"]; occupied?: boolean; compact?: boolean }) {
+  return <span className="grid gap-1"><CrmStatusBadge state={state} dot={false}>{stateLabels[state]}</CrmStatusBadge>{occupied ? compact ? <Badge variant="warning" aria-label="Occupation locative enregistrée ; la vente peut rester active.">Occupé</Badge> : <span className="text-warning">Occupation locative enregistrée ; la vente peut rester active.</span> : null}{state === "review" && !compact ? <span className="text-warning">Périmètre à vérifier par un responsable.</span> : null}{conflict === "DEVELOPMENT_OVERLAP" ? compact ? <Badge variant="warning" aria-label="Réservation en chevauchement : revue du stock nécessaire.">À vérifier</Badge> : <span className="text-warning">Réservation en chevauchement : revue du stock nécessaire.</span> : null}</span>;
 }
-export function Price({ offering }: { offering: Offering }) {
+export function Price({ offering, compact = false }: { offering: Offering; compact?: boolean }) {
   const period = offering.price_period === "day" ? " / jour" : offering.price_period === "week" ? " / semaine" : offering.price_period === "month" ? " / mois" : offering.price_period === "year" ? " / an" : "";
-  return <div className="grid min-w-0 gap-1"><span className="wrap-anywhere tabular-nums">{formatMAD(offering.price_mad)}{offering.price_mad !== null ? period : ""}</span>{offering.annual_equivalent_mad !== null ? <span className="wrap-anywhere text-sm text-muted-foreground tabular-nums">Comparaison annuelle : {formatMAD(offering.annual_equivalent_mad)} / an</span> : null}</div>;
+  return <div className="grid min-w-0 gap-1"><span className="wrap-anywhere tabular-nums">{formatMAD(offering.price_mad)}{offering.price_mad !== null ? period : ""}</span>{!compact && offering.annual_equivalent_mad !== null ? <span className="wrap-anywhere text-sm text-muted-foreground tabular-nums">Comparaison annuelle : {formatMAD(offering.annual_equivalent_mad)} / an</span> : null}</div>;
 }
 export function InventoryError({ error, id, choose, level }: { error?: ApiError; id?: string; choose?: (current: InventoryTarget) => void; level?: "development" }) {
   if (!error) return null;

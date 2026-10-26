@@ -9,7 +9,7 @@ const desktopQuery = "(min-width: 831px)";
 const desktopSnapshot = () => window.matchMedia(desktopQuery).matches;
 const serverSnapshot = () => true;
 
-export function FilterResultsLayout({ title, filters, children, active = false, inline = false, widePanel = false, reference = false, activeCount = 0, reset, className, panelHeading, mode = "rail" }: {
+export function FilterResultsLayout({ title, filters, children, active = false, inline = false, widePanel = false, reference = false, activeCount = 0, reset, className, panelHeading, mode = "rail", searchControl, surface = true }: {
   title: string;
   filters: (close: () => void) => ReactNode;
   children: ReactNode;
@@ -22,6 +22,8 @@ export function FilterResultsLayout({ title, filters, children, active = false, 
   className?: string;
   panelHeading?: ReactNode;
   mode?: "rail" | "drawer";
+  searchControl?: ReactNode;
+  surface?: boolean;
 }) {
   const hydrated = useHydrated();
   const [open, setOpen] = useState(false);
@@ -67,9 +69,10 @@ export function FilterResultsLayout({ title, filters, children, active = false, 
         </aside>
       ) : (
         <div className="kay-list-controls">
+          {searchControl ? <div className="kay-list-search" data-filter-panel="search">{searchControl}</div> : null}
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild><Button action="search" size="icon" variant="outline" disabled={!hydrated} aria-label="Rechercher dans cette liste" onClick={() => setSearching(true)}><span className="sr-only">Rechercher</span></Button></SheetTrigger>
-            <SheetTrigger asChild><Button action="filter" size="icon" ref={trigger} variant="outline" disabled={!hydrated} aria-label={active ? `Afficher les filtres (${activeCount || 1} actif)` : "Afficher les filtres"} onClick={() => setSearching(false)}><span className="sr-only">Filtres</span></Button></SheetTrigger>
+            {!searchControl ? <SheetTrigger asChild><Button action="search" size="icon" variant="outline" disabled={!hydrated} aria-label="Rechercher dans cette liste" onClick={() => setSearching(true)}><span className="sr-only">Rechercher</span></Button></SheetTrigger> : null}
+            <SheetTrigger asChild><Button action="filter" size={mode === "drawer" && desktop ? "default" : "icon"} ref={trigger} variant="outline" disabled={!hydrated} aria-label={active ? `Afficher les filtres (${activeCount || 1} actif)` : "Afficher les filtres"} onClick={() => setSearching(false)}><span className={mode === "drawer" && desktop ? undefined : "sr-only"}>Filtres{activeCount ? ` · ${activeCount}` : ""}</span></Button></SheetTrigger>
             <SheetContent side="right" data-filter-panel="mobile" closeLabel="Fermer les filtres" className="kay-record-drawer" onOpenAutoFocus={event => { if (searching) { event.preventDefault(); document.querySelector<HTMLElement>('[data-filter-panel="mobile"] input')?.focus(); } }} onCloseAutoFocus={event => { if (window.matchMedia(desktopQuery).matches && mode === "rail") event.preventDefault(); }}>
               <SheetHeader className="kay-drawer-head"><SheetTitle>{searching ? "Rechercher" : title}</SheetTitle><SheetDescription>Affinez les résultats de cette liste.</SheetDescription></SheetHeader>
               <div className="kay-drawer-body kay-filter-fields">{filters(close)}</div>
@@ -77,7 +80,7 @@ export function FilterResultsLayout({ title, filters, children, active = false, 
           </Sheet>
         </div>
       )}
-      <div data-list-results className="kay-list-results">{children}</div>
+      <div data-list-results data-surface={surface} className="kay-list-results">{children}</div>
     </div>
   );
 }

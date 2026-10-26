@@ -6,6 +6,7 @@ import { CalendarIcon, EmailIcon, PhoneIcon, MoreIcon } from "@/components/icons
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { SectionHeading } from "./section-heading";
+import { RecordHeader } from "./record-header";
 import type { ContactSummary } from "@/features/contacts/contracts";
 
 export function ContactAvatar({ name, size = "small" }: { name: string; size?: "small" | "large" | "medium" }) {
@@ -31,13 +32,7 @@ export function CrmDirectoryToolbar({ children, primary }: { children: ReactNode
 }
 
 export function CrmRecordHeader({ contact, title, route, badges, actions, backHref, reference, showContact = true }: { contact: ContactSummary; title: string; route: string; badges: ReactNode; actions?: ReactNode; backHref?: string; reference?: ReactNode; showContact?: boolean }) {
-  return <header className="kay-record-heading" data-crm-kind={route.startsWith("/deals/") ? "deal" : "enquiry"}>
-    {backHref ? <Button action="back" asChild size="icon" variant="outline"><Link href={backHref} aria-label="Retour à la liste"><span className="sr-only">Retour</span></Link></Button> : null}
-    <div className="kay-record-heading-copy"><h1 tabIndex={-1} data-route={route}>{title}</h1><div className="kay-record-meta">{reference ? <span>{reference}</span> : null}{badges}
-      {showContact ? <><a href={`tel:${contact.primary_phone}`}><PhoneIcon aria-hidden="true" size={16} />{contact.primary_phone}</a>{contact.primary_email ? <a href={`mailto:${contact.primary_email}`}><EmailIcon aria-hidden="true" size={16} />{contact.primary_email}</a> : null}</> : null}</div>
-    </div>
-    {actions ? <div className="kay-record-heading-actions">{actions}</div> : null}
-  </header>;
+  return <RecordHeader title={title} route={route} badges={badges} actions={actions} backHref={backHref} reference={reference} kind={route.startsWith("/deals/") ? "deal" : "enquiry"} metadata={showContact ? <><a href={`tel:${contact.primary_phone}`}><PhoneIcon aria-hidden="true" size={16} />{contact.primary_phone}</a>{contact.primary_email ? <a href={`mailto:${contact.primary_email}`}><EmailIcon aria-hidden="true" size={16} />{contact.primary_email}</a> : null}</> : undefined} />;
 }
 
 export function CrmStatusBoard({ title, items, current, label, splitAt = 5 }: { title: string; items: { id: string; label: string }[]; current: string; label: string; splitAt?: number }) {

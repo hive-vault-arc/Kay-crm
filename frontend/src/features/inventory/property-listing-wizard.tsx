@@ -27,11 +27,11 @@ type Field = "reference" | "marketing_name" | "price_mad" | "location" | "addres
 type Values = Record<Field, string> & { category: Category; market: Market; period: "day" | "week" | "month" | "year" | ""; amenities: (keyof typeof amenityLabels)[] };
 const initial: Values = { reference: "", marketing_name: "", price_mad: "", location: "", address: "", region: "", city: "", district: "", neighborhood: "", google_maps_url: "", area_sqm: "", rooms: "", bedrooms: "", bathrooms: "", capacity: "", minimum_nights: "", condition: "", age_band: "", floor_type: "", unit_floor: "", building_floors: "", orientation: "", plot_area_sqm: "", land_delivery: "", land_status: "", garden_area_sqm: "", terrace_area_sqm: "", garage_spaces: "", description: "", category: "apartment", market: "sale", period: "", amenities: [] };
 const steps = [
-  { label: "Bien et offre", mobileLabel: "Offre", icon: PropertyIcon },
-  { label: "Localisation", mobileLabel: "Adresse", icon: LocationIcon },
+  { label: "Bien et offre", mobileLabel: "Bien", icon: PropertyIcon },
+  { label: "Localisation", mobileLabel: "Lieu", icon: LocationIcon },
   { label: "Caractéristiques", mobileLabel: "Détails", icon: SettingsIcon },
   { label: "Équipements", mobileLabel: "Options", icon: FinanceIcon },
-  { label: "Vérification", mobileLabel: "Vérifier", icon: CompletedIcon },
+  { label: "Vérification", mobileLabel: "Résumé", icon: CompletedIcon },
 ] as const;
 const residential = new Set<Category>(["apartment", "house", "villa", "riad", "room"]);
 const hasRooms = (category: Category) => residential.has(category) && category !== "room";
@@ -170,8 +170,8 @@ export function PropertyListingWizard({ property }: { property?: Property }) {
     { label: "Google Maps", value: values.google_maps_url ? "Lien renseigné" : null },
     { label: "Équipements", value: values.amenities.length ? `${values.amenities.length} sélectionné(s)` : null },
   ];
-  return <form noValidate className="form-surface grid min-w-0 items-start gap-5 lg:grid-cols-[14rem_minmax(0,1fr)]" aria-label={editing ? "Modifier le bien" : "Créer un bien indépendant"} aria-busy={command.pending} onSubmit={event => { event.preventDefault(); if (step === 4) void save(); else if (validate(step)) focus(step + 1); }}>
-    <InventoryWizardSteps steps={wizardSteps} current={step} label={editing ? "Progression de la modification" : undefined} />
+  return <form noValidate className="form-surface kay-inventory-wizard grid min-w-0 items-start gap-5" aria-label={editing ? "Modifier le bien" : "Créer un bien indépendant"} aria-busy={command.pending} onSubmit={event => { event.preventDefault(); if (step === 4) void save(); else if (validate(step)) focus(step + 1); }}>
+    <InventoryWizardSteps steps={wizardSteps} current={step} change={focus} disabled={!hydrated || command.pending} label={editing ? "Progression de la modification" : undefined} />
     <div className="grid min-w-0 gap-5">
       <div><h2 ref={heading} tabIndex={-1} className="sr-only">{wizardSteps[step].label}</h2><SectionHeading icon={wizardSteps[step].icon} tone="teal">{wizardSteps[step].label}</SectionHeading><p className="mt-2 text-sm text-muted-foreground">{step === 0 ? editing ? "Modifiez les informations du bien. Les prix et les offres existantes restent inchangés." : "Commencez par le type de bien et le prix de l’offre brouillon." : step === 1 ? "Situez le bien. Le lien Google Maps restera accessible sur sa fiche." : step === 2 ? "Seuls les champs utiles à ce type de bien sont affichés." : step === 3 ? "Ajoutez les équipements connus et une description courte." : editing ? "Relisez les modifications avant de les enregistrer." : "Relisez la fiche. Vous pourrez ajouter les photos après sa création."}</p>{editing ? <p className="mt-2 text-xs text-muted-foreground">Les informations inconnues peuvent rester vides. Photos, propriétaires et documents sont conservés.</p> : null}</div>
       <fieldset disabled={!hydrated || command.pending} className="grid min-w-0 gap-5">

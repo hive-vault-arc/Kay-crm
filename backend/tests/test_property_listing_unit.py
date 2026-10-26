@@ -5,7 +5,29 @@ from uuid import uuid4
 import pytest
 from pydantic import ValidationError
 
-from app.inventory.contracts import CreateProperty, EditProperty, ListingDetails, NewOffering
+from app.inventory.contracts import (
+    CreateProperty,
+    DevelopmentQuery,
+    EditProperty,
+    InventoryQuery,
+    ListingDetails,
+    NewOffering,
+    PropertiesQuery,
+)
+
+
+def test_development_category_filter_does_not_broaden_property_categories() -> None:
+    assert DevelopmentQuery(category="mixed", page_size=20).category == "mixed"
+    for schema in (InventoryQuery, PropertiesQuery):
+        with pytest.raises(ValidationError):
+            schema.model_validate({"category": "mixed"})
+    for category in ("castle", "room", "office", "farm", "riad"):
+        with pytest.raises(ValidationError):
+            DevelopmentQuery.model_validate({"category": category})
+    with pytest.raises(ValidationError):
+        DevelopmentQuery.model_validate({"category": "mixed", "private_owner": True})
+    with pytest.raises(ValidationError, match="INVALID_COMPARISON_RANGE"):
+        DevelopmentQuery(min_comparison_mad="100", max_comparison_mad="50")
 
 
 def listing(category: str = "apartment", kind: str = "sale") -> dict[str, object]:

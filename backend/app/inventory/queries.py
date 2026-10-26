@@ -12,7 +12,7 @@ from app.contacts.models import Contact
 from app.db.session import Database
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
-from app.inventory.contracts import InventoryQuery, PropertiesQuery
+from app.inventory.contracts import InventoryQuery, InventoryQueryFields, PropertiesQuery
 from app.inventory.hierarchy_models import Block, Development, Floor, UnitType
 from app.inventory.models import InventoryEvent, Offering, Property, PropertyOwner
 from app.inventory.outcome_history import metadata
@@ -208,7 +208,7 @@ def read_detail(database: Database, token: str, pid: UUID) -> dict[str, object]:
 
 
 def numbered(
-    items: list[dict[str, object]], total: int, query: InventoryQuery
+    items: list[dict[str, object]], total: int, query: InventoryQueryFields
 ) -> dict[str, object]:
     return {
         "items": items,

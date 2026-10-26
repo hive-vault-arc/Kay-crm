@@ -23,7 +23,7 @@ type Values = { reference: string; name: string; category: Development["category
 const steps = [
   { label: "Identité du programme", mobileLabel: "Programme", icon: DevelopmentIcon },
   { label: "Localisation et contexte", mobileLabel: "Détails", icon: LocationIcon },
-  { label: "Vérification", mobileLabel: "Vérifier", icon: CompletedIcon },
+  { label: "Vérification", mobileLabel: "Résumé", icon: CompletedIcon },
 ] as const;
 
 export function DevelopmentCreationWizard() {
@@ -83,8 +83,8 @@ export function DevelopmentCreationWizard() {
     { label: "Promoteur", value: developer ? "Contact lié" : null },
     { label: "Libellé public du promoteur", value: draft.developer_marketing_display?.trim() },
   ];
-  return <form noValidate className="form-surface grid min-w-0 items-start gap-5 lg:grid-cols-[14rem_minmax(0,1fr)]" aria-label="Créer un programme" aria-busy={command.pending} onSubmit={event => { event.preventDefault(); if (step === 2) void form.handleSubmit(save)(event); else next(); }}>
-    <InventoryWizardSteps steps={steps} current={step} />
+  return <form noValidate className="form-surface kay-inventory-wizard grid min-w-0 items-start gap-5" aria-label="Créer un programme" aria-busy={command.pending} onSubmit={event => { event.preventDefault(); if (step === 2) void form.handleSubmit(save)(event); else next(); }}>
+    <InventoryWizardSteps steps={steps} current={step} change={next => { setValidation(""); focusStep(next); }} disabled={!hydrated || command.pending} />
     <div className="grid min-w-0 gap-5">
       <div>
         <h2 ref={heading} tabIndex={-1} className="sr-only">{steps[step].label}</h2>

@@ -21,9 +21,9 @@ import { PropertyListingWizard } from "./property-listing-wizard";
 
 type Values = { reference: string; category: Property["category"]; marketing_name: string; location: string; area_sqm: string; rooms: string; offer_kind: "sale" | "rental"; price: string; period: "month" | "year" };
 const steps = [
-  { label: "Type et identité", mobileLabel: "Type", icon: PropertyIcon },
+  { label: "Type et identité", mobileLabel: "Unité", icon: PropertyIcon },
   { label: "Caractéristiques", mobileLabel: "Détails", icon: LocationIcon },
-  { label: "Vérification", mobileLabel: "Vérifier", icon: CompletedIcon },
+  { label: "Vérification", mobileLabel: "Résumé", icon: CompletedIcon },
 ] as const;
 const hasRooms = (category: Property["category"]) => category === "apartment" || category === "villa" || category === "house";
 
@@ -105,8 +105,8 @@ function DevelopmentPropertyWizard({ developmentId }: { developmentId: string })
     ...(hasRooms(category) ? [{ label: "Pièces", value: draft.rooms?.trim() }] : []),
     ...(developmentId && category === "apartment" ? [{ label: "Étage et type", value: placement.floor_id && placement.unit_type_id ? "Renseignés" : null }] : []),
   ];
-  return <form noValidate className="form-surface grid min-w-0 items-start gap-5 lg:grid-cols-[14rem_minmax(0,1fr)]" aria-label={developmentId ? "Créer une unité physique" : "Créer un bien indépendant"} aria-busy={command.pending} onSubmit={event => { event.preventDefault(); if (step === 2) void form.handleSubmit(save)(event); else next(); }}>
-    <InventoryWizardSteps steps={steps} current={step} />
+  return <form noValidate className="form-surface kay-inventory-wizard grid min-w-0 items-start gap-5" aria-label={developmentId ? "Créer une unité physique" : "Créer un bien indépendant"} aria-busy={command.pending} onSubmit={event => { event.preventDefault(); if (step === 2) void form.handleSubmit(save)(event); else next(); }}>
+    <InventoryWizardSteps steps={steps} current={step} change={next => { setValidation(""); focusStep(next); }} disabled={!hydrated || command.pending} />
     <div className="grid min-w-0 gap-5">
       <div>
         <h2 ref={heading} tabIndex={-1} className="sr-only">{steps[step].label}</h2>
