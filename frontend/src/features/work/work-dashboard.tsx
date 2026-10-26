@@ -8,20 +8,21 @@ import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { RecordError } from "@/features/contacts/record-states";
 import { queryPath, useQuery } from "@/features/contacts/use-query";
 import { localLabel } from "@/features/schedule/time";
+import { TaskListCard } from "./task-presentation";
 import { useHydrated } from "@/hooks/use-hydrated";
-import { bucketLabels, followUpSchema, tasksSchema, taskStatusLabels, type Bucket } from "./contracts";
+import { bucketLabels, followUpSchema, tasksSchema, type Bucket } from "./contracts";
 import { NotificationPanel } from "./notification-panel";
 import { ReportDashboard } from "@/features/reports/report-dashboard";
 
 export function WorkDashboard() {
-  return <div className="grid min-w-0 gap-5"><ReportDashboard><div className="grid min-w-0 items-start gap-4 xl:grid-cols-2"><div className="surface max-h-96 overflow-y-auto" role="region" aria-label="Travail quotidien, défilement vertical" tabIndex={0}><DashboardTasks /></div><div id="notifications" className="surface max-h-96 overflow-y-auto" role="region" aria-label="Notifications, défilement vertical" tabIndex={0}><NotificationPanel /></div></div></ReportDashboard><div className="surface"><VisitFollowUp /></div></div>;
+  return <div className="grid min-w-0 gap-5"><ReportDashboard><div className="grid min-w-0 items-start gap-4 xl:grid-cols-2"><div className="kay-surface kay-daily-work" aria-label="Travail quotidien"><DashboardTasks /></div><div id="notifications" className="kay-surface kay-daily-work" aria-label="Notifications"><NotificationPanel /></div></div></ReportDashboard><div className="surface"><VisitFollowUp /></div></div>;
 }
 
 function DashboardTasks() {
   const id = useId(), hydrated = useHydrated(), [bucket, setBucket] = useState<Bucket>("today"), [page, setPage] = useState(1);
-  const query = useQuery(queryPath("tasks", { bucket, page }), tasksSchema);
+  const query = useQuery(queryPath("tasks", { bucket, page, page_size: 20 }), tasksSchema);
   return <section className="grid min-w-0 gap-4" aria-label="Travail à faire"><h2 className="text-section font-medium">Travail à faire</h2><div className="flex flex-wrap items-end gap-4"><div className="grid gap-2"><Label htmlFor={id}>Période des tâches</Label><NativeSelect id={id} value={bucket} onChange={e => { setBucket(e.target.value as Bucket); setPage(1); }}>{Object.entries(bucketLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div><Button liveRefresh action="refresh" type="button" variant="outline" disabled={!hydrated} onClick={query.refresh}>Actualiser le travail</Button></div>
-    {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement du travail…</p> : <><p>{query.value.total} tâche(s) accessible(s) : {bucketLabels[bucket].toLowerCase()}. Heure de l’agence : Africa/Casablanca.</p>{query.value.items.length ? <ul className="grid min-w-0 gap-4">{query.value.items.map(task => <li key={task.id} className="grid min-w-0 gap-2 border-t pt-4"><Link className="inline-flex min-h-control items-center justify-self-start wrap-anywhere text-link underline" href={task.deal_id ? `/deals/${task.deal_id}?task=${task.id}` : `/contacts/${task.contact_id}?task=${task.id}`}>{task.title}</Link><p className="wrap-anywhere">{task.contact_name} : {taskStatusLabels[task.status]}</p><p className={task.status === "open" && Date.parse(task.due_at) < Date.parse(query.value?.now ?? task.due_at) ? "text-danger" : "text-muted-foreground"}>{localLabel(task.due_local)}{task.status === "open" && Date.parse(task.due_at) < Date.parse(query.value?.now ?? task.due_at) ? " : en retard" : ""}</p><p className="wrap-anywhere text-sm text-muted-foreground">Responsable : {task.owner_name}</p></li>)}</ul> : <p>Aucune tâche pour cette période dans votre périmètre. Créez une tâche depuis la fiche contact ou l’affaire concernée.</p>}<NumberedPages page={query.value.page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages du travail accessible" /></>}
+    {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement du travail…</p> : <><p>{query.value.total} tâche(s) accessible(s) : {bucketLabels[bucket].toLowerCase()}. Heure de l’agence : Africa/Casablanca.</p>{query.value.items.length ? <ul className="kay-work-list">{query.value.items.map(task => <li key={task.id}><TaskListCard task={task} clock={query.value!} href={task.deal_id ? "/deals/" + task.deal_id + "?task=" + task.id : "/contacts/" + task.contact_id + "?task=" + task.id} /></li>)}</ul> : <p>Aucune tâche pour cette période dans votre périmètre. Créez une tâche depuis la fiche contact ou l’affaire concernée.</p>}{query.value.has_previous || query.value.has_next ? <NumberedPages compact page={query.value.page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages du travail accessible" /> : null}</>}
   </section>;
 }
 

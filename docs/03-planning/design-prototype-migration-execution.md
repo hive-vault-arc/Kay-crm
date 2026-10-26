@@ -24,10 +24,10 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to59 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers and click/unload draft guards implemented | Exact inline-field/form parity, Back/Forward handling, responsive focus and native interaction checks |
-| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement implemented | Exact inline editing, remaining form/document parity, browser selector migration and native review |
+| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement implemented | Desktop-only Kanban, exact inline editing, remaining form/document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu and role-gated Finance drawer composed from real controllers | Remaining exact inline/offer/form/PDF layouts and provenance; final native security/stock/focus checks |
-| P6 work/schedule | Existing application behavior retained | Selected calendar/task/activity/inbox presentation and full context flows |
+| P6 work/schedule | Task cards/shared tonal entries, authoritative due state and notification entries implemented; current commands retained | Calendar/agenda, detailed task/activity forms, inbox/settings refinements and native workflow review |
 | P7 remaining surfaces | Help topic hub, side-by-side guide cards and balanced reader implemented; other existing behavior retained | Dashboard/report/search/audit/jobs/settings compositions and native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
@@ -301,3 +301,32 @@ icon stubs and failed; the fixture was corrected, with no production gate remove
 Native reading, keyboard, Back/Forward focus and visual acceptance remain pending.
 
 [Help batch evidence](design-migration-evidence/help-2026-10-26.json) records source hashes and checks.
+
+## Work entries and pagination batch
+
+Tasks now share the selected tonal full-width entry pattern in dossier drawers
+and daily work. Title/status, due/responsible metadata, real dossier/property
+links and disclosed instructions/outcome use the available width. The existing
+task creation, selection, versioned finish/edit and origin checks remain on their
+controllers. Urgency compares the API's now instant and Casablanca today/due_local,
+never the prototype demo date or browser's current clock. Daily work/inbox boxes
+no longer impose independent fixed-height scrolling regions.
+
+Notification entries use actual kinds, read state, due/created times and permitted
+dossier links. Mark-read uses the existing command; a current denial hides prior
+entries and unread totals. Current reminders, PushControl and all errors remain.
+Only ordinary bounded20-row list preferences changed, within the existing API.
+
+Single-page pagination now keeps its accurate result caption without disabled
+controls. An out-of-range page after records disappear keeps a Back/direct-page
+escape and an explicit empty-page caption, rather than a reversed result range.
+Compact supporting lists use authoritative has_previous/has_next flags, so a
+reduced final page does not strand the user. Numbered API pagination is unchanged.
+
+Lint/typecheck/build pass;128 frontend units pass (59 glyphs/392 Button sites,
+zero violations). New synthetic cases cover server-clock/civil-day urgency,
+terminal tasks, notification denial after prior data, and reduced/single-page
+navigation. Native time/input/focus/resize and real task/reminder/database tests
+remain pending. This is not the completed calendar/dashboard or whole branch.
+
+[Work-entry batch evidence](design-migration-evidence/work-2026-10-26.json) records source hashes and scoped checks.

@@ -1,5 +1,20 @@
 # KAY security check for changes
 
+## Work-entry and pagination presentation, 2026-10-26
+
+Existing scoped task/notification read schemas and commands are reused. New card
+context links use only IDs already supplied by those scoped records and retain
+the target routes' authorization. Notification command denial hides previous
+entries and unread counts. Task urgency uses the API's clock/civil day, not a
+browser clock or demo date. No reminder scheduling, task version/history, role,
+backend, file, finance or worker contract changed. Twenty-row reads stay within
+the existing bounded numbered API; shrinking-page navigation remains available.
+
+128 frontend units, lint/typecheck and pinned production build pass. Added
+synthetic cases cover supplied-clock/terminal state, current-denial UI and
+reduced-page escape. No native browser, real reminder/database/time-race or final
+security acceptance is inferred from these source/controller checks.
+
 ## Selected Help composition and navigation, 2026-10-26
 
 The hub still receives only the current authenticated role's static guides and

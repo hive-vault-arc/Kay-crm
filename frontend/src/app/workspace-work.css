@@ -1,0 +1,46 @@
+/* Selected drawer-cards.css / task-presentation.js; no demo clock or client authority. */
+.kay-work-list { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; min-width:0; }
+.kay-record-entry { display:grid; gap:12px; min-width:0; width:100%; padding:16px; border:1px solid var(--workspace-line); border-radius:var(--workspace-geometry-inset-radius); background:var(--workspace-field); }
+.kay-record-entry > header { display:flex; align-items:flex-start; gap:10px; min-width:0; }
+.kay-entry-symbol { display:grid; place-items:center; flex:none; width:28px; height:28px; color:var(--workspace-muted); }
+.kay-record-entry h3 { min-width:0; flex:1; margin:0; font-size:14px; line-height:1.5; font-weight:550; overflow-wrap:anywhere; }
+.kay-record-entry h3 > a { display:inline-flex; min-height:44px; align-items:center; }
+.kay-record-entry h3 > a:hover { text-decoration:underline; }
+.kay-entry-status { flex:none; max-width:45%; }
+:root .kay-entry-status .crm-status-badge { display:inline-flex; align-items:center; gap:5px; max-width:100%; white-space:normal; font-size:11px; line-height:1.4; }
+.kay-entry-meta { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 20px; min-width:0; }
+.kay-entry-meta > div { display:grid; align-content:start; gap:4px; min-width:0; }
+.kay-entry-meta dt { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--workspace-muted); }
+.kay-entry-meta dd { min-width:0; font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
+.kay-entry-body { display:grid; gap:8px; min-width:0; }
+.kay-record-entry > footer { display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:8px; padding-top:4px; }
+.kay-record-entry > footer [data-slot=button] { font-size:12px; }
+.kay-entry-open[data-slot=button] { display:flex; justify-content:flex-start; align-items:flex-start; gap:10px; min-width:0; width:100%; height:auto; padding:0; font-size:14px; font-weight:550; text-align:left; line-height:1.5; }
+.kay-entry-open [data-action-icon] { margin-top:3px; }
+.kay-entry-open > span { flex:1; }
+.kay-task-due { display:grid; gap:2px; font-variant-numeric:tabular-nums; }
+.kay-task-due small { font-size:11px; color:var(--workspace-muted); }
+.kay-task-due[data-overdue=true],.kay-task-due[data-overdue=true] small { color:var(--workspace-danger); }
+.kay-task-context { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px; min-width:0; font-size:12px; color:var(--workspace-muted); }
+.kay-task-context a { display:inline-flex; align-items:center; min-height:44px; overflow-wrap:anywhere; }
+.kay-task-context a:hover { text-decoration:underline; color:var(--workspace-ink); }
+.kay-entry-note summary { display:flex; align-items:center; min-height:44px; cursor:pointer; font-size:12px; color:var(--workspace-muted); }
+.kay-entry-note summary svg { margin-left:8px; transition:transform var(--motion-local); }
+.kay-entry-note[open] summary svg { transform:rotate(180deg); }
+.kay-entry-note p { margin:4px 0 0; font-size:13px; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere; }
+.kay-work-controls { display:flex; flex-wrap:wrap; align-items:flex-end; gap:12px; }
+.kay-work-controls > .grid { flex:1; max-width:280px; }
+.kay-work-controls label { font-size:12px; color:var(--workspace-muted); }
+.kay-work-count { font-size:12px; color:var(--workspace-muted); }
+.kay-notification-context { font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
+.kay-notification-time { font-size:11px; color:var(--workspace-muted); }
+.kay-notification-workspace,.kay-daily-work { padding:24px; }
+@media(max-width:830px) {
+  .kay-record-entry { padding:12px; gap:10px; }
+  .kay-entry-meta { gap:10px 12px; }
+  .kay-notification-workspace,.kay-daily-work { padding:16px; }
+  .kay-record-entry h3,.kay-entry-open[data-slot=button] { font-size:13px; }
+  .kay-task-context { gap:2px 8px; font-size:11px; }
+}
+@media(max-width:360px) { .kay-entry-meta { grid-template-columns:minmax(0,1fr); } }
+@media(forced-colors:active) { .kay-record-entry { border-color:CanvasText; background:Canvas; color:CanvasText; } }

@@ -1,5 +1,10 @@
 # KAY QA command register
 
+Latest work-entry/pagination slice (2026-10-26): frontend lint/typecheck/build
+pass,128 units pass;59 semantic icons/392 Button sites/zero violations. Added
+supplied-clock/terminal task, notification current-denial and shrinking-page
+navigation cases are synthetic; no database/reminder/native pass is claimed.
+
 Latest selected Help slice (2026-10-26): frontend lint/typecheck/build pass,
 125 units pass;59 semantic icons/392 Button sites/zero violations. New SSR/route
 cases cover current-role topic filtering, bounded URLs/static pages, query

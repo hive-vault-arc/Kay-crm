@@ -1,5 +1,9 @@
 "use client";
 import Link from "next/link";
+import { CalendarIcon, CompletedIcon, FileIcon, NotificationIcon, TaskIcon } from "@/components/icons";
+import { CrmStatusBadge } from "@/components/shared/crm-presentation";
+import { RecordEntry } from "@/components/shared/record-entry";
+import { formatInstant } from "@/lib/format";
 import { useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -17,7 +21,7 @@ import { PushControl } from "@/features/realtime/push-control";
 export function NotificationPanel() {
   const id = useId(), hydrated = useHydrated(), heading = useRef<HTMLHeadingElement>(null), lock = useRef(false);
   const [state, setState] = useState("all"), [page, setPage] = useState(1), [busy, setBusy] = useState<string>(), [error, setError] = useState<ApiError>(), [notice, setNotice] = useState("");
-  const query = useQuery(queryPath("notifications", { state, page }), notificationsSchema);
+  const query = useQuery(queryPath("notifications", { state, page, page_size: 20 }), notificationsSchema);
   async function markRead(nid: string) {
     if (lock.current) return; lock.current = true; setBusy(nid); setError(undefined); setNotice("");
     try { await apiCommand(`/api/v1/notifications/${nid}/read`, {}, readSchema, crypto.randomUUID()); query.refresh(); setNotice("Notification marquée comme lue."); heading.current?.focus(); }
@@ -25,11 +29,14 @@ export function NotificationPanel() {
     finally { setBusy(undefined); lock.current = false; }
   }
   const denied = error && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED"].includes(error.code);
-  return <section className="grid min-w-0 gap-4 border-t pt-8" aria-label="Notifications internes"><h2 ref={heading} tabIndex={-1} className="text-section font-medium">Notifications internes</h2>
-    <div className="flex flex-wrap items-end gap-4"><div className="grid min-w-0 gap-2"><Label htmlFor={id}>Notifications affichées</Label><NativeSelect id={id} value={state} disabled={Boolean(busy)} onChange={e => { setState(e.target.value); setPage(1); setError(undefined); }}><option value="all">Toutes les notifications actuelles</option><option value="unread">Non lues</option><option value="read">Lues</option></NativeSelect></div><Button liveRefresh action="refresh" type="button" variant="outline" disabled={!hydrated || Boolean(busy)} onClick={() => { setError(undefined); query.refresh(); }}>Actualiser les notifications</Button></div>
-    {notice ? <p role="status" className="text-success">{notice}</p> : null}{error ? <RecordError error={error} /> : null}
-    {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des notifications…</p> : denied ? <p>Actualisez pour vérifier vos droits et les rappels encore actuels.</p> : <><p>{query.value.unread_total} notification(s) actuelle(s) non lue(s).</p>{query.value.items.length ? <ul className="grid min-w-0 gap-4">{query.value.items.map(item => <li key={item.id} className="grid min-w-0 gap-2 border-t pt-4"><h3 className="font-medium">{item.title}</h3><p className="wrap-anywhere">{item.context}</p>{item.due_local ? <p>{localLabel(item.due_local)}</p> : null}<p className="text-sm text-muted-foreground">{item.read_at ? "Lue" : "Non lue"}</p><div className="flex flex-wrap gap-2"><Button action="preview" asChild variant="outline"><Link href={item.href}>Ouvrir le dossier</Link></Button>{!item.read_at ? <Button action="read" type="button" variant="outline" disabled={Boolean(busy)} onClick={() => void markRead(item.id)}>{busy === item.id ? "Enregistrement…" : "Marquer comme lue"}</Button> : null}</div></li>)}</ul> : <p>Aucune notification actuelle pour ce filtre. Les rappels programmés apparaîtront ici à partir de leur échéance.</p>}<NumberedPages page={query.value.page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages des notifications" /></>}
-    <p className="text-sm text-muted-foreground">Rappels internes uniquement. Les liens et les totaux suivent vos droits actuels ; les anciens horaires et les tâches terminées ne restent pas dans cette liste.</p>
-    <PushControl />
+  return <section className="kay-work-panel grid min-w-0 gap-4" aria-label="Notifications internes" aria-busy={Boolean(busy)}><header className="kay-section-head"><h2 ref={heading} tabIndex={-1} className="text-section font-medium">Notifications</h2>{query.value && !denied && !query.error ? <span className="kay-work-count">{query.value.unread_total} non lue(s)</span> : null}</header>
+    <div className="kay-work-controls"><div className="grid min-w-0 gap-2"><Label htmlFor={id}>Afficher</Label><NativeSelect id={id} value={state} disabled={Boolean(busy)} onChange={event => { setState(event.target.value); setPage(1); setError(undefined); }}><option value="all">Toutes les notifications</option><option value="unread">Non lues</option><option value="read">Lues</option></NativeSelect></div><Button liveRefresh action="refresh" type="button" variant="quiet" size="icon" aria-label="Actualiser les notifications" title="Actualiser les notifications" disabled={!hydrated || Boolean(busy)} onClick={() => { setError(undefined); query.refresh(); }}><span className="sr-only">Actualiser</span></Button></div>
+    {notice ? <p role="status" className="text-sm text-success">{notice}</p> : null}{error ? <RecordError error={error} /> : null}
+    {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des notifications…</p> : denied ? <p>Actualisez pour vérifier vos droits et les rappels encore actuels.</p> : <>{query.value.items.length ? <ul className="kay-work-list">{query.value.items.map(item => {
+      const Icon = item.kind === "file.scanned" ? FileIcon : item.kind.startsWith("visit.") ? CalendarIcon : TaskIcon;
+      const StateIcon = item.read_at ? CompletedIcon : NotificationIcon;
+      return <li key={item.id}><RecordEntry title={item.title} icon={Icon} status={<CrmStatusBadge state={item.read_at ? "draft" : "in_progress"} dot={false}><StateIcon size={12} aria-hidden="true" />{item.read_at ? "Lue" : "Non lue"}</CrmStatusBadge>} meta={item.due_local ? [{ label: "Échéance", icon: CalendarIcon, value: localLabel(item.due_local) }] : []} actions={<><Button action="forward" asChild variant="quiet"><Link href={item.href}>Ouvrir le dossier</Link></Button>{!item.read_at ? <Button action="read" type="button" variant="outline" disabled={Boolean(busy)} onClick={() => void markRead(item.id)}>{busy === item.id ? "Enregistrement…" : "Marquer comme lue"}</Button> : null}</>}><p className="kay-notification-context">{item.context}</p><time className="kay-notification-time" dateTime={item.created_at}>{formatInstant(item.created_at)}</time></RecordEntry></li>;
+    })}</ul> : <p className="text-sm text-muted-foreground">Aucune notification pour ce filtre. Les rappels apparaissent à leur échéance.</p>}{query.value.has_previous || query.value.has_next ? <NumberedPages compact page={query.value.page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages des notifications" /> : null}</>}
+    <p className="text-xs text-muted-foreground">Les rappels et les liens suivent vos droits actuels. Les horaires remplacés et les tâches terminées ne restent pas dans cette liste.</p><PushControl />
   </section>;
 }
