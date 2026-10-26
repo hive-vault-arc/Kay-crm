@@ -20,6 +20,13 @@ reports runtime0/full0 vulnerabilities and0 exceptions. No blanket install-scrip
 approval was issued. Repository guard and repository-only sprint validation pass
 at the foundation checkpoint; latest scoped evidence is linked below.
 
+The subsequent document/picker/narrow-collection batch passes frontend lint,
+typecheck,122 units and the pinned production build (59 glyphs,393 Button sites,
+zero violations). Its new actual-controller/React/TanStack SSR cases cover picker
+cancel/drop, same-key upload retry, existing-document version/metadata boundaries,
+escaped full card values/actions/selection and desktop table retention. Evidence:
+[documents](03-planning/design-migration-evidence/files-2026-10-26.json).
+
 No app HTTP/native browser access, backend/DB/worker/scanner operation or native
 visual/keyboard/touch/zoom verification occurred in this branch batch. Previous
 automatic approval restriction remains binding. Final verification and owner

@@ -237,3 +237,41 @@ denied) passes292,683 deselected. No app HTTP/native browser/DB/security race or
 full-product verification is claimed. Final review remains after implementation.
 
 [Inventory batch evidence](design-migration-evidence/inventory-2026-10-26.json) records the exact source hashes and scoped commands.
+
+## Documents, picker and narrow collections batch
+
+The selected upload surface now has the actual single-file native chooser/drop
+target, named selection, size, remove control and consistent insets. Document
+Add opens only its uploader; cancellation stays at the existing list/tab, with
+the shared unsaved confirmation. Successful upload closes that uploader and
+announces quarantine on the list. Interrupted metadata creation retains its key;
+existing-document version upload retains its identity and original metadata
+requirements, fetches the current version, then uses the original private permit/
+byte flow. It does not create another document or change metadata. Version counts
+are explicitly recent/bounded (49+), not an invented total. The source's more
+general replacement UX is adapted to the actual fixed-metadata API.
+
+The same picker is used for automatic photo conversion/upload. Original-author
+recovery, existing slots, capability checks, ten-photo limit, conversion and
+scanner workflow are unchanged. Pending photos expose the existing busy state
+to the containing drawer guard. File states now use the selected semantic badge
+surfaces with explicit icons; quarantine/failure explanations remain visible.
+
+Main document lists keep aligned columns on desktop, becoming shaded entries in
+Sheets and on phones. A shared Sheet context now selects card presentation for
+every shared DataTable in a side panel, retaining full cells/actions. Phone tables
+without a dedicated compact presenter also receive the complete labeled card
+fallback. Desktop main tables remain tables. Selection stays in the existing
+controller, and the horizontal scrolling hint is absent in cards/drawers. The
+same real cell renderers are reused; native resize/focus checks remain pending.
+
+Validation: lint/typecheck/build pass,59 semantic icons/393 Button sites/zero
+violations;122 frontend units pass. Added actual-component synthetic checks cover
+single/drop/cancel/disabled selection, uploader cancellation, interrupted retry
+identity, version metadata rejection and current-version permit dispatch. Actual
+React/TanStack SSR verifies full card values/actions/selection, escaped text,
+dedicated presenter preference and retained desktop table presentation. These do
+not prove native dialogs, real private-byte/scanner behavior, focus or visual
+fidelity. No backend/facade/dependency/storage/permission contract changed.
+
+[Document batch evidence](design-migration-evidence/files-2026-10-26.json) records the source hashes and scoped commands.

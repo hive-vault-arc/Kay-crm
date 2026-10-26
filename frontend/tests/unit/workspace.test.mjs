@@ -4,10 +4,39 @@ import { loadServer } from "./load-server.mjs";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { createElement } from "react";
+import * as react from "react";
+import * as tableRuntime from "@tanstack/react-table";
 import * as jsxRuntime from "react/jsx-runtime";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const appearance = loadServer("src/lib/theme-preference.ts");
+
+test("Data collections retain every value and action in phone/drawer cards while desktop remains a table", () => {
+  let phone = false, inSheet = false;
+  const { DataTable } = loadServer("src/components/shared/data-table.tsx", { modules: {
+    react, "react/jsx-runtime": jsxRuntime, "@tanstack/react-table": tableRuntime,
+    "@/components/ui/table": { Table: ({ scrollLabel, ...props }) => createElement("table", { ...props, "aria-label": scrollLabel }), TableBody: "tbody", TableCaption: "caption", TableCell: "td", TableHead: "th", TableHeader: "thead", TableRow: "tr" },
+    "@/components/ui/checkbox": { Checkbox: ({ onCheckedChange, ...props }) => createElement("input", { ...props, type: "checkbox", onChange: onCheckedChange }) },
+    "@/components/ui/button": { Button: "button" }, "@/hooks/use-phone-layout": { usePhoneLayout: () => phone }, "@/components/ui/sheet": { useInSheet: () => inSheet },
+  } });
+  const props = {
+    columns: [{ accessorKey: "name", header: "Tâche" }, { accessorKey: "note", header: "Consignes" }, { id: "action", header: "Action", cell: ({ row }) => createElement("a", { href: `/contacts/${row.original.id}` }, "Voir le contact") }],
+    rows: [{ id: "synthetic-record", name: "Synthetic task", note: "Synthetic note <escaped>" }],
+    caption: "Synthetic collection", emptyLabel: "Aucun résultat", getRowId: row => row.id, rowSelectionLabel: row => row.name,
+  };
+  const render = () => renderToStaticMarkup(createElement(DataTable, props));
+  assert.match(render(), /<table/);
+  for (const surface of ["phone", "drawer"]) {
+    phone = surface === "phone"; inSheet = surface === "drawer";
+    const html = render();
+    assert.doesNotMatch(html, /<table/); assert.match(html, /<dl>/);
+    assert.match(html, /Synthetic task/); assert.match(html, /Synthetic note &lt;escaped&gt;/);
+    assert.match(html, /href="\/contacts\/synthetic-record"/);
+    assert.equal((html.match(/type="checkbox"/g) ?? []).length, 2);
+  }
+  props.mobileCard = (row, selection) => createElement("article", null, row.name, selection);
+  assert.match(render(), /<article>Synthetic task/);
+});
 test("Appearance accepts only selected modes, follows system changes and cannot inject preference cookies", () => {
   for (const value of [undefined, null, {}, "", "DARK", "dark; Path=/api", "https://foreign.invalid"]) assert.equal(appearance.parseThemePreference(value), "system");
   for (const value of ["light", "dark", "system"]) assert.equal(appearance.parseThemePreference(value), value);

@@ -1,10 +1,11 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
-import { EmptyFolderIcon } from "@/components/icons";
+import { FileIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, useInSheet } from "@/components/ui/sheet";
+import { FilePicker, fileSizeLabel } from "@/components/shared/file-picker";
+import { useUnsavedGuard } from "@/components/shared/unsaved-guard";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { ProtectedFileState } from "@/components/shared/protected-file-state";
 import { RecordError } from "@/features/contacts/record-states";
@@ -21,6 +22,7 @@ export function FilePanel({ parentKind, parentId, writable }: { parentKind: Pare
 }
 
 function FilePanelBody({ parentKind, parentId, writable }: { parentKind: ParentKind; parentId: string; writable: boolean }) {
+  const inSheet = useInSheet();
   const inventoryParent = parentKind === "property" || parentKind === "development";
   const hydrated = useHydrated();
   const [page, setPage] = useState(1);
@@ -31,9 +33,14 @@ function FilePanelBody({ parentKind, parentId, writable }: { parentKind: ParentK
   const [progress, setProgress] = useState<number>();
   const [error, setError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
+  const [uploadOpen, setUploadOpen] = useState(false);
   const inputId = useId();
+  const uploadId = useId();
   const fileInput = useRef<HTMLInputElement>(null);
   const chooser = useRef<HTMLButtonElement>(null);
+  const browse = useRef<HTMLButtonElement>(null);
+  const uploadTrigger = useRef<HTMLElement | null>(null);
+  const guard = useUnsavedGuard();
   const heading = useRef<HTMLHeadingElement>(null);
   const abort = useRef<AbortController | null>(null);
   const attempt = useRef({ key: "", documentId: "" });
@@ -43,7 +50,7 @@ function FilePanelBody({ parentKind, parentId, writable }: { parentKind: ParentK
   useEffect(() => { if (!pending) return; const timer = setInterval(refresh, 2000); return () => clearInterval(timer); }, [pending, refresh]);
   useEffect(() => () => abort.current?.abort(), []);
   async function upload() {
-    if (locked.current || !file) return;
+    if (locked.current || !file || !writable) return;
     const extension = file.name.split(".").at(-1)?.toLowerCase() ?? "";
     const metadata = { parent_kind: parentKind, parent_id: parentId, filename: file.name, mime_type: file.type, size_bytes: file.size };
     if (!newDocumentSchema.safeParse(metadata).success || mimeTypes[extension] !== file.type || (inventoryParent && file.type.startsWith("image/"))) { setError(new ApiError(file.size > maxFileBytes ? "FILE_TOO_LARGE" : inventoryParent ? "PROPERTY_PHOTO_WEBP_REQUIRED" : "UNSUPPORTED_MEDIA_TYPE", 422)); return; }
@@ -65,21 +72,40 @@ function FilePanelBody({ parentKind, parentId, writable }: { parentKind: ParentK
       setNotice("Transfert terminé. Le fichier reste en quarantaine jusqu’au résultat de l’analyse.");
       setFile(undefined); setResume(undefined); attempt.current = { key: "", documentId: "" };
       if (fileInput.current) fileInput.current.value = "";
+      setUploadOpen(false);
     } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("FILE_TRANSFER_INTERRUPTED", 503)); }
     finally { locked.current = false; setBusy(false); setProgress(undefined); abort.current = null; if (controller.signal.aborted) heading.current?.focus(); refresh(); }
   }
-  return <section aria-label="Pièces jointes" className="grid min-w-0 gap-6 border-t pt-6">
-    <div className="grid gap-2"><h2 ref={heading} tabIndex={-1} className="flex items-center gap-3 text-section font-medium"><span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-sm bg-info-background text-info"><EmptyFolderIcon aria-hidden="true" className="size-4" /></span>Pièces jointes</h2><p className="max-w-reading text-sm text-muted-foreground">{parentKind === "contact" || parentKind === "deal" ? "Documents privés liés au contact. Seules les personnes autorisées peuvent les consulter." : "Fichiers partagés avec l’équipe. Les justificatifs privés des propriétaires et promoteurs restent sur leurs fiches Contacts."}</p></div>
+  function closeUpload() {
+    if (busy) return;
+    guard.request(() => { setUploadOpen(false); setFile(undefined); setResume(undefined); setError(undefined); attempt.current = { key: "", documentId: "" }; if (fileInput.current) fileInput.current.value = ""; }, window.document.getElementById(uploadId) ?? window.document);
+  }
+  function showUpload(document?: ProtectedDocument) {
+    if (busy || !writable) return;
+    uploadTrigger.current = window.document.activeElement instanceof HTMLElement ? window.document.activeElement : null;
+    setResume(document); setFile(undefined); setError(undefined); setNotice(""); attempt.current = { key: "", documentId: "" }; setUploadOpen(true);
+  }
+  return <section aria-label="Pièces jointes" className="kay-record-section kay-file-panel" data-in-sheet={inSheet}>
+    <header className="kay-section-head"><h2 ref={heading} tabIndex={-1}>Pièces jointes</h2>{writable ? <Button action="upload" ref={chooser} variant="outline" disabled={!hydrated || busy} onClick={() => showUpload()}>Ajouter un document</Button> : null}</header>
+    <p className="kay-section-description">{parentKind === "contact" || parentKind === "deal" ? "Documents privés liés au contact, accessibles selon vos droits." : "Documents partagés avec l’équipe. Les justificatifs privés restent sur la fiche du contact."}</p>
     {query.error ? <RecordError error={query.error} retry={refresh} /> : <>
-    {writable ? <form className="grid min-w-0 max-w-reading gap-4" onSubmit={event => { event.preventDefault(); void upload(); }}>
-      <fieldset disabled={!hydrated || busy} className="relative grid min-w-0 gap-2"><Label htmlFor={inputId}>{resume ? "Sélectionner à nouveau le fichier" : "Fichier à ajouter"}</Label><Input ref={fileInput} id={inputId} type="file" tabIndex={-1} className="sr-only left-0 top-0 h-px w-px border-0 p-0" accept={inventoryParent ? ".pdf,.docx,.xlsx" : ".jpg,.jpeg,.png,.webp,.pdf,.docx,.xlsx"} aria-describedby={`${inputId}-help`} onChange={event => { setFile(event.target.files?.[0]); setError(undefined); setNotice(""); attempt.current = { key: "", documentId: "" }; }} /><Button action="file" ref={chooser} type="button" variant="outline" className="justify-self-start" aria-describedby={`${inputId}-selection ${inputId}-help`} onClick={() => fileInput.current?.click()}>Choisir un fichier</Button><p id={`${inputId}-selection`} className="wrap-anywhere text-sm" aria-live="polite">{file?.name ?? "Aucun fichier sélectionné"}</p><p id={`${inputId}-help`} className="text-sm text-muted-foreground">{inventoryParent ? "PDF, DOCX ou XLSX sans macro. Les images s’ajoutent dans Photos. 20 Mo maximum." : "JPEG, PNG, WebP, PDF, DOCX ou XLSX sans macro. 20 Mo maximum (20 971 520 octets)."}</p>{resume ? <p className="wrap-anywhere">Reprise de {resume.filename}. Conservez le même nom, format et nombre d’octets.</p> : null}</fieldset>
-      <div className="flex flex-wrap gap-2"><Button action="upload" type="submit" disabled={!hydrated || busy || !file}>{busy ? "Transfert en cours…" : error ? "Réessayer le transfert" : "Envoyer le fichier"}</Button>{busy ? <Button action="cancel" type="button" variant="outline" onClick={() => abort.current?.abort()}>Interrompre le transfert</Button> : resume ? <Button action="cancel" type="button" variant="outline" onClick={() => { setResume(undefined); setFile(undefined); attempt.current = { key: "", documentId: "" }; if (fileInput.current) fileInput.current.value = ""; }}>Annuler la reprise</Button> : null}</div>
-    </form> : <p className="text-sm text-muted-foreground">{parentKind === "deal" ? "Pièces jointes en lecture seule pour l’état actuel de l’affaire ou du contact." : parentKind === "contact" ? "Contact archivé : les documents ne peuvent pas être modifiés tant que le contact n’est pas restauré." : "Lecture seule : les pièces jointes d’inventaire sont gérées par les responsables."}</p>}
-    {progress !== undefined ? <p role="status">Transfert : {progress} %. L’analyse antivirus n’est pas encore terminée.</p> : null}
-    {error ? <p role="alert" className="text-danger">{error.message}</p> : null}{notice ? <p role="status" className="text-info">{notice}</p> : null}
-    {!query.value ? <p role="status">Chargement des pièces jointes…</p> : query.value.items.length ? <ul className="grid min-w-0 gap-6">{query.value.items.map(document => <FileRow key={`${document.id}:${document.version}`} document={document} writable={writable && !busy} refresh={refresh} returnFocus={() => heading.current?.focus()} resume={() => { setResume(document); setFile(undefined); setError(undefined); attempt.current = { key: "", documentId: "" }; chooser.current?.focus(); }} />)}</ul> : <p>Aucune pièce jointe sur cette page.{writable ? " Ajoutez un fichier pour commencer." : ""}</p>}
-    {query.value ? <NumberedPages label="Pages des pièces jointes" page={page} total={query.value.total} size={20} change={setPage} /> : null}
+      {!writable ? <p className="text-sm text-muted-foreground">{parentKind === "deal" || parentKind === "contact" ? "Documents en lecture seule dans l’état actuel du dossier." : "Les pièces jointes sont gérées par les responsables."}</p> : null}
+      {notice ? <p role="status" className="text-info">{notice}</p> : null}
+      {!query.value ? <p role="status">Chargement des pièces jointes…</p> : query.value.items.length ? <div className="kay-file-collection"><div className="kay-file-columns" aria-hidden="true"><span>Document</span><span title="Historique récent renvoyé par le serveur">Versions récentes</span><span>Taille</span><span>Actions</span></div><ul className="kay-file-list">{query.value.items.map(document => <FileRow key={document.id + ":" + document.version} document={document} writable={writable && !busy} refresh={refresh} returnFocus={() => heading.current?.focus()} resume={() => showUpload(document)} />)}</ul></div> : <p className="text-sm text-muted-foreground">Aucune pièce jointe sur cette page.{writable ? " Ajoutez un document pour commencer." : ""}</p>}
+      {query.value && query.value.total > query.value.page_size ? <NumberedPages label="Pages des pièces jointes" page={page} total={query.value.total} size={query.value.page_size} change={setPage} /> : null}
     </>}
+    <Sheet open={uploadOpen} onOpenChange={open => { if (!open) closeUpload(); }}><SheetContent id={uploadId} className="kay-record-drawer kay-document-uploader" closeLabel="Fermer l’ajout de document" onOpenAutoFocus={event => { event.preventDefault(); browse.current?.focus(); }} onCloseAutoFocus={event => { event.preventDefault(); const target = uploadTrigger.current; if (target?.isConnected) target.focus(); else chooser.current?.focus(); }}>
+      <SheetHeader className="kay-drawer-head"><SheetTitle>{resume ? resume.versions[0]?.state === "clean" ? "Ajouter une version" : "Reprendre le transfert" : "Ajouter un document"}</SheetTitle><SheetDescription>Le fichier sera disponible après son analyse antivirus.</SheetDescription></SheetHeader>
+      <form className="kay-document-upload" data-live-dirty={file ? "true" : undefined} aria-busy={busy} onSubmit={event => { event.preventDefault(); void upload(); }}>
+        <div className="kay-drawer-body">
+          {resume ? <div className="kay-upload-context"><FileIcon size={20} aria-hidden="true" /><div><span>Document concerné</span><strong>{resume.filename}</strong><small>Conservez le même nom, format et nombre d’octets ({new Intl.NumberFormat("fr-MA").format(resume.size_bytes)}).</small></div></div> : null}
+          <FilePicker id={inputId} label={resume ? "Fichier à envoyer à nouveau" : "Fichier"} accept={inventoryParent ? ".pdf,.docx,.xlsx" : ".jpg,.jpeg,.png,.webp,.pdf,.docx,.xlsx"} inputRef={fileInput} browseRef={browse} selected={file} disabled={!hydrated || busy || !writable} description={inventoryParent ? "PDF, DOCX ou XLSX sans macro · 20 Mo maximum. Les images s’ajoutent dans Photos." : "JPEG, PNG, WebP, PDF, DOCX ou XLSX sans macro · 20 Mo maximum (20 971 520 octets)."} choose={selected => { setFile(selected); setError(undefined); setNotice(""); attempt.current = { key: "", documentId: "" }; }} />
+          {progress !== undefined ? <div className="kay-upload-progress" role="status"><progress max={100} value={progress} aria-label="Progression du transfert" /><p>Transfert : {progress} %. Analyse antivirus à suivre.</p></div> : null}
+          {error ? <p role="alert" className="text-sm text-danger">{error.message}</p> : null}
+        </div>
+        <footer className="kay-upload-footer">{busy ? <Button action="cancel" type="button" variant="outline" onClick={() => abort.current?.abort()}>Interrompre le transfert</Button> : <Button action="cancel" type="button" variant="outline" onClick={closeUpload}>Annuler</Button>}<Button action="upload" type="submit" disabled={!hydrated || busy || !file || !writable}>{busy ? "Transfert…" : error ? "Réessayer" : "Envoyer le fichier"}</Button></footer>
+      </form>
+    </SheetContent></Sheet>{guard.dialog}
   </section>;
 }
 
@@ -118,10 +144,10 @@ function FileRow({ document, writable, refresh, resume, returnFocus }: { documen
     } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("FILE_TRANSFER_INTERRUPTED", 503)); }
     finally { locked.current = false; setBusy(false); }
   }
-  return <li className="grid min-w-0 gap-4 border-b pb-6">
-    <div className="grid min-w-0 gap-2"><h3 className="wrap-anywhere font-medium">{document.filename}</h3><p className="text-sm text-muted-foreground">{new Intl.NumberFormat("fr-MA").format(document.size_bytes)} octets</p><ProtectedFileState version={latest} /></div>
+  return <li className="kay-file-entry">
+    <div className="kay-file-entry-head"><span className="kay-file-entry-symbol"><FileIcon size={20} aria-hidden="true" /></span><div><h3>{document.filename}</h3><ProtectedFileState version={latest} /></div></div><p className="kay-file-versions"><span className="kay-file-mobile-label">Versions · </span>{document.versions.length >= 49 ? "49+" : document.versions.length}</p><p className="kay-file-size">{fileSizeLabel(document.size_bytes)}</p>
     {error ? <p role="alert" className="text-danger">{error.message}</p> : null}
-    <div className="flex flex-wrap gap-2"><Button action="download" variant="outline" disabled={busy || !clean} aria-label={`Télécharger ${document.filename}`} onClick={() => void open()}>Télécharger{clean && latest?.id !== clean.id ? " la version précédente" : ""}</Button>{document.mime_type.startsWith("image/") && clean ? <Button action="preview" ref={previewButton} variant="outline" disabled={busy} aria-label={`Afficher ${document.filename}`} onClick={() => void open(true)}>Afficher l’image</Button> : null}{writable && (!latest || latest.state === "awaiting_upload") ? <Button action="upload" variant="outline" disabled={busy} onClick={resume}>Reprendre le transfert</Button> : null}{writable && latest?.state === "pending_scan" && latest.scan_error ? <Button action="retry" variant="outline" disabled={busy} onClick={() => void command("retry-scan")}>Réessayer l’analyse</Button> : null}{writable ? <Button action="archive" ref={archiveButton} variant="destructive" disabled={busy} aria-label={`Archiver ${document.filename}`} onClick={() => setConfirm(true)}>Archiver</Button> : null}</div>
+    <div className="kay-file-actions"><Button action="download" variant="outline" disabled={busy || !clean} aria-label={`Télécharger ${document.filename}`} onClick={() => void open()}>Télécharger{clean && latest?.id !== clean.id ? " la version précédente" : ""}</Button>{document.mime_type.startsWith("image/") && clean ? <Button action="preview" ref={previewButton} variant="outline" disabled={busy} aria-label={`Afficher ${document.filename}`} onClick={() => void open(true)}>Afficher l’image</Button> : null}{writable && latest?.state === "clean" ? <Button action="upload" variant="outline" disabled={busy} aria-label={"Ajouter une version de " + document.filename} title="Ajouter une version" onClick={resume}>Ajouter une version</Button> : null}{writable && (!latest || latest.state === "awaiting_upload") ? <Button action="upload" variant="outline" disabled={busy} aria-label={"Reprendre le transfert de " + document.filename} title="Reprendre le transfert" onClick={resume}>Reprendre le transfert</Button> : null}{writable && latest?.state === "pending_scan" && latest.scan_error ? <Button action="retry" variant="outline" disabled={busy} aria-label={"Réessayer l’analyse de " + document.filename} title="Réessayer l’analyse" onClick={() => void command("retry-scan")}>Réessayer l’analyse</Button> : null}{writable ? <Button action="archive" ref={archiveButton} variant="destructive" disabled={busy} aria-label={`Archiver ${document.filename}`} onClick={() => setConfirm(true)}>Archiver</Button> : null}</div>
     {busy ? <p role="status">Opération sur le fichier en cours…</p> : null}
     {preview ? <div className="grid min-w-0 justify-items-start gap-4"><Image src={preview} alt={`Aperçu du fichier ${document.filename}`} width={640} height={480} unoptimized className="h-auto max-h-96 w-auto max-w-full object-contain" /><Button action="close" variant="outline" onClick={() => { setPreview(undefined); if (url.current) URL.revokeObjectURL(url.current); url.current = undefined; previewButton.current?.focus(); }}>Fermer l’aperçu</Button></div> : null}
     <AlertDialog open={confirm} onOpenChange={open => { if (!busy) setConfirm(open); }}><AlertDialogContent onCloseAutoFocus={event => { event.preventDefault(); if (archived.current) returnFocus(); else archiveButton.current?.focus(); }}><AlertDialogTitle>Archiver cette pièce jointe ?</AlertDialogTitle><AlertDialogDescription>Le fichier ne sera plus proposé au téléchargement. Ses versions et son historique seront conservés.</AlertDialogDescription><div className="flex flex-wrap gap-2"><AlertDialogCancel asChild><Button action="cancel" variant="outline" disabled={busy}>Annuler</Button></AlertDialogCancel><Button action="archive" variant="destructive" disabled={busy} onClick={() => void command("archive")}>Confirmer l’archivage</Button></div>{error ? <p role="alert" className="text-danger">{error.message}</p> : null}</AlertDialogContent></AlertDialog>

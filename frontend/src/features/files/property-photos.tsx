@@ -3,10 +3,9 @@
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
 import { ShowPasswordIcon, UploadIcon } from "@/components/icons";
+import { FilePicker } from "@/components/shared/file-picker";
 import { ProtectedFileState } from "@/components/shared/protected-file-state";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
@@ -80,7 +79,7 @@ export function PropertyPhotos({ propertyId, parentKind = "property", writable, 
   }, [query.value, onChanged]);
 
   async function upload(selected: File) {
-    if (locked.current || (!resume && (query.value?.total ?? 0) >= photoLimit)) return;
+    if (locked.current || !uploadable || (!resume && (query.value?.total ?? 0) >= photoLimit)) return;
     locked.current = true; setBusy(true); setProgress(undefined); setError(undefined); setNotice("");
     const controller = new AbortController(); abort.current = controller;
     if (!attempt.current.key) attempt.current.key = crypto.randomUUID();
@@ -106,17 +105,17 @@ export function PropertyPhotos({ propertyId, parentKind = "property", writable, 
     finally { locked.current = false; setBusy(false); setProgress(undefined); abort.current = null; refresh(); if (controller.signal.aborted) heading.current?.focus(); }
   }
 
-  return <section aria-label="Photos du bien" className="surface grid min-w-0 gap-5 xl:col-span-2">
+  return <section aria-label="Photos du bien" aria-busy={busy} className="kay-photo-gallery grid min-w-0 gap-5">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><div className="grid gap-1"><h2 ref={heading} tabIndex={-1} className="text-section font-medium"><UploadIcon aria-hidden="true" className="mr-2 inline size-5 align-[-0.15em]" />Photos du bien</h2><p className="text-sm text-muted-foreground">JPEG, PNG ou WebP convertis en WebP avant l’envoi. Les photos sont partagées avec l’équipe après analyse.</p></div><p className="text-sm font-medium" aria-live="polite">{query.value ? `${query.value.total} / ${photoLimit} photos` : "Chargement…"}</p></div>
     {query.error ? <RecordError error={query.error} retry={refresh} /> : <>
-      {uploadable && (resume || (query.value && query.value.total < photoLimit)) ? <fieldset className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+      {uploadable && (resume || (query.value && query.value.total < photoLimit)) ? <fieldset className="grid min-w-0 gap-3">
         <legend className="sr-only">Envoi d’une photo</legend>
-        <div className="grid min-w-0 gap-2"><Label htmlFor={inputId}>{resume ? "Reprendre cette photo" : "Ajouter une photo"}</Label><Input ref={input} id={inputId} type="file" accept=".jpg,.jpeg,.png,.webp" className="sr-only left-0 top-0 h-px w-px border-0 p-0" tabIndex={-1} disabled={!hydrated || busy} onChange={event => { const selected = event.target.files?.[0]; if (!selected) return; setFile(selected); setError(undefined); setNotice(""); attempt.current = { key: "", documentId: "" }; void upload(selected); }} /><Button ref={chooser} action="file" type="button" variant="outline" className="justify-self-start" disabled={!hydrated || busy} onClick={() => input.current?.click()}>Choisir une image</Button><p className="wrap-anywhere text-sm text-muted-foreground" aria-live="polite">{busy ? "Préparation et envoi automatique…" : file?.name ?? "Aucune image sélectionnée"} · 20 Mo maximum par image</p>{resume ? <p className="text-sm text-muted-foreground">Sélectionnez à nouveau la même image source pour reprendre {resume.filename}.</p> : null}</div>
+        <div className="grid min-w-0 gap-3"><FilePicker id={inputId} label={resume ? "Reprendre cette photo" : "Ajouter une photo"} accept=".jpg,.jpeg,.png,.webp" description="JPEG, PNG ou WebP · 20 Mo maximum par image." inputRef={input} browseRef={chooser} selected={file} disabled={!hydrated || busy} automatic choose={selected => { if (!selected) return; setFile(selected); setError(undefined); setNotice(""); attempt.current = { key: "", documentId: "" }; void upload(selected); }} />{resume ? <p className="text-sm text-muted-foreground">Sélectionnez à nouveau la même image source pour reprendre {resume.filename}.</p> : null}</div>
         <div className="flex flex-wrap gap-2">{busy ? <Button action="cancel" type="button" variant="outline" onClick={() => abort.current?.abort()}>Interrompre</Button> : error && file ? <Button action="retry" type="button" variant="outline" onClick={() => void upload(file)}>Réessayer l’envoi</Button> : resume ? <Button action="cancel" type="button" variant="outline" onClick={() => { setResume(undefined); setFile(undefined); attempt.current = { key: "", documentId: "" }; if (input.current) input.current.value = ""; }}>Annuler la reprise</Button> : null}</div>
       </fieldset> : null}
       {progress !== undefined ? <p role="status">Transfert WebP : {progress} %. Analyse antivirus à suivre.</p> : null}
       {error ? <p role="alert" className="text-danger">{error.message}</p> : null}{notice ? <p role="status" className="text-info">{notice}</p> : null}
-      {!query.value ? <p role="status">Chargement des photos…</p> : query.value.items.length ? <ul className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">{query.value.items.map(photo => <PhotoCard key={`${photo.id}:${photo.version}`} photo={photo} writable={writable && !busy} resumable={uploadable && !busy && (writable || photo.can_upload === true)} refresh={() => { setPage(1); refresh(); }} onChanged={onChanged} openPreview={trigger => { previewTrigger.current = trigger; setSelectedPhotoId(photo.id); }} resume={() => { setResume(photo); setFile(undefined); setError(undefined); attempt.current = { key: "", documentId: "" }; requestAnimationFrame(() => chooser.current?.focus()); }} />)}</ul> : <p className="text-sm text-muted-foreground">Aucune photo sur ce bien.</p>}
+      {!query.value ? <p role="status">Chargement des photos…</p> : query.value.items.length ? <ul className="grid min-w-0 gap-4 sm:grid-cols-2">{query.value.items.map(photo => <PhotoCard key={`${photo.id}:${photo.version}`} photo={photo} writable={writable && !busy} resumable={uploadable && !busy && (writable || photo.can_upload === true)} refresh={() => { setPage(1); refresh(); }} onChanged={onChanged} openPreview={trigger => { previewTrigger.current = trigger; setSelectedPhotoId(photo.id); }} resume={() => { setResume(photo); setFile(undefined); setError(undefined); attempt.current = { key: "", documentId: "" }; requestAnimationFrame(() => chooser.current?.focus()); }} />)}</ul> : <p className="text-sm text-muted-foreground">Aucune photo sur ce bien.</p>}
       {query.value && query.value.total >= photoLimit ? <p className="text-sm text-muted-foreground">Limite de 10 photos atteinte. Archivez une photo pour libérer une place.</p> : null}
       {query.value ? <NumberedPages label="Pages des photos du bien" page={page} total={query.value.total} size={10} change={setPage} /> : null}
       {selectedIndex >= 0 ? <PhotoViewer photos={cleanPhotos} index={selectedIndex} change={index => setSelectedPhotoId(cleanPhotos[index]?.id)} close={() => setSelectedPhotoId(undefined)} returnFocus={previewTrigger} /> : null}

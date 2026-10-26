@@ -158,6 +158,14 @@
 .kay-linked-project-open > span { display:grid; gap:4px; min-width:0; font-size:14px; line-height:1.4; overflow-wrap:anywhere; }
 .kay-linked-project-open small { font-size:12px; color:var(--workspace-muted); }
 .kay-record-panel > section:first-child { border-top:0; padding-top:0; }
+.kay-data-card { position:relative; min-width:0; }
+.kay-data-card > dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 16px; }
+.kay-data-card > .kay-card-select + dl { padding-right:32px; }
+.kay-data-card > dl > div { display:grid; align-content:start; gap:4px; min-width:0; }
+.kay-data-card > dl > div[data-wide=true] { grid-column:1/-1; }
+.kay-data-card dt { color:var(--workspace-muted); font-size:11px; }
+.kay-data-card dd { min-width:0; color:var(--workspace-ink); font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
+.kay-data-card > dl > div:first-child dd { font-weight:550; }
 .kay-form-stepper { min-width:0; padding:4px; border:1px solid var(--workspace-line); border-radius:var(--workspace-geometry-inset-radius); background:var(--workspace-field); }
 .kay-form-stepper ol { display:flex; align-items:stretch; gap:4px; margin:0; padding:0; list-style:none; }
 .kay-form-stepper li { flex:1; min-width:0; }

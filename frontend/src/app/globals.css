@@ -2,6 +2,7 @@
 @import "./workspace.css";
 @import "./workspace-collections.css";
 @import "./workspace-status.css";
+@import "./workspace-files.css";
 
 html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   display: none;

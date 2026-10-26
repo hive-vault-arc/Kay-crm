@@ -5,6 +5,9 @@ import { cn } from "@/lib/utils";
 import { CloseIcon } from "@/components/icons";
 import { Dialog as SheetPrimitive } from "radix-ui";
 
+const SheetSurfaceContext = React.createContext(false);
+export function useInSheet() { return React.useContext(SheetSurfaceContext); }
+
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
@@ -75,7 +78,7 @@ function SheetContent({
         )}
         {...props}
       >
-        {children}
+        <SheetSurfaceContext.Provider value={true}>{children}</SheetSurfaceContext.Provider>
         {showCloseButton && (
           <SheetPrimitive.Close className="absolute top-2 right-2 flex size-control items-center justify-center rounded-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
             <CloseIcon aria-hidden="true" className="size-5" />

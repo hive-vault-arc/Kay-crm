@@ -1,5 +1,25 @@
 # KAY security check for changes
 
+## Document presentation and narrow collections, 2026-10-26
+
+The selected file picker is presentation only. Existing bounded metadata,
+extension/MIME/size, private permits, byte transfer, quarantine, archive and
+current scope remain authoritative. Adding a version uses the existing document
+with identical name/type/length; changed metadata is rejected before any permit.
+Interrupted metadata retries preserve the same key. No raw file bytes or permit
+tokens enter screenshots, logs, examples, browser storage or evidence.
+
+Photo automatic conversion and original-author capability/ten-slot behavior stay
+on their original controllers. Busy transfers cannot close through the new
+uploader controls. Cancel/discard returns to the existing list. Narrow cards use
+the same scoped values and action renderers, without hiding a denied boundary or
+fetching extra records. Recent version counts respect the bounded projection.
+
+122 frontend units, lint/typecheck and production build pass. Positive/negative/
+interrupted controller and React SSR cases are synthetic; real byte transfer,
+AV, revoked-session/copied-ID, native dialog/focus/resize and final release checks
+remain pending. No backend/facade/dependency/permission change or main promotion.
+
 ## Inventory redesign source/read-contract review, 2026-10-26
 
 The inventory/owner batch keeps D34 active-agent fact, hierarchy and unit editing

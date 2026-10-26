@@ -13,6 +13,7 @@ function stateHarness() {
     useState(initial) { const index = cursor++; if (!(index in state)) state[index] = typeof initial === "function" ? initial() : initial; return [state[index], next => { state[index] = typeof next === "function" ? next(state[index]) : next; }]; },
     useRef(initial) { const index = cursor++; if (!(index in state)) state[index] = { current: initial }; return state[index]; },
     useCallback(callback) { return callback; },
+    useEffect() {},
     useId() { return "synthetic-control"; },
   };
   return { react, render(callback) { cursor = 0; return callback(); } };
@@ -166,6 +167,81 @@ test("Jumping around the property wizard preserves entered fields and final save
   find(render(), "Steps")[0].props.change(4); find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
   assert.equal(calls.length, 0); assert.equal(find(render(), "Steps")[0].props.current, 0);
   assert.ok(find(render(), "p").some(node => node.props.role === "alert"));
+});
+
+test("File picker handles native cancel, single-file drop and disabled state without starting a transfer", () => {
+  const harness = stateHarness(), choices = [];
+  const { FilePicker } = loadServer("src/components/shared/file-picker.tsx", { modules: {
+    react: harness.react, "react/jsx-runtime": runtime, "@/components/icons": {},
+    "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" },
+  } });
+  const file = { name: "synthetic.pdf", type: "application/pdf", size: 100 }, inputRef = { current: { value: "selected", click() {} } };
+  let disabled = false;
+  const render = () => harness.render(() => FilePicker({ id: "synthetic-picker", label: "Fichier", accept: ".pdf", description: "20 Mo maximum", selected: file, choose: value => choices.push(value), inputRef, disabled }));
+  find(render(), "Input")[0].props.onChange({ target: { files: [] } }); assert.equal(choices.length, 0);
+  const drop = files => find(render(), "div").find(node => node.props.onDrop).props.onDrop({ preventDefault() {}, dataTransfer: { files } });
+  drop([file, file]); assert.equal(choices.length, 0); assert.ok(find(render(), "p").some(node => node.props.role === "alert"));
+  drop([file]); assert.equal(choices[0], file);
+  disabled = true; drop([file]); assert.equal(choices.length, 1);
+  assert.ok(find(render(), "Button").every(button => button.props.disabled));
+  disabled = false; find(render(), "Button").find(button => button.props.action === "remove").props.onClick();
+  assert.equal(choices[1], undefined); assert.equal(inputRef.current.value, "");
+});
+
+function filePanelHarness() {
+  const harness = stateHarness(), calls = [], cancellations = [], parentId = randomUUID();
+  class Element { isConnected = true; focus() {} }
+  class ApiError extends Error { constructor(code, status) { super(code); this.code = code; this.status = status; } }
+  const contracts = loadServer("src/features/files/contracts.ts");
+  const document = { id: randomUUID(), filename: "synthetic.pdf", mime_type: "application/pdf", purpose: "attachment", size_bytes: 100, version: 7, archived: false, versions: [{ id: randomUUID(), state: "clean", scan_error: null, created_at: "2026-10-26T00:00:00Z" }] };
+  let fail = false, writable = true;
+  const { FilePanel } = loadServer("src/features/files/file-panel.tsx", { globals: { AbortController, crypto: { randomUUID }, HTMLElement: Element, window: { document: { activeElement: new Element(), getElementById: () => ({}) } }, document: { getElementById: () => ({}) } }, modules: {
+    react: harness.react, "react/jsx-runtime": runtime, "next/image": { default: "Image" }, "@/components/icons": {}, "@/components/ui/button": { Button: "Button" },
+    "@/components/ui/sheet": { Sheet: "Sheet", SheetContent: "SheetContent", SheetHeader: "SheetHeader", SheetTitle: "SheetTitle", SheetDescription: "SheetDescription", useInSheet: () => false },
+    "@/components/shared/file-picker": { FilePicker: "Picker", fileSizeLabel: value => String(value) }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request: callback => cancellations.push(callback), dialog: null }) },
+    "@/components/ui/alert-dialog": { AlertDialog: "Dialog", AlertDialogCancel: "Cancel", AlertDialogContent: "Content", AlertDialogDescription: "Description", AlertDialogTitle: "Title" },
+    "@/components/shared/protected-file-state": { ProtectedFileState: "FileState" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/numbered-pages": { NumberedPages: "Pages" },
+    "@/features/contacts/use-query": { useQuery: () => ({ value: { items: [document], total: 1, page_size: 20 }, refreshQuietly() {} }) }, "@/hooks/use-hydrated": { useHydrated: () => true },
+    "@/lib/api/client": { ApiError, apiGet: async (...args) => { calls.push({ type: "read", args }); return { ...document, version: 9 }; } },
+    "@/lib/api/command": { apiCommand: async (...args) => { calls.push({ type: "create", args }); if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return document; } },
+    "./contracts": contracts, "./transfers": { requestFilePermit: async body => { calls.push({ type: "permit", body }); return {}; }, uploadBytes: async (...args) => calls.push({ type: "bytes", args }), downloadBytes() {} },
+  } });
+  function render() { const body = FilePanel({ parentKind: "deal", parentId, writable }); return harness.render(() => body.type(body.props)); }
+  return { render, calls, cancellations, document, setFail(value) { fail = value; }, setWritable(value) { writable = value; } };
+}
+
+test("Document upload cancellation returns to its existing list and interrupted metadata retries keep the key", async () => {
+  const controller = filePanelHarness(), { render, calls } = controller;
+  find(render(), "Button").find(button => button.props.children === "Ajouter un document").props.onClick();
+  assert.equal(find(render(), "Sheet")[0].props.open, true);
+  find(render(), "Picker")[0].props.choose({ name: "synthetic.pdf", type: "application/pdf", size: 100 });
+  find(render(), "Sheet")[0].props.onOpenChange(false);
+  assert.equal(find(render(), "Sheet")[0].props.open, true); assert.equal(controller.cancellations.length, 1);
+  controller.cancellations[0](); assert.equal(find(render(), "Sheet")[0].props.open, false); assert.equal(find(render(), "Picker")[0].props.selected, undefined); assert.equal(calls.length, 0);
+  find(render(), "Button").find(button => button.props.children === "Ajouter un document").props.onClick();
+  find(render(), "Picker")[0].props.choose({ name: "synthetic.pdf", type: "application/pdf", size: 100 });
+  controller.setFail(true); find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
+  assert.equal(find(render(), "Sheet")[0].props.open, true);
+  controller.setFail(false); find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
+  const creates = calls.filter(call => call.type === "create");
+  assert.equal(creates.length, 2); assert.equal(creates[0].args[3], creates[1].args[3]);
+  assert.equal(calls.filter(call => call.type === "permit").length, 1); assert.equal(calls.filter(call => call.type === "bytes").length, 1);
+  assert.equal(find(render(), "Sheet")[0].props.open, false);
+});
+
+test("A new document version uses the existing document and refuses changed metadata before private transfer", async () => {
+  const { render, calls, document } = filePanelHarness();
+  const row = find(render(), "ul")[0].props.children[0];
+  row.props.resume();
+  find(render(), "Picker")[0].props.choose({ name: "changed.pdf", type: "application/pdf", size: 100 });
+  find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
+  assert.equal(calls.length, 0);
+  find(render(), "Picker")[0].props.choose({ name: document.filename, type: document.mime_type, size: document.size_bytes });
+  find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
+  assert.equal(calls.filter(call => call.type === "create").length, 0);
+  assert.equal(calls.find(call => call.type === "read").args[0], `/api/v1/documents/${document.id}`);
+  const permit = calls.find(call => call.type === "permit");
+  assert.deepEqual(JSON.parse(JSON.stringify(permit.body)), { action: "upload", document_id: document.id, expected_version: 9 });
 });
 
 test("Unsaved guard retains drafts on cancel, blocks pending commands and discards only after confirmation", () => {
