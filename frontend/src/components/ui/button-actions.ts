@@ -3,7 +3,7 @@ import {
   AddIcon, ArchiveIcon, BackIcon, CalendarIcon, ChevronDownIcon, CloseIcon,
   ColumnsIcon, ListIcon, KanbanIcon, CompareIcon, CompletedIcon, ContactIcon, ContactsIcon, DealIcon,
   DeleteIcon, DownloadIcon, EditIcon, FileIcon, EnquiryIcon, FinanceIcon,
-  FilterIcon, ForwardIcon, HidePasswordIcon, PasswordIcon, PropertyIcon,
+  FilterIcon, HelpIcon, ForwardIcon, HidePasswordIcon, PasswordIcon, PropertyIcon,
   RefreshIcon, RestoreIcon, SearchIcon, SettingsIcon, ShowPasswordIcon,
   SignOutIcon, TaskIcon, UploadIcon, PhoneIcon, EmailIcon,
 } from "@/components/icons";
@@ -55,6 +55,7 @@ export const buttonActions = {
   password: { icon: PasswordIcon, tone: "purple", variant: "outline" },
   show: { icon: ShowPasswordIcon, tone: "info", variant: "outline" },
   hide: { icon: HidePasswordIcon, tone: "info", variant: "outline" },
+  help: { icon: HelpIcon, tone: "neutral", variant: "outline" },
   settings: { icon: SettingsIcon, tone: "neutral", variant: "outline" },
   contact: { icon: ContactIcon, tone: "info", variant: "outline" },
   phone: { icon: PhoneIcon, tone: "neutral", variant: "outline" },

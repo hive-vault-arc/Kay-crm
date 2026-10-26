@@ -1,5 +1,27 @@
 # KAY security check for changes
 
+## Selected calendar presentation and booking context, 2026-10-26
+
+The current scheduling/facade/authority contracts remain unchanged. The calendar
+uses server-resolved week boundaries and supplied offset-aware local projections,
+not the browser's Casablanca tzdata. Safe free/busy reads still reject private
+type/status filters and expose only intervals. Main queries keep full-range
+scoped facets and numbered50-row pages. React escapes card/context strings.
+
+The new Next creation context accepts only optional validated contact UUID and
+a real bounded2000–2100 date. It supplies a date-only form hint, never an instant
+or authority. Split input sends a complete local value to the existing resolver;
+zero/two choices retain skipped/repeated-time behavior. Required work context,
+participants, preview, schedule/stock rules and final backend checks remain.
+
+Visit actions preserve their opened reviewed version/reason/retry identity and
+serialize duplicate submissions. Current authority denial hides prior calendar/
+detail content. Controlled form drafts and busy state participate in the existing
+navigation guard. No data, credentials, sessions, external messaging, private
+file paths, backend workers, dependencies or database operations are introduced.
+Lint/typecheck/build and147 synthetic frontend checks pass. No native, real
+capacity/session/DST race or final release security pass is inferred.
+
 ## Desktop paged Kanban, 2026-10-26
 
 Existing enquiry/deal list schemas and scoped backend endpoints own every lane,

@@ -27,7 +27,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban implemented | Exact inline editing, remaining form/document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu and role-gated Finance drawer composed from real controllers | Remaining exact inline/offer/form/PDF layouts and provenance; final native security/stock/focus checks |
-| P6 work/schedule | Task cards/shared tonal entries, authoritative due state and notification entries implemented; current commands retained | Calendar/agenda, detailed task/activity forms, inbox/settings refinements and native workflow review |
+| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda and date-only booking context implemented; current commands retained | Detailed visit/task/activity forms, inbox/settings refinements and native workflow review |
 | P7 remaining surfaces | Help topic hub, side-by-side guide cards and balanced reader implemented; other existing behavior retained | Dashboard/report/search/audit/jobs/settings compositions and native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
@@ -367,3 +367,47 @@ visual fidelity and real stock/database race tests remain for final verification
 This batch does not finish the remaining forms/calendar/report/PDF migration.
 
 [Kanban evidence](design-migration-evidence/kanban-2026-10-26.json) records exact hashes and command results.
+
+## Selected calendar and booking context batch
+
+The former hourly grid/mini-month rail is replaced on this route by the frozen
+prototype's compact toolbar, seven day columns, tonal visit cards and drawer
+filters. Week/Agenda/Par type retain desktop choice; phones use the chronological
+agenda, with a CSS agenda fallback before hydration. Cancel editors are owned
+outside the keyed week/filter collections, so resizing/changing view does not
+recreate a reason draft. Rules show the actual policy/capacity, all work windows
+and lunch rows without inventing availability. The desktop collection uses the
+remaining viewport; short/phone views keep native page overflow.
+
+Authoritative week resolution, server-local offset strings, scoped50-row pages,
+full-range facets and current/empty/denied states remain. All status choices,
+including zero-count choices, stay available. Applied selections persist when
+changing weeks or entering/leaving free/busy. Private busy columns/agenda reuse
+only the original safe interval endpoint, with no visit IDs/names/type/status
+filters. Multi-day visits appear on every touched day; an exact midnight end
+does not appear on the next day. Cards keep real route/context/status and review
+flags; the detailed label retains the complete authoritative time interval.
+
+Day links now carry a bounded valid date through contact selection to the real
+booking form. This is a date-only hint, never a default hour/instant. Split
+date/time inputs preserve partial entry; the existing backend resolver still
+rejects skipped times and requires an explicit repeated-hour occurrence. Final
+booking still needs original context/participants/rules/preview validation.
+Controlled form fields now mark drafts explicitly; Back/Cancel use the shared
+unsaved/busy guard. Preselected date-only defaults are initially clean.
+
+Visit actions now retain the snapshot reviewed when opened, including across
+interrupted retries and later parent refresh. Their original reason/body/key
+checks remain; a synchronous lock blocks duplicate submit. Current authority
+denial propagates to remove prior calendar/detail content. No backend, timezone,
+stock, worker, facade, package or storage contract changed.
+
+Lint/typecheck/build pass with62 glyphs/404 Button sites/zero violations;147
+frontend units pass, including9 new actual-component/controller/SSR cases. A
+PostCSS parse verifies61 rules/14 referenced roles/zero missing roles. These
+are source/synthetic checks: no native viewport/focus/scroll/drag/zoom, browser
+calendar acceptance, real booking/capacity/DST race or complete product pass is
+claimed. The branch still needs remaining forms, record inline editing, PDF,
+report/admin/search surfaces and final owner-directed verification.
+
+[Calendar evidence](design-migration-evidence/calendar-2026-10-26.json) records source hashes and commands.

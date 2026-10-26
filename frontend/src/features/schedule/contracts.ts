@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { agentSchema, numberedPage } from "@/features/contacts/contracts";
 
+export const visitCreateContextSchema = z.object({ contact_id: z.uuid().optional(), date: z.iso.date().refine(value => value >= "2000-01-01" && value <= "2100-12-31").optional() }).strict();
+
 export const typeLabels = { company_car: "Avec véhicule de société", without_company_car: "Sans véhicule de société", office: "Au bureau" } as const;
 export const statusLabels = { draft: "Brouillon : aucun créneau garanti", scheduled: "Planifiée", confirmed: "Confirmée", completed: "Terminée", not_completed: "Non réalisée", cancelled: "Annulée" } as const;
 export const actionLabels = { created: "Visite créée", updated: "Visite modifiée", confirmed: "Visite confirmée", rescheduled: "Visite replanifiée", completed: "Visite terminée", not_completed: "Visite non réalisée", cancelled: "Visite annulée", contact_merged: "Contact fusionné" } as const;

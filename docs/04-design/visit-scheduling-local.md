@@ -5,6 +5,19 @@ Date: 2026-10-15
 Authority: C01/C07/C13/C14, BR-06/16/30 and accepted Q-07.
 Evidence: [SP-14 execution](../03-planning/sprints/sp-14-execution.md).
 
+## Current selected presentation (2026-10-26)
+
+The owner's frozen-design migration replaces the historical hourly/mini-month
+presentation with day columns, drawer filters and a phone agenda. Current scoped
+facets, numbered pages and safe colleague intervals remain authoritative. The
+Next booking entry additionally accepts a strict optional date context alongside
+contact_id, carrying only a real2000–2100 date through authorized contact selection.
+No hour/instant is supplied by that link. Separate date/time controls retain the
+existing backend local-time resolver, skipped/repeated-time choices and final
+preview/booking checks. This is presentation/context adaptation, not a new API
+permission or scheduling rule. Native/final acceptance remains pending.
+[Implementation evidence](../03-planning/design-migration-evidence/calendar-2026-10-26.json).
+
 ## Rule and authority
 
 Only administrators preview/save working policy. Active, unrestricted staff read

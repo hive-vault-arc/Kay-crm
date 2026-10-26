@@ -1,5 +1,14 @@
 # KAY QA command register
 
+Latest selected calendar slice (2026-10-26): frontend lint/typecheck/build
+pass;147 units pass,62 semantic glyphs/404 Button sites/zero inventory violations.
+Nine new actual-component/controller/SSR cases cover complete day placement,
+private busy reads, whole-range/zero facets, responsive draft ownership, date-only
+context, authoritative local-time choices and original action retry/version locks.
+Calendar CSS parses with61 rules/14 role references/zero missing roles. These are
+synthetic/source checks, not native or real scheduling/capacity/DST acceptance.
+Evidence: [calendar](03-planning/design-migration-evidence/calendar-2026-10-26.json).
+
 Latest desktop Kanban slice (2026-10-26): lint and pinned Next16.4.2 build
 (including fresh TypeScript) pass;62 semantic glyphs/401 Button sites/zero
 violations;138 units pass. `npm run security:check` reports runtime0/full0/zero exceptions.

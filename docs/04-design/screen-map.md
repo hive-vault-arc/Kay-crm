@@ -1,5 +1,13 @@
 # KAY screen map and navigation contract
 
+2026-10-26 selected-design migration: S09 retains its protected routes and real
+scheduling controllers, now presenting seven day columns, compact visit cards,
+drawer filters and phone agenda instead of the historical D38 hourly rail. Day
+creation links carry a validated date-only hint through contact selection; they
+do not choose a default hour or bypass the backend local-time resolver. Applied
+filters, server facets/numbered pages, guarded cancellation and private colleague
+busy intervals remain. [Current execution](../03-planning/design-prototype-migration-execution.md).
+
 2026-10-23 owner-requested help: `/help` is an authenticated searchable,
 role-filtered French guide directory; `/help/{slug}` provides steps, explanations,
 contents anchors and related reading. Aide sits above the identity in the footer,
