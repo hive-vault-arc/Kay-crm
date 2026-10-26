@@ -31,7 +31,7 @@ function ContactEditorForm({ contact, saved, cancel, metadata }: { contact: Cont
   const attempt = useRef({ key: "", body: "" });
   const lock = useRef(false);
   const values = useWatch({ control: form.control });
-  const draft = useDossierDraft(values);
+  const draft = useDossierDraft(values, form.formState.isSubmitting);
   const current = contactSchema.safeParse(error?.details?.current);
   async function submit(values: Values) {
     if (lock.current) return;

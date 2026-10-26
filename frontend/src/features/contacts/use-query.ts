@@ -7,7 +7,7 @@ import { subscribeLive } from "@/features/realtime/live-events";
 
 function deferDetail(path: string) {
   const recordRead = /^\/api\/v1\/(contacts|enquiries|deals|tasks|requirements|commissions|visits|properties|developments)\/[a-f0-9-]{36}$/.test(path.split("?")[0]);
-  return (recordRead || path === "/api/v1/contacts/metadata" || path === "/api/v1/visit-schedule/policy" || path.startsWith("/api/v1/generated-documents/context")) && Boolean(document.querySelector('[data-live-dirty="true"]'));
+  return (recordRead || path === "/api/v1/contacts/metadata" || path === "/api/v1/visit-schedule/policy" || path.startsWith("/api/v1/generated-documents/context")) && Boolean(document.querySelector('[data-live-dirty="true"], form[data-draft-managed][aria-busy="true"]'));
 }
 
 export function queryPath(kind: string, values: Record<string, string | number | undefined>) {

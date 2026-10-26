@@ -43,6 +43,8 @@ try {
     "tests/unit/query-drafts.test.mjs",
     "tests/unit/dossier-forms.test.mjs",
     "tests/unit/work-forms.test.mjs",
+    "tests/unit/visit-forms.test.mjs",
+    "tests/unit/draft-lifecycle.test.mjs",
     "tests/unit/kanban.test.mjs",
     "tests/unit/realtime.test.mjs",
     "tests/unit/help.test.mjs",

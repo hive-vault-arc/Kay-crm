@@ -18,6 +18,19 @@ preview/booking checks. This is presentation/context adaptation, not a new API
 permission or scheduling rule. Native/final acceptance remains pending.
 [Implementation evidence](../03-planning/design-migration-evidence/calendar-2026-10-26.json).
 
+## Selected routed drawer refinement (2026-10-26)
+
+The visits layout owns the calendar while the existing create/detail routes open
+shared guarded drawers. Page identity/UUID/query/password gates remain. Forms
+retain date-only entry, resolved instants, scoped contact/property/dossier choices,
+participants, reviewed versions, retries and explicit commands. Draft rescheduling
+retains its draft status without a booking preview. Saved overlap explanations
+remain separate from outcomes. History lazily presents the existing latest100
+entries in20-entry cards; current denial clears the old view. Native route/focus/
+stacking acceptance remains pending. The prototype's separate general Notes field
+still needs a persistence mapping and is not claimed implemented by this UI slice.
+[Current execution](../03-planning/design-prototype-migration-execution.md).
+
 ## Rule and authority
 
 Only administrators preview/save working policy. Active, unrestricted staff read

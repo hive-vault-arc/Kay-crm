@@ -1,5 +1,5 @@
 import { visitCreateContextSchema } from "@/features/schedule/contracts";
-import { PageHeader } from "@/components/shared/page-header";
+import { VisitRouteDrawer } from "@/features/schedule/visit-route-drawer";
 import { AuthUnavailable } from "@/features/auth/auth-frame";
 import { VisitCreate } from "@/features/schedule/visit-create";
 import { requireIdentity } from "@/lib/auth/server";
@@ -8,5 +8,5 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const identity = await requireIdentity("/visits/new");
   if (identity.state !== "authenticated") return <AuthUnavailable path="/visits/new" />;
   const query = visitCreateContextSchema.safeParse(await searchParams);
-  return <><PageHeader title="Planifier une visite" description="Trois types de visite, avec vérification des horaires et des participants." route="/visits/new" />{query.success ? <VisitCreate actorId={identity.profile.user.id} contactId={query.data.contact_id} date={query.data.date} /> : <p role="alert" className="text-danger">Contexte invalide. Revenez au calendrier pour choisir un contact accessible.</p>}</>;
+  return query.success ? <VisitCreate key={[identity.profile.user.id, query.data.contact_id ?? "", query.data.date ?? ""].join("/")} actorId={identity.profile.user.id} contactId={query.data.contact_id} date={query.data.date} /> : <VisitRouteDrawer title="Planifier une visite" description="Nouveau rendez-vous"><p role="alert" className="text-danger">Contexte invalide. Revenez au calendrier pour choisir un contact accessible.</p></VisitRouteDrawer>;
 }

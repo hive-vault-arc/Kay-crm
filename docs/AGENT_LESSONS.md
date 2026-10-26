@@ -1479,3 +1479,12 @@ rejects. Read the actual hook signature before composing an optional read. Mount
 a small loader only when its real scoped path exists; keep parent search/form
 state mounted and never send a dummy path or UUID. Component-controller fixtures
 are useful behavioral evidence, but TypeScript/build checks are still required.
+
+
+## Controlled drafts need one owner across all live listeners (2026-10-26)
+
+When a form owns data-live-dirty, both the navigation listener and the optional
+live-update listener must respect it. Protect an in-flight managed command even
+when its values are unchanged, then release held reads after the busy/dirty
+lifetime ends or unmounts. Keep current authorization failures fail-closed and
+test the actual listeners/lifecycle; a disabled-live fixture alone misses this.

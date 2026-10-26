@@ -47,3 +47,18 @@
 .kay-drawer-form-section { min-width:0; padding-top:20px; border-top:1px solid var(--workspace-line); }
 .kay-form-footer { display:flex; flex-wrap:wrap; justify-content:flex-end; min-width:0; gap:8px; padding-top:20px; border-top:1px solid var(--workspace-line); }
 @container(max-width:520px) { .kay-form-pair { grid-template-columns:minmax(0,1fr); } }
+
+/* Visit drawers keep one scroll owner, short facts and subordinate policy/history. */
+.kay-visit-record { display:grid; min-width:0; gap:20px; container-type:inline-size; }
+.kay-visit-meta,.kay-visit-related { display:flex; flex-wrap:wrap; align-items:center; min-width:0; gap:8px 12px; }
+.kay-visit-meta { font-size:13px; color:var(--workspace-muted); }
+.kay-visit-meta:focus { outline:none; }
+.kay-visit-meta:focus-visible { outline:2px solid var(--workspace-focus); outline-offset:4px; border-radius:8px; }
+.kay-visit-related:empty { display:none; }
+.kay-visit-facts { display:grid; min-width:0; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 24px; }
+.kay-visit-facts > div { display:grid; min-width:0; align-content:start; gap:6px; }
+.kay-visit-facts dt { font-size:13px; color:var(--workspace-muted); }
+.kay-visit-facts dd { font-size:14px; line-height:1.6; }
+.kay-visit-slot { padding-top:20px; border-top:1px solid var(--workspace-line); }
+.kay-visit-availability { min-width:0; padding:16px; border-radius:16px; background:var(--workspace-field); font-size:13px; line-height:1.6; }
+@container(max-width:520px) { .kay-visit-facts { grid-template-columns:minmax(0,1fr); } }

@@ -27,7 +27,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
-| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task forms and guarded activity creation drawer implemented; current commands retained | Detailed visit forms, inbox/settings refinements and native workflow review |
+| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Separate general visit Notes persistence, inbox/settings refinements and native workflow review |
 | P7 remaining surfaces | Help topic hub, side-by-side guide cards and balanced reader implemented; other existing behavior retained | Dashboard/report/search/audit/jobs/settings compositions and native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
@@ -561,3 +561,68 @@ hydration/POST fallback, denial, drawer ownership and selected-property paginati
 Native focus/layout/touch/zoom and real current-authority/worker/database acceptance
 remain pending. Detailed visit/finance/admin forms and other migration phases are
 not declared complete by this slice. [Evidence](design-migration-evidence/work-forms-2026-10-26.json).
+
+
+## Routed visit drawers and controlled command lifetime
+
+The selected visit drawer now sits over a calendar owned by the persistent
+visits layout. Existing /visits, /visits/new and /visits/{uuid} pages keep their
+exact identity/UUID/bounded-query checks; the layout renders no calendar for an
+anonymous or password-change identity. Opening/closing a visit no longer replaces
+the calendar composition. The intended week/filter retention follows that source
+ownership; actual native route/focus retention still needs final verification.
+Closing the guarded route replaces the in-app location with /visits and hands
+focus to its retained heading, instead of assuming browser Back is safe.
+
+Creation uses a scoped contact chooser and a guarded change-contact step. Date-only
+context survives selection without inventing an hour, title, place or participant
+from prototype demo data. Save replaces the creation route with the saved UUID.
+Rescheduling uses the original full DTO and a reviewed snapshot/version. It now
+retains the saved overlap explanation; general notes and terminal outcomes are
+not folded into that field. A draft stays a draft and does not require a booking
+preview, matching the existing server and prototype rules. Confirming/finishing/
+cancelling remain explicit commands and required reasons are preserved.
+
+Forms use paired type/title and start/end controls, the existing scoped physical
+property selector, authorized participant controls and subordinate policy/history
+sections. The read view uses compact facts, status colors, meaningful links,
+result cards and one primary action with the other commands in Actions. The root
+owns one reviewed command snapshot. History loads on disclosure, stays mounted
+through editing and paginates the existing bounded100-event response in20-entry
+cards. A history/comparison authority denial removes the previous private view.
+Availability checks and saves share one synchronous operation lock, stale interval
+previews are discarded, and explicit version rebase requires another preview.
+Terminal, archived or changed canonical-contact comparisons cannot be rebased.
+
+Review found a clean-but-pending managed form could be replaced by a quiet read.
+Detail/field-metadata deferral now includes a managed busy form, still requiring
+an existing validated same-path projection. Initial/different-record reads, lists,
+hard refreshes and current401/403/404 errors keep their fail-closed behavior.
+Controlled draft owners release deferred reads after editing and commands finish
+or the form unmounts, using the existing field-free event. Both generic input
+trackers now respect managed ownership, including when live updates are enabled.
+The same busy lease is wired through existing Contact/Lead/Deal/Task forms.
+
+Fifteen new actual component/controller/hook/SSR cases cover full visit payloads,
+resolved instants and property context, serialized preview/save, retries, draft
+rescheduling, explicit comparison, denial, lazy retained history, command snapshots,
+protected route composition, focus handoff and draft/live lifetimes. One assertion
+initially compared VM-realm object prototypes; normalizing only the fixture
+comparison fixed it. A multi-file edit stopped on reassignment of a const path;
+the remaining page-key edit was applied separately. Wrong-root reference reads
+were corrected before their contents were used. No failed command was counted
+as a pass. Final lint/typecheck/build and193 frontend units pass (62 glyphs/421
+Button sites/zero violations). Form CSS parses with50 rules/4 existing roles;
+all254 prototype input hashes still match.
+
+Remaining field mapping: the selected prototype persists a separate visit Notes
+value. Current visit storage/write DTOs expose overlap_reason and outcome, not a
+corresponding general-notes path. That capability is unfinished and needs its
+own scoped persistence/history/compatibility slice; no fake input was shipped or
+unrelated business field overwritten. This is a concrete P0/P6 gap, not completion
+of the full scheduling migration. Native overlay/keyboard/zoom/touch/route/race
+review remains pending, with the existing app-access restriction and AFTER timing.
+No backend, facade, worker, database, dependency, production, main, push or merge
+change was made in this slice.
+
+[Visit drawer evidence](design-migration-evidence/visits-2026-10-26.json).

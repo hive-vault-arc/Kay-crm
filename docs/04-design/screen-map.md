@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+2026-10-26 S09 selected routed drawers: the persistent /visits layout owns the
+calendar, with the existing protected new/UUID pages presenting guarded visit
+panels. One primary command and Actions replace scattered detail buttons;
+history uses lazy bounded cards. All existing identity/context/UUID/command rules
+remain, with native route/focus acceptance pending. General visit Notes remain an
+unmapped persistence requirement. [Execution](../03-planning/design-prototype-migration-execution.md).
+
 2026-10-26 selected dossier editing: Contacts keeps Aperçu/Activités with linked
 dossiers below Responsabilité; Lead/Deal keeps Aperçu/Projets/Activités/Documents.
 Quiet value editors use current canonical/versioned commands. Assignment, source

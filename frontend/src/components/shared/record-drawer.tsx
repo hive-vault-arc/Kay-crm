@@ -8,7 +8,7 @@ import { useHydrated } from "@/hooks/use-hydrated";
 import { useUnsavedGuard } from "./unsaved-guard";
 
 export function RecordDrawer({ label, title = label, description, action = "forward", children, initialOpen = false, busy = false, iconOnly = false, hideTrigger = false, onClosed, returnFocus }: {
-  label: string; title?: string; description: string; action?: ButtonAction; children: ReactNode | ((close: () => void, saved: () => void) => ReactNode); initialOpen?: boolean; busy?: boolean; iconOnly?: boolean; hideTrigger?: boolean; onClosed?: () => void; returnFocus?: RefObject<HTMLButtonElement | null>;
+  label: string; title?: string; description: string; action?: ButtonAction; children: ReactNode | ((close: () => void, saved: () => void) => ReactNode); initialOpen?: boolean; busy?: boolean; iconOnly?: boolean; hideTrigger?: boolean; onClosed?: () => void; returnFocus?: RefObject<HTMLElement | null>;
 }) {
   const [open, setOpen] = useState(initialOpen);
   const control = useId();

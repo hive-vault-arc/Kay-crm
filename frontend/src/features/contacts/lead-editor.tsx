@@ -55,7 +55,7 @@ function LeadEditorForm({ enquiry, contact, metadata }: { enquiry: Enquiry; cont
   const lock = useRef(false);
   const clientDraft = useWatch({ control: clientForm.control });
   const leadDraft = useWatch({ control: form.control });
-  const draft = useDossierDraft({ client: clientDraft, lead: leadDraft });
+  const draft = useDossierDraft({ client: clientDraft, lead: leadDraft }, busy || reloading);
   const originalClient = useRef(JSON.stringify(clientValues(contact)));
   const current = enquirySchema.safeParse(error?.details?.current);
   async function submit(event: React.FormEvent) {

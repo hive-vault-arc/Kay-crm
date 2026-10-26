@@ -50,7 +50,7 @@ function LeadCreateForm({ role, metadata }: { role: StaffRole; metadata: Qualifi
   const reuseFocus = useRef(false);
   const lock = useRef(false);
   const contactValues = useWatch({ control: form.control });
-  const draft = useDossierDraft({ contact: contactValues, mode, contactId: selected?.id, agent, queue, message, qualification });
+  const draft = useDossierDraft({ contact: contactValues, mode, contactId: selected?.id, agent, queue, message, qualification }, busy || reusing);
   const guard = useUnsavedGuard();
   useEffect(() => {
     if (!reusing && reuseFocus.current) {

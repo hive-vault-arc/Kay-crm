@@ -13,7 +13,7 @@ const label = (property: Pick<Property, "reference" | "marketing_name" | "develo
   `${property.reference}${property.marketing_name ? ` · ${property.marketing_name}` : ""}${property.development_id ? " · Unité" : ""}`;
 
 /** Context only: shared physical inventory, never an offering or reservation. */
-export function WorkPropertySelect({ value, change }: { value: string | null; change: (id: string | null) => void }) {
+export function WorkPropertySelect({ value, change, purpose = "task" }: { value: string | null; change: (id: string | null) => void; purpose?: "task" | "visit" }) {
   const id = useId();
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
@@ -28,7 +28,7 @@ export function WorkPropertySelect({ value, change }: { value: string | null; ch
     </NativeSelect></div>
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des biens…</p> : query.value.total === 0 ? <p className="text-sm text-muted-foreground">{value ? "Aucun bien actif ne correspond. Le lien actuel reste conservé." : "Aucun bien actif ne correspond."}</p> : null}
     {query.value && (query.value.total > 25 || page > 1) ? <NumberedPages compact page={page} size={25} total={query.value.total} change={setPage} label="Pages des biens et unités" /> : null}
-    <p className="text-xs text-muted-foreground">Ce lien précise le contexte de la tâche. Il ne réserve aucune offre et ne modifie pas la disponibilité.</p>
+    <p className="text-xs text-muted-foreground">Ce lien précise le contexte de {purpose === "visit" ? "la visite" : "la tâche"}. Il ne réserve aucune offre et ne modifie pas la disponibilité.</p>
   </fieldset>;
 }
 

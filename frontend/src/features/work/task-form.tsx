@@ -43,7 +43,7 @@ function Editor({ contactId, dealId, enquiryId, value, currentUser, owners, save
   const [baseVersion, setBaseVersion] = useState(value?.version), [comparison, setComparison] = useState<Task>();
   const [busy, setBusy] = useState(false), [error, setError] = useState<ApiError>(), [invalid, setInvalid] = useState("");
   const attempt = useRef({ fingerprint: "", key: "" }), lock = useRef(false);
-  const draft = useDossierDraft({ title, notes, owner, context, local, due, propertyId });
+  const draft = useDossierDraft({ title, notes, owner, context, local, due, propertyId }, busy);
   const guard = useUnsavedGuard();
   const denied = error && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED"].includes(error.code);
   const blocked = error?.code === "CONTACT_ARCHIVED" || comparison?.status !== undefined && comparison.status !== "open" || comparison?.contact_archived;

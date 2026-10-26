@@ -1,5 +1,30 @@
 # KAY security check for changes
 
+## Routed visits and pending managed commands, 2026-10-26
+
+The persistent calendar layout does not replace page identity, UUID, date/query
+or password-change gates. Visit commands still use strict existing DTOs, canonical
+scope, authorized participants, explicit property/context IDs, reviewed versions
+and same-body retry keys. Draft rescheduling stays a draft; preview never reserves
+capacity. The original UTC resolver, final booking checks and guarded terminal
+commands remain. Saved overlap explanations survive editing; general Notes are
+still an explicit unmapped capability rather than another field's hidden payload.
+
+Preview/save share a synchronous lock. Current comparison/history denials remove
+old private content; canonical-context/terminal comparisons cannot be rebased.
+History cards page only the existing latest100-event response. No new read grant,
+stock command, session, facade, transfer, worker, database or dependency is added.
+
+Quiet detail/metadata reads may hold only an existing same-path validated view
+while a managed command is busy, as well as during dirty editing. Current401/403/
+404 and other non5xx failures still replace it. Initial/new-target/list/hard reads
+are not hidden. Existing field-free lifecycle events release deferred reads when
+controlled editing/commands finish or unmount. Both input trackers respect the
+same owner. Fields remain transient React state, without storage or external
+transmission. Lint/typecheck/build and193 synthetic frontend tests pass. This does
+not establish native focus/modal stacking, real booking/scope races or production
+acceptance. [Evidence](03-planning/design-migration-evidence/visits-2026-10-26.json).
+
 ## Task/activity form composition and existing property context, 2026-10-26
 
 Task/property selection reuses strict existing task DTOs and authorized physical

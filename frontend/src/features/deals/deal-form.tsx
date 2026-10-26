@@ -85,7 +85,7 @@ function DealEditorForm({ contact, role = "agent", context = {}, offering = null
   const router = useRouter();
   const lock = useRef(false);
   const clientDraft = useWatch({ control: client.control });
-  const draft = useDossierDraft({ client: clientDraft, mode, contact: selectedContact?.id, agent, fields, projects, selectedOffering, stage });
+  const draft = useDossierDraft({ client: clientDraft, mode, contact: selectedContact?.id, agent, fields, projects, selectedOffering, stage }, busy || reloading);
   const guard = useUnsavedGuard();
   useEffect(() => { if (validation.length) validationSummary.current?.focus(); }, [validation]);
   function change(patch: Partial<DealFields>) { setFields(previous => ({ ...previous, ...patch })); setValidation([]); }

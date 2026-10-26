@@ -129,7 +129,7 @@ test("Split local-time inputs keep a preselected date without inventing a time a
 test("Root-owned visit cancellation retains reviewed version, reason and retry key after interruption and blocks duplicate submit", async () => {
   const state = harness(), calls = [], closed = [], denied = []; let fail = true, unlock;
   let pending = Promise.resolve();
-  const { VisitAction } = loadServer("src/features/schedule/visit-record.tsx", { globals: { crypto: { randomUUID } }, modules: { react: state.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/components/ui/alert-dialog": dialogs, "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": {}, "@/features/realtime/current-record": {}, "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError }, "@/lib/api/command": { apiCommand: async (...args) => { calls.push(args); await pending; if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } }, "./contracts": contracts, "./visit-form": { VisitForm: "Form" }, "./time": time } });
+  const { VisitAction } = loadServer("src/features/schedule/visit-record.tsx", { globals: { crypto: { randomUUID } }, modules: { react: state.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/components/ui/alert-dialog": dialogs, "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": {}, "@/features/realtime/current-record": {}, "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError }, "@/lib/api/command": { apiCommand: async (...args) => { calls.push(args); await pending; if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } }, "./contracts": contracts, "./visit-form": { VisitForm: "Form" }, "./time": time, "@/components/shared/unsaved-guard": {}, "@/components/shared/crm-presentation": {}, "@/components/shared/record-actions": {}, "@/components/shared/record-entry": {}, "@/features/contacts/numbered-pages": {}, "./visit-route-drawer": {} } });
   let value = visit(); const props = { action: "cancel", dialogOnly: true, saved() {}, closed: () => closed.push(true), denied: error => denied.push(error) }, render = () => state.render(() => VisitAction({ ...props, value }));
   assert.equal(find(render(), "Trigger").length, 0);
   find(render(), "Textarea")[0].props.onChange({ target: { value: "Synthetic cancellation reason" } });
@@ -145,18 +145,19 @@ test("Root-owned visit cancellation retains reviewed version, reason and retry k
 test("The real booking form keeps date-only context clean, tracks controlled edits and refuses unresolved times", async () => {
   const state = harness(), commands = [], formState = { isSubmitting: false, isDirty: false };
   const { VisitForm } = loadServer("src/features/schedule/visit-form.tsx", { globals: { crypto: { randomUUID } }, modules: {
-    react: state.react, "react/jsx-runtime": runtime, "react-hook-form": { useForm: () => ({ formState, control: {}, handleSubmit: callback => () => callback({ title: "Synthetic booking", location: "Synthetic location", overlap_reason: "" }) }) }, "@hookform/resolvers/zod": { zodResolver: () => ({}) },
+    react: state.react, "react/jsx-runtime": runtime, "react-hook-form": { useWatch: () => ({ title: "Synthetic booking", location: "Synthetic location", overlap_reason: "" }), useForm: () => ({ formState, control: {}, setFocus() {}, handleSubmit: callback => () => callback({ title: "Synthetic booking", location: "Synthetic location", overlap_reason: "" }) }) }, "@hookform/resolvers/zod": { zodResolver: () => ({}) },
     "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/checkbox": { Checkbox: "Checkbox" },
     "@/components/ui/form": { Form: "Form", FormControl: "Control", FormField: "Field", FormItem: "Item", FormLabel: "FieldLabel", FormMessage: "Message" },
     "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request() {}, dialog: null }) }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": { useQuery: () => ({ value: undefined, refresh() {} }), queryPath: () => "/api/v1/calendar/availability" },
     "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError }, "@/lib/api/command": { apiCommand: async (...args) => commands.push(args) },
+    "@/components/shared/dossier-form": loadServer("src/components/shared/dossier-form.tsx", { modules: { react: state.react, "react/jsx-runtime": runtime, "./record-header": {} } }), "./visit-slot-preview": { VisitSlotPreview: "Preview" }, "@/features/work/work-property-select": { WorkPropertySelect: "Property" },
     "./contracts": contracts, "./local-time-field": { LocalTimeField: "LocalTime" }, "./time": time, "@/features/work/work-context-select": { WorkContextSelect: "Context" },
   } });
   const props = { actorId: randomUUID(), contactId: randomUUID(), contactName: "Synthetic contact", initialDate: "2026-10-20", saved() {} }, render = () => state.render(() => VisitForm(props));
   let view = render(); assert.equal(find(view, "form")[0].props["data-live-dirty"], undefined); assert.equal(find(view, "form")[0].props["aria-busy"], false);
   const times = find(view, "LocalTime"); assert.equal(times.length, 2); assert.equal(times[0].props.local, "2026-10-20T"); assert.equal(times[1].props.local, "2026-10-20T"); assert.equal(times[0].props.instant, "");
   find(view, "Context")[0].props.change({ enquiry_id: randomUUID(), deal_id: null }); view = render();
-  assert.equal(find(view, "form")[0].props["data-live-dirty"], true);
+  assert.equal(find(view, "form")[0].props["data-live-dirty"], "true");
   find(view, "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
   assert.equal(commands.length, 0); assert.equal(find(render(), "Error")[0].props.error.code, "VALIDATION_ERROR");
   formState.isSubmitting = true; assert.equal(find(render(), "form")[0].props["aria-busy"], true);
@@ -165,10 +166,10 @@ test("The real booking form keeps date-only context clean, tracks controlled edi
 test("Contact selection passes the calendar date through to the original authorized booking form", () => {
   const state = harness(), requested = [];
   const { VisitCreate } = loadServer("src/features/schedule/visit-create.tsx", { modules: {
-    react: state.react, "react/jsx-runtime": runtime, "next/navigation": { useRouter: () => ({ push: value => requested.push(value) }) }, "@/components/ui/button": { Button: "Button" }, "@/features/contacts/contact-selector": { ContactSelector: "ContactSelector" }, "@/features/contacts/contracts": contacts, "@/features/contacts/use-query": {}, "@/features/contacts/record-states": { RecordError: "Error" }, "./visit-form": { VisitForm: "Booking" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: null, request: callback => callback() }) },
+    react: state.react, "react/jsx-runtime": runtime, "next/navigation": { useRouter: () => ({ replace: value => requested.push(value) }) }, "@/components/ui/button": { Button: "Button" }, "@/features/contacts/contact-selector": { ContactSelector: "ContactSelector" }, "@/features/contacts/contracts": contacts, "@/features/contacts/use-query": {}, "@/features/contacts/record-states": { RecordError: "Error" }, "./visit-form": { VisitForm: "Booking" }, "./visit-route-drawer": { VisitRouteDrawer: "Drawer" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: null, request: callback => callback() }) },
   } });
   const props = { actorId: randomUUID(), date: "2026-10-20" }, render = () => state.render(() => VisitCreate(props));
-  find(render(), "ContactSelector")[0].props.choose({ id: randomUUID(), name: "Synthetic contact", archived_at: null });
-  const selected = render(), body = selected.type(selected.props), booking = find(body, "Booking")[0];
+  find(render().props.children(() => {}), "ContactSelector")[0].props.choose({ id: randomUUID(), name: "Synthetic contact", archived_at: null });
+  const selected = render().props.children(() => {}), body = selected.type(selected.props), booking = find(body, "Booking")[0];
   assert.equal(booking.props.initialDate, props.date); booking.props.saved("synthetic-id"); assert.deepEqual(requested, ["/visits/synthetic-id"]);
 });

@@ -1,5 +1,14 @@
 # KAY QA command register
 
+Latest routed-visit/draft-lifetime slice (2026-10-26): lint/typecheck/build and193
+frontend units pass (62 glyphs/421 Button sites/zero inventory violations). Fifteen
+new controller/hook/SSR cases cover real DTOs, preview/retry/version/denial, draft
+rescheduling, persistent-layout composition and managed live-refresh lifetimes.
+Form CSS parses with50 rules/4 existing roles;254 prototype input hashes match.
+These are source/synthetic checks. Native route/focus/zoom and real scheduling/
+security acceptance remain pending. Separate general visit Notes persistence is
+still unmapped. [Evidence](03-planning/design-migration-evidence/visits-2026-10-26.json).
+
 Latest task/activity form slice (2026-10-26): lint/typecheck/build and178 frontend
 units pass (62 glyphs/415 Button sites/zero violations). Form CSS parses with37
 rules/4 existing roles. Six new synthetic component/controller

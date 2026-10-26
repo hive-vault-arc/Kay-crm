@@ -1,5 +1,11 @@
 # KAY interface components: shadcn/ui working guide
 
+2026-10-26 routed visit drawers use the shared RecordDrawer, persistent calendar
+layout, compact facts and bounded history cards. useDossierDraft now owns busy
+as well as dirty lifetime and releases deferred reads through the existing
+field-free event. Both generic input listeners respect managed ownership;
+current authorization errors still clear views. [Execution](../03-planning/design-prototype-migration-execution.md).
+
 2026-10-26 selected full dossier forms reuse RecordHeader/RecordSection, one
 continuous panel and a single header action row. Shared workspace field geometry
 uses wide label/value rows, top labels in narrow panels and one phone column.
