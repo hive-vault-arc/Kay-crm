@@ -60,6 +60,17 @@ test("local HTTPS accepts the explicit local CA", async t => {
   assert.equal((await facade.relayHealth("/api/v1/health/live", "synthetic-id")).status, 200);
 });
 
+test("visit notes negotiation is opt-in and absent from free/busy and other domains", async t => {
+  const port = await server(t, (incoming, response) => response.end('{}'));
+  const { facade, observed } = facadeFor(port);
+  for (const [pathname, expected] of [["/api/v1/visits", "1"], ["/api/v1/visits?page=1", "1"], ["/api/v1/visits/synthetic/history", "1"], ["/api/v1/calendar/context", "1"], ["/api/v1/calendar/free-busy", undefined], ["/api/v1/documents", undefined], ["/api/v1/visits-other", undefined]]) {
+    await facade.upstreamRequest(pathname, "synthetic-id", { visitNotes: true });
+    assert.equal(observed.at(-1).headers["X-Kay-Visit-Notes"], expected);
+  }
+  await facade.upstreamRequest("/api/v1/visits", "synthetic-id");
+  assert.equal(observed.at(-1).headers["X-Kay-Visit-Notes"], undefined);
+});
+
 test("photo capability negotiation is opt-in and restricted to document metadata paths", async t => {
   const port = await server(t, (incoming, response) => response.end('{}'));
   const { facade, observed } = facadeFor(port);

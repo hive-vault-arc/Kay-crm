@@ -1,5 +1,12 @@
 # KAY QA command register
 
+Latest separate-visit-Notes slice (2026-10-26): frontend lint/typecheck/build and
+198 units pass; backend explicit .venv Ruff and mypy (12 modules) pass. The
+connection-forbidden tests.unit_runner passes301, with685 integration cases
+intentionally deselected. Alembic graph inspection finds one0036 head/36 revisions,
+without executing migration code or opening a database. Revision0036 is unapplied;
+new PostgreSQL and native acceptance cases remain pending. [Evidence](03-planning/design-migration-evidence/visit-notes-2026-10-26.json).
+
 Latest routed-visit/draft-lifetime slice (2026-10-26): lint/typecheck/build and193
 frontend units pass (62 glyphs/421 Button sites/zero inventory violations). Fifteen
 new controller/hook/SSR cases cover real DTOs, preview/retry/version/denial, draft

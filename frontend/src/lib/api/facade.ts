@@ -17,7 +17,7 @@ export function facadeError(status: number, code: string, requestId: string) {
 }
 
 export async function upstreamRequest(path: string, requestId: string, options: {
-  method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE"; body?: string; token?: string; csrf?: string; origin?: string; idempotencyKey?: string; maxResponseBytes?: number; timeoutMs?: number; photoCapabilities?: boolean;
+  method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE"; body?: string; token?: string; csrf?: string; origin?: string; idempotencyKey?: string; maxResponseBytes?: number; timeoutMs?: number; photoCapabilities?: boolean; visitNotes?: boolean;
 } = {}) {
   let origin: URL;
   try { origin = new URL(process.env.API_BASE_URL ?? ""); }
@@ -51,6 +51,7 @@ export async function upstreamRequest(path: string, requestId: string, options: 
         ...(options.origin ? { Origin: options.origin } : {}),
         ...(options.idempotencyKey ? { "Idempotency-Key": options.idempotencyKey } : {}),
         ...(options.photoCapabilities && /^\/api\/v1\/documents(?:[/?]|$)/.test(path) ? { "X-Kay-Photo-Capabilities": "1" } : {}),
+        ...(options.visitNotes && /^\/api\/v1\/(?:visits(?:[/?]|$)|calendar\/context$)/.test(path) ? { "X-Kay-Visit-Notes": "1" } : {}),
       },
     }, (incoming) => {
       const chunks: Buffer[] = [];

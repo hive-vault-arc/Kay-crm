@@ -1,5 +1,13 @@
 # HTTP contracts for `/api/v1`
 
+Selected migration addendum,2026-10-26: visit create/edit accepts optional notes;
+omitted notes preserves the saved value and old receipt digest, while explicit
+empty clears. The server-facade opt-in X-Kay-Visit-Notes:1 exposes optional
+notes_supported:true on calendar/context and notes in visit metadata/original
+history snapshots. Legacy projections keep their existing strict shape; free/busy
+is unchanged. Existing current scope, versions, CSRF and terminal commands prevail.
+[Concrete compatibility/storage contract](visit-scheduling-local.md).
+
 ## Agent inventory photo uploads (2026-10-23)
 
 Local correction2026-10-24: photo document reads/create acknowledgements add an

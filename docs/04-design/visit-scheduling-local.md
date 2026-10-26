@@ -1,5 +1,26 @@
 # Local visit scheduling contract (SP-14)
 
+## Selected general Notes mapping (2026-10-26)
+
+General notes are separate from overlap_reason and terminal outcome. The selected
+form/read disclosure now binds to optional notes (technical cap1000, a proposal
+matching existing visit text bounds). Omission on edit preserves stored notes;
+explicit empty clears. All existing current-scope/version/terminal rules apply.
+New immutable snapshots include notes; pre-migration snapshots stay unchanged.
+
+The trusted facade requests X-Kay-Visit-Notes:1 on visit metadata and calendar/context.
+Opt-in context adds notes_supported:true; detail/list snapshots include notes and
+history includes it only when originally recorded. Without opt-in, responses keep
+the old strict shape. With an older backend, support/notes are absent and the new
+form sends no notes. Absent notes preserve legacy receipt-body hashes. Free/busy
+stays metadata-free. This is representation negotiation, never an access grant.
+
+Prepared revision0036 adds an empty-default String1000 and deferred event matching;
+it refuses destructive downgrade in development or with retained note history.
+Apply the additive schema before deploying the new backend. No migration was
+executed in this slice. Real PostgreSQL/native acceptance remains pending; see
+[execution](../03-planning/design-prototype-migration-execution.md).
+
 Status: implemented and technically accepted locally; product review pending
 Date: 2026-10-15
 Authority: C01/C07/C13/C14, BR-06/16/30 and accepted Q-07.

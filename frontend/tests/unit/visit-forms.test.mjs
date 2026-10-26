@@ -22,6 +22,30 @@ function preview(patch={}){return contracts.availabilitySchema.parse({policy_ver
 const submit=tree=>find(tree,"form")[0].props.onSubmit({preventDefault(){}});
 function fillNew(tree,controller){controller.setText({title:"Synthetic booking",location:"Synthetic location",overlap_reason:"Reviewed explanation"});find(tree,"Context")[0].props.change({enquiry_id:randomUUID(),deal_id:null});const times=find(tree,"Time");times[0].props.changeLocal("2026-10-20T10:00");times[0].props.choose(at);times[1].props.changeLocal("2026-10-20T11:00");times[1].props.choose("2026-10-20T10:00:00Z");}
 
+for (const supported of [false, true]) test(`Visit notes are ${supported ? "saved with stable retry identity" : "omitted for an older backend"}`, async () => {
+ const h=harness(),calls=[];let interrupted=true;
+ const controller=formModule(h,async(...args)=>{calls.push(args);if(interrupted)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return{id:randomUUID(),version:1};},undefined,path=>({value:path.includes("policy")?policy:path.endsWith("calendar/context")?{today:"2026-10-20",time_zone:"Africa/Casablanca",tzdata_version:"synthetic",...(supported?{notes_supported:true}:{})}:{items:[{id:actor,display_name:"Synthetic actor"}]},refresh(){}}));
+ const props={actorId:actor,contactId:randomUUID(),contactName:"Synthetic contact",saved(){}};
+ const render=()=>h.render(()=>controller.VisitForm(props));let tree=render();
+ assert.equal(find(tree,"Field").some(field=>field.props.name==="notes"),supported);
+ fillNew(tree,controller);if(supported)controller.setText({notes:"Préparer le dossier\nSeconde ligne"});
+ find(tree,"Select").find(field=>field.props.id.endsWith("-status")).props.onChange({target:{value:"draft"}});
+ tree=render();submit(tree);await delay(0);assert.equal(calls.length,1);
+ assert.equal(calls[0][1].notes,supported?"Préparer le dossier\nSeconde ligne":undefined);
+ assert.equal(calls[0][1].overlap_reason,"Reviewed explanation");
+ interrupted=false;submit(render());await delay(0);assert.equal(calls[0][3],calls[1][3]);assert.deepEqual(plain(calls[0][1]),plain(calls[1][1]));
+});
+
+test("Clearing saved visit notes sends an explicit empty value without changing overlap explanation", async () => {
+ const h=harness(),calls=[],value=visit({status:"draft",notes:"Notes sauvegardées"});
+ const controller=formModule(h,async(...args)=>{calls.push(args);return{id:value.id,version:9};});
+ const props={actorId:actor,contactId:value.contact_id,contactName:value.contact_name,value,saved(){}};
+ const render=()=>h.render(()=>controller.VisitForm(props));let tree=render();
+ assert.equal(find(tree,"Field").some(field=>field.props.name==="notes"),true);
+ controller.setText({notes:""});submit(render());await delay(0);
+ assert.equal(calls[0][1].notes,"");assert.equal(calls[0][1].overlap_reason,value.overlap_reason);assert.equal(calls[0][1].expected_version,8);
+});
+
 test("Visit creation sends only resolved instants and explicit context/property, preserving retry identity after an interrupted write",async()=>{
  const h=harness(),calls=[],saved=[];let fail=true;const controller=formModule(h,async(...args)=>{calls.push(args);if(fail)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return{id:randomUUID(),version:1};});const props={actorId:actor,contactId:randomUUID(),contactName:"Synthetic contact",saved:id=>saved.push(id),cancel(){}};const render=()=>h.render(()=>controller.VisitForm(props));let tree=render();fillNew(tree,controller);const propertyId=randomUUID();find(tree,"Property")[0].props.change(propertyId);tree=render();submit(tree);await delay(0);assert.equal(calls.length,0);find(tree,"Preview")[0].props.check();await delay(0);tree=render();submit(tree);submit(tree);await delay(0);assert.equal(calls.length,1);assert.equal(calls[0][1].contact_id,props.contactId);assert.equal(calls[0][1].property_id,propertyId);assert.equal(calls[0][1].start_at,at);assert.equal(calls[0][1].overlap_reason,"Reviewed explanation");assert.equal(calls[0][1].status,"scheduled");assert.equal(calls[0][1].participant_ids[0],actor);assert.equal(calls[0][1].start_local,undefined);tree=render();assert.equal(find(tree,"form")[0].props["data-live-dirty"],"true");fail=false;submit(tree);await delay(0);assert.equal(calls[0][3],calls[1][3]);assert.deepEqual(plain(calls[0][1]),plain(calls[1][1]));assert.equal(saved.length,1);assert.equal(find(render(),"form")[0].props["data-live-dirty"],undefined);
 });
@@ -39,6 +63,20 @@ test("A terminal/canonical-context conflict cannot be rebased and a comparison r
 });
 
 function recordModule(h,read,query){return loadServer("src/features/schedule/visit-record.tsx",{modules:{...common(h),"@/components/shared/crm-presentation":{CrmStatusBadge:"Badge"},"@/components/shared/record-actions":{RecordActions:"Actions"},"@/components/shared/record-entry":{RecordEntry:"Entry"},"@/features/contacts/numbered-pages":{NumberedPages:"Pages"},"./visit-route-drawer":{VisitRouteDrawer:"Drawer"},"@/components/ui/alert-dialog":dialogs,"@/features/contacts/use-query":{useQuery:query},"@/features/realtime/current-record":currentRecord,"@/lib/api/client":{ApiError,apiGet:read},"@/lib/api/command":{apiCommand:async()=>{}},"./visit-form":{VisitForm:"Booking"}},globals:{requestAnimationFrame:callback=>callback(),crypto:{randomUUID}}});}
+
+test("Visit notes stay separate from outcome and overlap text in details and original history", () => {
+ const h=harness(),original=visit({notes:"Notes actuelles <synthetic>",overlap_reason:"Chevauchement distinct",outcome:"Résultat distinct"});
+ const event={id:randomUUID(),version:1,action:"created",actor:{id:actor,display_name:"Synthetic actor"},occurred_at:at,reason:"Motif distinct",snapshot:{status:"scheduled",start_at:at,end_at:original.end_at,notes:"Notes originales"}};
+ const loaded=recordModule(h,async()=>original,path=>({value:path.endsWith("/history")?{items:[event]}:original,refresh(){}}));
+ const render=()=>h.render(()=>loaded.VisitRecord({id:original.id,actorId:actor}));let tree=render();
+ for(const text of [original.notes,original.overlap_reason,original.outcome])assert.ok(find(tree,"p").some(node=>node.props.children===text));
+ assert.ok(find(tree,"summary").some(node=>node.props.children==="Notes et chevauchement"));
+ find(tree,"details").find(node=>node.props.onToggle).props.onToggle({currentTarget:{open:true}});tree=render();
+ const history=find(tree,node=>node.type?.name==="VisitHistory")[0],rows=h.render(()=>history.type(history.props),"history");
+ assert.ok(find(rows,"p").some(node=>node.props.children==="Notes originales"));assert.ok(find(rows,"p").some(node=>node.props.children==="Motif distinct"));
+ assert.equal(contracts.visitSchema.safeParse({...original,notes:null}).success,false);
+ assert.equal(contracts.visitSchema.safeParse({...original,notes:"x".repeat(1001)}).success,false);
+});
 
 test("Visit details use one drawer with lazy paged card history, retain it during editing and remove all content on history denial",()=>{
  const h=harness(),original=visit({outcome:"Synthetic result"}),events=Array.from({length:41},(_,index)=>({id:randomUUID(),version:index+1,action:"updated",actor:{id:actor,display_name:"Synthetic actor"},occurred_at:at,reason:"Synthetic reason",snapshot:{status:"scheduled",start_at:at,end_at:original.end_at}}));let denied=false;const calls=[];const loaded=recordModule(h,async()=>original,path=>{calls.push(path);return path.endsWith("/history")?denied?{error:new ApiError("FORBIDDEN",403)}:{value:{items:events}}:{value:original,refresh(){}};});const render=()=>h.render(()=>loaded.VisitRecord({id:original.id,actorId:actor}));let tree=render();assert.equal(find(tree,"Drawer")[0].props.title,original.title);assert.equal(calls.some(path=>path.endsWith("/history")),false);const disclosure=find(tree,"details").find(n=>n.props.onToggle);disclosure.props.onToggle({currentTarget:{open:true}});tree=render();let history=find(tree,n=>n.type?.name==="VisitHistory")[0];const renderHistory=()=>h.render(()=>history.type(history.props),"history");let rows=renderHistory();assert.equal(find(rows,"Entry").length,20);find(rows,"Pages")[0].props.change(3);rows=renderHistory();assert.equal(find(rows,"Entry").length,1);const controls=find(tree,n=>n.type?.name==="VisitControls")[0];controls.props.edit();tree=render();assert.equal(find(tree,"Booking").length,1);history=find(tree,n=>n.type?.name==="VisitHistory")[0];assert.equal(find(renderHistory(),"Pages")[0].props.page,3);denied=true;renderHistory();h.effects.splice(0).forEach(callback=>callback());tree=render();assert.equal(find(tree,"Drawer")[0].props.title,"Visite");assert.equal(find(tree,"Booking").length,0);assert.equal(find(tree,"Badge").length,0);assert.equal(find(tree,"Error")[0].props.error.code,"FORBIDDEN");

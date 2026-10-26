@@ -1,5 +1,11 @@
 # Data model: dictionary, conceptual, logical, and physical views
 
+Selected migration addendum,2026-10-26: prepared revision0036_visit_notes adds
+visit.notes, an empty-default bounded string separate from overlap_reason/outcome.
+New event snapshots include it and a deferred guard matches current row/event.
+Historical JSON is not rewritten; note-bearing downgrade is refused. This schema
+has not been applied. [Contract](visit-scheduling-local.md).
+
 Migration `0035_project_photos` widens `document_purpose` so a WebP photo may
 reference a development as well as a physical property. One-parent, generated
 PDF and template-code checks are preserved. No record/file rewrite occurs.

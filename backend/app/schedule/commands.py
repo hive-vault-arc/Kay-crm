@@ -70,6 +70,7 @@ def fields_from_row(session: Session, row: Visit, reason: str) -> VisitFields:
                 "deal_id",
                 "enquiry_id",
                 "property_id",
+                "notes",
             )
         }
         | {"participant_ids": participants(session, row.id), "overlap_reason": reason}
@@ -96,6 +97,7 @@ def apply_visit(
             policy_version=1,
             schedule_version=1,
             outcome="",
+            notes="",
         )
         fields, action = body, "created"
     else:
@@ -139,6 +141,9 @@ def apply_visit(
         "overlap_reason",
     ):
         setattr(row, name, getattr(fields, name))
+    # Old clients omit this field: unrelated edits must preserve stored notes.
+    if "notes" in fields.model_fields_set:
+        row.notes = fields.notes
     if original_schedule is not None and original_schedule != (
         row.start_at,
         row.end_at,
@@ -169,6 +174,14 @@ def apply_visit(
     return row
 
 
+def command_payload(body: Body) -> dict[str, object]:
+    payload = body.model_dump(mode="json")
+    # Preserve pre-notes receipt hashes for the same legacy command body.
+    if isinstance(body, VisitFields) and "notes" not in body.model_fields_set:
+        payload.pop("notes", None)
+    return payload
+
+
 def command(
     database: Database,
     token: str,
@@ -182,7 +195,7 @@ def command(
     digest = keyed_digest(
         secret,
         "visit-command",
-        json.dumps(body.model_dump(mode="json"), sort_keys=True, separators=(",", ":")),
+        json.dumps(command_payload(body), sort_keys=True, separators=(",", ":")),
     )
     with database.session() as session, session.begin():
         session.scalar(select(Agency).where(Agency.id == AGENCY_ID).with_for_update())

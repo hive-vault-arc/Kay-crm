@@ -27,7 +27,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
-| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Separate general visit Notes persistence, inbox/settings refinements and native workflow review |
+| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox/settings refinements and native workflow review |
 | P7 remaining surfaces | Help topic hub, side-by-side guide cards and balanced reader implemented; other existing behavior retained | Dashboard/report/search/audit/jobs/settings compositions and native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
@@ -626,3 +626,45 @@ No backend, facade, worker, database, dependency, production, main, push or merg
 change was made in this slice.
 
 [Visit drawer evidence](design-migration-evidence/visits-2026-10-26.json).
+
+
+## Separate visit Notes: persistence and compatibility
+
+The selected prototype's general Notes now has its own optional visit field,
+independent of overlap explanations and terminal outcomes. Create/reschedule
+retain the complete existing command, actor/version and retry identity. Omitted
+notes on a legacy edit preserve the stored value; an explicit empty string clears
+it. Terminal commands retain notes without accepting an unrelated notes edit.
+New snapshots include the value while historical snapshots remain unchanged.
+The form/read view place notes with the existing subordinate disclosure, and
+comparison exposes current notes before an explicit conflict rebase.
+
+The facade opts into X-Kay-Visit-Notes:1 only on visit metadata and calendar/context.
+Older frontend clients receive their exact legacy record/list/history shape;
+projection copies never remove notes from stored JSON. New clients recognize an
+optional notes_supported flag for creation and an optional notes field on detail.
+Against an older backend, the field stays absent and the body omits it. Existing
+pre-notes receipt digests remain identical when notes was omitted. This header
+negotiates representation only; current contact scope still authorizes every read
+and write. Free/busy keeps only interval/busy metadata and receives no notes header.
+
+Revision0036_visit_notes is prepared, not applied. It adds an empty-default visit
+column and a deferred constraint requiring current notes to match the current
+immutable event snapshot. It never backfills or rewrites historical snapshots.
+Downgrade refuses development or retained note-bearing data/history. Deployment
+order requires the additive schema before the new backend; old clients can then
+remain in service. After notes exist, backend rollback needs a reviewed compatible
+build rather than deletion or a schema downgrade. A1000-character technical cap,
+aligned with existing visit text bounds, is an implementation proposal, not a new
+commercial/permission rule. No migration/database service or real data was used.
+
+Actual checks:198 frontend units, lint/typecheck and pinned Next16.4.2 production
+build pass;301 database-forbidden backend units pass (685 integration cases are
+explicitly deselected), Ruff passes and mypy passes for12 schedule modules. The
+Alembic script graph has36 revisions and one head0036 over0035 without opening a
+database. New real-PostgreSQL persistence/retry/clear/scope/free-busy/history-guard
+cases are prepared but not run. Source tests do not establish real trigger/locking,
+booking/security races or native input/focus acceptance. Both that final stage and
+the remaining P0-P7 implementation stay open; no main/push/merge or dependency change.
+
+[Visit Notes evidence](design-migration-evidence/visit-notes-2026-10-26.json).

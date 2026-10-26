@@ -63,6 +63,7 @@ test("calendar facade forwards exact filters/current session and requires comple
   assert.equal(result.status, 200);
   assert.equal(calls[0][0], path);
   assert.equal(calls[0][2].token, "synthetic-session");
+  assert.equal(calls[0][2].visitNotes, true);
   assert.equal(result.headers.get("cache-control"), "no-store");
   const { relay: bad } = facade({ status: 200, body: { items: [], total: 0 } });
   assert.equal((await bad("visits", new Request(origin + path), "synthetic-request")).status, 503);

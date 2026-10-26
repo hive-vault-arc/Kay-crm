@@ -1,5 +1,22 @@
 # KAY security check for changes
 
+## Separate visit Notes, 2026-10-26
+
+Notes uses existing scoped visit commands, current authority, reviewed versions,
+immutable true-actor events and actor/operation/target/key receipts. Legacy
+omission preserves notes and the pre-notes digest; explicit empty clears it.
+Outcomes and overlap reasons remain distinct. Notes never enter audit summaries,
+free/busy, public storage, logs or a new external transmission.
+
+The server facade's path-bounded representation opt-in does not grant authority.
+Legacy response projection copies remove only the new key and never mutate stored
+history. Older backend responses omit support, so new forms omit the input/body.
+A deferred notes/history guard and refusing downgrade are prepared in additive0036,
+which has NOT been applied. No real/development data or services were touched.
+Ruff/mypy,301 connection-forbidden backend units,198 frontend units and production
+build pass; real PostgreSQL trigger/race/scope and native security checks remain
+pending. [Evidence](03-planning/design-migration-evidence/visit-notes-2026-10-26.json).
+
 ## Routed visits and pending managed commands, 2026-10-26
 
 The persistent calendar layout does not replace page identity, UUID, date/query

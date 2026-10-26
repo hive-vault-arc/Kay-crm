@@ -1,5 +1,14 @@
 # Acceptance scenarios
 
+Selected visit-Notes mapping,2026-10-26 (AT-16/23/40): verify bounded separate
+notes creation, interrupted same-key retry, legacy omitted-field preservation,
+explicit clear and immutable true-actor snapshots; reject stale/denied edits and
+mismatched database notes/history. Confirm old-client response compatibility and
+unchanged metadata-free free/busy. The [PostgreSQL cases](../../backend/tests/test_visit_notes.py)
+are prepared, not executed. Connection-forbidden/controller/facade checks are
+recorded separately in [evidence](../03-planning/design-migration-evidence/visit-notes-2026-10-26.json); native/real-stack
+acceptance remains pending.
+
 ## Generated Lead/Deal PDF preparations (2026-10-20)
 
 All twelve supplied working models render a branded preparation sheet with

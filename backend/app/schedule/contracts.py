@@ -94,6 +94,7 @@ class VisitFields(Period):
     location: Text
     participant_ids: Annotated[list[UUID], Field(min_length=1, max_length=100)]
     overlap_reason: Reason = ""
+    notes: Reason = ""
     deal_id: UUID | None = None
     enquiry_id: UUID | None = None
     property_id: UUID | None = None
