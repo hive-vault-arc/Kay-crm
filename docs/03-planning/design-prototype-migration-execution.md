@@ -28,7 +28,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox/settings refinements and native workflow review |
-| P7 remaining surfaces | Help topic hub, side-by-side guide cards and balanced reader implemented; other existing behavior retained | Dashboard/report/search/audit/jobs/settings compositions and native review |
+| P7 remaining surfaces | Help topic hub, side-by-side guide cards, balanced reader plus selected settings navigation/overview implemented; other existing behavior retained | Dashboard/report/search/audit/jobs and detailed settings form compositions; native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -668,3 +668,38 @@ booking/security races or native input/focus acceptance. Both that final stage a
 the remaining P0-P7 implementation stay open; no main/push/merge or dependency change.
 
 [Visit Notes evidence](design-migration-evidence/visit-notes-2026-10-26.json).
+
+
+## Selected settings navigation and real overview
+
+The selected288px administration navigation now accompanies the overview, user
+list, user create/edit and working-hours routes. It becomes a compact local pill
+strip below1280px and centers the current section inside that strip, following
+the reference without changing the page scroll position. Each route retains its
+exact existing administrator/identity gate and UUID handling. The user-list action
+sits with its content heading; the duplicate Paramètres button is replaced by
+consistent navigation. Existing staff forms, reset/delete commands and policy
+preview/save services remain untouched. Detailed form composition remains open.
+
+The overview uses the real users total, only the returned first3 named summaries,
+and the actual policy's distinct open weekdays/capacity/timezone. It labels the
+account total as comptes rather than inventing an active-only aggregate. Empty,
+loading and independent transient failures have explicit content. Current authority
+denial on either read removes both summaries, including prior staff names. No
+prototype demo person/count/default hours are copied.
+
+Shared semantic surfaces, four existing roles, typed glyphs and shadcn Buttons
+compose the hierarchy; no page-width cap, new kit/token/font/chart/dependency is
+introduced. Four actual SSR/route cases cover current navigation, real total vs
+page counts, distinct weekdays, safe error/denial and exact admin destinations.
+Initial source typechecking caught unsupported19/15/17 icon size props; supported
+20/16 grid sizes now pass. New tests initially omitted explicit React/JSX runtime
+fixtures, then lint caught a children-prop fixture; both were corrected without
+relaxing the loader/lint contracts. Final lint/typecheck/build and202 frontend
+units pass (62 glyphs/420 Button sites/zero violations). Settings CSS parses
+with51 rules/4 existing roles/zero missing definitions. Native responsive layout,
+local-strip focus/reveal, zoom and real account workflows remain for final review.
+No backend, identity/session, credential, real account or main/push/merge change
+is part of this settings slice.
+
+[Settings source evidence](design-migration-evidence/settings-2026-10-26.json).

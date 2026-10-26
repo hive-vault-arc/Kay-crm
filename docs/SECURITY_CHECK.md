@@ -1,5 +1,16 @@
 # KAY security check for changes
 
+## Settings overview/navigation, 2026-10-26
+
+Exact existing administrator page guards and user UUID validation remain. Summary
+reads use existing strict users/policy schemas and current authorized endpoints.
+Account totals are not mislabelled active counts. Authority failure on either
+read hides both summaries; other failures render their own recovery state without
+prior names. No password/reset/deletion/session command, credential field or API
+contract changed. Tests contain only synthetic staff.202 frontend source tests,
+lint/typecheck/build pass; real account/current-authority/native security review
+remains pending. [Evidence](03-planning/design-migration-evidence/settings-2026-10-26.json).
+
 ## Separate visit Notes, 2026-10-26
 
 Notes uses existing scoped visit commands, current authority, reviewed versions,

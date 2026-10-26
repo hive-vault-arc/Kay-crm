@@ -1,5 +1,14 @@
 # KAY interface components: shadcn/ui working guide
 
+Selected settings composition,2026-10-26: SettingsWorkspace provides one page
+heading plus current-section administration navigation for overview, staff list/
+create/edit and hours routes. The source288px rail becomes local pills below1280px;
+active reveal changes only that strip. SettingsOverview composes shared surfaces,
+typed icons and Buttons with existing strict users/policy reads, actual total/
+distinct-weekday data, independent loading/error and whole-summary authority denial.
+It adds no generic chart or settings write. Detailed forms and native review
+remain pending. [Execution](../03-planning/design-prototype-migration-execution.md).
+
 2026-10-26 routed visit drawers use the shared RecordDrawer, persistent calendar
 layout, compact facts and bounded history cards. useDossierDraft now owns busy
 as well as dirty lifetime and releases deferred reads through the existing

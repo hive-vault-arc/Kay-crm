@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+Selected settings migration,2026-10-26: existing /settings, /settings/users,
+/settings/users/new, /settings/users/{uuid}/edit and /settings/working-hours retain
+their admin/identity guards and concrete routes while sharing the selected local
+navigation. Overview summaries now read current staff totals and schedule policy;
+no reference sample value is shipped. Detailed form/native verification remains
+open. [Execution](../03-planning/design-prototype-migration-execution.md).
+
 2026-10-26 S09 selected routed drawers: the persistent /visits layout owns the
 calendar, with the existing protected new/UUID pages presenting guarded visit
 panels. One primary command and Actions replace scattered detail buttons;

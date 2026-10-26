@@ -1,5 +1,12 @@
 # KAY QA command register
 
+Latest selected settings overview/navigation slice (2026-10-26): frontend lint,
+typecheck,202 units and pinned Next16.4.2 build pass (62 glyphs/420 Button sites,
+zero violations). Four SSR/route cases cover authoritative totals/weekdays,
+current-section routing and denied data. Settings CSS parses with51 rules and4
+existing roles. Native account/form/resize/focus acceptance remains pending.
+[Evidence](03-planning/design-migration-evidence/settings-2026-10-26.json).
+
 Latest separate-visit-Notes slice (2026-10-26): frontend lint/typecheck/build and
 198 units pass; backend explicit .venv Ruff and mypy (12 modules) pass. The
 connection-forbidden tests.unit_runner passes301, with685 integration cases
