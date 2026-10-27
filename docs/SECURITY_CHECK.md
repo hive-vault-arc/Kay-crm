@@ -1,5 +1,40 @@
 # KAY security check for changes
 
+## Selected photo gallery and managed upload, 2026-10-27
+
+The selected explicit send preserves the existing WebP/size/pixel/AV/ten-slot
+and private-file rules. An attempt retains exact parent/resume/source/converted
+bytes/key and known document ID. Uncertain metadata freezes replacement; fresh
+document identity/metadata/capability precede a fresh permit. Current completed
+transfer state resolves lost acknowledgement without another version. A rejected
+version never becomes clean. Agent cannot infer existing-row upload authority
+from read access; only the form's own accepted creation retains the old optional-
+capability fallback to a server-authorized permit. Explicit false always denies.
+
+Legacy authorized resume matches original filename/MIME/size and preserves bytes.
+No Contact identity/attribution, inventory ownership, storage/provenance or backend
+permission/slot serialization changes. New creation stays WebP-only. Source File/
+private proof/bytes are kept only in memory, never storage/logs/URL payloads.
+Metadata success no longer clears a managed form's dirty marker; the full workflow
+must accept it. Legacy unmanaged command behavior and live events remain.
+
+Optional cancellation reaches CSRF/metadata/permit/transfer and departed previews.
+Common bounded request signals avoid AbortSignal.any and release listeners/
+timers after body consumption, retaining existing bounds and private headers/
+cookie/no-store behavior. Current denial clears old composer/viewer projection;
+blob URLs are revoked and late unmounted completions cannot navigate or publish
+client success. Backend cancellation/rollback is not claimed. Gallery commands
+lock duplicates and use the managed busy boundary; archive/viewer focus has a
+surviving-gallery fallback.
+
+352 frontend units, lint/typecheck and Next16.4.2 build pass, with18 new actual-
+module cases. Two native isolated journeys are prepared and not run. No real
+document/record, database, scanner/worker/service, migration or private config
+was accessed. Source/compiled checks are not proof of native private bytes, current
+permissions, slot concurrency, actual scan/interrupt/merge, full stack, CI or human
+AFTER/product approval. Those gates and the broader migration remain open.
+[Evidence](03-planning/design-migration-evidence/photo-workspace-2026-10-27.json).
+
 ## Selected legal-owner and hierarchy forms, 2026-10-27
 
 The full-owner replacement command cannot be sent from a projection containing

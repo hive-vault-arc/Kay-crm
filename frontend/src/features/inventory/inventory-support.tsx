@@ -11,7 +11,7 @@ import type { Development } from "./development-contracts";
 export function InventoryPhotoRail({ id, kind, writable, archived, revision, changed }: {
   id: string; kind: "property" | "development"; writable: boolean; archived: boolean; revision: number; changed: () => void;
 }) {
-  return <RecordSection title="Photos" action={!archived ? <RecordDrawer label="Galerie" action="preview" title="Photos du dossier" description="Photos validées, transferts et reprises autorisés."><PropertyPhotos propertyId={id} parentKind={kind} writable={writable} uploadable onChanged={changed} /></RecordDrawer> : undefined}><div className="kay-inventory-photo-cover"><InventoryThumbnail key={revision} kind={kind} id={id} /></div></RecordSection>;
+  return <RecordSection title="Photos" action={!archived ? <RecordDrawer label="Galerie" action="photos" title="Photos du dossier" description="Photos validées, transferts et reprises autorisés."><PropertyPhotos propertyId={id} parentKind={kind} writable={writable} uploadable onChanged={changed} /></RecordDrawer> : undefined}><div className="kay-inventory-photo-cover"><InventoryThumbnail key={revision} kind={kind} id={id} /></div></RecordSection>;
 }
 
 export function InventoryParty({ link }: { link: Development["developer"] }) {

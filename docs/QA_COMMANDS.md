@@ -1,5 +1,18 @@
 # KAY QA command register
 
+Latest photo-workspace slice (2026-10-27):352 frontend units pass, including18 new
+actual conversion/controller/gallery/media/transfer/request-lifetime cases. Lint/
+typecheck and pinned Next16.4.2 build pass (63 glyphs,91 consumers/321 icon sites,
+466 Button sites/zero violations). Selected gallery cards and explicit upload
+step retain private WebP/AV/permit/ten-slot rules and exact uncertain retries.
+Common managed markers survive metadata-only writes; optional signals and bounded
+request composition do not require AbortSignal.any. Initial hook/fixture/loader
+failures were corrected, not recorded as passing attempts. Two native isolated
+journeys are prepared in `tests/e2e/photo-workspace.spec.ts`, not executed; older
+photo/inventory selectors remain. Native/real transfer/role/slot/scanner/race/
+full-stack/AFTER/CI/owner review is pending. No backend/data/service operation.
+[Evidence](03-planning/design-migration-evidence/photo-workspace-2026-10-27.json).
+
 Latest inventory-form slice (2026-10-27):334 frontend units pass, including14 new
 actual model/controller/command cases for protected legal-owner lists, explicit
 comparison/rebase/reload, exact retry keys, duplicate locks, typed hierarchy

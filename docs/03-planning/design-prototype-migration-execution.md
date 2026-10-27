@@ -25,7 +25,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to62 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
-| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine, clickable short steppers, owner identity/reuse and legal-owner/hierarchy forms implemented; typed mixed-programme query correction | Remaining exact owner directory/drawer entry, photo forms and native review |
+| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms and photo gallery/upload step implemented; typed mixed-programme query correction | Remaining exact owner directory/drawer entry and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
@@ -1412,3 +1412,59 @@ Repository gate passes8729 indexed files/zero forbidden or oversized/14 ignore
 probes. Docs pass22 sprints,1245 links,42 mappings,13 Mermaid and12 API JSON
 examples. Cached diff check passes. The unrelated35 lesson lines and motion plan
 remain excluded; main remains the original e0bdc09 base.
+
+
+## Selected photo gallery and focused upload — 2026-10-27
+
+Continued P4 from `a7f85f6`. The frozen gallery/recovery/upload composition now
+supplies a compact header/count, explicit Ajouter une photo entry, tonal3:2 cards
+and a focused form in the same drawer body. Staging a file does not send it;
+explicit submit starts automatic WebP preparation/private transfer. This keeps
+the selected intentional UX rather than the older immediate-on-selection flow.
+Shared insets/sections/picker/footer, container-based phone column and semantic
+state/actions remain. The exact Camera vector joins the typed/hash-checked
+registry; no runtime package, chart, theme or prototype change.
+
+An upload attempt now owns parent/resume/source/converted bytes/key/known ID.
+Unknown metadata freezes replacement; exact retry remains possible even at ten
+slots. A fresh matching current read follows a creation receipt or known attempt
+before any permit. Current capability/metadata wins over stale props. Lost byte
+acknowledgement resolves real pending/clean/rejected state without appending a
+version; quarantine/rejection is never relabelled clean. Legacy authorized JPEG/
+PNG resume retains original exact metadata/bytes, while new creation stays WebP.
+Agent existing-row capability and own accepted-creation legacy fallback remain
+separate; current backend authority still controls every permit/transfer.
+
+Managed form dirtiness now survives metadata-only apiCommand success; the full
+controller accepts the draft. Optional trailing signals preserve old timeout
+callers. API/private download cancellation uses bounded AbortController signals
+without AbortSignal.any, releasing timers/listeners after body consumption and
+retaining existing bounds/private headers/cookies/no-store. This does not finish
+older-browser history fallback. Departed previews abort/revoke URLs, definite
+denial clears private composer/viewer context, and late success cannot navigate.
+Gallery command locks/busy state and archive/viewer fallback focus are explicit.
+
+Eighteen actual-module cases are registered;352 frontend units pass. Lint/typecheck
+and pinned Next16.4.2 build pass (63 glyphs,91 consumers/321 icon sites/466 Buttons/
+zero violations). Initial hook dependency, synthetic changing-parent retry and
+missing crypto-loader failures were corrected, not called passing attempts.
+Two1440px-property/390px-development native journeys are prepared, not executed;
+older photo/inventory selectors still describe the old flow and remain open.
+[Photo contract](../04-design/photo-workspace-local.md) and security check record
+scope and limits. Source/compiled checks confirm the frozen254 inputs unchanged,
+exact Camera source/hash,3:2 image, phone column and important hidden display.
+Those checks are not native or rendered visual evidence.
+
+Original-machine mandatory skills remain unavailable/not claimed; dense CRM
+excludes the marketing workflow, shared system/React guidance and AFTER timing
+remain. Owner directory/drawer entry, broader per-domain/form/offer/PDF/provenance
+and report/work refinements, legacy history and final native/current-role/slot/
+worker/scan/private-byte/race/SQL/full-stack/CI/AFTER/owner gates remain open.
+No real records, service, DB, migration, private config, main/push/merge or goal
+completion. [Evidence](design-migration-evidence/photo-workspace-2026-10-27.json).
+
+
+Repository gate passes8737 indexed files/zero forbidden or oversized/14 ignore
+probes. Docs pass22 sprints,1246 links,42 mappings,13 Mermaid and12 API JSON
+examples. Cached diff check passes. The protected35 pre-existing lesson lines and
+motion plan remain excluded, with main unchanged at the original e0bdc09 base.

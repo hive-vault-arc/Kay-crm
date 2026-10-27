@@ -26,6 +26,7 @@ export const MoonIcon = createPrototypeIcon("moon");
 export const MonitorIcon = createPrototypeIcon("monitor");
 
 export const CarIcon = createPrototypeIcon("car");
+export const CameraIcon = createPrototypeIcon("camera");
 export const ClockIcon = createPrototypeIcon("clock");
 export const AlertIcon = createPrototypeIcon("alert");
 export const EmptyFolderIcon = createPrototypeIcon("empty-folder");

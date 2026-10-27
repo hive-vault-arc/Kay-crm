@@ -2,11 +2,12 @@ import { z } from "zod";
 import { apiGet, ApiError } from "@/lib/api/client";
 import { meSchema } from "@/lib/auth/contracts";
 import { permitSchema, type TransferPermit } from "./contracts";
+import { boundedRequestSignal } from "@/lib/api/request-signal";
 
 type BoundPermit = TransferPermit & { binding: string };
-export async function requestFilePermit(body: { action: "upload" | "download"; document_id: string; expected_version: number; version_id?: string }): Promise<BoundPermit> {
-  const identity = await apiGet("/api/v1/auth/me", meSchema);
-  const permit = await apiGet("/api/v1/files/permits", permitSchema, undefined, { body, csrf: identity.csrf_token });
+export async function requestFilePermit(body: { action: "upload" | "download"; document_id: string; expected_version: number; version_id?: string }, signal?: AbortSignal): Promise<BoundPermit> {
+  const identity = await apiGet("/api/v1/auth/me", meSchema, signal);
+  const permit = await apiGet("/api/v1/files/permits", permitSchema, signal, { body, csrf: identity.csrf_token });
   return { ...permit, binding: identity.csrf_token };
 }
 
@@ -46,10 +47,13 @@ export function uploadBytes(permit: BoundPermit, file: File, progress: (value: n
   });
 }
 
-export async function downloadBytes(permit: BoundPermit): Promise<Blob> {
+export async function downloadBytes(permit: BoundPermit, signal?: AbortSignal): Promise<Blob> {
   let result: Response;
-  try { result = await fetch(permit.transfer_url, { credentials: "omit", cache: "no-store", headers: { "X-File-Permit": permit.token, "X-File-Session": permit.binding }, signal: AbortSignal.timeout(90_000) }); }
-  catch { throw new ApiError("FILE_TRANSFER_INTERRUPTED", 503); }
-  if (!result.ok) throw transferError(await result.json().catch(() => null), result.status);
-  return result.blob();
+  const bounded = boundedRequestSignal(signal, 90_000);
+  try {
+    try { result = await fetch(permit.transfer_url, { credentials: "omit", cache: "no-store", headers: { "X-File-Permit": permit.token, "X-File-Session": permit.binding }, signal: bounded.signal }); }
+    catch { throw new ApiError("FILE_TRANSFER_INTERRUPTED", 503); }
+    if (!result.ok) throw transferError(await result.json().catch(() => null), result.status);
+    return await result.blob();
+  } finally { bounded.release(); }
 }

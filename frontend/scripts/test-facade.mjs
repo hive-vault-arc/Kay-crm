@@ -36,6 +36,7 @@ try {
     "tests/unit/owners.test.mjs",
     "tests/unit/owner-forms.test.mjs",
     "tests/unit/inventory-forms.test.mjs",
+    "tests/unit/photo-workspace.test.mjs",
     "tests/unit/generated-documents.test.mjs",
     "tests/unit/project-links.test.mjs",
     "tests/unit/theme.test.mjs",

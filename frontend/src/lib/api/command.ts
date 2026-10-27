@@ -2,12 +2,14 @@ import { z } from "zod";
 import { apiGet } from "./client";
 import { meSchema } from "@/lib/auth/contracts";
 
-export async function apiCommand<T>(path: `/api/v1/${string}`, body: unknown, schema: z.ZodType<T>, key: string, method: "POST" | "PATCH" | "PUT" | "DELETE" = "POST", timeoutMs?: number) {
-  const identity = await apiGet("/api/v1/auth/me", meSchema);
+export async function apiCommand<T>(path: `/api/v1/${string}`, body: unknown, schema: z.ZodType<T>, key: string, method: "POST" | "PATCH" | "PUT" | "DELETE" = "POST", timeoutMs?: number, signal?: AbortSignal) {
+  const identity = await apiGet("/api/v1/auth/me", meSchema, signal);
   const form = typeof document !== "undefined" ? document.activeElement?.closest<HTMLElement>("form, [role=dialog], [role=alertdialog]") : null;
-  const result = await apiGet(path, schema, undefined, { body, csrf: identity.csrf_token, key, method, timeoutMs });
+  const result = await apiGet(path, schema, signal, { body, csrf: identity.csrf_token, key, method, timeoutMs });
   if (form && !path.startsWith("/api/v1/realtime/")) {
-    delete form.dataset.liveDirty;
+    // A metadata reservation may be only one step of a managed form's command.
+    // Its controller accepts the draft after the complete workflow succeeds.
+    if (!form.hasAttribute("data-draft-managed")) delete form.dataset.liveDirty;
     window.dispatchEvent(new Event("kay:command-saved"));
   }
   return result;

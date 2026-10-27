@@ -1616,3 +1616,20 @@ A new passing standalone test file is not part of the broad gate until registere
 Check the final case count and rerun that real gate after registration; never
 report the unchanged old total as coverage of the new cases. Prepared native
 journeys and compiled CSS checks remain distinct from executed browser evidence.
+
+
+## 2026-10-27 — Metadata acknowledgement is not a completed file workflow
+
+A managed upload must keep its dirty marker until the full transfer is accepted;
+shared command helpers cannot clear it after metadata reservation alone. Keep
+exact parent/resume/source/converted bytes/key across an unknown response and
+freeze file replacement until success or explicit discard. Read current matching
+metadata/capability before a new permit; a lost transfer acknowledgement may
+already be pending, clean or rejected and must not create a duplicate version.
+Existing-row upload capability is distinct from this form's own accepted creation.
+
+Cancellation must cover body consumption as well as response headers, release
+its timer/listeners, and not assume AbortSignal.any exists. Tests need stable
+attempt context and the runtime globals used by actual modules. Prepared browser
+cases, compiled geometry and private-URL lifecycle units are not native transfer,
+current-permission, scanner, slot-concurrency or human visual evidence.

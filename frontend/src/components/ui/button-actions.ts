@@ -4,7 +4,7 @@ import {
   ColumnsIcon, ListIcon, KanbanIcon, CompareIcon, CompletedIcon, ContactIcon, ContactsIcon, DealIcon,
   DeleteIcon, DownloadIcon, EditIcon, FileIcon, EnquiryIcon, FinanceIcon,
   FilterIcon, HelpIcon, ForwardIcon, HidePasswordIcon, PasswordIcon, PropertyIcon,
-  RefreshIcon, RestoreIcon, SearchIcon, SettingsIcon, ShowPasswordIcon,
+  RefreshIcon, RestoreIcon, SearchIcon, SettingsIcon, ShowPasswordIcon, CameraIcon,
   SignOutIcon, TaskIcon, UploadIcon, PhoneIcon, EmailIcon,
 } from "@/components/icons";
 
@@ -38,6 +38,7 @@ export const buttonActions = {
   filter: { icon: FilterIcon, tone: "warning", variant: "outline" },
   reset: { icon: RestoreIcon, tone: "neutral", variant: "outline" },
   refresh: { icon: RefreshIcon, tone: "info", variant: "outline" },
+  photos: { icon: CameraIcon, tone: "neutral", variant: "outline" },
   retry: { icon: RefreshIcon, tone: "info", variant: "outline" },
   compare: { icon: CompareIcon, tone: "purple", variant: "outline" },
   select: { icon: CompletedIcon, tone: "success", variant: "outline" },
