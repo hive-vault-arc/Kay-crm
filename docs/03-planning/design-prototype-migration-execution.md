@@ -23,7 +23,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | --- | --- | --- |
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to62 source-pinned glyphs and selected status palette | Native review later |
-| P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields and click/unload draft guards implemented | Remaining inventory/work/admin form parity, Back/Forward handling, responsive focus and native interaction checks |
+| P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
@@ -1240,3 +1240,60 @@ present in compiled CSS. Repository gate passes8712 indexed files/zero forbidden
 or oversized/14 ignore probes; docs pass22 sprints,1242 links,42 mappings,
 13 Mermaid and12 API JSON examples. Cached diff check passes. The protected
 35-line lesson addition and unrelated motion plan are left out of the commit.
+
+## Shared draft settlement and Navigation API history — 2026-10-27
+
+Continued P2 from `de85c52`. Existing markers/dialog/link behavior remain the
+foundation. Final confirmation now rechecks the actual scope for a pending
+command and recollects current dirty nodes. Failed approved async navigation
+restores surviving markers; success alone emits draft release. Actual values
+are untouched. Reload/cross-document unload also covers clean-but-busy managed
+forms, subject to the browser's prompt/activation boundary.
+
+Inspected Next16.4.2 source restores its tree through a non-capture popstate
+listener. The new available-Navigation-API path retains the current entry for
+cancelable dirty traversals and captures an uncancelable same-document move
+before Next. It returns to the editor's existing entry before confirmation,
+then resumes only the reviewed destination key. Busy commands block discard.
+Hash-only movement stays available; distinct cached entries with identical URLs
+remain guarded. Framework push/replace changes remain owned by Next, with no
+history writes, sentinel entries, method wrappers or internal-state copies.
+
+Rapid opposite actions retain the latest destination and target the original
+absolute return key. Three automatic return attempts and a visible explicit
+retry are integration proposals pending native review. Cleanup removes listeners
+and prevents late prompts. Normative platform behavior and inspected dependency
+source are linked in the [draft-navigation contract](../04-design/draft-navigation-local.md).
+No documentation assertion or fake event is treated as native platform evidence.
+
+Fifteen new units exercise the actual controller, discard helper, workspace
+unload/input tracker and installed Next AST listener assumption. Existing cancel/
+confirm tests additionally start a command after the dialog opens. The first
+full run found one old fixture missing newly imported helpers; its real helpers
+were supplied and305 frontend tests then pass. Lint/typecheck/Next16.4.2 build
+pass (62 glyphs,88 consumers/309 icon sites/450 Button sites/zero violations).
+One browser integration source uses real Next entries with synthetic DOM drafts;
+it is prepared, not executed, and is not full business-form/gesture/focus proof.
+
+Browsers without Navigation API still have only link/unload protection. Their
+same-document fallback is explicitly unfinished work; no browser baseline is
+raised or older device silently excluded. P2 is not complete. Remaining full
+field/form/document/offer/PDF/provenance reconciliation and final native/real
+stack/CI/AFTER/owner gates stay open. Original-machine mandatory skills remain
+unavailable/not claimed; dense CRM excludes the marketing workflow, existing
+React/shared primitives and AFTER timing remain. No backend/API, new style/
+dependency/chart, real data/service, production, main/push/merge or goal completion.
+[History evidence](design-migration-evidence/history-drafts-2026-10-27.json).
+
+Final source review also corrected form-as-scope lookup: root dirty/busy markers
+participate alongside descendants. The existing shared case covers root scopes
+and a command starting after confirmation opens.305 units pass after that change;
+typecheck/build are rerun. All254 frozen source inputs remain unchanged. Repository
+gate passes8718 indexed files/zero forbidden or oversized/14 ignore probes; docs
+pass22 sprints,1243 links,42 mappings,13 Mermaid and12 API JSON examples. Cached
+diff check passes, with the protected35 lesson lines and motion plan excluded.
+
+Mixed cancelable/uncancelable actions also invalidate the older confirmation
+callback before restoration finishes. A stale click cannot resume an outdated
+destination. Settled movement clears obsolete history prompts; a same-entry
+framework update does not. This counterexample is covered by the fifteenth case.

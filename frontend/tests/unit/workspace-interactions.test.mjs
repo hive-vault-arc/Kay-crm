@@ -298,6 +298,8 @@ test("Unsaved guard retains drafts on cancel, blocks pending commands and discar
     react: harness.react, "react/jsx-runtime": runtime, "next/navigation": {},
     "@/components/ui/alert-dialog": { AlertDialog: "Dialog", AlertDialogCancel: "Cancel", AlertDialogContent: "Content", AlertDialogDescription: "Description", AlertDialogTitle: "Title" },
     "@/components/ui/button": { Button: "Button" }, "@/lib/navigation-intent": {},
+    "@/lib/discard-draft-action": loadServer("src/lib/discard-draft-action.ts"),
+    "@/lib/history-draft-guard": loadServer("src/lib/history-draft-guard.ts"),
   } });
   const render = () => harness.render(useUnsavedGuard);
   render().request(() => ran++, scope); let guard = render();
@@ -305,9 +307,16 @@ test("Unsaved guard retains drafts on cancel, blocks pending commands and discar
   guard.dialog.props.onOpenChange(false); assert.equal(render().dialog.props.open, false); assert.equal(dirty.dataset.liveDirty, "true");
   busy = true; render().request(() => ran++, scope); assert.equal(render().dialog.props.open, false); assert.equal(ran, 0);
   busy = false; render().request(() => ran++, scope); guard = render();
+  busy = true; find(guard.dialog, "Button").find(node => node.props.action === "forward").props.onClick();
+  assert.equal(ran, 0); assert.equal(dirty.dataset.liveDirty, "true"); assert.equal(render().dialog.props.open, true);
+  busy = false;
   find(guard.dialog, "Button").find(node => node.props.action === "forward").props.onClick();
   assert.equal(ran, 1); assert.equal(dirty.dataset.liveDirty, undefined); assert.equal(render().dialog.props.open, false);
   render().request(() => ran++, scope); assert.equal(ran, 2);
+  const ownForm={dataset:{liveDirty:"true"},matches:selector=>selector.includes("aria-busy")?busy:ownForm.dataset.liveDirty==="true",querySelector:()=>null,querySelectorAll:()=>[]};
+  busy=true;render().request(()=>ran++,ownForm);assert.equal(ran,2);assert.equal(render().dialog.props.open,false);
+  busy=false;render().request(()=>ran++,ownForm);assert.equal(ran,2);assert.equal(render().dialog.props.open,true);
+  find(render().dialog,"Button").find(node=>node.props.action==="forward").props.onClick();assert.equal(ran,3);assert.equal(ownForm.dataset.liveDirty,undefined);
 });
 
 test("Deal stage menu delegates stock actions and preserves the reviewed ordinary-transition version", async () => {

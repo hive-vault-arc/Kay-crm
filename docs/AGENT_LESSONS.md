@@ -1573,3 +1573,16 @@ without real source keys or app/database connections. Keep uncertain submission
 bytes stable, bind refresh to the known receipt ID and block late duplicate
 handlers after acknowledgement. Shared styling must not add staff controls or
 turn illustrative prototype validation into a different intake business rule.
+
+
+## 2026-10-27 — Treat browser traversal as a separate draft boundary
+
+Click/unload guards do not establish Back/Forward protection. Inspect the pinned
+router's restore listener and respect navigation cancelability; do not add fake
+history entries or copy framework-private state to obtain a passing fixture.
+Recheck busy commands at confirmation/resume, restore surviving markers after
+failed approved navigation and emit release only on success. Preserve hash-only
+movement without confusing identical-URL cached entries. Pin integration
+assumptions in meaningful tests, update explicit test-loader imports when shared
+helpers change and keep unsupported browsers/native gestures as open work.
+Synthetic event/state-machine checks are not native browser or cache evidence.

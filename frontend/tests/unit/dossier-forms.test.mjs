@@ -137,6 +137,8 @@ test("Navigation leaves managed picker input clean and blocks page links for an 
   const link={href:"https://crm.synthetic.invalid/leads",target:"",hasAttribute:()=>false};
   const document={activeElement:new HTMLElement(),addEventListener:(name,callback)=>{events[name]=callback;},removeEventListener(){},querySelector:selector=>selector.includes("aria-busy")?(busy?{}:null):form.dataset.liveDirty==="true"?form:null,querySelectorAll:()=>form.dataset.liveDirty==="true"?[form]:[]};
   const modules={...h.modules,react:{...h.modules.react,useCallback:callback=>callback,useEffect:callback=>effects.push(callback)},"./navigation-intent":{},"@/lib/navigation-intent":loadServer("src/lib/navigation-intent.ts")};
+  modules["@/lib/discard-draft-action"]=loadServer("src/lib/discard-draft-action.ts");
+  modules["@/lib/history-draft-guard"]=loadServer("src/lib/history-draft-guard.ts");
   for(const name of ["AlertDialog","AlertDialogCancel","AlertDialogContent","AlertDialogDescription","AlertDialogTitle"])modules["@/components/ui/alert-dialog"]={...modules["@/components/ui/alert-dialog"],[name]:name};
   const loaded=loadServer("src/components/shared/unsaved-guard.tsx",{modules,globals:{document,Element,HTMLElement,location:{href:"https://crm.synthetic.invalid/deals/new",origin:"https://crm.synthetic.invalid"},window:{addEventListener:(name,callback)=>{windowEvents[name]=callback;},removeEventListener(){},dispatchEvent(){}},Event:class Event{}}});
   const render=()=>h.render(()=>loaded.WorkspaceNavigationGuard());render();effects.shift()();

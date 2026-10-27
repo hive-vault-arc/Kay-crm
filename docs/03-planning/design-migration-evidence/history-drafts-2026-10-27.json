@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "de85c52",
+  "scope": "Shared discard settlement, clean-busy unload protection and feature-detected Navigation API draft history",
+  "checks": [
+    { "command": "npm run test:unit", "cwd": "frontend", "exitCode": 0, "passed": 305, "failed": 0, "newCases": 15 },
+    { "command": "npm run lint", "cwd": "frontend", "exitCode": 0, "semanticGlyphs": 62, "iconConsumers": 88, "iconSites": 309, "buttonSites": 450, "violations": 0 },
+    { "command": "npm run typecheck", "cwd": "frontend", "exitCode": 0 },
+    { "command": "npm run build", "cwd": "frontend", "exitCode": 0, "next": "16.4.2" },
+    { "command": "node .github/scripts/repository-check.mjs", "exitCode": 0, "indexedFiles": 8718, "forbiddenOrOversized": 0, "ignoreProbes": 14 },
+    { "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly", "exitCode": 0, "sprints": 22, "links": 1243, "acceptanceMappings": 42, "mermaidSources": 13, "apiJsonExamples": 12 },
+    { "command": "git diff --cached --check", "exitCode": 0 }
+  ],
+  "source": { "prototypeInputs": 254, "drift": 0, "newCssDependenciesChartsOrApi": false, "frameworkBoundary": "Installed Next16.4.2 non-capture popstate listener passes unchanged event.state to its restore path; AST case pins that integration assumption" },
+  "invariants": ["No input-value read/copy/log/storage", "No history writes/sentinels/method wrappers or Next private-state copies", "Discard confirmation and history resume recheck outstanding commands", "Form-as-scope includes its own dirty/busy markers", "Failed approved navigation restores surviving markers; release after success", "Cancelable dirty traversal retains current entry; uncancelable same-document traversal returns before Next restoration", "Resume only reviewed entry key", "Hash-only movement stays available; identical-URL distinct entries remain guarded", "Bounded return retry and listener cleanup"],
+  "proposals": ["Three automatic return attempts and an explicit visible retry", "Feature-detected platform integration requires native verification and owner review"],
+  "correctedAttempts": ["One existing dossier fixture lacked new helper imports; corrected and full suite rerun"],
+  "preparedBrowser": "frontend/tests/e2e/history-drafts.spec.ts; real Next entries with synthetic DOM draft/busy fixtures, not executed",
+  "remaining": ["Same-document history fallback for browsers without Navigation API; no browser minimum change", "Actual business-form/native back gestures/history menus/popup focus/cache/reload/stop/races/zoom/accessibility", "Browser/CUA/CDP/app HTTP under the existing automatic rejection", "Full-stack/AFTER/owner/CI and other P0-P8 reconciliation"],
+  "preserved": ["Original frozen design", "Backend records/authorization/idempotency/private transfers", "Unrelated35-line lesson change and motion plan", "main, push, merge and production"],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

@@ -56,6 +56,7 @@ try {
     "tests/unit/intake-workspace.test.mjs",
     "tests/unit/audit-workspace.test.mjs",
     "tests/unit/draft-lifecycle.test.mjs",
+    "tests/unit/history-drafts.test.mjs",
     "tests/unit/kanban.test.mjs",
     "tests/unit/realtime.test.mjs",
     "tests/unit/help.test.mjs",

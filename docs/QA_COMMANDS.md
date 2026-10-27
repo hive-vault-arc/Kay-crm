@@ -1,5 +1,17 @@
 # KAY QA command register
 
+Latest draft/history slice (2026-10-27):305 frontend units pass, including15 new
+history/rapid movement/confirmation/busy/marker settlement/workspace/Next-listener
+cases. Lint/typecheck and Next16.4.2 build pass (62 glyphs,88 consumers/309 icon
+sites/450 Button sites/zero violations). An existing dossier fixture initially
+missed new helper imports; it was corrected and the full suite rerun successfully.
+`tests/e2e/history-drafts.spec.ts` is prepared, not run. When authorized, the
+existing `npm run test:e2e -- tests/e2e/history-drafts.spec.ts` command runs it
+through the isolated supervised stack; its synthetic DOM boundary does not prove
+all business-form/native gestures or focus. Older-browser same-document fallback,
+full native/stack/AFTER/owner gates remain open. No backend/data/service operation.
+[Evidence](03-planning/design-migration-evidence/history-drafts-2026-10-27.json).
+
 Latest public-intake UI slice (2026-10-27):376 connection-forbidden backend units
 pass/696 integration cases deselected, including13 new exact-public-asset/Host/
 query/cookie/private-path/response-cap ASGI cases. Explicit backend/.venv Ruff,

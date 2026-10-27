@@ -1,5 +1,32 @@
 # KAY security check for changes
 
+## Selected draft/history protection, 2026-10-27
+
+Navigation protection reads boolean dirty/busy markers and existing opaque entry
+keys/URLs only. It never reads input values, copies Next's private router state,
+persists/logs drafts, writes history or submits records. Standard dialog consent
+still gates discard; confirmation and history resume both recheck busy commands.
+Form-as-scope calls include the form's own markers, not only descendants.
+Failed approved asynchronous navigation restores surviving draft markers and
+does not announce a successful release. Native unload also covers clean pending
+managed forms, subject to browser prompt/activation rules.
+
+The Navigation API path cancels when permitted, otherwise restores the existing
+editor entry before prompting, with capture ordered before Next's inspected
+non-capture restore listener. It resumes only the reviewed key; bounded failures
+keep the editor mounted and offer retry. No backend authorization, session,
+version, idempotency or atomicity boundary is replaced by this client guard.
+
+305 frontend units and lint/typecheck/Next16.4.2 build pass. Fifteen new units
+exercise the actual controller/helpers/workspace boundary and installed Next
+listener shape, including invalidation of a superseded confirmation callback.
+One existing fixture's new helper imports were corrected after
+a failed run. A real-router browser fixture is prepared, not executed. Older
+browser same-document fallback, native/gesture/cache/race/focus/accessibility,
+real stack and owner/AFTER gates remain open. No supported-browser narrowing,
+real records/service/DB, backend/API/dependency/CSS change or main promotion.
+[Evidence](03-planning/design-migration-evidence/history-drafts-2026-10-27.json).
+
 ## Selected public intake form and fixed assets, 2026-10-27
 
 Only two exact public selected-design images are added to the simulator's

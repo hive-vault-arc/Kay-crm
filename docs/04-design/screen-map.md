@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+Selected draft navigation,2026-10-27: managed shell forms retain edits on cancel
+and recheck outstanding commands at final discard. Available Navigation API
+history uses the same confirmation, returning to the existing editor entry before
+uncancelable same-document restoration reaches Next. No history/state rewrite.
+Reload protection includes clean busy forms. Older-browser same-document fallback
+and native verification remain open. [Contract](draft-navigation-local.md).
+
 Selected public-intake migration,2026-10-27: `/website-simulator` renders the
 Demande web card used by the existing separate127.0.0.1 simulator. It shares the
 selected KAY logo/background and labelled form/receipt states, without staff
