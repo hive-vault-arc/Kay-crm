@@ -1,5 +1,29 @@
 # KAY security check for changes
 
+## Selected public intake form and fixed assets, 2026-10-27
+
+Only two exact public selected-design images are added to the simulator's
+loopback read proxy. Host, verified TLS/CA, disabled redirects/environment
+proxies, response cap, no-store and non-forwarded cookies/authorization remain.
+No arbitrary image/optimizer URL, staff API or signing-key/configuration access
+is added. Source/HMAC/current routing/receipt/outbox authority is untouched.
+
+The client keeps exact uncertain retry bytes/source identity/time, omits cookies
+and referrer, rejects redirects and accepts only receipt ID/state. Synchronous
+guards also reject late duplicate send handlers after acknowledgement. Known
+receipt refresh rejects a foreign returned ID, and cannot send another enquiry.
+Queued/failed state cannot restart; definitive422/413 preserves fields for a
+corrected new submission. After acknowledgement, hidden draft/raw JSON is cleared.
+Unmount aborts; no browser storage, URL payload, credential or private CRM result.
+
+376 database-connection-forbidden backend units pass/696 integration deselected;
+13 new ASGI cases use a synthetic mocked opener without reading any real key/CA
+or connecting to an app/database. Seven new frontend cases join290 passing units.
+Ruff/format/mypy, frontend lint/typecheck/Next16.4.2 build pass. Actual public
+delivery/HMAC/worker/database/revocation/race/load, native/AFTER and owner gates
+remain pending. No real source/CLI/configuration/service/data or main promotion.
+[Evidence](03-planning/design-migration-evidence/intake-ui-2026-10-27.json).
+
 ## Selected contact-import review, 2026-10-27
 
 The existing M/A/current-session/CSRF/Origin/private streaming boundary and

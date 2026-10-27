@@ -1,5 +1,13 @@
 # KAY screen map and navigation contract
 
+Selected public-intake migration,2026-10-27: `/website-simulator` renders the
+Demande web card used by the existing separate127.0.0.1 simulator. It shares the
+selected KAY logo/background and labelled form/receipt states, without staff
+navigation or APIs. Only two exact public images join the fixed read proxy;
+source signing and public receipt-only responses remain unchanged. The real
+message stays optional. Unknown send retries exact bytes; receipt refresh binds
+the known ID. Native/real-stack review is pending. [Contract](website-intake-local.md).
+
 Selected contact-import migration,2026-10-27: `/leads?view=import&batch=UUID`
 keeps current M/A authority and the same protected batch. Shared file picker,
 initial fallback, collapsed corrected-file composer and top report actions fit

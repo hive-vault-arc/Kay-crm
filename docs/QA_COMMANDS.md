@@ -1,5 +1,16 @@
 # KAY QA command register
 
+Latest public-intake UI slice (2026-10-27):376 connection-forbidden backend units
+pass/696 integration cases deselected, including13 new exact-public-asset/Host/
+query/cookie/private-path/response-cap ASGI cases. Explicit backend/.venv Ruff,
+format and mypy pass. Frontend290 units pass, including7 new exact-byte retry,
+validation/rate-limit, receipt binding/refresh, abort and selected composition
+cases; lint/typecheck/Next16.4.2 build pass (62 glyphs,88 consumers/309 icon sites,
+449 Button sites/zero violations). Prepared browser selectors are updated, not
+run. Native/full-stack/HMAC/worker/database/race/load/AFTER/owner gates remain
+pending. No real source/configuration/CLI/service/data or main promotion.
+[Evidence](03-planning/design-migration-evidence/intake-ui-2026-10-27.json).
+
 Latest contact-import UI slice (2026-10-27):283 frontend units pass, including15
 new changed-preview/unknown-retry/mapping/parent/row/lookup-denial/private-transfer/
 facade cases. Final lint/typecheck and pinned Next16.4.2 build pass (62 glyphs,

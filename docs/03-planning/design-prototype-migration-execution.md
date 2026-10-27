@@ -28,7 +28,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
-| P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs and selected audit/typed attribution implemented; template visibility shared across reads | Remaining report/intake/import panels and directory refinements; native/real SQL/full-stack/product review |
+| P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -1190,3 +1190,53 @@ All254 frozen source hashes still match. Repository gate passes8707 indexed
 files/zero forbidden or oversized/14 ignore probes; docs pass22 sprints,
 1241 links,42 mappings,13 Mermaid and12 API JSON examples. Cached diff check
 passes; the unrelated35-line lesson addition and motion plan remain unstaged.
+
+## Selected signed public-intake form — 2026-10-27
+
+Continued P7 from `b45f366`. The public Demande web card now uses the selected
+shared atmosphere/card geometry,84px source logo, four labelled fields, one
+full-width primary button and semantic receipt states. The real contract keeps
+the message optional; the prototype's illustrative required-message handler
+does not establish a new business rule. No staff-only AuthFrame/footer/navigation
+or API lookup is imported. Presentation integration remains proposed pending
+native/owner review; no new CSS/theme/icon kit/chart/dependency.
+
+Inspection found the simulator only proxied Next static chunks/favicon, so the
+selected logo and CSS background would fail there. A closed two-filename public
+asset route now maps to the fixed frontend origin, ignores destination query
+parameters and does not forward cookies/authorization. Private/optimizer/other
+image paths remain denied. Host/verified loopback TLS/CA/no redirect/no proxy,
+no-store and the existing2MB response cap are unchanged. The actual selected
+background is1469089 bytes. Source signing keys/configuration and workers are
+untouched; no real data or local service is operated.
+
+The extracted public controller keeps exact original retry bytes/ID/time after
+unknown/rate-limited acknowledgement. Synchronous guards reject duplicate events
+even after success before a rerender. Definitive422/413 preserves editable fields
+for a corrected new identity. Receipt acknowledgement clears hidden draft/raw
+payload; status refresh sends only that known ID and rejects a foreign returned
+receipt. Refresh never submits and queued/failed cannot restart. Unmount aborts
+without late state publication. The client omits cookies/referrer, rejects
+redirects and parses only ID/state; no staff data, storage or URL payload.
+
+Thirteen new mocked-opener ASGI units inspect exact assets, fixed destinations,
+Host, discarded caller identity headers, rejected private paths and response cap.
+They use no real CA/key or app/database connection.376 connection-forbidden
+backend units pass/696 integration deselected; Ruff/format and simulator mypy
+pass. Seven new actual frontend controller/client/composition cases join290
+passing units, with lint/typecheck and pinned Next16.4.2 build (62 glyphs,
+88 consumers/309 icon sites/449 Button sites/zero violations). The initial
+formatter check was corrected; a failed documentation context patch changed
+nothing. Prepared browser headings/field labels are updated, not executed.
+
+All remaining P0–P8 reconciliation, exact form/document/offer/PDF/provenance,
+global Back/Forward guards and final native/full-stack/CI/AFTER/owner acceptance
+remain open. No source/operator CLI, worker, real database/configuration/data,
+production, main/push/merge or goal completion.
+[Intake evidence](design-migration-evidence/intake-ui-2026-10-27.json).
+
+Source check confirms all254 frozen inputs unchanged and the84px width utility
+present in compiled CSS. Repository gate passes8712 indexed files/zero forbidden
+or oversized/14 ignore probes; docs pass22 sprints,1242 links,42 mappings,
+13 Mermaid and12 API JSON examples. Cached diff check passes. The protected
+35-line lesson addition and unrelated motion plan are left out of the commit.

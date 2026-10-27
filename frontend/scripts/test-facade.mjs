@@ -53,6 +53,7 @@ try {
     "tests/unit/prepared-history.test.mjs",
     "tests/unit/exports-workspace.test.mjs",
     "tests/unit/imports-workspace.test.mjs",
+    "tests/unit/intake-workspace.test.mjs",
     "tests/unit/audit-workspace.test.mjs",
     "tests/unit/draft-lifecycle.test.mjs",
     "tests/unit/kanban.test.mjs",

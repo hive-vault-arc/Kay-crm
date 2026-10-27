@@ -1561,3 +1561,15 @@ A same-ID upload/preview retry needs an explicit report revision, and lookup
 denial must hide cached choices and the parent file/report before retry.
 Test changed projections, duplicate events, absent hashes and retained row IDs;
 synthetic controllers do not certify real atomicity or native focus/layout.
+
+
+## 2026-10-27 — Preserve the public simulator boundary when sharing design assets
+
+A shared form background or Brand component also needs its actual assets on the
+separate simulator origin. Allow only the exact required public filenames on
+the fixed frontend proxy; never add a general image/optimizer/private API relay.
+Test Host, query destinations, discarded identity headers and response limits
+without real source keys or app/database connections. Keep uncertain submission
+bytes stable, bind refresh to the known receipt ID and block late duplicate
+handlers after acknowledgement. Shared styling must not add staff controls or
+turn illustrative prototype validation into a different intake business rule.
