@@ -2,7 +2,7 @@ import { chromium, type Route } from "@playwright/test";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { test, expect, clearActorContext, removeActor, signIn, type TestActor } from "../helpers/auth";
-import { confirmImport, csv, csvRow, importFixture, prepareCorrected } from "../helpers/imports";
+import { confirmImport, csv, csvRow, expectImportCounts, importFixture, prepareCorrected } from "../helpers/imports";
 import { geometry } from "../helpers/report-review";
 
 test("SP18 visible Chrome: mixed/corrected import, confirmation, native states and responsive access", async ({ page, browser, baseURL }) => {
@@ -21,13 +21,13 @@ test("SP18 visible Chrome: mixed/corrected import, confirmation, native states a
     const data = await importFixture(page, actors); monitor(page); await geometry(page); await capture(page, "empty-desktop");
     await page.getByText("Format et colonnes du CSV", { exact: true }).click(); await expect(page.getByText(/En-tête exact/)).toBeVisible(); await page.getByText("Format et colonnes du CSV", { exact: true }).click();
     const mixed = csv([csvRow("+212600000001", "", ""), csvRow("+212600111001", data.agent.email), csvRow("bad-phone", data.agent.email)]);
-    let choice = page.waitForEvent("filechooser"); await page.getByRole("button", { name: "Choisir un CSV", exact: true }).click(); await (await choice).setFiles({ name: "interdit.txt", mimeType: "text/plain", buffer: mixed }); await page.getByRole("button", { name: "Envoyer et prévisualiser", exact: true }).click(); await expect(page.getByRole("alert").filter({ hasText: "Choisissez un fichier .csv" })).toBeVisible();
-    choice = page.waitForEvent("filechooser"); await page.getByRole("button", { name: "Choisir un CSV", exact: true }).click(); await (await choice).setFiles({ name: "contacts-synthetiques.csv", mimeType: "text/csv", buffer: mixed });
+    let choice = page.waitForEvent("filechooser"); await page.getByRole("button", { name: "Parcourir", exact: true }).click(); await (await choice).setFiles({ name: "interdit.txt", mimeType: "text/plain", buffer: mixed }); await page.getByRole("button", { name: "Envoyer et prévisualiser", exact: true }).click(); await expect(page.getByRole("alert").filter({ hasText: "Choisissez un fichier .csv" })).toBeVisible();
+    choice = page.waitForEvent("filechooser"); await page.getByRole("button", { name: "Parcourir", exact: true }).click(); await (await choice).setFiles({ name: "contacts-synthetiques.csv", mimeType: "text/csv", buffer: mixed });
     let pending: Route | undefined, signalUpload: () => void = () => {}; const started = new Promise<void>(resolve => { signalUpload = resolve; }); injected = true;
     await page.route("**/api/v1/transfers/imports/*", route => { pending = route; signalUpload(); }); await page.getByRole("button", { name: "Envoyer et prévisualiser", exact: true }).click(); await started;
     await page.getByRole("button", { name: "Interrompre le transfert", exact: true }).click(); await expect(page.getByRole("alert").filter({ hasText: "Transfert interrompu" })).toBeVisible(); await pending!.abort("aborted"); await page.unroute("**/api/v1/transfers/imports/*"); injected = false;
     const previewResponse = page.waitForResponse(response => /\/api\/v1\/imports\/[a-f0-9-]+\/preview$/.test(new URL(response.url()).pathname) && response.request().method() === "POST"); await page.getByRole("button", { name: "Réessayer le fichier", exact: true }).click(); expect((await previewResponse).status()).toBe(200);
-    await expect(page.getByText("1 à créer ; 1 ignorée(s) ; 1 à corriger ; 0 créée(s).", { exact: true })).toBeVisible(); await capture(page, "invalid-desktop");
+    await expectImportCounts(page, 1, 1, 1, 0); await capture(page, "invalid-desktop");
     await prepareCorrected(page, data.agent, data.other); const bid = new URL(page.url()).searchParams.get("batch")!; await geometry(page); await capture(page, "preview-desktop");
     const approve = page.getByRole("button", { name: "Approuver l’import", exact: true }); await approve.focus(); await page.keyboard.press("Enter"); await expect(page.getByRole("alertdialog")).toBeVisible(); await geometry(page); await capture(page, "confirmation-desktop", false); await page.keyboard.press("Escape"); await expect(page.getByRole("alertdialog")).toHaveCount(0); await expect(approve).toBeFocused();
     await approve.click(); await page.getByRole("button", { name: "Revenir à l’aperçu", exact: true }).click(); await expect(approve).toBeFocused();

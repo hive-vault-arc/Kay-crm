@@ -1548,3 +1548,16 @@ immutable event fields. A denied lookup must hide the parent projection too;
 retry must not redisplay cached names before a fresh authorized response.
 Mark read-only filter/picker inputs as disposable UI so they do not create
 business drafts. SQL/controller checks do not certify real scope/race or UI gates.
+
+
+## 2026-10-27 — Keep an unknown import approval attached to its reviewed batch
+
+Freeze the import file/version/hash/fallback/counts when confirmation opens.
+A newer live projection cannot replace that command. After an interrupted
+approval, retain its original key/body even if a later read lacks that hash;
+block another file or mapping/preview/page action until a definitive result.
+Do not label timeout as rollback or display stale counts as a final outcome.
+A same-ID upload/preview retry needs an explicit report revision, and lookup
+denial must hide cached choices and the parent file/report before retry.
+Test changed projections, duplicate events, absent hashes and retained row IDs;
+synthetic controllers do not certify real atomicity or native focus/layout.

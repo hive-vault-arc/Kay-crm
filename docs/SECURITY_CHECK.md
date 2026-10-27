@@ -1,5 +1,32 @@
 # KAY security check for changes
 
+## Selected contact-import review, 2026-10-27
+
+The existing M/A/current-session/CSRF/Origin/private streaming boundary and
+whole-batch PostgreSQL transaction remain authoritative. The frontend now freezes
+validated preview hash, fallback, file hash/version and displayed counts at
+confirmation open; later data cannot silently replace that request. Unknown
+approval preserves its original UUID key/body and blocks another upload, preview,
+mapping or page change. No timeout is described as proof of rollback. A malformed
+approval result remains unknown; current committed read resolves it. Pending
+counts/rows are hidden. Definitive denial removes old file/report/agent details;
+the shared agent picker cannot render cached selection options on lookup errors.
+
+Abort propagates through identity, metadata creation/read and private transfer.
+Resumed file metadata, batch IDs, permit parent and nested committed-result ID
+are checked before use. Closed facade schemas, exact private API transfer target,
+no-store, cookie omission and generation/session-bound permits are preserved.
+CSV fields are escaped React text; all original logical row identities and eight
+bounded values remain inspectable. No browser storage, raw-file download/public
+URL, CSV parsing substitute, new grant/route or actual import is introduced.
+
+283 frontend units pass, including15 new review/controller/parent/row/denial/
+facade/private-transfer cases; lint/typecheck/Next16.4.2 build pass. Browser-source
+selectors are updated, not executed. No backend change, database/service/worker,
+migration or real data operation. Existing native/real-stack/performance/AFTER/
+owner gates remain pending, as does general Back/Forward draft handling.
+[Evidence](03-planning/design-migration-evidence/import-ui-2026-10-27.json).
+
 ## Selected audit and typed attribution, 2026-10-27
 
 The new GET actor lookup uses current identity/real M/A role before names/count/

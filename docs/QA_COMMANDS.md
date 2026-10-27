@@ -1,5 +1,17 @@
 # KAY QA command register
 
+Latest contact-import UI slice (2026-10-27):283 frontend units pass, including15
+new changed-preview/unknown-retry/mapping/parent/row/lookup-denial/private-transfer/
+facade cases. Final lint/typecheck and pinned Next16.4.2 build pass (62 glyphs,
+88 consumers/309 icon sites/449 Button sites/zero violations). All254 frozen
+inputs still match. Initial VM cross-realm assertion and reserved test-variable
+naming failures were corrected; those initial runs are not passes. Browser
+selectors are prepared, not executed. No backend/API route, data/service/worker,
+migration, CSS/dependency or source-prototype edit. Native desktop/mobile/drawer/
+focus/touch/zoom/accessibility, real atomic import/revocation/races/performance,
+AFTER and owner review remain pending.
+[Evidence](03-planning/design-migration-evidence/import-ui-2026-10-27.json).
+
 Latest audit slice (2026-10-27): explicit backend/.venv Ruff/mypy pass for9 app
 modules;363 connection-forbidden units pass/696 integration cases deselected.
 Thirty-three new role/query/actual SQL/route/typed-attribution cases are included.

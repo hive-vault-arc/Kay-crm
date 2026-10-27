@@ -1,5 +1,15 @@
 # KAY screen map and navigation contract
 
+Selected contact-import migration,2026-10-27: `/leads?view=import&batch=UUID`
+keeps current M/A authority and the same protected batch. Shared file picker,
+initial fallback, collapsed corrected-file composer and top report actions fit
+the selected layout. Desktop has four report columns; phone/drawers have compact
+record cards and one independent row-agent drawer. Pending assignments require
+preview. Confirmation snapshots the reviewed batch; unknown approval locks new
+uploads and retries the same request. Denial removes cached names/file/report
+before fresh reads. No import-history directory or route is invented. Native
+verification is pending. [Contract](contact-import-local.md).
+
 Selected audit migration,2026-10-27: `/dashboard?view=audit` retains authenticated
 M/A access. Four automatic filters match the selected family/user/date grouping;
 the lazy author picker reads real typed history attribution across numbered pages.

@@ -2,19 +2,25 @@ import type { z } from "zod";
 import { apiGet, ApiError } from "@/lib/api/client";
 import { meSchema } from "@/lib/auth/contracts";
 import { transferError } from "@/features/files/transfers";
-import { batchSchema, createSchema, permitSchema } from "./contracts";
+import { batchPageSchema, batchSchema, createSchema, permitSchema } from "./contracts";
 
 export async function importCommand<T>(path: `/api/v1/imports${string}`, body: unknown, schema: z.ZodType<T>, key?: string, signal?: AbortSignal) {
-  const identity = await apiGet("/api/v1/auth/me", meSchema);
+  if (signal?.aborted) throw new ApiError("FILE_TRANSFER_INTERRUPTED", 503);
+  const identity = await apiGet("/api/v1/auth/me", meSchema, signal);
+  if (signal?.aborted) throw new ApiError("FILE_TRANSFER_INTERRUPTED", 503);
   return apiGet(path, schema, signal, { body, key, csrf: identity.csrf_token, timeoutMs: 70_000 });
 }
 export async function uploadImport(file: File, attempt: { key: string; batchId: string }, progress: (value: number) => void, signal: AbortSignal) {
   if (!createSchema.safeParse({ filename: file.name, size_bytes: file.size }).success) throw new ApiError("IMPORT_FILE_INVALID", 422);
-  const identity = await apiGet("/api/v1/auth/me", meSchema);
-  if (!attempt.batchId) attempt.batchId = (await importCommand("/api/v1/imports", { filename: file.name, size_bytes: file.size }, batchSchema, attempt.key)).id;
-  const batch = await apiGet(`/api/v1/imports/${attempt.batchId}?page_size=1`, batchSchema.passthrough(), signal);
+  if (signal.aborted) throw new ApiError("FILE_TRANSFER_INTERRUPTED", 503);
+  const identity = await apiGet("/api/v1/auth/me", meSchema, signal);
+  if (!attempt.batchId) attempt.batchId = (await importCommand("/api/v1/imports", { filename: file.name, size_bytes: file.size }, batchSchema, attempt.key, signal)).id;
+  const batch = await apiGet(`/api/v1/imports/${attempt.batchId}?page_size=1`, batchPageSchema, signal);
+  if (batch.id !== attempt.batchId) throw new ApiError("INVALID_RESPONSE", 502);
+  if (batch.filename !== file.name || batch.size_bytes !== file.size) throw new ApiError("IMPORT_FILE_INVALID", 422);
   if (!["awaiting_upload", "uploading"].includes(batch.state)) return attempt.batchId;
   const permit = await apiGet(`/api/v1/imports/${attempt.batchId}/upload-permit`, permitSchema, signal, { body: {}, csrf: identity.csrf_token });
+  if (permit.batch_id !== attempt.batchId) throw new ApiError("INVALID_RESPONSE", 502);
   await new Promise<void>((resolve, reject) => {
     const xhr = new XMLHttpRequest(), cancel = () => xhr.abort(), clear = () => signal.removeEventListener("abort", cancel);
     xhr.open("PUT", permit.transfer_url); xhr.withCredentials = false; xhr.timeout = 90_000;

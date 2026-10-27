@@ -1132,3 +1132,61 @@ Radix and compiled CSS. Git attributes normalize working CRLF to indexed LF;
 the logical source is unchanged. Repository gate passes8703 indexed files/zero
 forbidden or oversized/14 ignore probes. Documentation gate passes22 sprints,
 1240 links,42 mappings,13 Mermaid and12 API JSON examples; cached diff check passes.
+
+## Selected contact-import composer and batch review — 2026-10-27
+
+Continued P7 on `codex/redesign` from `b4abe53`. The selected frozen import flow
+now uses the shared file picker/drop area, explicit initial fallback, format
+details and full available section width. The corrected-file composer collapses
+after success and stays usable on interrupted transfer. Current-batch actions
+sit above its authoritative status counts and rows; its fallback is separate
+from a new file's initial fallback. No import-history directory is invented.
+Desktop preserves Ligne/Contact/Agent/État; phone/drawers reuse compact record
+cards. A single row-agent Sheet lives outside the responsive collection, with
+surviving-trigger/heading focus fallback. All eight original CSV values, actual
+logical row numbers, errors/truncation and original created-contact links remain.
+
+The source review found confirmation using live preview data at submit time.
+It now snapshots validated file/hash/version/fallback/counts when opened. Changed
+data blocks first confirmation and requires another review. Interrupted approval
+retains exactly one UUID/body even if a later read has a changed or missing hash;
+it blocks new files, preview, mapping and page actions while unknown. Nonfinal
+rows/counts are hidden, malformed result remains unknown, and a current committed
+read resolves it. No timeout is called proof of rollback. Synchronous locks stop
+duplicate events; unmount aborts outstanding identity/command/transfer work.
+
+Actual fallback/row edits participate in managed draft/busy guards; picker search
+does not. Switching to another batch guards only the current review, not the file
+candidate being submitted. Same-batch upload/preview interruption explicitly
+refreshes a mounted report. Current denial clears old file/report/agent context
+before a clean retry. The shared assignment picker hides cached choices on read
+failure, and its empty copy follows active-account/first-password rules. General
+Back/Forward business-draft handling remains separate open P2 work.
+
+Closed page schemas and resumed metadata/permit/result parent checks reinforce
+the existing session/CSRF/Origin/private transfer boundary. Abort reaches identity
+and metadata creation too. Actual backend CSV/phone/agent/atomicity/provenance
+rules remain authoritative, including pipe-separated list cells rather than the
+prototype's illustrative separator. No backend route, worker, storage, migration,
+CSS, dependency or business-scope replacement. The original source stays frozen.
+
+Fifteen new actual-module synthetic cases cover frozen/stale review, unknown
+same-key retries, duplicate locks, mapping/dirty/page guards, committed rereads,
+malformed/denied responses, parent upload/revision/denial, row/cards/agent Sheet,
+private byte protocol, facade scope and lookup-cache removal.283 frontend units,
+lint/typecheck and Next16.4.2 build pass (62 glyphs,88 consumers,309 icon sites,
+449 Button sites,zero violations). Initial cross-realm fixture assertion and
+reserved test-variable lint failures were corrected; neither initial run is a
+pass. Browser helper/count/file-choice selectors were updated, not executed.
+
+The unavailable original-machine skills are not claimed; dense CRM excludes the
+marketing workflow, shared React/primitives remain in use and AFTER timing stays.
+Native visual/focus/touch/zoom/accessibility, real atomic DB/authority/race/load,
+owner/full-stack/CI gates and the rest of P0–P8 remain open. No real records,
+service/worker, production, main/push/merge or goal completion.
+[Import evidence](design-migration-evidence/import-ui-2026-10-27.json).
+
+All254 frozen source hashes still match. Repository gate passes8707 indexed
+files/zero forbidden or oversized/14 ignore probes; docs pass22 sprints,
+1241 links,42 mappings,13 Mermaid and12 API JSON examples. Cached diff check
+passes; the unrelated35-line lesson addition and motion plan remain unstaged.
