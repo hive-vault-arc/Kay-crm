@@ -28,7 +28,7 @@ the existing shared-guard case, including busy state changing after dialog open.
 
 ## Same-document history integration
 
-Feature detection enables the new path when `window.navigation.currentEntry`
+Feature detection prefers the Navigation API path when `window.navigation.currentEntry`
 and `traverseTo` exist. It listens to the standard navigation/current-entry events
 and a capture-phase popstate listener. It does not write session history, add
 sentinel entries, wrap history methods, copy Next's internal state or change URLs.
@@ -59,19 +59,66 @@ explains why cancelability cannot be assumed. Installed Next source and concrete
 controller tests supply the local integration evidence; platform documentation
 does not replace a native browser run.
 
-## Open compatibility and verification
+## Classic History API fallback,2026-10-27
 
-Browsers without this API retain the existing link/unload guards only. Their
-same-document Back/Forward fallback remains explicit unfinished work. Do not
-raise the browser minimum, silently drop older devices or claim this feature
-detection closes that gap. Final P2 also requires real form drafts, keyboard/
-touch/back gestures/history menus, popup focus, reload/stop/interruption, zoom,
-browser-cache restoration and supported-browser/physical-device cases.
+Browsers without native entry keys now receive the same controller through a
+classic adapter. A closed first-party inline Script in the root layout executes
+before hydration; the protected workspace also attempts idempotent installation
+if that startup step was missed. This follows the [Next Script contract](https://nextjs.org/docs/app/api-reference/components/script)
+and is checked against the installed16.4.2 bootstrap source. No remote loader,
+new dependency or framework upgrade is involved. The modern path skips the
+classic instrumentation entirely.
 
-Fifteen new frontend units cover history, cancellation/replay, pending commands,
+The adapter adds only `__kayHistoryEntryV1:{scope,position,id}` to ordinary
+history-state records: UUID scope/entry identifiers and an integer position.
+Initial replace adds no session entry; normal pushes get distinct identities,
+including duplicate URLs, while replace preserves identity. No sentinel entry,
+artificial push, history-stack truncation or URL rewrite is introduced by setup
+or restoration. An ordinary application push keeps its existing native behavior.
+Next's opaque owned fields pass through unchanged and are never interpreted or
+copied into the KAY marker. No form value, record, credential or private tree
+is collected into a separate registry/storage/log. Metadata tracking lasts for
+the document; the protected editor's guard listener still cleans up on unmount.
+
+The adapter translates reviewed entry keys to relative traversal only when
+current/target markers have the same scope and valid positions. It never calls
+go(0). A settled matching popstate resolves the attempt; a different destination,
+write interruption or two-second timeout rejects it. The existing three-attempt
+return limit and manual recovery notice retain the live editor. Untracked,
+non-record or failed-initial-write entries fail closed rather than inventing a
+direction or releasing a dirty entry into Next. Returning to a known entry with
+browser history can recover the held return. Native fragment entries receive
+their own marker and leave the current React editor in place; fragment movement
+does not trigger a false dirty-navigation prompt or incomplete Next restoration.
+
+This necessarily differs from the no-history-writes implementation of the
+Navigation API path above. It is a scoped compatibility proposal within the
+existing draft guard, not a new permission or business rule. The [History API
+contract](https://html.spec.whatwg.org/multipage/nav-history-apis.html#the-history-interface)
+and [popstate ordering](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event)
+explain the marker/return requirement. Native recovery, history menus, nested
+frame/joint-session movement, startup blocking/CSP, browser-cache restoration,
+stop/interruption, real forms/keyboard/touch/zoom and supported physical devices
+remain verification work. Positions describe app-owned main-frame writes;
+synthetic tests do not prove every browser/subframe history race.
+
+## Evidence and remaining verification
+
+The [classic follow-up evidence](../03-planning/design-migration-evidence/classic-history-2026-10-27.json)
+records17 added frontend cases, including actual generated-script execution,
+installed Next wrapper nesting in both orders, installed pre-hydration bootstrap
+ordering, failed writes, retained/reloaded metadata, exact destinations, rapid
+movement, timeout/retry, pending commands, hashes, unknown entries, cleanup and
+actual workspace interface selection. Compiled function extraction/standalone
+execution checks the emitted bootstrap's closure independently of source tests;
+it is not a browser/app run. No backend/API/permission/data change. The prepared
+native integration source now covers both preferred native and forced-classic
+paths, still with synthetic DOM drafts and real Next entry movement. It has not
+run and does not replace business-form CRUD/focus/gesture cases or owner review.
+
+The earlier checkpoint's fifteen frontend units cover history, cancellation/replay, pending commands,
 rapid movement, hash/identical URL entries, return failures/retry, cleanup,
 marker settlement, actual unload/input tracking and the installed router source.
-One isolated browser integration source is prepared with synthetic DOM drafts
-and real Next entry movement; it is not executed and does not replace actual
-business-form CRUD/focus cases. No backend/API/permission or data change.
-[Evidence](../03-planning/design-migration-evidence/history-drafts-2026-10-27.json).
+Its original [evidence](../03-planning/design-migration-evidence/history-drafts-2026-10-27.json)
+remains historical. No browser minimum is raised; native, full-stack, AFTER and
+owner gates and the full redesign goal remain open.

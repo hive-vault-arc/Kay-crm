@@ -1,5 +1,40 @@
 # KAY security check for changes
 
+## Classic same-document draft protection,2026-10-27
+
+A fixed first-party root Script executes before hydration; it interpolates no
+request/user/form/record values and fetches no external code. A client installation
+backup is idempotent. Native Navigation API support bypasses classic history
+instrumentation. The adapter writes only its own UUID scope/entry ID and integer
+position into a namespaced state field. These markers are UI bookkeeping, never
+session/authorization/retry proofs. It forwards the original framework payload
+without interpreting its private tree or collecting any field into a new store.
+No local/session storage, cookie, telemetry, network, permission, file or backend
+capability is introduced. Initial replace adds no entry or dummy forward branch.
+
+The shared guard still blocks clean-busy commands and requires explicit discard.
+It restores a known same-scope entry before prompting, invalidates stale decisions
+and uses a bounded return/retry. Failed/unknown entries hold the editor and offer
+recovery rather than guessing a direction or allowing dirty Next restoration.
+go(0) is never used. Fragment handling keeps the editor's tree; document-lifetime
+metadata tracking remains separate from the removable guard listener. Existing
+cross-document unload behavior, backend/session/current-scope enforcement and
+private data contracts are unchanged. Restoring history does not imply that an
+outstanding write was rolled back.
+
+471 frontend units/lint/types/build pass. Seventeen new tests include actual
+installed Next wrapper nesting and beforeInteractive execution order. Two emitted
+bootstrap variants execute standalone in a synthetic VM via `npm run history:check`;
+no app module/server/listener/HTTP/browser was accessed. Frozen254 inputs remain
+unchanged. A typed but incorrectly serialized prepared browser callback was
+corrected after lint/source inspection; neither prepared native case has run.
+Compiled/source tests do not prove native CSP/startup/cache/joint-frame/history-
+menu/gesture/stop/privacy/focus behavior or actual business-form outcomes. Those
+and full-stack/CI/AFTER/owner acceptance remain pending. No backend rerun, real
+data/service/private configuration, main, push/merge/deploy/production operation.
+[Contract](04-design/draft-navigation-local.md) and
+[evidence](03-planning/design-migration-evidence/classic-history-2026-10-27.json).
+
 ## Inline Finance receipts and dossier financial history,2026-10-27
 
 New GET /deals/{id}/finance-history uses current M/A authority before Deal lookup,

@@ -1729,3 +1729,16 @@ restoration if the user has already moved focus. Validation focus must wait for
 invalid controls to commit. Never assume a fixed Casablanca offset in a fixture;
 verify retained instants and test projection with an explicit deterministic zone
 without changing authoritative civil-time policy to satisfy the assertion.
+
+
+## Serialized navigation code and production closure checks (2026-10-27)
+
+A page.evaluate callback cannot capture the test loop variable; pass arguments
+explicitly even when TypeScript accepts the callback. Source inspection caught
+one such browser-only failure after an unused-argument lint warning. Likewise,
+a before-hydration function serialized with .toString must stay closed after
+production compilation, not merely in TypeScript tests. Extract and execute only
+that emitted function with synthetic globals, without loading the app/server.
+History metadata is UI bookkeeping, never authorization; preserve opaque router
+fields, never invent a direction for untracked entries or call go(0). VM/source
+checks do not prove native cache, CSP, frame, gesture or real-form behavior.

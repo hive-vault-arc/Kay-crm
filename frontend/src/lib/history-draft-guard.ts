@@ -14,8 +14,8 @@ function hashOnly(previous: GuardedHistoryEntry, next: GuardedHistoryEntry) {
 }
 
 // No history writes, router-state copies, form values or persistent storage.
-// Older browsers retain the link/unload guards; their same-document traversal
-// fallback remains a separate compatibility item, not a claimed native pass.
+// The classic-history bootstrap supplies this same interface where Navigation
+// API entry keys are unavailable. Native verification remains a separate gate.
 export function protectHistoryDrafts({ navigation, target, protection, confirm, restoreFailed, settled = () => {} }: {
   navigation: HistoryNavigation; target: Pick<Window, "addEventListener" | "removeEventListener">;
   protection: () => DraftProtection; confirm: (resume: () => Promise<void>) => void; restoreFailed: (retry: () => void) => void;

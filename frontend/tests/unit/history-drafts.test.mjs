@@ -118,13 +118,14 @@ function componentHarness() {
     useEffect(run, deps) { const i = cursor++, old = slots[i]; if (!old || deps.some((value, n) => !Object.is(value, old.deps[n]))) { const current = { deps }; slots[i] = current; effects.push(() => { old?.cleanup?.(); current.cleanup = run(); }); } },
   }, render(run) { cursor = 0; const result = run(); effects.splice(0).forEach(run => run()); return result; }, unmount() { slots.forEach(slot => slot?.cleanup?.()); } };
 }
-function workspaceSetup() {
+function workspaceSetup({ navigation, classic } = {}) {
   const h = componentHarness(), target = new WindowEvents(), docEvents = new WindowEvents(), marker = { dataset: { liveDirty: "true" }, isConnected: true };
+  target.navigation = navigation; target.__kayClassicHistoryV1 = classic;
   let busy = false, dirty = false; const navigations = [];
   const document = { querySelector: selector => selector.includes("aria-busy") ? busy ? {} : null : dirty ? marker : null, querySelectorAll: () => dirty ? [marker] : [], activeElement: null, addEventListener: (...args) => docEvents.addEventListener(...args), removeEventListener: (...args) => docEvents.removeEventListener(...args) };
   class Element { constructor(form) { this.form = form; } closest(selector) { return selector === "[data-filter-panel]" ? null : selector.startsWith("form,") ? this.form : null; } get value() { throw new Error("The navigation guard must not read field values"); } }
   const router = { push: value => navigations.push(value) }, jsx = (type, props) => ({ type, props }); target.dispatchEvent = event => { target.dispatch(event); return true; };
-  const loaded = loadServer("src/components/shared/unsaved-guard.tsx", { modules: { react: h.react, "react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "Fragment" }, "next/navigation": { useRouter: () => router }, "@/components/ui/alert-dialog": Object.fromEntries(["AlertDialog", "AlertDialogCancel", "AlertDialogContent", "AlertDialogDescription", "AlertDialogTitle"].map(name => [name, name])), "@/components/ui/button": { Button: "Button" }, "@/lib/navigation-intent": loadServer("src/lib/navigation-intent.ts"), "@/lib/discard-draft-action": { discardDraftAction }, "@/lib/history-draft-guard": { protectHistoryDrafts } }, globals: { window: target, document, Element, HTMLElement: Element, Event, location: { href: "https://crm.synthetic.invalid/contacts/record" } } });
+  const loaded = loadServer("src/components/shared/unsaved-guard.tsx", { modules: { react: h.react, "react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "Fragment" }, "next/navigation": { useRouter: () => router }, "@/components/ui/alert-dialog": Object.fromEntries(["AlertDialog", "AlertDialogCancel", "AlertDialogContent", "AlertDialogDescription", "AlertDialogTitle"].map(name => [name, name])), "@/components/ui/button": { Button: "Button" }, "@/lib/navigation-intent": loadServer("src/lib/navigation-intent.ts"), "@/lib/discard-draft-action": { discardDraftAction }, "@/lib/classic-history-bootstrap": { bootstrapClassicHistory() {} }, "@/lib/history-draft-guard": { protectHistoryDrafts } }, globals: { window: target, document, Element, HTMLElement: Element, Event, location: { href: "https://crm.synthetic.invalid/contacts/record" } } });
   const render = () => h.render(() => loaded.WorkspaceNavigationGuard()); render();
   return { target, docEvents, marker, navigations, render, unmount: h.unmount, Element, busy: value => { busy = value; }, dirty: value => { dirty = value; } };
 }
@@ -148,4 +149,15 @@ test("The installed Next router still restores history through a non-capture pop
   function visit(node) { if (ts.isCallExpression(node) && node.expression.getText(ast) === "window.addEventListener" && node.arguments[0]?.text === "popstate") listeners.push(node); ts.forEachChild(node, visit); }
   visit(ast); assert.equal(listeners.length, 1); assert.equal(listeners[0].arguments.length, 2); assert.equal(listeners[0].arguments[1].getText(ast), "onPopState");
   assert.match(source, /const onPopState = \(event\)=>handlePopState\(event.state\)/); assert.match(source, /_navigator\.traverse\)\(window.location.href, state.__PRIVATE_NEXTJS_INTERNALS_TREE\)/);
+});
+
+test("the actual workspace installs its history guard on the classic adapter when native entry keys are unavailable", () => {
+  const classic = new EventTarget(); classic.currentEntry = entry("classic", "/contacts"); classic.traverseTo = () => ({ finished: Promise.resolve() });
+  const s = workspaceSetup({ classic }); assert.equal(s.target.listeners.filter(item => item.type === "popstate" && item.capture).length, 1); s.unmount(); assert.equal(s.target.listeners.length, 0);
+});
+
+test("the workspace prefers the native Navigation API when both interfaces exist", () => {
+  class Observed extends EventTarget { registrations = 0; addEventListener(...args) { this.registrations++; super.addEventListener(...args); } }
+  const classic = new Observed(), navigation = new Observed(); for (const api of [classic, navigation]) { api.currentEntry = entry("current", "/contacts"); api.traverseTo = () => ({ finished: Promise.resolve() }); }
+  const s = workspaceSetup({ classic, navigation }); assert.equal(navigation.registrations, 2); assert.equal(classic.registrations, 0); s.unmount();
 });

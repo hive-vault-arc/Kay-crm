@@ -23,7 +23,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | --- | --- | --- |
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to63 source-pinned glyphs and selected status palette | Native review later |
-| P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
+| P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and preferred Navigation API/classic history fallback source implemented | Remaining inventory/work/admin form parity, responsive focus and native interaction/cache/startup/gesture/frame checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery and selected server-rendered preparation stationery | Remaining restyled-appendix content/provenance and per-field context refinements; old native selectors and final native security/stock/focus/performance checks |
@@ -1860,3 +1860,52 @@ UI excludes marketing design-taste. No browser/app-access workaround, real DB,
 service, private configuration, data, main, push, merge or deployment operation.
 The unrelated35 lesson additions/motion note remain separate. Finance collection
 source alignment is progress within the full active redesign goal, not its end.
+
+## Classic History API compatibility,2026-10-27
+
+Afterd522f31, browsers without native Navigation API entry keys receive the same
+shared draft/busy/history decision controller through a classic adapter. A closed
+first-party root beforeInteractive script tracks entries before Next hydration;
+the protected workspace has an idempotent client backup. Native support skips
+instrumentation. Only namespaced UUID scope/ID and integer position are added to
+history-state records. Next's other opaque fields stay unchanged. Setup uses an
+initial replace, not a sentinel or artificial push; it does not truncate Forward
+history, rewrite URLs or collect form values/private tree data into a new store.
+
+Normal pushes create distinct entry identities even for duplicate URLs; replace
+keeps the same identity. Known same-scope relative traversal resolves only at its
+reviewed key. A different destination, write failure or two-second timeout rejects
+it; existing bounded return/retry keeps the live editor. Unknown/untracked entries
+never guess a direction or call go(0). Hash-only movement keeps the current tree.
+The document owns metadata tracking; editor unmount removes its guard listener.
+Manual recovery guidance now covers a held return that needs browser history.
+
+471 frontend units pass, including17 new actual generated-script/controller/
+workspace/installed-Next cases. Actual installed history wrappers are executed in
+both nesting orders, and installed app-bootstrap source executes the inline script
+before its hydration callback. Lint/typecheck and pinned Next16.4.2 build pass
+(63 glyphs,100 consumers,338 icon/477 Button sites, zero violations). The first
+prepared-browser callback edit passed types but lint found an unused evaluate
+argument; source review also caught a callback using its outer loop variable.
+Both now pass/use explicit serialized arguments. Native and forced-classic test
+variants are prepared, not run; actual business-form cases remain a separate gate.
+
+A new repeatable `npm run history:check` extracts two distinct emitted bootstrap
+functions and executes only that closed code for stamp/push/pop in a synthetic
+VM. It does not load the Next app/server or access HTTP. This catches production
+compiler closure changes rather than inferring .toString safety from TypeScript.
+All254 frozen design inputs remain unchanged; no appearance/token/CSS/font/icon/
+chart/dependency version or backend/API/data/grant change. Package scripts only
+register the compiler check; the lockfile is unchanged.
+
+[Contract](../04-design/draft-navigation-local.md) and
+[evidence](design-migration-evidence/classic-history-2026-10-27.json) retain the
+classic path's metadata-write proposal and browser limitations. Positions describe
+app-owned main-frame writes; native subframe/joint-session movement, cache/CSP/
+startup, history menus, gestures, stop/interruption, focus/zoom/real forms and
+physical-device/browser-baseline acceptance remain pending. Existing app-access
+rejection and AFTER timing are preserved; source tests do not close those gates.
+Original-machine mandatory skills remain unavailable; dense product UI excludes
+the marketing workflow. No backend rerun, database/service/private-config/real
+record/main/push/merge/deploy operation. The unrelated35 lesson lines and motion
+note remain outside this checkpoint. P0/P2/P3–P8 gaps and the full goal stay active.

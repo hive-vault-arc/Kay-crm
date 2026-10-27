@@ -12,6 +12,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "security:check": "node ../.github/scripts/dependency-audit.mjs",
     "test:unit": "node scripts/test-facade.mjs",
+    "history:check": "node scripts/check-history-bootstrap.mjs",
     "test:e2e": "playwright test",
     "test:chrome": "playwright test --config=playwright.chrome.config.ts --headed --workers=1",
     "test:realtime": "playwright test --config=playwright.realtime.config.ts --headed --workers=1"

@@ -299,7 +299,7 @@ test("Unsaved guard retains drafts on cancel, blocks pending commands and discar
     "@/components/ui/alert-dialog": { AlertDialog: "Dialog", AlertDialogCancel: "Cancel", AlertDialogContent: "Content", AlertDialogDescription: "Description", AlertDialogTitle: "Title" },
     "@/components/ui/button": { Button: "Button" }, "@/lib/navigation-intent": {},
     "@/lib/discard-draft-action": loadServer("src/lib/discard-draft-action.ts"),
-    "@/lib/history-draft-guard": loadServer("src/lib/history-draft-guard.ts"),
+    "@/lib/classic-history-bootstrap": { bootstrapClassicHistory() {} }, "@/lib/history-draft-guard": loadServer("src/lib/history-draft-guard.ts"),
   } });
   const render = () => harness.render(useUnsavedGuard);
   render().request(() => ran++, scope); let guard = render();

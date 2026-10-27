@@ -2,15 +2,16 @@ import { test, expect, signIn, clearActorContext } from "../helpers/auth";
 
 // Prepared native integration boundary, not a replacement for real business-form
 // CRUD/focus/touch cases. The only edited values here are synthetic DOM fixtures.
-test("History navigation retains a draft on cancel, confirms discard and blocks a pending command", async ({ page, actor }) => {
+for (const mode of ["native", "classic"] as const) test(`History navigation retains a draft on cancel, confirms discard and blocks a pending command (${mode})`, async ({ page, actor }) => {
   try {
+    if (mode === "classic") await page.addInitScript(() => { Object.defineProperty(window, "navigation", { value: undefined, configurable: true }); });
     await signIn(page, actor);
     await page.goto("/contacts");
     if (!await page.locator('a[href="/leads"]:visible').count()) await page.getByRole("button", { name: "Ouvrir la navigation", exact: true }).click();
     await page.locator('a[href="/leads"]:visible').first().click();
     await expect(page).toHaveURL(/\/leads$/);
     expect(await page.evaluate(() => {
-      const navigation = (window as Window & { navigation?: EventTarget & { currentEntry?: unknown } }).navigation;
+      const navigation = (window as Window & { navigation?: EventTarget & { currentEntry?: unknown } }).navigation ?? window.__kayClassicHistoryV1;
       return Boolean(navigation?.currentEntry);
     })).toBe(true);
     const historyLength = await page.evaluate(() => history.length);
@@ -32,13 +33,13 @@ test("History navigation retains a draft on cancel, confirms discard and blocks 
     await expect(page).toHaveURL(/\/contacts$/);
     await page.evaluate(() => history.forward());
     await expect(page).toHaveURL(/\/leads$/);
-    await page.evaluate(() => {
+    await page.evaluate(mode => {
       document.querySelector('[data-synthetic-draft]')?.remove();
       const form = document.createElement("form"); form.dataset.syntheticDraft = "true"; form.dataset.draftManaged = ""; form.setAttribute("aria-busy", "true"); document.querySelector("main")!.append(form);
-      const navigation = (window as Window & { navigation?: EventTarget }).navigation!;
       const probe = { events: 0 }; (window as Window & { historyGuardProbe?: typeof probe }).historyGuardProbe = probe;
-      navigation.addEventListener("navigate", () => { probe.events++; });
-    });
+      if (mode === "native") (window as Window & { navigation?: EventTarget }).navigation!.addEventListener("navigate", () => { probe.events++; });
+      else { const original = history.go.bind(history); history.go = delta => { probe.events++; original(delta); }; }
+    }, mode);
     await page.evaluate(() => history.back());
     await expect.poll(() => page.evaluate(() => (window as Window & { historyGuardProbe?: { events: number } }).historyGuardProbe?.events ?? 0)).toBeGreaterThan(0);
     await expect(page).toHaveURL(/\/leads$/);

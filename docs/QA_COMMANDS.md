@@ -1,5 +1,25 @@
 # KAY QA command register
 
+Latest classic-history compatibility slice (2026-10-27):471 frontend units pass,
+including17 new actual bootstrap/controller/workspace/installed-Next integration
+cases. Lint/typecheck and pinned Next16.4.2 build pass (63 glyphs,100 consumers/
+338 icon sites,477 Button sites/zero violations). `npm run history:check` after
+build extracts two distinct emitted bootstrap functions and executes their own
+closed code for initial stamp/push/pop, preserving Next fields. It never loads
+the app/server; the check is now a repeatable frontend script. All254 frozen
+inputs remain unchanged. The first prepared-browser edit passed types but lint
+found an unused evaluate argument; source review also caught a separate callback
+capturing its loop variable. Both callbacks now pass/use arguments explicitly.
+Native and forced-classic browser cases are prepared/type-checked, not executed.
+Unknown entries and failed writes retain a fail-closed controller; relative
+traversal is never guessed or converted to go(0). Tests cover actual installed
+Next wrappers in both nesting orders and its beforeInteractive bootstrap order,
+not native cache/CSP/gesture/joint-frame behavior. Real forms, browser cache,
+startup failure, history-menu/back gestures, nested frames, focus/zoom, full-stack/
+CI/AFTER/owner review and wider migration work remain open. No backend test rerun,
+API/grant/data/service/private-config/main/push/merge/deploy operation.
+[Evidence](03-planning/design-migration-evidence/classic-history-2026-10-27.json).
+
 Latest Finance collection follow-up (2026-10-27):454 frontend units pass and417
 connection-forbidden backend units pass/697 real integration cases deselected.
 Eight new frontend cases replace one obsolete detail-rendering case; its retained

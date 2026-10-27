@@ -1,5 +1,13 @@
 # KAY screen map and navigation contract
 
+Classic navigation follow-up,2026-10-27: the root layout installs a closed local
+beforeInteractive history adapter only when native Navigation API entry keys
+are unavailable. The protected workspace uses the same draft/busy confirmation
+controller in both paths. Setup adds no session entry, carries no form values
+in its own metadata and preserves Next-owned fields. Unknown/failed returns keep
+the editor open with recovery guidance. Native/cache/gesture/frame verification
+remains pending. [Contract](draft-navigation-local.md).
+
 Selected Finance collection follow-up,2026-10-27: Deal keeps four main tabs and
 the supporting M/A-only drawer. Receipts now appear beneath commission actions;
 history follows the collection through the scoped financial-history read.
@@ -35,7 +43,7 @@ versions, same-body retry and denied-context clearing remain. Directory/drawer/
 legal-link/hierarchy/photo and native work are not declared complete.
 [Contract](owner-forms-local.md).
 
-Selected draft navigation,2026-10-27: managed shell forms retain edits on cancel
+Earlier Navigation API checkpoint,2026-10-27: managed shell forms retain edits on cancel
 and recheck outstanding commands at final discard. Available Navigation API
 history uses the same confirmation, returning to the existing editor entry before
 uncancelable same-document restoration reaches Next. No history/state rewrite.

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { navigationIntent } from "@/lib/navigation-intent";
 import { discardDraftAction } from "@/lib/discard-draft-action";
 import { protectHistoryDrafts, type HistoryNavigation } from "@/lib/history-draft-guard";
+import { bootstrapClassicHistory } from "@/lib/classic-history-bootstrap";
 
 // A caller may pass the form itself rather than a wrapper around it.
 function scopeBusy(scope: ParentNode) {
@@ -61,9 +62,11 @@ export function WorkspaceNavigationGuard() {
       request(() => { const url = new URL(next); if (url.origin === location.origin) router.push(`${url.pathname}${url.search}${url.hash}`); else location.assign(url.href); });
     };
     const navigation = (window as Window & { navigation?: HistoryNavigation }).navigation;
-    const releaseHistory = navigation?.currentEntry && typeof navigation.traverseTo === "function" ? protectHistoryDrafts({ navigation, target: window, protection, confirm: resume => { setHistoryError(undefined); request(resume); }, restoreFailed: retry => { cancel(); setHistoryError({ retry }); }, settled: () => { cancel(); setHistoryError(undefined); } }) : undefined;
+    if (!navigation?.currentEntry || typeof navigation.traverseTo !== "function") bootstrapClassicHistory();
+    const history = navigation?.currentEntry && typeof navigation.traverseTo === "function" ? navigation : window.__kayClassicHistoryV1;
+    const releaseHistory = history?.currentEntry ? protectHistoryDrafts({ navigation: history, target: window, protection, confirm: resume => { setHistoryError(undefined); request(resume); }, restoreFailed: retry => { cancel(); setHistoryError({ retry }); }, settled: () => { cancel(); setHistoryError(undefined); } }) : undefined;
     window.addEventListener("beforeunload", unload); document.addEventListener("click", clicked, true); document.addEventListener("input", dirty); document.addEventListener("change", dirty);
     return () => { releaseHistory?.(); window.removeEventListener("beforeunload", unload); document.removeEventListener("click", clicked, true); document.removeEventListener("input", dirty); document.removeEventListener("change", dirty); };
   }, [request, router, cancel]);
-  return <>{dialog}{historyError ? <div role="alert" className="fixed inset-x-4 top-24 z-70 flex flex-wrap items-center gap-3 rounded-xl border bg-card p-4 text-sm shadow-lg"><p className="min-w-0 flex-1">Le retour n’a pas abouti. Votre saisie reste ouverte. Réessayez le retour avant de naviguer.</p><Button action="retry" type="button" variant="outline" onClick={() => { setHistoryError(undefined); historyError.retry(); }}>Réessayer le retour</Button></div> : null}</>;
+  return <>{dialog}{historyError ? <div role="alert" className="fixed inset-x-4 top-24 z-70 flex flex-wrap items-center gap-3 rounded-xl border bg-card p-4 text-sm shadow-lg"><p className="min-w-0 flex-1">Le retour n’a pas abouti. Votre saisie reste ouverte. Si nécessaire, revenez d’abord à cette page avec l’historique du navigateur, puis réessayez.</p><Button action="retry" type="button" variant="outline" onClick={() => { setHistoryError(undefined); historyError.retry(); }}>Réessayer le retour</Button></div> : null}</>;
 }
