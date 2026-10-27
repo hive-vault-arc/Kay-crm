@@ -25,7 +25,7 @@ export default async function WorkspacePage({ params, searchParams }: Props) {
   if (section !== "dashboard") notFound();
   if ((await searchParams).view === "audit") return <>
     <PageHeader title="Journal d’audit" description="Historique des actions autorisées de l’équipe." route="/dashboard" />
-    {identity.profile.user.role === "agent" ? <p role="alert">Accès non autorisé : le journal est réservé aux responsables et administrateurs.</p> : <AuditPanel />}
+    {identity.profile.user.role === "agent" ? <p role="alert">Accès non autorisé : le journal est réservé aux responsables et administrateurs.</p> : <AuditPanel role={identity.profile.user.role} />}
   </>;
   return <>
     <PageHeader title="Tableau de bord" description="" route="/dashboard" actions={<Button action="create" asChild><Link href="/leads/new">Nouveau prospect</Link></Button>} />

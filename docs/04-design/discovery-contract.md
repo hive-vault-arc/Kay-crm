@@ -198,6 +198,51 @@ Stable created_at DESC,id order, safe action/actor ID/current actor name/time
 and typed target IDs; no credentials, private values or financial amounts.
 Dashboard?view=audit is M/A contextual access. Settings remains admin-only.
 
+### Typed attribution lookup, 2026-10-27
+
+`GET /api/v1/audit/actors` is a read-only M/A-only attribution lookup, not a staff
+or source-administration directory. It accepts only optional literal name `q`
+(0–160 characters), numbered `page` (1–1m) and `page_size` (1–100, default25).
+Current identity/role is checked before metadata/count/page in a read-only
+repeatable-read transaction. Each user/source appears once only if represented
+in permitted audit history; retained/inactive/deleted identities are included.
+Unused staff and sources are absent. Options cover the whole history, independently
+of the current event page/family/date filter. Wildcards are escaped literally.
+
+The numbered response's items contain only `kind`, `id` and `display_name`:
+
+- `user`: real user UUID and current display name (up to160 characters).
+- `website`: real source UUID and `Source web : ` plus current source name
+  (up to173 characters). No source key, signing digest, configuration or grant.
+- `unattributed`: null ID and `Auteur non renseigné`, only if rows have neither
+  user nor source attribution. Such rows do not prove a system actor.
+
+The disjoint EXISTS/UNION projection avoids event fanout and fabricated IDs.
+Ordering is lower(display_name), kind, UUID, before numbered slicing. No email,
+staff role/state, private CRM value, financial amount or event body is returned.
+
+`GET /audit/events` retains its response fields and previous user `actor_id`
+behavior. It additionally accepts `website_source_id=UUID` or
+`unattributed_actor=true`. At most one attribution selector is allowed; other
+literal values and ambiguous combinations are422. Source selection requires no
+user actor and that exact source; unattributed selection requires both references
+null. All selectors only narrow existing M/A authority. Legacy no-author rows now
+have the explicit unknown-author label; web labels fit their full173-character
+bound. Casablanca dates/order/target IDs and immutable records remain unchanged.
+
+The selected page keeps four automatic filters (family, author, from, to), the
+Date/Utilisateur/Action/Objet desktop columns, and shared phone/drawer cards.
+The lazy author Popover uses bounded numbered reads, keeping selection separate
+from search. A five-option page is an implementation proposal pending native/
+owner review. Invalid dates preserve the last applied query. Authority failure
+hides names/counts/choices and clears old author filters before retry. Filters/picker
+search are disposable read-only UI, not business drafts. Parent links use existing
+typed routes with no prefetch; account links are admin-only and offering IDs do
+not invent a route. Known labels reuse record vocabulary; raw action references
+and unknown actions remain exact. Backend must precede the new typed filters/UI.
+Actual PostgreSQL scope/concurrency/performance and native/full-stack verification
+are pending in the [migration execution](../03-planning/design-prototype-migration-execution.md).
+
 Only explicit identity/login/logout/bootstrap/password and users create/edit/
 disable/reset-password/confirm-handoff security actions older than24 calendar
 months are eligible for deletion, with all business target FKs null. Leap-day

@@ -1,5 +1,15 @@
 # KAY QA command register
 
+Latest audit slice (2026-10-27): explicit backend/.venv Ruff/mypy pass for9 app
+modules;363 connection-forbidden units pass/696 integration cases deselected.
+Thirty-three new role/query/actual SQL/route/typed-attribution cases are included.
+Four PostgreSQL cases are prepared and not run. Frontend268 units pass, including
+nine new facade/route/filter/lookup/denial/link cases, with lint/typecheck and
+pinned Next16.4.2 build (62 glyphs/450 Button sites/zero violations). Real database/
+performance, native desktop/phone/drawer/keyboard/touch/zoom/accessibility and
+product/AFTER verification remain pending.
+[Evidence](03-planning/design-migration-evidence/audit-ui-2026-10-27.json).
+
 Latest export UI slice (2026-10-27):259 frontend units pass, including13 new
 review/filter/retry/menu-focus/job/private-transfer/facade controller cases.
 Typecheck, pinned Next16.4.2 build and final lint pass (62 glyphs/444 Button sites/zero violations).

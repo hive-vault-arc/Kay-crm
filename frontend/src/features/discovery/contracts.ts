@@ -28,5 +28,15 @@ export const newExportSchema = z.object({ kind: z.enum(["contacts", "enquiries"]
 export type ExportJob = z.infer<typeof exportSchema>;
 export const permitSchema = z.object({ token: z.string().min(20).max(128), expires_at: date, export_id: z.uuid(), transfer_url: z.url().max(500) }).strict();
 export const familyLabels = { security: "Sécurité et comptes", contacts: "Contacts", enquiries: "Demandes", properties: "Biens", developments: "Programmes", offerings: "Offres", documents: "Documents", requirements: "Besoins", deals: "Affaires et finance", visits: "Visites", tasks: "Tâches", imports: "Imports", exports: "Exports" } as const;
-export const auditQuerySchema = z.object({ ...page, family: z.enum(Object.keys(familyLabels) as [keyof typeof familyLabels, ...(keyof typeof familyLabels)[]]).optional(), actor_id: z.uuid().optional(), start_on: z.iso.date().optional(), end_on: z.iso.date().optional() }).strict().refine(v => !v.start_on || !v.end_on || v.start_on <= v.end_on);
-export const auditSchema = numberedPage(z.object({ id: z.uuid(), action: z.string().max(100), actor_id: z.uuid().nullable(), actor_name: z.string().max(160), created_at: date, target_user_id: z.uuid().nullable(), targets: z.partialRecord(z.enum(["contact", "enquiry", "property", "development", "offering", "deal"]), z.uuid()) }).strict());
+export const auditQuerySchema = z.object({ ...page, family: z.enum(Object.keys(familyLabels) as [keyof typeof familyLabels, ...(keyof typeof familyLabels)[]]).optional(), actor_id: z.uuid().optional(), website_source_id: z.uuid().optional(), unattributed_actor: z.literal("true").optional(), start_on: z.iso.date().optional(), end_on: z.iso.date().optional() }).strict().refine(v => !v.start_on || !v.end_on || v.start_on <= v.end_on).refine(v => [v.actor_id, v.website_source_id, v.unattributed_actor].filter(value => value !== undefined).length <= 1);
+export const auditSchema = numberedPage(z.object({ id: z.uuid(), action: z.string().max(100), actor_id: z.uuid().nullable(), actor_name: z.string().min(1).max(173), created_at: date, target_user_id: z.uuid().nullable(), targets: z.partialRecord(z.enum(["contact", "enquiry", "property", "development", "offering", "deal"]), z.uuid()) }).strict());
+export type AuditRow = z.infer<typeof auditSchema>["items"][number];
+export const auditActorsQuerySchema = pageQuerySchema.extend({ q: z.string().trim().max(160).optional() });
+const auditActorSchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("user"), id: z.uuid(), display_name: z.string().min(1).max(160) }).strict(),
+  z.object({ kind: z.literal("website"), id: z.uuid(), display_name: z.string().min(1).max(173) }).strict(),
+  z.object({ kind: z.literal("unattributed"), id: z.null(), display_name: z.literal("Auteur non renseigné") }).strict(),
+]);
+export const auditActorsSchema = numberedPage(auditActorSchema);
+export type AuditActor = z.infer<typeof auditActorSchema>;
+export function auditActorKey(actor: AuditActor) { return actor.kind === "unattributed" ? "unattributed" : `${actor.kind}:${actor.id}`; }

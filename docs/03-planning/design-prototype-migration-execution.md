@@ -28,7 +28,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
-| P7 remaining surfaces | Help/settings/dashboard/search, real prepared-PDF discovery/history and selected export review/job UI implemented; template visibility shared across reads | Remaining report tools/audit/import panels and directory refinements; native/real SQL/full-stack/product review |
+| P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs and selected audit/typed attribution implemented; template visibility shared across reads | Remaining report/intake/import panels and directory refinements; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -1068,3 +1068,67 @@ slice (62 semantic glyphs,444 Button sites,zero violations). All254 prototype in
 remain unchanged. Backend source/dependencies are unchanged; the prior scoped
 330 connection-forbidden backend result is retained, not newly rerun or generalized
 to job delivery. Native/real worker/private-byte checks are still not run.
+
+## Selected audit page and typed attribution lookup
+
+2026-10-27. The selected data-operations/audit-model sources use family, author
+and date filters with Date/Utilisateur/Action/Objet results. The real page now
+matches that grouping, applies valid changes immediately, retains the last applied
+query on invalid dates, resets numbered paging and uses shared desktop tables/
+phone-or-drawer cards. Inputs are disposable read-only controls, so neither the
+page nor its lazy picker creates a business draft. Current denial removes the
+whole projection, and retry clears cached author labels before another read.
+
+The existing event endpoint already accepted user IDs but had no complete scoped
+choice API. The new M/A-only attribution lookup uses the same current authority
+and read-only repeatable-read boundary, with disjoint EXISTS/UNION branches before
+literal name matching/count/page. It includes retained users/web sources only
+where represented in audit history, plus an explicit null-ID unknown-author row.
+No unused-identity roster, role/email/source-key/digest, CRM payload or fake staff
+ID. A missing user/source reference does not establish a system actor; the initial
+system-label assumption was corrected to « Auteur non renseigné » before commit.
+
+Legacy user actor_id, response fields and Casablanca date/order behavior remain.
+The new source and unknown-author selectors only narrow existing M/A scope and
+reject conflicting choices. Prefixed source names fit their true173-character
+wire bound. The page links typed parent routes without prefetch, preserves safe
+IDs/raw references, restricts account links to administrator UI, and does not
+invent a route for a bare offering ID. Existing contact/deal/activity vocabulary
+is reused; inventory action labels are extracted without changing their object
+initializer, then shared by both histories. Unknown actions remain exact.
+
+The picker uses existing shadcn Popover/Button/Input primitives, five-option
+numbered reads and the installed Radix available-height variable. Its selected
+label fits its field while keeping the full accessible text/title. Five options
+is an integration proposal pending native/owner review. No new CSS/theme/icon kit,
+chart, dependency, migration, storage or command. Normal modules stay below300
+lines; the longer audit query/composition functions were reviewed as cohesive
+read/filter/presentation responsibilities, with target/vocabulary rendering and
+the picker separated. Retention code/CLI is untouched and was not executed.
+
+Thirty-three new connection-forbidden cases inspect actual SQL/role/count/page,
+typed attribution, legacy bounds/shape and real route annotation/dispatch. Four
+isolated PostgreSQL cases are prepared for complete distinct pagination/retained
+identities/literal matching, current role/session denial and web/unknown rows;
+they have not run. Nine new frontend cases execute the route/facade/picker/filter/
+denial/retry/link paths.363 backend units pass/696 integration cases are deselected;
+268 frontend units, Ruff/mypy (9 app modules), lint/typecheck and pinned Next16.4.2
+build pass (62 glyphs/450 Button sites/zero violations). No test result is promoted
+to real SQL/race/performance, native focus/touch/zoom/accessibility or product proof.
+
+Patch-validation and shell quoting attempts that made no change were corrected;
+they are not successful commands. Original-machine mandatory skills remain
+unavailable/not claimed, dense CRM remains outside the marketing workflow, shared
+React guidance/primitives are applied and AFTER timing is unchanged. Other
+P0–P8 reconciliation, import/intake/report/directory forms, global history guards,
+original/styled PDF provenance and final native/full-stack/owner gates stay open.
+No real database/service/data, production, main/push/merge or goal completion.
+
+[Audit evidence](design-migration-evidence/audit-ui-2026-10-27.json).
+
+Source/AST checks confirm all254 frozen inputs unchanged, all21 inventory labels'
+initializers identical and the Popover height variable present in both installed
+Radix and compiled CSS. Git attributes normalize working CRLF to indexed LF;
+the logical source is unchanged. Repository gate passes8703 indexed files/zero
+forbidden or oversized/14 ignore probes. Documentation gate passes22 sprints,
+1240 links,42 mappings,13 Mermaid and12 API JSON examples; cached diff check passes.

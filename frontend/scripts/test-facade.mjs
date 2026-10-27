@@ -52,6 +52,7 @@ try {
     "tests/unit/prepared-search.test.mjs",
     "tests/unit/prepared-history.test.mjs",
     "tests/unit/exports-workspace.test.mjs",
+    "tests/unit/audit-workspace.test.mjs",
     "tests/unit/draft-lifecycle.test.mjs",
     "tests/unit/kanban.test.mjs",
     "tests/unit/realtime.test.mjs",

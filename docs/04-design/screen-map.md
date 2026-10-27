@@ -1,5 +1,15 @@
 # KAY screen map and navigation contract
 
+Selected audit migration,2026-10-27: `/dashboard?view=audit` retains authenticated
+M/A access. Four automatic filters match the selected family/user/date grouping;
+the lazy author picker reads real typed history attribution across numbered pages.
+Staff, web sources and missing authors stay distinct without a fake user ID.
+Desktop keeps Date/Utilisateur/Action/Objet; phone/drawers use shared cards.
+Existing typed record routes are linked with no prefetch. Staff-account links
+remain admin-only; offering IDs do not invent a route. Current denial removes
+previous names/counts and clears author filters before retry. Native/real-stack
+verification is pending. [Execution](../03-planning/design-prototype-migration-execution.md).
+
 Selected search migration,2026-10-27: desktop header suggestions now open an anchored
 eight-row preview and the authenticated `/search?q=...&kind=...&page=...` view.
 Phone keeps its search icon/Sheet. The full page has the common labelled form,

@@ -69,6 +69,8 @@ class AuditQuery(PageQuery):
         | None
     ) = None
     actor_id: UUID | None = None
+    website_source_id: UUID | None = None
+    unattributed_actor: Literal["true"] | None = None
     start_on: date | None = None
     end_on: date | None = None
 
@@ -76,4 +78,16 @@ class AuditQuery(PageQuery):
     def ordered(self) -> AuditQuery:
         if self.start_on and self.end_on and self.start_on > self.end_on:
             raise ValueError("INVALID_DATE_RANGE")
+        if (
+            sum(
+                value is not None
+                for value in (self.actor_id, self.website_source_id, self.unattributed_actor)
+            )
+            > 1
+        ):
+            raise ValueError("ONE_AUDIT_ACTOR_REQUIRED")
         return self
+
+
+class AuditActorsQuery(PageQuery):
+    q: str = Field(default="", max_length=160)

@@ -2,10 +2,10 @@ from calendar import monthrange
 from datetime import UTC, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import delete, func, or_, select, text
+from sqlalchemy import Uuid, delete, exists, func, literal, or_, select, text, union_all
 
 from app.db.session import Database
-from app.discovery.contracts import AuditQuery
+from app.discovery.contracts import AuditActorsQuery, AuditQuery
 from app.discovery.search import page_result
 from app.identity.models import AuditEvent, User
 from app.identity.sessions import current_identity, require_role
@@ -31,7 +31,10 @@ def read_audit(database: Database, token: str, query: AuditQuery) -> dict[str, o
         require_role(current_identity(session, token), {"manager"})
         statement = (
             select(
-                AuditEvent, func.coalesce(User.display_name, "Source web : " + WebsiteSource.name)
+                AuditEvent,
+                func.coalesce(
+                    User.display_name, "Source web : " + WebsiteSource.name, "Auteur non renseigné"
+                ),
             )
             .outerjoin(User, AuditEvent.actor_user_id == User.id)
             .outerjoin(WebsiteSource, AuditEvent.website_source_id == WebsiteSource.id)
@@ -44,6 +47,15 @@ def read_audit(database: Database, token: str, query: AuditQuery) -> dict[str, o
             )
         if query.actor_id:
             statement = statement.where(AuditEvent.actor_user_id == query.actor_id)
+        if query.website_source_id:
+            statement = statement.where(
+                AuditEvent.actor_user_id.is_(None),
+                AuditEvent.website_source_id == query.website_source_id,
+            )
+        if query.unattributed_actor:
+            statement = statement.where(
+                AuditEvent.actor_user_id.is_(None), AuditEvent.website_source_id.is_(None)
+            )
         for day, end in [(query.start_on, False), (query.end_on, True)]:
             if day:
                 bound = datetime.combine(
@@ -82,6 +94,64 @@ def read_audit(database: Database, token: str, query: AuditQuery) -> dict[str, o
             for event, name in rows
         ]
         return page_result(items, total, query.page, query.page_size)
+
+
+def read_audit_actors(database: Database, token: str, query: AuditActorsQuery) -> dict[str, object]:
+    """Distinct staff/web/unattributed attribution with history, never a general directory."""
+    with database.session() as session:
+        session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
+        require_role(current_identity(session, token), {"manager"})
+        users = select(literal("user").label("kind"), User.id, User.display_name).where(
+            exists(select(AuditEvent.id).where(AuditEvent.actor_user_id == User.id))
+        )
+        sources = select(
+            literal("website").label("kind"),
+            WebsiteSource.id,
+            (literal("Source web : ") + WebsiteSource.name).label("display_name"),
+        ).where(
+            exists(
+                select(AuditEvent.id).where(
+                    AuditEvent.actor_user_id.is_(None),
+                    AuditEvent.website_source_id == WebsiteSource.id,
+                )
+            )
+        )
+        unattributed = select(
+            literal("unattributed").label("kind"),
+            literal(None, type_=Uuid()).label("id"),
+            literal("Auteur non renseigné").label("display_name"),
+        ).where(
+            exists(
+                select(AuditEvent.id).where(
+                    AuditEvent.actor_user_id.is_(None),
+                    AuditEvent.website_source_id.is_(None),
+                )
+            )
+        )
+        authors = union_all(users, sources, unattributed).subquery()
+        statement = select(authors.c.kind, authors.c.id, authors.c.display_name)
+        if query.q:
+            escaped = query.q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            statement = statement.where(authors.c.display_name.ilike(f"%{escaped}%", escape="\\"))
+        total = session.scalar(select(func.count()).select_from(statement.subquery())) or 0
+        rows = session.execute(
+            statement.order_by(func.lower(authors.c.display_name), authors.c.kind, authors.c.id)
+            .offset((query.page - 1) * query.page_size)
+            .limit(query.page_size)
+        ).mappings()
+        return page_result(
+            [
+                {
+                    "kind": row["kind"],
+                    "id": str(row["id"]) if row["id"] is not None else None,
+                    "display_name": row["display_name"],
+                }
+                for row in rows
+            ],
+            total,
+            query.page,
+            query.page_size,
+        )
 
 
 def purge_security(database: Database, now: datetime | None = None) -> int:

@@ -1,5 +1,17 @@
 # HTTP contracts for `/api/v1`
 
+## Audit attribution choices, 2026-10-27
+
+The selected audit page adds M/A-only `GET /audit/actors` with bounded literal
+name search and numbered pages. It returns only typed user/source/unknown-author
+identity and display metadata represented in existing permitted history, not a
+staff/source directory. `GET /audit/events` additionally accepts exactly one of
+legacy `actor_id`, `website_source_id` or `unattributed_actor=true`. Its existing
+response fields, Casablanca bounds and role checks remain; missing attribution
+is labelled explicitly and never called a system actor without evidence.
+No business values, configuration/keys, retention command, migration or write.
+[Complete contract and rollout](discovery-contract.md#typed-attribution-lookup-2026-10-27).
+
 Selected prepared-PDF search extension,2026-10-27: exact GET `/search` accepts an
 optional bounded `X-Kay-Search-Version:2`. That mode adds generated_document hits
 with a catalogue title and a Lead/Deal Documents-tab destination. Legacy requests

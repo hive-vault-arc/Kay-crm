@@ -1,5 +1,35 @@
 # KAY security check for changes
 
+## Selected audit and typed attribution, 2026-10-27
+
+The new GET actor lookup uses current identity/real M/A role before names/count/
+pagination in a read-only repeatable-read transaction. Its disjoint EXISTS/UNION
+rows include only actual retained user or web-source IDs/names represented in
+audit history, plus a null-ID unknown-author option when both references are null.
+It does not read unused identities as a roster, reveal source keys/digests,
+emails/roles/configuration, copy event bodies or invent a system/user actor.
+Literal escaped name matching and stable kind/ID ordering precede numbered slicing.
+
+Existing audit reads retain their wire fields and legacy user selector. The added
+source/unknown selectors only narrow the same current M/A authority; conflicts,
+unknown inputs and invalid dates are rejected. No purging or history write occurs.
+The previous null-name and prefixed web-name bounds are handled truthfully.
+
+The frontend/facade accept closed bounded typed metadata, no-store/current-session
+reads and no writes. Lazy options remove old names during query changes/errors;
+authority failure clears the parent projection and old filters before retry.
+Readonly query controls cannot become business drafts. Record links use typed
+parents and no prefetch; account links remain admin-only and never grant access.
+Known action vocabulary is shared; raw audit identifiers/unknown actions remain
+available without fetching CRM contents or changing original events.
+
+363 connection-forbidden backend units and268 frontend units pass with scoped
+Ruff/mypy/lint/typecheck/build. Four PostgreSQL cases are prepared, not executed.
+Native/zoom/touch/accessibility, real SQL scope/races/performance, deployed API/
+full-stack and owner/AFTER acceptance remain pending. No real DB/service/data,
+retention CLI, migration, main/push/merge or production operation.
+[Evidence](03-planning/design-migration-evidence/audit-ui-2026-10-27.json).
+
 ## Selected export review/job UI, 2026-10-27
 
 The frontend snapshots validated applied whole-result filters and count when the

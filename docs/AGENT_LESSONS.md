@@ -1535,3 +1535,16 @@ callback through context; do not pass refs into render callbacks. Block navigati
 only while the command is outstanding. Tests must
 exercise changed props, duplicate events, interrupted retries and unmounts.
 Controller checks do not certify native popup/focus behavior or worker delivery.
+
+
+## 2026-10-27 — Filter audit attribution without inventing authors
+
+Build attribution options from the complete permitted audit history before
+counting or paging, not a staff directory or the current event page. Retained
+users and web sources keep separate typed IDs; missing attribution has no fake
+user ID. Null staff/source references do not prove that the system performed
+an action: display « Auteur non renseigné ». Preserve current role checks and
+immutable event fields. A denied lookup must hide the parent projection too;
+retry must not redisplay cached names before a fresh authorized response.
+Mark read-only filter/picker inputs as disposable UI so they do not create
+business drafts. SQL/controller checks do not certify real scope/race or UI gates.
