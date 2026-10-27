@@ -1,5 +1,14 @@
 # KAY screen map and navigation contract
 
+Selected owner identity forms,2026-10-27: `/owners/new` and `/owners/{id}/edit`
+use the shared dossier header/actions and Coordonnées/Gestion du contact groups.
+Existing mode reads the chosen canonical Contact and explicitly adds its owner
+role without copying the new draft, changing its agent or creating property links.
+Literal-role-present choices open without a write. Managed drafts, expected
+versions, same-body retry and denied-context clearing remain. Directory/drawer/
+legal-link/hierarchy/photo and native work are not declared complete.
+[Contract](owner-forms-local.md).
+
 Selected draft navigation,2026-10-27: managed shell forms retain edits on cancel
 and recheck outstanding commands at final discard. Available Navigation API
 history uses the same confirmation, returning to the existing editor entry before

@@ -25,7 +25,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to62 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
-| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
+| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine, clickable short steppers and owner identity/reuse forms implemented; typed mixed-programme query correction | Remaining exact owner directory/drawer entry, legal-owner/hierarchy/photo forms and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
@@ -1297,3 +1297,61 @@ Mixed cancelable/uncancelable actions also invalidate the older confirmation
 callback before restoration finishes. A stale click cannot resume an outdated
 destination. Settled movement clears obsolete history prompts; a same-entry
 framework update does not. This counterexample is covered by the fifteenth case.
+
+## Selected owner identity forms and current-contact reuse — 2026-10-27
+
+Continued P4 from `46f67bc`. The routed new/edit owner form now uses the selected
+dossier header/actions, available width, Coordonnées/Gestion du contact sections
+and complementary disclosure. One shared field component owns phone/e-mail
+collections once; labels, primary flags, profile/type/languages and other roles
+remain intact. Owner is fixed in this form. Owner-only composition leaves the
+default/inline Contact field groups unchanged. The real optional-language rule
+prevails over the prototype's illustrative required handler. No new CSS/theme/
+chart/dependency or source image. Native/owner integration review remains pending.
+
+Source inspection found existing-contact choice present in owners.js but absent
+in the old CRM page. It now uses the scoped paged chooser plus a fresh canonical
+Contact read. Explicit role-only PATCH copies that contact's current fields and
+version, not the unused new draft or its agent. Literal role already present
+opens without a write; no legal owner link is created. The directory's broader
+role-or-current/former-link predicate stays unchanged: a literal-role badge is
+not proof of legal ownership or absence of historical links. This mapping uses
+the current Contact capability and is documented for product review.
+
+New M/A contacts require an explicit agent; Agent sends no assignment override.
+Edits do not change responsibility/provenance. A lock spans async validation and
+the command, with a retry key for exact path/method/body. Empty mode/search does
+not create a draft, while typed fields/agent survive mode changes and selected
+contact ID is protected. Superseded reads abort. Current denial clears private
+form/choice before fresh retry. Unmount suppresses late redirects, without
+claiming a submitted mutation was rolled back. Archived choices are read-only.
+
+Conflicts retain fields, require explicit reload/keep-version choice for full
+edit, allow only current reload for role reuse, and reject foreign-ID snapshots.
+Comparison preserves/displays all methods, roles, profile and responsibility.
+Accessible duplicate reuse has owner-role wording instead of promising another
+enquiry. Existing C02/C04 scope/phone/merge/stock/provenance and backend commands
+remain unchanged. No real records, service, database, migration or private data.
+
+Fifteen new actual-module units cover model preservation, assignment, validation/
+retry locks, canonical reuse/no-op, archive/stale/denied/mode/unmount/conflict,
+collection composition and confirmation/chooser boundaries.320 frontend units,
+lint/typecheck and Next16.4.2 build pass (62 glyphs,88 consumers/316 icon sites,
+455 Button sites/zero violations). Initial missing required RecordFact icons
+were corrected and rerun. One old inline-fields loader gained its actual shared
+section import. Prepared native reuse journey and two owner-name selectors were
+updated, not executed; the broader old directory/detail browser assertions remain.
+
+Routed page identity is this slice's scope. Owner directory/drawer entry,
+legal-owner/hierarchy/photo forms, other remaining per-domain/form/document/
+offer/PDF/provenance work, legacy history fallback and final native/stack/CI/
+AFTER/owner gates stay open. Original-machine mandatory skills remain unavailable/
+not claimed; dense CRM excludes marketing workflow, shared primitives/React and
+AFTER timing remain. No main/push/merge, production or goal completion.
+[Owner-form evidence](design-migration-evidence/owner-forms-2026-10-27.json).
+
+Source/AST check confirms all254 frozen inputs unchanged and the important hidden
+display rule in compiled CSS; this is not native visibility evidence. Repository
+gate passes8724 indexed files/zero forbidden or oversized/14 ignore probes. Docs
+pass22 sprints,1244 links,42 mappings,13 Mermaid and12 API JSON examples. Cached
+diff check passes; the unrelated35 lesson lines and motion plan remain excluded.

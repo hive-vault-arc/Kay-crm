@@ -1,5 +1,34 @@
 # KAY security check for changes
 
+## Selected owner identity and canonical reuse, 2026-10-27
+
+The UI uses existing Contacts metadata/list/detail/POST/PATCH, with no new grant,
+identity, ownership or assignment endpoint. Explicit reuse first reads the
+current permitted canonical Contact, then copies its complete editable fields
+and expected_version while adding only owner among roles. It never substitutes
+the unused new-contact draft/agent or posts legal links. Literal owner role is
+not legal ownership evidence; existing directory role/link predicates stay intact.
+M/A select assignment only for a new contact; Agent sends no override. Backend
+scope/write/phone uniqueness/merge/provenance authority remains authoritative.
+
+Validation/commands synchronously lock duplicates and retain unchanged path/body/
+method retry identity. Conflicts do not overwrite inputs automatically; reuse
+can only reload current identity, and foreign-ID snapshots cannot be adopted.
+Archived contacts are not restored implicitly. New lookup/mode/unmount aborts
+the old read and blocks stale projection/late redirects. Current denial hides
+private fields/selection and retry remounts before reread; chooser errors hide
+previous options. Duplicate reuse confirmation describes a Contact role only.
+No browser storage, log, URL payload, raw data export or private marketing copy.
+
+320 frontend units pass, including15 new actual form/model/selector/layout/
+confirmation cases. Lint/typecheck/Next16.4.2 build pass. The initial typecheck
+found missing required RecordFact icons; the semantic icons were supplied and
+checks rerun. A real-API/browser reuse journey is prepared, not run. Existing
+backend contracts remain unchanged/unexecuted here. Native/full-stack/real
+permission/race/merge/AFTER/owner gates and other migration surfaces remain open.
+No real records/service/DB, main/push/merge or production operation.
+[Evidence](03-planning/design-migration-evidence/owner-forms-2026-10-27.json).
+
 ## Selected draft/history protection, 2026-10-27
 
 Navigation protection reads boolean dirty/busy markers and existing opaque entry

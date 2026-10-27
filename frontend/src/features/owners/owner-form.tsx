@@ -2,76 +2,103 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ContactIcon } from "@/components/icons";
-import { PageHeader } from "@/components/shared/page-header";
+import { DossierFormHeader, useDossierDraft } from "@/components/shared/dossier-form";
+import { RecordHeader } from "@/components/shared/record-header";
+import { RecordSection } from "@/components/shared/record-workspace";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 import { AgentPicker } from "@/features/contacts/agent-picker";
-import { ContactFields, blankContact } from "@/features/contacts/contact-fields";
-import { contactFieldsSchema, contactSchema, newContactSchema, type Contact, type ContactFields as Values, type StaffRole } from "@/features/contacts/contracts";
+import { ContactFields } from "@/features/contacts/contact-fields";
+import { ContactSelector } from "@/features/contacts/contact-selector";
+import { contactFieldsSchema, contactSchema, editContactSchema, newContactSchema, type Contact, type ContactFields as Values, type StaffRole } from "@/features/contacts/contracts";
 import { qualificationMetadataSchema, type QualificationMetadata } from "@/features/contacts/qualification-contracts";
 import { CommandError, RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
 import { useHydrated } from "@/hooks/use-hydrated";
-import { ApiError } from "@/lib/api/client";
+import { apiGet, ApiError } from "@/lib/api/client";
 import { apiCommand } from "@/lib/api/command";
+import { ownerRoleBody, ownerValues } from "./owner-form-model";
+import { OwnerContactChoice, OwnerContactSnapshot } from "./owner-form-parts";
 import { OwnerLoading } from "./owner-loading";
-
-function valuesFor(contact?: Contact): Values {
-  return contact ? {
-    name: contact.name, type: contact.type, phones: contact.phones, emails: contact.emails,
-    roles: [...new Set([...contact.roles, "owner" as const])],
-    country: contact.country, nationality: contact.nationality, languages: contact.languages,
-  } : { ...blankContact, roles: ["owner"] };
-}
 
 export function OwnerForm({ id, role }: { id?: string; role: StaffRole }) {
   const metadata = useQuery("/api/v1/contacts/metadata", qualificationMetadataSchema);
-  const title = id ? "Modifier le propriétaire" : "Ajouter un propriétaire";
-  const heading = <PageHeader title={title} description="Identité et coordonnées privées du contact propriétaire." route={id ? `/owners/${id}/edit` : "/owners/new"} icon={ContactIcon} />;
-  if (metadata.error) return <>{heading}<RecordError error={metadata.error} retry={metadata.refresh} /></>;
+  const [revision, setRevision] = useState(0);
+  const heading = <RecordHeader title={id ? "Modifier le propriétaire" : "Ajouter un propriétaire"} route={id ? `/owners/${id}/edit` : "/owners/new"} backHref={id ? `/owners/${id}` : "/owners"} />;
+  const retry = () => { metadata.refresh(); setRevision(value => value + 1); };
+  if (metadata.error) return <>{heading}<RecordError error={metadata.error} retry={retry} /></>;
   if (!metadata.value) return <>{heading}<OwnerLoading label="Chargement du formulaire" /></>;
-  return <div className="grid min-w-0 gap-5">{heading}{id ? <OwnerEditLoader id={id} role={role} metadata={metadata.value} /> : <OwnerFormFields role={role} metadata={metadata.value} />}</div>;
+  return id ? <OwnerEditLoader key={revision} id={id} role={role} metadata={metadata.value} retry={retry} /> : <OwnerFormFields key={revision} role={role} metadata={metadata.value} retry={retry} />;
 }
-
-function OwnerEditLoader({ id, role, metadata }: { id: string; role: StaffRole; metadata: QualificationMetadata }) {
+function OwnerEditLoader({ id, role, metadata, retry }: { id: string; role: StaffRole; metadata: QualificationMetadata; retry: () => void }) {
   const query = useQuery(`/api/v1/contacts/${id}`, contactSchema);
   if (query.error) return <RecordError error={query.error} retry={query.refresh} />;
   if (!query.value) return <OwnerLoading label="Chargement du propriétaire" />;
-  return <OwnerFormFields key={`${id}:${query.value.version}`} role={role} metadata={metadata} contact={query.value} />;
+  return <OwnerFormFields key={`${id}:${query.value.version}`} role={role} metadata={metadata} contact={query.value} retry={retry} />;
 }
-
-function OwnerFormFields({ role, metadata, contact }: { role: StaffRole; metadata: QualificationMetadata; contact?: Contact }) {
-  const hydrated = useHydrated();
-  const router = useRouter();
-  const form = useForm<Values>({ resolver: zodResolver(contactFieldsSchema), defaultValues: valuesFor(contact) });
-  const [agent, setAgent] = useState("");
-  const [error, setError] = useState<ApiError>();
-  const attempt = useRef({ body: "", key: "" });
-  const title = contact ? "Enregistrer les modifications" : "Créer le propriétaire";
-  async function submit(values: Values) {
-    setError(undefined);
-    const fields = { ...values, roles: [...new Set([...values.roles, "owner" as const])] };
-    if (!contact && role !== "agent" && !agent) { setError(new ApiError("INVALID_ASSIGNEE", 422)); return; }
-    const body = contact ? { ...fields, expected_version: contact.version } : { ...fields, ...(role !== "agent" ? { primary_agent_id: agent } : {}) };
-    const parsed = contact ? contactFieldsSchema.safeParse(fields) : newContactSchema.safeParse(body);
-    if (!parsed.success) { setError(new ApiError("VALIDATION_ERROR", 422)); return; }
-    const fingerprint = JSON.stringify(body);
-    if (attempt.current.body !== fingerprint) attempt.current = { body: fingerprint, key: crypto.randomUUID() };
-    try {
-      const saved = await apiCommand(contact ? `/api/v1/contacts/${contact.id}` : "/api/v1/contacts", body, contactSchema, attempt.current.key, contact ? "PATCH" : "POST");
-      router.push(`/owners/${saved.id}`);
-    } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
+function OwnerFormFields({ role, metadata, contact, retry }: { role: StaffRole; metadata: QualificationMetadata; contact?: Contact; retry: () => void }) {
+  const hydrated = useHydrated(), router = useRouter();
+  const form = useForm<Values>({ resolver: zodResolver(contactFieldsSchema), defaultValues: ownerValues(contact) });
+  const values = useWatch({ control: form.control });
+  const [mode, setMode] = useState("new"), [selected, setSelected] = useState<Contact>(), [selectedId, setSelectedId] = useState("");
+  const [agent, setAgent] = useState(""), [agentName, setAgentName] = useState("");
+  const [version, setVersion] = useState(contact?.version ?? 1), [saving, setSaving] = useState(false), [selecting, setSelecting] = useState(false);
+  const [error, setError] = useState<ApiError>(), [denied, setDenied] = useState<ApiError>();
+  const lock = useRef(false), mounted = useRef(true), lookup = useRef<AbortController | null>(null), attempt = useRef({ body: "", key: "" }), trigger = useRef<HTMLButtonElement>(null);
+  const isReuse = !contact && mode === "existing";
+  const activeValues = { fields: values, agent: !contact ? agent : "", selectedId: isReuse ? selectedId : "" };
+  const draft = useDossierDraft(activeValues, saving);
+  const snapshot = contactSchema.safeParse(error?.details?.current);
+  const current = snapshot.success && snapshot.data.id === (isReuse ? selected?.id : contact?.id) ? snapshot : { success: false as const };
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; lookup.current?.abort(); }; }, []);
+  const authorityDenied = useCallback((failure: ApiError) => { lookup.current?.abort(); setDenied(failure); setSelected(undefined); setSelectedId(""); }, []);
+  function clearChoice() { if (lock.current) return; lookup.current?.abort(); setSelected(undefined); setSelectedId(""); setSelecting(false); setError(undefined); }
+  async function chooseExisting(id: string) {
+    if (lock.current || !contactSchema.shape.id.safeParse(id).success) return;
+    lookup.current?.abort(); const controller = new AbortController(); lookup.current = controller;
+    setMode("existing"); setSelected(undefined); setSelectedId(id); setSelecting(true); setError(undefined);
+    try { const result = await apiGet(`/api/v1/contacts/${id}`, contactSchema, controller.signal); if (!controller.signal.aborted && mounted.current) setSelected(result); }
+    catch (reason) { if (!controller.signal.aborted && mounted.current) { const failure = reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503); if ([401, 403, 404].includes(failure.status)) authorityDenied(failure); else setError(failure); } }
+    finally { if (!controller.signal.aborted && mounted.current) setSelecting(false); }
   }
-  return <Form {...form}><form noValidate className="form-surface grid min-w-0 gap-6" aria-busy={form.formState.isSubmitting} onSubmit={event => void form.handleSubmit(submit)(event)}>
-    <div className="grid gap-1"><h2 className="text-section font-medium">Coordonnées du propriétaire</h2><p className="text-sm text-muted-foreground">Le numéro est privé et reste soumis aux droits Contacts. Un propriétaire peut aussi avoir d’autres rôles.</p></div>
-    <fieldset disabled={!hydrated || form.formState.isSubmitting} className="grid min-w-0 gap-5"><ContactFields form={form} metadata={metadata} requiredRole="owner" />{!contact && role !== "agent" ? <AgentPicker value={agent} change={setAgent} /> : !contact ? <p className="text-sm text-muted-foreground">Vous serez l’agent responsable de ce contact.</p> : null}</fieldset>
-    <CommandError error={error} dismiss={() => setError(undefined)} />
-    {error?.code === "VERSION_CONFLICT" ? <p className="text-sm text-warning">Ce contact a changé. Conservez votre saisie, ouvrez la fiche actuelle dans un autre onglet et comparez avant de réessayer.</p> : null}
-    <p className="text-sm text-muted-foreground">Pour rattacher un bien ou un programme, ouvrez sa fiche « Propriétaires ». L’identité du contact ne suffit pas à créer un lien de propriété.</p>
-    <div className="flex flex-wrap gap-2"><Button action={contact ? "save" : "create"} type="submit" disabled={!hydrated || form.formState.isSubmitting}>{form.formState.isSubmitting ? "Enregistrement…" : title}</Button><Button action="cancel" asChild variant="outline"><Link href={contact ? `/owners/${contact.id}` : "/owners"}>Annuler</Link></Button></div>
+  async function persist(fields?: Values) {
+    if (isReuse && (!selected || selected.archived_at)) return;
+    if (isReuse && selected?.roles.includes("owner")) { draft.accept(activeValues); router.push(`/owners/${selected.id}`); return; }
+    if (!isReuse && !contact && role !== "agent" && !agent) { setError(new ApiError("INVALID_ASSIGNEE", 422)); return; }
+    const ownerFields = fields && { ...fields, roles: [...new Set([...fields.roles, "owner" as const])] };
+    const parsed = isReuse && selected ? editContactSchema.safeParse(ownerRoleBody(selected)) : contact ? editContactSchema.safeParse({ ...ownerFields, expected_version: version }) : newContactSchema.safeParse({ ...ownerFields, ...(role !== "agent" ? { primary_agent_id: agent } : {}) });
+    if (!parsed.success) { setError(new ApiError("VALIDATION_ERROR", 422)); return; }
+    const target = isReuse ? selected : contact, path = target ? `/api/v1/contacts/${target.id}` as const : "/api/v1/contacts", method = target ? "PATCH" : "POST";
+    const fingerprint = JSON.stringify({ path, method, body: parsed.data });
+    if (attempt.current.body !== fingerprint) attempt.current = { body: fingerprint, key: crypto.randomUUID() };
+    try { const saved = await apiCommand(path, parsed.data, contactSchema, attempt.current.key, method); if (mounted.current) { draft.accept(activeValues); router.push(`/owners/${saved.id}`); } }
+    catch (reason) { if (mounted.current) { const failure = reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503); if ([401, 403, 404].includes(failure.status)) authorityDenied(failure); else setError(failure); } }
+  }
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); if (lock.current || selecting || !hydrated) return;
+    lock.current = true; setSaving(true); setError(undefined);
+    try { if (isReuse) await persist(); else await form.handleSubmit(persist)(event); }
+    finally { lock.current = false; if (mounted.current) setSaving(false); }
+  }
+  const route = contact ? `/owners/${contact.id}/edit` : "/owners/new", back = contact ? `/owners/${contact.id}` : "/owners";
+  const title = contact ? "Modifier le propriétaire" : "Ajouter un propriétaire";
+  if (denied) return <><RecordHeader title={title} route={route} backHref={back} /><RecordError error={denied} retry={retry} /></>;
+  if (contact?.archived_at) return <><RecordHeader title={title} route={route} backHref={back} /><p className="text-sm text-warning">Ce contact est archivé. Gérez sa restauration depuis sa fiche avant de le modifier.</p></>;
+  return <Form {...form}><form noValidate className="kay-dossier-form" aria-label={title} data-draft-managed data-live-dirty={draft.dirty || undefined} aria-busy={saving} onSubmit={event => void submit(event)}>
+    <DossierFormHeader title={title} route={route} backHref={back} description="Identité et coordonnées du contact propriétaire." actions={<><Button action="cancel" asChild variant="outline" disabled={saving}><Link prefetch={false} href={back}>Annuler</Link></Button><Button ref={trigger} action={contact ? "save" : isReuse && selected?.roles.includes("owner") ? "show" : "create"} type="submit" disabled={!hydrated || saving || selecting || isReuse && (!selected || Boolean(selected.archived_at))}>{saving ? "Enregistrement…" : contact ? "Enregistrer les modifications" : isReuse ? selected?.roles.includes("owner") ? "Ouvrir le propriétaire" : "Ajouter le rôle Propriétaire" : "Créer le propriétaire"}</Button></>} />
+    <div className="kay-surface kay-form-sheet">
+      <CommandError error={error} record="propriétaire" reuse={!contact ? id => void chooseExisting(id) : undefined} returnFocus={trigger} dismiss={() => setError(undefined)} />
+      {!contact ? <RecordSection title="Contact propriétaire"><fieldset disabled={!hydrated || saving} className="grid min-w-0 gap-4"><Label htmlFor="owner-contact-mode">Contact</Label><NativeSelect id="owner-contact-mode" value={mode} onChange={event => { if (!lock.current) { clearChoice(); setMode(event.target.value); } }}><option value="new">Créer un nouveau contact</option><option value="existing">Choisir un contact existant</option></NativeSelect>
+        {isReuse ? selected ? <OwnerContactChoice contact={selected} change={clearChoice} disabled={saving} /> : <><ContactSelector choose={item => void chooseExisting(item.id)} denied={authorityDenied} />{selecting ? <p role="status">Chargement du contact sélectionné…</p> : null}{error && selectedId && !selecting ? <Button action="retry" type="button" variant="outline" className="justify-self-start" onClick={() => void chooseExisting(selectedId)}>Recharger le contact sélectionné</Button> : null}</> : <p className="text-sm text-muted-foreground">Choisissez un contact existant pour éviter un doublon.</p>}
+      </fieldset></RecordSection> : null}
+      <fieldset hidden={isReuse} disabled={!hydrated || saving || isReuse} className={`grid min-w-0 gap-0 ${contact ? "" : "border-t pt-5"}`}><ContactFields form={form} metadata={metadata} requiredRole="owner" workspace ownerLayout assignment={!contact && !isReuse && role !== "agent" ? <AgentPicker value={agent} selectedLabel={agentName} change={(id, name) => { setAgent(id); setAgentName(name ?? ""); }} denied={authorityDenied} /> : <p className="text-sm text-muted-foreground">Agent responsable : {contact?.primary_agent.display_name ?? "vous-même"}. L’attribution ne change pas dans cette fiche.</p>} /></fieldset>
+      {current.success ? <RecordSection title={`Version actuelle ${current.data.version}`}><OwnerContactSnapshot contact={current.data} /><p className="text-sm">Votre saisie est conservée. Comparez-la avant de poursuivre.</p><div className="flex flex-wrap gap-2"><Button action="refresh" type="button" variant="outline" onClick={() => { if (isReuse) setSelected(current.data); else { const next = ownerValues(current.data); form.reset(next); draft.accept({ fields: next, agent: "", selectedId: "" }); setVersion(current.data.version); } setError(undefined); }}>Charger la version actuelle</Button>{!isReuse ? <Button action="compare" type="button" variant="outline" onClick={() => { setVersion(current.data.version); setError(undefined); form.setFocus("name"); }}>Conserver ma saisie sur cette version</Button> : null}</div></RecordSection> : null}
+      <p className="text-sm text-muted-foreground">Les biens se rattachent depuis leur fiche dans Projets. Le rôle Propriétaire ne crée aucun lien de propriété.</p>
+    </div>
   </form></Form>;
 }

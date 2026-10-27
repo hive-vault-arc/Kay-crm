@@ -34,6 +34,7 @@ try {
     "tests/unit/projects.test.mjs",
     "tests/unit/directory-filters.test.mjs",
     "tests/unit/owners.test.mjs",
+    "tests/unit/owner-forms.test.mjs",
     "tests/unit/generated-documents.test.mjs",
     "tests/unit/project-links.test.mjs",
     "tests/unit/theme.test.mjs",

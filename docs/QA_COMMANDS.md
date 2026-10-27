@@ -1,5 +1,16 @@
 # KAY QA command register
 
+Latest owner identity slice (2026-10-27):320 frontend units pass, including15 new
+payload/assignment/retry/validation/canonical reuse/role no-op/archive/denial/
+stale lookup/conflict/mode/layout/duplicate-copy cases. Lint/typecheck and pinned
+Next16.4.2 build pass (62 glyphs,88 consumers/316 icon sites/455 Button sites/zero
+violations). Initial missing required fact icons were corrected, not called a
+passing run. `tests/e2e/owner-reuse.spec.ts` and updated owner form name selectors
+are prepared, not executed; other old owner directory/detail selectors remain
+open. No backend/API route/CSS/dependency or actual data operation. Native,
+real permission/merge/race/full-stack/AFTER/owner gates remain pending.
+[Evidence](03-planning/design-migration-evidence/owner-forms-2026-10-27.json).
+
 Latest draft/history slice (2026-10-27):305 frontend units pass, including15 new
 history/rapid movement/confirmation/busy/marker settlement/workspace/Next-listener
 cases. Lint/typecheck and Next16.4.2 build pass (62 glyphs,88 consumers/309 icon

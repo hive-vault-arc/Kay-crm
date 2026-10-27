@@ -14,7 +14,7 @@ test("propriétaire: create, private scope, inventory history and former link", 
   try {
     await signIn(page, agent);
     await page.goto("/owners/new");
-    await page.getByLabel("Nom du contact", { exact: true }).fill(name);
+    await page.getByLabel("Nom complet", { exact: true }).fill(name);
     await page.getByLabel("Téléphone 1 *", { exact: true }).fill(phone);
     const created = page.waitForResponse(response => response.url().endsWith("/api/v1/contacts") && response.request().method() === "POST");
     await page.getByRole("button", { name: "Créer le propriétaire", exact: true }).click();
@@ -51,7 +51,7 @@ test("propriétaire: create, private scope, inventory history and former link", 
     await expect(page.getByRole("tab", { name: "Historique", exact: true })).toHaveAttribute("aria-selected", "true");
 
     await page.goto(`/owners/${ownerId}/edit`);
-    await page.getByLabel("Nom du contact", { exact: true }).fill(`${name} révisé`);
+    await page.getByLabel("Nom complet", { exact: true }).fill(`${name} révisé`);
     await page.getByRole("button", { name: "Enregistrer les modifications" }).click();
     await expect(page.getByRole("heading", { name: `${name} révisé`, exact: true })).toBeVisible();
 

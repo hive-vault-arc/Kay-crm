@@ -1586,3 +1586,16 @@ movement without confusing identical-URL cached entries. Pin integration
 assumptions in meaningful tests, update explicit test-loader imports when shared
 helpers change and keep unsupported browsers/native gestures as open work.
 Synthetic event/state-machine checks are not native browser or cache evidence.
+
+
+## 2026-10-27 — Reuse an owner contact without replacing its identity
+
+Existing-owner/contact choice must read current canonical fields before a
+versioned role update. Never reuse a new-contact draft or its agent as the
+replacement body. Preserve methods, labels, primary flags, profile, other roles
+and provenance; a literal owner role is separate from legal-property links or
+owner-directory membership through current/former links. Require explicit
+conflict choices and reject a foreign current snapshot. Retain inactive drafts
+across mode changes without making empty mode/search into an edit. Test stale
+lookup abort, validation races, role no-op, denial and full field preservation;
+synthetic form checks do not certify backend scope or native drawer behavior.
