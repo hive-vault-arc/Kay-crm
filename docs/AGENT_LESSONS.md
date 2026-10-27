@@ -1666,3 +1666,23 @@ Reuse container-aware full-grid spans: viewport sm:col-span-2 can create an
 implicit second column inside a narrow desktop drawer. Locate paths with rg
 before reading them; a plausible old filename is not evidence that it exists.
 Compiled geometry and prepared native cases never establish rendered acceptance.
+
+
+## 2026-10-27 — Proposal editor identity must survive its collection refresh
+
+Keep a selected editor outside table rows and key it by original proposal ID,
+not the changing parent revision. Capture reviewed fields/versions until success
+or an explicit current-version choice. A row disappearing or moving off-page
+must not discard the draft or turn an edit into creation. Port its actual home
+from the selected tab composition instead of copying an older overview layout.
+
+Unknown mutation acknowledgement or follow-up reload failure remains an exact
+retry path. Do not offer a context/version rebase that could duplicate a committed
+creation. Separate command failure from current-read failure; bracket paged child
+comparison with parent revision and reject foreign/malformed rows. Keep/reload
+are deliberate, with discard protection and current terminal/archive checks.
+
+Synthetic summaries must use their actual strict DTO, not extra full-record
+fields. JSX walkers may insert whitespace absent from real rendering; fix that
+assertion without altering exact money. Read the actual Markdown heading before
+a multi-file patch: a guessed heading rejects the whole patch without writes.

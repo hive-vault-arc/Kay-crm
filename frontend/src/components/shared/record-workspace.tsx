@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type ReactNode, type Ref } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useHydrated } from "@/hooks/use-hydrated";
 
@@ -28,8 +28,8 @@ export function RecordWorkspace({ tabs, aside, initialTab, label, activeTab, onT
   </div>;
 }
 
-export function RecordSection({ title, action, children, description, count }: {
-  title: string; action?: ReactNode; children: ReactNode; description?: string; count?: number;
+export function RecordSection({ title, action, children, description, count, headingRef }: {
+  title: string; action?: ReactNode; children: ReactNode; description?: string; count?: number; headingRef?: Ref<HTMLHeadingElement>;
 }) {
-  return <section className="kay-record-section"><header className="kay-section-head"><h2>{title}{count !== undefined ? <span className="kay-section-count">{count}</span> : null}</h2>{action ? <div className="kay-section-actions">{action}</div> : null}</header>{description ? <p className="kay-section-description">{description}</p> : null}<div className="kay-section-body">{children}</div></section>;
+  return <section className="kay-record-section"><header className="kay-section-head"><h2 ref={headingRef} tabIndex={headingRef ? -1 : undefined}>{title}{count !== undefined ? <span className="kay-section-count">{count}</span> : null}</h2>{action ? <div className="kay-section-actions">{action}</div> : null}</header>{description ? <p className="kay-section-description">{description}</p> : null}<div className="kay-section-body">{children}</div></section>;
 }

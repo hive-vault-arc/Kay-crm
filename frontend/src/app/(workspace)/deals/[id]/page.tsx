@@ -10,6 +10,6 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   if (identity.state !== "authenticated") return <AuthUnavailable path={`/deals/${id}`} />;
   const query = await searchParams;
   const task = z.uuid().safeParse(query.task);
-  const tab = query.tab === "finance" || query.tab === "documents" ? query.tab : undefined;
+  const tab = typeof query.tab === "string" && ["overview", "projects", "activity", "documents", "finance"].includes(query.tab) ? query.tab : undefined;
   return <DealRecord key={`${id}:${task.success ? task.data : ""}:${tab ?? ""}`} id={id} role={identity.profile.user.role} actorId={identity.profile.user.id} initialTab={tab} initialTask={task.success ? task.data : undefined} />;
 }

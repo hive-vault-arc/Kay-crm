@@ -1,5 +1,43 @@
 # KAY security check for changes
 
+## Selected customer proposals and Projects context, 2026-10-27
+
+Only existing Deal/proposal reads and POST/PATCH commands are used. Proposals
+retain current Contact scope, active/reserved versus terminal/archive boundaries,
+MAD decimal strings, original coherent periods, conditions/status/date bounds,
+both reviewed versions and true-actor history. Acceptance still does not close,
+reserve or modify inventory, with no automatic expiry or single-accepted rule.
+Moving existing project controls/stock facts and proposals into Projets adds no
+grant or command. Selected neutral badges, desktop table and phone/drawer cards
+remain; supported tab aliases are explicit scalar values, not arbitrary routing.
+
+The existing MutateDeal/useDealCommand boundary serializes writes, retains the
+exact unchanged path/method/body retry key and re-reads current Deal state.
+Managed drafts survive lost acknowledgement/reload. Unknown mutation outcomes
+stay on exact retry, not a version rebase that could duplicate a committed
+creation. Only confirmed success accepts/closes. A stale unrelated parent error
+is not attributed to this form. Selection outside the table keeps draft identity
+when rows or revisions change; keys do not silently convert edit into creation.
+
+Explicit current comparison uses the actual paged scoped collection bracketed
+by Deal revision, never an invented proposal GET route. Strict schemas reject
+foreign rows, wrong pages/sizes, excess/unexpected data; malformed/missing or
+changing-version projections cannot be adopted. Keep is explicit and reload
+discard-guarded. Current denial removes private lists/fields before fresh retry;
+transient failures retain them. Departure aborts comparison/releases its busy
+ownership and suppresses late success, without claiming backend rollback. No
+private values/proofs are persisted, logged, exported or placed in URLs.
+
+403 frontend units, lint/typecheck and Next16.4.2 build pass, including18 new
+actual-module cases. Two isolated native journeys are prepared, not executed;
+older browser helpers and real permission/stock/merge/race/SQL/full-stack/CI/
+AFTER/owner review remain pending. Frozen254 inputs remain unchanged; compiled
+CSS/model evidence is not native privacy/accessibility acceptance. No new CSS,
+dependency, backend/schema/data/service/private-config operation, real records,
+main/push/merge, deployment or production access.
+[Contract](04-design/customer-proposals-local.md) and
+[evidence](03-planning/design-migration-evidence/customer-proposals-2026-10-27.json).
+
 ## Focused inventory offering commands, 2026-10-27
 
 Only existing campaign/confirm-availability routes are used. M/A-only ordinary

@@ -1,5 +1,13 @@
 # SP-11 implemented deal contract
 
+Selected workspace integration, 2026-10-27: proposals live in Projets, with
+desktop table/phone cards and one focused create/edit drawer. Existing commands,
+exact amounts/periods, both reviewed versions and stock independence remain.
+Current comparison uses the real scoped paged collection bracketed by the Deal
+revision; unknown-result recovery retains the original request rather than
+rebasing it. See the [proposal workspace](customer-proposals-local.md). Native
+and owner review remain pending; no business/API/schema rule changed.
+
 Status: implementation present; actual acceptance belongs to
 [SP-11 evidence](../03-planning/sprints/sp-11-evidence.md). This supplements the
 future-facing API, model and architecture; it does not implement SP-12 onward.

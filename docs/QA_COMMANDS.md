@@ -1,5 +1,20 @@
 # KAY QA command register
 
+Latest customer-proposal slice (2026-10-27):403 frontend units pass, including18
+new actual model/controller/composition cases. Selected projects/linked inventory
+and proposals live in Projets; four main tabs remain. Desktop table, phone cards
+and an independent focused editor preserve scoped identities, exact amounts/
+periods, managed drafts, unchanged retries and explicit current comparison.
+Lint/typecheck and pinned Next16.4.2 build pass (63 glyphs,96 consumers/332 icon
+sites,474 Button sites/zero violations). Initial strict summary-fixture and
+synthetic whitespace failures were corrected without weakening real schemas.
+Two1440/390 journeys in `tests/e2e/customer-proposals.spec.ts` are prepared, not
+run; older Deal/Contact/pipeline helpers remain. Source/compiled checks retain254
+frozen inputs and shared responsive/footer/disclosure/hidden declarations, not
+native visibility/focus evidence. Existing app-access restriction and final
+real-role/stock/race/SQL/native/full-stack/AFTER/CI/owner gates remain pending.
+[Evidence](03-planning/design-migration-evidence/customer-proposals-2026-10-27.json).
+
 Latest offering-form slice (2026-10-27):385 frontend units pass, including13 new
 actual model/controller/composition cases. Lint/typecheck and pinned Next16.4.2
 build pass (63 glyphs,93 consumers/328 icon sites,469 Button sites/zero violations).
