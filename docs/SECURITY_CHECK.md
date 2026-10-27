@@ -1,5 +1,25 @@
 # KAY security check for changes
 
+## Staff/policy form migration, 2026-10-27
+
+Existing admin identity/CSRF proof, strict user/password DTOs, current authority,
+versions, same-body retry identity and backend protections remain. UI confirmation
+holds the shown target/version. Synchronous locks cover validation/commands;
+dirty/busy identity edits block sibling reset/delete. Passwords remain transient
+inputs/retry-owner data, with no secret in managed draft signatures/events, URL,
+storage, logs, screenshots or API responses. Native fallback uses POST. Success,
+dismissal and authority denial clear credential inputs; denial hides the prior
+editor. Tests generate synthetic secrets and assert them only through booleans.
+
+Working policy retains every work/pause row and current version. Preview leases
+bind the full proposal/hash, invalidate immediately on edits and reject late
+previews; save still uses the original backend authority and impacted-visit
+review. Comparison retains input, exposes the current week and requires another
+preview. Command/comparison denial removes old impact content. No backend,
+migration, credential/account, real data/service or permission change occurred.
+211 frontend source tests and lint/typecheck/build pass; real account/scheduling
+security and native final review remain pending. [Evidence](03-planning/design-migration-evidence/settings-forms-2026-10-27.json).
+
 ## Settings overview/navigation, 2026-10-26
 
 Exact existing administrator page guards and user UUID validation remain. Summary

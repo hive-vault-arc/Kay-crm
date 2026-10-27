@@ -1,5 +1,14 @@
 # KAY interface components: shadcn/ui working guide
 
+Selected settings form composition,2026-10-27: UserForm owns one SettingsWorkspace
+header/action row, identity/role card and right-hand security slot. Security tools
+use existing confirmed dialogs/status colors; dirty/busy identity edits block
+competing commands. Password presence alone enters managed draft signatures.
+WorkingHours shows complete weekday summaries and a support card; RecordDrawer
+owns all detailed periods, pauses, preview/comparison and save. Existing controls,
+DTOs, versions/retry and permission guards remain. Layouts stack below999/640px;
+no new kit/token/chart/dependency. [Execution](../03-planning/design-prototype-migration-execution.md).
+
 Selected settings composition,2026-10-26: SettingsWorkspace provides one page
 heading plus current-section administration navigation for overview, staff list/
 create/edit and hours routes. The source288px rail becomes local pills below1280px;

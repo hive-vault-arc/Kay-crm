@@ -1,0 +1,129 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "61f2070",
+  "scope": "Selected staff detail/security forms and complete detailed working-policy drawer",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 425,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 211,
+      "failed": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8653,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1234,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    }
+  ],
+  "sourceAnalysis": {
+    "settingsCssRules": 73,
+    "existingRoles": 4,
+    "missingRoles": 0,
+    "prototypeInputs": 254,
+    "prototypeHashDrift": 0
+  },
+  "sources": [
+    {
+      "path": "frontend/scripts/test-facade.mjs",
+      "sha256": "ffd2f543cd87e21649a47b2827fa1b0e354d9dc0c8c1fc6a7b10bd9fe6beeabf"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/settings/users/[id]/edit/page.tsx",
+      "sha256": "ce5e445481373304dd6c64507b54150dc5ff1df69eb3b76026e7b216dcdaf36c"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/settings/users/new/page.tsx",
+      "sha256": "a3a03751b545c7503cae09d3dc9dcaa8fa17fdda61a3822fe21e86f3528ed053"
+    },
+    {
+      "path": "frontend/src/app/workspace-settings.css",
+      "sha256": "4f1fa0050480aa94da450456518d5aca6d64b9b3e1286f1f03ee9d3418a68a15"
+    },
+    {
+      "path": "frontend/src/features/schedule/working-hours.tsx",
+      "sha256": "4881b56473332f0fee749052f00e7048530e5bbc3f9f26115c2ec31875701bf7"
+    },
+    {
+      "path": "frontend/src/features/users/settings-workspace.tsx",
+      "sha256": "89929aeb9f11341020b7a74d6ae0dc6766a3f0ec15c96c1e1f0b7349cc38e3b6"
+    },
+    {
+      "path": "frontend/src/features/users/user-actions.tsx",
+      "sha256": "4d07314dce572bc4ddcbc598ac5975955725d00db8d2a7162d766444993adffd"
+    },
+    {
+      "path": "frontend/src/features/users/user-editor.tsx",
+      "sha256": "de7c1e2686666627f865c0f5e1bcddda0ab86599a25256caf49c2183b731359e"
+    },
+    {
+      "path": "frontend/src/features/users/user-form.tsx",
+      "sha256": "c1e23e5da977c95cd33df37adcf88547cd073ce19cf53b57238ec1522a80fb74"
+    },
+    {
+      "path": "frontend/tests/unit/settings-forms.test.mjs",
+      "sha256": "676d67fbedf2b17475e3460d2ad73568b6088fce249d46561eaf06f9bfa25ee8"
+    },
+    {
+      "path": "frontend/tests/unit/settings-workspace.test.mjs",
+      "sha256": "8878225e8b6c70ba7fd416bd125ae752e329a98ff7c277f94bcccdc819d37ffa"
+    }
+  ],
+  "security": [
+    "Existing admin/current authority/session/CSRF/DTO/version/idempotency protections preserved",
+    "Password-presence-only draft signatures; transient input/retry owner; POST fallback; clear on success/dismissal/authority loss",
+    "Reviewed target/version held while confirmation is open; dirty sibling edits block security writes",
+    "Complete policy windows/pauses; synchronous locks; exact proposal/hash lease; stale handlers and late previews refused",
+    "Comparison preserves proposed rows and requires fresh preview; authority loss clears previous content"
+  ],
+  "correctedFailures": [
+    "Optional union error narrowed for RecordError",
+    "Root-cwd npm invocation did not run a check; corrected frontend cwd",
+    "Malformed editor script rejected before mutation; corrected without counting a pass"
+  ],
+  "adaptations": [
+    "Real policy always uses its multiple-period representation, never illustrative source defaults",
+    "Staff/password business rules follow current D37 with actual initial expiry and session revocation",
+    "Existing concrete Next routes and single settings frame retained"
+  ],
+  "limits": [
+    "No native/browser/CUA/CDP/app-HTTP access",
+    "No real account/password/reset/delete or scheduling command executed",
+    "No backend/migration/database/service/dependency/prototype change",
+    "Revised browser selectors and final real-stack/security/layout/accessibility/AFTER/product review pending",
+    "Full migration objective remains open; no main/push/merge/deploy"
+  ]
+}

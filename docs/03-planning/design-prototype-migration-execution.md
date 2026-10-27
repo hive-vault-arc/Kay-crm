@@ -1,6 +1,6 @@
 # Selected KAY workspace migration: execution
 
-Updated: 2026-10-26
+Updated: 2026-10-27
 Branch: `codex/redesign`
 Base/main: `e0bdc09feed0c3920b63cda635e5cf4cf42e08b1`
 Plan: [selected-design migration](design-prototype-migration-2026-10-25.md)
@@ -27,8 +27,8 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
-| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox/settings refinements and native workflow review |
-| P7 remaining surfaces | Help topic hub, side-by-side guide cards, balanced reader plus selected settings navigation/overview implemented; other existing behavior retained | Dashboard/report/search/audit/jobs and detailed settings form compositions; native review |
+| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
+| P7 remaining surfaces | Help topic hub, side-by-side guide cards, balanced reader plus selected settings navigation/overview/staff forms and working-policy drawer implemented; other existing behavior retained | Dashboard/report/search/audit/jobs and remaining directory refinements; native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -703,3 +703,59 @@ No backend, identity/session, credential, real account or main/push/merge change
 is part of this settings slice.
 
 [Settings source evidence](design-migration-evidence/settings-2026-10-26.json).
+
+
+## Staff detail forms and detailed working-policy drawer
+
+The selected staff create/edit hierarchy now owns one settings header with Back,
+Cancel and Save actions, a main identity/role card and a content-sized right-hand
+security card. The layouts stack on narrow screens and keep top labels. Account
+state uses the existing colored Badge vocabulary; initial expiry, first-login
+password replacement, session revocation and preserved attribution remain explicit.
+Existing create/edit/reset/delete routes, administrator proof/CSRF, reviewed versions
+and backend last-administrator/deletion safeguards are unchanged. No real staff
+operation, initial-password delivery or backend/session change was performed.
+
+The full user form serializes validation/submission, preserves an interrupted
+command body/key and holds its reviewed record snapshot. Ordinary edits send no
+password. Native fallback is POST and controls are hydration-gated. Managed draft
+ownership records actual identity/role fields and only a password-presence marker;
+no plaintext credential enters the draft baseline/event. Credentials remain only
+in transient inputs and the existing retry owner, clearing on success/authority
+denial. Security actions are blocked while sibling identity edits are dirty/busy.
+Reset/delete confirmation captures its shown record/version, serializes execution
+and clears credentials on dismissal/success/denial. Current denials remove the
+prior editor; explicit read retry clears stale data before loading. Successful
+commands retain feedback through the new-version form remount.
+
+Working hours now follows the selected detailed-policy composition: seven compact
+read-only day rows, a capacity/timezone support card and one guarded detailed
+drawer. All existing multiple work periods and pauses remain distinct per day;
+none is flattened into the prototype's illustrative simple-week defaults. New
+rows start blank and both42-row category bounds remain. The drawer uses matching
+soft day groups, top-label time controls and icon removal actions.
+
+The original strict complete proposal, version, preview hash and save DTO remain.
+Preview never saves. A synchronous operation lock serializes requests, while an
+immediately invalidated preview lease/signature and edit epoch reject stale save
+handlers and late previews. Conflict comparison shows the complete current week,
+retains the proposal and requires a new preview after explicit version selection.
+Retry retains the same complete reviewed save body/key. Current command/comparison
+denial removes previous drawer/impact content. Affected visits use existing cards.
+
+Nine new actual component/controller cases cover these DTOs, transient credential
+lifetimes using boolean-only secret assertions, draft/cancel/hydration boundaries,
+reviewed reset versions, retry locks, full period retention, preview invalidation,
+comparison and denial. Existing route fixtures now reflect the form-owned single
+workspace while preserving exact admin destinations. Typechecking caught an
+optional-error union and it was narrowed explicitly. One root-cwd npm invocation
+failed before running a check and was rerun from frontend; one malformed editor
+script failed before mutation and was corrected. No failed attempt is a pass.
+
+Final lint/typecheck/build and211 frontend units pass (62 glyphs/425 Button sites/
+zero violations). Settings CSS parses with73 rules/4 existing roles/zero missing
+definitions. Native account/reset/delete/booking workflows, revised browser
+selectors, final layout/focus/zoom/accessibility and AFTER/product review remain
+pending. Remaining migration phases are not narrowed or declared complete.
+
+[Settings form evidence](design-migration-evidence/settings-forms-2026-10-27.json).

@@ -1,5 +1,15 @@
 # Local visit scheduling contract (SP-14)
 
+Selected detailed-policy UI,2026-10-27: /settings/working-hours keeps its existing
+administrator gate and exact policy/preview/save contract. Seven summary rows
+preserve every period/pause; a guarded drawer owns the complete editable proposal.
+New rows are blank. Every edit invalidates the preview lease immediately; late
+previews cannot authorize save. Conflict comparison shows current complete rows,
+retains input and requires a new preview. Role/authority denial removes old impact
+content. Backend working-time, capacity, affected-visit hash and version checks
+are unchanged. Source checks pass; native and real-PostgreSQL workflow acceptance
+remains pending. [Evidence](../03-planning/design-migration-evidence/settings-forms-2026-10-27.json).
+
 ## Selected general Notes mapping (2026-10-26)
 
 General notes are separate from overlap_reason and terminal outcome. The selected

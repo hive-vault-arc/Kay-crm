@@ -45,6 +45,7 @@ try {
     "tests/unit/work-forms.test.mjs",
     "tests/unit/visit-forms.test.mjs",
     "tests/unit/settings-workspace.test.mjs",
+    "tests/unit/settings-forms.test.mjs",
     "tests/unit/draft-lifecycle.test.mjs",
     "tests/unit/kanban.test.mjs",
     "tests/unit/realtime.test.mjs",

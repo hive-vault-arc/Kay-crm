@@ -1,5 +1,13 @@
 # KAY QA command register
 
+Latest staff/policy form slice (2026-10-27): frontend lint/typecheck,211 units
+and pinned Next16.4.2 build pass (62 glyphs/425 Button sites/zero violations).
+Nine new actual controller cases cover reviewed credential commands, retry and
+clearance, full policy windows, serialized preview/save, stale handlers and denial.
+Settings CSS parses with73 rules/4 existing roles. Native/auth/real scheduling,
+browser selector migration and final product acceptance remain pending.
+[Evidence](03-planning/design-migration-evidence/settings-forms-2026-10-27.json).
+
 Latest selected settings overview/navigation slice (2026-10-26): frontend lint,
 typecheck,202 units and pinned Next16.4.2 build pass (62 glyphs/420 Button sites,
 zero violations). Four SSR/route cases cover authoritative totals/weekdays,

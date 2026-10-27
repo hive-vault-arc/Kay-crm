@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+Selected staff/detail-policy migration,2026-10-27: existing user create/edit pages
+keep exact admin/UUID checks; their client forms now own a single settings frame,
+header actions and identity/security columns. Loading/denied editors use a generic
+safe frame. Working-hours summary opens one detailed policy drawer, keeping all
+original windows and preview-before-save commands. No route/API/permission change.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
 Selected settings migration,2026-10-26: existing /settings, /settings/users,
 /settings/users/new, /settings/users/{uuid}/edit and /settings/working-hours retain
 their admin/identity guards and concrete routes while sharing the selected local

@@ -13,7 +13,7 @@ const icons={SettingsIcon:"svg",ContactsIcon:"svg",CalendarIcon:"svg",ForwardIco
 const header=loadServer("src/components/shared/page-header.tsx",{modules:{"react/jsx-runtime":runtime}});
 
 test("Selected settings navigation has one current section and preserves concrete Next routes",()=>{
- const {SettingsWorkspace}=loadServer("src/features/users/settings-workspace.tsx",{modules:{react,"react/jsx-runtime":runtime,"next/link":{default:"a"},"@/components/icons":icons,"@/components/shared/page-header":header}});
+ const {SettingsWorkspace}=loadServer("src/features/users/settings-workspace.tsx",{modules:{react,"react/jsx-runtime":runtime,"next/link":{default:"a"},"@/components/icons":icons,"@/components/ui/button":{Button:({children})=>createElement(Fragment,null,children)},"@/components/shared/page-header":header}});
  const html=renderToStaticMarkup(createElement(SettingsWorkspace,{active:"users",route:"/settings/users"},"Content"));
  assert.equal((html.match(/aria-current="page"/g)||[]).length,1);
  assert.match(html,/href="\/settings\/users" aria-current="page"/);
@@ -47,6 +47,6 @@ test("Settings authority denial hides both summaries; transient failures keep in
 test("Settings route wrappers retain exact administrator gates before rendering sections",async()=>{
  for(const [file,path] of [["page.tsx","/settings"],["working-hours/page.tsx","/settings/working-hours"],["users/new/page.tsx","/settings/users/new"]]){
   const destinations=[];let allowed=false;const {default:Page}=loadServer(`src/app/(workspace)/settings/${file}`,{modules:{"react/jsx-runtime":runtime,"@/features/users/access":{adminAccess:async destination=>{destinations.push(destination);return allowed?{actorId:"synthetic-actor",denied:null}:{denied:"DENIED"};}},"@/features/users/settings-workspace":{SettingsWorkspace:"Workspace"},"@/features/users/settings-overview":{SettingsOverview:"Overview"},"@/features/schedule/working-hours":{WorkingHours:"Hours"},"@/features/users/user-form":{UserForm:"UserForm"}}});
-  assert.equal(await Page(),"DENIED");allowed=true;const rendered=await Page();assert.equal(rendered.props.route,path);assert.deepEqual(destinations,[path,path]);
+  assert.equal(await Page(),"DENIED");allowed=true;const rendered=await Page();if(path.endsWith("/new"))assert.equal(rendered.props.actorId,"synthetic-actor");else assert.equal(rendered.props.route,path);assert.deepEqual(destinations,[path,path]);
  }
 });

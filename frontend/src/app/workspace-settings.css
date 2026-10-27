@@ -40,6 +40,23 @@
 .kay-settings-facts > div { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 16px; }
 .kay-settings-facts dt { color:var(--workspace-muted); }
 .kay-settings-facts dd { font-weight:550; overflow-wrap:anywhere; }
+.kay-settings-user-layout,.kay-settings-hours-layout { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr); gap:20px; align-items:start; min-width:0; }
+.kay-settings-form-card { min-width:0; padding:24px; }
+.kay-settings-support { display:grid; gap:20px; align-content:start; min-width:0; }
+.kay-settings-user-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; min-width:0; }
+.kay-settings-form-section { display:grid; gap:20px; padding-top:24px; border-top:1px solid var(--workspace-line); }
+.kay-settings-form-section .kay-settings-panel-head { margin:0; }
+.kay-settings-security-card p { font-size:14px; line-height:22px; }
+.kay-settings-schedule { display:grid; min-width:0; }
+.kay-settings-schedule > div { display:flex; flex-wrap:wrap; align-items:start; gap:12px 24px; justify-content:space-between; padding:16px 0; border-top:1px solid var(--workspace-line); font-size:14px; line-height:20px; }
+.kay-settings-schedule dt { font-weight:550; }
+.kay-settings-schedule dd { display:grid; gap:4px; text-align:right; }
+.kay-settings-schedule small { color:var(--workspace-muted); font-size:13px; }
+.kay-settings-policy-editor { display:grid; min-width:0; gap:20px; }
+.kay-settings-policy-day { display:grid; min-width:0; gap:20px; padding:20px; border-radius:20px; background:var(--workspace-field); }
+.kay-settings-policy-day > h3 { display:flex; gap:9px; align-items:center; font-size:16px; font-weight:550; }
+.kay-settings-policy-groups { display:grid; min-width:0; gap:20px; }
+.kay-settings-window-row { display:grid; min-width:0; grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px; gap:12px; align-items:end; }
 @media(max-width:1279px) {
   .kay-settings-layout { grid-template-columns:minmax(0,1fr); }
   .kay-settings-navigation { position:static; }
@@ -48,9 +65,16 @@
   .kay-settings-nav-link { flex:none; min-height:44px; padding:10px 16px; border-radius:999px; gap:8px; }
   .kay-settings-nav-link strong { font-size:14px; font-weight:500; white-space:nowrap; }
 }
+@media(max-width:999px) {
+  .kay-settings-user-layout,.kay-settings-hours-layout { grid-template-columns:minmax(0,1fr); }
+}
 @media(max-width:640px) {
   .kay-settings-overview { grid-template-columns:minmax(0,1fr); }
   .kay-settings-overview-card { padding:16px; }
   .kay-settings-nav-link { padding-inline:12px; }
   .kay-settings-nav-link strong { font-size:13px; }
+  .kay-settings-form-card { padding:16px; }
+  .kay-settings-user-fields { grid-template-columns:minmax(0,1fr); }
+  .kay-settings-policy-day { padding:16px; }
+  .kay-settings-window-row { gap:8px; }
 }
