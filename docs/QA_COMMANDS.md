@@ -1,5 +1,22 @@
 # KAY QA command register
 
+Latest PDF stationery slice (2026-10-27):410 connection-forbidden backend units
+pass/696 integration cases deselected, including26 new actual layout/render/
+metadata/decimal/asset/font/service-context cases. Explicit backend/.venv Ruff/
+format and mypy217 source files pass. Selected Manrope stationery replaces the
+old preparation-sheet styling;12 original appendices remain byte/content-stream
+intact. Poppler4 final preparation pages from3 synthetic samples were inspected,
+plus a frozen reference. The first image pass exposed ReportLab's shared internal
+font-name collision; distinct embedded faces fixed it and the final images were
+re-rendered/reviewed. Initial old title-case/dash assertions and a text-token
+Ruff false positive were corrected. Offline no-index wheel build and zip checks
+prove18 required resources match source, without installation/deployment.
+All254 frozen inputs stay intact. Frontend is unchanged from the prior423-unit/
+lint/type/build checkpoint; those are retained results, not new execution.
+M01 restyled-appendix content/provenance and native app/real SQL/scope/transfer/
+race/full-stack/AFTER/CI/owner gates and wider migration work remain pending.
+[Evidence](03-planning/design-migration-evidence/pdf-stationery-2026-10-27.json).
+
 Latest PDF workspace slice (2026-10-27):423 frontend units pass, including20 new
 actual model/controller/composition/facade/transfer cases. Selected two-tab PDF
 preparation uses the real scoped catalogue, per-model drafts and exact uncertain
@@ -1736,7 +1753,7 @@ scenarios are not passing results.
 | HTTPS API startup/smoke | `.venv/Scripts/python.exe -m app.cli.serve`; in another terminal `-m app.cli.smoke` | 2026-10-15 SP-08: final development API restarted on localhost:8000 HTTPS; explicit CA, live/ready, missing-authority403, no-store and untrusted-CA refusal pass. No global TLS bypass/system trust change. |
 | First-administrator bootstrap and initial handoff | `scripts/kay.ps1 -Task bootstrap` or `.venv/Scripts/python.exe -m app.cli.bootstrap_admin`, from an interactive terminal in backend/ | 2026-10-14 SP-03/SP-04: real hidden TTY success/weak/mismatch/interrupt/repeat; non-TTY/argument/echo-fallback refusal and real PostgreSQL atomicity/races pass. Staff creation/handoff/reset/restricted change/fresh login verified synthetically. Actual administrator chooses their own password; no real/default account created. Actual staff delivery remains a human operation. |
 | Playwright browser installation | `npx playwright install chromium firefox webkit` | 2026-10-14: exit 0; Chromium 156.0.8078.4/rev 1248, Firefox 157/rev 1555, WebKit 27.2/rev 2370 installed. Chrome/Edge channels use installed browsers. |
-| Playwright E2E | `npm run test:e2e -- --grep 'SP08\|SP07\|SP06\|@shell' --max-failures=1`; corrected remaining targets `--project=firefox --project=webkit` with the same grep | 2026-10-15 SP-08:105 distinct affected cases verified across five targets. Original command:66 passed/1 Firefox validation-message failure/38 not run,14.2m,not clean. Its63 completed Chromium/Chrome/Edge cases plus the corrected complete Firefox/WebKit42/42,zero skipped,15.3m cover21 per target,including25 new SP08 cases. Application source unchanged by the explicit POST422-before-message synchronization. Earlier interrupted100-case command and genuine record-key fix are retained in evidence; no mock business success. |
+| Playwright E2E | `npm run test:e2e -- --grep 'SP08\|SP07\|SP06\|@shell' --max-failures=1`; corrected remaining targets `--project=firefox --project=webkit` with the same grep | 2026-10-15 SP-08:105 distinct affected cases verified across five targets. Original command:66 passed/1 Firefox validation-message failure/38 not run,14.2m,not clean. Its63 completed Chromium/Chrome/Edge cases plus the corrected complete Firefox/WebKit42/42,zero skipped,15.3m cover21 per target,including26 new SP08 cases. Application source unchanged by the explicit POST422-before-message synchronization. Earlier interrupted100-case command and genuine record-key fix are retained in evidence; no mock business success. |
 | Visible isolated Chrome sprint review | `npm run test:chrome -- --grep 'SP08 visible\|SP07 visible\|SP08 AT-23' --max-failures=1` | 2026-10-15 SP-08: refreshed5/5 pass,zero skipped,1.7m; actual hierarchy/units/template/briefing, prior standalone inventory, outage/invalid/record-switch checks.320/360/768/1024/1440,keyboard/touch,long labels and applicable states; actual200% edit,DPR2→4,width1427→713,overflowfalse,2854x1702 viewport. Main-agent inspection16 refreshed SP08 captures; AFTER008:0 HIGH/0 MEDIUM/1 optional LOW pending Khalid's selection. No audit-only fix; product/design review pending. |
 | Built-server browser smoke | After `npm run build`, temporarily set KAY_E2E_PRODUCTION=1; `npm run test:e2e -- --project=chrome --grep 'SP08\|SP07\|SP06\|@shell' --max-failures=1`; restore previous variable | 2026-10-15 SP-08:21/21 passed,zero skipped,3.6m. Build 0mZyw9I1IbVqz57TCdg3n on HTTPS3100 with isolated API/PostgreSQL and synthetic actors. All five SP08 cases plus seven inventory,five ownership and four shell regressions. Local optimized build quality,not deployment. |
 | Locust load run | Not configured | Record dataset, users, duration, p95 result, and environment. |

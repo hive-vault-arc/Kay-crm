@@ -1695,3 +1695,12 @@ when another model is selected. Accepting one successful model must not accept
 other models’ drafts. Abandon recovery only after explicit confirmation that
 the prior PDF may exist. Hide/clear retained private drafts on current denial
 from either context or history; do not infer continued access from an older read.
+
+
+## Static font instances can still share a variable-face name,2026-10-27
+
+A regular/bold filename pair does not prove distinct embedded PDF faces. The
+selected Manrope instances share an internal face name, and ReportLab aliases
+later registrations to the first. Verify actual embedded font streams and render
+the result; use distinct scoped descriptor identities without rewriting frozen
+font bytes. A green text/layout test alone did not catch the lost bold weight.

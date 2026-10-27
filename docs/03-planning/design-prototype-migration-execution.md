@@ -26,7 +26,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
-| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer and selected2-tab PDF preparation/true-creator history with per-model draft recovery | Remaining generated-PDF byte styling/provenance, finance and per-field context refinements; final native security/stock/focus checks |
+| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer, selected2-tab PDF preparation/true-creator history with per-model draft recovery and selected server-rendered preparation stationery | Remaining restyled-appendix content/provenance, finance and per-field context refinements; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
@@ -1695,3 +1695,56 @@ scope and remaining native/current-role/SQL/transfer/race/full-stack/CI gates.
 No data/service/private-config/real-record/main/push/merge/deploy operation.
 The unrelated35 lesson lines and motion note remain outside this checkpoint.
 The whole redesign goal stays active; the other ledger gaps remain outstanding.
+
+
+## Selected server-rendered preparation stationery,2026-10-27
+
+After `b595921`, new preparation sheets use frozen document-stationery.js /
+generated-pdf.js geometry and source assets: Manrope regular/bold, the small
+wordmark, white/navy page, uppercase centred title, paired current metadata,
+numbered sections, paired short fields/full-width long text, blank writing rules
+and subdued footer. Actual parent UUID/actor metadata wraps within columns;
+oversized bounded fields split across pages. Decimal grouping is string-exact.
+The authorized service supplies preparation actor independently of editable
+representative text; four-argument internal renderer use invents no actor.
+
+Warnings and the more explicit existing original-blank/no-auto-fill/no-signature
+facts remain. Only new generation changes appearance. Stored PDFs/receipts,
+current authority/finance/archive checks, publication transaction, private file
+storage/transfer and the12 original models remain. All appended page streams,
+text, media/crop boxes and rotation compare unchanged. Original appendices are
+not overlaid; M01 still requires a resolution of selected restyled appendix
+content/page/provenance differences rather than silently changing legal clauses.
+
+The fonts are exact selected static instances with the existing OFL, and the
+fixed logo commands retain source hashes. Their679-point repertoire matches the
+old variable face; complex-script shaping/all-Unicode acceptance is not inferred.
+No font/network download, runtime SVG parser or new dependency. Package data now
+includes the fixed vector JSON. An offline no-index/no-deps/no-build-isolation
+wheel and zip-byte check verify18 required resources, with no installation or
+deployment. Native app/full-stack execution remains under the existing rejection.
+
+The PDF skill was read/applied; its marker ran once before3 synthetic intermediate
+PDFs. One frozen reference and4 final Poppler-rendered preparation-page PNGs were
+inspected. The first images exposed both static font files' shared internal face
+name, causing ReportLab to alias bold to regular. Scoped embedded descriptor
+identities fix the collision without changing source bytes; the final samples
+were re-rendered and inspected. No observed French glyph/clipping/overlap/footer
+fault remains in these samples. This is local PDF inspection, not all-model
+visual proof, browser/real-user/AFTER or product acceptance.
+
+Validation:410 connection-forbidden backend units pass/696 integration cases
+deselected, including26 new geometry/metadata/literal/decimal/line-break/asset/
+font/concurrent-render/service-context cases. Explicit venv Ruff/format and
+mypy217 source files pass. Initial old case/dash assertions and a text-token Ruff
+false positive were corrected; no production schema was relaxed. All254 frozen
+inputs and12 original files are unchanged. Frontend source is unchanged from the
+preceding423-unit/lint/type/build checkpoint; those are retained, not freshly run.
+
+[Contract](../04-design/pdf-stationery-local.md) and
+[evidence](design-migration-evidence/pdf-stationery-2026-10-27.json) retain the
+native/current-role/SQL/race/transfer/full-stack/CI/AFTER/owner boundaries. Mandatory
+original-machine skill prerequisites remain unavailable; no execution is claimed.
+Main/push/merge/deploy, real records/services/private configuration, the unrelated
+35 local lesson lines and motion note remain separate. The full redesign goal
+stays active; finance/context/report/work and all other ledger gaps remain.

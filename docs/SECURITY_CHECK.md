@@ -1,5 +1,37 @@
 # KAY security check for changes
 
+## Selected preparation-sheet PDF renderer, 2026-10-27
+
+Only new generation's sheet appearance/metadata changes. Current authenticated
+actor and scoped parent supply preparation metadata; editable representative
+text cannot forge the creator. Existing template/parent authorization precedes
+rendering and locked current authority still precedes publication/replay. Receipt
+digest, original stored versions,12 original appendices, model warnings, private
+storage and one-use session-bound transfers remain. No new API request/response,
+grant, schema/migration, signature, funds/tax claim or public byte URL.
+
+User strings are literal canvas text, with no markup/action/URI/script parser.
+Decimal grouping uses strings and never rounds. Wrapping and page-local commands
+keep bounded long values and line breaks above the footer. Source SVG is132
+fixed owner-supplied path commands; fonts and license are locally pinned. No
+external asset fetch, new library or arbitrary user drawing/font input. Shared
+source face names receive distinct embedded descriptor identities so bold is
+not silently aliased. No values/proofs enter logs, storage beyond the existing
+authorized generated document, telemetry or URLs. Synthetic samples stay ignored.
+
+410 connection-forbidden backend units, scoped Ruff/format and mypy217 sources
+pass;696 real integration cases are deselected. All12 appended page streams/
+text/boxes/rotation remain original, and254 frozen inputs have zero drift.
+Offline wheel construction verifies18 resources; it is not install/deploy/runtime
+acceptance. Four final local PDF-page PNGs plus a reference were inspected after
+correcting the font collision; no browser/app access was attempted. Real sessions,
+scope/SQL/races/file transfer/full stack/CI, native app/AFTER/owner review and
+M01 restyled-appendix provenance remain open. French samples and equal679-point
+font coverage do not certify complex-script shaping or legal use. No real data,
+service, private configuration, main/push/merge/deployment/production operation.
+[Contract](04-design/pdf-stationery-local.md) and
+[evidence](03-planning/design-migration-evidence/pdf-stationery-2026-10-27.json).
+
 ## Selected PDF preparation and retained creator history, 2026-10-27
 
 Existing POST, current scope/template/archive rules, immutable PDF storage and

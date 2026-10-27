@@ -1,5 +1,10 @@
 # Selected PDF preparation workspace
 
+The subsequent [stationery renderer](pdf-stationery-local.md) now ports the
+selected preparation-sheet appearance onto new PDFs. The UI-only checkpoint
+described below changed no PDF bytes; original/styled appendix reconciliation
+and final native/full-stack acceptance remain open.
+
 Date:2026-10-27. Source implementation on `codex/redesign`; native and real-stack
 acceptance remain pending. This extends the [document contract](generated-documents.md)
 and [selected migration](../03-planning/design-prototype-migration-2026-10-25.md).

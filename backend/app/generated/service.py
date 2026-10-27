@@ -23,7 +23,7 @@ from app.files.service import audit, authorize, locked_identity
 from app.files.storage import PrivateStorage
 from app.generated.catalog import BY_CODE, TEMPLATES, Template
 from app.generated.contracts import GenerateRequest
-from app.generated.render import render_pdf
+from app.generated.render import PreparationContext, render_pdf
 from app.generated.visibility import visible_template_codes
 from app.identity.models import User
 from app.identity.security import IdentityError
@@ -214,11 +214,18 @@ def generate(
         if not _visible(identity, template):
             raise IdentityError("FORBIDDEN", 403)
         authorize(session, identity, body.parent_kind, body.parent_id, write=True)
+        prepared_by = identity.user.display_name
 
     now = datetime.now(ZoneInfo("Africa/Casablanca"))
     document_id, version_id, object_key = uuid4(), uuid4(), uuid4()
     reference = document_id.hex[:8]
-    payload = render_pdf(template, body.values, reference, now.strftime("%d/%m/%Y"))
+    payload = render_pdf(
+        template,
+        body.values,
+        reference,
+        now.strftime("%d/%m/%Y"),
+        PreparationContext(body.parent_kind, body.parent_id, prepared_by),
+    )
     if not payload or len(payload) > MAX_FILE_BYTES:
         raise IdentityError("FILE_TOO_LARGE", 413)
     storage = PrivateStorage(settings)

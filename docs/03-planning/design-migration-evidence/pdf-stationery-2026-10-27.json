@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "b5959219c0143e93ea4a6c68a0f5dbd75a99bc47",
+  "scope": "Selected server-rendered preparation-sheet stationery; literal bounded fields, real parent/true actor metadata, decimal-string formatting and unchanged original appendices",
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 410,
+      "deselected": 696,
+      "newCases": 26,
+      "boundary": "Connection-forbidden units. No real database, app listener or services."
+    },
+    {
+      "command": ".venv/Scripts/ruff.exe check app/generated/render.py app/generated/stationery.py app/generated/service.py tests/test_generated_unit.py",
+      "cwd": "backend",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/ruff.exe format app/generated/render.py app/generated/stationery.py app/generated/service.py tests/test_generated_unit.py",
+      "cwd": "backend",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/mypy.exe app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 217
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m pip wheel . --no-deps --no-build-isolation --no-index --wheel-dir ../.git/codex-pdf-stationery-wheel",
+      "cwd": "backend",
+      "exitCode": 0,
+      "wheelBuild": "offline --no-deps --no-build-isolation --no-index",
+      "wheelBytes": 1646439,
+      "sha256": "6e51a18f9a0a10831510395f4b1792bc20b58f8ef937404af6f6113baef96929",
+      "requiredResources": 18,
+      "resourcesMatchSource": true,
+      "forbiddenEntries": 0,
+      "installOrDeployment": false
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe .git/codex-pdf-stationery-samples.py",
+      "exitCode": 0,
+      "syntheticOnly": true,
+      "appOrDatabaseAccess": false,
+      "samples": [
+        {
+          "code": "01",
+          "preparationPages": 1,
+          "originalAppendixPages": 1,
+          "bytes": 98078,
+          "sha256": "72cf838bc9cd7f04fd3fd2d30fcf005efb4d84c8eb03be8041f37a84e021e735",
+          "layoutTextCommands": 30
+        },
+        {
+          "code": "09",
+          "preparationPages": 2,
+          "originalAppendixPages": 3,
+          "bytes": 106664,
+          "sha256": "097787df70879c7a47413b10806ad8145f8363ca4bf80c4416cc939062fb8093",
+          "layoutTextCommands": 81
+        },
+        {
+          "code": "11",
+          "preparationPages": 1,
+          "originalAppendixPages": 1,
+          "bytes": 98709,
+          "sha256": "dc801f57714c9b58c17c747bcdae907c8ebdf00fbae4f90c75d1817fcdb59811",
+          "layoutTextCommands": 25
+        }
+      ]
+    },
+    {
+      "command": "Poppler pdftoppm -png, first preparation pages of01/09/11 and09 continuation",
+      "exitCode": 0,
+      "finalPreparationPagesInspected": 4,
+      "frozenReferenceInspected": 1,
+      "noObservedClippingOverlapFrenchGlyphOrFooterDefect": true,
+      "notAllModelVisualProof": true
+    },
+    {
+      "command": "Read-only frozen/source/resource hash checks",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0,
+      "originalModels": 12,
+      "originalModelFilesUnchanged": true,
+      "selectedFontInstances": 2,
+      "selectedFontBytesExact": true,
+      "visualReview": "One frozen reference and four final preparation-page PNGs inspected; local PDF rendering only, no app/browser access",
+      "fullStackOrOwnerAcceptance": false
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8770,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1251,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "authority": "Frozen document-stationery.js and generated-pdf.js, with existing original-model/content/security contracts",
+    "fonts": "Exact selected Manrope regular/bold static instances; existing OFL;679-code-point coverage unchanged",
+    "wordmark": "3 fixed paths/132 operators; source SHA and font/license provenance in packaged JSON; no runtime SVG dependency",
+    "layout": "A4 dimensions595.28x841.89pt,48pt margins/wordmark,56pt lower content boundary, uppercase centered title, paired metadata/fields, numbered sections, blank writing rules, full-width long fields and restrained footer",
+    "sourceHashes": {
+      "backend/app/generated/render.py": "7bdd283610a3e1cea79c1300c9b36fbfca2fd8119b3e93c3f812db5dd029fb8c",
+      "backend/app/generated/stationery.py": "e3d34803bce7f04be1a8e9b5bfb90b09d18626f07218d693549c7a1001b514ef",
+      "backend/app/generated/service.py": "57d99b51f9cb984eb2e3e905a276a5576cbe379a876720de5283f9958ba81d2f",
+      "backend/app/generated/assets/document-branding.json": "9246e1fe9306d793c11482711f3c9d77a3ef34f8e2295891850eb50b8df769f1",
+      "backend/app/generated/fonts/manrope-regular.ttf": "e9e1400397ddf980ac722fa3963cbc649be0607c20800e183b20812eb9d27692",
+      "backend/app/generated/fonts/manrope-bold.ttf": "5ae5c99a522733b5dfaf9064c2a68818ca32bcec5400c794bcdbd573b9518b90",
+      "backend/pyproject.toml": "95201d8f32a2ad1eca73587c8fd67d198f0e2ec161e4ac808209212526f4be36",
+      "backend/tests/test_generated_unit.py": "ea354660698ff815a6dfcfebdb0f9157d232071e50cec5271c1857b35484db7b"
+    },
+    "hashEncoding": "SHA-256 of staged Git blob bytes (canonical line endings)"
+  },
+  "invariants": [
+    "Only future new generation changes appearance; stored versions/receipt replay stay immutable",
+    "Current role/template/parent/archive checks remain before render and in locked publication; no public API/grant/schema/migration change",
+    "Authorized actor and scoped parent supply metadata independently of editable representative values; actual server Casablanca date remains",
+    "Catalogue fields/model warnings and explicit original-blank/no-auto-fill/no-signature facts remain; no tax/accounting/contract interpretation",
+    "Literal canvas text cannot create HTML/URI/actions/scripts; exact string decimal grouping never rounds or converts to float",
+    "Page-local layout keeps long bounded values and line breaks above footers; concurrent renders keep private page text independent",
+    "All12 original appended page streams/text/boxes/rotation and original source files remain unchanged; no original-page overlay",
+    "Fixed local assets only; fonts serialized registration avoids same-face-name aliasing without modifying source font bytes",
+    "No private values/proofs in logs/URLs/telemetry; synthetic intermediate files are ignored",
+    "All254 frozen inputs stay unchanged; no install/deploy/data/service/private-config access"
+  ],
+  "correctedAttempts": [
+    "Ruff interpreted the text-piece variable name token as a possible hardcoded credential; renamed it without disabling the check",
+    "Old renderer tests expected mixed-case/em-dash headings; updated exact expected presentation to selected uppercase/ASCII-dash normalization while strengthening appendix stream/geometry checks",
+    "Visual inspection exposed static font internal-name collision: ReportLab aliased bold to regular. Unique embedded descriptor identities fixed it; final files re-rendered and4 PNGs inspected",
+    "Synthetic text assertions normalize natural line-wrap whitespace, not escaped/literal content constraints"
+  ],
+  "retainedFrontendChecks": {
+    "sourceUnchangedSince": "b595921",
+    "unitPassed": 423,
+    "lintTypecheckBuildPassed": true,
+    "newExecutionThisSlice": false
+  },
+  "remaining": [
+    "M01 original-versus-restyled blank appendix token/page/provenance reconciliation; no claim of legal equivalence or approval",
+    "Native app generation/private download, real session/role/SQL/races/transfer/full-stack/CI, AFTER and owner review",
+    "All other P0-P8 ledger gaps, including finance/per-field context, work/report/directory reconciliation and older-browser same-document navigation fallback",
+    "French samples/equal font repertoire do not establish complex-script shaping or all-Unicode acceptance",
+    "Existing automatic app-access rejection remains binding; no browser/CUA/CDP/HTTP attempt or workaround"
+  ],
+  "preserved": [
+    "Original12 blank models and254 frozen inputs",
+    "API shape, authority, private storage, receipts/versions, migrations and runtime dependencies",
+    "Unrelated35 local lesson additions and untracked motion plan",
+    "main, push, merge, deployment and production"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

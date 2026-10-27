@@ -1,5 +1,14 @@
 # Generated Lead and Deal documents
 
+## Selected preparation-sheet renderer, 2026-10-27
+
+New PDFs now use the selected Manrope/wordmark/paired-field stationery with
+actual scoped parent and true actor metadata. Literal text and exact decimal
+display remain bounded; long fields split across pages. The original12 blank
+appendices, warnings, authority, immutable versions/receipts and private transfer
+remain unchanged. Source/packaging/visual evidence and the still-open restyled
+appendix provenance boundary are in the [stationery contract](pdf-stationery-local.md).
+
 ## History creator projection, 2026-10-27
 
 History alone accepts optional literal `include_actor=true` and adds
