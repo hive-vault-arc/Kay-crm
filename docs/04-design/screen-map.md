@@ -5,8 +5,11 @@ eight-row preview and the authenticated `/search?q=...&kind=...&page=...` view.
 Phone keeps its search icon/Sheet. The full page has the common labelled form,
 selected Tabs, scoped totals, short icon rows and numbered pages. The server checks
 identity before strict URL params; invalid values are not echoed and only bare
-`/search` is an allowed login return. The seven current API kinds and their parent/
-unit-context routes remain; prepared-PDF discovery is tracked as missing parity.
+`/search` is an allowed login return. The original seven kinds retain their parent/
+unit-context routes. The explicit version2 opt-in now adds real prepared-PDF
+metadata and Lead/Deal Documents destinations. Both record routes accept validated
+scalar Documents selection, separating attachments and scoped prepared history.
+The preparation page returns there. Native/private-byte/SQL verification is pending.
 [Execution](../03-planning/design-prototype-migration-execution.md).
 
 Selected dashboard composition,2026-10-27: existing `/dashboard` identity checks

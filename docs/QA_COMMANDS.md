@@ -1,11 +1,20 @@
 # KAY QA command register
 
+Latest export UI slice (2026-10-27):259 frontend units pass, including13 new
+review/filter/retry/menu-focus/job/private-transfer/facade controller cases.
+Typecheck, pinned Next16.4.2 build and final lint pass (62 glyphs/444 Button sites/zero violations).
+All254 pinned design inputs still match; no dependency/CSS/backend/data change.
+The existing whole-result/owned-job/worker/private-delivery contracts remain.
+Actual worker/database/native byte delivery, desktop/mobile/focus/accessibility
+and product/AFTER verification are not run.
+[Evidence](03-planning/design-migration-evidence/export-ui-2026-10-27.json).
+
 Latest prepared-PDF search slice (2026-10-27): backend explicit .venv Ruff/mypy
 pass for12 app modules;330 connection-forbidden units pass/692 integration cases
 deselected. Twenty new actual SQL/route/visibility cases are included; three real
 PostgreSQL scenarios are prepared, not run. Frontend246 units, lint/typecheck and
-pinned Next16.4.2 build pass (62 glyphs/445 Button sites/zero violations). Seven
-new schema/facade/transport/presentation cases cover the bounded version2 opt-in
+pinned Next16.4.2 build pass (62 glyphs/444 Button sites/zero violations). Thirteen
+new schema/facade/controller cases cover the bounded version2 opt-in, real destinations
 and legacy behavior. No known dependency vulnerabilities or prototype hash drift.
 Native, real SQL/scope/performance and final product verification remain pending.
 [Evidence](03-planning/design-migration-evidence/prepared-search-2026-10-27.json).

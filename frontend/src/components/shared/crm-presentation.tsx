@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { createContext, useCallback, useContext, useRef, type ReactNode } from "react";
 import { CalendarIcon, EmailIcon, PhoneIcon, MoreIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -27,8 +27,13 @@ export function CrmDirectoryHeader({ title, count, noun, description, route, act
   </header>;
 }
 
+const DirectoryMenuFocus = createContext<(() => void) | undefined>(undefined);
+export function useDirectoryMenuFocus() { return useContext(DirectoryMenuFocus); }
+
 export function CrmDirectoryToolbar({ children, primary }: { children: ReactNode; primary: ReactNode }) {
-  return <div className="kay-directory-tools">{primary}<Popover><PopoverTrigger asChild><Button variant="outline" size="icon" aria-label="Autres actions de la liste"><MoreIcon aria-hidden="true" size={20} /></Button></PopoverTrigger><PopoverContent align="end" className="kay-directory-utilities" aria-label="Actions de la liste">{children}</PopoverContent></Popover></div>;
+  const menuRef = useRef<HTMLButtonElement>(null);
+  const returnFocus = useCallback(() => { menuRef.current?.focus(); }, []);
+  return <div className="kay-directory-tools">{primary}<Popover><PopoverTrigger asChild><Button ref={menuRef} variant="outline" size="icon" aria-label="Autres actions de la liste"><MoreIcon aria-hidden="true" size={20} /></Button></PopoverTrigger><PopoverContent align="end" className="kay-directory-utilities" aria-label="Actions de la liste"><DirectoryMenuFocus value={returnFocus}>{children}</DirectoryMenuFocus></PopoverContent></Popover></div>;
 }
 
 export function CrmRecordHeader({ contact, title, route, badges, actions, backHref, reference, showContact = true }: { contact: ContactSummary; title: string; route: string; badges: ReactNode; actions?: ReactNode; backHref?: string; reference?: ReactNode; showContact?: boolean }) {

@@ -28,7 +28,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
-| P7 remaining surfaces | Help/settings/dashboard/search compositions and versioned real prepared-PDF discovery implemented; template visibility shared across search/history/file reads | Remaining report tools/audit/jobs and directory refinements; native/real SQL/full-stack/product review |
+| P7 remaining surfaces | Help/settings/dashboard/search, real prepared-PDF discovery/history and selected export review/job UI implemented; template visibility shared across reads | Remaining report tools/audit/import panels and directory refinements; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -1014,3 +1014,57 @@ final accessibility/AFTER/product verification and the wider remaining P0–P8 w
 stay open. No real database/data/service, main/push/merge or production operation.
 
 [Prepared search evidence](design-migration-evidence/prepared-search-2026-10-27.json).
+
+## Selected export review and own-job history
+
+2026-10-27. The selected data-operations source confirms all filtered results with
+an explicit checked scope, and shows Date/Contenu/État/Fichier on desktop. The real
+UI now uses that confirmation Sheet and shared source-styled desktop table, with
+tonal compact cards on phone/in drawers. It retains the actual owned M/A job API,
+worker states, exact row/byte counts (including zero), server totals and numbered
+pages. Unsupported sample CSV/session URLs, names or success states are not copied.
+
+Review opening validates/clones the applied filters and displayed count, excluding
+only page controls/empty values. Later props cannot replace the body. Interrupted
+same-body retries keep their UUID key across cancel/reopen until success; another
+body requires a new review. Frontend validation mirrors existing whole-result and
+Contact restrictions, with the same backend remaining authoritative. Confirmation
+is disposable UI; the outstanding command uses the existing managed busy marker.
+Close/Escape/outside interactions cannot dismiss it while pending. Denial removes
+the old summary/count. A new pure review model owns this normalization and labels.
+
+Both real directory compositions now keep the review owner outside the transient
+utilities Popover. The toolbar supplies an event-time focus-return callback through
+context, and the small trigger records it only on interaction. Direct ref/callback
+passing through a render prop was rejected by React's refs rule; that approach was
+replaced, without lint suppression. Controller cases execute both directory owners
+and the actual toolbar/context handoff; native focus/trap behavior remains pending.
+
+Visible queued jobs refresh quietly every5s, releasing the interval when the page
+has no queued jobs or unmounts. That interval is a UI implementation proposal
+pending native/owner review, not a change to worker cadence or job state. Download
+events synchronously lock, use fresh identity/CSRF and exact-job one-use private
+permits, abort on unmount and deliver no canceled/foreign-job/invalid/oversized CSV.
+Authority/state errors clear old jobs before retry. No browser persistence, public
+URL, file-permission grant, backend/worker/migration or actual CSV operation.
+
+Source files stay below300 lines. Review/job components over50 lines were reviewed
+as cohesive controllers/compositions; normalization is separated and common
+DataTable/RecordEntry/Sheet/Button/Checkbox primitives are reused. No new CSS,
+component kit, chart, icon family or dependency. React scope/ref/cleanup guidance
+is applied; original-machine mandatory skills remain unavailable and are not
+claimed executed, dense CRM remains excluded from the marketing workflow, and
+AFTER timing stays unchanged. A test-fixture brace parse error was corrected.
+
+The broader remaining audit actor tools, import panels, reporting/directory
+reconciliation, history navigation, original/styled PDF provenance and P0–P8 native/
+real-stack/product gates remain open. The source/controller checkpoint is not a
+full redesign completion or owner acceptance. Main/push/merge remain unchanged.
+
+[Export UI evidence](design-migration-evidence/export-ui-2026-10-27.json).
+
+Final259 frontend units, typecheck, lint and pinned Next16.4.2 build pass for this
+slice (62 semantic glyphs,444 Button sites,zero violations). All254 prototype inputs
+remain unchanged. Backend source/dependencies are unchanged; the prior scoped
+330 connection-forbidden backend result is retained, not newly rerun or generalized
+to job delivery. Native/real worker/private-byte checks are still not run.

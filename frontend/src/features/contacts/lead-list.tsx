@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { usePhoneLayout } from "@/hooks/use-phone-layout";
 import { DirectoryViewSwitch, useDirectoryView } from "@/components/shared/directory-view-switch";
@@ -64,13 +64,15 @@ export function LeadList({ role, actorId, contactId, archived = false, revision 
   const scopeDenied = error && ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED"].includes(error.code);
   const viewControl = <DirectoryViewSwitch value={preference.value} phone={phone} listRef={listRef} change={value => { if (value === "list") { setBoardEpoch(epoch => epoch + 1); setBoardFailure(undefined); } preference.change(value); }} />;
   function clearFilters() { reset(); setAgentLabel(""); }
-  const toolbar = <CrmDirectoryToolbar primary={<Button action="create" asChild variant="creation"><Link href="/leads/new">Nouveau prospect</Link></Button>}>
+  const tools = (exportActions?: ReactNode) => <CrmDirectoryToolbar primary={<Button action="create" asChild variant="creation"><Link href="/leads/new">Nouveau prospect</Link></Button>}>
     <Button action="contact" asChild variant="quiet" size="compact"><Link href="/contacts">Contacts</Link></Button>
     <Button action={recordArchive === "active" ? "archive" : "back"} variant="quiet" size="compact" aria-pressed={recordArchive === "archived"} onClick={() => { setRecordArchive(value => value === "active" ? "archived" : "active"); setPage(1); }}>{recordArchive === "active" ? "Archives des prospects" : "Prospects actifs"}</Button>
     {role !== "agent" ? <Button action="upload" asChild variant="quiet" size="compact"><Link href="/leads?view=import">Importer des contacts</Link></Button> : null}
-    {role !== "agent" && result && recordArchive === "active" ? <ExportAction compact kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} /> : null}
+    {exportActions}
     <ColumnChooser compact visible={visible} change={change} />
   </CrmDirectoryToolbar>;
+  // The review Sheet stays outside the transient utilities Popover.
+  const toolbar = role !== "agent" && result && recordArchive === "active" ? <ExportAction compact kind="enquiries" filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : undefined }} total={result.total} renderActions={tools} /> : tools();
   return <div className={!contactId ? "crm-directory" : "grid min-w-0 gap-3"}>
     {!contactId ? <CrmDirectoryHeader title="Prospects" count={result?.total} noun="demandes" description="Qualifiez vos prospects et préparez vos prochaines affaires." route="/leads" actions={toolbar} /> : <h2 className="text-section font-medium">Demandes liées</h2>}
     <FilterResultsLayout leadingControl={!contactId && phone ? viewControl : undefined} title="Filtres des Leads" inline={Boolean(contactId)} reference={!contactId} active={activeCount > 0} activeCount={activeCount} reset={clearFilters} filters={close => <form onSubmit={event => { event.preventDefault(); apply(close); }} className="crm-directory-filter-form" aria-label="Recherche et filtres des Leads">

@@ -1,5 +1,28 @@
 # KAY security check for changes
 
+## Selected export review/job UI, 2026-10-27
+
+The frontend snapshots validated applied whole-result filters and count when the
+review opens. It requires explicit confirmation, rejects unsupported/page-scoped
+commands before relay, preserves the exact same-body retry key, and does not allow
+live props to alter a reviewed request. The existing backend M/A/current-session/
+CSRF/owned-job/worker authority remains unchanged. Denial removes previous review
+and job projections. Close is blocked while pending; its managed busy marker
+participates in the existing guarded links/unload boundary. General Back/Forward
+draft handling remains open migration work.
+
+Downloads synchronously lock duplicates, obtain fresh identity/CSRF and an
+exact-job private permit, retain cookies-omitted/no-store transfer, reject
+foreign-job/non-CSV/oversized data and abort before browser delivery on unmount.
+Only ready owned jobs display a download action; safe row counts/size/times remain
+server data. Queued polling reads only the existing owned metadata endpoint while
+visible. No actual CSV/data operation, worker change, role/directory grant,
+storage/cache/public URL, dependency or schema/migration change is introduced.
+
+Synthetic facade/controller/byte-fixture checks do not certify real worker,
+PostgreSQL session revocation/races, private delivery, native accessibility or
+product acceptance. [Evidence](03-planning/design-migration-evidence/export-ui-2026-10-27.json).
+
 ## Prepared-PDF discovery and shared file visibility, 2026-10-27
 
 The source review identified a metadata permission gap: legacy search's generic

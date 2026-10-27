@@ -21,7 +21,11 @@ export type SearchHit = z.infer<typeof searchSchema>["items"][number];
 export const pageQuerySchema = z.object(page).strict();
 export const exportSchema = z.object({ id: z.uuid(), kind: z.enum(["contacts", "enquiries"]), state: z.enum(["queued", "ready", "failed", "denied"]), error_code: z.string().max(80).nullable(), row_count: z.number().int().nonnegative().nullable(), size_bytes: z.number().int().nonnegative().nullable(), created_at: date, completed_at: date.nullable() }).strict();
 export const exportsSchema = numberedPage(exportSchema);
-export const newExportSchema = z.object({ kind: z.enum(["contacts", "enquiries"]), filters: listQuerySchema }).strict();
+export const newExportSchema = z.object({ kind: z.enum(["contacts", "enquiries"]), filters: listQuerySchema }).strict().superRefine(({ kind, filters }, context) => {
+  if (filters.page !== undefined && filters.page !== 1 || filters.page_size !== undefined && filters.page_size !== 50) context.addIssue({ code: "custom", message: "EXPORT_ALL_FILTERED_ROWS_NOT_A_PAGE" });
+  if (kind === "contacts" && (filters.status || filters.source || filters.assigned_agent_id || filters.received_from || filters.received_to || filters.sort === "-received_at")) context.addIssue({ code: "custom", message: "CONTACT_FILTERS_REQUIRED" });
+});
+export type ExportJob = z.infer<typeof exportSchema>;
 export const permitSchema = z.object({ token: z.string().min(20).max(128), expires_at: date, export_id: z.uuid(), transfer_url: z.url().max(500) }).strict();
 export const familyLabels = { security: "Sécurité et comptes", contacts: "Contacts", enquiries: "Demandes", properties: "Biens", developments: "Programmes", offerings: "Offres", documents: "Documents", requirements: "Besoins", deals: "Affaires et finance", visits: "Visites", tasks: "Tâches", imports: "Imports", exports: "Exports" } as const;
 export const auditQuerySchema = z.object({ ...page, family: z.enum(Object.keys(familyLabels) as [keyof typeof familyLabels, ...(keyof typeof familyLabels)[]]).optional(), actor_id: z.uuid().optional(), start_on: z.iso.date().optional(), end_on: z.iso.date().optional() }).strict().refine(v => !v.start_on || !v.end_on || v.start_on <= v.end_on);

@@ -1522,3 +1522,16 @@ and direct file authorization, before counting or paging. Keep a permission fix
 unconditional for legacy requests; version only the new response shape. Search
 known catalogue metadata, never generated field snapshots or PDF contents. SQL
 compilation/units do not prove real database scope or concurrency behavior.
+
+
+## 2026-10-27 — Freeze reviewed commands outside transient menus
+
+Do not rebuild an export body from live list props after confirmation opens.
+Snapshot the validated whole-result filters and displayed count, keep one retry
+key for that body after interruption, and require a new review for another body.
+Keep the confirmation owner outside a disposable utilities popup; its trigger
+can disappear on focus transfer. Provide the surviving menu's event-time focus
+callback through context; do not pass refs into render callbacks. Block navigation
+only while the command is outstanding. Tests must
+exercise changed props, duplicate events, interrupted retries and unmounts.
+Controller checks do not certify native popup/focus behavior or worker delivery.

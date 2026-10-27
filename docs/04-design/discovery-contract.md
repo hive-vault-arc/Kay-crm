@@ -147,6 +147,27 @@ document and does not bypass or replace SP-09 antivirus rules.
 
 French Leads/Contacts actions confirm the entire current applied filter, not
 the page. Current counts may change before worker snapshot; UI says so.
+
+2026-10-27 selected-design implementation: the confirmation Sheet freezes a
+validated copy of those filters and the displayed count when opened. A checked
+confirmation is required. Live list refreshes cannot replace its body; interrupted
+same-body retries reuse their UUID key, including cancel/reopen before success.
+The frontend mirrors existing whole-result pagination/contact-only restrictions
+before relaying; PostgreSQL remains authoritative. The Sheet owner survives its
+utilities Popover and returns focus to the surviving list-menu control. A pending
+command blocks close and uses the existing managed marker for guarded links/
+unload. Global Back/Forward draft handling remains separate migration work.
+
+The own-job page retains the selected Date/Contenu/État/Fichier columns on desktop
+and shared tonal cards on phone/in a Sheet, with numbered pages and complete server
+totals. Only ready jobs expose download. Visible queued pages refresh every5s;
+completion, denial, page changes and unmount release that polling. Download clicks
+synchronously lock, obtain fresh current identity/CSRF/exact-job private permits,
+and abort on unmount. Authority/state failures clear old jobs before refresh;
+foreign-job permits and canceled/invalid/oversized CSV delivery produce no browser
+download. No browser storage, public URL, worker/data-model or permission change.
+These are source/controller boundaries; real worker/private-byte/native checks
+remain pending in the [migration execution](../03-planning/design-prototype-migration-execution.md).
 Mes exports is durable recovery/status/download; refresh never creates another
 request. A lost acknowledgement retries the same key/body. The original request
 remains discoverable even if the session ends. Delivery needs current authority.
