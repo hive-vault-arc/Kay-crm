@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "af81a6f",
+  "scope": "Selected owner directory, lazy quick preview/create drawer, shared canonical identity and right-only portfolio",
+  "checks": [
+    {
+      "command": "node --test tests/unit/owner-workspace.test.mjs tests/unit/owner-forms.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 35,
+      "failed": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 372,
+      "failed": 0,
+      "newRegisteredCases": 20
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 92,
+      "iconSites": 326,
+      "buttonSites": 467,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .git/codex-owner-workspace-source-check.cjs",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0,
+      "compiledPreviewFlex": true,
+      "compiledPreviewSingleGap": true,
+      "compiledDossierNaturalHeight": true,
+      "compiledPhoneFieldColumn": true,
+      "compiledPhoneAsideBound": true,
+      "compiledHiddenImportant": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8745,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1247,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "reference": "Frozen owners.js, owner-inline-ui.js and owner-workspace.css",
+    "proposal": "Selected directory columns/header entry, compact lazy Contact preview, one existing OwnerForm in the create/edit drawer, shared identity sections and one right-side current/past portfolio",
+    "runtimeKitDependencyChartThemeOrBackendChange": false
+  },
+  "invariants": [
+    "Backend owner directory membership remains literal role OR current/former legal link; Agent archive requests force active",
+    "Ordinary hydrated click opens current details lazily, while modified/auxiliary/pre-hydration links retain native routes without private detail prefetch",
+    "Preview title derives only from the current permitted canonical read; current denial removes private projection",
+    "Same Contact inline/form controllers retain full methods, labels, roles, assignment, original provenance, reviewed versions and exact retry identity",
+    "Primary agent is not directly patched; management keeps impact/reason/confirmation and propagates definite denial from preview/commit/follow-up/refresh",
+    "Canonical alias updates use the actual current Contact ID, newer accepted edits survive stale reads, and foreign snapshots cannot be adopted",
+    "Exactly two main tabs, Apercu and Activites; Patrimoine is only on the right with lazy retained current/past panels",
+    "Quick portfolio is strict current page1,size3; full cards preserve real link IDs/lifetimes, asset routes, archive/date metadata and empty-page escape",
+    "Archived identity remains read-only; literal role is not a legal asset link; no private records/drafts are stored or logged",
+    "Drawer focus returns to a connected row or surviving header action; native focus and visual fidelity remain unverified"
+  ],
+  "correctedAttempts": [
+    "Initial synthetic Contact fixture omitted required calling_code; fixture corrected rather than relaxing the real schema",
+    "Static JSX tree traversal counted an inactive AlertDialog error slot as visible; assertion corrected to verify the actual failure and exact denial callback",
+    "One scripted edit used a repository-relative path from frontend cwd, failed without a source change, then was corrected to an absolute path before rerun",
+    "Scoped source review corrected inherited grid display and sibling margins to retain a single preview-card gap"
+  ],
+  "preparedBrowser": [
+    "frontend/tests/e2e/owner-workspace.spec.ts:1440/390 directory, nonliteral linked-owner membership, lazy read, guarded inline preview edit, canonical methods/assignment preservation, two-tab/right-only deep link and create drawer; not executed"
+  ],
+  "remaining": [
+    "Older owner/inventory browser selectors and final P0-P8 per-domain reconciliation",
+    "Legacy same-document history fallback and remaining form/document/offer/PDF/provenance/report/work details",
+    "Existing automatic app-access rejection: no browser/CUA/CDP/app HTTP attempt",
+    "Native desktop/phone/focus/touch/zoom/accessibility/AFTER, real current-role/merge/race/SQL/full-stack/CI and owner review"
+  ],
+  "preserved": [
+    "All254 frozen prototype inputs",
+    "Backend/API/schema/services/data/migrations/private configuration",
+    "Unrelated35-line lesson change and motion plan",
+    "main, push, merge and production"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

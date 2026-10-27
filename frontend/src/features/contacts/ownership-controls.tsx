@@ -17,7 +17,7 @@ import { commandResultSchema, intentSchema, operationLabels, previewSchema, type
 import { OwnershipImpact } from "./ownership-impact";
 import { RecordError } from "./record-states";
 
-export function OwnershipControls({ contact, role, changed, embedded = false }: { contact: Contact; role: StaffRole; changed: (id: string, operation: Operation) => Promise<void>; embedded?: boolean }) {
+export function OwnershipControls({ contact, role, changed, embedded = false, denied }: { contact: Contact; role: StaffRole; changed: (id: string, operation: Operation) => Promise<void>; embedded?: boolean; denied?: (error: ApiError) => void }) {
   const hydrated = useHydrated();
   const control = useId();
   const [open, setOpen] = useState(embedded);
@@ -34,6 +34,11 @@ export function OwnershipControls({ contact, role, changed, embedded = false }: 
   const [prepared, setPrepared] = useState<{ intent: ChangeIntent; preview: Preview; key: string }>();
   const previewButton = useRef<HTMLButtonElement>(null);
   const operations: Operation[] = current.archived_at ? ["restore"] : role === "agent" ? ["merge"] : ["assign", "collaborators", "archive", "merge"];
+  function failed(failure: unknown) {
+    const error = failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503);
+    setError(error);
+    if ([401, 403, 404].includes(error.status)) denied?.(error);
+  }
 
   async function prepare(event: React.FormEvent) {
     event.preventDefault(); setError(undefined); setBusy(true);
@@ -43,7 +48,7 @@ export function OwnershipControls({ contact, role, changed, embedded = false }: 
     try {
       const preview = await apiCommand(`/api/v1/contacts/${current.id}/preview`, intent.data, previewSchema, crypto.randomUUID());
       setPrepared({ intent: intent.data, preview, key: crypto.randomUUID() });
-    } catch (failure) { setError(failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
+    } catch (failure) { failed(failure); }
     finally { setBusy(false); }
   }
   async function confirm() {
@@ -53,7 +58,7 @@ export function OwnershipControls({ contact, role, changed, embedded = false }: 
       const result = await apiCommand(`/api/v1/contacts/${current.id}/${prepared.intent.operation}`, { ...prepared.intent, preview_token: prepared.preview.preview_token }, commandResultSchema, prepared.key, prepared.intent.operation === "collaborators" ? "PUT" : "POST");
       await changed(result.contact_id, prepared.intent.operation);
       setPrepared(undefined); setOpen(false);
-    } catch (failure) { setError(failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
+    } catch (failure) { failed(failure); }
     finally { setBusy(false); }
   }
   async function refreshVersions() {
@@ -61,7 +66,7 @@ export function OwnershipControls({ contact, role, changed, embedded = false }: 
     try {
       const [fresh, target] = await Promise.all([apiGet(`/api/v1/contacts/${current.id}`, contactSchema), survivor ? apiGet(`/api/v1/contacts/${survivor.id}`, contactSchema) : undefined]);
       setCurrent(fresh); if (target) setSurvivor(target); setPrepared(undefined);
-    } catch (failure) { setError(failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
+    } catch (failure) { failed(failure); }
     finally { setBusy(false); }
   }
   return <section className="grid max-w-reading gap-4" aria-label="Gestion du contact">
@@ -71,9 +76,9 @@ export function OwnershipControls({ contact, role, changed, embedded = false }: 
       <p className="wrap-anywhere text-sm">Version utilisée : {current.version} · Responsable : {current.primary_agent.display_name}</p>
       <fieldset className="grid min-w-0 gap-4" disabled={!hydrated || busy}>
         <div className="grid gap-2"><Label htmlFor={`${control}-operation`}>Opération</Label><NativeSelect id={`${control}-operation`} value={operation} onChange={event => { setOperation(event.target.value as Operation); setError(undefined); }}>{operations.map(value => <option key={value} value={value}>{operationLabels[value]}</option>)}</NativeSelect></div>
-        {operation === "assign" ? <><AgentPicker value={agent} change={setAgent} label="Nouveau responsable" /><div className="flex items-start gap-2"><Checkbox id={`${control}-retain`} checked={retain} onCheckedChange={value => setRetain(value === true)} /><Label className="min-h-control flex-1 py-2 leading-relaxed" htmlFor={`${control}-retain`}>Conserver l’ancien responsable comme collaborateur</Label></div><p className="text-sm text-muted-foreground">Sans cette option, l’ancien responsable perd son accès. Les demandes dont l’attribution devient invalide rejoignent la file du responsable.</p></> : null}
-        {operation === "collaborators" ? <div className="grid gap-4"><AgentPicker value={candidate?.id ?? ""} change={(id, label) => setCandidate(id ? { id, display_name: label ?? id } : undefined)} label="Collaborateur à ajouter" /><Button action="add" className="justify-self-start" type="button" variant="outline" disabled={!candidate || candidate.id === current.primary_agent.id || grants.some(value => value.id === candidate.id)} onClick={() => { if (candidate) { setGrants([...grants, candidate]); setCandidate(undefined); } }}>Ajouter le collaborateur</Button><ul className="grid gap-2">{grants.map(value => <li className="flex flex-wrap items-center gap-2" key={value.id}><span className="min-w-0 flex-1 wrap-anywhere">{value.display_name}</span><Button action="remove" type="button" variant="outline" className="h-auto min-h-control max-w-full wrap-anywhere whitespace-normal text-left" onClick={() => setGrants(grants.filter(grant => grant.id !== value.id))}>Retirer {value.display_name}</Button></li>)}</ul>{!grants.length ? <p>Aucun collaborateur sélectionné.</p> : null}</div> : null}
-        {operation === "merge" ? <div className="grid min-w-0 gap-4"><p>Cette fiche sera la source fusionnée. Choisissez explicitement la fiche à conserver, dans votre périmètre.</p>{survivor ? <><p className="wrap-anywhere">Fiche conservée : <strong>{survivor.name}</strong> · Version {survivor.version}</p><Button action="contact" type="button" variant="outline" className="justify-self-start" onClick={() => setSurvivor(undefined)}>Changer la fiche conservée</Button></> : <ContactSelector choose={setSurvivor} />}</div> : null}
+        {operation === "assign" ? <><AgentPicker value={agent} change={setAgent} label="Nouveau responsable" denied={denied} /><div className="flex items-start gap-2"><Checkbox id={`${control}-retain`} checked={retain} onCheckedChange={value => setRetain(value === true)} /><Label className="min-h-control flex-1 py-2 leading-relaxed" htmlFor={`${control}-retain`}>Conserver l’ancien responsable comme collaborateur</Label></div><p className="text-sm text-muted-foreground">Sans cette option, l’ancien responsable perd son accès. Les demandes dont l’attribution devient invalide rejoignent la file du responsable.</p></> : null}
+        {operation === "collaborators" ? <div className="grid gap-4"><AgentPicker value={candidate?.id ?? ""} change={(id, label) => setCandidate(id ? { id, display_name: label ?? id } : undefined)} label="Collaborateur à ajouter" denied={denied} /><Button action="add" className="justify-self-start" type="button" variant="outline" disabled={!candidate || candidate.id === current.primary_agent.id || grants.some(value => value.id === candidate.id)} onClick={() => { if (candidate) { setGrants([...grants, candidate]); setCandidate(undefined); } }}>Ajouter le collaborateur</Button><ul className="grid gap-2">{grants.map(value => <li className="flex flex-wrap items-center gap-2" key={value.id}><span className="min-w-0 flex-1 wrap-anywhere">{value.display_name}</span><Button action="remove" type="button" variant="outline" className="h-auto min-h-control max-w-full wrap-anywhere whitespace-normal text-left" onClick={() => setGrants(grants.filter(grant => grant.id !== value.id))}>Retirer {value.display_name}</Button></li>)}</ul>{!grants.length ? <p>Aucun collaborateur sélectionné.</p> : null}</div> : null}
+        {operation === "merge" ? <div className="grid min-w-0 gap-4"><p>Cette fiche sera la source fusionnée. Choisissez explicitement la fiche à conserver, dans votre périmètre.</p>{survivor ? <><p className="wrap-anywhere">Fiche conservée : <strong>{survivor.name}</strong> · Version {survivor.version}</p><Button action="contact" type="button" variant="outline" className="justify-self-start" onClick={() => setSurvivor(undefined)}>Changer la fiche conservée</Button></> : <ContactSelector choose={setSurvivor} denied={denied} />}</div> : null}
         {operation === "archive" ? <p>L’archivage retire l’accès aux agents. Les demandes et l’historique restent liés. Un responsable peut restaurer cette même fiche, sans expiration automatique.</p> : null}
         {operation === "restore" ? <p>La restauration réactive la même fiche et ses liens. Les droits suivent le responsable et les collaborateurs actuels.</p> : null}
         <div className="grid gap-2"><Label htmlFor={`${control}-reason`}>Motif de l’opération</Label><Textarea id={`${control}-reason`} required rows={3} maxLength={1000} value={reason} onChange={event => setReason(event.target.value)} /></div>

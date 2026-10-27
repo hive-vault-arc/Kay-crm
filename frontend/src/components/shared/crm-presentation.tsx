@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { createContext, useCallback, useContext, useRef, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useRef, type ReactNode, type MouseEventHandler } from "react";
 import { CalendarIcon, EmailIcon, PhoneIcon, MoreIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -53,6 +53,6 @@ export function CrmAgent({ name }: { name: string }) {
   return <span className="crm-agent"><ContactAvatar name={name} /><span title={name}>{name}</span></span>;
 }
 
-export function CrmContactCell({ contact, href, describedBy }: { contact: ContactSummary; href: string; describedBy: string }) {
-  return <Link href={href} className="crm-contact-cell" aria-label={contact.name} aria-describedby={describedBy}><ContactAvatar name={contact.name} /><span><strong>{contact.name}</strong><span id={describedBy}>{contact.primary_phone}</span></span></Link>;
+export function CrmContactCell({ contact, href, describedBy, onOpen }: { contact: ContactSummary; href: string; describedBy: string; onOpen?: MouseEventHandler<HTMLAnchorElement> }) {
+  return <Link href={href} prefetch={onOpen ? false : undefined} onClick={onOpen} className="crm-contact-cell" aria-label={contact.name} aria-describedby={describedBy}><ContactAvatar name={contact.name} /><span><strong>{contact.name}</strong><span id={describedBy}>{contact.primary_phone}</span></span></Link>;
 }

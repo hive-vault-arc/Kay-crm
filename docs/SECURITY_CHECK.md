@@ -1,5 +1,38 @@
 # KAY security check for changes
 
+## Selected owner directory and shared identity workspace, 2026-10-27
+
+The directory retains the server's literal-owner-role OR current/former legal-
+link predicate. Agent archive queries are forced active. No directory or read
+projection grants write/assignment authority. Ordinary preview entry lazily
+reads the current canonical Contact; modified/native links remain usable and
+private detail prefetch is disabled. Current authorized data supplies the title.
+
+Shared inline/form controllers preserve complete phone/e-mail collections,
+labels, other roles, primary agent, version and original provenance. Management
+still uses the existing impact/reason/confirmation transaction, not a direct
+agent PATCH. Alias updates must match the current canonical ID. Stale reads do
+not replace newer accepted edits; foreign updates cause a fresh read. Current
+denial clears identity/assets and directory projection before retry, including
+management preview/commit/follow-up/refresh and portfolio read denial. Departed
+callbacks cannot reopen the workspace. No copied private state enters storage,
+logs, URL parameters, export or diagnostics.
+
+The preview's strict page1,size3,current-link response rejects excess/historical
+rows and unexpected fields. Full portfolio retains actual link IDs/lifetimes,
+archive state and existing numbered pages without inferring legal ownership
+from a Contact role. Legal links still change only on the actual asset record.
+No new route/facade/backend command/grant/schema or data migration is introduced.
+
+372 frontend units, lint/typecheck and Next16.4.2 build pass, including20 new
+actual-module cases. Two isolated native journeys are prepared, not executed.
+Source/compiled CSS/hash checks are not proof of native private-data handling,
+real current-role/merge/race/SQL behavior, full stack, CI or AFTER/owner approval.
+Those gates and the wider migration remain open. No real record, database,
+service, private config, main/push/merge, deployment or production access.
+[Contract](04-design/owner-workspace-local.md) and
+[evidence](03-planning/design-migration-evidence/owner-workspace-2026-10-27.json).
+
 ## Selected photo gallery and managed upload, 2026-10-27
 
 The selected explicit send preserves the existing WebP/size/pixel/AV/ten-slot

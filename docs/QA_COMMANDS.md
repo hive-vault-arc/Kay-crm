@@ -1,5 +1,21 @@
 # KAY QA command register
 
+Latest owner-workspace slice (2026-10-27):372 frontend units pass, including20 new
+actual-module cases for directory/current-contact state, drawer reuse, canonical
+aliases, full/quick identity, bounded current preview, link history/paging,
+native-link fallback, connected focus fallback and denial propagation. Lint/
+typecheck and pinned Next16.4.2 build pass (63 glyphs,92 consumers/326 icon sites,
+467 Button sites/zero violations). The primary/secondary editor remains the same
+canonical Contact controller; Patrimoine appears only on the right. Initial
+synthetic calling_code omission and static closed-dialog counting were corrected
+before rerun. Two1440/390 journeys in `tests/e2e/owner-workspace.spec.ts` are
+prepared, not executed. Source/compiled checks confirm254 unchanged frozen inputs
+and scoped responsive declarations, not native visibility/focus fidelity. The
+existing app-access restriction remains; native/current-role/merge/race/SQL/
+full-stack/AFTER/CI/owner gates and older browser selectors remain pending.
+No backend/data/service operation.
+[Evidence](03-planning/design-migration-evidence/owner-workspace-2026-10-27.json).
+
 Latest photo-workspace slice (2026-10-27):352 frontend units pass, including18 new
 actual conversion/controller/gallery/media/transfer/request-lifetime cases. Lint/
 typecheck and pinned Next16.4.2 build pass (63 glyphs,91 consumers/321 icon sites,

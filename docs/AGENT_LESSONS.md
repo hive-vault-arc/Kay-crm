@@ -1633,3 +1633,20 @@ its timer/listeners, and not assume AbortSignal.any exists. Tests need stable
 attempt context and the runtime globals used by actual modules. Prepared browser
 cases, compiled geometry and private-URL lifecycle units are not native transfer,
 current-permission, scanner, slot-concurrency or human visual evidence.
+
+
+## 2026-10-27 — Owner membership and preview authority are separate from role badges
+
+A linked owner need not have the literal owner role. Keep the backend role OR
+current/former legal-link directory predicate, and reuse the complete canonical
+Contact controller for preview, routed and drawer identity edits. A compact
+primary display must not replace the full methods collection during a save.
+Use the current authorized read for private drawer titles, and propagate current
+denial from portfolio and management reads/commands to that same boundary.
+
+Portfolio counts describe actual link lifetimes, not deduplicated asset names.
+Keep link dates and an empty-page escape while showing the portfolio once.
+Static JSX harnesses also see closed portal slots: test actual failure/state and
+denial propagation without treating every inactive slot as visible browser UI.
+Use absolute paths for scripted edits after changing cwd. Registered units,
+compiled CSS and frozen hashes remain distinct from native visual/focus evidence.

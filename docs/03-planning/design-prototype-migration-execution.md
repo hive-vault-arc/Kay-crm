@@ -22,10 +22,10 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | Phase | Source state | Remaining acceptance/work |
 | --- | --- | --- |
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
-| P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to62 source-pinned glyphs and selected status palette | Native review later |
+| P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to63 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
-| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms and photo gallery/upload step implemented; typed mixed-programme query correction | Remaining exact owner directory/drawer entry and native review |
+| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload and owner directory/preview/create drawer implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
@@ -1468,3 +1468,58 @@ Repository gate passes8737 indexed files/zero forbidden or oversized/14 ignore
 probes. Docs pass22 sprints,1246 links,42 mappings,13 Mermaid and12 API JSON
 examples. Cached diff check passes. The protected35 pre-existing lesson lines and
 motion plan remain excluded, with main unchanged at the original e0bdc09 base.
+
+
+## Selected owner directory, preview and right-side portfolio — 2026-10-27
+
+Continued P4 from `af81a6f`. Selected directory columns/header create action now
+use shared filters, numbered20-row results and compact phone cards. Ordinary
+hydrated title clicks open a lazy current canonical Contact preview; modified,
+auxiliary, prevented and pre-hydration clicks keep real routes. Private detail
+prefetch is disabled. One OwnerForm controller supplies routed and drawer create/
+edit, preserving existing/new choice, full methods and exact retry behavior.
+Preview/full identity share ContactInlineField and selected sections/insets/icons.
+
+Owner membership remains the backend role OR current/former legal-link predicate,
+not a strict literal-role gate. Agent archive queries force active. A role does
+not imply legal ownership. Agent assignment is read-only inline; full management
+still uses the existing impact/reason/confirmation controls. Current canonical
+IDs and versions control accepted edits; foreign replies cause reread. Current
+denial clears old private title/identity/assets, including portfolio and management
+preview/commit/follow-up/refresh. Retry starts without the old projection; departed
+callbacks cannot reopen the workspace. A surviving header action is the drawer
+focus fallback when its directory row disappears.
+
+Exactly two main tabs remain, Aperçu and Activités. Patrimoine exists only on the
+right, with lazy retained current/past panels, natural dossier height and bounded
+phone aside. Quick preview requests/validates current page1,size3. Full cards show
+actual archive/location/link dates and preserve distinct link lifetimes; empty
+reduced pages keep an escape. No duplicate portfolio tab/history shortcut or
+unnecessary empty single-page footer. Scoped CSS avoids inherited grid/sibling
+spacing conflicts. Existing shadcn/Tailwind/typed icons, API and legal-link flows
+remain. No theme/kit/dependency/backend/schema/prototype change.
+
+Twenty new registered actual-module cases bring the frontend gate to372 passing.
+Lint/typecheck and pinned Next16.4.2 build pass (63 glyphs,92 consumers/326 icon
+sites/467 Button sites/zero violations). Initial required calling_code fixture
+and static inactive-dialog counting failures were corrected, not called passes.
+One cwd-relative scripted edit failed without source changes, then used an
+absolute path before rerun. Two1440/390 native journeys are prepared, not run;
+older owner/inventory selectors remain. Source/compiled checks confirm all254
+frozen inputs unchanged, preview flex/single gap, natural height, phone fields/
+aside and important hidden display. Those are not native visual/focus evidence.
+
+[Contract](../04-design/owner-workspace-local.md), QA and security check record
+scope and limits. Dense CRM/forms exclude marketing design-taste; shared system/
+React guidance and AFTER timing remain. Original-machine mandatory skill files
+are unavailable and not claimed executed. Other remaining P0-P8 reconciliation,
+legacy history, exact form/document/offer/PDF/provenance/report/work and final
+native/current-role/merge/race/SQL/full-stack/CI/AFTER/owner gates remain open.
+No real records, DB, service, private config, main/push/merge or goal completion.
+[Evidence](design-migration-evidence/owner-workspace-2026-10-27.json).
+
+
+Repository gate passes8745 indexed files/zero forbidden or oversized/14 ignore
+probes. Docs pass22 sprints,1247 links,42 mappings,13 Mermaid and12 API JSON
+examples. Cached diff check passes. The protected35 pre-existing lesson additions
+and motion plan remain excluded; main stays at the original e0bdc09 base.
