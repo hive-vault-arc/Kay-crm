@@ -1,0 +1,114 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "464e31d",
+  "scope": "Selected direct inventory offer actions and focused create/edit/availability forms with current-version comparison",
+  "checks": [
+    {
+      "command": "node --test tests/unit/offering-forms.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 385,
+      "failed": 0,
+      "newRegisteredCases": 13
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 93,
+      "iconSites": 328,
+      "buttonSites": 469,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .git/codex-offering-forms-source-check.cjs",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0,
+      "compiledFormFooter": true,
+      "compiledPhonePair": true,
+      "compiledFullSpan": true,
+      "compiledOfferDesktopGrid": true,
+      "compiledOfferPhoneGrid": true,
+      "compiledHiddenImportant": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8750,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1248,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "reference": "Frozen inventory-detail.js and source-views.js campaign/availability form mapping",
+    "proposal": "Selected direct semantic offer-row actions, a single focused command form, common tonal entry/sections/top labels/responsive pairs/footer and explicit current-offering comparison",
+    "runtimeKitDependencyChartThemeCssOrBackendChange": false
+  },
+  "invariants": [
+    "Documents/Modifier stay in the page header; creation remains on the Offers section and commands beside the actual offer",
+    "Existing M/A gates, D43 initial-creation exception, stock/archive/release/outcome rules and ordinary versus holiday boundaries remain",
+    "Exact decimal strings and original valid periods are retained; blank is unknown; a draft requires separate availability confirmation",
+    "Actual parent and offering versions/IDs drive unchanged request contracts; creation does not send edit-state/reason fields",
+    "Current comparison verifies parent/embedded offering target and never adopts a replacement campaign, foreign target or engaged/archived state",
+    "Inputs remain until explicit keep or discard-guarded reload; both reviewed versions are adopted together",
+    "Managed drafts, synchronous duplicate locks and exact unchanged path/method/body retry identity survive unknown responses",
+    "Definite denial clears private fields before fresh retry; transient failures retain drafts; reads abort on departure and late/foreign success is suppressed",
+    "External-result impact/date/reason/confirmation and stock fingerprint remain in the existing dialog; only trigger presentation changes",
+    "No private fields/reasons/retry proofs are stored or logged; no new backend/schema/API route or data operation"
+  ],
+  "correctedAttempts": [
+    "Source review replaced viewport-based two-column spans with full-grid spans so a narrow drawer cannot create an implicit second phone column",
+    "Source review retained a stale available choice as explicitly invalid when current stock is draft, instead of silently making it available",
+    "Several exploratory reads guessed stale filenames; rg file inventory located the actual modules before edits, with no source/data change from failed reads"
+  ],
+  "preparedBrowser": [
+    "frontend/tests/e2e/offering-forms.spec.ts:1440px programme/390px property, legal owner, focused creation/availability, discard guard, competing update/current comparison and Agent readonly commands; not executed"
+  ],
+  "remaining": [
+    "Customer-proposal/PDF/finance and other remaining P0-P8 per-domain presentation/provenance reconciliation",
+    "Older inventory/native browser helpers and legacy same-document history fallback",
+    "Existing automatic app-access rejection: no browser/CUA/CDP/app HTTP attempt",
+    "Native desktop/phone/focus/touch/zoom/accessibility/AFTER, actual current-role/stock/overlap/race/SQL/full-stack/CI and owner review"
+  ],
+  "preserved": [
+    "All254 frozen prototype inputs",
+    "Backend/API/schema/services/data/migrations/private configuration",
+    "Unrelated35-line lesson change and motion plan",
+    "main, push, merge and production"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

@@ -1,5 +1,37 @@
 # KAY security check for changes
 
+## Focused inventory offering commands, 2026-10-27
+
+Only existing campaign/confirm-availability routes are used. M/A-only ordinary
+offer/availability/external-result authority and D43's separate atomic creation
+exception remain unchanged. Reserved/terminal/review/withdrawn stock cannot be
+replaced by ordinary edits. External results retain reviewed impact, required
+date/reason, confirmation, versions/fingerprint and existing server authorization;
+only their trigger presentation changes. No holiday reservation is invented.
+
+Price remains an exact decimal string with original valid period, optional
+unknown value, required edit/confirmation reasons and current parent/offering
+versions. A draft cannot become available through ordinary editing. Current
+comparison verifies parent identity and embedded offering target; it preserves
+input until deliberate keep or discard-guarded reload. A replaced campaign ID,
+foreign target, archive or engaged stock cannot supply an editable baseline.
+
+Managed dirty/busy state survives interrupted responses; the existing synchronous
+command lock and exact path/method/body retry key remain. Current denial removes
+private fields before fresh read; transient errors keep drafts. Unmount aborts
+comparison and suppresses late/foreign success. This does not claim rollback of
+an already submitted command. No fields, reasons, private identities or retry
+proofs enter storage/logs/URL payloads or exports.
+
+385 frontend units pass, including13 new actual-module cases; lint/typecheck and
+Next16.4.2 build pass. Two isolated native journeys are prepared, not executed.
+All254 frozen inputs remain unchanged. Compiled CSS/units do not establish real
+permission/stock/race/SQL, native focus/accessibility, full-stack/CI or AFTER/owner
+acceptance. No backend/schema/API-contract/data/service/private-config change,
+real record access, main/push/merge, deployment or production operation.
+[Contract](04-design/offering-workspace-local.md) and
+[evidence](03-planning/design-migration-evidence/offering-forms-2026-10-27.json).
+
 ## Selected owner directory and shared identity workspace, 2026-10-27
 
 The directory retains the server's literal-owner-role OR current/former legal-

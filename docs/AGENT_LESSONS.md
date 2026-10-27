@@ -1650,3 +1650,19 @@ Static JSX harnesses also see closed portal slots: test actual failure/state and
 denial propagation without treating every inactive slot as visible browser UI.
 Use absolute paths for scripted edits after changing cwd. Registered units,
 compiled CSS and frozen hashes remain distinct from native visual/focus evidence.
+
+
+## 2026-10-27 — A stock conflict cannot switch an edit to another campaign
+
+Keep the original campaign ID fixed while comparing the current parent record.
+Adopt both reviewed versions only after an explicit choice, and reject replaced,
+foreign, archived or engaged stock as an editable baseline. Missing old stock is
+not permission to create a new campaign. Preserve the original rent period and
+exact decimal strings; a current draft cannot inherit stale available state
+without the separate confirmation command. Use focused managed forms rather
+than stacking several mutation controllers inside a generic Actions drawer.
+
+Reuse container-aware full-grid spans: viewport sm:col-span-2 can create an
+implicit second column inside a narrow desktop drawer. Locate paths with rg
+before reading them; a plausible old filename is not evidence that it exists.
+Compiled geometry and prepared native cases never establish rendered acceptance.

@@ -25,7 +25,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to63 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
-| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload and owner directory/preview/create drawer implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
+| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
@@ -1523,3 +1523,58 @@ Repository gate passes8745 indexed files/zero forbidden or oversized/14 ignore
 probes. Docs pass22 sprints,1247 links,42 mappings,13 Mermaid and12 API JSON
 examples. Cached diff check passes. The protected35 pre-existing lesson additions
 and motion plan remain excluded; main stays at the original e0bdc09 base.
+
+
+## Focused inventory offer commands and current-version comparison — 2026-10-27
+
+Continued P4 from `464e31d`. Frozen inventory-detail/source-views composition now
+supplies direct edit/availability/external-result actions beside an offer, with
+one focused command form per entry instead of a generic drawer stacking controls.
+Creation stays on the Offers section; Documents/Modifier stay in the page header.
+Shared entry/sections/top labels/input pairs/footer and semantic44px triggers
+retain selected density without a nested form surface/reading cap. Read-only/
+engaged details, exact prices/original periods, conditions and confirmation dates
+remain. The existing external-result impact/confirmation controller gains only
+an optional icon trigger and parent busy gate.
+
+Create/edit/availability now declare actual dirty/busy state, synchronous command
+locks, unchanged exact retry identity and success-only draft acceptance. Current
+denial clears private input before fresh reread; transient errors keep it.
+Departed comparisons abort, late or foreign-target acknowledgements cannot close
+as success, and cancellation does not claim rollback. Availability remains a
+reason-only confirmation of real price/owners/stock, not a reservation.
+
+Conflict recovery deliberately reads the existing current parent route, checks
+parent/embedded offering target identity and displays current price/period/state/
+conditions/archive/owner count. No input is automatically replaced. Explicit keep
+adopts both reviewed versions; reload uses the discard guard. Original campaign
+ID stays fixed. A replacement, foreign projection, archive or engaged/terminal/
+review state cannot become writable or turn editing into creation. New draft
+availability still requires its separate command; original annual rent persists.
+Existing M/A gates, D43 atomic creation exception and stock/overlap rules remain.
+
+Thirteen new actual-module cases are registered;385 frontend units pass. Lint/
+typecheck and pinned Next16.4.2 build pass (63 glyphs,93 consumers/328 icon sites,
+469 Button sites/zero violations). Source review corrected viewport-based spans
+for narrow drawers and explicitly retained/invalidated stale available state on
+a current draft. Failed exploratory stale-path reads changed no files; actual
+modules were located with rg. Two1440-programme/390-property native journeys are
+prepared, not executed. Older inventory helpers still need migration. Source/
+compiled checks confirm254 unchanged frozen inputs and shared footer/phone pairs/
+full spans/desktop-phone offer grids/important hidden display. This is not native
+visual, focus, touch, zoom or real stock/permission/race evidence.
+
+[Contract](../04-design/offering-workspace-local.md), QA and security check record
+scope and limits. No new CSS/kit/theme/dependency/backend/schema/data operation.
+Original-machine mandatory skills remain unavailable/not claimed; dense CRM/forms
+exclude marketing design-taste, and shared system/React guidance plus AFTER timing
+remain. Customer proposals/PDF/finance, remaining form/document/report/work/domain
+reconciliation, legacy history and final native/current-role/stock/race/SQL/full-
+stack/CI/AFTER/owner gates stay open. No main/push/merge or goal completion.
+[Evidence](design-migration-evidence/offering-forms-2026-10-27.json).
+
+
+Repository gate passes8750 indexed files/zero forbidden or oversized/14 ignore
+probes. Docs pass22 sprints,1248 links,42 mappings,13 Mermaid and12 API JSON
+examples. Cached diff check passes; protected35 lesson additions and motion plan
+remain excluded, with main unchanged at the original e0bdc09 base.

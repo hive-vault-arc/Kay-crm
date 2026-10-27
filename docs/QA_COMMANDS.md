@@ -1,5 +1,19 @@
 # KAY QA command register
 
+Latest offering-form slice (2026-10-27):385 frontend units pass, including13 new
+actual model/controller/composition cases. Lint/typecheck and pinned Next16.4.2
+build pass (63 glyphs,93 consumers/328 icon sites,469 Button sites/zero violations).
+Offer commands are beside each row and open one focused form; exact money,
+market period, parent/offering versions and current stock rules remain. Managed
+drafts/duplicate locks/exact retry and deliberate comparison/reload replace the
+old unguarded form. Foreign/replaced/engaged/archived baselines cannot be adopted.
+Two native journeys in `tests/e2e/offering-forms.spec.ts` are prepared, not run;
+their source passes type checking. Frozen254 inputs and compiled shared/footer/
+phone grid checks pass, without claiming native visual/focus behavior. Existing
+app-access restriction, older inventory selectors, real current-role/stock/race/
+SQL/full-stack/AFTER/CI/owner and wider migration work remain pending.
+[Evidence](03-planning/design-migration-evidence/offering-forms-2026-10-27.json).
+
 Latest owner-workspace slice (2026-10-27):372 frontend units pass, including20 new
 actual-module cases for directory/current-contact state, drawer reuse, canonical
 aliases, full/quick identity, bounded current preview, link history/paging,

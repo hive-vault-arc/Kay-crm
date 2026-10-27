@@ -15,7 +15,7 @@ import { externalSchema, stockReviewSchema, type StockReview } from "./outcome-c
 import { StockReviewFacts } from "./stock-review";
 import { InventoryBusyContext, useInventoryCommand } from "./use-command";
 
-export function ExternalOutcome({ target, offering, saved }: { target: InventoryTarget; offering: Offering; saved: () => void }) {
+export function ExternalOutcome({ target, offering, saved, iconOnly = false, disabled = false }: { target: InventoryTarget; offering: Offering; saved: () => void; iconOnly?: boolean; disabled?: boolean }) {
   const [open, setOpen] = useState(false); const [review, setReview] = useState<StockReview>();
   const [completedOn, setCompletedOn] = useState(""); const [explanation, setExplanation] = useState("");
   const [invalid, setInvalid] = useState(""); const [error, setError] = useState<ApiError>(); const [loading, setLoading] = useState(false);
@@ -42,7 +42,7 @@ export function ExternalOutcome({ target, offering, saved }: { target: Inventory
     void command.submit(`${path}/external-outcome`, data.data, "POST", () => { setOpen(false); setExplanation(""); saved(); router.refresh(); });
   }
   return <AlertDialog open={open} onOpenChange={next => { if (!busy) { setOpen(next); if (next) { setReview(undefined); setError(undefined); command.clear(); setInvalid(""); void refresh(); } } }}>
-    <AlertDialogTrigger asChild><Button action="outcome" type="button" variant="outline" className="justify-self-start" disabled={!hydrated}>{action}</Button></AlertDialogTrigger>
+    <AlertDialogTrigger asChild><Button action="outcome" type="button" variant={iconOnly ? "quiet" : "outline"} size={iconOnly ? "icon" : "default"} aria-label={iconOnly ? action : undefined} className="justify-self-start" disabled={!hydrated || disabled}><span className={iconOnly ? "sr-only" : undefined}>{action}</span></Button></AlertDialogTrigger>
     <AlertDialogContent onOpenAutoFocus={event => { event.preventDefault(); titleInput.current?.focus(); }}><AlertDialogTitle ref={titleInput} tabIndex={-1}>{action}</AlertDialogTitle><AlertDialogDescription>Résultat externe, réservé aux responsables. Cette action modifie le stock et signale les affaires concernées, sans créer de gain KAY, de commission ni d’encaissement.</AlertDialogDescription>
       {!review && !error ? <p role="status">Vérification du périmètre et des effets…</p> : null}{review ? <StockReviewFacts review={review} /> : null}
       <form noValidate className="grid min-w-0 gap-4" onSubmit={event => { event.preventDefault(); submit(); }}><fieldset className="grid min-w-0 gap-4" disabled={busy}><legend className="sr-only">Résultat externe</legend><div className="grid gap-2"><Label htmlFor={`external-date-${offering.id}`}>Date du résultat externe (obligatoire)</Label><Input ref={dateInput} id={`external-date-${offering.id}`} type="date" value={completedOn} onChange={e => setCompletedOn(e.target.value)} aria-describedby={invalid ? `external-invalid-${offering.id}` : undefined} /></div><div className="grid gap-2"><Label htmlFor={`external-reason-${offering.id}`}>Motif partagé, sans donnée privée (obligatoire)</Label><Textarea ref={reasonInput} id={`external-reason-${offering.id}`} value={explanation} maxLength={1000} onChange={e => setExplanation(e.target.value)} aria-describedby={invalid ? `external-invalid-${offering.id}` : undefined} /></div></fieldset>
