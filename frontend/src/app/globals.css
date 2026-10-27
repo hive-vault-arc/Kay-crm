@@ -11,6 +11,7 @@
 @import "./workspace-forms.css";
 @import "./workspace-settings.css";
 @import "./workspace-dashboard.css";
+@import "./workspace-search.css";
 
 html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   display: none;

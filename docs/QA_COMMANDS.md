@@ -1,5 +1,13 @@
 # KAY QA command register
 
+Latest selected-search UI slice (2026-10-27):233 frontend units pass, including
+eight new actual route/controller cases. Lint/typecheck and pinned Next16.4.2 build
+pass, including `/search` (62 glyphs/445 Button sites/zero violations). Search CSS
+parses with37 rules/seven existing roles/one verified Radix runtime role and no
+missing aliases. All254 prototype hashes match. Native/app-HTTP/real SQL/focus/
+touch/zoom/AFTER/product review remain pending; prepared-PDF search parity remains
+explicit next data work. [Evidence](03-planning/design-migration-evidence/search-ui-2026-10-27.json).
+
 Latest selected-dashboard UI slice (2026-10-27):225 frontend units pass, including
 eight new component/controller cases. Lint/typecheck and pinned Next16.4.2 build
 pass (62 glyphs/444 Button sites/zero violations). Dashboard CSS parses with151

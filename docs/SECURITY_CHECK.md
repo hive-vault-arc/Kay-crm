@@ -1,5 +1,28 @@
 # KAY security check for changes
 
+## Selected search preview and full results, 2026-10-27
+
+The new `/search` route requires identity before examining URL parameters. It
+accepts only bounded q/kind/page, rejects duplicate/unknown input and does not
+reflect invalid values into fields or component keys. The login return allowlist
+adds only bare `/search`, preserving rejection of query strings and foreign paths.
+Existing facade/session/no-store/current-parent scope remains authoritative.
+
+No request mounts below two characters or with a closed/obsolete preview. Editing,
+navigation, breakpoint changes and current read errors remove prior result rows;
+the normal query abort lifecycle remains. Link prefetch is disabled, destinations
+remain strict parent/unit-context paths and no file bytes/public URLs, staff
+directory, finance data, storage/cache or write command is added. Full navigation
+still uses the shared draft guard; its focus return target survives popup closure.
+Enquiry/file live topics now refresh scoped search as well.
+
+233 frontend units plus lint/typecheck/build/source/CSS checks pass. Prepared PDFs
+are still absent from the real search projection and must be added with their
+existing template/parent authority; no illustrative hit is substituted. No backend/
+database/migration/service operation or native/full-stack security acceptance.
+[Contract](04-design/discovery-contract.md) ·
+[Evidence](03-planning/design-migration-evidence/search-ui-2026-10-27.json).
+
 ## Selected dashboard UI composition, 2026-10-27
 
 Only the current typed workspace projection supplies headline/preview values.

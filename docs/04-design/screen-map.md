@@ -1,5 +1,14 @@
 # KAY screen map and navigation contract
 
+Selected search migration,2026-10-27: desktop header suggestions now open an anchored
+eight-row preview and the authenticated `/search?q=...&kind=...&page=...` view.
+Phone keeps its search icon/Sheet. The full page has the common labelled form,
+selected Tabs, scoped totals, short icon rows and numbered pages. The server checks
+identity before strict URL params; invalid values are not echoed and only bare
+`/search` is an allowed login return. The seven current API kinds and their parent/
+unit-context routes remain; prepared-PDF discovery is tracked as missing parity.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
 Selected dashboard composition,2026-10-27: existing `/dashboard` identity checks
 remain. New prospect stays in its page header; the shared shell owns account and
 notifications. Four scoped headline cards, five current stages and period outcomes

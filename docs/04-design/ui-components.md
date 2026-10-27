@@ -1,5 +1,15 @@
 # KAY interface components: shadcn/ui working guide
 
+Selected search composition,2026-10-27: SearchTrigger switches at the existing
+phone boundary between DesktopSearch and the shared Sheet. PopoverAnchor is now
+exported from the installed shadcn/Radix primitive; existing Popover behavior is
+unchanged. Typed search-model/presentation/workspace modules compose Input, Label,
+NativeSelect, Tabs, Button, numbered pages, safe errors and semantic result icons.
+Desktop uses a labelled nonmodal result dialog and ordinary linked rows; phone/
+full-page views reuse the same parent-only rows. The selected popup geometry/menu
+material is the scoped CSS exception; no new dependency, kit or arbitrary icon.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
 Selected dashboard composition,2026-10-27: WorkspaceDashboard owns the four-KPI
 workspace projection and shared RecordDrawer report/work/record tools. Separate
 KPI, pipeline, preview, responsible-picker and rowset modules reuse Button/Popover/

@@ -1501,3 +1501,14 @@ different API parameters. Copy only declared keys when initializing a legacy
 report from a new context, normalize empty optional UUIDs before strict parsing,
 and exercise the actual component/controller boundary. Source checks do not replace
 rendered/real-stack verification.
+
+
+## 2026-10-27 — Keep search focus and query lifetimes explicit
+
+A preview can reopen itself when Escape returns focus to a field whose focus
+handler opens it. Suppress that return event, then clear the suppression. Before
+linked-result navigation opens an unsaved confirmation, keep or return focus to
+the surviving search field rather than a popup link that will unmount. Mount a
+preview read only for the open current query, and discard old results immediately
+while the replacement query debounces. Source/controller tests do not prove native
+focus, touch or viewport behavior.

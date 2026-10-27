@@ -22,8 +22,38 @@ numbered pages; deep empty pages retain the scoped total.
 Unit-type hits navigate to the actual programme unit list with an applied
 unit_type_id filter. A template never becomes inventory or a sale target.
 Document-name hits navigate to their parent context, never a public byte URL.
-The header search uses the existing Sheet with labelled query/kind, explicit
-submit, loading/empty/error/retry and keyboard close/return focus.
+Selected migration2026-10-27: the desktop header now uses the frozen anchored
+preview (eight rows, complete authorized total,440px width/420px maximum height)
+and a link to authenticated `/search`. The phone header keeps an icon-only Sheet
+with the common labelled query/type form and full numbered result rows. The
+full page supports strict q/kind/page parameters, fixed20-row pages and the same
+current API. Unknown/duplicate/invalid URL parameters are rejected without
+reflecting them into the form; identity is checked first. Only bare `/search`
+joins the login-return allowlist, never its query string.
+
+Desktop typing is a disposable search draft, with a300ms request debounce and no
+read below two characters. Changing the query immediately removes old suggestions;
+closing/navigation/breakpoint changes unmount the preview and abort its current
+read. Current failure/denial replaces previous names. Shared shadcn Popover uses a
+labelled nonmodal result dialog and ordinary links, with keyboard focus movement
+and Escape return to the input, rather than a falsely declared listbox while
+focus moves among links. This preserves the selected appearance and preview-to-all
+workflow with accessible ordinary-link semantics. Native focus/touch remains a
+separate verification gate. All result links disable prefetch and still pass
+through the shared unsaved-navigation guard. Full-page query navigation explicitly
+uses that guard; phone search remains disposable local UI state.
+
+Full results reuse the selected app Tabs for scoped per-kind counts, shared soft
+result rows and numbered pages; full/drawer lists have no fixed inner scroll height.
+Reusable-type/document destinations remain the authoritative parent/unit-context
+URLs. Live search refresh now also includes enquiry and file topics. No local
+storage, staff-directory request, public file URL or extra result field is added.
+
+Prepared-PDF discovery is still a genuine parity gap: the prototype includes it,
+but current backend `search.py` projects uploaded Document rows only. This UI
+slice retains the actual seven-kind API; it does not invent generated-PDF hits or
+mark that gap complete. The next data slice must preserve existing template role
+and parent-contact authority. [UI evidence](../03-planning/design-migration-evidence/search-ui-2026-10-27.json).
 
 ## CSV request, worker and delivery
 

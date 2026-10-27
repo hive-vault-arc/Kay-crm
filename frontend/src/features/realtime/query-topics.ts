@@ -9,7 +9,7 @@ const groups: Record<string, string[]> = {
   notifications: ["notifications", "tasks", "visits", "files", "contacts"],
   reports: ["reports"], commissions: ["finance"], documents: ["files"], files: ["files"],
   imports: ["imports"], exports: ["exports"], work: ["tasks", "visits", "contacts"],
-  users: ["identity"], requirements: ["requirements", "inventory"], search: ["contacts", "deals", "inventory"],
+  users: ["identity"], requirements: ["requirements", "inventory"], search: ["contacts", "enquiries", "deals", "inventory", "files"],
   "customer-offers": ["deals", "inventory"],
   "generated-documents": ["files", "contacts", "deals", "inventory"],
   audit: ["contacts", "deals", "inventory", "visits", "tasks", "files", "finance", "imports", "exports", "identity"],

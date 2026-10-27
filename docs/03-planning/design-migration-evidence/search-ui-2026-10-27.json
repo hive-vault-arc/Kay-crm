@@ -1,0 +1,122 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "1f1acee",
+  "scope": "Selected desktop search preview, phone Sheet and authenticated full-result view over the existing seven-kind scoped API",
+  "checks": [
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2",
+      "route": "/search"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 445,
+      "violations": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 233,
+      "failed": 0,
+      "newCases": 8
+    },
+    {
+      "command": "npm run security:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "runtimeVulnerabilities": 0,
+      "fullVulnerabilities": 0,
+      "exceptionsUsed": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8686,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1237,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "cwd": ".",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "rules": 37,
+    "roles": 7,
+    "runtimeRoles": [
+      "--radix-popover-content-available-height"
+    ],
+    "missing": [],
+    "pinnedInputs": 254,
+    "sourceDrift": 0
+  },
+  "prototypeReferences": [
+    "src/global-search.js",
+    "src/mobile-search.js",
+    "src/app.css",
+    "src/interactive-surfaces.css",
+    "src/mobile-core.css",
+    "src/mobile-app.css",
+    "src/main.js"
+  ],
+  "designRead": "Frozen operational CRM search, existing semantic surfaces/controls and real scoped data; no marketing concept workflow",
+  "adaptations": [
+    "Shadcn nonmodal result dialog with ordinary linked rows/roving keyboard focus instead of an input-focus listbox claim",
+    "300ms debounce for real request traffic; eight previews with complete server totals",
+    "Strict authenticated full-page q/kind/page route, fixed20-row pages, invalid parameter values not reflected",
+    "Bare /search login return only, preserving query/foreign-path rejection",
+    "Pointer selection keeps field focus; keyboard activation returns there before the unsaved guard opens",
+    "History events close transient suggestions and clear their query; global business-draft Back/Forward handling remains separate P2 work"
+  ],
+  "remainingParity": [
+    "Prepared PDF search is present in prototype but absent from actual backend search.py; add with existing template-role and parent scope",
+    "Audit actor tools, export/import/background-job hierarchy",
+    "Other P0-P8 fields/forms/document/browser-selector and full-system work"
+  ],
+  "notRun": [
+    "Browser/CUA/app-HTTP access",
+    "Rendered keyboard/focus/touch/viewport/zoom/accessibility",
+    "Actual database/scope/concurrency/performance",
+    "AFTER audit and owner product review"
+  ],
+  "unchanged": [
+    "Backend, database/migrations/services and private file APIs",
+    "Session/CSRF and current parent/finance authority",
+    "Dependencies and pinned prototype inputs",
+    "main, push, merge and production"
+  ],
+  "skills": {
+    "react": "Applied hook/state/effect/lazy component and accessible-control guidance",
+    "designTaste": "Dense product UI excluded from marketing workflow",
+    "mandatoryOriginalMachineSkills": "Unavailable here, not claimed executed",
+    "antislop": "AFTER timing retained; no audit-only findings applied"
+  },
+  "correctedChecks": [
+    "Malformed test helper failed parsing before any test executed; fixed and rerun"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

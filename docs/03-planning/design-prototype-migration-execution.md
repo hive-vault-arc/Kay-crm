@@ -28,7 +28,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
-| P7 remaining surfaces | Help hub/reader, selected settings navigation/overview/staff forms/policy drawer and the selected dashboard's scoped data, four KPIs, Bklit semicircle, short previews and full report/work drawers implemented | Remaining report tools/search/audit/jobs and directory refinements; native/full-stack/product review |
+| P7 remaining surfaces | Help/settings/dashboard compositions plus desktop search preview, phone search Sheet and authenticated full-result page wired to real current scoped APIs | Prepared-PDF search parity; remaining report tools/audit/jobs and directory refinements; native/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -877,3 +877,60 @@ AFTER and owner verification remain pending. The overall redesign goal remains
 active; remaining P0–P8 work is not narrowed, and main/push/merge are untouched.
 
 [Dashboard UI evidence](design-migration-evidence/dashboard-ui-2026-10-27.json).
+
+## Selected global search preview and full results
+
+2026-10-27. The frozen source uses a desktop anchored preview and a full result
+view; the previous CRM used its Sheet everywhere. The header now follows that
+composition with the existing mobile830px boundary. Eight result previews retain
+the complete server total and a full-results link. The440/420px popup uses existing
+menu roles and Radix collision/available-height handling; the shared form/result
+hierarchy serves the phone Sheet and the new authenticated `/search` page.
+No full/drawer result list gains a fixed inner scroll region.
+
+The new route authenticates before reading parameters. q/kind/page remain strict
+and bounded, duplicates/unknowns are invalid, and invalid values are not reflected
+as fields or component keys. Only bare `/search` is an allowed login return.
+Literal queries are URL-encoded. Existing GET facade/session/no-store and backend
+scope/count/parent-context contracts remain; no extra phone, file, finance or owner
+field is inferred. Document hits open their authorized parent; reusable types open
+their actual programme's filtered unit context. Prefetch remains disabled.
+
+Preview reads debounce300ms and mount only while open with a valid current query.
+Changing text immediately removes the old query subtree; current errors remove
+prior names. History events, route and desktop/phone changes clear/unmount the preview. The ordinary
+linked-result Popover uses a labelled nonmodal dialog with arrow/Home/End focus,
+Enter activation and Escape return, preserving the selected visible workflow
+without claiming input-focus listbox semantics. Escape return suppresses its own
+reopen event. Pointer selection keeps focus in the input, and keyboard activation
+returns focus there before the shared unsaved guard can open its confirmation;
+that return target survives popup closure. Native behavior remains unverified.
+
+Full results retain scoped per-kind counts in the existing Tabs, exact complete
+totals and shared numbered pages. Page/facet/query navigation uses the unsaved
+guard; the phone's search state remains disposable and clears old results on edits.
+Live invalidation now includes files and enquiries in addition to the existing
+search domains. No generic query-hook, backend, permission or business-command
+implementation changed. The pinned installed Next page/Link documentation was
+read for the new route/async params and prefetch handling.
+
+Eight source/controller cases cover bounds/encoding/return paths, auth-before-params,
+duplicate/unknown rejection, responsive-mode closure, debounce/stale-query/denied
+results, popup keys/focus return, protected full-page navigation, phone validation,
+parent-only links and live topics. One malformed test helper failed parsing before
+any test ran and was corrected.233 frontend units and final lint/typecheck/build
+pass (62 glyphs/445 Button sites/zero violations). Search CSS parses with37 rules,
+seven existing roles and one verified Radix runtime role; zero missing aliases.
+All254 prototype inputs remain unchanged.
+
+The source reconciliation also confirmed a genuine missing capability: prepared
+PDFs are included in the selected prototype search but not in the current backend
+Document-only projection. That remains explicit P0/P7 data work, preserving C13
+template roles and parent-contact authority; this UI checkpoint is not a substitute
+for that outcome. Audit actor tools, job/import panels and other migration phases
+remain open. Original-machine mandatory skills remain unavailable, dense CRM stays
+outside the marketing workflow, React guidance/shared primitives are reused, and
+AFTER timing is retained. No native/app-HTTP, real SQL/races, final accessibility/
+AFTER or owner approval is claimed. Main/push/merge and the active goal are unchanged.
+
+[Search UI evidence](design-migration-evidence/search-ui-2026-10-27.json).
