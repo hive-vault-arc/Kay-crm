@@ -1,5 +1,27 @@
 # KAY security check for changes
 
+## Selected dashboard UI composition, 2026-10-27
+
+Only the current typed workspace projection supplies headline/preview values.
+Responsible choices use its scoped read endpoint rather than the staff directory;
+filters narrow current authority. Loading/error/denial removes stale main cards
+and record drawers. Exact rowsets use existing facade/session/no-store contracts;
+current stage and immutable closing attribution keep their distinct parameters.
+The legacy detailed report retains every authorized metric and only copies date
+keys from workspace context. Shared account/inbox authorization remains unchanged.
+
+Photos retain existing clean-scan/private-permit/byte/object-URL behavior. Exact MAD
+and server civil-time/clock helpers remain; no public file URL, owner/contact grant,
+new write command, credentials/cache or real record operation is added. Task links
+retain explicit Lead/Deal context. All display text stays React-escaped. Bklit source
+and original MIT notice are hash-verified; its two direct dependencies are unchanged
+locked/installed transitives. Dependency audits report zero known vulnerabilities.
+
+225 frontend units, lint/typecheck/build and source/CSS checks pass. These checks
+do not prove real SQL authorization/races/performance, rendered focus/accessibility
+or full-stack acceptance; browser/app access remains restricted. No backend or
+migration change. [Evidence](03-planning/design-migration-evidence/dashboard-ui-2026-10-27.json).
+
 ## Selected dashboard data projection, 2026-10-27
 
 New GET-only workspace endpoints use existing facade/session proof, strict bounded

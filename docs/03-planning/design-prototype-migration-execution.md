@@ -28,7 +28,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
-| P7 remaining surfaces | Help topic hub, side-by-side guide cards, balanced reader plus selected settings navigation/overview/staff forms and working-policy drawer implemented; selected-dashboard authoritative data/transport prepared; other existing behavior retained | Selected dashboard UI wiring plus report/search/audit/jobs and remaining directory refinements; native review |
+| P7 remaining surfaces | Help hub/reader, selected settings navigation/overview/staff forms/policy drawer and the selected dashboard's scoped data, four KPIs, Bklit semicircle, short previews and full report/work drawers implemented | Remaining report tools/search/audit/jobs and directory refinements; native/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -805,3 +805,75 @@ migration, dependency, real data/service, production, main, push or merge operat
 
 [Dashboard data contract](../04-design/dashboard-workspace-local.md) ·
 [Source evidence](design-migration-evidence/dashboard-data-2026-10-27.json).
+
+## Selected dashboard composition and supporting drawers
+
+2026-10-27. `/dashboard` now uses the frozen welcome/four-KPI composition and
+the real workspace projection. The source1150/980/1600px grid transitions and
+later830px mobile override are reconciled with the actual CSS import order:
+wide screens show pipeline/catalogue/appointments above three supporting cards;
+phones retain the final compact two-column KPI grid. Source hero-photo geometry
+is retained for this dashboard showcase; project directories keep their existing
+short left-image cards. This is source/cascade evidence, not a rendered-layout pass.
+
+The five-stage Bklit semicircle has an exact keyboard-operated count legend,
+current active total, reduced-motion behavior and separate period-closing links.
+Its square measuring canvas is clipped by the source220/136 viewport, preserving
+the85px inner radius. The empty placeholder is decorative only; exact zero values
+remain in the legend. Current-stage drawers query the existing scoped Deal list;
+headline drawers use exact workspace record rowsets. Closing drawers map the
+selected responsible to immutable closing attribution instead of passing a
+current-portfolio filter into the legacy report API.
+
+Three catalogue, two appointment and three follow-up/task/team previews use their
+complete authorized totals. Photo cards reuse private metadata/clean scan/permit
+and object-URL cleanup; no public inventory photo URL is introduced. Property and
+programme links use their real distinct routes. Campaign money stays exact MAD,
+terms/states remain visible, and task links retain explicit Lead/Deal context
+before the historical Contact fallback. Civil tiles use server-supplied local
+dates/times; overdue uses the authoritative clock, including ongoing appointments.
+
+The old page-local account/notification controls are removed; the shared shell
+already supplies them. New prospect stays in the selected page header. Shared
+RecordDrawer provides full work/visit follow-up and lazy detailed reports. All
+authorized legacy metrics, contributor charts, exact values, alert filters,
+numbered pages and drills remain. Report numeric alternatives are full-width soft
+rows instead of tables. Detailed reports explicitly own their filters and retain
+current-primary/closing-primary/true-actor distinctions. They copy only their date
+keys from workspace context. Main loading/error/denied states remove stale cards
+and associated record drawers. Current caller/backend authorization remains final.
+
+Three Bklit pie source files match the frozen source, apart from the local `cn`
+import. The exact MIT notice is distributed with the app. `@visx/group@4.0.0` and
+`d3-shape@3.2.0` were already locked/installed transitives; their unchanged versions
+are now declared direct dependencies because the pie source imports them. No
+package version or installed dependency tree changed. Both selected key images
+match source hashes; all254 pinned inputs still match.
+
+Eight actual component/controller cases cover default/invalid/draft/applied/reset
+filters, denied projection removal, complete KPI totals/zero denominators, stage
+and closing rowsets, civil/decimal/private-photo contracts, distinct catalogue and
+task routes, and complete supporting metrics without copied portfolio parameters.
+The initial invalid union-Omit typing, missing semantic Button mappings, one
+locale-abbreviation assertion and one reserved test-variable name were corrected;
+failed checks are not passes. CSS review corrected the initial rectangular Bklit
+measurement and isolated-file breakpoint assumptions before the final build.
+
+Shared primitives/tokens remain; custom CSS is limited to selected dashboard
+geometry/material/cascade. Original-machine antislop/design-system-ops paths remain
+unavailable and are not claimed executed. The local design-taste skill explicitly
+excludes dashboards; no marketing workflow/aesthetic reinvention was applied.
+React guidance was used for typed state, lazy charts/reports, current projection
+boundaries and reusable components. AFTER timing is preserved; no audit-only
+finding is selected or human approval inferred.
+
+Final source checks:225 frontend units, lint/typecheck and pinned Next16.4.2 build
+pass;62 glyphs/444 Button sites/zero violations. Dashboard CSS parses with151 rules,
+13 existing roles and zero undefined aliases. Runtime/full dependency audits both
+report zero known vulnerabilities. No backend/database/migration/service or real
+record operation. Browser/app access remains restricted; native geometry/focus/
+keyboard/touch/zoom, PostgreSQL scope races/performance, revised browser selectors,
+AFTER and owner verification remain pending. The overall redesign goal remains
+active; remaining P0–P8 work is not narrowed, and main/push/merge are untouched.
+
+[Dashboard UI evidence](design-migration-evidence/dashboard-ui-2026-10-27.json).

@@ -27,7 +27,7 @@ export function PageHeader({
           {Icon ? <Icon aria-hidden="true" className="size-6 shrink-0 text-link" /> : null}
           {title}
         </h1>
-        <p>{description}</p>
+        {description ? <p>{description}</p> : null}
       </div>
       {navigation ? <div className="kay-page-navigation">{navigation}</div> : null}
       {actions ? <div className="kay-page-actions">{actions}</div> : null}

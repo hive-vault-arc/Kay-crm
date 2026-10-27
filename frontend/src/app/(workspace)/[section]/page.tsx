@@ -4,8 +4,9 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
 import { requireIdentity } from "@/lib/auth/server";
 import { AuthUnavailable } from "@/features/auth/auth-frame";
-import { WorkDashboard } from "@/features/work/work-dashboard";
-import { DashboardHeaderActions } from "@/features/reports/dashboard-header-actions";
+import { WorkspaceDashboard } from "@/features/reports/workspace-dashboard";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type Props = { params: Promise<{ section: string }>; searchParams: Promise<{ view?: string }> };
 
@@ -27,7 +28,7 @@ export default async function WorkspacePage({ params, searchParams }: Props) {
     {identity.profile.user.role === "agent" ? <p role="alert">Accès non autorisé : le journal est réservé aux responsables et administrateurs.</p> : <AuditPanel />}
   </>;
   return <>
-    <PageHeader title="Tableau de bord" description="Votre activité, en un regard." route="/dashboard" actions={<DashboardHeaderActions user={identity.profile.user} />} />
-    <WorkDashboard />
+    <PageHeader title="Tableau de bord" description="" route="/dashboard" actions={<Button action="create" asChild><Link href="/leads/new">Nouveau prospect</Link></Button>} />
+    <WorkspaceDashboard displayName={identity.profile.user.display_name} role={identity.profile.user.role} />
   </>;
 }

@@ -3,7 +3,8 @@
 2026-10-27. Implemented source/transport support for the selected dashboard.
 Technical metric/filter choices below are proposals for final product review;
 C10, BR-05/18/19/29, current permissions and existing report definitions prevail.
-This slice does not yet replace the dashboard's visual composition.
+The selected visual composition is now wired; final rendered/full-stack review
+remains separate from the source evidence below.
 
 ## Boundary and transport
 
@@ -93,7 +94,18 @@ units, lint/typecheck and pinned Next16.4.2 build pass. Six new facade/contract 
 cover current session/no-store, path/query bounds, exact money, count cohesion,
 malformed/private/foreign-link denial, legacy compatibility and refresh topics.
 
-The selected greeting/four-card layout, pipeline semicircle, compact photo/agenda/
-priority/task/team cards and supplementary report/work tools still need UI wiring.
+The selected greeting/four-card layout, Bklit semicircle, photo/agenda/priority/
+task/team previews and supplementary report/work drawers are now wired. Stage
+links use the existing current-stage Deal list, headline links use exact workspace
+records, and outcome links map responsible to the legacy immutable attribution
+filter. Detailed reports own their complete authorized metrics and independent
+filters; only dates initialize from workspace context. Private photo authorization,
+exact campaign prices/terms/states and explicit Lead/Deal task routes remain.
+
+225 frontend units plus lint/typecheck/build pass. Dashboard CSS/source hashes and
+zero known dependency vulnerabilities are recorded in the
+[UI evidence](../03-planning/design-migration-evidence/dashboard-ui-2026-10-27.json).
 No native/browser/app-HTTP, real database/performance/concurrent-scope/transfer,
-AFTER or product acceptance is claimed. [Evidence](../03-planning/design-migration-evidence/dashboard-data-2026-10-27.json).
+AFTER or product acceptance is claimed. The separate
+[data evidence](../03-planning/design-migration-evidence/dashboard-data-2026-10-27.json)
+retains its actual earlier310 backend units and prepared SQL acceptance cases.

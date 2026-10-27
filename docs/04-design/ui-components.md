@@ -1,5 +1,15 @@
 # KAY interface components: shadcn/ui working guide
 
+Selected dashboard composition,2026-10-27: WorkspaceDashboard owns the four-KPI
+workspace projection and shared RecordDrawer report/work/record tools. Separate
+KPI, pipeline, preview, responsible-picker and rowset modules reuse Button/Popover/
+Input/Label/Badge, exact formatting and private InventoryThumbnail. Bklit pie source
+implements the selected semicircle; exact keyboard-operated legend values remain
+outside its decorative SVG. Detailed report values use compact soft rows in the
+drawer. Shared PageHeader suppresses an empty description instead of leaving a
+blank text row. No new kit/chart library/route or business command.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
 Selected settings form composition,2026-10-27: UserForm owns one SettingsWorkspace
 header/action row, identity/role card and right-hand security slot. Security tools
 use existing confirmed dialogs/status colors; dirty/busy identity edits block

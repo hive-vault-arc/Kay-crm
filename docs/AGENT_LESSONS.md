@@ -1488,3 +1488,16 @@ live-update listener must respect it. Protect an in-flight managed command even
 when its values are unchanged, then release held reads after the busy/dirty
 lifetime ends or unmounts. Keep current authorization failures fail-closed and
 test the actual listeners/lifecycle; a disabled-live fixture alone misses this.
+
+
+## 2026-10-27 — Port the full CSS cascade and keep report-filter meanings distinct
+
+A frozen dashboard leaf stylesheet was insufficient evidence for the final target:
+a later mobile import overrides KPI columns, while a wide-screen rule changes
+card distribution. Inspect actual import order and all relevant media rules before
+porting geometry; preserve Bklit's square measuring canvas inside its cropped
+semicircle viewport. Current portfolio and immutable closing attribution also use
+different API parameters. Copy only declared keys when initializing a legacy
+report from a new context, normalize empty optional UUIDs before strict parsing,
+and exercise the actual component/controller boundary. Source checks do not replace
+rendered/real-stack verification.

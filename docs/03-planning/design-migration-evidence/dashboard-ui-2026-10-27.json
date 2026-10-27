@@ -1,0 +1,147 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "e7dd8e4",
+  "scope": "Selected dashboard UI, Bklit semicircle, complete real scoped previews, exact record drills and supporting report/work drawers",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 444,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 225,
+      "failed": 0,
+      "newCases": 8
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run security:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "runtimeVulnerabilities": 0,
+      "fullVulnerabilities": 0,
+      "exceptionsUsed": 0
+    },
+    {
+      "command": "npm ls @visx/group d3-shape --depth=0",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "versions": {
+        "@visx/group": "4.0.0",
+        "d3-shape": "3.2.0"
+      }
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8678,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1236,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "cwd": ".",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "pinnedInputs": 254,
+    "drift": 0,
+    "copied": [
+      {
+        "file": "frontend/src/components/charts/pie-chart.tsx",
+        "source": "src/vendor/bklit/pie-chart.tsx",
+        "sourceSha256": "4d6a7a119c991acbc3995a663f308f1ce00c31985c7339586cfe3d51f89da050",
+        "sha256": "f492c0cb52bee991815c09c7ad6a56ba42298145956e4bd3d1ad3b69fe945323",
+        "indexSha256": "d945c9cd265b395025f454188ba100ac97855ebcc44ecafe094373164a0780dc"
+      },
+      {
+        "file": "frontend/src/components/charts/pie-context.tsx",
+        "source": "src/vendor/bklit/pie-context.tsx",
+        "sourceSha256": "dcdafa437446a9c9f17f1b46ac089ac733eb619bf41466ff7774d6f09567a836",
+        "sha256": "dcdafa437446a9c9f17f1b46ac089ac733eb619bf41466ff7774d6f09567a836",
+        "indexSha256": "c3ebffd2c228c5e3973e824c3442b368ada81396bad45d393fb7d1c2b8495df5"
+      },
+      {
+        "file": "frontend/src/components/charts/pie-slice.tsx",
+        "source": "src/vendor/bklit/pie-slice.tsx",
+        "sourceSha256": "a8413d8745ac4c36c83d0de3f2bfa825cc8d0ab0bf9073d0abd3ab230d0a0d11",
+        "sha256": "a8413d8745ac4c36c83d0de3f2bfa825cc8d0ab0bf9073d0abd3ab230d0a0d11",
+        "indexSha256": "2034d79ebd5701093ca9135ac306a7cdeb26439d0e150e208e92db59ecfb8120"
+      },
+      {
+        "file": "frontend/public/images/workspace/kay-key-only-black-transparent.png",
+        "source": "public/assets/kay-key-only-black-transparent.png",
+        "sha256": "9fb66e3fd27cd03de125c5b9e9f2798e508d37333a83cc27afc687688334b82b"
+      },
+      {
+        "file": "frontend/public/images/workspace/kay-key-only-white-transparent.png",
+        "source": "public/assets/kay-key-only-white-transparent.png",
+        "sha256": "d928ff6b6a5616acb8ccd5fc131042a516c22062b278747498d550603e9c2c5a"
+      }
+    ],
+    "textNormalization": "Raw source/working-tree hashes recorded; repository gitattributes normalizes vendored CRLF to LF in the index. The cn import is the only code adaptation."
+  },
+  "css": {
+    "rules": 151,
+    "roles": 13,
+    "missing": []
+  },
+  "dependencyChange": "Only existing exact locked/installed transitive versions promoted to direct declarations; no dependency node/version/integrity or installed tree change",
+  "sourceCorrections": [
+    "Distributive typed selection instead of Omit on an intersection of unions",
+    "Explicit semantic Button/icon mappings and narrowly documented numeric legend exception",
+    "Normalized empty optional responsible UUID before strict query parsing",
+    "Legacy reports copy only their own date keys; closing drills use attribution_id",
+    "Corrected square Bklit measuring geometry and read final CSS import/media order",
+    "Locale-dependent month abbreviation assertion and reserved test variable corrected"
+  ],
+  "skills": {
+    "react": "Read and applied component/hook/lazy-loading/accessibility guidance",
+    "designTaste": "Dashboard explicitly excluded from marketing workflow",
+    "originalMachineMandatoryPaths": "Unavailable here; not claimed executed",
+    "antislop": "AFTER retained; no audit-only finding selected"
+  },
+  "notRun": [
+    "Native/browser/app-HTTP access",
+    "Rendered desktop/mobile/focus/touch/keyboard/zoom and accessibility",
+    "Actual PostgreSQL scope/transfer/concurrency/performance scenarios",
+    "Full-stack acceptance and revised browser selectors",
+    "AFTER audit and owner product review"
+  ],
+  "unchanged": [
+    "Backend and database/migrations/services",
+    "Session/CSRF/permissions and private file transfer/scanner authorization",
+    "Exact finance/attribution/business contracts",
+    "main, push, merge and production"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

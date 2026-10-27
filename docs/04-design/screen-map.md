@@ -1,5 +1,15 @@
 # KAY screen map and navigation contract
 
+Selected dashboard composition,2026-10-27: existing `/dashboard` identity checks
+remain. New prospect stays in its page header; the shared shell owns account and
+notifications. Four scoped headline cards, five current stages and period outcomes
+open guarded numbered record drawers. Catalogue cards use `/projects/{uuid}` for
+programmes and `/projects/properties/{uuid}` for physical properties; appointments
+and tasks keep their concrete contextual routes. Work/visit follow-up and all
+authorized detailed report/alert tools remain in supporting drawers. The existing
+manager/administrator audit destination is retained and hidden from agents.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
 Selected staff/detail-policy migration,2026-10-27: existing user create/edit pages
 keep exact admin/UUID checks; their client forms now own a single settings frame,
 header actions and identity/security columns. Loading/denied editors use a generic

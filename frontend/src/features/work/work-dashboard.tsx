@@ -11,18 +11,11 @@ import { localLabel } from "@/features/schedule/time";
 import { TaskListCard } from "./task-presentation";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { bucketLabels, followUpSchema, tasksSchema, type Bucket } from "./contracts";
-import { NotificationPanel } from "./notification-panel";
-import { ReportDashboard } from "@/features/reports/report-dashboard";
-
-export function WorkDashboard() {
-  return <div className="grid min-w-0 gap-5"><ReportDashboard><div className="grid min-w-0 items-start gap-4 xl:grid-cols-2"><div className="kay-surface kay-daily-work" aria-label="Travail quotidien"><DashboardTasks /></div><div id="notifications" className="kay-surface kay-daily-work" aria-label="Notifications"><NotificationPanel /></div></div></ReportDashboard><div className="surface"><VisitFollowUp /></div></div>;
-}
-
-function DashboardTasks() {
+export function DashboardTasks() {
   const id = useId(), hydrated = useHydrated(), [bucket, setBucket] = useState<Bucket>("today"), [page, setPage] = useState(1);
   const query = useQuery(queryPath("tasks", { bucket, page, page_size: 20 }), tasksSchema);
   return <section className="grid min-w-0 gap-4" aria-label="Travail à faire"><h2 className="text-section font-medium">Travail à faire</h2><div className="flex flex-wrap items-end gap-4"><div className="grid gap-2"><Label htmlFor={id}>Période des tâches</Label><NativeSelect id={id} value={bucket} onChange={e => { setBucket(e.target.value as Bucket); setPage(1); }}>{Object.entries(bucketLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div><Button liveRefresh action="refresh" type="button" variant="outline" disabled={!hydrated} onClick={query.refresh}>Actualiser le travail</Button></div>
-    {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement du travail…</p> : <><p>{query.value.total} tâche(s) accessible(s) : {bucketLabels[bucket].toLowerCase()}. Heure de l’agence : Africa/Casablanca.</p>{query.value.items.length ? <ul className="kay-work-list">{query.value.items.map(task => <li key={task.id}><TaskListCard task={task} clock={query.value!} href={task.deal_id ? "/deals/" + task.deal_id + "?task=" + task.id : "/contacts/" + task.contact_id + "?task=" + task.id} /></li>)}</ul> : <p>Aucune tâche pour cette période dans votre périmètre. Créez une tâche depuis la fiche contact ou l’affaire concernée.</p>}{query.value.has_previous || query.value.has_next ? <NumberedPages compact page={query.value.page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages du travail accessible" /> : null}</>}
+    {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement du travail…</p> : <><p>{query.value.total} tâche(s) accessible(s) : {bucketLabels[bucket].toLowerCase()}. Heure de l’agence : Africa/Casablanca.</p>{query.value.items.length ? <ul className="kay-work-list">{query.value.items.map(task => <li key={task.id}><TaskListCard task={task} clock={query.value!} href={task.deal_id ? "/deals/" + task.deal_id + "?task=" + task.id : task.enquiry_id ? "/leads/" + task.enquiry_id + "?task=" + task.id: "/contacts/" + task.contact_id + "?task=" + task.id} /></li>)}</ul> : <p>Aucune tâche pour cette période dans votre périmètre. Créez une tâche depuis la fiche contact ou l’affaire concernée.</p>}{query.value.has_previous || query.value.has_next ? <NumberedPages compact page={query.value.page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages du travail accessible" /> : null}</>}
   </section>;
 }
 

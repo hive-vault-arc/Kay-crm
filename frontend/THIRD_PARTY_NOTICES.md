@@ -1,5 +1,20 @@
 # Third-party notices
 
+## Selected Bklit pie components
+
+`src/components/charts/pie-chart.tsx`, `pie-context.tsx` and `pie-slice.tsx` are
+copied from the owner-frozen Bklit source in the KAY prototype. Their original MIT
+notice is retained verbatim in `public/licenses/workspace/Bklit-MIT.txt`. The only
+source adaptation is the existing local `cn` helper import. The pie reuses Bklit's
+existing parent measurement/mount-animation helpers; KAY composes the semicircle,
+exact accessible legend and reduced-motion behavior in feature wrappers.
+
+The directly imported `@visx/group@4.0.0` and `d3-shape@3.2.0` already existed in
+the locked/installed chart tree; their exact versions are now declared directly.
+No different chart library or dependency upgrade is introduced. Source hashes,
+full-prototype comparison and dependency audit evidence are recorded in
+`../docs/03-planning/design-migration-evidence/dashboard-ui-2026-10-27.json`.
+
 ## Selected workspace assets
 
 The owner-selected screen uses Inter Variable, distributed under SIL OFL1.1.

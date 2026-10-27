@@ -5,7 +5,6 @@ import { Bar } from "@/components/charts/bar";
 import { ChartTooltip } from "@/components/charts/tooltip/chart-tooltip";
 import { useChartHover, useChartStable } from "@/components/charts/chart-context";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
 import type { Metric } from "./contracts";
 
@@ -41,13 +40,7 @@ export function MetricChart({ metric, open }: { metric: Metric; open: (id?: stri
           <FocusPoint selected={selected} points={points} />
         </BarChart>
       </div>
-      <Table aria-label={`Valeurs : ${metric.label}`} className="table-fixed">
-        <TableHeader><TableRow><TableHead className="w-3/4">Contributeur / responsable</TableHead><TableHead className="text-right">Nombre</TableHead></TableRow></TableHeader>
-        <TableBody>{points.map((point, index) => <TableRow key={point.id}>
-          <TableCell className="whitespace-normal wrap-anywhere"><Button variant="link" className="h-auto min-h-control max-w-full justify-start gap-2 whitespace-normal text-start wrap-anywhere" onFocus={() => setSelected(index)} onBlur={() => setSelected(null)} onClick={() => open(point.id)}><span aria-hidden="true" className="size-3 shrink-0 rounded-sm" style={{ backgroundColor: colors[((page - 1) * 10 + index) % colors.length] }} /><span className="wrap-anywhere">{point.number}. {point.label}</span></Button></TableCell>
-          <TableCell className="text-right tabular-nums">{point.value}</TableCell>
-        </TableRow>)}</TableBody>
-      </Table>
+      <ul aria-label={`Valeurs : ${metric.label}`} className="kay-work-list">{points.map((point, index) => <li key={point.id}><Button variant="quiet" className="min-h-control w-full justify-start gap-3 rounded-2xl bg-muted px-4 py-3 text-start" onFocus={() => setSelected(index)} onBlur={() => setSelected(null)} onClick={() => open(point.id)}><span aria-hidden="true" className="size-3 shrink-0 rounded-sm" style={{ backgroundColor: colors[((page - 1) * 10 + index) % colors.length] }} /><span className="min-w-0 flex-1 wrap-anywhere">{point.number}. {point.label}</span><strong className="tabular-nums">{point.value}</strong></Button></li>)}</ul>
       <NumberedPages page={page} size={10} total={metric.series.length} change={next => { setPage(next); setSelected(null); }} label={`Pages du graphique ${metric.key}`} />
     </> : <p>Aucune donnée pour ce graphique dans votre périmètre et cette période. Le total est 0.</p>}
     <Button action="preview" variant="outline" className="justify-self-start" onClick={() => open()}>Voir les dossiers : {metric.total}</Button>

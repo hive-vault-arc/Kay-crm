@@ -1,5 +1,14 @@
 # KAY QA command register
 
+Latest selected-dashboard UI slice (2026-10-27):225 frontend units pass, including
+eight new component/controller cases. Lint/typecheck and pinned Next16.4.2 build
+pass (62 glyphs/444 Button sites/zero violations). Dashboard CSS parses with151
+rules/13 existing roles/zero undefined aliases. All254 prototype hashes match.
+Runtime/full dependency audits report zero known vulnerabilities; only two existing
+exact locked transitives became explicit Bklit pie dependencies. Native/app-HTTP,
+real SQL/scope/performance, AFTER and final owner review remain pending.
+[Evidence](03-planning/design-migration-evidence/dashboard-ui-2026-10-27.json).
+
 Latest selected-dashboard data slice (2026-10-27): explicit backend .venv Ruff/
 mypy (9 report modules) pass;310 connection-forbidden units pass with689 integration
 cases deselected. Four new PostgreSQL scenarios are prepared, not run. Frontend
