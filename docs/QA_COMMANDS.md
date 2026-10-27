@@ -1,5 +1,13 @@
 # KAY QA command register
 
+Latest selected-dashboard data slice (2026-10-27): explicit backend .venv Ruff/
+mypy (9 report modules) pass;310 connection-forbidden units pass with689 integration
+cases deselected. Four new PostgreSQL scenarios are prepared, not run. Frontend
+lint/typecheck/build and217 units pass (62 glyphs/425 Button sites/zero violations).
+The new API/strict facade supplies complete scoped totals and bounded previews;
+selected dashboard visuals/native and real SQL/performance review remain pending.
+[Evidence](03-planning/design-migration-evidence/dashboard-data-2026-10-27.json).
+
 Latest staff/policy form slice (2026-10-27): frontend lint/typecheck,211 units
 and pinned Next16.4.2 build pass (62 glyphs/425 Button sites/zero violations).
 Nine new actual controller cases cover reviewed credential commands, retry and

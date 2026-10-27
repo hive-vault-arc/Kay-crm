@@ -28,7 +28,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
-| P7 remaining surfaces | Help topic hub, side-by-side guide cards, balanced reader plus selected settings navigation/overview/staff forms and working-policy drawer implemented; other existing behavior retained | Dashboard/report/search/audit/jobs and remaining directory refinements; native review |
+| P7 remaining surfaces | Help topic hub, side-by-side guide cards, balanced reader plus selected settings navigation/overview/staff forms and working-policy drawer implemented; selected-dashboard authoritative data/transport prepared; other existing behavior retained | Selected dashboard UI wiring plus report/search/audit/jobs and remaining directory refinements; native review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -759,3 +759,49 @@ selectors, final layout/focus/zoom/accessibility and AFTER/product review remain
 pending. Remaining migration phases are not narrowed or declared complete.
 
 [Settings form evidence](design-migration-evidence/settings-forms-2026-10-27.json).
+
+
+## Authoritative data path for the selected dashboard
+
+The reference's four headline values and bounded appointment/follow-up/task/stock/
+team previews are not all provided by the old report projection. New separate
+read-only workspace/records/agents endpoints now provide those actual authorized
+rowsets. Existing13-metric reports, finance and attribution APIs are untouched.
+This slice prepares the complete data/typed-facade path; it does not substitute
+the old five KPI cards for the selected four or claim dashboard visuals complete.
+
+Counts apply current identity/contact scope before period/filter/group/page/limit,
+inside one read-only repeatable snapshot. Received enquiries, current active deals,
+nonexpired scheduled/confirmed visits starting in the period, and currently
+follow-up unconverted enquiries remain distinct. Previous comparisons exist only
+for received cohorts and use equal-length dates/current scope; no past ownership/
+status snapshot or future-visit comparison is invented. Existing BR-18 takes
+precedence over the prototype's single demo filter: current portfolio follows
+current primary responsibility, while period outcomes keep primary at closing.
+Current caller contact scope still authorizes both.
+
+Preview totals precede2/3-entry limits; paged headline records reuse exact source
+predicates. Team cohorts preserve their current-responsibility meaning without
+replacing true-actor activity. Catalogue targets resolve UUID-backed qualified
+interests, discussed/visited links and selected offerings, deduplicated per target/
+active deal. Free-text names never identify stock and whole programmes never expand
+to child units. Current campaigns use exact MAD strings; no owner/contact grant or
+public photo URL is added. Tasks preserve explicit Lead/Deal context. Refresh-topic
+matching includes task/visit/stock changes only on the new workspace paths.
+
+Nine new database-forbidden cases compile actual PostgreSQL statements for all
+three roles, exercise complete zero projections, date boundaries, strict queries,
+identity-first failure, historical closing filtering, non-cartesian team groups
+and exact campaign/target identities. Four real-PostgreSQL acceptance cases are
+prepared, not run. SQLAlchemy2.1 variadic Select typing was corrected without
+ignores; a new integration import order was sorted. Final Ruff/mypy pass for9
+report modules;310 connection-forbidden units pass/689 integration cases deselected.
+
+Six new strict facade/contract cases plus the existing suite pass217 frontend
+units. Lint/typecheck/build pass (62 glyphs/425 Button sites/zero violations).
+The selected layout/chart/card/tool composition, actual PostgreSQL behavior/
+performance/scope races and native/AFTER/product verification remain open. No
+migration, dependency, real data/service, production, main, push or merge operation.
+
+[Dashboard data contract](../04-design/dashboard-workspace-local.md) ·
+[Source evidence](design-migration-evidence/dashboard-data-2026-10-27.json).

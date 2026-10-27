@@ -1,5 +1,27 @@
 # KAY security check for changes
 
+## Selected dashboard data projection, 2026-10-27
+
+New GET-only workspace endpoints use existing facade/session proof, strict bounded
+queries, current identity and a read-only repeatable snapshot. Caller roles/scopes/
+clocks and finance metrics are rejected. Canonical active contact scope precedes
+counts, filters and preview limits. Responsible filters intersect authority and
+never grant it; BR-18 current-portfolio vs immutable-closing attribution remains.
+No agency inventory total is inferred from shared catalogue access.
+
+Linked targets are actual UUID relationships on authorized active deals, deduped
+without programme-child expansion or free-text identity matching. No legal-owner
+fields, phone/email data, credentials, private file bytes/public URLs or new write
+command is exposed. Current campaign prices remain exact strings. Agents choices
+are scoped responsible identities with bounded escaped search/numbered pages.
+Strict frontend schemas reject partial/inconsistent totals and foreign record links;
+errors expose only safe codes and legacy reports remain unchanged.
+
+Ruff/mypy and310 connection-forbidden backend units plus217 frontend units/build
+pass. Actual PostgreSQL permission/transfer/concurrency/performance and native
+security review remain pending. No migration/service/real-data operation occurred.
+[Contract](04-design/dashboard-workspace-local.md) · [Evidence](03-planning/design-migration-evidence/dashboard-data-2026-10-27.json).
+
 ## Staff/policy form migration, 2026-10-27
 
 Existing admin identity/CSRF proof, strict user/password DTOs, current authority,

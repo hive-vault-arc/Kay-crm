@@ -17,6 +17,7 @@ MODULES = frozenset(
         "test_generated_unit.py",
         "test_property_listing_unit.py",
         "test_visit_notes_unit.py",
+        "test_workspace_reports_unit.py",
     }
 )
 NODES = frozenset({"test_foundation.py::test_runtime_is_project_venv"})

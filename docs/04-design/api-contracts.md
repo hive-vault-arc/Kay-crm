@@ -1,5 +1,12 @@
 # HTTP contracts for `/api/v1`
 
+Selected dashboard data extension,2026-10-27: new facade-only GET
+/reports/workspace, /reports/workspace/records and /reports/workspace/agents
+provide bounded typed summaries, identical-source numbered headline records and
+scoped responsible choices. Existing reporting/finance endpoints are unchanged;
+current identity/contact scope precedes all filtering/counting. No write or schema
+migration. [Concrete definitions and limits](dashboard-workspace-local.md).
+
 Selected migration addendum,2026-10-26: visit create/edit accepts optional notes;
 omitted notes preserves the saved value and old receipt digest, while explicit
 empty clears. The server-facade opt-in X-Kay-Visit-Notes:1 exposes optional

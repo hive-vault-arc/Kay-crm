@@ -1,5 +1,12 @@
 # Local dashboard reporting (SP-17)
 
+Selected dashboard migration addendum,2026-10-27: a separate read-only workspace
+projection supplies the four selected headline rowsets and short real previews,
+without altering this existing13-metric reporting contract. Current assignment
+and immutable closing attribution remain distinct under team filtering. These
+technical definitions/proposals and remaining UI/real-stack work are recorded in
+the [workspace contract](dashboard-workspace-local.md).
+
 Implemented technical projection,2026-10-15; product review pending Khalid.
 C10/C13/C14, BR-05/18/19/28/29; AT-18/19 and dashboard AT-36/39.
 These concrete metric/date/scope details are implementation proposals, not new

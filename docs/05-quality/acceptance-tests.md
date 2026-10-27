@@ -1,5 +1,14 @@
 # Acceptance scenarios
 
+Selected dashboard projection,2026-10-27 (AT-18/19/23/36/39): verify complete
+scoped headline/record parity and preview limits, private/copied responsible filters,
+current ownership transfer, immutable closing attribution, UUID-backed catalogue
+interests/link deduplication, exact campaign decimals, no owner/child-stock leakage,
+strict facade queries/errors and authoritative clock boundaries. Four
+[PostgreSQL scenarios](../../backend/tests/test_workspace_reports.py) are prepared,
+not executed. Source SQL/controller evidence and remaining selected-layout/native/
+real-stack/performance work are distinguished in the [contract](../04-design/dashboard-workspace-local.md).
+
 Selected visit-Notes mapping,2026-10-26 (AT-16/23/40): verify bounded separate
 notes creation, interrupted same-key retry, legacy omitted-field preservation,
 explicit clear and immutable true-actor snapshots; reject stale/denied edits and

@@ -4,9 +4,10 @@ import { z } from "zod";
 import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
 import { activityQuery, dashboardSchema, drillQuery, drillSchema, exceptionQuery, exceptionsSchema, periodQuery } from "./contracts";
+import { workspaceAgentsQuery, workspaceAgentsSchema, workspaceQuery, workspaceRecordsQuery, workspaceRecordsSchema, workspaceSchema } from "./workspace-contracts";
 
 export async function relayReports(key: string, request: Request, requestId: string) {
-  const schemas = key === "reports/dashboard" ? [periodQuery, dashboardSchema] : key === "reports/drill-down" ? [drillQuery, drillSchema] : key === "reports/activities" ? [activityQuery, drillSchema] : key === "reports/exceptions" ? [exceptionQuery, exceptionsSchema] : null;
+  const schemas = key === "reports/workspace" ? [workspaceQuery, workspaceSchema] : key === "reports/workspace/records" ? [workspaceRecordsQuery, workspaceRecordsSchema] : key === "reports/workspace/agents" ? [workspaceAgentsQuery, workspaceAgentsSchema] : key === "reports/dashboard" ? [periodQuery, dashboardSchema] : key === "reports/drill-down" ? [drillQuery, drillSchema] : key === "reports/activities" ? [activityQuery, drillSchema] : key === "reports/exceptions" ? [exceptionQuery, exceptionsSchema] : null;
   if (!schemas || request.method !== "GET") return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url), params = [...url.searchParams];
   if (new Set(params.map(([k]) => k)).size !== params.length || !schemas[0].safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
