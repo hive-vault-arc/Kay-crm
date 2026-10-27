@@ -18,7 +18,7 @@ export function useInventoryCommand() {
     const fingerprint = JSON.stringify({ path, method, body });
     if (attempt.current.body !== fingerprint) attempt.current = { key: crypto.randomUUID(), body: fingerprint };
     try { const result = await apiCommand(path, body, resultSchema, attempt.current.key, method); saved("property_id" in result ? result.property_id : result.development_id); }
-    catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
+    catch (reason) { const failure = reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503); setError(failure); return failure; }
     finally { locked.current = false; setPending(false); recordBusy(false); }
   }
   return { error, pending, submit, clear: () => setError(undefined) };

@@ -1,5 +1,17 @@
 # KAY QA command register
 
+Latest inventory-form slice (2026-10-27):334 frontend units pass, including14 new
+actual model/controller/command cases for protected legal-owner lists, explicit
+comparison/rebase/reload, exact retry keys, duplicate locks, typed hierarchy
+payloads and paged current-item identity/version checks. Lint/typecheck and
+Next16.4.2 build pass (62 glyphs,90 consumers/319 icon sites/465 Button sites/zero
+violations). The new unit file was initially outside the explicit runner list;
+it is now registered and the334-case gate passed. Prepared1440/390 native journeys
+in `tests/e2e/inventory-forms.spec.ts` are not run. Existing older inventory browser
+selectors remain open. No backend/API/data/service change. Native/real authority/
+stock/race/full-stack/AFTER/owner review is pending.
+[Evidence](03-planning/design-migration-evidence/inventory-forms-2026-10-27.json).
+
 Latest owner identity slice (2026-10-27):320 frontend units pass, including15 new
 payload/assignment/retry/validation/canonical reuse/role no-op/archive/denial/
 stale lookup/conflict/mode/layout/duplicate-copy cases. Lint/typecheck and pinned

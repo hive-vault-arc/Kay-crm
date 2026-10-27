@@ -1,5 +1,31 @@
 # KAY security check for changes
 
+## Selected legal-owner and hierarchy forms, 2026-10-27
+
+The full-owner replacement command cannot be sent from a projection containing
+protected/null contact identities. Existing shared labels remain readable; a
+fresh explicit authorized dossier read is required to resume editing. No hidden
+owner/link/origin ID or private marketing copy is inferred. Canonical contacts,
+role/provenance, programme/unit link separation, last-owner/availability and
+backend current-role/version/stock checks remain authoritative.
+
+Explicit conflict reads verify dossier or hierarchy-item/parent identity. Current
+hierarchy comparison uses the real paged collection bracketed by the parent
+version; a changed version or foreign/malformed result cannot be adopted. Keeping
+an owner draft warns that it replaces the complete reviewed current set. Protected
+and archived comparisons cannot authorize a write. Reload is discard-guarded;
+fields do not change automatically. Definite401/403/404 removes private fields.
+Read abort/unmount, synchronous locks, managed busy/dirty markers and exact
+path/method/body retry identity are covered without claiming backend rollback.
+
+334 frontend units, lint/typecheck and Next16.4.2 build pass. Fourteen new actual
+controller/model cases are included in the explicit unit runner. Two native
+isolated journeys are prepared, not executed. Existing API/backend contracts are
+unchanged; no real records, database, worker, migration or private configuration
+was accessed. Native/real permission/merge/stock/races/full-stack/AFTER/owner/CI
+verification and other migration surfaces remain open. No main promotion.
+[Evidence](03-planning/design-migration-evidence/inventory-forms-2026-10-27.json).
+
 ## Selected owner identity and canonical reuse, 2026-10-27
 
 The UI uses existing Contacts metadata/list/detail/POST/PATCH, with no new grant,

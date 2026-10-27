@@ -1599,3 +1599,20 @@ conflict choices and reject a foreign current snapshot. Retain inactive drafts
 across mode changes without making empty mode/search into an edit. Test stale
 lookup abort, validation races, role no-op, denial and full field preservation;
 synthetic form checks do not certify backend scope or native drawer behavior.
+
+
+## 2026-10-27 — Keep complete owner sets and register new verification cases
+
+A full-list replacement must never be built from a projection that omitted
+protected/null identities. Keep that projection read-only until a fresh authorized
+read is complete; do not invent hidden link/contact IDs. Conflict review must
+show the actual current set/item before a deliberate rebase, with a warning for
+concurrent links that a replacement would remove. A parent version alone does
+not display an edited hierarchy item's current values: use its existing paged
+collection and reject a changing parent snapshot.
+
+This frontend unit command has an explicit file list in scripts/test-facade.mjs.
+A new passing standalone test file is not part of the broad gate until registered.
+Check the final case count and rerun that real gate after registration; never
+report the unchanged old total as coverage of the new cases. Prepared native
+journeys and compiled CSS checks remain distinct from executed browser evidence.

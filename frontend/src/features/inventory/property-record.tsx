@@ -58,7 +58,7 @@ export function PropertyRecord({ id, role, edit = false, initialTab }: { id: str
       </RecordFacts></RecordSection> : null}
     </> }]} aside={<>
       <InventoryPhotoRail id={id} kind="property" writable={managedWritable} archived={archived} revision={photoRevision} changed={photoChanged} />
-      <RecordSection title="Propriétaires" action={managedWritable ? <RecordDrawer label="Modifier" action="edit" busy={busy} initialOpen={initialTab === "owners"} description="Propriétaires légaux de ce bien.">{(close, done) => <OwnerEditor property={property} saved={() => { saved(); done(); }} cancel={close} />}</RecordDrawer> : undefined}>{property.owners.length ? property.owners.map((owner, index) => <InventoryParty key={index} link={owner} />) : <p className="text-sm text-muted-foreground">Aucun propriétaire renseigné. Les offres ne peuvent pas devenir disponibles.</p>}</RecordSection>
+      <RecordSection title="Propriétaires" action={managedWritable ? <RecordDrawer label="Modifier" title="Propriétaires légaux" action="edit" busy={busy} initialOpen={initialTab === "owners"} description="Propriétaires légaux de ce bien.">{(close, done) => <OwnerEditor property={property} saved={() => { saved(); done(); }} cancel={close} />}</RecordDrawer> : undefined}>{property.owners.length ? property.owners.map((owner, index) => <InventoryParty key={index} link={owner} />) : <p className="text-sm text-muted-foreground">Aucun propriétaire renseigné. Les offres ne peuvent pas devenir disponibles.</p>}</RecordSection>
     </>} />
   </fieldset></InventoryBusyContext.Provider>;
 }
