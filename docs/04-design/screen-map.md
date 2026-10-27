@@ -1,5 +1,14 @@
 # KAY screen map and navigation contract
 
+Selected PDF workspace,2026-10-27: `/leads/{id}/documents` and
+`/deals/{id}/documents` share Préparer un PDF/Historique, the actual role-scoped
+model rail or compact phone select, retained grouped fields and fixed action
+footer. History has the selected four desktop columns and phone/drawer cards.
+Retained true creators use explicit history opt-in; drafts/unknown attempts stay
+per model under the common navigation guard. Return opens the existing parent
+Documents tab. PDF bytes/provenance and native/real-stack acceptance remain open.
+[Contract](document-workspace-local.md).
+
 Selected owner identity forms,2026-10-27: `/owners/new` and `/owners/{id}/edit`
 use the shared dossier header/actions and Coordonnées/Gestion du contact groups.
 Existing mode reads the chosen canonical Contact and explicitly adds its owner

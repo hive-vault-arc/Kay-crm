@@ -1,5 +1,41 @@
 # KAY security check for changes
 
+## Selected PDF preparation and retained creator history, 2026-10-27
+
+Existing POST, current scope/template/archive rules, immutable PDF storage and
+session-bound private permits remain. History adds explicit `include_actor=true`
+after authorization/filtering/paging; one same-agency lookup exposes only the
+visible documents' retained creator ID/display name, including disabled/deleted
+staff. Missing creator fails closed. Legacy omitted-flag reads and POST receipts
+retain their exact shape. Invalid/duplicate/context/write flags deny before
+business work. New frontend requires backend-first rollout. No migration/grant,
+staff-directory access, generator byte or original-model change.
+
+Only declared bounded fields enter POST; Unicode/control/UTF-8 limits remain.
+Per-model dirty baselines and pinned uncertain body/key prevent model switching
+from losing drafts or silently duplicating a committed generation. Explicit
+recovery abandonment warns of the possible prior PDF and performs no write.
+One synchronous lock prevents duplicate commands; changed uncertain catalogues
+cannot submit. Managed markers persist in hidden preparation/history transitions.
+Current denial from either read or command hides/clears prior private fields and
+attempts; removed finance models are pruned. Unmount aborts requests/suppresses
+late success, without claiming rollback. Downloads require the displayed exact
+version and fresh permit; departure or a denied current read prevents a late
+browser download. No values, identities or proofs enter storage/logs/export/URLs.
+
+423 frontend units/lint/type/build and384 connection-forbidden backend units
+pass;696 integration cases remain deselected. Scoped Ruff/format and mypy216
+sources pass. Synthetic SQL compilation and fully stubbed in-process ASGI query
+checks do not prove real session/role/database behavior. Two updated1440/390
+journeys are prepared, not run under the existing app-access restriction.
+All254 frozen inputs and12 originals remain unchanged; read-only token/page
+differences in selected restyled appendices are not legal-equivalence evidence.
+M01 styling/provenance, native/focus/a11y, real transfers/SQL/races/full stack/CI,
+AFTER and owner approval remain. No data/service/private-configuration access,
+real records, main/push/merge/deploy or production operation.
+[Contract](04-design/document-workspace-local.md) and
+[evidence](03-planning/design-migration-evidence/document-workspace-2026-10-27.json).
+
 ## Selected customer proposals and Projects context, 2026-10-27
 
 Only existing Deal/proposal reads and POST/PATCH commands are used. Proposals

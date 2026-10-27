@@ -1,5 +1,22 @@
 # Generated Lead and Deal documents
 
+## History creator projection, 2026-10-27
+
+History alone accepts optional literal `include_actor=true` and adds
+`actor: {id, display_name}` to each item. Omission retains the exact legacy row
+shape; POST receipts and context are unchanged. False/other/duplicate flags and
+the flag on context or commands are rejected. Current parent authorization and
+template visibility precede paging and one same-agency lookup of the page's
+retained document creators. Disabled/deleted staff remain attributable; missing
+creators fail closed. No email, staff permissions, extra identities or synthetic
+current-user fallback are exposed. There is no migration or grant change.
+
+The selected preparation/history workspace uses this strict opt-in. Roll out
+the backend capability first; an older backend cannot satisfy the new frontend
+projection. Existing clients may continue omitting the flag. Selected tabs,
+per-model draft/recovery rules, native boundaries and unchanged PDF provenance
+are in the [workspace contract](document-workspace-local.md).
+
 ## Prepared-PDF discovery, 2026-10-27
 
 The selected global search now supports real prepared PDFs through explicit

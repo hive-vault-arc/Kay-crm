@@ -1,5 +1,23 @@
 # KAY QA command register
 
+Latest PDF workspace slice (2026-10-27):423 frontend units pass, including20 new
+actual model/controller/composition/facade/transfer cases. Selected two-tab PDF
+preparation uses the real scoped catalogue, per-model drafts and exact uncertain
+retry; history adds true retained creator metadata through an explicit strict
+opt-in. Lint/typecheck and pinned Next16.4.2 build pass (63 glyphs,96 consumers/
+334 icon sites,478 Button sites/zero violations). Initial synchronous-effect/
+test-hook lint failures and a cross-VM array-prototype assertion were corrected,
+without relaxing production contracts.384 connection-forbidden backend units
+pass/696 integration cases deselected, including8 new author/query/SQL-source
+cases; explicit backend/.venv Ruff/format and mypy216 sources pass. The stubbed
+in-process ASGI case opens no listener or database. Two1440/390 journeys replace
+stale PDF selectors in `tests/e2e/generated-documents.spec.ts`; prepared and
+type-checked, not executed.254 frozen inputs and12 original models stay intact;
+compiled scroll/field/footer rules are not native geometry/focus evidence.
+M01 PDF-byte styling/provenance, real roles/SQL/private transfer/races, native/
+full-stack/AFTER/CI/owner review and wider migration work remain open.
+[Evidence](03-planning/design-migration-evidence/document-workspace-2026-10-27.json).
+
 Latest customer-proposal slice (2026-10-27):403 frontend units pass, including18
 new actual model/controller/composition cases. Selected projects/linked inventory
 and proposals live in Projets; four main tabs remain. Desktop table, phone cards

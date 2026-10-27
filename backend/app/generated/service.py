@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
 from zoneinfo import ZoneInfo
@@ -24,6 +25,7 @@ from app.generated.catalog import BY_CODE, TEMPLATES, Template
 from app.generated.contracts import GenerateRequest
 from app.generated.render import render_pdf
 from app.generated.visibility import visible_template_codes
+from app.identity.models import User
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
 from app.inventory.models import Offering, Property
@@ -133,7 +135,15 @@ def _row(session: Session, document: Document) -> dict[str, object]:
     }
 
 
-def history(database: Database, token: str, kind: str, pid: UUID, page: int) -> dict[str, object]:
+def history(
+    database: Database,
+    token: str,
+    kind: str,
+    pid: UUID,
+    page: int,
+    *,
+    include_actor: bool = False,
+) -> dict[str, object]:
     with database.session() as session:
         identity = current_identity(session, token)
         authorize(session, identity, kind, pid)
@@ -150,14 +160,39 @@ def history(database: Database, token: str, kind: str, pid: UUID, page: int) -> 
             .offset((page - 1) * 20)
             .limit(20)
         ).all()
+        actors = _history_actors(session, identity, rows) if include_actor else {}
         return {
-            "items": [_row(session, row) for row in rows],
+            "items": [
+                {
+                    **_row(session, row),
+                    **({"actor": actors[row.created_by_user_id]} if include_actor else {}),
+                }
+                for row in rows
+            ],
             "page": page,
             "page_size": 20,
             "total": total,
             "has_next": page * 20 < total,
             "has_previous": page > 1,
         }
+
+
+def _history_actors(
+    session: Session,
+    identity: CurrentIdentity,
+    rows: Sequence[Document],
+) -> dict[UUID, dict[str, str]]:
+    """Read true retained creators only after the authorized, filtered document page."""
+    ids = {row.created_by_user_id for row in rows}
+    if not ids:
+        return {}
+    users = session.scalars(
+        select(User).where(User.id.in_(ids), User.agency_id == identity.user.agency_id)
+    ).all()
+    actors = {user.id: {"id": str(user.id), "display_name": user.display_name} for user in users}
+    if actors.keys() != ids or any(not actor["display_name"] for actor in actors.values()):
+        raise IdentityError("DEPENDENCY_UNAVAILABLE", 503)
+    return actors
 
 
 def generate(

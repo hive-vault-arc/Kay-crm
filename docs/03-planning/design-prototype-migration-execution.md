@@ -26,7 +26,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
-| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining PDF layouts/provenance, finance and per-field context refinements; final native security/stock/focus checks |
+| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer and selected2-tab PDF preparation/true-creator history with per-model draft recovery | Remaining generated-PDF byte styling/provenance, finance and per-field context refinements; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
@@ -1641,3 +1641,57 @@ probes. Docs pass22 sprints,1249 links,42 mappings,13 Mermaid and12 API JSON
 examples. Cached diff initially found a redundant facts-file EOF blank line; it
 was trimmed/restaged and the final check passes. Protected35 lesson additions
 and motion plan remain excluded; main stays at the original e0bdc09 base.
+
+
+## Selected PDF preparation and history workspace,2026-10-27
+
+After `95815c2`, both document routes use the selected two-tab composition,
+desktop model rail/phone select, grouped bounded form and fixed footer. The
+actual role-scoped catalogue drives all choices and counts. Model selection and
+prefill are clean; per-model baselines retain independent edits across model/
+history switches, and each model restores its own form scroll. A successful PDF
+opens history without accepting another model’s unsaved draft. Managed markers
+remain mounted when the preparation tab is hidden.
+
+Unknown generation pins exact body/key per model. Duplicate locks, disabled
+uncertain fields, catalogue-signature guard and explicit recovery-abandonment
+confirmation prevent silent duplicate creation. Definite denial from context,
+history or command hides prior private values and clears retained memory;
+removed finance models are pruned. Parent keys, client abort and mounted guards
+suppress departed completions, without claiming server rollback.
+
+The selected Auteur column required a real API projection. Optional literal
+`include_actor=true` on history adds only retained creator ID/display name after
+current parent authorization, template filtering and paging. One same-agency
+lookup covers the visible page, including disabled/deleted staff. Missing creator
+fails closed. Omitted-flag legacy history, context, POST receipts, authority and
+PDF generation/storage remain unchanged. The new strict frontend requires this
+backend capability first; no migration or new grant. History has four desktop
+columns and phone/drawer cards, using fresh exact-version private permits.
+Current denial/unmount aborts transfer and suppresses a late browser download.
+
+Validation:423 frontend units pass,20 new cases; lint/typecheck and pinned
+Next16.4.2 build pass (63 glyphs,96 consumers/334 icon sites,478 Button sites,
+zero violations).384 connection-forbidden backend units pass/696 integration
+cases deselected, including8 new actor/query/SQL-source cases. Explicit venv
+Ruff/format and mypy216 sources pass. Fully stubbed in-process ASGI routing opens
+no real app listener or DB. The initial synchronous-effect/test-hook lint failures
+and cross-VM array assertion were corrected without weakening production rules.
+Two1440/390 native journeys replace old PDF selectors and use current synthetic
+API fixtures; prepared/type-checked, not run. Other older browser helpers remain.
+
+All254 frozen inputs and12 original models are intact. Compiled CSS confirms
+rail/field/footer/scroll declarations, not rendered geometry or focus. Read-only
+comparison found12 matching core field catalogues, while selected styled blank
+models have different token sequences/page breaks. Legal equivalence is not
+inferred. M01 generated-sheet styling/original-versus-styled appendix provenance
+remains open; no PDF byte changed. Original-machine mandatory skill prerequisites
+remain unavailable and are not claimed executed; dense CRM form/history excludes
+marketing design-taste. AFTER and final owner review remain pending.
+
+[Contract](../04-design/document-workspace-local.md) and
+[evidence](design-migration-evidence/document-workspace-2026-10-27.json) record the
+scope and remaining native/current-role/SQL/transfer/race/full-stack/CI gates.
+No data/service/private-config/real-record/main/push/merge/deploy operation.
+The unrelated35 lesson lines and motion note remain outside this checkpoint.
+The whole redesign goal stays active; the other ledger gaps remain outstanding.

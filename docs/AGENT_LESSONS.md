@@ -1686,3 +1686,12 @@ Synthetic summaries must use their actual strict DTO, not extra full-record
 fields. JSX walkers may insert whitespace absent from real rendering; fix that
 assertion without altering exact money. Read the actual Markdown heading before
 a multi-file patch: a guessed heading rejects the whole patch without writes.
+
+
+## PDF model changes must not replace an uncertain generation,2026-10-27
+
+Keep an uncertain PDF attempt’s exact body and idempotency key per model, even
+when another model is selected. Accepting one successful model must not accept
+other models’ drafts. Abandon recovery only after explicit confirmation that
+the prior PDF may exist. Hide/clear retained private drafts on current denial
+from either context or history; do not infer continued access from an older read.

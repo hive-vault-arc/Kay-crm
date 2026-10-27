@@ -12,6 +12,7 @@
 @import "./workspace-settings.css";
 @import "./workspace-dashboard.css";
 @import "./workspace-search.css";
+@import "./workspace-documents.css";
 
 html[data-live-refresh="automatic"] [data-live-refresh="true"] {
   display: none;

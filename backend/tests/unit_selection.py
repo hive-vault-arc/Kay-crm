@@ -15,6 +15,7 @@ MODULES = frozenset(
         "test_qualification_unit.py",
         "test_unit_selection.py",
         "test_generated_unit.py",
+        "test_generated_history_actor_unit.py",
         "test_property_listing_unit.py",
         "test_visit_notes_unit.py",
         "test_workspace_reports_unit.py",
