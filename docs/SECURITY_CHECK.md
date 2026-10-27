@@ -1,5 +1,39 @@
 # KAY security check for changes
 
+## Inline Finance receipts and dossier financial history,2026-10-27
+
+New GET /deals/{id}/finance-history uses current M/A authority before Deal lookup,
+count or page. One scoped join filters immutable revisions through the authorized
+Deal; count/page share that source and stable created_at/id ordering. Only the
+existing revision fields plus deal_id/commission_id appear on this new read.
+Legacy projections/commands, original actor snapshot, exact decimal strings and
+server civil time remain. No mutation/migration/broader grant, new identity lookup
+or proof-byte access. Backend-first rollout is required for the new client read.
+
+Inline receipts retain bounded pages, originals/replacement/void and exact
+correction targets. Both collection and history reject foreign/duplicate/wrong
+pages, hide denied data and propagate current denial to the private-controller
+lifetime boundary. Focused forms retain reviewed versions, exact unknown retry
+and acknowledged read-only completion behavior. Page/focus restoration stays in
+memory; late reads respect an intervening user focus change. No private facts or
+proofs enter storage, logs or URL payloads. Expected commissions make no receipt
+query; at most20 recognized-commission receipt reads accompany a20-row page.
+This is bounded, not a measured maximum-page performance acceptance.
+
+454 frontend units/lint/types/build and417 connection-forbidden backend units
+pass;697 real integration cases are deselected. Ruff/format6 targets and mypy217
+sources pass. Synthetic SQL compilation/stubbed ASGI do not prove actual session,
+SQL isolation/ordering/authorization, races or native privacy/geometry. A first
+unit assertion assumed a fixed Casablanca offset; only the test changed to
+retained-instant/deterministic-zone checks, not real civil-time policy. Prepared
+DB/HTTP/native checks and older review selectors remain unexecuted/pending.
+Frozen254 inputs remain intact; scoped related-entry CSS does not change the
+outer card/theme. Existing app-access rejection, real-scope/proof/full-stack/CI,
+AFTER/owner review and wider migration gates remain. No database/data/service/
+private-config/production/main/push/merge/deploy operation.
+[Contract](04-design/finance-workspace-local.md) and
+[evidence](03-planning/design-migration-evidence/finance-collection-2026-10-27.json).
+
 ## Selected Finance forms and private controller lifetime,2026-10-27
 
 Only existing M/A Finance reads/commands and proof metadata reads are composed;

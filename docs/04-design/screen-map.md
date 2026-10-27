@@ -1,6 +1,14 @@
 # KAY screen map and navigation contract
 
-Selected Finance forms,2026-10-27: Deal keeps four main tabs and the M/A-only
+Selected Finance collection follow-up,2026-10-27: Deal keeps four main tabs and
+the supporting M/A-only drawer. Receipts now appear beneath commission actions;
+history follows the collection through the scoped financial-history read.
+Focused forms return to the retained collection/page, without the old detail
+detour. Delayed receipt focus respects a user's intervening focus change.
+Native/real-stack review and older Chrome selectors remain pending.
+[Contract](finance-workspace-local.md).
+
+Earlier Finance forms checkpoint,2026-10-27: Deal keeps four main tabs and the M/A-only
 supporting Finance drawer. Full-width tonal commission/receipt/audit cards and
 one focused managed form replace the old parallel editors. Return follows its
 entry point; numbered20-row reads remain. Current denial unmounts private

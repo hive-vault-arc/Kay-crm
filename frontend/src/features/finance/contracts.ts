@@ -40,6 +40,7 @@ export const receiptSchema = z.object({ id: z.uuid(), commission_id: z.uuid(), s
 const pages = { page: version, page_size: z.number().int().min(1).max(100), total: z.number().int().nonnegative(), has_next: z.boolean(), has_previous: z.boolean() };
 export const commissionsSchema = z.object({ items: z.array(commissionSchema).max(100), ...pages }).strict();
 export const revisionsSchema = z.object({ items: z.array(revisionSchema).max(100), ...pages }).strict();
+export const financeHistorySchema = z.object({ items: z.array(revisionSchema.extend({ commission_id: z.uuid(), deal_id: z.uuid() })).max(100), ...pages }).strict();
 export const receiptsSchema = z.object({ items: z.array(receiptSchema).max(100), ...pages }).strict();
 export const financeQuerySchema = z.object({ page: z.string().regex(/^[1-9][0-9]{0,6}$/).refine(value => Number(value) <= 1000000).optional(), page_size: z.string().regex(/^[1-9][0-9]{0,2}$/).refine(value => Number(value) <= 100).optional() }).strict();
 export type Commission = z.infer<typeof commissionSchema>;

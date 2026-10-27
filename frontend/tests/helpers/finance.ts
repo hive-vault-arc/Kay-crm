@@ -34,8 +34,7 @@ export async function fillCommission(page: Page, percentage = false) {
 export async function saveCommission(page: Page) {
   await page.getByRole("button", { name: "Enregistrer la commission prévue", exact: true }).click();
   await expect(page.getByRole("form", { name: "Nouvelle commission", exact: true })).toHaveCount(0);
-  await page.getByRole("button", { name: "Encaissements et historique", exact: true }).first().click();
-  await expect(page.getByRole("region", { name: "Commission sélectionnée", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Reconnaître la commission", exact: true })).toBeVisible();
 }
 export async function confirmFinance(page: Page, title: string) {
   const dialog = page.getByRole("alertdialog", { name: title, exact: true });

@@ -1717,3 +1717,15 @@ editor through denial/retry and unmount. When renaming browser journeys, retain
 their required acceptance-profile identity and coverage; never lower the required
 case count to make discovery pass. Source and synthetic checks remain distinct
 from native/real-scope acceptance.
+
+
+## Inline collection reads and deferred focus (2026-10-27)
+
+Match the selected collection organization while keeping real server pagination.
+Cross-commission history needs one scoped bounded server read, not concatenated
+client pages presented as a complete history. Keep legacy projections unchanged.
+Restore an inline receipt action only after its selected page settles, and stop
+restoration if the user has already moved focus. Validation focus must wait for
+invalid controls to commit. Never assume a fixed Casablanca offset in a fixture;
+verify retained instants and test projection with an explicit deterministic zone
+without changing authoritative civil-time policy to satisfy the assertion.

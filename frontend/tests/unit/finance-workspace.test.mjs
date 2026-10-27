@@ -5,7 +5,7 @@ import { loadServer } from "./load-server.mjs";
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" }, plain = value => JSON.parse(JSON.stringify(value));
-function find(node, type) { if (!node || typeof node !== "object") return []; if (Array.isArray(node)) return node.flatMap(child => find(child, type)); return [...(node.type === type ? [node] : []), ...find(node.props?.children, type), ...find(node.props?.actions, type), ...find(node.props?.action, type), ...find(node.props?.status, type)]; }
+function find(node, type) { if (!node || typeof node !== "object") return []; if (Array.isArray(node)) return node.flatMap(child => find(child, type)); return [...(node.type === type ? [node] : []), ...find(node.props?.children, type), ...find(node.props?.actions, type), ...find(node.props?.action, type), ...find(node.props?.status, type), ...find(node.props?.related, type)]; }
 function text(node) { return node == null || typeof node === "boolean" ? "" : Array.isArray(node) ? node.map(text).join(" ") : typeof node === "object" ? text(node.props?.children) : String(node); }
 function button(view, label) { const node = find(view, "Button").find(node => text(node) === label); assert.ok(node, label); return node; }
 class ApiError extends Error { constructor(code, status) { super(code); Object.assign(this, { code, status }); } }
@@ -33,6 +33,7 @@ function harness() {
   return { react, render(run) { cursor = 0; const result = run(); effects.splice(0).forEach(effect => effect()); return result; }, unmount() { slots.forEach(slot => slot?.cleanup?.()); } };
 }
 const ui = { "react/jsx-runtime": runtime, "@/components/icons": { FinanceIcon: "Icon" }, "@/components/shared/record-entry": { RecordEntry: "Entry" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/components/ui/badge": { Badge: "Badge" }, "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/contacts/record-states": { RecordError: "Error" }, "./confirmation": { FinanceConfirmation: "Confirmation" }, "./contracts": finance, "@/features/deals/contracts": deals, "@/features/files/contracts": files };
+ui["./collection"] = { CommissionReceipts: "Receipts", FinanceHistory: "History" };
 function setup({ recognized = false, existing = true, kind = "terms", command, read, saved, hydrated = true, writable = true, verify, original: editingReceipt = false } = {}) {
   const h = harness(), parent = deal(), value = commission(parent.id, recognized), original = editingReceipt ? receipt(value.id) : undefined, calls = [], reads = [], denies = [], decisions = [], events = []; let completed = 0, closed = 0;
   const props = { dealId: parent.id, dealVersion: parent.version, value: existing ? value : undefined, contactId: parent.contact.id, original, writable, denied: error => denies.push(error), saved: async result => { completed++; if (saved) await saved(result); }, cancel: () => closed++ };
@@ -140,7 +141,7 @@ test("cancel during an active write is synchronously refused; archive/hydration 
 test("finance workspace uses tonal cards and direct actions, keeps one focused editor, and clears the active selection before authority retry", async () => {
   const h = harness(), parent = deal(), value = commission(parent.id), result = { value: page([value]), refresh() { result.value = undefined; }, refreshQuietly() {} }, parentQuery = { value: parent, refresh() { parentQuery.value = undefined; } };
   const modules = { ...ui, react: h.react, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request: run => run(), dialog: null }) }, "@/hooks/use-hydrated": { useHydrated: () => true }, "@/features/contacts/use-query": { useQuery: path => path.includes("/commissions?") ? result : parentQuery }, "@/lib/api/client": { ApiError }, "./commission-record": { CommissionRecord: "Record" }, "./model": { FINANCE_PAGE_SIZE: 20, financePageValid: (value, n) => value.page === n && value.page_size === 20 && value.items.length <= 20, financeDenied: error => [401, 403, 404].includes(error.status) }, "./terms-form": { TermsForm: "Terms" } };
-  const denied = [], onDenied = error => denied.push(error), loaded = loadServer("src/features/finance/finance-panel.tsx", { modules, globals: { queueMicrotask } }), render = () => h.render(() => loaded.FinanceWorkspace({ deal: parent, onDenied })); let view = render(); assert.equal(find(view, "Entry").length, 1); assert.equal(find(view, "table").length, 0); assert.equal(find(view, "Pages").length, 0); assert.equal(find(view, "Badge")[0].props.variant, "neutral");
+  modules["./model"].restoreFinanceReturn = () => false; const denied = [], onDenied = error => denied.push(error), loaded = loadServer("src/features/finance/finance-panel.tsx", { modules, globals: { queueMicrotask } }), render = () => h.render(() => loaded.FinanceWorkspace({ deal: parent, onDenied })); let view = render(); assert.equal(find(view, "Entry").length, 1); assert.equal(find(view, "table").length, 0); assert.equal(find(view, "Pages").length, 0); assert.equal(find(view, "Badge")[0].props.variant, "neutral");
   button(view, "Corriger la commission").props.onClick(); view = render(); assert.equal(find(view, "Record").length, 1); assert.equal(find(view, "Entry").length, 0); assert.equal(find(view, "Record")[0].props.initial.mode, "commission"); button(view, "Commissions et encaissements").props.onClick(); view = render(); assert.equal(find(view, "Entry").length, 1);
   button(view, "Corriger la commission").props.onClick(); assert.equal(find(render(), "Record").length, 1);
   result.error = new ApiError("FORBIDDEN", 403); view = render(); assert.equal(find(view, "Entry").length, 0); assert.equal(find(view, "Record").length, 0); assert.equal(find(view, "Error")[0].props.error.status, 403); assert.ok(!text(view).includes("Synthetic finance contact"));
@@ -157,13 +158,7 @@ test("finance authority boundary removes the private controller and retries with
   view.props.retry(); view = render(); assert.equal(view.type, loaded.FinanceWorkspace); assert.notEqual(view.key, controller.key); assert.equal(view.props.deal.id, parent.id);
 });
 
-test("finance detail keeps receipts and audit in full-width cards with retained actors, original status and server-local time", () => {
-  const h = harness(), parent = deal(), value = commission(parent.id, true), original = receipt(value.id), replaced = { ...receipt(value.id), valid: false }, queries = { current: { value }, receipts: { value: page([original, replaced]), refresh() {} }, revisions: { value: page([value.current]), refresh() {} } }, opened = [], denies = [];
-  const modules = { ...ui, react: h.react, "@/components/shared/dossier-form": {}, "@/components/shared/unsaved-guard": {}, "@/features/contacts/use-query": { useQuery: path => path.includes("/receipts?") ? queries.receipts : path.includes("/revisions?") ? queries.revisions : queries.current }, "@/hooks/use-hydrated": { useHydrated: () => true }, "@/features/schedule/time": { localLabel: value => `Server civil ${value}` }, "@/lib/api/client": { ApiError }, "./model": { FINANCE_PAGE_SIZE: 20, financePageValid: (value, n) => value.page === n && value.page_size === 20, financeDenied: error => [401, 403, 404].includes(error.status) }, "./mutation": {}, "./receipt-form": {}, "./terms-form": {} };
-  const { CommissionDetail } = loadServer("src/features/finance/commission-record.tsx", { modules }); const props = { value, dealId: parent.id, writable: true, receiptPage: 1, setReceiptPage() {}, historyPage: 1, setHistoryPage() {}, notice: "", denied: error => denies.push(error), close() {}, open: (...args) => opened.push(args) }, render = () => h.render(() => CommissionDetail(props)); let view = render();
-  assert.equal(find(view, "Entry").length, 4); assert.equal(find(view, "table").length, 0); assert.equal(find(view, "Pages").length, 0); const history = find(view, "Entry").find(node => node.props.title === "Commission reconnue"); assert.equal(history.props.meta.find(item => item.label === "Date").value, `Server civil ${at}`); assert.equal(history.props.meta.find(item => item.label === "Auteur").value, "Synthetic original creator");
-  button(view, "Corriger cet encaissement").props.onClick(); assert.equal(opened[0][2].id, original.id); queries.receipts.error = new ApiError("FORBIDDEN", 403); view = render(); assert.equal(find(view, "Entry").length, 0); assert.equal(denies[0].status, 403);
-});
+
 
 test("finance evidence picker masks denied/invalid pages and offers only current clean optional documents", () => {
   const h = harness(), parent = deal(), changed = [], denies = [], calls = [], document = state => files.documentSchema.parse({ id: randomUUID(), filename: `synthetic-${state}-${randomUUID().slice(0,8)}.pdf`, mime_type: "application/pdf", purpose: "attachment", size_bytes: 1024, version: 1, archived: false, versions: [{ id: randomUUID(), state, scan_error: null, created_at: at }] });
@@ -174,11 +169,15 @@ test("finance evidence picker masks denied/invalid pages and offers only current
   query.value = page([clean], { page: 2 }); view = render(); assert.equal(find(view, "Error").length, 1); assert.ok(!text(view).includes(clean.filename)); query.value = page([clean]); query.error = new ApiError("FORBIDDEN", 403); view = render(); assert.ok(!text(view).includes(clean.filename)); assert.equal(denies[0].status, 403);
 });
 
-test("financial form return follows its entry point instead of leaving a duplicate list beneath the editor", async () => {
-  for (const direct of [true, false]) {
-    const h = harness(), parent = deal(), value = commission(parent.id), events = [], modules = { ...ui, react: h.react, "@/components/shared/dossier-form": {}, "@/components/shared/unsaved-guard": {}, "@/features/contacts/use-query": {}, "@/hooks/use-hydrated": {}, "@/features/schedule/time": {}, "@/lib/api/client": { ApiError }, "./model": { readCommission: async () => value }, "./mutation": {}, "./terms-form": { TermsForm: "Terms" }, "./receipt-form": { ReceiptForm: "Receipt" } };
-    const { CommissionRecord } = loadServer("src/features/finance/commission-record.tsx", { modules }), props = { initial: { commission: value, ...(direct ? { mode: "commission" } : {}) }, dealId: parent.id, contactId: parent.contact.id, dealVersion: 7, writable: true, changed: () => events.push("changed"), denied() {}, close: () => events.push("close") }, render = () => h.render(() => CommissionRecord(props)); let view = render();
-    if (!direct) { view.props.open("commission", value); view = render(); } assert.equal(view.type, "Terms"); view.props.cancel(); assert.equal(events.includes("close"), direct);
+test("financial editors return directly to the collection and receipt correction retains its original page and identity", () => {
+  for (const mode of ["commission", "receipt", "recognize"]) {
+    const h = harness(), parent = deal(), value = commission(parent.id, true), original = receipt(value.id), events = [];
+    const modules = { ...ui, react: h.react, "@/components/shared/dossier-form": {}, "@/components/shared/unsaved-guard": {}, "@/hooks/use-hydrated": {}, "@/lib/api/client": { ApiError }, "./model": {}, "./mutation": {}, "./terms-form": { TermsForm: "Terms" }, "./receipt-form": { ReceiptForm: "Receipt" } };
+    const { CommissionRecord } = loadServer("src/features/finance/commission-record.tsx", { modules }), props = { initial: { commission: value, mode, original: mode === "receipt" ? original : undefined, receiptPage: 3 }, dealId: parent.id, contactId: parent.contact.id, dealVersion: parent.version, writable: true, changed() {}, denied() {}, close: () => events.push("close") }, render = () => h.render(() => CommissionRecord(props)); const view = render();
+    assert.ok(["Terms", "Receipt", "RecognitionForm"].includes(typeof view.type === "string" ? view.type : view.type.name));
+    if (mode === "receipt") { assert.equal(view.props.original.id, original.id); assert.equal(view.props.originalPage, 3); }
+    view.props.cancel(); assert.deepEqual(events, ["close"]);
+    props.initial.original = { ...original, commission_id: randomUUID() }; assert.equal(render().type, "Error");
   }
 });
 
@@ -206,4 +205,79 @@ test("finance facade preserves the backend's archive refusal instead of turning 
   const request = new Request(`${origin}/api/v1/deals/${parent.id}/commissions`, { method: "POST", headers: { Origin: origin, "Idempotency-Key": randomUUID(), "X-CSRF-Token": "synthetic-csrf", "Content-Type": "application/json" }, body: JSON.stringify({ kind: "fixed", base_mad: "100", amount_mad: "10", rate_percent: null, due_on: null, expected_deal_version: 7 }) });
   const result = await relayFinance(`deals/${parent.id}/commissions`, request, "synthetic"); assert.equal(result.status, 409); assert.equal((await result.json()).error.code, "RECORD_ARCHIVED"); assert.equal(calls[0][2].token, "synthetic-session"); assert.equal(calls[0][2].csrf, "synthetic-csrf");
   const s = setup({ kind: "hook", command: async () => { throw new ApiError("RECORD_ARCHIVED", 409); } }); await s.render().save(`/api/v1/commissions/${s.value.id}/recognize`, { expected_version: 1 }); assert.equal(s.denies[0].code, "RECORD_ARCHIVED"); assert.equal(s.render().uncertain, false);
+});
+
+function collectionFixture(kind = 'receipts') {
+  const h = harness(), parent = deal(), value = commission(parent.id, true), original = receipt(value.id), state = { hydrated: true }, calls = [], denied = [], edited = [], ready = [];
+  const query = { value: kind === 'receipts' ? page([original, { ...receipt(value.id), valid: false }]) : page([{ ...value.current, commission_id: value.id, deal_id: parent.id, created_local: '2026-10-20T13:00:00+01:00' }]), refresh() {} };
+  const model = loadServer('src/features/finance/model.ts', { modules: { '@/lib/api/client': { ApiError }, '@/features/deals/contracts': deals, './contracts': finance } });
+  const modules = { ...ui, react: h.react, '@/features/contacts/use-query': { useQuery: path => { calls.push(path); return query; } }, '@/features/schedule/time': { localLabel: value => `Server civil ${value}` }, '@/hooks/use-hydrated': { useHydrated: () => state.hydrated }, '@/lib/api/client': { ApiError }, './model': model };
+  const loaded = loadServer('src/features/finance/collection.tsx', { modules }), props = { value, dealId: parent.id, page: 1, changePage() {}, writable: true, denied: error => denied.push(error), edit: (...args) => edited.push(args), ready: id => ready.push(id) };
+  const render = () => h.render(() => kind === 'receipts' ? loaded.CommissionReceipts(props) : loaded.FinanceHistory(props));
+  return { h, parent, value, original, state, query, calls, denied, edited, ready, model, props, render };
+}
+
+test('inline receipts retain every original, exact correction target/page and current clean read boundary without a detail detour', () => {
+  const s = collectionFixture(), view = s.render(); assert.equal(find(view, 'Entry').length, 2); assert.equal(find(view, 'table').length, 0); assert.equal(find(view, 'Pages').length, 0);
+  assert.ok(s.calls[0].includes(`/commissions/${s.value.id}/receipts?page=1&page_size=20`)); assert.equal(s.ready[0], s.value.id);
+  assert.equal(find(view, 'Entry')[0].props.variant, 'related'); assert.equal(find(view, 'Entry')[0].props.meta.find(item => item.label === 'Auteur').value, s.original.actor.display_name); assert.equal(find(view, 'Badge')[1].props.children, 'Remplacé ou annulé');
+  button(view, 'Corriger cet encaissement').props.onClick(); assert.equal(s.edited[0][0].id, s.original.id); assert.equal(s.edited[0][1], 1);
+  s.props.writable = false; assert.equal(find(s.render(), 'Button').length, 0); s.props.writable = true; s.state.hydrated = false; const disabled = button(s.render(), 'Corriger cet encaissement'); assert.equal(disabled.props.disabled, true); disabled.props.onClick(); assert.equal(s.edited.length, 1);
+  s.query.error = new ApiError('FORBIDDEN', 403); assert.equal(find(s.render(), 'Entry').length, 0); assert.equal(s.denied[0].status, 403);
+});
+
+test('inline receipt pagination rejects duplicate/foreign/wrong-page results and preserves an escape from empty later pages', () => {
+  const s = collectionFixture();
+  for (const response of [page([s.original, s.original]), page([{ ...s.original, commission_id: randomUUID() }]), page([s.original], { page: 2 })]) { s.query.value = response; assert.equal(find(s.render(), 'Entry').length, 0); assert.equal(find(s.render(), 'Error').length, 1); }
+  s.props.page = 3; s.query.value = page([], { page: 3, has_previous: true }); const view = s.render(); assert.equal(find(view, 'Pages')[0].props.page, 3); assert.match(text(view), /Aucun versement enregistré/);
+});
+
+test('collection history is numbered across the dossier with retained actor/reason/server civil time and full optional revision context', () => {
+  const s = collectionFixture('history'), view = s.render(), entry = find(view, 'Entry')[0]; assert.ok(s.calls[0].includes(`/deals/${s.parent.id}/finance-history?page=1&page_size=20`));
+  assert.equal(find(view, 'table').length, 0); assert.equal(find(view, 'Pages').length, 0); assert.equal(entry.props.title, 'Commission reconnue'); assert.equal(entry.props.meta.find(item => item.label === 'Date').value, 'Server civil 2026-10-20T13:00:00+01:00'); assert.equal(entry.props.meta.find(item => item.label === 'Auteur').value, s.value.current.actor.display_name);
+  assert.equal(find(view, 'details').length, 1); assert.ok(text(view).includes(s.value.id)); assert.ok(text(view).includes('Commission fixe'));
+  s.query.error = new ApiError('FORBIDDEN', 403); assert.equal(find(s.render(), 'Entry').length, 0); assert.equal(s.denied[0].code, 'FORBIDDEN');
+});
+
+test('history never accepts a foreign dossier or duplicate revision and hides only a genuinely empty first page', () => {
+  const s = collectionFixture('history'), original = s.query.value.items[0];
+  for (const response of [page([{ ...original, deal_id: randomUUID() }]), page([original, original]), page([original], { page_size: 50 })]) { s.query.value = response; assert.equal(find(s.render(), 'Entry').length, 0); assert.equal(find(s.render(), 'Error').length, 1); }
+  s.query.value = page([]); assert.equal(s.render(), null); s.props.page = 3; s.query.value = page([], { page: 3, has_previous: true }); assert.equal(find(s.render(), 'Pages')[0].props.page, 3);
+});
+
+test('finance return waits for the selected receipt read, restores that exact action/scroll and safely falls back if it moved or disappeared', () => {
+  const s = collectionFixture(), focused = [], body = { scrollTop: 0 }, heading = { focus: () => focused.push('heading') }, target = { focus: () => focused.push('receipt') }; let receiptNode, cardPresent = true;
+  const card = { querySelector: selector => selector.includes('data-finance-receipt-id') ? receiptNode : undefined }, root = { querySelector: () => cardPresent ? card : null, closest: () => body }, value = { id: s.value.id, receiptId: s.original.id, action: 'edit', scroll: 178 };
+  assert.equal(s.model.restoreFinanceReturn(root, heading, value), false); assert.equal(s.model.restoreFinanceReturn(root, heading, value, randomUUID()), false); assert.deepEqual(focused, ['heading']);
+  receiptNode = { querySelector: () => target }; assert.equal(s.model.restoreFinanceReturn(root, heading, value, s.value.id), true); assert.deepEqual(focused, ['heading', 'receipt']); assert.equal(body.scrollTop, 178);
+  receiptNode = undefined; assert.equal(s.model.restoreFinanceReturn(root, heading, value, s.value.id), true); assert.equal(focused.at(-1), 'heading'); cardPresent = false; assert.equal(s.model.restoreFinanceReturn(root, heading, value), true); assert.equal(s.model.restoreFinanceReturn(null, heading, value), false);
+  root.ownerDocument = { activeElement: { id: 'user-moved-on' } }; const count = focused.length; assert.equal(s.model.restoreFinanceReturn(root, heading, value, s.value.id), true); assert.equal(focused.length, count);
+});
+
+test('commission cards place receipts after their actions, retain each receipt/history page through focused editing and remove the old detail button', () => {
+  const h = harness(), parent = deal(), value = commission(parent.id, true), original = receipt(value.id), result = { value: page([value]), refresh() {}, refreshQuietly() {} }, parentQuery = { value: parent }, onDenied = () => {};
+  const modules = { ...ui, react: h.react, '@/components/shared/unsaved-guard': { useUnsavedGuard: () => ({ request: run => run(), dialog: null }) }, '@/hooks/use-hydrated': { useHydrated: () => true }, '@/features/contacts/use-query': { useQuery: path => path.includes('/commissions?') ? result : parentQuery }, '@/lib/api/client': { ApiError }, './commission-record': { CommissionRecord: 'Record' }, './model': { FINANCE_PAGE_SIZE: 20, financePageValid: () => true, financeDenied: () => false, restoreFinanceReturn: () => false }, './terms-form': {} };
+  const loaded = loadServer('src/features/finance/finance-panel.tsx', { modules, globals: { queueMicrotask } }), render = () => h.render(() => loaded.FinanceWorkspace({ deal: parent, onDenied })); let view = render();
+  assert.equal(find(view, 'Entry')[0].props.related.type, 'Receipts'); assert.equal(find(view, 'History').length, 1); assert.equal(find(view, 'Button').some(node => text(node) === 'Encaissements et historique'), false);
+  find(view, 'Receipts')[0].props.changePage(3); find(view, 'History')[0].props.changePage(4); view = render(); find(view, 'Receipts')[0].props.edit(original, 3); view = render(); assert.equal(find(view, 'Entry').length, 0); assert.equal(find(view, 'History').length, 0); assert.equal(find(view, 'Record')[0].props.initial.original.id, original.id); assert.equal(find(view, 'Record')[0].props.initial.receiptPage, 3);
+  find(view, 'Record')[0].props.close(); view = render(); assert.equal(find(view, 'Receipts')[0].props.page, 3); assert.equal(find(view, 'History')[0].props.page, 4);
+  const { RecordEntry } = loadServer('src/components/shared/record-entry.tsx', { modules: { 'react/jsx-runtime': runtime } }); const rendered = RecordEntry({ title: 'Synthetic', actions: jsx('button', {}), related: jsx('section', {}) }); const children = rendered.props.children.filter(Boolean); assert.ok(children.findIndex(node => node.type === 'footer') < children.findIndex(node => find(node, 'section').length));
+});
+
+test('dossier Finance history facade admits only bounded read-only queries and strictly validates the scoped revision shape', async () => {
+  const parent = deal(), value = commission(parent.id), rows = page([{ ...value.current, deal_id: parent.id, commission_id: value.id }]), calls = []; let response = { status: 200, body: rows };
+  const { relayFinance } = loadServer('src/features/finance/facade.ts', { modules: { 'next/headers': { cookies: async () => ({ get: () => ({ value: 'synthetic-session' }) }) }, '@/lib/auth/facade': { boundedJson: request => request.json(), frontendOrigin: () => 'https://frontend.synthetic.invalid' }, '@/lib/auth/contracts': { SESSION_COOKIE: 'synthetic' }, '@/lib/api/facade': { facadeError: (status, code) => Response.json({ error: { code } }, { status }), upstreamRequest: async (...args) => { calls.push(args); return response; } }, './contracts': finance } });
+  const key = `deals/${parent.id}/finance-history`, url = `https://frontend.synthetic.invalid/api/v1/${key}`;
+  let result = await relayFinance(key, new Request(`${url}?page=2&page_size=20`), 'synthetic-request'); assert.equal(result.status, 200); assert.equal(result.headers.get('Cache-Control'), 'no-store'); assert.equal(calls[0][2].token, 'synthetic-session'); assert.equal(calls[0][0], `/api/v1/${key}?page=2&page_size=20`);
+  for (const suffix of ['?page=1&page=2', '?page_size=0', '?page_size=101', '?role=agent', '?deal_id=' + randomUUID()]) assert.equal((await relayFinance(key, new Request(url + suffix), 'synthetic')).status, 422);
+  assert.equal((await relayFinance(key, new Request(url, { method: 'POST' }), 'synthetic')).status, 404); assert.equal(calls.length, 1);
+  response = { status: 200, body: { ...rows, items: [{ ...rows.items[0], debug: 'rejected' }] } }; result = await relayFinance(key, new Request(url), 'synthetic'); assert.equal(result.status, 503); assert.ok(!(await result.text()).includes('Synthetic original creator'));
+});
+
+test('financial validation waits for committed invalid controls before focusing and links receipt explanations to the shared error', () => {
+  for (const kind of ['terms', 'receipt']) {
+    const s = setup({ kind, existing: false, recognized: kind === 'receipt' }), focused = [], initial = s.render(); const form = find(initial, 'form')[0]; form.props.ref.current = { querySelector: selector => ({ focus: () => focused.push(selector) }) };
+    s.submit(); assert.deepEqual(focused, []); const view = s.render(); assert.deepEqual(focused, ['[aria-invalid="true"]']); assert.ok(find(view, 'Input').some(node => node.props['aria-invalid']));
+    if (kind === 'receipt') { const reason = find(view, 'Textarea').find(node => node.props.name === 'reason'); assert.match(reason.props['aria-describedby'], /-validation$/); assert.equal(find(view, 'p').find(node => node.props.role === 'alert').props.id, reason.props['aria-describedby']); }
+  }
 });

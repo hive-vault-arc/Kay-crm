@@ -200,3 +200,28 @@ def test_database_balance_guard_survives_a_bypassed_service_calculation(
         assert session.get(Commission, cid).version == 3
         assert session.scalar(select(func.count()).select_from(Receipt)) == 1
         assert session.scalar(select(func.count()).select_from(CommissionRevision)) == 3
+
+
+def test_dossier_finance_history_pages_all_commissions_without_changing_their_facts(
+    settings, database
+):
+    _, agent, _, manager, did = fixture(settings, database)
+    first = create(settings, database, manager, did)
+    execute(settings, database, manager, Recognize(expected_version=1), cid=first)
+    execute(settings, database, manager, receipt(2), cid=first)
+    second = create(settings, database, manager, did, amount_mad="500.00")
+    query = FinanceQuery(page_size=2)
+    one = read(database, manager, did, query, "deal_history")
+    two = read(database, manager, did, FinanceQuery(page=2, page_size=2), "deal_history")
+    assert one["total"] == two["total"] == 4
+    assert one["has_next"] is True and two["has_previous"] is True
+    events = one["items"] + two["items"]
+    assert len({item["id"] for item in events}) == 4
+    assert {item["commission_id"] for item in events} == {str(first), str(second)}
+    assert {item["deal_id"] for item in events} == {str(did)}
+    assert {item["action"] for item in events} == {"created", "recognized", "receipt"}
+    assert read(database, manager, first, FinanceQuery(), "detail")["balance_mad"] == "7500.00"
+    assert len(read(database, manager, first, FinanceQuery(), "receipts")["items"]) == 1
+    with pytest.raises(IdentityError) as captured:
+        read(database, agent, did, query, "deal_history")
+    assert captured.value.code == "FORBIDDEN"

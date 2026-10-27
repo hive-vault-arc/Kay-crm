@@ -1,5 +1,27 @@
 # KAY QA command register
 
+Latest Finance collection follow-up (2026-10-27):454 frontend units pass and417
+connection-forbidden backend units pass/697 real integration cases deselected.
+Eight new frontend cases replace one obsolete detail-rendering case; its retained
+actor/time/receipt coverage now exercises the inline collection. Seven new backend
+cases cover current M/A-before-lookup authority, the scoped aggregate count/page,
+original actor/decimal/local-time projection, stable bounded SQL and closed
+read-only route through fully stubbed in-process ASGI, without a listener/DB.
+The first backend run failed a hard-coded Casablanca offset assumption; the
+test now verifies retained instants and injects a separate deterministic zone
+for projection behavior. Runtime time policy is unchanged. Lint/typecheck and
+pinned Next16.4.2 build pass (63 glyphs,100 consumers/338 icon sites,477 Button
+sites/zero violations). Explicit backend/.venv Ruff/format6 targets and mypy217
+sources pass. Inline receipts/history replace the extra detail navigation;
+focused forms retain pages, exact retries and original correction IDs. Validation
+focus waits for rendered invalid fields, and delayed receipt restoration does
+not steal focus after user navigation. Three native cases and real PostgreSQL/
+HTTP history coverage are prepared, not executed. Older review selectors,
+maximum-page performance, native/scope/SQL/race/proof/full-stack/AFTER/CI/owner
+review and wider migration work remain open. Source/compiled declaration checks
+are not rendered geometry. No database/service/private-config/main/merge/deploy
+operation. [Evidence](03-planning/design-migration-evidence/finance-collection-2026-10-27.json).
+
 Latest Finance form/workspace checkpoint (2026-10-27):447 frontend units pass,
 including24 new actual controller/form/model/facade cases. Lint/typecheck and
 pinned Next16.4.2 production build pass (63 glyphs,99 consumers/338 icon sites,

@@ -26,6 +26,7 @@ export function TermsForm({ dealId, dealVersion, value, saved, denied, cancel, w
   const draft = useDossierDraft({ ...fields, recovery: mutation.uncertain }, mutation.busy);
   async function onSaved(result: { id: string; version: number }) { draft.accept({ ...fields, recovery: false }); await saved(result); }
   useEffect(() => { alive.current = true; first.current?.focus(); return () => { alive.current = false; }; }, []);
+  useEffect(() => { if (Object.keys(invalid).length) form.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(); }, [invalid]);
   const terms = { kind: fields.kind, base_mad: fields.base.trim().replace(",", "."), rate_percent: fields.kind === "percentage" ? fields.rate.trim().replace(",", ".") : null, amount_mad: fields.kind === "fixed" ? fields.amount.trim().replace(",", ".") : null, due_on: fields.due || null };
   const preview = calculatedAmount(terms), disabled = !hydrated || mutation.busy || mutation.uncertain || !writable || Boolean(pending);
   const label = value ? "Confirmer la correction de commission" : "Enregistrer la commission prévue";
@@ -35,7 +36,7 @@ export function TermsForm({ dealId, dealVersion, value, saved, denied, cancel, w
   return <form ref={form} className="kay-drawer-form" data-draft-managed data-live-dirty={draft.dirty} data-write-recovery={mutation.uncertain} aria-busy={mutation.busy} aria-label={value ? "Correction de commission" : "Nouvelle commission"} noValidate onSubmit={event => {
     event.preventDefault(); if (disabled || mutation.isBusy()) return;
     const parsed = value ? correctCommissionSchema.safeParse({ ...terms, target: "commission", expected_version: expected, reason: fields.reason }) : newCommissionSchema.safeParse({ ...terms, expected_deal_version: expected });
-    if (!parsed.success) { setInvalid(Object.fromEntries(parsed.error.issues.map(issue => [String(issue.path[0]), issue.message]))); form.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(); return; }
+    if (!parsed.success) { setInvalid(Object.fromEntries(parsed.error.issues.map(issue => [String(issue.path[0]), issue.message]))); return; }
     setInvalid({}); if (value) setPending({ body: parsed.data, preview: preview!, before: source?.current.amount_mad, base: terms.base_mad, rate: terms.rate_percent, reason: fields.reason }); else void save(parsed.data);
   }}>
     <fieldset disabled={disabled} className="grid min-w-0 gap-5 border-0 p-0"><legend className="sr-only">Calcul de commission</legend><RecordSection title={value ? "Corriger la commission" : "Prévoir une commission"} description="Une commission prévue n’est ni reconnue ni encaissée.">

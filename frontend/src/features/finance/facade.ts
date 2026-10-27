@@ -4,13 +4,13 @@ import { z } from "zod";
 import { boundedJson, frontendOrigin } from "@/lib/auth/facade";
 import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
-import { commissionSchema, commissionsSchema, correctionSchema, financeQuerySchema, newCommissionSchema, receiptCommandSchema, receiptsSchema, recognitionSchema, resultSchema, revisionsSchema } from "./contracts";
+import { commissionSchema, commissionsSchema, correctionSchema, financeHistorySchema, financeQuerySchema, newCommissionSchema, receiptCommandSchema, receiptsSchema, recognitionSchema, resultSchema, revisionsSchema } from "./contracts";
 
 const id = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}";
 const errors = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONTACT_ARCHIVED", "RECORD_ARCHIVED", "IDEMPOTENCY_CONFLICT", "VERSION_CONFLICT", "COMMISSION_ALREADY_RECOGNIZED", "COMMISSION_NOT_RECOGNIZED", "COMMISSION_BELOW_COLLECTIONS", "OVER_COLLECTION", "RECEIPT_ALREADY_CORRECTED", "INVALID_FINANCIAL_EVIDENCE"]);
 export async function relayFinance(key: string, request: Request, requestId: string) {
-  const method = request.method, list = new RegExp(`^deals/${id}/commissions$`).test(key), detail = new RegExp(`^commissions/${id}$`).test(key), history = new RegExp(`^commissions/${id}/revisions$`).test(key), receipts = new RegExp(`^commissions/${id}/receipts$`).test(key), recognize = new RegExp(`^commissions/${id}/recognize$`).test(key), correct = new RegExp(`^commissions/${id}/correct$`).test(key);
-  if (!((list && ["GET", "POST"].includes(method)) || ((detail || history || receipts) && method === "GET") || ((receipts || recognize || correct) && method === "POST"))) return facadeError(404, "NOT_FOUND", requestId);
+  const method = request.method, list = new RegExp(`^deals/${id}/commissions$`).test(key), detail = new RegExp(`^commissions/${id}$`).test(key), history = new RegExp(`^commissions/${id}/revisions$`).test(key), dealHistory = new RegExp(`^deals/${id}/finance-history$`).test(key), receipts = new RegExp(`^commissions/${id}/receipts$`).test(key), recognize = new RegExp(`^commissions/${id}/recognize$`).test(key), correct = new RegExp(`^commissions/${id}/correct$`).test(key);
+  if (!((list && ["GET", "POST"].includes(method)) || ((detail || history || dealHistory || receipts) && method === "GET") || ((receipts || recognize || correct) && method === "POST"))) return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url), params = [...url.searchParams], mutation = method === "POST";
   if (new Set(params.map(([k]) => k)).size !== params.length || !(method === "GET" && !detail ? financeQuerySchema : z.object({}).strict()).safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
   const retryKey = request.headers.get("Idempotency-Key") ?? undefined;
@@ -30,6 +30,6 @@ export async function relayFinance(key: string, request: Request, requestId: str
       const code = parsed.success && errors.has(parsed.data.error.code) ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE";
       return facadeError(code === "DEPENDENCY_UNAVAILABLE" ? 503 : response.status, code, requestId);
     }
-    return Response.json((mutation ? resultSchema : list ? commissionsSchema : detail ? commissionSchema : history ? revisionsSchema : receiptsSchema).parse(response.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
+    return Response.json((mutation ? resultSchema : list ? commissionsSchema : detail ? commissionSchema : history ? revisionsSchema : dealHistory ? financeHistorySchema : receiptsSchema).parse(response.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

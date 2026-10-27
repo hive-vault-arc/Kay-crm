@@ -23,6 +23,14 @@ def commissions(
     return read(configuration(request)[0], token, did, query)
 
 
+@router.get("/deals/{did}/finance-history")
+def deal_history(
+    request: Request, token: Proof, did: UUID, query: Annotated[FinanceQuery, Query()]
+) -> dict[str, object]:
+    validate_query(request)
+    return read(configuration(request)[0], token, did, query, "deal_history")
+
+
 @router.post("/deals/{did}/commissions")
 def create(
     request: Request, token: Proof, key: RetryKey, did: UUID, body: NewCommission

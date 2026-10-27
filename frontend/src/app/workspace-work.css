@@ -16,6 +16,8 @@
 .kay-entry-body { display:grid; gap:8px; min-width:0; }
 .kay-record-entry > footer { display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:8px; padding-top:4px; }
 .kay-record-entry > footer [data-slot=button] { font-size:12px; }
+.kay-record-entry.kay-related-entry { padding:0; border:0; border-radius:0; background:transparent; }
+.kay-related-entry > footer { justify-content:flex-start; padding-top:0; }
 .kay-entry-open[data-slot=button] { display:flex; justify-content:flex-start; align-items:flex-start; gap:10px; min-width:0; width:100%; height:auto; padding:0; font-size:14px; font-weight:550; text-align:left; line-height:1.5; }
 .kay-entry-open [data-action-icon] { margin-top:3px; }
 .kay-entry-open > span { flex:1; }

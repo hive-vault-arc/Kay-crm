@@ -37,6 +37,12 @@ async def test_finance_transport_roles_strict_money_pages_csrf_and_no_store(sett
             ).status_code == 403
         assert (await client.post(route, headers=headers(agent), json=request)).status_code == 403
         assert (await client.get(route, headers=headers(agent))).status_code == 403
+        history_route = f"/api/v1/deals/{did}/finance-history"
+        assert (await client.get(history_route, headers=headers(agent))).status_code == 403
+        assert (await client.get(history_route, headers=proof)).headers[
+            "cache-control"
+        ] == "no-store"
+        assert (await client.post(history_route, headers=proof, json={})).status_code == 405
         for patch in (
             {"balance_mad": "0"},
             {"amount_mad": 1.5},
@@ -82,6 +88,7 @@ async def test_finance_transport_roles_strict_money_pages_csrf_and_no_store(sett
             ).status_code == 403
         for query in ("page=1&page=2", "page_size=101", "secret=1"):
             assert (await client.get(f"{route}?{query}", headers=proof)).status_code == 422
+            assert (await client.get(f"{history_route}?{query}", headers=proof)).status_code == 422
         assert (
             await client.get(f"/api/v1/commissions/{uuid4()}", headers=proof)
         ).status_code == 404

@@ -26,7 +26,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
-| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with focused managed forms/tonal cards/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery and selected server-rendered preparation stationery | Remaining restyled-appendix content/provenance, inline Finance collection receipt/history organization and per-field context refinements; final native security/stock/focus checks |
+| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery and selected server-rendered preparation stationery | Remaining restyled-appendix content/provenance and per-field context refinements; old native selectors and final native security/stock/focus/performance checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
@@ -1806,3 +1806,57 @@ real scope/SQL/proof/race/native/full-stack/CI and all other ledger gaps remain.
 No app-access workaround, database/service/private configuration/real-record/main/
 push/merge/deploy operation. The unrelated35 lesson lines and motion note remain
 outside this checkpoint; the full redesign goal stays active.
+
+## Inline Finance collection and scoped dossier history,2026-10-27
+
+After8299fc1, recognized commission cards show their receipts directly beneath
+commission actions. Related entries use the selected separator treatment with
+two scoped shared-variant CSS rules, preserving outer cards/tokens. Expected
+commissions make no receipt request. Each recognized card and its numbered20-row
+receipt page remain bounded; at most20 such reads accompany one commission page.
+There is no extra Encaissements et historique navigation or parallel detail.
+Focused terms/recognition/receipt forms return to the collection and retain
+receipt/history pages. Exact original receipt/page/version still enters correction.
+
+A new read-only /deals/{id}/finance-history supplies the selected collection's
+history below its cards. Current M/A authority precedes lookup/count/page. A
+single scoped revision/commission join supplies both total and bounded page,
+ordered by timestamp/id. Original captured actor/reason, exact base/rate/amount,
+server-local time and IDs remain; only deal_id/commission_id extend the new route.
+Legacy per-commission shapes and all commands/grants remain. No migration. This
+avoids aggregating every commission's history with an unbounded client scan.
+History describes actual finance events; ordinary Deal activities keep their home.
+
+Late receipt focus waits for the selected page, safely falls back if the target
+moved/disappeared and respects a user's intervening focus move. Validation now
+focuses after invalid controls commit, rather than querying stale attributes in
+the submit handler. Receipt explanations have real accessible associations.
+Dirty guards, immutable originals, exact unknown retry, acknowledged read-only
+completion and the private denial/retry lifetime remain.
+
+454 frontend units pass (eight new cases, one obsolete detail-only case replaced
+while preserving its actor/time/receipt coverage).417 connection-forbidden backend
+units pass/697 real integration cases deselected, including seven new scoped
+query/authority/route/projection cases. The fully stubbed ASGI test has no listener
+or database. The first backend run failed an assumed fixed Casablanca offset;
+tests now preserve the instant and separately inject a deterministic zone, with
+real server time policy unchanged. Initial format-wrapped patch verification
+refused the edit before reapplication to the read source; no partial patch.
+
+Lint/types and pinned Next16.4.2 build pass (63 glyphs,100 consumers,338 icon/
+477 Button sites, zero violations). Explicit venv Ruff/format6 targets and
+mypy217 source files pass. Three native source journeys retain19 representative
+profile cases and now use inline collection selectors. A new isolated PostgreSQL
+history case and extended HTTP read-only/Agent/query cases are prepared, not run.
+Older finance.chrome.spec.ts selectors still need migration. All254 frozen inputs
+remain intact. Compiled card/related/form/scroll rules are declaration evidence,
+not native geometry, privacy, focus or maximum-page performance acceptance.
+
+[Current contract](../04-design/finance-workspace-local.md) and
+[evidence](design-migration-evidence/finance-collection-2026-10-27.json) retain
+backend-first rollout and real-scope/SQL/race/proof/native/full-stack/CI/AFTER/
+owner gates. Original-machine mandatory skills remain unavailable; dense product
+UI excludes marketing design-taste. No browser/app-access workaround, real DB,
+service, private configuration, data, main, push, merge or deployment operation.
+The unrelated35 lesson additions/motion note remain separate. Finance collection
+source alignment is progress within the full active redesign goal, not its end.

@@ -52,6 +52,7 @@ unbounded queries are rejected. Expected versions are strict positive integers.
 | Route | Contract |
 |---|---|
 | GET/POST /deals/{id}/commissions | Scoped list; create Terms + expected_deal_version |
+| GET /deals/{id}/finance-history | M/A-only numbered revisions across this Deal's commissions; existing revision fields plus deal_id/commission_id |
 | GET /commissions/{id} | Current immutable revision, collected_mad and balance_mad |
 | GET /commissions/{id}/revisions | Numbered true-actor/reason/previous-revision history |
 | GET /commissions/{id}/receipts | Numbered retained originals/replacements/valid flags |

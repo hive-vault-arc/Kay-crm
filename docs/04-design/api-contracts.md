@@ -1,5 +1,15 @@
 # HTTP contracts for `/api/v1`
 
+Selected Finance collection extension,2026-10-27: M/A-only
+`GET /deals/{id}/finance-history` returns numbered immutable revisions across
+that scoped Deal's commissions. The existing revision projection adds only
+`commission_id`/`deal_id` on this new route, retaining original actor/reason,
+exact decimal strings and authoritative server civil time. Count/page share a
+scoped join and stable timestamp/ID ordering; no write, new grant or migration.
+Legacy per-commission reads remain unchanged. Backend support precedes the new
+client; real SQL/HTTP/race acceptance remains pending.
+[Concrete workspace/transport contract](finance-workspace-local.md#dossier-financial-history-read).
+
 ## Audit attribution choices, 2026-10-27
 
 The selected audit page adds M/A-only `GET /audit/actors` with bounded literal
