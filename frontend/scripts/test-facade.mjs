@@ -42,6 +42,7 @@ try {
     "tests/unit/photo-workspace.test.mjs",
     "tests/unit/generated-documents.test.mjs",
     "tests/unit/document-workspace.test.mjs",
+    "tests/unit/finance-workspace.test.mjs",
     "tests/unit/project-links.test.mjs",
     "tests/unit/theme.test.mjs",
     "tests/unit/workspace.test.mjs",

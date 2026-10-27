@@ -1,5 +1,26 @@
 # KAY QA command register
 
+Latest Finance form/workspace checkpoint (2026-10-27):447 frontend units pass,
+including24 new actual controller/form/model/facade cases. Lint/typecheck and
+pinned Next16.4.2 production build pass (63 glyphs,99 consumers/338 icon sites,
+481 Button sites/zero violations). Tonal cards/focused managed forms preserve
+exact decimal calculation, reviewed confirmations, immutable correction/void,
+explicit comparison, pinned uncertain retry and read-only acknowledged completion
+recovery. Current denial removes the entire private controller before retry.
+The first full run was444/445: renamed Finance tests had dropped the required
+SP16 acceptance profile case. Its identity/coverage is restored; the19-case
+representative selection check now passes without lowering its expectation.
+Prepared native source retains excess/refusal/reopen/Agent cases and explicit
+1440/390 variants; no native execution. Earlier hook/fixture/lint corrections
+remain recorded in the evidence. The initial compiled hidden-selector checker
+expected an unqualified selector; AST inspection confirmed Tailwind's actual
+until-found exception and corrected the checker, with no CSS change.
+All254 frozen inputs remain intact; compiled card/form/footer/scroll declarations
+are not native geometry/focus proof. Inline collection receipt/history parity,
+older finance Chrome selectors and real scope/SQL/proof/race/native/full-stack/
+AFTER/CI/owner gates and wider migration work remain open. No backend/data/service
+operation. [Evidence](03-planning/design-migration-evidence/finance-workspace-2026-10-27.json).
+
 Latest PDF stationery slice (2026-10-27):410 connection-forbidden backend units
 pass/696 integration cases deselected, including26 new actual layout/render/
 metadata/decimal/asset/font/service-context cases. Explicit backend/.venv Ruff/

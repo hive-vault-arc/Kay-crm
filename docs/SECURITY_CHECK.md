@@ -1,5 +1,39 @@
 # KAY security check for changes
 
+## Selected Finance forms and private controller lifetime,2026-10-27
+
+Only existing M/A Finance reads/commands and proof metadata reads are composed;
+the backend remains authoritative. Both Deal and Contact archive flags disable
+writes. The facade preserves existing RECORD_ARCHIVED409 as a definite refusal.
+Current read/command/proof401/403/404 or archive refusal hides private views and
+unmounts all Finance controller state; retry starts fresh queries and cannot
+resurrect an earlier editor. Superseded denial cleanup is cancelled. Invalid or
+foreign pages/parents/receipt IDs never provide a current comparison baseline.
+Clean scoped optional proof selection grants no file bytes or expanded scope.
+
+Confirmation snapshots exact reviewed body/version/amounts. Synchronous locking,
+hydration/read-only handler checks, managed dirty/busy/recovery markers and
+guarded cancellation remain. Unknown acknowledgement pins path/body/key and
+cannot be rebased; acknowledged POST followed by read failure retries only its
+completion read. An older-than-acknowledged projection cannot complete. Unmount
+aborts/suppresses late client completion without claiming rollback. Leaving
+recovery truthfully warns of a possible existing operation. No fields/proofs/
+retry keys enter browser storage, telemetry or URLs. Existing exact calculation,
+explicit recognition, immutable originals/void/review and true-actor facts remain.
+
+447 synthetic frontend units, lint/typecheck/build pass, including24 new actual
+module cases. The initial445-case run's acceptance-discovery regression was
+repaired by restoring the Finance profile journey, not reducing required19.
+Three prepared native source cases retain excess receipt/correction/void/reopen/
+Agent/exact retry coverage; older review selectors remain. Frozen254 inputs stay
+intact. CSS AST proves declarations only; it does not prove native privacy/focus,
+real sessions/scope/proofs/SQL/races/full-stack/CI or human acceptance. No backend
+change/test rerun, database/service/private-config/real-record/main/push/merge/
+deploy/production operation. Existing app-access rejection and AFTER timing remain.
+Inline collection receipt/history fidelity is still open.
+[Contract](04-design/finance-workspace-local.md) and
+[evidence](03-planning/design-migration-evidence/finance-workspace-2026-10-27.json).
+
 ## Selected preparation-sheet PDF renderer, 2026-10-27
 
 Only new generation's sheet appearance/metadata changes. Current authenticated

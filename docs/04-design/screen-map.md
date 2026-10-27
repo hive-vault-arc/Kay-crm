@@ -1,5 +1,14 @@
 # KAY screen map and navigation contract
 
+Selected Finance forms,2026-10-27: Deal keeps four main tabs and the M/A-only
+supporting Finance drawer. Full-width tonal commission/receipt/audit cards and
+one focused managed form replace the old parallel editors. Return follows its
+entry point; numbered20-row reads remain. Current denial unmounts private
+controller state before fresh retry. Exact unknown retries and acknowledged
+completion reads remain distinct. Inline collection-receipt/history fidelity,
+older native selectors and real-stack review remain open.
+[Contract](finance-workspace-local.md).
+
 Selected PDF workspace,2026-10-27: `/leads/{id}/documents` and
 `/deals/{id}/documents` share Préparer un PDF/Historique, the actual role-scoped
 model rail or compact phone select, retained grouped fields and fixed action

@@ -1,32 +1,61 @@
 "use client";
-import { useCallback, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FinanceIcon } from "@/components/icons";
+import { RecordEntry } from "@/components/shared/record-entry";
+import { RecordSection } from "@/components/shared/record-workspace";
+import { useUnsavedGuard } from "@/components/shared/unsaved-guard";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
-import type { StaffRole } from "@/features/contacts/contracts";
-import type { Deal } from "@/features/deals/contracts";
+import { dealSchema, type Deal } from "@/features/deals/contracts";
+import { useHydrated } from "@/hooks/use-hydrated";
 import { ApiError } from "@/lib/api/client";
 import { commissionsSchema, mad } from "./contracts";
 import { CommissionRecord } from "./commission-record";
+import { FINANCE_PAGE_SIZE, financeDenied, financePageValid, type FinanceSelection } from "./model";
 import { TermsForm } from "./terms-form";
 
-export function DealFinanceTabs({ role, deal, initialTab, children, actions }: { role: StaffRole; deal: Deal; initialTab?: string; children: ReactNode; actions?: ReactNode }) {
-  const [tab, setTab] = useState(initialTab === "finance" ? "finance" : "dossier");
-  if (role === "agent") return <>{actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}{children}</>;
-  return <Tabs value={tab} onValueChange={setTab} className="grid min-w-0 gap-4"><div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><TabsList aria-label="Rubriques de l’affaire"><TabsTrigger value="dossier">Dossier</TabsTrigger><TabsTrigger value="finance">Finance</TabsTrigger></TabsList>{tab === "dossier" ? actions : null}</div><TabsContent value="dossier" className="record-stack grid min-w-0 gap-8">{children}</TabsContent><TabsContent value="finance" className="record-stack"><FinancePanel key={deal.id} deal={deal} /></TabsContent></Tabs>;
+export function FinancePanel({ deal }: { deal: Deal }) { return <FinanceBoundary key={deal.id} deal={deal} />; }
+function FinanceBoundary({ deal }: { deal: Deal }) {
+  const [denial, setDenial] = useState<ApiError>(), [generation, setGeneration] = useState(0);
+  function retry() { setGeneration(value => value + 1); setDenial(undefined); }
+  return denial ? <RecordError error={denial} retry={retry} /> : <FinanceWorkspace key={generation} deal={deal} onDenied={setDenial} />;
 }
-export function FinancePanel({ deal }: { deal: Deal }) {
-  const [page, setPage] = useState(1), [selected, setSelected] = useState<string>(), [creating, setCreating] = useState(false), [denial, setDenial] = useState<ApiError>();
-  const heading = useRef<HTMLHeadingElement>(null), deny = useCallback((error: ApiError) => setDenial(error), []);
-  const query = useQuery(`/api/v1/deals/${deal.id}/commissions?page=${page}`, commissionsSchema);
-  if (denial) return <RecordError error={denial} retry={() => { query.refresh(); setDenial(undefined); }} />;
-  if (query.error) return <RecordError error={query.error} retry={query.refresh} />;
-  function close() { setCreating(false); setSelected(undefined); heading.current?.focus(); }
-  return <section className="grid min-w-0 gap-6" aria-label="Finance de l’affaire"><h2 ref={heading} tabIndex={-1} className="text-section font-medium">Commissions et encaissements</h2><p>Facultatif : une affaire se clôture sans commission. Reconnaissance et encaissement sont deux confirmations distinctes.</p>
-    {creating ? <TermsForm dealId={deal.id} dealVersion={deal.version} saved={result => { setCreating(false); setSelected(result.id); query.refreshQuietly(); }} denied={deny} cancel={close} /> : <div className="flex flex-wrap gap-2">{!deal.contact.archived_at ? <Button action="create" type="button" disabled={Boolean(selected)} onClick={() => setCreating(true)}>Prévoir une commission</Button> : <p>Contact archivé : finance conservée en lecture seule.</p>}<Button liveRefresh action="refresh" type="button" variant="outline" disabled={Boolean(selected)} onClick={query.refresh}>Actualiser les commissions</Button></div>}
-    {!query.value ? <p role="status">Chargement des commissions…</p> : <>{!query.value.items.length ? <p>Aucune commission pour cette affaire. Aucune saisie financière n’est requise pour la clôturer.</p> : <ul className="grid min-w-0 gap-4">{query.value.items.map((item, index) => <li key={item.id} className="grid min-w-0 gap-2 border-t pt-4"><Button action="finance" type="button" variant="outline" className="h-auto min-h-control justify-self-start whitespace-normal text-start" disabled={creating || Boolean(selected) && selected !== item.id} aria-pressed={selected === item.id} onClick={() => setSelected(item.id)}>Commission {index + 1 + (page - 1) * query.value!.page_size} : {mad(item.current.amount_mad)}</Button><p>{item.current.state === "recognized" ? "Reconnue" : "Prévue"} ; encaissé {mad(item.collected_mad)}{item.balance_mad === null ? " ; aucun solde reconnu" : ` ; reste ${mad(item.balance_mad)}`}</p>{item.current.review_required ? <p className="text-warning">Revue financière demandée après réouverture.</p> : null}</li>)}</ul>}<NumberedPages page={page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages des commissions" /></>}
-    {selected && !creating ? <CommissionRecord key={selected} id={selected} contactId={deal.contact.id} dealVersion={deal.version} writable={!deal.contact.archived_at} changed={query.refreshQuietly} denied={deny} close={close} /> : null}
-  </section>;
+export function FinanceWorkspace({ deal, onDenied }: { deal: Deal; onDenied: (error: ApiError) => void }) {
+  const [page, setPage] = useState(1), [selection, setSelection] = useState<FinanceSelection>(), [creating, setCreating] = useState<Deal>(), [denial, setDenial] = useState<ApiError>(), [notice, setNotice] = useState("");
+  const scope = useRef<HTMLDivElement>(null), heading = useRef<HTMLHeadingElement>(null), restore = useRef<{ id?: string; action: string; scroll: number } | undefined>(undefined);
+  const guard = useUnsavedGuard(), hydrated = useHydrated();
+  const parent = useQuery(`/api/v1/deals/${deal.id}`, dealSchema);
+  const query = useQuery(`/api/v1/deals/${deal.id}/commissions?page=${page}&page_size=${FINANCE_PAGE_SIZE}`, commissionsSchema);
+  const deny = useCallback((error: ApiError) => { setDenial(error); setSelection(undefined); setCreating(undefined); setNotice(""); restore.current = undefined; onDenied(error); }, [onDenied]);
+  const authority = [parent.error, query.error].find(error => error && financeDenied(error));
+  // Hide immediately below, then unmount the complete private controller. A retry
+  // must start fresh queries rather than remounting an earlier financial draft.
+  useEffect(() => { if (!authority) return; let cancelled = false; queueMicrotask(() => { if (!cancelled) deny(authority); }); return () => { cancelled = true; }; }, [authority, deny]);
+  const invalid = parent.value && parent.value.id !== deal.id || query.value && (!financePageValid(query.value, page) || query.value.items.some(item => item.deal_id !== deal.id || item.version !== item.current.version));
+  const problem = denial ?? authority ?? (invalid ? new ApiError("DEPENDENCY_UNAVAILABLE", 503) : undefined);
+  const current = !parent.error && parent.value?.id === deal.id ? parent.value : selection || creating ? creating ?? deal : undefined;
+  const writable = Boolean(current && !current.contact.archived_at && !current.archived_at);
+  useEffect(() => { if (!selection && !creating && restore.current) { heading.current?.focus({ preventScroll: true }); if (!query.value) return; const value = restore.current; restore.current = undefined; const selector = value.id ? `[data-finance-id="${value.id}"] [data-action="${value.action}"]` : `[data-action="${value.action}"]`; const target = scope.current?.querySelector<HTMLElement>(selector); (target ?? heading.current)?.focus({ preventScroll: true }); const body = scope.current?.closest<HTMLElement>(".kay-drawer-body"); if (body) body.scrollTop = value.scroll; } }, [selection, creating, query.value]);
+  function remember(id?: string, action = "preview") { restore.current = { id, action, scroll: scope.current?.closest<HTMLElement>(".kay-drawer-body")?.scrollTop ?? 0 }; setNotice(""); }
+  function close() { setCreating(undefined); setSelection(undefined); }
+  function retry() { close(); setNotice(""); restore.current = undefined; parent.refresh(); query.refresh(); setDenial(undefined); }
+  function updated() { setNotice("Opération financière enregistrée. Les originaux restent conservés."); query.refresh(); }
+  function saved() { close(); updated(); }
+  return <div ref={scope} className="grid min-w-0 gap-5">
+    {problem ? <RecordError error={problem} retry={retry} /> : !current && !selection && !creating ? parent.error ? <RecordError error={parent.error} retry={parent.refresh} /> : <p role="status">Chargement du contexte financier…</p> : <>
+      {selection || creating ? <Button action="back" type="button" variant="quiet" className="justify-self-start" onClick={() => guard.request(close, scope.current ?? undefined)}>Commissions et encaissements</Button> : null}
+      {creating ? <TermsForm dealId={creating.id} dealVersion={creating.version} writable={writable} saved={saved} denied={deny} cancel={close} /> : selection ? <CommissionRecord key={selection.commission.id} initial={selection} dealId={deal.id} contactId={current?.contact.id ?? deal.contact.id} dealVersion={current?.version ?? deal.version} writable={writable} changed={updated} denied={deny} close={close} /> : <RecordSection title="Commissions" count={!query.error ? query.value?.total : undefined} headingRef={heading} action={writable ? <Button action="create" type="button" disabled={!hydrated} onClick={() => { if (!current) return; remember(undefined, "create"); setCreating(current); }}>Prévoir une commission</Button> : undefined} description="Facultatif : reconnaissance et encaissement sont deux confirmations distinctes.">
+        {notice ? <p role="status" className="text-sm text-success">{notice}</p> : null}
+        {!writable ? <p className="text-sm text-muted-foreground">Dossier ou contact archivé : la finance est conservée en lecture seule.</p> : null}
+        {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des commissions…</p> : <>
+          {!query.value.items.length ? <p className="text-sm text-muted-foreground">Aucune commission prévue. Une affaire peut se clôturer sans saisie financière.</p> : <ul className="grid min-w-0 gap-3">{query.value.items.map(item => <li key={item.id} data-finance-id={item.id}><RecordEntry title={mad(item.current.amount_mad)} icon={FinanceIcon} status={<Badge variant="neutral">{item.current.state === "recognized" ? "Reconnue" : "Prévue"}</Badge>} meta={[{ label: "Calcul", value: item.current.kind === "fixed" ? "Commission fixe" : `${item.current.rate_percent} % de ${mad(item.current.base_mad)}` }, { label: "Échéance", value: item.current.due_on ?? "Non renseignée" }, { label: "Encaissé", value: mad(item.collected_mad) }, { label: "Solde reconnu", value: item.balance_mad === null ? "Non reconnu" : mad(item.balance_mad) }]} actions={<>{writable ? <><Button action={item.current.state === "expected" ? "confirm" : "add"} type="button" variant="outline" disabled={!hydrated} onClick={() => { remember(item.id, item.current.state === "expected" ? "confirm" : "add"); setSelection({ commission: item, mode: item.current.state === "expected" ? "recognize" : "receipt" }); }}>{item.current.state === "expected" ? "Reconnaître la commission" : "Ajouter un encaissement"}</Button><Button action="edit" type="button" variant="quiet" disabled={!hydrated} onClick={() => { remember(item.id, "edit"); setSelection({ commission: item, mode: "commission" }); }}>Corriger la commission</Button></> : null}<Button action="preview" type="button" variant="quiet" disabled={!hydrated} onClick={() => { remember(item.id); setSelection({ commission: item }); }}>Encaissements et historique</Button></>}>{item.current.review_required ? <p className="text-sm text-warning">Revue financière requise après réouverture de l’affaire.</p> : null}</RecordEntry></li>)}</ul>}
+          {query.value.has_previous || query.value.has_next || page > 1 ? <NumberedPages compact page={page} total={query.value.total} size={FINANCE_PAGE_SIZE} change={setPage} label="Pages des commissions" /> : null}
+        </>}
+      </RecordSection>}
+    </>}
+    {guard.dialog}
+  </div>;
 }

@@ -1704,3 +1704,16 @@ selected Manrope instances share an internal face name, and ReportLab aliases
 later registrations to the first. Verify actual embedded font streams and render
 the result; use distinct scoped descriptor identities without rewriting frozen
 font bytes. A green text/layout test alone did not catch the lost bold weight.
+
+
+## Finance acknowledgement, current authority and acceptance selection (2026-10-27)
+
+Separate an acknowledged command from its completion read: retain its result and
+retry only the read, refusing a projection older than the acknowledged revision.
+An unknown write instead retains exact path/body/key and cannot rebase. Current
+authority loss must remove the private controller, not just hide it: otherwise
+retry can resurrect the prior draft while fresh reads are pending. Test an active
+editor through denial/retry and unmount. When renaming browser journeys, retain
+their required acceptance-profile identity and coverage; never lower the required
+case count to make discovery pass. Source and synthetic checks remain distinct
+from native/real-scope acceptance.

@@ -1,5 +1,12 @@
 # Local optional commissions and collections (SP-16)
 
+Current selected-design implementation,2026-10-27: the old Dossier/Finance tab
+description below is historical. The Deal retains four main tabs and a supporting
+Finance drawer, tonal cards and focused managed forms. Existing business/security
+contracts remain. See [current Finance workspace](finance-workspace-local.md)
+for recovery/authority behavior, evidence and remaining collection-layout/native/
+full-stack work. Source progress is not product approval.
+
 Status: technically accepted at the local SP-16 boundary; product review pending
 Date: 2026-10-15
 Evidence: [SP-16 execution](../03-planning/sprints/sp-16-execution.md).

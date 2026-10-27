@@ -19,7 +19,7 @@ function scopeDrafts(scope: ParentNode) {
 }
 
 export function useUnsavedGuard() {
-  const [pending, setPending] = useState<{ run: () => void | Promise<void>; scope: ParentNode }>();
+  const [pending, setPending] = useState<{ run: () => void | Promise<void>; scope: ParentNode; recovery: boolean }>();
   const trigger = useRef<HTMLElement | null>(null);
   const cancel = useCallback(() => setPending(undefined), []);
   const request = useCallback((run: () => void | Promise<void>, scope: ParentNode = document) => {
@@ -28,9 +28,10 @@ export function useUnsavedGuard() {
     const dirty = scopeDrafts(scope);
     if (!dirty.length) { discardDraftAction(run, [], () => {}); return; }
     trigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    setPending({ run, scope });
+    const recovery = Boolean((scope as HTMLElement).matches?.('[data-write-recovery="true"]') || scope.querySelector('[data-write-recovery="true"]'));
+    setPending({ run, scope, recovery });
   }, []);
-  const dialog = <AlertDialog open={Boolean(pending)} onOpenChange={open => { if (!open) setPending(undefined); }}><AlertDialogContent onCloseAutoFocus={event => { event.preventDefault(); trigger.current?.focus(); }}><AlertDialogTitle>Quitter la modification ?</AlertDialogTitle><AlertDialogDescription>Votre saisie n’est pas enregistrée. Restez ici pour la terminer ou quittez sans l’enregistrer.</AlertDialogDescription><div className="flex flex-wrap justify-end gap-2"><AlertDialogCancel asChild><Button action="back" variant="outline">Continuer la modification</Button></AlertDialogCancel><Button action="forward" variant="destructive" onClick={() => { if (!pending || scopeBusy(pending.scope)) return; const { run, scope } = pending; const dirty = scopeDrafts(scope); setPending(undefined); discardDraftAction(run, dirty, () => { if (typeof window !== "undefined") window.dispatchEvent(new Event("kay:draft-cleared")); }); }}>Quitter sans enregistrer</Button></div></AlertDialogContent></AlertDialog>;
+  const dialog = <AlertDialog open={Boolean(pending)} onOpenChange={open => { if (!open) setPending(undefined); }}><AlertDialogContent onCloseAutoFocus={event => { event.preventDefault(); trigger.current?.focus(); }}><AlertDialogTitle>Quitter la modification ?</AlertDialogTitle><AlertDialogDescription>{pending?.recovery ? "L’opération peut déjà être enregistrée. Quitter abandonne sa récupération dans ce formulaire ; vérifiez ensuite l’historique." : "Votre saisie n’est pas enregistrée. Restez ici pour la terminer ou quittez sans l’enregistrer."}</AlertDialogDescription><div className="flex flex-wrap gap-2"><AlertDialogCancel asChild><Button action="back" variant="outline">Continuer la modification</Button></AlertDialogCancel><Button action="forward" variant="destructive" onClick={() => { if (!pending || scopeBusy(pending.scope)) return; const { run, scope } = pending; const dirty = scopeDrafts(scope); setPending(undefined); discardDraftAction(run, dirty, () => { if (typeof window !== "undefined") window.dispatchEvent(new Event("kay:draft-cleared")); }); }}>{pending?.recovery ? "Quitter le formulaire" : "Quitter sans enregistrer"}</Button></div></AlertDialogContent></AlertDialog>;
   return { request, dialog, cancel };
 }
 

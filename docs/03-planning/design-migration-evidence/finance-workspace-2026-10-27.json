@@ -1,0 +1,224 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "748ac14",
+  "scope": "Selected Finance focused forms, tonal scoped cards, exact retry and private authority/controller lifetime; collection receipt/history fidelity remains open",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 447,
+      "failed": 0,
+      "newRegisteredCases": 24
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 99,
+      "iconSites": 338,
+      "buttonSites": 481,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .git/codex-finance-workspace-source-check.cjs",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0,
+      "compiledManagedFormGrid": true,
+      "compiledSharedFooter": true,
+      "compiledPhonePair": true,
+      "compiledHiddenImportant": true,
+      "compiledFullWidthEntry": true,
+      "compiledTonalEntry": true,
+      "compiledBorderedEntry": true,
+      "compiledPairedMetadata": true,
+      "compiledDrawerScroll": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8774,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1252,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "reference": [
+      "src/parity-ui.js",
+      "src/app.css",
+      "src/drawer-cards.css"
+    ],
+    "appearance": "Shared full-width tonal entries, neutral statuses, semantic glyphs, focused managed forms, top labels, paired responsive fields and common footer",
+    "backendApiShapeDataMigrationDependencyThemeCssChartChange": false,
+    "facadeChange": "Preserve the existing RECORD_ARCHIVED409 code as a definite refusal"
+  },
+  "invariants": [
+    "Four Deal main tabs; M/A-only supporting Finance entry; existing backend authorization remains authoritative",
+    "Fixed/percentage explicit base and exact BigInt half-up preview, no inferred recognition or collection; expected recognized balance remains null",
+    "Reviewed baseline and frozen confirmation body; synchronous duplicate lock, hydration/read-only handler guards, shared dirty/busy/recovery boundary",
+    "Unknown acknowledgement pins exact path/body/key and forbids comparison/rebase; acknowledged POST retries only completion read and rejects older returned revisions",
+    "Current comparison uses exact real parent/commission IDs; missing/replaced/voided selected-page receipt cannot be adopted",
+    "Optional clean current scoped proof metadata grants no bytes or expanded scope; denied/invalid pages reveal no cached filenames",
+    "Current read/command/proof denial unmounts private Finance state; fresh retry cannot resurrect prior editor/selection; superseded cleanup cancelled",
+    "Original financial facts, reason/true actor/server civil-time/receipt replacement and void/reopening review remain",
+    "Explicit20-row numbered reads and conditional page footer; no tables in current Finance drawer views",
+    "Private data and retry proofs do not enter storage, logs or URL payloads; departure aborts/suppresses late completion without claiming rollback"
+  ],
+  "correctedAttempts": [
+    "Initial form harness did not expand the local FinanceField and awaited a void confirmation handler; real modules/contracts remained strict and the synthetic harness/timing was corrected",
+    "Initial inline saved callback accessed the later managed draft during compilation; hoisted named onSaved functions fixed TDZ lint without a suppression",
+    "First full frontend run passed444/445: renamed Finance journeys lost the required SP16 acceptance identity; restored journey/excess/reopen/Agent coverage preserves19 representative cases without reducing the assertion",
+    "Privacy review found read-denial masking could retain a selected editor through retry; added the outer private-controller lifetime boundary and active-editor/fresh-retry tests",
+    "Completion review added a refusal for a read older than the acknowledged result, with an actual controller test",
+    "Initial CSS proof expected a bare hidden selector; inspected the actual AST Tailwind until-found exception and corrected only the checker",
+    "A multi-file documentation patch guessed a historical screen-map heading; verification refused the entire patch without changes, then the actual heading was read"
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/finance.spec.ts",
+    "cases": 3,
+    "profiles": "Existing cumulative SP16 journey retains each profile device; extra explicit1440/390 journeys",
+    "coverage": [
+      "dirty cancel retains fields",
+      "recognition and partial receipt",
+      "excess refusal retains amount",
+      "immutable replacement and explicit void",
+      "committed exact-key retry",
+      "version comparison retains draft",
+      "reopening retains finance and review",
+      "Agent read/write denial and closure without finance prompt"
+    ],
+    "executed": false,
+    "olderReviewSelectors": "frontend/tests/review/finance.chrome.spec.ts remains pending"
+  },
+  "pending": [
+    "Selected prototype embeds receipts beneath collection cards and a collection history; this checkpoint still uses selected-commission receipt/revision detail and must reconcile that fidelity gap",
+    "Older native Finance review selector migration",
+    "Native desktop/phone keyboard/touch/zoom/focus/accessibility and real scope/session/SQL/proof transfer/race/full-stack/CI",
+    "AFTER and owner approval; M01 appendix/context/report/work and all remaining migration ledger items"
+  ],
+  "restrictions": [
+    "Existing automatic app-access rejection remains binding; no browser/CUA/CDP/app HTTP/alternate-origin workaround",
+    "Original-machine mandatory antislop/design-system-ops files unavailable; no execution claimed; installed design-taste excludes dense multi-step product UI",
+    "No backend test rerun or real/development DB, worker, scanner, service, private credentials/configuration, records, main, push, merge, deployment or production operation",
+    "Protected35 pre-existing lesson additions and untracked motion note remain outside staged work"
+  ],
+  "sourceHashes": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 3964,
+      "sha256": "147cf3ce525bbb2c3ce69f478ebade833c60d2b92c9203a5eb78c75d57766976",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/components/shared/record-workspace.tsx",
+      "bytes": 3147,
+      "sha256": "e1d45d35a9387f24e0d8dacd81fd37703695871e4050328fb5854363dd5a8c84",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/components/shared/unsaved-guard.tsx",
+      "bytes": 6669,
+      "sha256": "49c46025f1eed77f9e3be01128eab7f1920595b663d8af8e78e79dcf4e98d844",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-workspace.tsx",
+      "bytes": 9509,
+      "sha256": "ba922be9475c48c6ceaaabf51c77f13d161a42d8dad6cd7e8d01dbcef29bbf16",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/commission-record.tsx",
+      "bytes": 13498,
+      "sha256": "927f19881c5def4df99ddc7aef467904de0b1746fce14a9395447676ccf4de86",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/confirmation.tsx",
+      "bytes": 1523,
+      "sha256": "626c61e77b2f180e609e9195d51f705217ce5d96838dae5d3c16a949a7617923",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/facade.ts",
+      "bytes": 3791,
+      "sha256": "445c58b6e61ba884d185a75a14da33f8377bd6b34fe852fd0a43bdb0afcd2aed",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/finance-panel.tsx",
+      "bytes": 8585,
+      "sha256": "d2c26c89f642f77f4da08e66931554704ac1740a9cacb4cc7ba77ab77548cf96",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/model.ts",
+      "bytes": 2281,
+      "sha256": "fafabf22f94cb405fb6db4c294e1687716aedf50fb8c9b40a97abf96f48e9017",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/mutation.tsx",
+      "bytes": 8293,
+      "sha256": "87b1fc2f646d1e560c1f97af5ca0e0034b6f3121b2163a140c136179018e2da6",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/receipt-form.tsx",
+      "bytes": 11830,
+      "sha256": "3cd19f1711adf3b2f451baa639864ec7a29b8b0b4c3a0c7d27a079191cf9865f",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/terms-form.tsx",
+      "bytes": 9168,
+      "sha256": "673f921b5b839a9883ef2942c706b570c9b932a51d3528f0f9b1d974604aca3a",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/e2e/finance.spec.ts",
+      "bytes": 11256,
+      "sha256": "f03a2cb630de019195798c6b0af92cf5a65594e9ccbb79bb86b07ee06bba4e84",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/helpers/finance.ts",
+      "bytes": 4333,
+      "sha256": "f5d49b40344c4c47502b770166149ed1f87e33505cb703f68f66547a6cf34ec1",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/finance-workspace.test.mjs",
+      "bytes": 38983,
+      "sha256": "db6e86485c78f3322a40a36f0c6f6cdfa0fb328c91e5eb0927fd3a8f7f0c156b",
+      "basis": "canonical staged Git blob"
+    }
+  ]
+}

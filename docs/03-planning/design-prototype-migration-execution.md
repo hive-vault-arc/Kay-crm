@@ -26,7 +26,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and Navigation API history source implemented | Remaining inventory/work/admin form parity, older-browser same-document history fallback, responsive focus and native interaction/cache checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
-| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer, selected2-tab PDF preparation/true-creator history with per-model draft recovery and selected server-rendered preparation stationery | Remaining restyled-appendix content/provenance, finance and per-field context refinements; final native security/stock/focus checks |
+| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with focused managed forms/tonal cards/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery and selected server-rendered preparation stationery | Remaining restyled-appendix content/provenance, inline Finance collection receipt/history organization and per-field context refinements; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
@@ -1748,3 +1748,61 @@ original-machine skill prerequisites remain unavailable; no execution is claimed
 Main/push/merge/deploy, real records/services/private configuration, the unrelated
 35 local lesson lines and motion note remain separate. The full redesign goal
 stays active; finance/context/report/work and all other ledger gaps remain.
+
+## Selected Finance forms and private workspace lifetime,2026-10-27
+
+After748ac14, the supporting Commissions et encaissements drawer keeps Deal's
+four main tabs and uses selected full-width tonal cards, neutral statuses and
+semantic icons. Terms/recognition/receipt correction each open one focused
+managed form, with shared labels/paired fields/footer and origin-aware return.
+Numbered20-row projections validate exact page/parent/unique identity; unnecessary
+one-page footers are absent. Current receipt/audit detail has no table.
+
+Existing BigInt/strict decimal schemas preserve explicit base, fixed/percentage
+modes, half-up preview, nullable expected balance, separate recognition and
+immutable receipt replacement/void/actor/reason/proof facts. Confirmation freezes
+the reviewed payload. Hydration/read-only checks and a synchronous lock also
+cover handlers. Managed draft/busy/recovery markers join the existing guard.
+
+An unknown acknowledgement pins exact path/body/key and cannot compare/rebase.
+A known successful POST with failed completion read retries only that read, even
+in read-only context; a read older than its acknowledged revision cannot complete.
+Current comparison is explicit and scope/identity checked. Receipt correction
+rechecks its original's selected page; moved/replaced/voided entries block keep
+and require reselecting, without a new endpoint or unbounded scan. Leaving
+recovery truthfully warns that the operation may already exist.
+
+A dossier-keyed authority boundary removes the complete private controller after
+current read/command/proof denial and retries with a fresh lifetime. Selection,
+creating state and notices cannot resurrect during a new read. Superseded cleanup
+is cancelled. Both Deal/Contact archive flags disable writes; the facade preserves
+the existing RECORD_ARCHIVED409 refusal instead of reporting uncertain503.
+No backend/API shape/grant/migration/data rule change.
+
+Final frontend checks:447 units pass, including24 new actual module cases;
+lint/typecheck and pinned Next16.4.2 production build pass (63 glyphs,99 consumers,
+338 icon/481 Button sites, zero violations). Earlier hook-test fixture expansion/
+void-handler timing and compiler TDZ lint faults were corrected. Initial full
+units passed444/445 because renamed Finance journeys lost their cumulative
+acceptance identity. The SP16 journey and earlier excess/reopen/Agent coverage
+are restored, retaining19 representative cases per profile. Three prepared
+Finance cases include explicit1440/390 variants; no native execution. The older
+finance.chrome.spec.ts still needs selector migration.
+
+All254 frozen inputs remain unchanged. CSS AST confirms full-width bordered/tonal
+entries, paired metadata, form/footer/phone and natural drawer-scroll declarations.
+The initial checker assumed an exact bare hidden selector; the actual compiled
+Tailwind until-found exception was inspected and the checker corrected, without
+changing CSS. These checks do not prove native geometry, focus or privacy.
+
+The prototype embeds receipts beneath each commission and collection history
+below them; this checkpoint still exposes paged selected-commission detail.
+That remains a fidelity gap to reconcile, not an approved final substitute or
+completion of Finance/the redesign. See [contract](../04-design/finance-workspace-local.md)
+and [evidence](design-migration-evidence/finance-workspace-2026-10-27.json).
+Original-machine mandatory skills remain unavailable; installed design-taste
+excludes dense multi-step product UI. AFTER timing, final owner verification,
+real scope/SQL/proof/race/native/full-stack/CI and all other ledger gaps remain.
+No app-access workaround, database/service/private configuration/real-record/main/
+push/merge/deploy operation. The unrelated35 lesson lines and motion note remain
+outside this checkpoint; the full redesign goal stays active.

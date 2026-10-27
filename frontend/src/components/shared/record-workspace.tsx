@@ -28,8 +28,8 @@ export function RecordWorkspace({ tabs, aside, initialTab, label, activeTab, onT
   </div>;
 }
 
-export function RecordSection({ title, action, children, description, count, headingRef }: {
-  title: string; action?: ReactNode; children: ReactNode; description?: string; count?: number; headingRef?: Ref<HTMLHeadingElement>;
+export function RecordSection({ title, action, children, description, count, headingRef, label }: {
+  title: string; action?: ReactNode; children: ReactNode; description?: string; count?: number; headingRef?: Ref<HTMLHeadingElement>; label?: string;
 }) {
-  return <section className="kay-record-section"><header className="kay-section-head"><h2 ref={headingRef} tabIndex={headingRef ? -1 : undefined}>{title}{count !== undefined ? <span className="kay-section-count">{count}</span> : null}</h2>{action ? <div className="kay-section-actions">{action}</div> : null}</header>{description ? <p className="kay-section-description">{description}</p> : null}<div className="kay-section-body">{children}</div></section>;
+  return <section className="kay-record-section" aria-label={label}><header className="kay-section-head"><h2 ref={headingRef} tabIndex={headingRef ? -1 : undefined}>{title}{count !== undefined ? <span className="kay-section-count">{count}</span> : null}</h2>{action ? <div className="kay-section-actions">{action}</div> : null}</header>{description ? <p className="kay-section-description">{description}</p> : null}<div className="kay-section-body">{children}</div></section>;
 }
