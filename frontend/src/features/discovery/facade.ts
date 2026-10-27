@@ -26,7 +26,7 @@ export async function relayDiscovery(key: string, request: Request, requestId: s
   }
   try {
     const jar = await cookies();
-    const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: get ? "GET" : "POST", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: get ? undefined : frontendOrigin(), idempotencyKey: retryKey, maxResponseBytes: 2 * 1024 * 1024 });
+    const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: get ? "GET" : "POST", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: get ? undefined : frontendOrigin(), idempotencyKey: retryKey, maxResponseBytes: 2 * 1024 * 1024, preparedSearch: key === "search" });
     if (upstream.status !== 200) { const error = z.object({ error: z.object({ code: z.string() }) }).safeParse(upstream.body), code = error.success && known.has(error.data.error.code) ? error.data.error.code : "DEPENDENCY_UNAVAILABLE"; return facadeError(code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, code, requestId); }
     const result = (key === "search" ? searchSchema : key === "audit/events" ? auditSchema : permit ? permitSchema : create || detail ? exportSchema : exportsSchema).parse(upstream.body);
     if ("transfer_url" in result) { const transfer = new URL(result.transfer_url), origin = new URL(process.env.API_BASE_URL ?? ""); if (transfer.origin !== origin.origin || transfer.pathname !== `/api/v1/transfers/exports/${id}` || transfer.search || transfer.hash || transfer.username || transfer.password) throw new Error("INVALID_TRANSFER_TARGET"); }

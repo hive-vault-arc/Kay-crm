@@ -3,13 +3,20 @@ import { listQuerySchema, numberedPage } from "@/features/contacts/contracts";
 
 const date = z.iso.datetime({ offset: true });
 const page = { page: z.coerce.number().int().min(1).max(1000000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional() };
-export const kindLabels = { contact: "Contacts", enquiry: "Prospects", deal: "Affaires", development: "Programmes", property: "Biens et unités", unit_type: "Types réutilisables", document: "Documents" } as const;
-export const kindSchema = z.enum(["contact", "enquiry", "deal", "development", "property", "unit_type", "document"]);
+export const kindLabels = { contact: "Contacts", enquiry: "Prospects", deal: "Affaires", development: "Programmes", property: "Biens et unités", unit_type: "Types réutilisables", document: "Documents", generated_document: "PDF préparés" } as const;
+const legacyKindSchema = z.enum(["contact", "enquiry", "deal", "development", "property", "unit_type", "document"]);
+export const kindSchema = z.enum(["contact", "enquiry", "deal", "development", "property", "unit_type", "document", "generated_document"]);
 export const searchQuerySchema = z.object({ ...page, q: z.string().trim().min(2).max(160), kind: kindSchema.optional() }).strict();
 export const searchPageQuerySchema = searchQuerySchema.omit({ page_size: true });
 export type SearchPageQuery = z.infer<typeof searchPageQuerySchema>;
 const destination = z.string().max(500).refine(value => /^\/(contacts|leads|deals|projects|projects\/properties)\/[a-f0-9-]{36}(\?tab=units&unit_type_id=[a-f0-9-]{36})?$/.test(value));
-export const searchSchema = numberedPage(z.object({ kind: kindSchema, id: z.uuid(), label: z.string().max(500), href: destination }).strict()).extend({ counts: z.partialRecord(kindSchema, z.number().int().nonnegative()) });
+const searchHit = z.discriminatedUnion("kind", [
+  z.object({ kind: legacyKindSchema, id: z.uuid(), label: z.string().max(500), href: destination }).strict(),
+  z.object({ kind: z.literal("generated_document"), id: z.uuid(), label: z.string().max(500), template_title: z.string().min(1).max(200), href: z.string().regex(/^\/(?:leads|deals)\/[a-f0-9-]{36}\?tab=documents$/) }).strict(),
+]);
+export const searchSchema = numberedPage(searchHit).extend({ counts: z.partialRecord(kindSchema, z.number().int().nonnegative()), search_version: z.literal(2).optional() }).superRefine((value, context) => {
+  if (value.search_version !== 2 && (value.counts.generated_document !== undefined || value.items.some(item => item.kind === "generated_document"))) context.addIssue({ code: "custom", message: "PREPARED_SEARCH_VERSION_REQUIRED" });
+});
 export type SearchHit = z.infer<typeof searchSchema>["items"][number];
 export const pageQuerySchema = z.object(page).strict();
 export const exportSchema = z.object({ id: z.uuid(), kind: z.enum(["contacts", "enquiries"]), state: z.enum(["queued", "ready", "failed", "denied"]), error_code: z.string().max(80).nullable(), row_count: z.number().int().nonnegative().nullable(), size_bytes: z.number().int().nonnegative().nullable(), created_at: date, completed_at: date.nullable() }).strict();

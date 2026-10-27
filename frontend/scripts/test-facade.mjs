@@ -49,6 +49,8 @@ try {
     "tests/unit/workspace-reports.test.mjs",
     "tests/unit/workspace-dashboard.test.mjs",
     "tests/unit/search-workspace.test.mjs",
+    "tests/unit/prepared-search.test.mjs",
+    "tests/unit/prepared-history.test.mjs",
     "tests/unit/draft-lifecycle.test.mjs",
     "tests/unit/kanban.test.mjs",
     "tests/unit/realtime.test.mjs",

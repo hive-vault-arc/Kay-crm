@@ -15,7 +15,16 @@ class PageQuery(StrictBody):
 class SearchQuery(PageQuery):
     q: str = Field(min_length=2, max_length=160)
     kind: (
-        Literal["contact", "enquiry", "deal", "development", "property", "unit_type", "document"]
+        Literal[
+            "contact",
+            "enquiry",
+            "deal",
+            "development",
+            "property",
+            "unit_type",
+            "document",
+            "generated_document",
+        ]
         | None
     ) = None
 

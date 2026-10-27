@@ -18,6 +18,7 @@ import type { StaffRole } from "@/features/contacts/contracts";
 import { ActivityHistory } from "@/features/activities/activity-history";
 import { RecordLifecycleAction } from "@/features/discovery/record-lifecycle-action";
 import { FilePanel } from "@/features/files/file-panel";
+import { PreparedDocuments } from "@/features/generated/prepared-documents";
 import { OfferingFacts } from "@/features/requirements/offering-card";
 import { RequirementPanel } from "@/features/requirements/requirement-panel";
 import { ProjectLinksPanel } from "@/features/project-links/project-links-panel";
@@ -46,7 +47,7 @@ export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChan
     <CrmRecordHeader contact={deal.contact} title={deal.title} route={`/deals/${deal.id}`} backHref="/deals" badges={<><DealStageMenu deal={deal} writable={canAct} busy={busy} busyChanged={busyChanged} mutate={mutate} saved={reload} error={error} /><CrmStatusBadge state={deal.rating} dot={false}>{ratingLabels[deal.rating]}</CrmStatusBadge>{deal.archived_at ? <CrmStatusBadge state="archived">Archivée</CrmStatusBadge> : null}</>} actions={<>{writable ? <Button action="edit" ref={editRef} variant="outline" disabled={busy} onClick={edit}>Modifier</Button> : null}{canArchive ? <RecordActions><RecordLifecycleAction kind="deals" id={deal.id} version={deal.version} archivedAt={deal.archived_at} label={deal.title} onChanged={() => void reload()} /></RecordActions> : null}</>} />
     {!canAct ? <p role="status" className="mb-3 text-sm text-muted-foreground">{deal.contact.archived_at ? "Contact archivé : dossier conservé en lecture seule." : "Affaire archivée : historique conservé, restauration possible pendant 30 jours."}</p> : null}
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{commandState}
-    <RecordWorkspace label="Rubriques de l’affaire" tabs={[
+    <RecordWorkspace label="Rubriques de l’affaire" initialTab={initialTab === "documents" ? initialTab : undefined} tabs={[
       { id: "overview", label: "Aperçu", content: <>
         <ContactProfilePanel contact={deal.contact} writable={writable} changed={contactChanged} denied={denied} />
         <RecordSection title="Qualification" action={<RecordDrawer label="Recherches" action="search" description="Critères de recherche liés au contact."><RequirementPanel contactId={deal.contact.id} writable={canAct} /></RecordDrawer>}><RecordFacts>
@@ -65,7 +66,7 @@ export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChan
       </> },
       { id: "projects", label: "Projets", content: <ProjectLinksPanel scope="deals" id={deal.id} writable={canAct} onChanged={() => setHistoryRevision(value => value + 1)} /> },
       { id: "activity", label: "Activités", content: <><ActivityHistory scope="deals" id={deal.id} writable={canAct} revision={deal.version + historyRevision} />{deal.enquiry_id ? <ActivityHistory scope="deals" id={deal.id} origin /> : null}<details className="kay-contact-more"><summary>Historique de l’affaire</summary><DealHistory id={deal.id} revision={deal.version} /></details><details className="kay-contact-more"><summary>Résultats, clôture et réouverture</summary><OutcomeHistory id={deal.id} revision={deal.version} /></details></> },
-      { id: "documents", label: "Documents", content: <><RecordSection title="Documents de l’affaire" action={<Button action="file" variant="outline" asChild><Link href={`/deals/${deal.id}/documents`}>Préparer un PDF</Link></Button>}><p className="text-sm text-muted-foreground">Pièces jointes privées et documents préparés pour ce dossier.</p></RecordSection><FilePanel parentKind="deal" parentId={deal.id} writable={writable && !busy} /></> },
+      { id: "documents", label: "Documents", content: <><FilePanel parentKind="deal" parentId={deal.id} writable={writable && !busy} /><PreparedDocuments parentKind="deal" id={deal.id} /></> },
     ]} aside={<>
       <RecordSection title="Suivi"><RecordFacts columns={1}><DealInlineField {...inline} icon={DealIcon} label="Action prévue" field="next_action" display={<span className="whitespace-pre-wrap">{deal.next_action || "Aucune prochaine action renseignée."}</span>} /></RecordFacts><RecordDrawer label="Voir les tâches" title="Tâches de l’affaire" action="task" description="Échéances et responsables de cette affaire." initialOpen={Boolean(initialTask)}><TaskPanel contactId={deal.contact.id} dealId={deal.id} writable={canAct} initialTask={initialTask} /></RecordDrawer></RecordSection>
       <ContactVisits contactId={deal.contact.id} writable={canAct} />

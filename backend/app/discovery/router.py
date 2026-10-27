@@ -1,4 +1,4 @@
-from typing import Annotated, cast
+from typing import Annotated, Literal, cast
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
@@ -21,10 +21,13 @@ RetryKey = Annotated[UUID, Header(alias="Idempotency-Key")]
 
 @router.get("/search")
 def find(
-    request: Request, token: Proof, query: Annotated[SearchQuery, Query()]
+    request: Request,
+    token: Proof,
+    query: Annotated[SearchQuery, Query()],
+    prepared_version: Annotated[Literal["2"] | None, Header(alias="X-Kay-Search-Version")] = None,
 ) -> dict[str, object]:
     validate_query(request, set(SearchQuery.model_fields))
-    return search(configuration(request)[0], token, query)
+    return search(configuration(request)[0], token, query, prepared=prepared_version == "2")
 
 
 @router.get("/audit/events")

@@ -1512,3 +1512,13 @@ the surviving search field rather than a popup link that will unmount. Mount a
 preview read only for the open current query, and discard old results immediately
 while the replacement query debounces. Source/controller tests do not prove native
 focus, touch or viewport behavior.
+
+
+## 2026-10-27 — Apply file visibility to discovery, not only byte delivery
+
+A restricted PDF can leak through its filename or count even when download is
+correctly denied. Reuse the catalogue policy in search, histories, generic metadata
+and direct file authorization, before counting or paging. Keep a permission fix
+unconditional for legacy requests; version only the new response shape. Search
+known catalogue metadata, never generated field snapshots or PDF contents. SQL
+compilation/units do not prove real database scope or concurrency behavior.

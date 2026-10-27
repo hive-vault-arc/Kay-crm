@@ -28,7 +28,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-side Patrimoine and clickable short steppers implemented; typed mixed-programme query correction | Remaining exact hierarchy/owner/photo form presentation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet and role-gated Finance drawer composed from real controllers | Remaining exact offer/PDF layouts and provenance; final native security/stock/focus checks |
 | P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
-| P7 remaining surfaces | Help/settings/dashboard compositions plus desktop search preview, phone search Sheet and authenticated full-result page wired to real current scoped APIs | Prepared-PDF search parity; remaining report tools/audit/jobs and directory refinements; native/full-stack/product review |
+| P7 remaining surfaces | Help/settings/dashboard/search compositions and versioned real prepared-PDF discovery implemented; template visibility shared across search/history/file reads | Remaining report tools/audit/jobs and directory refinements; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -934,3 +934,83 @@ AFTER timing is retained. No native/app-HTTP, real SQL/races, final accessibilit
 AFTER or owner approval is claimed. Main/push/merge and the active goal are unchanged.
 
 [Search UI evidence](design-migration-evidence/search-ui-2026-10-27.json).
+
+## Prepared-PDF discovery and shared catalogue visibility
+
+2026-10-27. The source reconciliation gap is now implemented through the actual
+existing Document/generated-PDF model, not an illustrative frontend hit. The new
+server-facade opt-in search version2 exposes a distinct PDF préparés kind for
+authorized active Lead/Deal parents, filename and current catalogue title. No
+submitted values, file contents, object keys or delivery proof is searched or
+returned. Source filenames remain unchanged; the title is explicitly the current
+catalogue label, not a rewritten historical snapshot.
+
+SQL applies current identity, canonical contact/record scope, assignment, archive,
+known-template visibility and clean-version existence before count/filter/page.
+It uses EXISTS for versions and disjoint uploaded/generated branches, preventing
+version fanout or duplicate categories. Static bound catalogue titles support
+literal escaped matching. Stable filenames/kind/UUID ordering and numbered pages
+remain; parent URLs open the actual Documents tab.
+
+The review found a real source visibility inconsistency: legacy generic search's
+Deal-document branch did not apply C13's finance-template predicate. A small shared
+catalogue policy now governs context, generated history, generic file metadata/
+direct authorization and both search modes. Models10/11 stay M/A only and unknown
+codes fail closed, including counts. No template visibility is inferred from the
+creator or shared inventory. The correction applies to legacy clients as well.
+
+The default no-header response keeps the original seven-kind/four-field shape and
+permitted Deal PDF parent/filename behavior. New Lead PDF discovery and title
+matching require bounded X-Kay-Search-Version:2; generated_document without that
+mode is invalid. New frontend contracts require the version marker for generated
+hits/counts, constrain their metadata and destinations, and reuse the selected
+rows/filters. The facade emits its own header only on exact GET search, ignoring
+caller-supplied version choices. Base legacy responses remain accepted by the new
+client. Prepared-PDF filtering requires the updated backend; rollout is backend
+first. This slice adds no dependency, table/migration, stored value, command, file
+byte, role grant or change to legal-model originals/provenance.
+
+Twenty new database-forbidden cases inspect actual PostgreSQL SQL, three roles,
+current identity ordering, count/row source and old/new serialization, actual
+route annotations/dispatch and metadata/direct-file policy. Seven frontend cases
+exercise versioned/legacy schemas, bounded server-only opt-in, failure/private-link
+rejection and presentation. Three PostgreSQL cases are prepared for populated
+private/finance/parent scope, true transfer and exact pages/legacy shape, and
+unassigned/archived Lead behavior. They have not been executed.
+
+Final Ruff/mypy pass for12 app modules;330 connection-forbidden backend units pass
+with692 integration cases deselected. Frontend246 units and lint/typecheck/pinned
+Next16.4.2 build pass (62 glyphs/444 Button sites/zero violations). Dependency audits
+report zero known vulnerabilities; all254 prototype hashes remain unchanged.
+An initial overlong signature, malformed test string and late-bound test callback
+were corrected. Running mypy from root missed backend plugin configuration and
+reported unrelated Settings arguments; it was rerun from backend with its explicit
+venv and actual configuration, without ignores. None of those failures is a pass.
+
+Following a search result through the real destination exposed another concrete
+gap: Lead ignored tab params, Deal accepted Finance only, and the Documents tabs
+omitted prepared history. Both authenticated routes now validate scalar Documents
+selection before passing it to the real lazy tabs; arrays/unknowns are not reflected
+in keys. Existing Finance/task entry stays supported. Attachments retain their
+actual Contact/Deal parents, and PDFs retain their Enquiry/Deal parents. Shared
+prepared-history controls also replace the dedicated page's repeated list/download
+logic. The latter returns to Documents. Catalogue titles, immutable filenames,
+time, size, numbered pages and labelled icon downloads reuse existing section/file
+roles and phone rows; no author is invented where the API lacks that field.
+
+Downloads synchronously lock duplicate clicks, request a fresh current-session
+exact-version permit, hide old projections after authority failure, and deliver no
+file after unmount. Six additional controller cases execute the actual route,
+record compositions, lazy tabs, history/permit and failure/unmount boundaries.
+Test-only parse/VM-object/deferred-stage issues were corrected. The VM helper was
+also corrected to honor its explicit synthetic URL/timer overrides; all246 cases
+then passed. These source/controller results do not prove native navigation,
+visual density or real private-byte delivery.
+
+The large existing file/generated services retain their command responsibilities;
+this slice extracts the shared policy and replaces existing predicates, rather
+than adding a new command concern. Native/app-HTTP, actual SQL/races/performance,
+final accessibility/AFTER/product verification and the wider remaining P0–P8 work
+stay open. No real database/data/service, main/push/merge or production operation.
+
+[Prepared search evidence](design-migration-evidence/prepared-search-2026-10-27.json).

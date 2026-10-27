@@ -103,3 +103,19 @@ test("facade source retains its server-only import and no public configuration p
   assert.equal(source.includes("NEXT_PUBLIC_"), false);
   assert.equal(source.includes("rejectUnauthorized: false"), false);
 });
+
+test("prepared search version is emitted only for an opted-in exact GET search target", async () => {
+  const { facade, calls } = transport(serverEnvironment({ API_BASE_URL: "https://api.synthetic.invalid" }));
+  for (const [path, options, expected] of [
+    ["/api/v1/search?q=synthetic", { preparedSearch: true }, "2"],
+    ["/api/v1/search", { preparedSearch: true }, "2"],
+    ["/api/v1/search/other", { preparedSearch: true }, undefined],
+    ["/api/v1/searches?q=synthetic", { preparedSearch: true }, undefined],
+    ["/api/v1/exports", { preparedSearch: true }, undefined],
+    ["/api/v1/search?q=synthetic", { preparedSearch: true, method: "POST" }, undefined],
+    ["/api/v1/search?q=synthetic", {}, undefined],
+  ]) {
+    await facade.upstreamRequest(path, "synthetic-id", options);
+    assert.equal(calls.at(-1).options.headers["X-Kay-Search-Version"], expected);
+  }
+});

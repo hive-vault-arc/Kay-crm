@@ -49,11 +49,55 @@ Reusable-type/document destinations remain the authoritative parent/unit-context
 URLs. Live search refresh now also includes enquiry and file topics. No local
 storage, staff-directory request, public file URL or extra result field is added.
 
-Prepared-PDF discovery is still a genuine parity gap: the prototype includes it,
-but current backend `search.py` projects uploaded Document rows only. This UI
-slice retains the actual seven-kind API; it does not invent generated-PDF hits or
-mark that gap complete. The next data slice must preserve existing template role
-and parent-contact authority. [UI evidence](../03-planning/design-migration-evidence/search-ui-2026-10-27.json).
+Prepared-PDF discovery was a genuine gap in the UI checkpoint above. Its source
+implementation now follows the versioned extension below; actual PostgreSQL/native
+verification remains pending. [UI evidence](../03-planning/design-migration-evidence/search-ui-2026-10-27.json).
+
+### Prepared PDF search extension, 2026-10-27
+
+The server facade opts in with the bounded header `X-Kay-Search-Version: 2` only
+on the exact GET search target. The backend then supports an eighth kind,
+`generated_document`, and returns `search_version:2`. A prepared hit retains
+kind/id/filename label/href and adds the current catalogue `template_title`;
+its destination is `/leads/{uuid}?tab=documents` or `/deals/{uuid}?tab=documents`.
+The browser never receives file bytes, storage keys, values snapshots, permits
+or financial amounts through search. Matching covers literal escaped filename
+or catalogue title, not PDF content or submitted field values.
+
+The existing active canonical contact intersection precedes parent and template
+filters, counts and stable numbered pages. Prepared parents must be active Leads
+or Deals. Agent Lead parents also retain the existing non-null assignment rule.
+Only known visible catalogue codes and an existing clean PDF version qualify.
+EXISTS avoids duplicate counts across file versions. Uploaded and prepared rows
+are separated in version2; a generated file is never counted in both kinds.
+
+One catalogue-derived helper now governs generated context/history, generic file
+metadata/direct authorization and search. Finance models10/11 remain M/A only;
+unknown codes fail closed. This also corrects a source visibility gap in legacy
+search: its generic Deal-document branch previously omitted the template rule.
+The permission correction applies regardless of the search-version opt-in.
+
+Without the header, the seven-kind response and original four-field hit shape
+remain; permitted Deal PDFs keep their legacy document kind/parent URL and
+filename-only matching. New Lead PDF discovery and title matching are opt-in.
+Asking for generated_document without version2 is invalid. No role, scope, clock
+or version override is accepted as a query parameter. The version is a transport
+choice, never an access grant; current identity and parent scope still authorize
+every request.
+
+The new frontend requests version2, validates its marker/new fields/destinations,
+and shows PDF préparés using the existing result rows and Tabs. It still accepts
+legacy seven-kind responses for base queries; it never fabricates PDF capability
+or results from an absent marker. Deploy the backend extension before the new
+frontend when using the prepared-PDF filter. Existing0030 generated-document
+schema is required; this slice adds no migration, stored value or byte rewrite.
+
+Twenty connection-forbidden source/SQL/route/visibility cases and seven frontend
+schema/facade/transport/presentation cases supplement existing suites.330 backend
+units pass with692 database cases deselected;240 frontend units plus lint/typecheck/
+build pass. Three real PostgreSQL cases are prepared, not run. No native/app-HTTP,
+real SQL/scope-race/performance or product acceptance is claimed.
+[Evidence](../03-planning/design-migration-evidence/prepared-search-2026-10-27.json).
 
 ## CSV request, worker and delivery
 

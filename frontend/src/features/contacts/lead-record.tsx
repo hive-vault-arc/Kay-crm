@@ -21,6 +21,7 @@ import { ConvertLead } from "@/features/deals/convert-lead";
 import { ActivityHistory } from "@/features/activities/activity-history";
 import { RecordLifecycleAction } from "@/features/discovery/record-lifecycle-action";
 import { FilePanel } from "@/features/files/file-panel";
+import { PreparedDocuments } from "@/features/generated/prepared-documents";
 import { TaskForm } from "@/features/work/task-form";
 import { TaskPanel } from "@/features/work/task-panel";
 import { ContactVisits } from "@/features/schedule/contact-visits";
@@ -33,7 +34,7 @@ import { campaignLabels, ratingLabels } from "./qualification-contracts";
 import { ContactProfilePanel } from "./contact-profile-panel";
 import { LeadStatusMenu } from "./lead-status-menu";
 
-export function LeadRecord({ id, edit = false, role = "agent", actorId }: { id: string; edit?: boolean; role?: StaffRole; actorId?: string }) {
+export function LeadRecord({ id, edit = false, role = "agent", actorId, initialTab }: { id: string; edit?: boolean; role?: StaffRole; actorId?: string; initialTab?: string }) {
   const [edited, setEdited] = useState<Enquiry>();
   const [scopeError, setScopeError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
@@ -52,7 +53,7 @@ export function LeadRecord({ id, edit = false, role = "agent", actorId }: { id: 
     <CrmRecordHeader contact={enquiry.contact} title={enquiry.contact.name} route={`/leads/${id}`} backHref="/leads" badges={<><LeadStatusMenu enquiry={enquiry} writable={writable} changed={saved => { setNotice(saved ? "Statut enregistré." : "Version actualisée."); refreshQuietly(); }} /><CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge>{enquiry.archived_at ? <CrmStatusBadge state="archived">Archivé</CrmStatusBadge> : null}</>} actions={<>{writable && enquiry.status !== "converted" ? <Button action="edit" asChild variant="outline"><Link href={`/leads/${id}/edit`}>Modifier</Link></Button> : null}<RecordActions>{writable ? <ConvertLead enquiry={enquiry} onRefresh={refreshQuietly} /> : null}{canArchive ? <RecordLifecycleAction kind="enquiries" id={id} version={enquiry.version} archivedAt={enquiry.archived_at} label={enquiry.contact.name} onChanged={refreshQuietly} /> : null}</RecordActions></>} />
     {!writable ? <p role="status" className="mb-3 text-sm text-muted-foreground">{enquiry.contact.archived_at ? "Contact archivé : restaurez-le pour modifier ce prospect." : "Prospect archivé : historique conservé, restauration possible pendant 30 jours."}</p> : null}
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}
-    <RecordWorkspace label="Rubriques du prospect" tabs={[
+    <RecordWorkspace label="Rubriques du prospect" initialTab={initialTab} tabs={[
       { id: "overview", label: "Aperçu", content: <>
         <ContactProfilePanel contact={enquiry.contact} writable={writable && enquiry.status !== "converted"} changed={refreshQuietly} denied={setScopeError} />
         <RecordSection title="Qualification" action={<RecordDrawer label="Recherches" action="search" description="Critères de recherche liés à ce contact."><RequirementPanel contactId={enquiry.contact.id} writable={writable} /></RecordDrawer>}><RecordFacts>
@@ -68,7 +69,7 @@ export function LeadRecord({ id, edit = false, role = "agent", actorId }: { id: 
       </> },
       { id: "projects", label: "Projets", content: <ProjectLinksPanel scope="enquiries" id={id} writable={writable} onChanged={() => setHistoryRevision(value => value + 1)} /> },
       { id: "activity", label: "Activités", content: <ActivityHistory key={id} scope="enquiries" id={id} writable={writable} revision={enquiry.version + historyRevision} /> },
-      { id: "documents", label: "Documents", content: <><RecordSection title="Documents du prospect" action={<Button action="file" variant="outline" asChild><Link href={`/leads/${id}/documents`}>Préparer un PDF</Link></Button>}><p className="text-sm text-muted-foreground">Pièces jointes du contact et documents préparés pour ce prospect.</p></RecordSection><FilePanel parentKind="contact" parentId={enquiry.contact.id} writable={writable} /></> },
+      { id: "documents", label: "Documents", content: <><FilePanel parentKind="contact" parentId={enquiry.contact.id} writable={writable} /><PreparedDocuments parentKind="enquiry" id={id} /></> },
     ]} aside={<>
       <RecordSection title="Suivi" action={writable ? <RecordDrawer label="Planifier une relance" action="task" description="Créer une tâche reliée à ce prospect et à son contact.">{(close, saved) => <TaskForm contactId={enquiry.contact.id} enquiryId={enquiry.id} saved={async () => { saved(); setNotice("Relance planifiée."); }} cancel={close} />}</RecordDrawer> : undefined}><RecordDrawer label="Voir les tâches du contact" title="Tâches du contact" action="task" description="Tâches partagées entre les dossiers de ce contact."><TaskPanel contactId={enquiry.contact.id} writable={writable} /></RecordDrawer>{role !== "agent" && writable ? <RecordDrawer label="Attribuer le prospect" action="assign" description="Choisissez un agent autorisé sur le contact.">{(_close, saved) => <EnquiryAssignment key={enquiry.version} enquiry={enquiry} saved={() => { saved(); setNotice("Attribution enregistrée."); refreshQuietly(); }} />}</RecordDrawer> : null}</RecordSection>
       <ContactVisits contactId={enquiry.contact.id} writable={writable} />

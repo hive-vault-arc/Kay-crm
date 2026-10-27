@@ -1,5 +1,15 @@
 # KAY QA command register
 
+Latest prepared-PDF search slice (2026-10-27): backend explicit .venv Ruff/mypy
+pass for12 app modules;330 connection-forbidden units pass/692 integration cases
+deselected. Twenty new actual SQL/route/visibility cases are included; three real
+PostgreSQL scenarios are prepared, not run. Frontend246 units, lint/typecheck and
+pinned Next16.4.2 build pass (62 glyphs/445 Button sites/zero violations). Seven
+new schema/facade/transport/presentation cases cover the bounded version2 opt-in
+and legacy behavior. No known dependency vulnerabilities or prototype hash drift.
+Native, real SQL/scope/performance and final product verification remain pending.
+[Evidence](03-planning/design-migration-evidence/prepared-search-2026-10-27.json).
+
 Latest selected-search UI slice (2026-10-27):233 frontend units pass, including
 eight new actual route/controller cases. Lint/typecheck and pinned Next16.4.2 build
 pass, including `/search` (62 glyphs/445 Button sites/zero violations). Search CSS

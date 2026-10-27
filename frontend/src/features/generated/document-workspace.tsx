@@ -10,32 +10,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { RecordError } from "@/features/contacts/record-states";
-import { useQuery } from "@/features/contacts/use-query";
-import { downloadBytes, requestFilePermit } from "@/features/files/transfers";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { apiCommand } from "@/lib/api/command";
 import { ApiError } from "@/lib/api/client";
-import { formatInstant } from "@/lib/format";
-import { generateBodySchema, generatedContextSchema, generatedHistorySchema, generatedItemSchema, type GeneratedItem } from "./contracts";
+import { generateBodySchema, generatedItemSchema } from "./contracts";
+import { PreparedDocumentHistory, usePreparedDocuments } from "./prepared-documents";
 
 type ParentKind = "enquiry" | "deal";
 
 export function DocumentWorkspace({ parentKind, id }: { parentKind: ParentKind; id: string }) {
-  const [page, setPage] = useState(1);
+  const documents = usePreparedDocuments({ parentKind, id });
+  const { context } = documents;
   const [selectedCode, setSelectedCode] = useState("01");
   const [drafts, setDrafts] = useState<Record<string, Record<string, string>>>({});
   const [busy, setBusy] = useState(false);
-  const [downloading, setDownloading] = useState<string>();
   const [error, setError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
   const lock = useRef(false);
   const attempt = useRef({ fingerprint: "", key: "" });
   const hydrated = useHydrated();
-  const parent = `parent_kind=${parentKind}&parent_id=${id}`;
-  const context = useQuery(`/api/v1/generated-documents/context?${parent}`, generatedContextSchema);
-  const history = useQuery(`/api/v1/generated-documents?${parent}&page=${page}`, generatedHistorySchema);
   const back = parentKind === "enquiry" ? `/leads/${id}` : `/deals/${id}`;
   const template = context.value?.templates.find(item => item.code === selectedCode) ?? context.value?.templates[0];
   const values = template ? (drafts[template.code] ?? context.value?.defaults ?? {}) : {};
@@ -62,32 +56,13 @@ export function DocumentWorkspace({ parentKind, id }: { parentKind: ParentKind; 
       await apiCommand("/api/v1/generated-documents", body, generatedItemSchema, attempt.current.key, "POST", 40_000);
       attempt.current = { fingerprint: "", key: "" };
       setNotice("PDF créé et conservé dans l’historique privé. Vous pouvez le télécharger ci-dessous.");
-      setPage(1);
-      history.refreshQuietly();
+      documents.refresh();
     } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
     finally { lock.current = false; setBusy(false); }
   }
 
-  async function download(item: GeneratedItem) {
-    if (downloading) return;
-    setDownloading(item.id); setError(undefined);
-    try {
-      const permit = await requestFilePermit({ action: "download", document_id: item.id, expected_version: item.version, version_id: item.version_id });
-      const blob = await downloadBytes(permit);
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = item.filename;
-      document.body.append(anchor);
-      anchor.click();
-      anchor.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("FILE_TRANSFER_INTERRUPTED", 503)); }
-    finally { setDownloading(undefined); }
-  }
-
   return <main className="record-stack grid min-w-0 gap-5">
-    <Button action="back" asChild variant="quiet" size="compact" className="justify-self-start"><Link href={back}>Retour à {parentKind === "enquiry" ? "la demande" : "l’affaire"}</Link></Button>
+    <Button action="back" asChild variant="quiet" size="compact" className="justify-self-start"><Link href={`${back}?tab=documents`} prefetch={false}>Retour à {parentKind === "enquiry" ? "la demande" : "l’affaire"}</Link></Button>
     <PageHeader icon={EnquiryIcon} title="Documents du dossier" description="Choisissez un modèle, vérifiez les informations préremplies et conservez chaque PDF généré." route={`${back}/documents`} />
     {context.error ? <RecordError error={context.error} retry={context.refresh} /> : !context.value ? <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(15rem,0.32fr)_minmax(0,1fr)]" role="status" aria-label="Chargement des modèles"><div className="crm-panel grid content-start gap-3"><Skeleton className="h-7 w-2/3" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></div><div className="crm-panel grid content-start gap-4"><Skeleton className="h-9 w-1/2" /><Skeleton className="h-16 w-full" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></div></div> : <>
       <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(15rem,0.32fr)_minmax(0,1fr)]">
@@ -107,8 +82,6 @@ export function DocumentWorkspace({ parentKind, id }: { parentKind: ParentKind; 
     </>}
     {notice ? <p role="status" className="text-success">{notice}</p> : null}
     {error ? <RecordError error={error} retry={() => setError(undefined)} /> : null}
-    {context.value ? <section aria-label="Historique des PDF générés" className="crm-panel grid min-w-0 gap-4"><SectionHeading compact icon={EmptyFolderIcon}>Historique des PDF</SectionHeading>
-      {history.error ? <RecordError error={history.error} retry={history.refresh} /> : !history.value ? <div role="status" aria-label="Chargement de l’historique" className="grid gap-3"><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></div> : history.value.items.length ? <><ul className="grid min-w-0 divide-y border-y">{history.value.items.map(item => <li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3"><div className="min-w-0"><p className="font-medium">{context.value?.templates.find(model => model.code === item.template_code)?.title ?? `Modèle ${item.template_code}`}</p><p className="wrap-anywhere text-xs text-muted-foreground">{formatInstant(item.created_at)} · {item.filename}</p></div><Button action="download" type="button" variant="outline" disabled={!hydrated || Boolean(downloading)} onClick={() => void download(item)}>{downloading === item.id ? "Téléchargement…" : "Télécharger"}</Button></li>)}</ul><NumberedPages label="Pages des PDF générés" page={page} total={history.value.total} size={20} change={setPage} /></> : <p>Aucun PDF généré pour ce dossier.</p>}
-    </section> : null}
+    {context.value ? <div className="crm-panel"><PreparedDocumentHistory documents={documents} /></div> : null}
   </main>;
 }

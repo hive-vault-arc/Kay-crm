@@ -1,5 +1,32 @@
 # KAY security check for changes
 
+## Prepared-PDF discovery and shared file visibility, 2026-10-27
+
+The source review identified a metadata permission gap: legacy search's generic
+Deal-document projection omitted the finance-template rule already used in file
+reads. It now uses the same catalogue-derived visibility as context, history,
+generic metadata and direct authorization. Restricted models10/11 remain M/A only;
+unknown codes fail closed. The fix applies before counts and in legacy mode, not
+only to new clients. No creator/shared-inventory shortcut grants private scope.
+
+Version2 uses a bounded server-facade header on exact GET search. It is a transport
+opt-in, not authority. Current identity and active canonical parent scope precede
+archive/assignment/template/clean-version predicates, counts and pages. Only filename
+and current catalogue title match; no submitted value, file content, object key,
+permit or financial amount is selected. Generated URLs open only the authorized
+Lead/Deal Documents tab. Uploaded and generated sets are disjoint; version checks
+use EXISTS to avoid duplicate counts. Existing file permit/session/role rechecks
+remain authoritative. No write, migration or stored-artifact change occurred.
+
+Old clients keep their seven-kind/four-field response shape; current visibility
+corrections remain. New frontend refuses unversioned generated hits/counts,
+unknown fields and foreign/incorrect parent destinations. Its facade never trusts
+a caller-supplied version header or query scope. Backend-first rollout is required
+for prepared-PDF filtering.330 database-forbidden backend units,246 frontend units,
+Ruff/mypy/lint/typecheck/build and dependency checks pass. Three real PostgreSQL
+cases remain prepared, not run; no actual scope-race/byte-transfer/native/full-stack
+acceptance or production claim. [Evidence](03-planning/design-migration-evidence/prepared-search-2026-10-27.json).
+
 ## Selected search preview and full results, 2026-10-27
 
 The new `/search` route requires identity before examining URL parameters. It

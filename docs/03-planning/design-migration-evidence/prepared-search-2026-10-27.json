@@ -1,0 +1,142 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "2e3a7db",
+  "scope": "Real versioned prepared-PDF discovery, catalogue-title matching and shared metadata/file visibility; legacy visibility correction applies without opt-in",
+  "checks": [
+    {
+      "command": "./.venv/Scripts/python.exe -m ruff check app/discovery app/generated/service.py app/generated/visibility.py app/files/service.py tests/test_prepared_search.py tests/test_prepared_search_unit.py tests/unit_selection.py",
+      "cwd": "backend",
+      "exitCode": 0
+    },
+    {
+      "command": "./.venv/Scripts/python.exe -m mypy app/discovery app/generated/service.py app/generated/visibility.py app/files/service.py",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 12
+    },
+    {
+      "command": "./.venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 330,
+      "deselectedIntegration": 692,
+      "newUnitCases": 20
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 444,
+      "violations": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 246,
+      "failed": 0,
+      "newCases": 13
+    },
+    {
+      "command": "npm run security:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "runtimeVulnerabilities": 0,
+      "fullVulnerabilities": 0,
+      "exceptionsUsed": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8693,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1238,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "inputs": 254,
+    "drift": 0,
+    "preparedCssRulesParsed": 8
+  },
+  "preparedIntegration": {
+    "file": "backend/tests/test_prepared_search.py",
+    "cases": 3,
+    "executed": false,
+    "coverage": [
+      "Populated Lead/Deal/private/finance scope and exact numbered rows/totals for Agent and both privileged roles",
+      "Real previewed contact transfer removes inherited PDF discovery",
+      "Legacy wire shape and existing file/history restriction",
+      "Unassigned and archived Lead global-search boundary while authorized immutable history remains"
+    ]
+  },
+  "wire": {
+    "header": "X-Kay-Search-Version: 2",
+    "newKind": "generated_document",
+    "newFields": [
+      "search_version:2",
+      "template_title on prepared hits"
+    ],
+    "legacy": "Seven kinds/four hit fields without the header; privacy fix applies in both modes",
+    "rollout": "Backend first for prepared-PDF filter; existing0030 schema, no new migration"
+  },
+  "permissionEvidence": [
+    "Current identity/active canonical parent scope before count and page",
+    "Existing non-null Agent Lead assignment rule",
+    "Catalogue-derived known-code restrictions used by context/history/generic metadata/direct file authorization/search",
+    "Clean-version EXISTS and disjoint uploaded/generated branches",
+    "No snapshot/content/storage-key/permit/financial-amount projection"
+  ],
+  "destinations": {
+    "sourceGap": "Lead ignored tab params; Deal recognized Finance only; neither record Documents tab displayed prepared history",
+    "implemented": "Validated scalar Documents tab on both real routes, lazy initial selection, shared scoped prepared history/download with separate Lead-contact attachments and Lead-enquiry PDFs",
+    "commands": "Existing current-session exact-version one-use permit only; synchronous duplicate lock, stale authority clears both projections, no delivery after unmount",
+    "additionalTests": 6,
+    "testHarness": "URL/timer overrides now actually reach the synthetic VM fixture; full246 suite rerun passed",
+    "visual": "Existing RecordSection/file row/icon/phone tokens; actual rendering remains unverified"
+  },
+  "correctedAttempts": [
+    "Ruff overlong function signature",
+    "Malformed test raw string and late-bound callback",
+    "Root-cwd mypy omitted backend plugin configuration; rerun from backend with explicit venv and no ignores",
+    "History test parse brace, VM prototype comparison and deferred-stage synchronization corrected",
+    "Synthetic VM helper overwrote supplied URL/timer mocks; fixed its explicit override behavior before full-suite rerun"
+  ],
+  "notRun": [
+    "Actual PostgreSQL scopes/transfer/concurrency/performance",
+    "Browser/CUA/app-HTTP and real byte-transfer workflows",
+    "Rendered focus/touch/layout/accessibility and AFTER/product review"
+  ],
+  "unchanged": [
+    "Source PDF originals, stored snapshots/receipts/generated bytes and generation commands",
+    "Database/migrations/services/real data",
+    "Dependencies, approved stack and pinned prototype",
+    "main, push, merge and production"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

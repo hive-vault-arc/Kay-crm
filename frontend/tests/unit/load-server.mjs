@@ -29,7 +29,8 @@ export function loadServer(relative, { env = {}, modules = {}, globals = {} } = 
   runInNewContext(compiled, {
     ...globals,
     exports: loadedModule.exports, module: loadedModule, require: scopedRequire,
-    process: { env }, Buffer, URL, URLSearchParams, Response, setTimeout, clearTimeout,
+    process: { env }, Buffer, URL: globals.URL ?? URL, URLSearchParams, Response,
+    setTimeout: globals.setTimeout ?? setTimeout, clearTimeout: globals.clearTimeout ?? clearTimeout,
   }, { filename });
   return loadedModule.exports;
 }

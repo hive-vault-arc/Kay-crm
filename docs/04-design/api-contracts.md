@@ -1,5 +1,13 @@
 # HTTP contracts for `/api/v1`
 
+Selected prepared-PDF search extension,2026-10-27: exact GET `/search` accepts an
+optional bounded `X-Kay-Search-Version:2`. That mode adds generated_document hits
+with a catalogue title and a Lead/Deal Documents-tab destination. Legacy requests
+retain seven-kind/four-field shapes, with the same current template/parent
+visibility correction applied before all counts. The facade owns the opt-in;
+role/scope/version query overrides remain invalid. No byte URL, snapshot, write
+or migration is added. [Concrete transport/scope contract](discovery-contract.md#prepared-pdf-search-extension-2026-10-27).
+
 Selected dashboard data extension,2026-10-27: new facade-only GET
 /reports/workspace, /reports/workspace/records and /reports/workspace/agents
 provide bounded typed summaries, identical-source numbered headline records and

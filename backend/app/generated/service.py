@@ -23,6 +23,7 @@ from app.files.storage import PrivateStorage
 from app.generated.catalog import BY_CODE, TEMPLATES, Template
 from app.generated.contracts import GenerateRequest
 from app.generated.render import render_pdf
+from app.generated.visibility import visible_template_codes
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
 from app.inventory.models import Offering, Property
@@ -80,7 +81,7 @@ def _defaults(
 
 
 def _visible(identity: CurrentIdentity, template: Template) -> bool:
-    return not template.restricted or identity.user.role in {"administrator", "manager"}
+    return template.code in visible_template_codes(identity.user.role)
 
 
 def context(database: Database, token: str, kind: str, pid: UUID) -> dict[str, object]:
@@ -138,10 +139,11 @@ def history(database: Database, token: str, kind: str, pid: UUID, page: int) -> 
         authorize(session, identity, kind, pid)
         column = Document.enquiry_id if kind == "enquiry" else Document.deal_id
         statement = select(Document).where(
-            column == pid, Document.purpose == "generated", Document.archived_at.is_(None)
+            column == pid,
+            Document.purpose == "generated",
+            Document.archived_at.is_(None),
+            Document.template_code.in_(visible_template_codes(identity.user.role)),
         )
-        if identity.user.role == "agent":
-            statement = statement.where(Document.template_code.not_in(("10", "11")))
         total = session.scalar(select(func.count()).select_from(statement.subquery())) or 0
         rows = session.scalars(
             statement.order_by(Document.created_at.desc(), Document.id.desc())
