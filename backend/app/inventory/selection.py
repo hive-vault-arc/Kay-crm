@@ -4,10 +4,11 @@ from collections.abc import Callable, Sequence
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import case, func, or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.inventory.contracts import InventoryQuery
+from app.inventory.directory_filters import comparison_price
 from app.inventory.hierarchy_models import Block, Development, Floor, UnitType
 from app.inventory.models import Offering, Property
 from app.inventory.reservations import shared_conflicts
@@ -140,13 +141,7 @@ def select_offerings(
         filters.append(
             Property.floor_id.in_(select(Floor.id).where(Floor.block_id == query.block_id))
         )
-    comparison = case(
-        (
-            Offering.kind == "rental",
-            Offering.price_mad * case((Offering.price_period == "month", 12), else_=1),
-        ),
-        else_=case((Offering.kind == "sale", Offering.price_mad), else_=None),
-    )
+    comparison = comparison_price()
     if query.min_comparison_mad is not None:
         filters.append(comparison >= Decimal(query.min_comparison_mad))
     if query.max_comparison_mad is not None:

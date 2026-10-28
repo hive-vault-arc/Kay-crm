@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,30 +16,28 @@ import { useHydrated } from "@/hooks/use-hydrated";
 import { categoryLabels, kindLabels, stateLabels } from "./contracts";
 import { inventoryPageSchema } from "./development-contracts";
 import { LevelPicker } from "./level-picker";
+import { useDirectoryFilters } from "@/features/contacts/use-directory-filters";
+import { InventoryRangeFields } from "./inventory-range-fields";
+import { inventoryRangeDefaults, inventoryRangeError, inventoryRangeQuery } from "./inventory-range";
 import { ArchiveFilter } from "@/features/discovery/archive-filter";
 import { PropertyEditor } from "./property-editor";
 import { InventoryStatus, Price } from "./states";
 
+const defaults = { archive: "active", q: "", block_id: "", floor_id: "", unit_type_id: "", category: "", state: "available", offering_kind: "", page_size: 20, ...inventoryRangeDefaults };
+
 export function UnitDirectory({ id, writable, blockId = "", floorId = "", unitTypeId = "", structureAction }: { id: string; writable: boolean; blockId?: string; floorId?: string; unitTypeId?: string; structureAction?: ReactNode }) {
-  const initial = { archive: "active", q: "", block_id: blockId, floor_id: floorId, unit_type_id: unitTypeId, category: "", state: "available", offering_kind: "", page_size: 20 };
-  const [draft, setDraft] = useState(initial), [filters, setFilters] = useState(initial), [page, setPage] = useState(1);
+  const { draft, setDraft, filters, page, setPage, apply, reset, activeCount, invalid } = useDirectoryFilters(defaults, undefined, undefined, inventoryRangeError, { ...defaults, block_id: blockId, floor_id: floorId, unit_type_id: unitTypeId });
   const hydrated = useHydrated();
-  const result = useQuery(queryPath(`developments/${id}/inventory`, { ...filters, page }), inventoryPageSchema);
-  useEffect(() => {
-    if (draft.q === filters.q) return;
-    const timer = setTimeout(() => { setFilters(current => ({ ...current, q: draft.q })); setPage(1); }, 350);
-    return () => clearTimeout(timer);
-  }, [draft.q, filters.q]);
-  function reset() { const cleared = { ...initial, block_id: "", floor_id: "", unit_type_id: "" }; setDraft(cleared); setFilters(cleared); setPage(1); }
-  const activeCount = Object.entries(filters).filter(([key, value]) => key !== "page_size" && value !== initial[key as keyof typeof initial]).length;
+  const result = useQuery(queryPath(`developments/${id}/inventory`, { ...filters, ...inventoryRangeQuery(filters), page }), inventoryPageSchema);
   return <div className="grid min-w-0 gap-4"><div className="kay-section-head"><h2>Unités physiques</h2><div className="kay-section-actions">{structureAction}{writable ? <RecordDrawer label="Créer une unité" action="create" description="Ajouter un bien physique rattaché à ce programme."><PropertyEditor developmentId={id} /></RecordDrawer> : null}</div></div>
-    <FilterResultsLayout mode="drawer" surface={false} title="Filtres des unités" active={activeCount > 0} activeCount={activeCount} reset={reset} searchControl={<form onSubmit={event => { event.preventDefault(); setFilters(current => ({ ...current, q: draft.q })); setPage(1); }}><Input id="unit-quick-search" aria-label="Rechercher une unité" placeholder="Nom ou référence" disabled={!hydrated} maxLength={160} value={draft.q} onChange={event => setDraft(current => ({ ...current, q: event.target.value }))} /></form>} filters={close => <form aria-label="Filtres des unités" onSubmit={event => { event.preventDefault(); setFilters(draft); setPage(1); close(); }}><fieldset disabled={!hydrated} className="grid gap-5">
+    <FilterResultsLayout mode="drawer" surface={false} title="Filtres des unités" active={activeCount > 0} activeCount={activeCount} reset={reset} searchControl={<form onSubmit={event => { event.preventDefault(); apply(() => {}); }}><Input id="unit-quick-search" aria-label="Rechercher une unité" placeholder="Nom ou référence" disabled={!hydrated} maxLength={160} value={draft.q} onChange={event => setDraft(current => ({ ...current, q: event.target.value }))} /></form>} filters={close => <form aria-label="Filtres des unités" onSubmit={event => { event.preventDefault(); apply(close); }}><fieldset disabled={!hydrated} className="grid gap-5">
       <div className="grid gap-2"><Label htmlFor="unit-category">Type de bien</Label><NativeSelect id="unit-category" value={draft.category} onChange={event => setDraft({ ...draft, category: event.target.value })}><option value="">Tous les biens</option>{Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
       <div className="grid gap-2"><Label htmlFor="unit-availability">Disponibilité</Label><NativeSelect id="unit-availability" value={draft.state} onChange={event => setDraft({ ...draft, state: event.target.value })}><option value="all">Tous les statuts, sans offre inclus</option>{Object.entries(stateLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
       <div className="grid gap-2"><Label htmlFor="unit-kind">Transaction</Label><NativeSelect id="unit-kind" value={draft.offering_kind} onChange={event => setDraft({ ...draft, offering_kind: event.target.value })}><option value="">Toutes les transactions</option>{Object.entries(kindLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
       <LevelPicker parent={id} kind="blocks" label="Bloc" value={draft.block_id} change={value => setDraft({ ...draft, block_id: value, floor_id: "" })} />
       {draft.block_id ? <LevelPicker key={draft.block_id} parent={draft.block_id} kind="floors" label="Étage" value={draft.floor_id} change={value => setDraft({ ...draft, floor_id: value })} /> : <p className="text-xs text-muted-foreground">Choisissez un bloc pour filtrer par étage.</p>}
       <LevelPicker parent={id} kind="unit-types" label="Type réutilisable" value={draft.unit_type_id} change={value => setDraft({ ...draft, unit_type_id: value })} />
+      <InventoryRangeFields prefix="unit" values={draft} change={(key, value) => setDraft(current => ({ ...current, [key]: value }))} error={invalid} />
       <ArchiveFilter value={draft.archive} change={value => setDraft({ ...draft, archive: value })} />
       <div className="flex flex-wrap justify-end gap-2"><Button action="reset" type="button" variant="outline" onClick={reset}>Réinitialiser</Button><Button action="filter" type="submit">Appliquer</Button></div>
     </fieldset></form>}>

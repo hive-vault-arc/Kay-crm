@@ -25,7 +25,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to64 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and preferred Navigation API/classic history fallback source implemented | Remaining inventory/work/admin form parity, responsive focus and native interaction/cache/startup/gesture/frame checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
-| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
+| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; mixed-programme typing and exact directory range filters/counts/facets wired through real reads | Programme phase storage, programme desktop Cards/List, selected property category presentation and project-kind URL synchronization; final per-domain/old-browser reconciliation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery, selected server stationery and approved styled blank appendices with preserved originals/provenance/early replay | Remaining per-field context refinements; old native selectors and final native security/stock/focus/performance checks, including actual PDF transfer/replay |
 | P6 work/schedule | Task/notification entries, compact header inbox/shared full-list recovery, selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); old selectors and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, grouped report cards/attribution tools/tonal drills and alerts, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
@@ -2159,3 +2159,57 @@ Reports checkpoint finalization: repository/index validation passes8821 files/
 42 mappings/13 Mermaid pairs/12 API JSON examples. Cached whitespace and all20
 canonical staged source hashes pass. The protected35 lesson additions/motion
 note remain unstaged; main remains e0bdc09. No native/product acceptance is added.
+
+## Exact selected inventory directory filters,2026-10-28
+
+Continued P0/P4 afterf6125cf. The selected prototype exposes price/rent, surface
+and room criteria that existing CRM query models declared but route/facade
+allowlists rejected and list reads ignored. Properties/units now apply all four
+criteria, developments their own two price bounds, before count/facet/page.
+Kind/state/both prices bind one offering. Shared exact Decimal comparison retains
+sale and BR-08 annual ordinary rent; holiday amounts are not invented annual
+prices. Physical dimensions never borrow reusable-type defaults. Current identity,
+shared stock scope and explicit withdrawn-campaign behavior remain intact.
+No schema, migration, business write, permission or dependency is added.
+
+The three views share labelled shadcn/Tailwind fields and common filter recovery.
+Raw comma drafts normalize only for valid queries; exact BigInt price ordering
+avoids floating-point loss. Invalid drafts keep applied page/results and the
+drawer open. Unit hierarchy links count as active and reset immediately.
+Properties use the selected common reference frame instead of the old oversized
+workbench; default20 has a matching option. Desktop property List remains a
+retained preference while phones render the selected compact image cards.
+
+532 frontend units pass, including12 new model/controller/facade cases; lint,
+types, Next16.4.2 build and compiled-history checks pass. Backend connection-
+forbidden unit runner passes476/704 integration deselected, including13 new pure,
+compiled SQL and completely stubbed in-process ASGI cases. Explicit venv Ruff
+check/format nine paths and backend-configured mypy219 pass. Four PostgreSQL
+cases and one browser journey are prepared/type-checked, not executed. Corrections
+retain the existing positive comparison validator and ES2017 target: zero price
+tests were corrected and BigInt constructors replace newer literal syntax.
+An initial root-cwd mypy call used the wrong config; the documented backend-cwd
+command passes without unrelated settings/finance edits.
+
+[Contract](../04-design/inventory-directory-local.md) and
+[evidence](design-migration-evidence/inventory-directory-2026-10-28.json).
+Ali's current Frontend Taste default now includes app screens; its app reference
+is read and relevant field/spacing/state/phone guidance applies. A new style draw
+would conflict with the selected reference, so its identity/layout are retained.
+Original-machine mandatory skills remain unavailable/not claimed; AFTER stays.
+No browser/CUA/CDP/HTTP workaround, real DB/service/private config/records,
+migration/main/push/merge/deploy. Real SQL/current scope/performance, native/CI/
+AFTER/owner acceptance and full P0-P8 reconciliation remain open.
+
+Concrete next P4 gaps: programme preparation/marketing phase has no persisted
+equivalent; programme desktop Cards/List is missing; selected property categories
+still use inherited multiselect presentation; project-kind URL Back/Forward needs
+reconciliation. This checkpoint does not claim these or the full branch finished.
+
+Inventory checkpoint finalization: Frontend Taste app static lint checks five
+changed UI sources with0 findings. Repository/index validation passes8830 files/
+0 refused/14 ignore probes; repository-only docs pass22 sprints/1260 links/
+42 mappings/13 Mermaid pairs/12 API JSON samples. Cached whitespace and all22
+canonical staged source hashes pass. All254 frozen inputs retain their hashes.
+The protected35 lesson additions and motion note remain unstaged; main remains
+e0bdc09. No native/full-stack or product acceptance is added.

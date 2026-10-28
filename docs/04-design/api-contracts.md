@@ -1,5 +1,12 @@
 # HTTP contracts for `/api/v1`
 
+Selected inventory ranges,2026-10-28: existing property/development/unit query
+fields now reach route/facade allowlists and real list predicates before
+counts/facets/pages. Exact same-offering sale/annual ordinary rent bounds retain
+BR-08; physical bounds apply only to properties/units, and whole-development
+bounds do not borrow child prices. No new endpoint, grant, migration or write.
+[Current contract](inventory-directory-local.md).
+
 Selected Recherches presentation,2026-10-27: the existing SP-10 endpoints,
 scoped Contact detail and contact timeline now supply a twenty-row card workspace
 with inline selections and one focused editor. Commands retain strict versioned

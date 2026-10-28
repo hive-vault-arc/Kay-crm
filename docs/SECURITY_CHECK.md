@@ -1,5 +1,24 @@
 # KAY security check for changes
 
+## Selected inventory directory ranges,2026-10-28
+
+Existing read models now reach strict route/facade allowlists and bounded exact
+Decimal predicates before facets/counts/pages. Kind/state/minimum/maximum bind
+the same correlated offering. Development price bounds use its own offerings;
+physical area/rooms compare actual properties. Current identity precedes queries,
+with no owner/contact join, permission widening, write, migration, new storage,
+service, dependency or log. Frontend normalization does not substitute for server
+validation. Unknown facts do not satisfy requested bounds; no holiday annual
+conversion is invented. Invalid drafts preserve applied state and page.
+
+476 connection-forbidden units pass, including13 new pure/SQL/stubbed in-process
+ASGI cases;704 integration cases deselected. Frontend532 units/lint/types/build/
+compiled history pass; Ruff check/format nine paths and backend mypy219 pass.
+Four real SQL cases and one browser journey are prepared/not run. No app-access
+workaround, real DB/service/private config/records or main/push/merge/deployment.
+Real SQL/current-scope/performance and native/CI/AFTER/product gates remain open.
+[Contract and evidence](04-design/inventory-directory-local.md).
+
 ## Selected supporting reports,2026-10-28
 
 Existing read-only report endpoints/session/facade/datasets and authority remain.

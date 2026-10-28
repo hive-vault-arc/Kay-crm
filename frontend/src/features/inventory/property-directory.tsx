@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
 import { FilterResultsLayout } from "@/components/shared/filter-results-layout";
@@ -18,6 +18,8 @@ import { PropertyCard, PropertyList } from "./property-card";
 import { PropertyFilterFields } from "./property-filters";
 import { propertyDefaults, propertyListPath, type PropertyFilters } from "./property-directory-model";
 import { usePhoneLayout } from "@/hooks/use-phone-layout";
+import { useDirectoryFilters } from "@/features/contacts/use-directory-filters";
+import { inventoryRangeError } from "./inventory-range";
 
 export function PropertyDirectory({ role, initialKind = "standalone" }: { role: StaffRole; initialKind?: "standalone" | "developments" }) {
   const [tab, setTab] = useState(initialKind);
@@ -32,18 +34,13 @@ export function PropertyDirectory({ role, initialKind = "standalone" }: { role: 
 }
 function StandaloneDirectory({ role }: { role: StaffRole }) {
   const phone = usePhoneLayout();
-  const [filters, setFilters] = useState(propertyDefaults), [search, setSearch] = useState("");
-  const [page, setPage] = useState(1), [view, setView] = useState("cards");
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  useEffect(() => () => clearTimeout(timer.current), []);
+  const { draft, setDraft, filters, page, setPage, apply, reset, activeCount, invalid } = useDirectoryFilters(propertyDefaults, undefined, undefined, inventoryRangeError);
+  const [view, setView] = useState("cards");
   const query = useQuery(propertyListPath(filters, page), propertiesSchema);
-  function change<K extends keyof PropertyFilters>(key: K, value: PropertyFilters[K]) { setFilters(current => ({ ...current, [key]: value })); setPage(1); }
-  function searchChange(value: string) { setSearch(value); clearTimeout(timer.current); timer.current = setTimeout(() => change("q", value), 250); }
-  function reset() { clearTimeout(timer.current); setSearch(""); setFilters(propertyDefaults); setPage(1); }
-  const active = Object.entries(filters).some(([key, value]) => value !== propertyDefaults[key as keyof PropertyFilters]);
-  return <FilterResultsLayout className="projects-workbench" title="Affiner les biens" active={active} panelHeading={<div className="project-filter-heading flex items-center justify-between gap-2"><h2 className="text-section">Affiner les biens</h2><Button action="reset" variant="quiet" size="compact" onClick={reset}>Réinitialiser</Button></div>} filters={() => <PropertyFilterFields filters={filters} search={search} searchChange={searchChange} change={change} reset={reset} value={query.value} />}>
+  function change<K extends keyof PropertyFilters>(key: K, value: PropertyFilters[K]) { setDraft(current => ({ ...current, [key]: value })); }
+  return <FilterResultsLayout reference title="Filtres des biens" active={activeCount > 0} activeCount={activeCount} reset={reset} filters={close => <PropertyFilterFields filters={draft} change={change} reset={reset} value={query.value} error={invalid} apply={() => apply(close)} />}>
     <Tabs value={phone ? "cards" : view} onValueChange={setView} className="gap-3">
-      <div className="projects-results-toolbar flex min-w-0 flex-wrap items-center justify-between gap-3"><p role="status" className="text-base">{query.value ? `${query.value.total} bien${query.value.total > 1 ? "s" : ""} correspondant${query.value.total > 1 ? "s" : ""}` : "Chargement des biens…"}</p><div className="flex min-w-0 flex-wrap items-center gap-4"><TabsList aria-label="Présentation des biens" className="kay-project-view-options"><TabsTrigger value="cards"><DashboardIcon aria-hidden="true" className="mr-2 size-5" />Cartes</TabsTrigger><TabsTrigger value="list"><TaskIcon aria-hidden="true" className="mr-2 size-5" />Liste</TabsTrigger></TabsList><div className="project-sort"><NativeSelect aria-label="Trier par" value={filters.sort} onChange={event => change("sort", event.target.value)}><option value="-updated_at">Plus récents</option><option value="reference">Référence</option></NativeSelect></div></div></div>
+      <div className="projects-results-toolbar flex min-w-0 flex-wrap items-center justify-between gap-3"><p role="status" className="text-base">{query.value ? `${query.value.total} bien${query.value.total > 1 ? "s" : ""} correspondant${query.value.total > 1 ? "s" : ""}` : "Chargement des biens…"}</p><div className="flex min-w-0 flex-wrap items-center gap-4"><TabsList aria-label="Présentation des biens" className="kay-project-view-options"><TabsTrigger value="cards"><DashboardIcon aria-hidden="true" className="mr-2 size-5" />Cartes</TabsTrigger><TabsTrigger value="list"><TaskIcon aria-hidden="true" className="mr-2 size-5" />Liste</TabsTrigger></TabsList><div className="project-sort"><NativeSelect aria-label="Trier par" value={draft.sort} onChange={event => change("sort", event.target.value)}><option value="-updated_at">Plus récents</option><option value="reference">Référence</option></NativeSelect></div></div></div>
       {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <div role="status" className="kay-project-grid" aria-label="Chargement des cartes de biens">{Array.from({ length: 4 }, (_, index) => <div key={index} className="project-card-skeleton rounded-md border bg-card" aria-hidden="true" />)}</div> : <>
         {!query.value.items.length ? <div role="status" className="surface grid gap-3"><h2 className="text-section">Aucun bien correspondant</h2><p>Modifiez les filtres ou revenez à la première page.</p><Button action="reset" variant="outline" onClick={reset} className="justify-self-start">Réinitialiser les filtres</Button></div> : <><TabsContent value="cards"><div className="kay-project-grid">{query.value.items.map(property => <PropertyCard key={property.id} property={property} />)}</div></TabsContent><TabsContent value="list"><PropertyList properties={query.value.items} /></TabsContent></>}
         {query.value.total > filters.page_size || page > 1 ? <NumberedPages label="Pages des biens" page={page} total={query.value.total} size={query.value.page_size} change={setPage} /> : null}

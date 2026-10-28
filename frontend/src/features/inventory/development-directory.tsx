@@ -14,17 +14,21 @@ import { useHydrated } from "@/hooks/use-hydrated";
 import { developmentsSchema, developmentFieldsSchema } from "./development-contracts";
 import { categoryLabels, kindLabels, stateLabels } from "./contracts";
 import { InventoryCard } from "./inventory-card";
+import { InventoryRangeFields } from "./inventory-range-fields";
+import { inventoryRangeDefaults, inventoryRangeError, inventoryRangeQuery } from "./inventory-range";
 
-const defaults = { archive: "active", q: "", category: "", offering_kind: "", state: "", sort: "-updated_at", page_size: 20 };
+const defaults = { archive: "active", q: "", category: "", offering_kind: "", state: "", sort: "-updated_at", page_size: 20, ...inventoryRangeDefaults };
 export function DevelopmentDirectory({ writable }: { writable: boolean }) {
-  const { draft, setDraft, filters, page, setPage, apply, reset, activeCount } = useDirectoryFilters(defaults);
+  const { draft, setDraft, filters, page, setPage, apply, reset, activeCount, invalid } = useDirectoryFilters(defaults, undefined, undefined, inventoryRangeError);
   const hydrated = useHydrated();
-  const result = useQuery(queryPath("developments", { ...filters, page }), developmentsSchema);
+  const result = useQuery(queryPath("developments", { ...filters, ...inventoryRangeQuery(filters), page }), developmentsSchema);
   return <FilterResultsLayout title="Filtres des programmes" reference active={activeCount > 0} activeCount={activeCount} reset={reset} filters={close => <form aria-label="Filtres des programmes" onSubmit={event => { event.preventDefault(); apply(close); }}><fieldset disabled={!hydrated} className="grid gap-4">
     <div className="grid gap-2"><Label htmlFor="development-search">Rechercher</Label><Input placeholder="Nom ou référence" id="development-search" maxLength={160} value={draft.q} onChange={event => setDraft({ ...draft, q: event.target.value })} /></div>
     <div className="grid gap-2"><Label htmlFor="development-list-category">Catégorie</Label><NativeSelect id="development-list-category" value={draft.category} onChange={event => setDraft({ ...draft, category: event.target.value })}><option value="">Toutes les catégories</option>{developmentFieldsSchema.shape.category.options.map(value => <option key={value} value={value}>{value === "mixed" ? "Mixte" : categoryLabels[value]}</option>)}</NativeSelect></div>
     <div className="grid gap-2"><Label htmlFor="development-list-kind">Offre du programme</Label><NativeSelect id="development-list-kind" value={draft.offering_kind} onChange={event => setDraft({ ...draft, offering_kind: event.target.value })}><option value="">Vente et location</option>{(["sale", "rental"] as const).map(value => <option key={value} value={value}>{kindLabels[value]}</option>)}</NativeSelect></div>
     <div className="grid gap-2"><Label htmlFor="development-list-state">État de l’offre</Label><NativeSelect id="development-list-state" value={draft.state} onChange={event => setDraft({ ...draft, state: event.target.value })}><option value="">Tous les états</option>{Object.entries(stateLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
+    <InventoryRangeFields prefix="development" values={draft} dimensions={false} change={(key, value) => setDraft(current => ({ ...current, [key]: value }))} error={invalid} />
+    <p className="text-xs text-muted-foreground">Le prix filtre les offres du programme entier, pas celles de ses unités.</p>
     <details className="crm-filter-advanced"><summary>Affichage et archives</summary><div className="grid gap-3 pt-3"><ArchiveFilter value={draft.archive} change={value => setDraft({ ...draft, archive: value })} /><Label htmlFor="development-sort">Trier par</Label><NativeSelect id="development-sort" value={draft.sort} onChange={event => setDraft({ ...draft, sort: event.target.value })}><option value="-updated_at">Modification récente</option><option value="reference">Référence</option></NativeSelect></div></details>
     <div className="flex flex-wrap gap-2"><Button action="filter" variant="outline" type="submit">Appliquer</Button><Button action="reset" variant="quiet" type="button" onClick={reset}>Réinitialiser</Button></div>
   </fieldset></form>}>

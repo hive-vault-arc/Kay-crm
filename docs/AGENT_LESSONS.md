@@ -1809,3 +1809,15 @@ positive. Render the pagination escape outside the nonempty branch and distingui
 that state from a genuine zero total. Keep logical period identity separate from
 the response timestamp so a quiet refresh does not reset the retained page. When
 its original trigger disappears, back navigation must focus the returned heading.
+
+
+## Follow a declared filter through every read boundary (2026-10-28)
+
+A query field existing in Pydantic/Zod does not prove it reaches route/facade
+allowlists or actual count/facet/page SQL. Trace all three, including same-offer
+correlation and inherited positive/decimal validators. Keep price/rent comparisons
+exact, and distinguish compiled SQL/stubbed ASGI from real PostgreSQL evidence.
+Filter deep-link initialization is separate from reset defaults; invalid drafts
+retain applied page/results until corrected. A correct backend-configured mypy
+command runs from backend, rather than changing unrelated code to satisfy a
+root-cwd invocation with different settings.

@@ -1,4 +1,5 @@
 import "server-only";
+import { inventoryRangeError } from "./inventory-range";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { boundedJson, frontendOrigin } from "@/lib/auth/facade";
@@ -22,6 +23,11 @@ export async function relayInventory(key: string, request: Request, requestId: s
   if ((url.search && (!list || mutation)) || new Set(params.map(([name]) => name)).size !== params.length || !parsedQuery.safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
   const allowed = suffix === "stock-review" ? ["offering_id"] : ["history", "blocks", "floors", "unit-types"].includes(suffix) ? ["page", "page_size"] : suffix === "inventory" ? ["page", "page_size", "q", "category", "block_id", "floor_id", "unit_type_id", "offering_kind", "state"] : key === "offerings" ? ["page", "page_size", "property_id", "development_id", "kind", "state", "target_level", "q", "category", "block_id", "floor_id", "unit_type_id", "min_comparison_mad", "max_comparison_mad", "min_area_sqm", "min_rooms"] : key === "properties" ? ["page", "page_size", "q", "category", "offering_kind", "state", "sort", "development_id", "block_id", "floor_id", "unit_type_id", "target_level"] : key === "developments" ? ["page", "page_size", "q", "category", "offering_kind", "state", "sort"] : [];
   if (key === "offerings") allowed.push("offering_id");
+  if (["properties", "developments"].includes(key) || suffix === "inventory") {
+    allowed.push("min_comparison_mad", "max_comparison_mad");
+    if (key !== "developments") allowed.push("min_area_sqm", "min_rooms");
+  }
+  if (inventoryRangeError(Object.fromEntries(params))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (key === "properties") allowed.push("categories");
   if (["properties", "developments"].includes(key) || suffix === "inventory") allowed.push("archive");
   if (allowed && params.some(([name]) => !allowed.includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);

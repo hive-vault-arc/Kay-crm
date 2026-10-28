@@ -72,6 +72,10 @@ def properties(
             "unit_type_id",
             "target_level",
             "archive",
+            "min_comparison_mad",
+            "max_comparison_mad",
+            "min_area_sqm",
+            "min_rooms",
         },
     )
     return read_list(database(request), token, "properties", query)

@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+Selected inventory filters,2026-10-28: properties, programmes and unit drawers
+share labelled price/rent ranges; physical filters add surface/rooms. Invalid
+drafts retain applied results/page, explicit valid Apply closes, and reset clears
+deep-linked unit hierarchy. Properties use the common reference frame; desktop
+view preference survives cards-only phones. Native acceptance remains pending.
+[Contract](inventory-directory-local.md).
+
 Selected header inbox,2026-10-28: compact Popover with ten server-backed entries,
 quick filters and read icons replaces the first-click large Sheet. Tout voir
 opens the shared full drawer with the active filter; `/notifications` remains.

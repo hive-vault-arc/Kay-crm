@@ -28,7 +28,20 @@ PAGE = {"page", "page_size"}
 def developments(
     request: Request, token: Proof, query: Annotated[DevelopmentQuery, Query()]
 ) -> dict[str, object]:
-    validate_query(request, PAGE | {"q", "category", "offering_kind", "state", "sort", "archive"})
+    validate_query(
+        request,
+        PAGE
+        | {
+            "q",
+            "category",
+            "offering_kind",
+            "state",
+            "sort",
+            "archive",
+            "min_comparison_mad",
+            "max_comparison_mad",
+        },
+    )
     return read_hierarchy(database(request), token, "developments", None, query)
 
 
@@ -66,6 +79,10 @@ def inventory(request: Request, token: Proof, did: UUID, query: PageQuery) -> di
             "offering_kind",
             "state",
             "archive",
+            "min_comparison_mad",
+            "max_comparison_mad",
+            "min_area_sqm",
+            "min_rooms",
         },
     )
     if "state" not in request.query_params:

@@ -1,0 +1,57 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { randomUUID } from "node:crypto";
+import { loadServer } from "./load-server.mjs";
+const vocabulary=loadServer("src/features/contacts/qualification-contracts.ts"),contacts=loadServer("src/features/contacts/contracts.ts",{modules:{"./qualification-contracts":vocabulary}});
+const contracts=loadServer("src/features/inventory/contracts.ts",{modules:{"@/features/contacts/contracts":contacts}});
+const range=loadServer("src/features/inventory/inventory-range.ts",{modules:{"./contracts":contracts}});
+const model=loadServer("src/features/inventory/property-directory-model.ts",{modules:{"./contracts":contracts,"./inventory-range":range}});
+const development=loadServer("src/features/inventory/development-contracts.ts",{modules:{"./contracts":contracts,"@/features/contacts/contracts":contacts}});
+const plain=value=>JSON.parse(JSON.stringify(value));
+test("Inventory comparisons preserve exact large decimal strings, comma input and integer room bounds",()=>{
+ const values={...range.inventoryRangeDefaults,min_comparison_mad:" 9007199254740993,41 ",max_comparison_mad:"9007199254740993,42",min_area_sqm:"94,25",min_rooms:"0003"};
+ assert.equal(range.inventoryRangeError(values),"");assert.deepEqual(plain(range.inventoryRangeQuery(values)),{min_comparison_mad:"9007199254740993.41",max_comparison_mad:"9007199254740993.42",min_area_sqm:"94.25",min_rooms:"3"});
+ const path=model.propertyListPath({...model.propertyDefaults,...values},2),url=new URL(path,"https://synthetic.invalid");assert.equal(url.searchParams.get("min_comparison_mad"),"9007199254740993.41");assert.equal(url.searchParams.get("max_comparison_mad"),"9007199254740993.42");assert.equal(url.searchParams.get("min_area_sqm"),"94.25");assert.equal(url.searchParams.get("min_rooms"),"3");assert.equal(url.searchParams.get("page"),"2");assert.equal(url.searchParams.get("target_level"),"standalone");
+});
+test("Invalid, zero, overlong, fractional-room and reversed ranges never become valid filters",()=>{
+ for(const patch of [{min_comparison_mad:"0"},{max_comparison_mad:"0.00"},{min_comparison_mad:"-1"},{min_comparison_mad:"1e3"},{min_comparison_mad:"1.001"},{min_comparison_mad:"9".repeat(19)},{min_area_sqm:"0"},{min_rooms:"0"},{min_rooms:"1001"},{min_rooms:"1.5"},{min_rooms:"1.0"},{min_rooms:"1e2"},{min_comparison_mad:"9007199254740993.42",max_comparison_mad:"9007199254740993.41"}])assert.ok(range.inventoryRangeError({...range.inventoryRangeDefaults,...patch}),JSON.stringify(patch));
+ assert.equal(range.inventoryRangeError(range.inventoryRangeDefaults),"");assert.equal(range.inventoryRangeError({...range.inventoryRangeDefaults,min_comparison_mad:"0.01",max_comparison_mad:"0.01",min_area_sqm:"0.01",min_rooms:"1000"}),"");
+});
+
+const jsx=(type,props,key)=>({type,props,key}),runtime={jsx,jsxs:jsx,Fragment:"Fragment"};
+function find(node,type){if(!node||typeof node!=="object")return[];if(Array.isArray(node))return node.flatMap(child=>find(child,type));return[...(node.type===type||typeof type==="function"&&type(node)?[node]:[]),...find(node.props?.children,type)];}
+function text(node){return node==null||typeof node==="boolean"?"":Array.isArray(node)?node.map(text).join(" "):typeof node==="object"?text(node.props?.children):String(node);}
+function harness(){const slots=[],effects=[],timers=new Map();let cursor=0,number=0;return{react:{useState(initial){const i=cursor++;if(!(i in slots))slots[i]=typeof initial==="function"?initial():initial;return[slots[i],next=>{slots[i]=typeof next==="function"?next(slots[i]):next;}];},useEffect(run,deps){const i=cursor++,old=slots[i];if(!old||deps.some((value,n)=>!Object.is(value,old.deps[n]))){const current={deps};slots[i]=current;effects.push(()=>{old?.cleanup?.();current.cleanup=run();});}}},globals:{setTimeout(fn){timers.set(++number,fn);return number;},clearTimeout(id){timers.delete(id);}},render(run){cursor=0;const result=run();effects.splice(0).forEach(effect=>effect());return result;},flush(){const current=[...timers.values()];timers.clear();current.forEach(fn=>fn());},clear(){slots.forEach(slot=>slot?.cleanup?.());slots.length=0;timers.clear();}};}
+const ui={"react/jsx-runtime":runtime,"next/link":{default:"Link"},"next/navigation":{useRouter:()=>({replace(){}})},"@/components/icons":{DashboardIcon:"Icon",TaskIcon:"Icon",FilterIcon:"Icon",SearchIcon:"Icon"},"@/components/shared/page-header":{PageHeader:"Header"},"@/components/ui/button":{Button:"Button"},"@/components/ui/input":{Input:"Input"},"@/components/ui/label":{Label:"Label"},"@/components/ui/checkbox":{Checkbox:"Checkbox"},"@/components/ui/native-select":{NativeSelect:"Select"},"@/components/ui/tabs":{Tabs:"Tabs",TabsContent:"Content",TabsList:"TabList",TabsTrigger:"Tab"},"@/components/shared/data-table":{DataTable:"Table"},"@/components/shared/filter-results-layout":{FilterResultsLayout:"Layout"},"@/components/shared/record-drawer":{RecordDrawer:"Drawer"},"@/features/contacts/numbered-pages":{NumberedPages:"Pages"},"@/features/contacts/record-states":{RecordError:"Error"},"@/features/discovery/archive-filter":{ArchiveFilter:"Archive"},"@/hooks/use-hydrated":{useHydrated:()=>true},"./contracts":contracts,"./development-contracts":development,"./property-directory-model":model,"./inventory-range":range,"./inventory-range-fields":{InventoryRangeFields:"RangeFields"},"./property-filters":{PropertyFilterFields:"FilterFields"},"./property-card":{PropertyCard:"Card",PropertyList:"List"},"./development-directory":{DevelopmentDirectory:"Developments"},"./inventory-card":{InventoryCard:"Card"},"./level-picker":{LevelPicker:"Level"},"./property-editor":{PropertyEditor:"Editor"},"./states":{InventoryStatus:"Status",Price:"Price"}};
+const queryPath=(kind,values)=>{const query=new URLSearchParams();for(const[key,value]of Object.entries(values))if(value!==""&&value!==undefined)query.set(key,String(value));return`/api/v1/${kind}?${query}`;};
+function setup(kind,{phone=false,initial={}}={}){
+ const h=harness(),paths=[],id=randomUUID();let filter;
+ const actual=loadServer("src/features/contacts/use-directory-filters.ts",{modules:{react:h.react},globals:h.globals});
+ const modules={...ui,react:h.react,"@/features/contacts/use-directory-filters":{useDirectoryFilters(...args){filter=actual.useDirectoryFilters(...args);return filter;}},"@/hooks/use-phone-layout":{usePhoneLayout:()=>phone},"@/features/contacts/use-query":{queryPath,useQuery(path){paths.push(path);return{value:{items:[],total:0,page:1,page_size:20,has_next:false,has_previous:false,category_counts:Object.fromEntries(contracts.propertyCategoryOrder.map(key=>[key,0]))},refresh(){}};}}};
+ const loaded=loadServer(`src/features/inventory/${kind}.tsx`,{modules});let component=loaded[kind==="unit-directory"?"UnitDirectory":"DevelopmentDirectory"];
+ if(kind==="property-directory"){const tree=h.render(()=>loaded.PropertyDirectory({role:"manager"}));component=find(tree,node=>typeof node.type==="function"&&node.type.name==="StandaloneDirectory")[0].type;h.clear();}
+ return{h,paths,get filter(){return filter;},setPhone(value){phone=value;},render(){return h.render(()=>component({role:"manager",writable:true,id,...initial}));}};
+}
+for(const kind of ["property-directory","development-directory","unit-directory"])test(`Actual ${kind} applies only validated ranges, resets pages and leaves invalid draft recoverable`,()=>{
+ const state=setup(kind);state.render();state.filter.setPage(3);state.render();state.filter.setDraft(current=>({...current,min_comparison_mad:"100,01",max_comparison_mad:"200,02"}));state.render();state.h.flush();state.render();
+ assert.ok(state.paths.at(-1).includes("min_comparison_mad=100.01"));assert.ok(state.paths.at(-1).includes("max_comparison_mad=200.02"));assert.ok(state.paths.at(-1).includes("page=1"));
+ state.filter.setPage(2);state.render();state.filter.setDraft(current=>({...current,min_comparison_mad:"300"}));state.render();state.h.flush();state.render();assert.equal(state.filter.page,2);assert.ok(state.paths.at(-1).includes("min_comparison_mad=100.01"));assert.ok(state.filter.invalid);let closed=false;state.filter.apply(()=>{closed=true;});assert.equal(closed,false);
+ state.filter.setDraft(current=>({...current,max_comparison_mad:"400"}));state.render();state.filter.apply(()=>{closed=true;});state.render();state.filter.setPage(2);state.render();state.h.flush();state.render();assert.equal(closed,true);assert.equal(state.filter.page,2);assert.ok(state.paths.at(-1).includes("min_comparison_mad=300"));
+ state.filter.reset();state.render();assert.equal(state.filter.invalid,"");assert.equal(state.filter.page,1);assert.ok(!state.paths.at(-1).includes("min_comparison_mad"));state.h.clear();
+});
+test("Unit deep-link hierarchy is counted, preserved initially and cleared immediately by reset",()=>{
+ const block=randomUUID(),floor=randomUUID(),type=randomUUID(),state=setup("unit-directory",{initial:{blockId:block,floorId:floor,unitTypeId:type}});state.render();assert.equal(state.filter.activeCount,3);assert.ok(state.paths.at(-1).includes(block));state.filter.reset();state.render();assert.equal(state.filter.activeCount,0);for(const id of [block,floor,type])assert.ok(!state.paths.at(-1).includes(id));state.h.clear();
+});
+test("Properties use the shared filter frame and retain desktop list preference while phones show image cards",()=>{
+ const state=setup("property-directory");let tree=state.render();assert.equal(find(tree,"Layout")[0].props.reference,true);assert.equal(find(tree,"Layout")[0].props.className,undefined);
+ find(tree,"Tabs")[0].props.onValueChange("list");tree=state.render();assert.equal(find(tree,"Tabs")[0].props.value,"list");state.setPhone(true);tree=state.render();assert.equal(find(tree,"Tabs")[0].props.value,"cards");state.setPhone(false);tree=state.render();assert.equal(find(tree,"Tabs")[0].props.value,"list");state.h.clear();
+});
+test("Range labels and errors are unique to each context; programme range fields contain no physical dimensions",()=>{
+ const {InventoryRangeFields}=loadServer("src/features/inventory/inventory-range-fields.tsx",{modules:ui}),changed=[];
+ const values={...range.inventoryRangeDefaults,min_rooms:"1001"};const tree=InventoryRangeFields({prefix:"unit",values,change:(key,value)=>changed.push([key,value]),error:range.inventoryRangeError(values)});assert.equal(find(tree,"Input").length,4);assert.equal(find(tree,"Input").find(node=>node.props.id==="unit-min_rooms").props["aria-invalid"],true);assert.ok(find(tree,"p").some(node=>node.props.id==="unit-range-error"));
+ find(tree,"Input")[0].props.onChange({target:{value:"123,45"}});assert.deepEqual(changed,[["min_comparison_mad","123,45"]]);
+ const programme=InventoryRangeFields({prefix:"programme",values:range.inventoryRangeDefaults,dimensions:false,change(){}});assert.equal(find(programme,"Input").length,2);assert.ok(text(programme).includes("locations vacances"));
+});
+test("The default property page size20 has a matching native option and explicit Apply closes its filter drawer",()=>{
+ const {PropertyFilterFields}=loadServer("src/features/inventory/property-filters.tsx",{modules:ui});let applied=0;const tree=PropertyFilterFields({filters:model.propertyDefaults,change(){},reset(){},apply(){applied++;}});const size=find(tree,"Select").find(node=>node.props.id==="inventory-size");assert.ok(find(size,"option").some(node=>node.props.value===20));find(tree,"form")[0].props.onSubmit({preventDefault(){}});assert.equal(applied,1);
+});

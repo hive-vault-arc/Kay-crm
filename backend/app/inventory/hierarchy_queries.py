@@ -13,6 +13,7 @@ from app.db.session import Database
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
 from app.inventory.contracts import DevelopmentQuery, InventoryQuery
+from app.inventory.directory_filters import directory_filters
 from app.inventory.hierarchy_models import Block, Development, DevelopmentOwner, Floor, UnitType
 from app.inventory.hierarchy_rules import development_record
 from app.inventory.models import InventoryEvent, Offering, Property
@@ -187,15 +188,7 @@ def read_hierarchy(
                 )
             if query.category:
                 filters.append(Development.category == query.category)
-            if (query.state and query.state != "all") or query.offering_kind:
-                campaign = select(Offering.id).where(Offering.development_id == Development.id)
-                if query.state and query.state != "all":
-                    campaign = campaign.where(Offering.state == query.state)
-                if query.offering_kind:
-                    campaign = campaign.where(Offering.kind == query.offering_kind)
-                if query.state != "withdrawn":
-                    campaign = campaign.where(Offering.is_current)
-                filters.append(campaign.exists())
+            filters.extend(directory_filters(query, development=True))
             total = (
                 session.scalar(select(func.count()).select_from(Development).where(*filters)) or 0
             )
@@ -294,15 +287,7 @@ def read_hierarchy(
                             Property.marketing_name.ilike(pattern),
                         )
                     )
-                if (query.state and query.state != "all") or query.offering_kind:
-                    campaign = select(Offering.id).where(Offering.property_id == Property.id)
-                    if query.state and query.state != "all":
-                        campaign = campaign.where(Offering.state == query.state)
-                    if query.offering_kind:
-                        campaign = campaign.where(Offering.kind == query.offering_kind)
-                    if query.state != "withdrawn":
-                        campaign = campaign.where(Offering.is_current)
-                    conditions.append(campaign.exists())
+                conditions.extend(directory_filters(query))
                 total = (
                     session.scalar(select(func.count()).select_from(Property).where(*conditions))
                     or 0

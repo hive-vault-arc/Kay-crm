@@ -1,5 +1,19 @@
 # KAY QA command register
 
+Selected inventory ranges,2026-10-28: frontend `npm run test:unit`:532 pass,
+0 failed/skipped;12 new actual range/controller/facade cases. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and `npm run history:check` pass.
+64 glyphs/105 consumers/348 icon sites and495 Button sites have0 violations.
+Backend cwd `backend`, explicit `.venv/Scripts/python.exe -m tests.unit_runner`:
+476 pass/704 integration deselected;13 new pure/SQL compilation/stubbed ASGI
+cases. Explicit venv Ruff check/format pass nine changed Python paths; cwd
+backend `.venv/Scripts/python.exe -m mypy app` passes219 sources. An initial
+root-cwd mypy invocation missed backend configuration and reported unrelated
+settings/finance errors; the correct documented invocation passes without
+unrelated edits. Four PostgreSQL cases and one browser journey are prepared,
+not executed. No DB/listener/app inspection or native acceptance is claimed.
+[Evidence](03-planning/design-migration-evidence/inventory-directory-2026-10-28.json).
+
 Selected supporting reports,2026-10-28: frontend `npm run test:unit`:520 pass,
 0 failed/skipped;15 added report model/controller/render/navigation cases.
 `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
