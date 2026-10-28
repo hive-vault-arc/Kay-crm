@@ -1,5 +1,20 @@
 # KAY QA command register
 
+Selected prospect status/inline recovery,2026-10-28: frontend cwd
+`npm run test:unit`:666 pass/0 failed/skipped,13 added actual hook/API-helper/
+dialog/inline/metadata/board/facade cases in the registered enquiry suite.
+Existing status and inline retry cases retain coverage using the actual hook
+and a strict full status fixture. `npm run lint`, `npm run typecheck`,
+`npm run build` (Next16.4.2) and `npm run history:check` pass.64 glyphs/104
+consumers/345 icon sites and499 Button sites have0 violations. Static Frontend
+Taste app lint covers5 changed UI sources,0 findings. An unused import warning
+was removed; metadata transient-failure ownership and owned-refresh self-lock
+are explicitly covered. Two native status/description cases are prepared/
+typechecked, not run. Backend unchanged/not rerun. No actual app/DB/account/
+config/service/worker/transfer access, migration, workaround, native/SQL/CI/AFTER/
+product or main/push/merge/deploy acceptance.
+[Contract](04-design/prospect-edit-recovery-local.md).
+
 Selected notes/activities/assignment recovery,2026-10-28: frontend cwd
 `npm run test:unit`:653 pass/0 failed/skipped,14 added cases in the newly
 registered entry suite. Existing activity hydration/context/retry/overlap/denial

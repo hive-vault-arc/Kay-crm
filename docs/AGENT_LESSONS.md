@@ -1947,3 +1947,18 @@ query error after a successful explicit refresh. Preserve every optional activit
 field and the real ID-only result rather than inventing a parent echo. Existing
 form tests should retain denial coverage in a fresh instance after verifying a
 completed stale submit cannot write again.
+
+## Prospect reviews, metadata hosts and owned refresh,2026-10-28
+
+A reviewed PATCH needs its own synchronous immutable request and actor binding,
+not a new fingerprint after each failure. Keep known saved DTO completion apart
+from dispatch and require explicit rebase after conflict. Status/inline owners
+must survive newer board reads and metadata loading/transient failure; disabling
+new writes is insufficient if the editor itself is unmounted. Preserve current
+denial projection and cancellation separately. Shared inline recovery can lock
+inputs/cancel/Escape while keeping its retry action usable. An owned conflict
+refresh must close through its private completion path; calling its public
+dismiss guard while holding its own lock deadlocks. Optional proof/dispatched
+callbacks on the shared API helper preserve existing callers while distinguishing
+preflight from unknown write. Validate route/current/result identity before UI
+projection and keep canonical read exceptions explicit.

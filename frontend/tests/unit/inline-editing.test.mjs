@@ -6,6 +6,7 @@ import * as react from "react";
 import * as jsxRuntime from "react/jsx-runtime";
 import { renderToStaticMarkup } from "react-dom/server";
 import { loadServer } from "./load-server.mjs";
+import { loadEnquiryCommand } from "./enquiry-fixtures.mjs";
 
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
 function harness() {
@@ -59,8 +60,9 @@ function contactInline(state, form, command) {
   } });
 }
 function leadInline(state, command) {
+  const hook = loadEnquiryCommand(state, { ApiError, command });
   return loadServer("src/features/contacts/lead-inline-field.tsx", { globals: { crypto: { randomUUID } }, modules: {
-    react: state.react, "react/jsx-runtime": runtime, "@/components/shared/inline-record-field": { InlineFieldForm: "InlineForm", InlineRecordField: "Field" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/button": { Button: "Button" }, "@/lib/api/command": { apiCommand: command }, "@/lib/api/client": { ApiError }, "@/hooks/use-hydrated": { useHydrated: () => true }, "./qualification-inputs": { BudgetInput: "Budget" }, "./qualification-contracts": vocabulary, "./contracts": contacts, "./record-states": { RecordError: "Error" }, "./use-query": {},
+    react: state.react, "react/jsx-runtime": runtime, "@/components/shared/inline-record-field": { InlineFieldForm: "InlineForm", InlineRecordField: "Field" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/button": { Button: "Button" }, "./use-enquiry-command": hook, "@/lib/api/client": { ApiError }, "@/hooks/use-hydrated": { useHydrated: () => true }, "./qualification-inputs": { BudgetInput: "Budget" }, "./qualification-contracts": vocabulary, "./contracts": contacts, "./record-states": { RecordError: "Error" }, "./use-query": {},
   } });
 }
 function dealInline(state) {

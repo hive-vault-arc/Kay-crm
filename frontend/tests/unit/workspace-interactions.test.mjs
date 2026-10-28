@@ -3,6 +3,7 @@ import test from "node:test";
 import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { loadServer } from "./load-server.mjs";
+import { enquiryFixture, loadEnquiryCommand } from "./enquiry-fixtures.mjs";
 
 const jsx = (type, props) => ({ type, props });
 const runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
@@ -38,18 +39,19 @@ test("Status menu preserves the reviewed version, immutable lead fields and retr
   const contracts = loadServer("src/features/contacts/contracts.ts", { modules: { "./qualification-contracts": qualification } });
   class ApiError extends Error { constructor(code, status) { super(code); this.code = code; this.status = status; } }
   let interrupted = true, saved = 0;
-  const { LeadStatusMenu } = loadServer("src/features/contacts/lead-status-menu.tsx", { globals: { crypto: { randomUUID } }, modules: {
+  const hook = loadEnquiryCommand(harness, { ApiError, command: async (path, body, schema, key, method) => { calls.push({ path, body, key, method }); if (interrupted) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return enquiry; } });
+  const { LeadStatusMenu } = loadServer("src/features/contacts/lead-status-menu.tsx", { globals: { crypto: { randomUUID }, structuredClone }, modules: {
     react: harness.react, "react/jsx-runtime": runtime,
     "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" },
     "@/components/ui/alert-dialog": { AlertDialog: "Dialog", AlertDialogCancel: "Cancel", AlertDialogContent: "Content", AlertDialogDescription: "Description", AlertDialogTitle: "Title" },
     "@/components/shared/crm-presentation": { CrmStatusBadge: "Badge" }, "@/components/shared/record-status-menu": { RecordStatusMenu: "StatusMenu" },
     "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError },
     "@/lib/api/command": { apiCommand: async (path, body, schema, key, method) => { calls.push({ path, body, key, method }); assert.equal(schema, contracts.enquirySchema); if (interrupted) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } },
-    "./contracts": contracts, "./record-states": { RecordError: "Error" },
+    "./contracts": contracts, "./record-states": { RecordError: "Error" }, "./use-enquiry-command": hook, "@/components/shared/dossier-form": { useDossierDraft: () => ({ dirty: false, accept() {} }) },
   } });
-  const enquiry = { id: randomUUID(), version: 17, contact: { name: "Synthetic contact" }, status: "new", message: "Retain the original request", initial_budget: "1 400 000 MAD", campaign_source: qualification.campaignSchema.options[0], rating: "cold" };
+  const enquiry = enquiryFixture({ version: 17, message: "Retain the original request", initial_budget: "1 400 000 MAD", campaign_source: qualification.campaignSchema.options[0] });
   let current = enquiry;
-  const render = () => harness.render(() => LeadStatusMenu({ enquiry: current, writable: true, changed: value => { if (value) saved++; } }));
+  const render = () => harness.render(() => { const node = LeadStatusMenu({ enquiry: current, writable: true, changed: value => { if (value) saved++; } }); return node.type(node.props); });
   find(render(), "StatusMenu")[0].props.choose("qualified");
   find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
   assert.equal(saved, 0); assert.equal(find(render(), "Dialog")[0].props.open, true);

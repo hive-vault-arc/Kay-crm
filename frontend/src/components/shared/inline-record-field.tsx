@@ -27,8 +27,8 @@ export function InlineRecordField({ label, icon: Icon, display, writable, editor
     <dd>{editing ? editor({ cancel: close, saved: close }) : <div className="kay-inline-display">{writable ? <Button id={id + "-trigger"} type="button" variant="ghost" className="kay-inline-value" aria-describedby={id + "-value"} aria-label={"Modifier " + label.toLocaleLowerCase("fr")} disabled={!hydrated || disabled} onClick={() => scope?.open(id)}><span id={id + "-value"}>{display}</span><EditIcon size={16} aria-hidden="true" /></Button> : <div className="kay-inline-static">{display}</div>}{actions}</div>}</dd>
   </div>;
 }
-export function InlineFieldForm({ label, children, submit, cancel, dirty, busy, disabled = false }: {
-  label: string; children: ReactNode; submit: FormEventHandler<HTMLFormElement>; cancel: () => void; dirty: boolean; busy: boolean; disabled?: boolean;
+export function InlineFieldForm({ label, children, submit, cancel, dirty, busy, disabled = false, recovering = false }: {
+  label: string; children: ReactNode; submit: FormEventHandler<HTMLFormElement>; cancel: () => void; dirty: boolean; busy: boolean; disabled?: boolean; recovering?: boolean;
 }) {
   const form = useRef<HTMLFormElement>(null);
   useEffect(() => {
@@ -36,9 +36,9 @@ export function InlineFieldForm({ label, children, submit, cancel, dirty, busy, 
     input?.focus();
     try { if (input && "setSelectionRange" in input) input.setSelectionRange(input.value.length, input.value.length); } catch { /* Native email/number controls reject text selection. */ }
   }, []);
-  return <form ref={form} className="kay-inline-form" aria-label={"Modifier " + label.toLocaleLowerCase("fr")} aria-busy={busy} data-live-dirty={dirty || undefined} noValidate onSubmit={submit} onKeyDown={event => { if (event.key === "Escape" && !event.defaultPrevented && !busy) { event.preventDefault(); event.stopPropagation(); cancel(); } }}>
-    <fieldset disabled={busy || disabled} className="kay-inline-controls">{children}</fieldset>
-    <div className="kay-inline-actions"><Button action="confirm" type="submit" size="icon" aria-label={"Enregistrer " + label.toLocaleLowerCase("fr")} disabled={busy || disabled}><span className="sr-only">Enregistrer</span></Button><Button action="cancel" type="button" size="icon" variant="quiet" aria-label={"Annuler " + label.toLocaleLowerCase("fr")} disabled={busy} onClick={cancel}><span className="sr-only">Annuler</span></Button></div>
+  return <form ref={form} className="kay-inline-form" aria-label={"Modifier " + label.toLocaleLowerCase("fr")} aria-busy={busy || recovering} data-draft-managed data-live-dirty={dirty || recovering || undefined} data-write-recovery={recovering || undefined} noValidate onSubmit={submit} onKeyDown={event => { if (event.key === "Escape" && !event.defaultPrevented && !busy && !recovering) { event.preventDefault(); event.stopPropagation(); cancel(); } }}>
+    <fieldset disabled={busy || recovering || disabled} className="kay-inline-controls">{children}</fieldset>
+    <div className="kay-inline-actions"><Button action="confirm" type="submit" size="icon" aria-label={(recovering ? "Réessayer " : "Enregistrer ") + label.toLocaleLowerCase("fr")} disabled={busy || disabled}><span className="sr-only">{recovering ? "Réessayer" : "Enregistrer"}</span></Button><Button action="cancel" type="button" size="icon" variant="quiet" aria-label={"Annuler " + label.toLocaleLowerCase("fr")} disabled={busy || recovering} onClick={() => { if (!busy && !recovering) cancel(); }}><span className="sr-only">Annuler</span></Button></div>
   </form>;
 }
 

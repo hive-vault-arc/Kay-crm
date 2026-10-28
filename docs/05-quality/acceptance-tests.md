@@ -1,5 +1,18 @@
 # Acceptance scenarios
 
+Selected prospect status/inline recovery,2026-10-28 (AT-05/23/24):
+retain all menu groups/states and four inline editors. Verify original body/
+version/key after changed props/drafts, failed retry preflight, synchronous
+overlap refusal, cancel/Escape locks and acknowledgement-only completion.
+Known conflict rebases preserve unrelated current fields; owned refresh must
+not deadlock on its own lock. Board and metadata transient reads retain the
+same review/editor; current denial masks it. Check result/contact/current IDs,
+fresh same-actor/role proof, disposal and backward-compatible API callbacks.
+666 frontend units pass,13 added; two native status/description cases are
+prepared/typechecked, not run. Full create/editor/conversion and actual role/
+SQL/native/device gates remain pending. Backend rules unchanged.
+[Contract](../04-design/prospect-edit-recovery-local.md).
+
 Selected note/activity/assignment recovery,2026-10-28 (AT-05/23/24):
 verify all current note/activity/assignment fields in their selected drawers,
 immutable original retry after changed draft/parent/options failure, synchronous

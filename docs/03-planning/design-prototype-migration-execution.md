@@ -2563,3 +2563,28 @@ merge/deploy. Full goal active.
 
 [Entry recovery evidence](design-migration-evidence/entry-recovery-2026-10-28.json)
 records synthetic/source checks separately from actual-stack acceptance.
+
+## Selected prospect status and inline request recovery,2026-10-28
+
+Selected status groups/icons/colors and four inline field controls remain.
+A strict enquiry command owner retains opening body/version/key after unknown
+dispatch, obtains fresh same-actor/role proof through optional shared API hooks
+and separates acknowledgement from completion. Cancellation, replacement,
+comparison and stale edits cannot discard recovery. Known conflicts require
+explicit rebase; an owned refresh can close its own review. Board snapshots and
+metadata hosts retain their editors through transient reads; current denial and
+disposal mask/cancel late work. Facade enquiry identity checks complement client
+contact/result/current guards while preserving canonical Contact reads. Backend/
+endpoint/permission/version/receipt/history/source/conversion rules are unchanged.
+[Contract](../04-design/prospect-edit-recovery-local.md).
+
+666 frontend units pass,13 added; lint/types/build/history and static app lint5
+pass. Existing inline/status retry coverage remains with actual hook fixtures.
+Two native cases are prepared/typechecked, not run. Backend unchanged/not rerun.
+Full prospect create/editor/conversion, other domain commands/fields, older
+selectors, actual native/SQL/device/AFTER/CI/product checks and migrations0036/
+0037 remain pending. No actual app/DB/account/config/service/worker/transfer
+access or workaround, main/push/merge/deploy. Full goal active.
+
+[Prospect recovery evidence](design-migration-evidence/prospect-edit-recovery-2026-10-28.json)
+records synthetic/source checks separately from actual-stack acceptance.

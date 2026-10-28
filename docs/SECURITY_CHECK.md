@@ -1,5 +1,21 @@
 # KAY security check for changes
 
+## Selected prospect status and inline recovery,2026-10-28
+
+Existing strict PATCH bodies retain their original enquiry/contact identity,
+fields, versions and retry key after unknown dispatch. Optional shared-command
+callbacks expose existing fresh identity proof before dispatch; the controller
+requires the same unrestricted actor/role. Existing callers remain compatible.
+Acknowledged completion cannot PATCH again; known conflicts require explicit
+rebase. Result/contact/current IDs are checked before projection, with facade
+enquiry GET/PATCH/conflict guards and retained canonical Contact reads. Denial/
+disposal masks/cancels private work; metadata/board transient reads retain the
+owner and cannot replace unknown recovery. No backend/grant/version/receipt/
+history/source/assignment/conversion change or persistent storage.666 frontend
+units and frontend gates pass; two native cases are prepared/not run. No backend
+rerun, actual access, migration, workaround or final acceptance.
+[Contract](04-design/prospect-edit-recovery-local.md).
+
 ## Selected note/activity/assignment request recovery,2026-10-28
 
 Only three existing route shapes and strict payloads enter the shared controller.

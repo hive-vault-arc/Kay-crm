@@ -179,3 +179,21 @@ pass. Four native cases are prepared/typechecked, not run. Remaining menus/forms
 detail/context and older broad selectors continue; actual native/SQL/device/
 AFTER/CI/product acceptance and migrations0036/0037 remain pending. No backend
 rerun or actual access is claimed. P0/P8 and the full redesign goal remain open.
+
+## Prospect status/inline follow-through,2026-10-28
+
+[Status/inline field-action map](../04-design/prospect-edit-recovery-local.md)
+retains selected menu groups/states and Budget/Qualification/Source/Description
+editors. Unknown PATCH recovery pins original fields/version/key and same actor/
+role proof; acknowledged completion cannot repeat the write. Known conflicts
+require explicit rebase. Board opening reviews and inline metadata owners survive
+transient reads without discarding the command; current denial masks them.
+Result/contact/current coherence preserves legitimate canonical Contact reads.
+Shared inline recovery keeps its selected geometry and accessible retry action.
+
+666 frontend units pass,13 added; lint/types/build/history and static app lint5
+pass. Two native cases are prepared/typechecked, not run. Full create/editor/
+conversion recovery, remaining domain commands/fields and older broad selectors
+remain; actual native/SQL/device/AFTER/CI/product acceptance and migrations0036/
+0037 are pending. Backend unchanged/not rerun; no actual access claimed. P0/P8
+and the full redesign goal remain open.

@@ -11,7 +11,7 @@ import { CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { ActivityForm } from "@/features/activities/activity-form";
 import { ConvertLead } from "@/features/deals/convert-lead";
 import type { ApiError } from "@/lib/api/client";
-import { enquiriesSchema, enquirySchema, statusLabels, statusSchema, type LeadSummary } from "./contracts";
+import { enquiriesSchema, enquirySchema, statusLabels, statusSchema, type Enquiry, type LeadSummary } from "./contracts";
 import { ratingLabels } from "./qualification-contracts";
 import { useQuery } from "./use-query";
 import { RecordError } from "./record-states";
@@ -28,8 +28,11 @@ export function LeadKanban({ filters, revision = 0, changed, denied, returnFocus
 
 function LeadBoardMove({ id, target, saved, denied, close, returnFocus }: { id: string; target: string; saved: () => void; denied: (error: ApiError) => void; close: () => void; returnFocus: RefObject<HTMLButtonElement | null> }) {
   const query = useQuery(`/api/v1/enquiries/${id}`, enquirySchema);
+  const [reviewed, setReviewed] = useState<Enquiry>();
   useEffect(() => { if (query.error && ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED"].includes(query.error.code)) denied(query.error); }, [query.error, denied]);
   const writable = query.value && !query.value.archived_at && !query.value.contact.archived_at && query.value.status !== "converted";
-  if (query.value && writable && query.value.status !== target) return target === "converted" ? <ConvertLead dialogOnly enquiry={query.value} onRefresh={query.refresh} closed={close} returnFocus={returnFocus} /> : <LeadStatusMenu dialogOnly initialStatus={target} enquiry={query.value} writable changed={success => { if (success) saved(); else query.refresh(); }} closed={close} returnFocus={returnFocus} />;
+  const review = reviewed ?? (query.value && writable && query.value.status !== target ? query.value : undefined);
+  if (!reviewed && review) setReviewed(review);
+  if (review && !(query.error && [401, 403, 404].includes(query.error.status))) return target === "converted" ? <ConvertLead dialogOnly enquiry={review} onRefresh={query.refresh} closed={close} returnFocus={returnFocus} /> : <LeadStatusMenu dialogOnly initialStatus={target} enquiry={review} writable denied={denied} changed={success => { if (success) saved(); else { query.refresh(); close(); } }} closed={close} returnFocus={returnFocus} />;
   return <AlertDialog open onOpenChange={open => { if (!open) close(); }}><AlertDialogContent onCloseAutoFocus={event => { event.preventDefault(); returnFocus.current?.focus(); }}><AlertDialogTitle>Vérifier le déplacement</AlertDialogTitle><AlertDialogDescription>{query.value ? writable ? "Ce prospect est déjà dans le statut demandé." : "Ce dossier est désormais en lecture seule. Aucun changement n’a été enregistré." : "Chargement du dossier actuel avant confirmation."}</AlertDialogDescription>{query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement…</p> : <Button action="show" variant="outline" asChild><Link href={"/leads/" + id}>Ouvrir le prospect</Link></Button>}<AlertDialogCancel asChild><Button action="close" variant="outline">Fermer</Button></AlertDialogCancel></AlertDialogContent></AlertDialog>;
 }

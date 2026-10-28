@@ -1,5 +1,14 @@
 # HTTP contracts for `/api/v1`
 
+Selected prospect status/inline recovery,2026-10-28: existing enquiry PATCH DTO,
+atomic contact-field contract and endpoints remain. Current identity proof can
+be observed before dispatch through optional shared-command callbacks; original
+body/key ownership and saved-only completion are client responsibilities.
+Enquiry record GET/PATCH successes and VERSION_CONFLICT snapshots must echo the
+route enquiry ID. Contextual status/inline clients also bind contact identity;
+canonical Contact GET is retained. No backend permission/receipt/version change.
+[Integration](prospect-edit-recovery-local.md).
+
 Selected note/activity/assignment recovery,2026-10-28: existing POST routes and
 strict fields remain. Client ownership now pins original target/body/key and
 fresh same-actor/role proof after unknown dispatch; completion of a known saved
