@@ -101,6 +101,12 @@ real SQL/scope-race/performance or product acceptance is claimed.
 
 ## CSV request, worker and delivery
 
+Selected migration2026-10-28: the original reviewed request/actor/key survives
+unknown replies and parent-list loading/failure, with guarded same-operation
+recovery and fail-closed kind/job/permit response binding. No CSV/worker/backend
+receipt rule changes. See [export recovery](export-recovery-local.md); actual
+stack/native acceptance remains pending.
+
 M/A only. POST /api/v1/exports requires current facade/session/Origin/CSRF and
 UUID Idempotency-Key. Body kind contacts|enquiries (default enquiries), filters
 reuse the contact list query contract. Export is the whole filtered set, not a

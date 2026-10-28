@@ -1,5 +1,21 @@
 # KAY QA command register
 
+Selected export request ownership,2026-10-28: frontend cwd
+`npm run test:unit`:598 pass/0 failed/skipped,13 added recovery/transport/facade/
+host/UI cases in the already-registered export suite. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and `npm run history:check`
+pass.64 glyphs/104 consumers/345 icon sites and494 Button sites have0 violations.
+Static Frontend Taste app lint covers4 UI sources,0 findings, not native render.
+The initial wider run caught a Contact denial test requiring disposal of its
+export owner and synchronous effect state updates; the source now derives denied
+projection before effect cancellation and the test checks its retained disabled
+owner. Final full checks above pass without suppression.
+Two new native Contacts/Prospects recovery cases are prepared/typechecked, not
+run. Backend behavior/schema unchanged; no backend rerun, actual app/DB/account/
+config access, worker/transfer, migration, access workaround or final native/SQL/
+CI/AFTER/product/main/push/merge/deploy acceptance.
+[Contract](04-design/export-recovery-local.md).
+
 Selected staff retry/editor ownership,2026-10-28: frontend cwd
 `npm run test:unit`:585 pass/0 failed/skipped,12 added command/scope/transport/
 editor/facade/form cases. The new staff-command suite is registered explicitly

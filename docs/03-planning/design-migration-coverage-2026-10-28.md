@@ -96,3 +96,19 @@ runner. Two browser recovery cases are prepared/typechecked, not run; required
 staff labels in the older browser suite are reconciled. Actual account/SQL/
 native/device/AFTER/CI/product checks remain pending. Continue remaining exact
 detail/job/intake coverage and legacy-selector reconciliation; P0/P8 remain open.
+
+## Export request ownership follow-through,2026-10-28
+
+[Export action/field map](../04-design/export-recovery-local.md) retains the
+selected full-filter review, explicit confirmation, Mes exports four columns and
+phone/drawer cards. Original kind/filters/key and same current M/A actor survive
+unknown replies; acknowledged recovery never creates another job. Directory
+and contextual owners survive loading/transient read failure. Authority loss
+masks the old review/aborts transport; kind/detail/permit identities fail closed.
+No backend worker/CSV/receipt/transfer rule changes or duplicate-control removal.
+
+598 frontend units pass, including13 added cases. Two new current-label browser
+cases are prepared/typechecked, not run. Older broad discovery fixture/helpers/
+selectors still need reconciliation; actual worker/private CSV/native/device/
+AFTER/CI/product checks remain pending. Continue remaining import/intake/detail
+coverage; this does not close P0/P8 or the full redesign goal.

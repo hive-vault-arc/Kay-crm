@@ -1,0 +1,153 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "a6b9e8ed32c63ec35c3f41b372cf3582336fbe9d",
+  "scope": "Selected CSV export request lifetime, exact unknown-result replay, acknowledged completion, same-actor M/A proof and fail-closed kind/job/permit replies; stable directory/contextual owner with selected layout preserved",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 598,
+      "additionalCases": 13,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic hook/transport/facade/returned-tree and synthetic TLS units; existing export suite registered."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 494,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <4 changed UI sources>",
+      "exitCode": 0,
+      "files": 4,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1268,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8876,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "correctedBeforeFinalPass": [
+    "Contact denial test incorrectly required disposing its command owner; now asserts retained disabled owner and current error.",
+    "Initial hook synchronized denied projection with synchronous effect setters; now derives/masks projection in render and cancels transport in an effect without suppression.",
+    "Initial duplicate-controls suspicion disproved by returned-tree inspection; no duplicate removed."
+  ],
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/export-recovery.spec.ts",
+    "browserCases": 2,
+    "typechecked": true,
+    "usesCurrentMenuCheckboxAndDrawerLabels": true,
+    "workerOrCsvByteDownloadStartedByCases": false
+  },
+  "preserved": {
+    "selectedLayoutColumnsPhoneCards": true,
+    "backendAuthorityReceiptWorkerCsvFiltersAndPrivateTransfer": true,
+    "exactWholeFilteredSet": true,
+    "noDuplicateControlsClaim": true,
+    "noInventedDataScopeOrMetrics": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notPerformed": [
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/account/customer records/private configuration/import/export/transfer",
+    "Backend test rerun or behavior/schema change",
+    "Executed migrations0036/0037",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/src/features/contacts/contact-directory.tsx",
+      "bytes": 9884,
+      "sha256": "d791798b6dcaaa8f1dda8c376f524af4ba1cbee68e87729fb15c4f4727e87664"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-dossiers.tsx",
+      "bytes": 6401,
+      "sha256": "b2253e3d8ec80d3a547d7654a932795437ac2a17f4a76afe4ee722476fdca919"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-list.tsx",
+      "bytes": 16653,
+      "sha256": "447f1c5424be0b80662470bbff614ab4402aae37b3ebe00f7adad6eddc51df29"
+    },
+    {
+      "file": "frontend/src/features/discovery/export-action.tsx",
+      "bytes": 7050,
+      "sha256": "25f75600092b54d062d2de81b5e3d9e4323f47db75d0c3f87a555b685d4e0a02"
+    },
+    {
+      "file": "frontend/src/features/discovery/export-command.ts",
+      "bytes": 1072,
+      "sha256": "359a047760b7fdcb1c6a328f5a5563d225a3369b5e592353a930f8f4f79ace34"
+    },
+    {
+      "file": "frontend/src/features/discovery/facade.ts",
+      "bytes": 4233,
+      "sha256": "1721afac3d4272b1076c48931f5eba1901cdbfddefc85f7b8b2f8f2413294c0f"
+    },
+    {
+      "file": "frontend/src/features/discovery/use-export-request.ts",
+      "bytes": 4261,
+      "sha256": "cbc1c69f3076644824b16008edb46802fea1be3d9042646994bee3a773dacaf4"
+    },
+    {
+      "file": "frontend/tests/e2e/export-recovery.spec.ts",
+      "bytes": 3208,
+      "sha256": "0227894753963628d6d17405b414330842c34b17747e0517470739316c6245d0"
+    },
+    {
+      "file": "frontend/tests/unit/contact-directory.test.mjs",
+      "bytes": 10609,
+      "sha256": "860abe6828c82c8f6baa7533d88f20c2fec79d449eabb8e6809e9e2251839961"
+    },
+    {
+      "file": "frontend/tests/unit/exports-workspace.test.mjs",
+      "bytes": 34610,
+      "sha256": "a83a79268fcce3f8542c4e75c1b003887e87cb7f66a71e3a9d520bb344b4cc53"
+    }
+  ]
+}

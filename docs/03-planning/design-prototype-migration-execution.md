@@ -2443,3 +2443,27 @@ coverage; this checkpoint does not complete P0/P8 or the redesign goal.
 
 [Staff workflow evidence](design-migration-evidence/staff-workflow-2026-10-28.json)
 records source/synthetic checks separately from final native acceptance.
+
+## Export request ownership,2026-10-28
+
+Selected filtered review/confirmation and Mes exports keep their current layout,
+four desktop columns and compact phone/drawer rows. The same original request
+and M/A actor now own unknown recovery; acknowledgement cannot create another
+job. Directory/contextual owners remain mounted through loading/transient read
+failure. Denial masks review/aborts/refuses stale handlers, and foreign kind/job/
+permit replies fail closed. No backend worker/CSV/receipt/transfer rule changes.
+The supposed contextual duplicate was disproved by returned-tree inspection;
+that branch already rendered one export control, and none was arbitrarily
+removed. [Contract](../04-design/export-recovery-local.md).
+
+598 frontend units pass, including13 added cases; lint/types/build/history and
+static app lint4 pass. The original wider failures were corrected without
+suppressing hook rules or dropping the new persistent-owner requirement.
+Two new current-label browser cases are prepared/typechecked, not run. Older
+discovery fixtures/selectors, actual worker/SQL/transfer/native/device/AFTER/CI/
+product gates and migrations0036/0037 remain pending. No actual app/DB/account/
+config/service access or workaround, worker/transfer or main/push/merge/deploy.
+Continue import/intake/detail field/action coverage; full goal remains active.
+
+[Export recovery evidence](design-migration-evidence/export-recovery-2026-10-28.json)
+records this checkpoint separately from final actual-stack acceptance.

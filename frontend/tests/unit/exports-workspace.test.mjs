@@ -10,7 +10,7 @@ const jsx=(type,props,key)=>({type,props,key}),runtime={jsx,jsxs:jsx,Fragment:"F
 function find(node,type){if(!node||typeof node!=="object")return[];if(Array.isArray(node))return node.flatMap(child=>find(child,type));return[...(node.type===type?[node]:[]),...find(node.props?.children,type)];}
 function text(node){if(node==null||typeof node==="boolean")return"";if(Array.isArray(node))return node.map(text).join("");return typeof node==="object"?text(node.props?.children):String(node);}
 const plain=value=>JSON.parse(JSON.stringify(value));
-function hooks(){const slots=[],effects=[];let cursor=0;return{react:{useState(initial){const i=cursor++;if(!(i in slots))slots[i]=typeof initial==="function"?initial():initial;return[slots[i],next=>{slots[i]=typeof next==="function"?next(slots[i]):next;}];},useRef(initial){const i=cursor++;return slots[i]??={current:initial};},useId:()=>"synthetic-export",useEffect(run,deps){const i=cursor++,prior=slots[i];if(!prior||deps.some((value,n)=>!Object.is(value,prior.deps[n]))){const current={deps};slots[i]=current;effects.push(()=>{prior?.cleanup?.();current.cleanup=run();});}}},render(fn){cursor=0;return fn();},effects(){effects.splice(0).forEach(run=>run());},dispose(){slots.forEach(slot=>slot?.cleanup?.());}};}
+function hooks(){const slots=[],effects=[];let cursor=0;return{react:{useCallback:fn=>fn,useState(initial){const i=cursor++;if(!(i in slots))slots[i]=typeof initial==="function"?initial():initial;return[slots[i],next=>{slots[i]=typeof next==="function"?next(slots[i]):next;}];},useRef(initial){const i=cursor++;return slots[i]??={current:initial};},useId:()=>"synthetic-export",useEffect(run,deps){const i=cursor++,prior=slots[i];if(!prior||deps.some((value,n)=>!Object.is(value,prior.deps[n]))){const current={deps};slots[i]=current;effects.push(()=>{prior?.cleanup?.();current.cleanup=run();});}}},render(fn){cursor=0;return fn();},effects(){effects.splice(0).forEach(run=>run());},dispose(){slots.forEach(slot=>slot?.cleanup?.());}};}
 class ApiError extends Error{constructor(code,status){super(code);this.code=code;this.status=status;}}
 const vocabulary=loadServer("src/features/contacts/qualification-contracts.ts"),contacts=loadServer("src/features/contacts/contracts.ts",{modules:{"./qualification-contracts":vocabulary}}),contracts=loadServer("src/features/discovery/contracts.ts",{modules:{"@/features/contacts/contracts":contacts}});
 const reviewModel=loadServer("src/features/discovery/export-review.ts",{modules:{"./contracts":contracts,"@/features/contacts/contracts":contacts,"@/features/contacts/qualification-contracts":vocabulary}});
@@ -18,8 +18,9 @@ const job=(state="ready")=>contracts.exportSchema.parse({id:randomUUID(),kind:"e
 function common(h){return{react:h.react,"react/jsx-runtime":runtime,"next/link":{default:"Link"},"@/components/ui/button":{Button:"Button"},"@/components/ui/checkbox":{Checkbox:"Checkbox"},"@/components/ui/label":{Label:"Label"},"@/components/ui/sheet":{Sheet:"Sheet",SheetContent:"SheetContent",SheetHeader:"Header",SheetTitle:"Title",SheetDescription:"Description"},"@/hooks/use-hydrated":{useHydrated:()=>true},"@/features/contacts/record-states":{RecordError:"Error"},"@/lib/api/client":{ApiError},"./contracts":contracts};}
 function actionSetup(command=async()=>job("queued")){
  const h=hooks(),calls=[],busy=[],focus=[];let props={kind:"enquiries",filters:{q:"original",status:"new",page:8,page_size:20},total:7,renderActions:actions=>jsx("Toolbar",{children:jsx("TransientPopover",{children:actions})})};
- const{ExportAction,ExportTrigger}=loadServer("src/features/discovery/export-action.tsx",{globals:{crypto:{randomUUID}},modules:{...common(h),"@/components/shared/dossier-form":{useDossierDraft:(_,pending)=>busy.push(pending)},"@/components/shared/crm-presentation":{useDirectoryMenuFocus:()=>()=>focus.push("menu")},"@/lib/api/command":{apiCommand:async(...args)=>{calls.push(args);return command(...args);}},"./export-review":reviewModel}});
- const render=()=>h.render(()=>ExportAction(props));
+ const request=loadServer("src/features/discovery/use-export-request.ts",{globals:{AbortController,structuredClone,crypto:{randomUUID}},modules:{...common(h),"./export-command":{createExportJob:async(body,key,binding,signal,dispatched)=>{dispatched();const args=["/api/v1/exports",body,contracts.exportSchema,key,"POST",undefined,signal];calls.push(args);return command(...args);}}}});
+ const{ExportAction,ExportTrigger}=loadServer("src/features/discovery/export-action.tsx",{globals:{crypto:{randomUUID}},modules:{...common(h),"@/components/shared/dossier-form":{useDossierDraft:(_,pending)=>busy.push(pending)},"@/components/shared/crm-presentation":{useDirectoryMenuFocus:()=>()=>focus.push("menu")},"./use-export-request":request,"./export-review":reviewModel}});
+ const render=()=>{const tree=h.render(()=>ExportAction(props));h.effects();return tree;};
  return{h,calls,busy,focus,render,change:next=>{props={...props,...next};},open(){const node=find(render(),ExportTrigger)[0];ExportTrigger(node.props).props.onClick();},confirm(){find(render(),"Checkbox")[0].props.onCheckedChange(true);},submit(){find(render(),"form")[0].props.onSubmit({preventDefault(){}});}};
 }
 
@@ -36,8 +37,8 @@ test("Export confirmation lives outside transient utilities and freezes reviewed
  view=s.render();find(view,"SheetContent")[0].props.onCloseAutoFocus({preventDefault(){}});assert.deepEqual(s.focus,["menu"]);
 });
 
-test("Cancel/reopen retains an interrupted identical request key; only a completed request starts a new export identity",async()=>{
- let fail=true;const s=actionSetup(async()=>{if(fail)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return job("queued");});s.open();s.confirm();s.submit();await delay(0);find(s.render(),"Sheet")[0].props.onOpenChange(false);s.open();s.confirm();fail=false;s.submit();await delay(0);assert.equal(s.calls[0][3],s.calls[1][3]);s.open();s.confirm();s.submit();await delay(0);assert.notEqual(s.calls[1][3],s.calls[2][3]);
+test("An interrupted export blocks dismissal/replacement; only a completed request starts a new identity",async()=>{
+ let fail=true;const s=actionSetup(async()=>{if(fail)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return job("queued");});s.open();s.confirm();s.submit();await delay(0);find(s.render(),"Sheet")[0].props.onOpenChange(false);s.change({kind:"contacts",filters:{q:"replacement"},total:100});s.open();s.confirm();assert.equal(find(s.render(),"Sheet")[0].props.open,true);assert.ok(text(s.render()).includes("7 prospects"));assert.equal(find(s.render(),"Checkbox")[0].props.disabled,true);assert.equal(find(s.render(),"form")[0].props["aria-busy"],true);fail=false;s.submit();await delay(0);assert.equal(s.calls[0][3],s.calls[1][3]);s.change({kind:"enquiries"});s.open();s.confirm();s.submit();await delay(0);assert.notEqual(s.calls[1][3],s.calls[2][3]);
 });
 
 test("Invalid filters make no export request and current authority failure removes the reviewed private count/filter summary",async()=>{
@@ -66,6 +67,22 @@ test("The real Lead toolbar owns the same surviving export review",()=>{
   "./use-query":{queryPath:()=>"/api/v1/enquiries",useQuery:()=>({value:{items:[],total:31,page:1,page_size:20}})},
  }});
  const view=h.render(()=>LeadList({role:"manager"})),action=find(view,"CrmDirectoryHeader")[0].props.actions;assert.equal(action.type,"ExportAction");assert.equal(action.props.total,31);const toolbar=action.props.renderActions("export controls");assert.equal(toolbar.type,"CrmDirectoryToolbar");assert.equal(find(toolbar,"ExportAction").length,0);
+});
+
+test("Directory and contextual prospect export owners stay mounted while their query loads or fails",()=>{
+ for(const [path,name,contextual] of [["src/features/contacts/contact-directory.tsx","ContactDirectory",false],["src/features/contacts/lead-list.tsx","LeadList",false],["src/features/contacts/lead-list.tsx","LeadList",true]]){
+  const h=hooks();let value={items:[],total:31,page:1,page_size:20},error;
+  const loaded=loadServer(path,{modules:{...childModules(path),...common(h),"@/hooks/use-phone-layout":{usePhoneLayout:()=>false},"@/components/shared/directory-view-switch":{DirectoryViewSwitch:"Switch",useDirectoryView:()=>({value:"list"})},"./column-chooser":{ColumnChooser:"Columns",useLeadColumns:()=>({visible:["name"]})},"./use-directory-filters":{useDirectoryFilters:()=>({draft:{q:""},filters:{q:""},page:1,activeCount:0})},"./use-query":{queryPath:()=>"/api/v1/contacts",useQuery:()=>({value,error})}}});
+  const render=()=>h.render(()=>loaded[name]({role:"manager",...(contextual?{contactId:randomUUID()}:{} )}));const owner=tree=>contextual?find(tree,"ExportAction")[0]:find(tree,"CrmDirectoryHeader")[0].props.actions;
+  let tree=render();assert.equal(owner(tree).type,"ExportAction");assert.equal(owner(tree).props.available,true);
+  value=undefined;tree=render();assert.equal(owner(tree).type,"ExportAction");assert.equal(owner(tree).props.available,false);assert.equal(owner(tree).props.total,0);
+  error=new ApiError("FORBIDDEN",403);tree=render();assert.equal(owner(tree).type,"ExportAction");assert.equal(owner(tree).props.scopeError,error);if(contextual)assert.equal(find(tree,"ExportAction").length,1);
+ }
+});
+
+test("Contact overview retains one prospect export owner through scoped dossier read failure",()=>{
+ const path="src/features/contacts/contact-dossiers.tsx",h=hooks();let value={items:[],total:7,page:1,page_size:20},error;
+ const loaded=loadServer(path,{modules:{...childModules(path),...common(h),"./use-query":{queryPath:kind=>`/api/v1/${kind}`,useQuery:()=>({value,error})}}});const contact={id:randomUUID(),version:1,archived_at:null};const render=()=>h.render(()=>loaded.ContactDossiers({contact,role:"manager"}));let tree=render();assert.equal(find(tree,"ExportAction").length,1);assert.equal(find(tree,"ExportAction")[0].props.available,true);value=undefined;error=new ApiError("DEPENDENCY_UNAVAILABLE",503);tree=render();assert.equal(find(tree,"ExportAction").length,1);assert.equal(find(tree,"ExportAction")[0].props.available,false);assert.equal(find(tree,"ExportAction")[0].props.scopeError,error);
 });
 
 test("The actual menu exposes an event-time focus callback for its surviving trigger",()=>{
@@ -121,4 +138,70 @@ test("The export facade admits only bounded whole-filter commands and matching p
  assert.equal((await relayDiscovery("exports",request({kind:"enquiries",filters:{q:"synthetic"}}),"id")).status,200);assert.equal(calls[0][2].token,"synthetic-session");assert.equal(calls[0][2].csrf,"synthetic-csrf");assert.equal(calls[0][2].idempotencyKey,id);
  for(const req of [request({kind:"contacts",filters:{status:"new"}}),request({kind:"enquiries",filters:{page:3}}),request({kind:"enquiries",filters:{role:"administrator"}}),request({kind:"enquiries",filters:{}},{Origin:"https://foreign.synthetic.invalid"})]){const before=calls.length;assert.notEqual((await relayDiscovery("exports",req,"id")).status,200);assert.equal(calls.length,before);}
  upstream={status:200,body:{token:"s".repeat(32),expires_at:"2026-10-20T15:00:00+01:00",export_id:id,transfer_url:`https://foreign.synthetic.invalid/api/v1/transfers/exports/${id}`}};assert.equal((await relayDiscovery(`exports/${id}/download-permit`,request({}, {}, `/${id}/download-permit`),"id")).status,503);
+});
+
+function requestSetup(command=async()=>job("queued")) {
+ const h=hooks(),calls=[],completed=[],denied=[];let options={completed:value=>completed.push(value.id),denied:()=>denied.push(true)};
+ const loaded=loadServer("src/features/discovery/use-export-request.ts",{modules:{...common(h),"./export-command":{createExportJob:async(...args)=>{calls.push(args);return command(...args);}}},globals:{AbortController,structuredClone,crypto:{randomUUID}}});
+ return{h,calls,completed,denied,change:patch=>{options={...options,...patch};},render(){const value=h.render(()=>loaded.useExportRequest(options));h.effects();return value;}};
+}
+const originalReview=()=>reviewModel.exportReview("enquiries",{q:"original"},7);
+
+test("Export preflight failure is editable; a dispatched unknown outcome pins the original request through later preflight failure",async()=>{
+ let mode="preflight";const s=requestSetup(async(body,key,binding,signal,dispatched)=>{if(mode==="preflight")throw new ApiError("DEPENDENCY_UNAVAILABLE",503);dispatched();if(mode==="unknown")throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return job("queued");});
+ await s.render().submit(originalReview());let current=s.render();assert.equal(current.uncertain,false);assert.equal(current.locked(),false);
+ mode="unknown";await current.submit(originalReview());current=s.render();assert.equal(current.uncertain,true);assert.equal(current.clear(),false);assert.equal(await current.submit(reviewModel.exportReview("contacts",{q:"replacement"},99)),false);
+ mode="preflight";await current.retry();assert.equal(s.render().uncertain,true);mode="success";assert.equal(await s.render().retry(),true);
+ assert.equal(s.calls.length,4);assert.notEqual(s.calls[0][1],s.calls[1][1]);assert.equal(s.calls[1][1],s.calls[2][1]);assert.equal(s.calls[2][1],s.calls[3][1]);assert.deepEqual(plain(s.calls[3][0]),{kind:"enquiries",filters:{q:"original"}});assert.equal(s.completed.length,1);
+});
+
+test("Acknowledged export completion retries its saved result without another job command",async()=>{
+ let completions=0;const s=requestSetup(async(body,key,binding,signal,dispatched)=>{dispatched();return job("queued");});s.change({completed:()=>{if(++completions===1)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);}});
+ await s.render().submit(originalReview());let current=s.render();assert.equal(current.uncertain,true);assert.equal(current.acknowledged,true);assert.equal(await current.retry(),true);current=s.render();assert.equal(current.uncertain,false);assert.equal(completions,2);assert.equal(s.calls.length,1);
+});
+
+test("Disposed export owner aborts transport and prevents late completion or stale-handler resubmission",async()=>{
+ let release;const s=requestSetup(async(body,key,binding,signal,dispatched)=>{dispatched();return new Promise(resolve=>{release=resolve;});});const stale=s.render();const pending=stale.submit(originalReview());s.h.dispose();assert.equal(s.calls[0][3].aborted,true);release(job("queued"));assert.equal(await pending,false);assert.equal(s.completed.length,0);assert.equal(await stale.submit(originalReview()),false);assert.equal(s.calls.length,1);
+});
+
+test("Foreign-kind export acknowledgements stay unresolved and never complete the selected request",async()=>{
+ let wrong=true;const s=requestSetup(async(body,key,binding,signal,dispatched)=>{dispatched();return{...job("queued"),kind:wrong?"contacts":"enquiries"};});await s.render().submit(originalReview());let current=s.render();assert.equal(current.error.code,"INVALID_RESPONSE");assert.equal(current.uncertain,true);assert.equal(s.completed.length,0);wrong=false;assert.equal(await current.retry(),true);assert.equal(s.calls[0][1],s.calls[1][1]);
+});
+
+test("Scope revocation aborts an export, masks its review and prevents reopening with stale private counts",async()=>{
+ let release;const s=actionSetup(()=>new Promise(resolve=>{release=resolve;}));s.open();s.confirm();s.submit();s.change({scopeError:new ApiError("FORBIDDEN",403),available:false});let tree=s.render();assert.equal(find(tree,"Sheet")[0].props.open,false);assert.equal(find(tree,"form").length,0);assert.ok(!text(tree).includes("7 prospects"));assert.equal(s.calls[0][6].aborted,true);release(job("queued"));await delay(0);s.open();tree=s.render();assert.equal(find(tree,"Sheet")[0].props.open,false);assert.equal(s.calls.length,1);assert.equal(find(tree,"Error")[0].props.error.code,"FORBIDDEN");
+});
+
+test("Uncertain export disables dismissal, outside interaction, history navigation and checkbox edits",async()=>{
+ const s=actionSetup(async()=>{throw new ApiError("DEPENDENCY_UNAVAILABLE",503);});s.open();s.confirm();s.submit();await delay(0);const tree=s.render();let prevented=0;const event={preventDefault(){prevented++;}};find(tree,"SheetContent")[0].props.onEscapeKeyDown(event);find(tree,"SheetContent")[0].props.onInteractOutside(event);find(tree,"Link")[0].props.onClick(event);find(tree,"Checkbox")[0].props.onCheckedChange(false);find(tree,"Sheet")[0].props.onOpenChange(false);assert.equal(prevented,3);assert.equal(find(s.render(),"Checkbox")[0].props.checked,true);assert.equal(find(s.render(),"Sheet")[0].props.open,true);assert.equal(find(s.render(),"SheetContent")[0].props.showCloseButton,false);assert.equal(s.busy.at(-1),true);
+});
+
+test("A transient parent read failure preserves the original unresolved export rather than permitting a replacement",async()=>{
+ let fail=true;const s=actionSetup(async()=>{if(fail)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return job("queued");});s.open();s.confirm();s.submit();await delay(0);s.change({available:false,scopeError:new ApiError("DEPENDENCY_UNAVAILABLE",503),total:0,filters:{q:"new parent filters"}});let tree=s.render();assert.equal(find(tree,"Sheet")[0].props.open,true);assert.ok(text(tree).includes("7 prospects"));fail=false;s.submit();await delay(0);tree=s.render();assert.equal(find(tree,"Sheet")[0].props.open,false);assert.equal(s.calls[0][3],s.calls[1][3]);assert.deepEqual(plain(s.calls[1][1].filters),{q:"original",status:"new"});
+});
+
+function createSetup() {
+ const calls=[],controller=new AbortController(),binding={},actor=randomUUID();let profile={user:{id:actor,role:"manager"},must_change_password:false,csrf_token:"synthetic-csrf"},returned=job("queued"),dispatched=0;
+ const loaded=loadServer("src/features/discovery/export-command.ts",{modules:{"@/lib/api/client":{ApiError,apiGet:async(...args)=>{calls.push(args);return args[0]==="/api/v1/auth/me"?profile:returned;}},"@/lib/auth/contracts":{meSchema:"Me"},"./contracts":contracts}});
+ return{calls,controller,binding,actor,profile:patch=>{profile={...profile,...patch};},result:value=>{returned=value;},dispatches:()=>dispatched,send:()=>loaded.createExportJob(originalReview().body,"synthetic-key",binding,controller.signal,()=>{dispatched++;})};
+}
+
+test("Export creation binds replay to the same current M/A actor and forwards fresh proof and cancellation",async()=>{
+ const s=createSetup();await s.send();assert.equal(s.binding.actorId,s.actor);assert.equal(s.dispatches(),1);assert.equal(s.calls.at(-1)[2],s.controller.signal);assert.equal(s.calls.at(-1)[3].csrf,"synthetic-csrf");assert.equal(s.calls.at(-1)[3].key,"synthetic-key");
+ s.profile({user:{id:randomUUID(),role:"administrator"}});await assert.rejects(s.send(),failure=>failure.code==="FORBIDDEN");assert.equal(s.dispatches(),1);
+});
+
+test("Agent, restricted-password and aborted export preflights never dispatch a job",async()=>{
+ for(const patch of [{user:{id:randomUUID(),role:"agent"}},{must_change_password:true}]){const s=createSetup();s.profile(patch);await assert.rejects(s.send(),ApiError);assert.equal(s.dispatches(),0);assert.equal(s.calls.length,1);}
+ const s=createSetup();s.controller.abort();await assert.rejects(s.send(),failure=>failure.name==="AbortError");assert.equal(s.dispatches(),0);assert.equal(s.calls.length,1);
+});
+
+test("Export transport rejects a success for a different requested kind",async()=>{
+ const s=createSetup();s.result({...job("queued"),kind:"contacts"});await assert.rejects(s.send(),failure=>failure.code==="INVALID_RESPONSE");assert.equal(s.dispatches(),1);
+});
+
+test("Export facade rejects foreign detail/permit identities and a create response for a different kind",async()=>{
+ const id=randomUUID(),foreign=randomUUID(),origin="https://frontend.synthetic.invalid";
+ const scenarios=[{path:"exports",method:"POST",body:{kind:"contacts",filters:{}},reply:job("queued")},{path:`exports/${id}`,method:"GET",reply:{...job(),id:foreign}},{path:`exports/${id}/download-permit`,method:"POST",body:{},reply:{export_id:foreign,token:"s".repeat(32),expires_at:"2026-10-20T15:00:00+01:00",transfer_url:`https://api.synthetic.invalid/api/v1/transfers/exports/${id}`}}];
+ for(const scenario of scenarios){const{relayDiscovery}=loadServer("src/features/discovery/facade.ts",{env:{API_BASE_URL:"https://api.synthetic.invalid"},modules:{"next/headers":{cookies:async()=>({get:()=>({value:"synthetic-session"})})},"@/lib/auth/facade":{frontendOrigin:()=>origin,boundedJson:request=>request.json()},"@/lib/auth/contracts":{SESSION_COOKIE:"synthetic-cookie"},"@/lib/api/facade":{facadeError:(status,code)=>Response.json({error:{code}},{status}),upstreamRequest:async()=>({status:200,body:scenario.reply})},"./contracts":contracts}});const response=await relayDiscovery(scenario.path,new Request(`${origin}/api/v1/${scenario.path}`,{method:scenario.method,headers:{Origin:origin,"Idempotency-Key":id,"Content-Type":"application/json"},body:scenario.body?JSON.stringify(scenario.body):undefined}),"request");assert.equal(response.status,503);assert.deepEqual(await response.json(),{error:{code:"DEPENDENCY_UNAVAILABLE"}});}
 });

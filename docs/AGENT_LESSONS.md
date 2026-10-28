@@ -1884,3 +1884,14 @@ and target. Register a new frontend unit file in scripts/test-facade.mjs: a
 targeted node --test pass does not mean npm run test:unit actually includes it.
 Compare the full-run case count before recording coverage. Native/SQL cases
 remain prepared until executed; do not generalize source checks into acceptance.
+
+## Export owners and returned-tree inspection,2026-10-28
+
+Creating a JSX expression does not prove that it is mounted. Trace its returned
+branch before claiming duplicate controls: the contextual prospect list already
+rendered one export action. Check the opposite lifetime failure too: conditionally
+removing an export owner on query loading/error loses its original unknown-result
+operation. Retain the owner, disable new requests when reads are unavailable, mask
+denial during render and use effects only to cancel external transport. Preserve
+kind/filters/key/actor through uncertainty; completion after acknowledgement must
+not create another job. Do not suppress hook rules to synchronize derived state.

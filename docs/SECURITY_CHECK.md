@@ -1,5 +1,20 @@
 # KAY security check for changes
 
+## Selected export operation recovery,2026-10-28
+
+An unrestricted current M/A identity and fresh CSRF proof precede dispatch;
+retry binds to the same actor. Original kind/filters/key remain pinned after an
+unknown sent response, including another preflight failure. Acknowledged
+completion cannot create another job. Current denial masks old review content,
+aborts transport and refuses stale handlers. Persistent directory/contextual
+owners survive read loading/failure; unmount aborts and ignores late replies.
+
+Facade kind/detail-ID/permit-ID coherence complements existing exact private
+transfer target checks. Backend current authority/receipt/worker/CSV/filter/
+transfer rules are unchanged.598 frontend units pass; two native cases are
+prepared/not run. No actual app/DB/account/config/worker/transfer, access
+workaround or native/CI acceptance. [Contract](04-design/export-recovery-local.md).
+
 ## Selected staff retry and target ownership,2026-10-28
 
 Fresh identity/CSRF checks require the same administrator and an unrestricted

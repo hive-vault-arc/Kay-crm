@@ -1,5 +1,15 @@
 # Acceptance scenarios
 
+Selected export operation recovery,2026-10-28 (AT-22/24/29/39):
+verify the opening kind/filters/count, fresh same-actor M/A proof, exact original
+key/body retry after lost response, parent-list loading/error survival, guarded
+cancel/Escape/outside/history/checkbox and acknowledged completion without a
+second job create. Denial must mask old review/abort/refuse stale handlers;
+foreign kind/detail/permit responses fail closed.598 frontend units pass,
+including13 added cases. Two current-label native cases are prepared/typechecked,
+not run; actual job/SQL/worker/transfer/focus/device/role checks remain pending.
+[Contract](../04-design/export-recovery-local.md).
+
 Selected staff retry/editor ownership,2026-10-28 (AT-01/02/38/39):
 preserve D37 selected initial/reset passwords,24h expiry, own change/fresh login,
 confirmed Delete/history and last-admin rules. Check fresh same-actor admin

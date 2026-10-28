@@ -17,11 +17,12 @@ export async function relayDiscovery(key: string, request: Request, requestId: s
   const query = get && !detail ? key === "search" ? searchQuerySchema : key === "audit/events" ? auditQuerySchema : key === "audit/actors" ? auditActorsQuerySchema : pageQuerySchema : z.object({}).strict();
   if (new Set(params.map(([name]) => name)).size !== params.length || !query.safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
   let body: string | undefined;
+  let requestedKind: "contacts" | "enquiries" | undefined;
   const retryKey = request.headers.get("Idempotency-Key") ?? undefined;
   if (!get) {
     if (request.headers.get("Origin") !== frontendOrigin()) return facadeError(403, "FORBIDDEN", requestId);
     if (create && !z.uuid().safeParse(retryKey).success) return facadeError(422, "VALIDATION_ERROR", requestId);
-    try { body = JSON.stringify((create ? newExportSchema : z.object({}).strict()).parse(await boundedJson(request, 8192))); }
+    try { const parsed = (create ? newExportSchema : z.object({}).strict()).parse(await boundedJson(request, 8192)); body = JSON.stringify(parsed); if (create) requestedKind = newExportSchema.parse(parsed).kind; }
     catch { return facadeError(422, "VALIDATION_ERROR", requestId); }
   }
   try {
@@ -29,6 +30,7 @@ export async function relayDiscovery(key: string, request: Request, requestId: s
     const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: get ? "GET" : "POST", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: get ? undefined : frontendOrigin(), idempotencyKey: retryKey, maxResponseBytes: 2 * 1024 * 1024, preparedSearch: key === "search" });
     if (upstream.status !== 200) { const error = z.object({ error: z.object({ code: z.string() }) }).safeParse(upstream.body), code = error.success && known.has(error.data.error.code) ? error.data.error.code : "DEPENDENCY_UNAVAILABLE"; return facadeError(code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, code, requestId); }
     const result = (key === "search" ? searchSchema : key === "audit/events" ? auditSchema : key === "audit/actors" ? auditActorsSchema : permit ? permitSchema : create || detail ? exportSchema : exportsSchema).parse(upstream.body);
+    if (create && exportSchema.parse(result).kind !== requestedKind || detail && exportSchema.parse(result).id !== id || permit && permitSchema.parse(result).export_id !== id) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
     if ("transfer_url" in result) { const transfer = new URL(result.transfer_url), origin = new URL(process.env.API_BASE_URL ?? ""); if (transfer.origin !== origin.origin || transfer.pathname !== `/api/v1/transfers/exports/${id}` || transfer.search || transfer.hash || transfer.username || transfer.password) throw new Error("INVALID_TRANSFER_TARGET"); }
     return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
