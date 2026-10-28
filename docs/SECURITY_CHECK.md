@@ -1,5 +1,23 @@
 # KAY security check for changes
 
+## Selected public intake reference,2026-10-28
+
+Only the five public input fields and submission metadata enter the new form's
+payload. Reference is optional enquiry text, not an inventory lookup/link or
+assignment/source/staff override. Local combined text and raw UTF-8 bounds fail
+without dispatch; the existing server forbidden-control validator now includes
+reference text before processing. Signature/source authority, current source
+scope, generic public errors, receipt/outbox atomicity and raw-byte replay remain.
+
+Unknown requests retain original bytes/id/time/reference, no persistent storage.
+Disposal aborts and refuses stale/late send/edit/refresh/restart work. Relative
+path allowlisting, cookie omission/no-referrer/no-store and strict UUID/state-only
+receipt projection remain.558 connection-forbidden backend units/720 deselected,
+621 frontend units, Ruff2/mypy220 and frontend gates pass. Three simulator cases
+are prepared/not run. No actual app/DB/account/config/signing key, service/worker/
+simulator/transfer, migration, workaround or native/CI acceptance.
+[Contract](04-design/intake-form-local.md).
+
 ## Selected import resume and ownership,2026-10-28
 
 Fresh unrestricted M/A identity/CSRF and original actor binding precede commands

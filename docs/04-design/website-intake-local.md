@@ -6,6 +6,14 @@ The actual website/technical owner remain Q01; no real site is connected.
 
 ## Authority and HTTP
 
+Selected migration2026-10-28 adds the existing optional property-reference
+contract to the selected public form. It retains exact-byte unknown retries,
+receipt-only projection and source-owned signing, adds local text/UTF-8 bounds
+and disposal guards, and extends the existing forbidden-control check to the
+reference. No inventory lookup, staff scope, processing or migration is added.
+See [form integration](intake-form-local.md); actual native/SQL acceptance remains
+pending.
+
 The separate Python-venv simulator binds127.0.0.1:8001 over local HTTPS.
 Its origin is **https://127.0.0.1:8001**, not localhost: staff host-only cookies
 therefore do not accompany form requests. Strict Host and exact Origin/JSON

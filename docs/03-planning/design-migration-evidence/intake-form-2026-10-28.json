@@ -1,0 +1,170 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "a099668ddd9c5150eb130c844db91ac0a271160a",
+  "scope": "Selected public optional property-reference field, local combined text/raw UTF-8 bounds, explicit public fields, exact-byte unknown sends, disposal/transport guards and backend reference control-validation correction",
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 558,
+      "deselected": 720,
+      "additionalCases": 11,
+      "boundary": "Connection-forbidden pure Submission and stubbed public asset tests; no actual app/database/signing configuration."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check <2 paths> and ruff format --check <same>",
+      "cwd": "backend",
+      "exitCode": 0,
+      "paths": [
+        "backend/app/intake/contracts.py",
+        "backend/tests/test_intake_workspace_unit.py"
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 220
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 621,
+      "additionalCases": 9,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic actual draft/hook/client/UI and synthetic TLS units; existing intake suite registered."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 496,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <changed public form>",
+      "exitCode": 0,
+      "files": 1,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1270,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8883,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "validationCorrection": "Existing forbidden control-text rule now includes property_reference; ordinary Unicode/multiline and normalized text bounds retained. No migration, stock lookup, receipt/signature/worker/authority change.",
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/intake-reference.spec.ts",
+    "browserCases": 3,
+    "typechecked": true,
+    "scenarios": [
+      "Reference exact-byte lost response retry",
+      "Combined message/reference local rejection and corrected send",
+      "UTF-8 wire cap local rejection and corrected send"
+    ],
+    "workerRemainsStopped": true,
+    "contactProcessingStarted": false
+  },
+  "preserved": {
+    "selectedPublicCardAndControls": true,
+    "realOptionalMessageAndReference": true,
+    "referenceIsOpaqueEnquiryTextOnly": true,
+    "sourceOwnedSigningAuthorityAndAtomicReceipt": true,
+    "strictReceiptOnlyProjection": true,
+    "cookieOmissionNoStoreNoReferrer": true,
+    "exactOriginalSubmissionBytesOnRetry": true,
+    "noBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notPerformed": [
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/simulator/account/customer records/private configuration/signing-key/import/export/transfer access",
+    "Executed migrations0036/0037 or another migration",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "backend/app/intake/contracts.py",
+      "bytes": 1778,
+      "sha256": "ad35bedf7fd7664bb059bd8b1990029d0afdc56e52b6491cbb823385325dfb85"
+    },
+    {
+      "file": "backend/tests/test_intake_workspace_unit.py",
+      "bytes": 6030,
+      "sha256": "4321111d6d16b38e7aac298184cc9b6ada570f7df8cc4369e03d4b6e6fdd0f2b"
+    },
+    {
+      "file": "frontend/src/features/intake/use-website-request.ts",
+      "bytes": 4093,
+      "sha256": "50c5ea654d8870641645352872a61d40e7d29cbd2896fc4c1e8cd7db62865c06"
+    },
+    {
+      "file": "frontend/src/features/intake/website-client.ts",
+      "bytes": 808,
+      "sha256": "ba2389788e15caf6ef14cbad87a238863b9f8d018227e445470e0f17802116b6"
+    },
+    {
+      "file": "frontend/src/features/intake/website-form.tsx",
+      "bytes": 5765,
+      "sha256": "024af688967f879c75710d6d6e8fd1e75deeacffd29558c41c2f38b695f860c9"
+    },
+    {
+      "file": "frontend/src/features/intake/website-draft.ts",
+      "bytes": 1975,
+      "sha256": "17a4e72348f1d5bf7e82d976473d9bc1fa2a206f0d580b0461dd808822602d49"
+    },
+    {
+      "file": "frontend/tests/unit/intake-workspace.test.mjs",
+      "bytes": 17465,
+      "sha256": "e7cc3d59eb45d3dddf6cffc3a3b664de0afad34a423b328316a5fa564c0ec6c2"
+    },
+    {
+      "file": "frontend/tests/e2e/intake-reference.spec.ts",
+      "bytes": 4886,
+      "sha256": "0c95a758f354910aa4f4866cdb89608de9c4df3ea6c4380d88d797293b748de6"
+    }
+  ]
+}

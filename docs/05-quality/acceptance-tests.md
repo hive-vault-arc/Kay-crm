@@ -1,5 +1,17 @@
 # Acceptance scenarios
 
+Selected public reference form,2026-10-28 (AT-22/23/30):
+verify the optional property-reference field, existing optional message, combined
+normalized4000-codepoint text bound,100-character reference and8192-byte raw UTF-8
+cap. Local rejection must preserve editable inputs and send nothing; unknown
+acknowledgement retries the same bytes/id/time/reference. No staff/source/
+inventory authority enters the payload, and the reference is only enquiry text.
+Extend the existing forbidden-control check to reference text; preserve Unicode,
+multiline text, receipt-only status, disposal and cookie-free public transport.
+558 backend/621 frontend units pass, including11/9 added cases. Three simulator
+cases are prepared/typechecked, not run; actual signed intake/SQL/worker/native/
+device/role checks remain pending. [Contract](../04-design/intake-form-local.md).
+
 Selected import resume/ownership,2026-10-28 (AT-20/21/23/39):
 reopen awaiting/uploading batches, resume with matching file metadata and no
 second batch create, preserve the previous batch when explicitly starting a new

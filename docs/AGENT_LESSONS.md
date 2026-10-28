@@ -1907,3 +1907,15 @@ would deadlock itself. Only that original owned retry can cross its child lock;
 a new upload still guards review drafts. Check the real guard implementation,
 not merely a permissive test double, and prepare a native recovery case. Use a
 synchronous upload-owner getter so stale review handlers cannot overlap writes.
+
+## Public reference fields, text budgets and immutable source bytes,2026-10-28
+
+When exposing a real optional intake field, inspect the backend text formatter:
+a reference consumes its own prefix and part of the message budget. Preserve
+the server normalization/codepoint boundary and independently check raw UTF-8
+wire bytes. Do not shrink a native maxlength and silently strand/truncate an
+existing message when a reference is added; show the budget and preserve an
+editable draft on local rejection. Explicitly whitelist public payload fields,
+keep an unknown send byte-for-byte, and guard stale callbacks after disposal.
+Extend the existing forbidden-control validator to every newly exposed text
+field instead of allowing it to fail later during queued processing.

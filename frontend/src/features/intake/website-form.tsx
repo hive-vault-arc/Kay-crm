@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { useWebsiteRequest } from "./use-website-request";
+import { websiteMessageLimit } from "./website-draft";
 
 const states = { queued: "En attente de traitement", processed: "Demande traitée", failed: "Traitement indisponible" };
 export function WebsiteForm() {
@@ -33,7 +34,8 @@ export function WebsiteForm() {
         <div className="grid gap-2"><Label htmlFor="website-name">Nom complet</Label><Input id="website-name" required maxLength={160} autoComplete="off" value={draft.name} onChange={event => model.change("name", event.target.value)} /></div>
         <div className="grid gap-2"><Label htmlFor="website-phone">Téléphone international</Label><Input id="website-phone" type="tel" required maxLength={48} autoComplete="off" aria-describedby="website-phone-help" value={draft.phone} onChange={event => model.change("phone", event.target.value)} /><p id="website-phone-help" className="text-xs text-muted-foreground">Indiquez l’indicatif, par exemple +212, puis le numéro synthétique.</p></div>
         <div className="grid gap-2"><Label htmlFor="website-email">E-mail (facultatif)</Label><Input id="website-email" type="email" maxLength={254} autoComplete="off" value={draft.email} onChange={event => model.change("email", event.target.value)} /></div>
-        <div className="grid gap-2"><Label htmlFor="website-message">Votre demande (facultative)</Label><Textarea id="website-message" maxLength={4000} value={draft.message} onChange={event => model.change("message", event.target.value)} /></div>
+        <div className="grid gap-2"><Label htmlFor="website-reference">Référence du bien (facultative)</Label><Input id="website-reference" maxLength={100} autoComplete="off" value={draft.property_reference} onChange={event => model.change("property_reference", event.target.value)} /></div>
+        <div className="grid gap-2"><Label htmlFor="website-message">Votre demande (facultative)</Label><Textarea id="website-message" maxLength={4000} aria-describedby="website-message-help" value={draft.message} onChange={event => model.change("message", event.target.value)} /><p id="website-message-help" className="text-xs text-muted-foreground">{draft.property_reference.trim() ? `${websiteMessageLimit(draft.property_reference).toLocaleString("fr")} caractères pour la demande avec cette référence.` : "4 000 caractères maximum, référence comprise."}</p></div>
         <Button action="upload" type="submit" className="w-full">{busy ? "Envoi…" : "Envoyer la demande"}</Button>
       </fieldset>
     </form>}

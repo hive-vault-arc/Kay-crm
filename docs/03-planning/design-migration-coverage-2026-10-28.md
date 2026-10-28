@@ -130,3 +130,19 @@ atomic rules remain unchanged.
 cases are prepared/typechecked, not run. Actual transfer/SQL/native/device/AFTER/
 CI/product gates remain pending. Continue intake/detail and broader old-selector
 coverage; this does not complete P0/P8 or the redesign goal.
+
+## Public intake field follow-through,2026-10-28
+
+[Public field/action map](../04-design/intake-form-local.md) retains the selected
+card and receipt-only workflow, adds the real optional property-reference input
+and preserves the real optional-message rule. Reference remains opaque enquiry
+text with no stock/inventory/private lookup. Local combined text/UTF-8 bounds,
+exact-byte retry, public field/path allowlists and disposal guards are covered;
+the backend existing forbidden-control rule now also checks the reference.
+Source signing/current authority/atomic receipt and processing behavior remain.
+
+558 backend/621 frontend units pass, including11/9 added cases; three simulator
+cases are prepared/typechecked, not run. Older broad intake helpers/selectors,
+actual signed service/SQL/worker/native/device/AFTER/CI/product checks remain
+pending. Continue remaining detail and wider selector coverage; P0/P8 and the
+full redesign goal remain open.

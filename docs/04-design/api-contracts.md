@@ -253,6 +253,13 @@ window, 8,192-byte and persistent rate bounds, strict role-free input, durable
 session is impersonated. Read projections allow null staff author only for a
 true source actor; manual source choices still exclude website.
 
+Selected form integration2026-10-28 exposes optional property_reference as
+enquiry text only. Its existing100-character and combined normalized4000-
+codepoint text bounds remain; the forbidden-control check now includes the
+reference. Local preparation additionally checks the existing raw UTF-8 cap,
+preserves exact unknown-retry bytes and adds no inventory/staff/source lookup.
+[Form boundary and pending native evidence](intake-form-local.md).
+
 SP-19's implemented scoped search, own-job CSV export/status, private single-use
 delivery, inventory archive/restore and M/A audit shapes are defined in
 [discovery contract](discovery-contract.md). Current authority precedes private

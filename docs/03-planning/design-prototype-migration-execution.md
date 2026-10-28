@@ -2491,3 +2491,26 @@ detail/legacy-selector coverage; the full goal remains active.
 
 [Import resume evidence](design-migration-evidence/import-resume-2026-10-28.json)
 records source/synthetic checks separately from actual-stack acceptance.
+
+## Public intake reference and request ownership,2026-10-28
+
+The selected public card now includes the real optional reference field while
+preserving the real optional-message contract and receipt-only flow. Local
+combined normalized text and8192-byte wire bounds keep invalid drafts editable;
+unknown sends retain original bytes/id/time/reference. Public field/path
+allowlists and disposal guards prevent scope injection or stale work. Existing
+backend forbidden-control validation now includes reference text, preserving
+ordinary Unicode/multiline behavior. The reference remains enquiry text; no
+inventory resolution, source/staff authority, new processing or migration.
+[Contract](../04-design/intake-form-local.md).
+
+558 connection-forbidden backend units/720 deselected,621 frontend units,
+Ruff2/mypy220, lint/types/build/history and static app lint1 pass. Three simulator
+cases are prepared/typechecked, not run. Actual signed service/SQL/worker/native/
+device/AFTER/CI/product acceptance, migrations0036/0037 and older broad intake/
+detail selectors remain pending. No actual app/DB/account/config/signing-key/
+simulator/service/worker/transfer access or workaround, main/push/merge/deploy.
+Continue detail/context and legacy-selector reconciliation; full goal active.
+
+[Public intake evidence](design-migration-evidence/intake-form-2026-10-28.json)
+records this source boundary separately from actual-stack acceptance.

@@ -1,5 +1,21 @@
 # KAY QA command register
 
+Selected public intake reference,2026-10-28: backend cwd explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:558 pass/720 integration
+deselected,11 added real Submission/property-reference/control/Unicode bounds
+cases. Ruff check/format--check pass2 paths; backend-cwd mypy passes220 sources.
+Frontend `npm run test:unit`:621 pass/0 failed/skipped,9 added cases in the
+registered intake suite. `npm run lint`, `npm run typecheck`, `npm run build`
+(Next16.4.2) and `npm run history:check` pass.64 glyphs/104 consumers/345 icon
+sites and496 Button sites have0 violations. Static Frontend Taste app lint
+covers1 UI source,0 findings, not native rendering. Three simulator cases are
+prepared/typechecked, not run; workers stay stopped in those prepared cases.
+The reference control-validation correction does not add business scope,
+inventory resolution or a migration. No actual app/DB/account/config/signing-key
+access, simulator/service/worker/transfer, workaround or final native/SQL/CI/
+AFTER/product/main/push/merge/deploy acceptance.
+[Contract](04-design/intake-form-local.md).
+
 Selected import resume/ownership,2026-10-28: frontend cwd
 `npm run test:unit`:612 pass/0 failed/skipped,14 added cases in the registered
 import suite. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2)
