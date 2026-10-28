@@ -42,6 +42,7 @@ try {
     "tests/unit/owners.test.mjs",
     "tests/unit/owner-forms.test.mjs",
     "tests/unit/owner-workspace.test.mjs",
+    "tests/unit/ownership-recovery.test.mjs",
     "tests/unit/inventory-forms.test.mjs",
     "tests/unit/offering-forms.test.mjs",
     "tests/unit/customer-proposals.test.mjs",

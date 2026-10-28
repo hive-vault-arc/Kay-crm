@@ -2514,3 +2514,27 @@ Continue detail/context and legacy-selector reconciliation; full goal active.
 
 [Public intake evidence](design-migration-evidence/intake-form-2026-10-28.json)
 records this source boundary separately from actual-stack acceptance.
+
+## Contact/Owner reviewed operation recovery,2026-10-28
+
+The selected contextual contact management form retains transfer/collaborators/
+archive/restore/merge fields, reason, explicit survivor and impact confirmation.
+Unknown dispatch pins original versions/proof/intent/key; acknowledged recovery
+only completes its saved read. One source/role owner survives version refresh,
+fresh identity binds retries to the same actor/role, and alias reads never
+silently retarget mutations. Preview/receipt coherence and ID-based merge labels
+prevent foreign/mislabelled projections. Denial/disposal and parent lifetime
+signals clear private content and ignore late updates. No backend/API/24-hour
+receipt/permission/history/merge-policy change or selected layout replacement.
+[Contract](../04-design/ownership-recovery-local.md).
+
+639 frontend units pass,18 added; lint/types/build/history and static app lint4
+pass without suppression after correcting immutable attempt updates and receipt
+presence. Two Contacts/Owners native cases are prepared/typechecked, not run.
+Backend unchanged/not rerun. Actual role/SQL/native/device/AFTER/CI/product checks,
+migrations0036/0037 and wider old selectors/detail coverage remain pending. No
+actual app/DB/account/config/service/worker/transfer access or workaround,
+main/push/merge/deploy. Full goal active.
+
+[Ownership recovery evidence](design-migration-evidence/ownership-recovery-2026-10-28.json)
+records synthetic/source checks separately from actual-stack acceptance.

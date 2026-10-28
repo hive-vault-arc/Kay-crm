@@ -1,5 +1,13 @@
 # HTTP contracts for `/api/v1`
 
+Selected contact/owner management recovery,2026-10-28: existing preview and
+assign/collaborators/archive/restore/merge routes retain their bodies, methods
+and backend policies. Facade/client reject incoherent impact IDs/versions/owner
+and confirmed target/operation. Canonical Contact GET remains valid; it cannot
+silently replace an editable mutation target. Exact unknown retry and saved-only
+completion preserve ordinary24-hour receipts; no endpoint/schema/backend change.
+[Client/facade integration](ownership-recovery-local.md).
+
 Selected unit/property listing workflow,2026-10-28: shared five-step
 creation/edit/review now covers rich unit facts, supported categories and real
 placement. BR-26 incomplete units can include known partial listing_details

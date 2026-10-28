@@ -1,5 +1,19 @@
 # KAY QA command register
 
+Selected contact/owner management recovery,2026-10-28: frontend cwd
+`npm run test:unit`:639 pass/0 failed/skipped,18 added hook/client/facade/dialog/
+parent cases in the newly registered ownership suite. Existing owner management
+denial phases retain preview/commit/follow-up/refresh/transient coverage with
+strict fixtures. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2)
+and `npm run history:check` pass.64 glyphs/104 consumers/345 icon sites and497
+Button sites have0 violations. Static Frontend Taste app lint covers4 changed
+UI sources,0 findings; no rendered acceptance. Initial React immutability and
+TypeScript receipt-presence diagnostics were corrected without suppression.
+Two real-stack Contacts/Owners recovery cases are prepared/typechecked, not run.
+Backend unchanged/not rerun; no actual app/DB/account/configuration/service/
+worker/transfer access, migration, workaround, native/SQL/CI/AFTER/product or
+main/push/merge/deploy acceptance. [Contract](04-design/ownership-recovery-local.md).
+
 Selected public intake reference,2026-10-28: backend cwd explicit venv
 `.venv/Scripts/python.exe -m tests.unit_runner`:558 pass/720 integration
 deselected,11 added real Submission/property-reference/control/Unicode bounds

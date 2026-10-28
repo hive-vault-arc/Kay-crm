@@ -146,3 +146,19 @@ cases are prepared/typechecked, not run. Older broad intake helpers/selectors,
 actual signed service/SQL/worker/native/device/AFTER/CI/product checks remain
 pending. Continue remaining detail and wider selector coverage; P0/P8 and the
 full redesign goal remain open.
+
+## Contact/Owner management follow-through,2026-10-28
+
+[Management action map](../04-design/ownership-recovery-local.md) retains all
+existing operation fields inside selected responsibility/drawer organization.
+One source/role lifetime survives version updates; reviewed intent/version/
+proof/key and actor remain pinned after unknown dispatch. Saved completion
+retries only its read. Current denial/disposal mask/cancel late work, canonical
+refresh cannot retarget a mutation, and merge labels follow IDs. Client/facade
+coherence complements unchanged backend scope/history/merge/receipt rules.
+
+639 frontend units pass, including18 added cases; two current-label native cases
+are prepared/typechecked, not run. Lint/types/build/history and static app lint4
+pass. Remaining detail/context, older broad selectors, actual native/SQL/device/
+AFTER/CI/product acceptance and migrations0036/0037 remain pending. No backend
+rerun or actual access is claimed. P0/P8 and the full redesign goal remain open.

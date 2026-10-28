@@ -31,14 +31,15 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
   const [scopeError, setScopeError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
   const contact = currentRecord(query.value, edited, id);
-  async function changed(target: string, operation: Operation) {
-    const fresh = await apiGet(`/api/v1/contacts/${target}`, contactSchema);
+  async function changed(target: string, operation: Operation, signal: AbortSignal) {
+    const fresh = await apiGet(`/api/v1/contacts/${target}`, contactSchema, signal);
+    if (signal.aborted) return;
     if (target === id) setEdited(fresh); else { setEdited(undefined); query.refreshQuietly(); }
     setNotice(`${operationLabels[operation]} : opération enregistrée.`);
   }
   const heading = <PageHeader title="Fiche contact" description="Coordonnées et dossiers accessibles." route={`/contacts/${id}`} />;
   if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
-  if (scopeError) return <>{heading}<RecordError error={scopeError} retry={() => { setScopeError(undefined); setEdited(undefined); query.refresh(); }} /></>;
+  if (scopeError) return <>{heading}{notice ? <p role="status">{notice}</p> : null}<RecordError error={scopeError} retry={() => { setScopeError(undefined); setEdited(undefined); setNotice(""); query.refresh(); }} /></>;
   if (!contact) return <>{heading}<p role="status">Chargement du contact…</p></>;
   const writable = !contact.archived_at;
   const editAction = writable ? <RecordDrawer label="Modifier" action="edit" title="Coordonnées du contact" description="Les coordonnées sont partagées par les dossiers de ce contact.">{(close, saved) => <ContactEditor key={`${contact.id}:${contact.version}`} contact={contact} saved={value => { setEdited(value); setNotice("Contact enregistré."); saved(); }} cancel={close} />}</RecordDrawer> : undefined;
@@ -61,7 +62,7 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
           <ContactInlineField {...inline} icon={ContactIcon} field="languages" label="Langues" />
           <RecordFact icon={InboxIcon} label="Source initiale">{sourceLabels[contact.source]}</RecordFact>
         </RecordFacts></RecordSection>
-        <RecordSection title="Responsabilité" action={writable || role !== "agent" ? <RecordDrawer label="Gérer le contact" action="settings" description="Attribution, collaboration et conservation avec aperçu de l’impact.">{(_close, saved) => <OwnershipControls embedded key={`${contact.id}:${contact.version}`} contact={contact} role={role} changed={async (target, operation) => { await changed(target, operation); saved(); }} />}</RecordDrawer> : undefined}><RecordFacts>
+        <RecordSection title="Responsabilité" action={writable || role !== "agent" ? <RecordDrawer label="Gérer le contact" action="settings" description="Attribution, collaboration et conservation avec aperçu de l’impact.">{(_close, saved) => <OwnershipControls embedded key={contact.id} contact={contact} role={role} denied={(failure, acknowledged) => { setNotice(acknowledged ? "L’opération est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} changed={async (target, operation, signal) => { await changed(target, operation, signal); if (!signal.aborted) saved(); }} />}</RecordDrawer> : undefined}><RecordFacts>
           <RecordFact icon={ContactsIcon} label="Agent responsable">{contact.primary_agent.display_name}</RecordFact>
           <RecordFact icon={ContactsIcon} label="Collaborateurs">{contact.collaborators.map(value => value.display_name).join(", ") || "Aucun"}</RecordFact>
           <RecordFact icon={CalendarIcon} label="Contact créé le">{formatInstant(contact.created_at)}</RecordFact>

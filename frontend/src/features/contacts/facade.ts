@@ -6,7 +6,7 @@ import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
 import { frenchApiError } from "@/lib/api/errors";
 import { agentsSchema, contactRoute, contactSchema, contactsSchema, duplicateSchema, editContactSchema, editEnquirySchema, enquiriesSchema, enquirySchema, listQuerySchema, newContactSchema, newEnquirySchema, privateConflictSchema, recordLifecycleResultSchema, recordLifecycleSchema, resolveSchema } from "./contracts";
-import { assignmentsSchema, commandResultSchema, confirmedChangeSchema, enquiryAssignmentSchema, intentSchema, noteSchema, previewSchema, timelineSchema } from "./ownership-contracts";
+import { assignmentsSchema, commandResultSchema, confirmedChangeSchema, enquiryAssignmentSchema, intentSchema, noteSchema, previewSchema, timelineSchema, ownershipPreviewMatches, ownershipResultMatches, type ChangeIntent } from "./ownership-contracts";
 import { qualificationMetadataSchema } from "./qualification-contracts";
 import { ownerPortfolioQuerySchema, ownerPortfolioSchema } from "@/features/owners/contracts";
 import { validListKind } from "./contracts";
@@ -29,6 +29,7 @@ export async function relayContacts(key: string, request: Request, requestId: st
   if (key === "enquiries" && params.some(([name]) => name === "owner_directory")) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (mutation && request.headers.get("Origin") !== frontendOrigin()) return facadeError(403, "FORBIDDEN", requestId);
   let body: string | undefined;
+  let ownershipIntent: ChangeIntent | undefined;
   const retryKey = request.headers.get("Idempotency-Key") ?? undefined;
   if (mutation) {
     if (key !== "contacts/resolve-phone" && suffix !== "preview" && !z.uuid().safeParse(retryKey).success) return facadeError(422, "VALIDATION_ERROR", requestId);
@@ -38,6 +39,7 @@ export async function relayContacts(key: string, request: Request, requestId: st
       if (!parsed.success) return facadeError(422, "VALIDATION_ERROR", requestId);
       if (suffix && !["preview", "notes"].includes(suffix) && key.startsWith("contacts/") && (!confirmedChangeSchema.safeParse(parsed.data).success || (parsed.data as { operation?: string }).operation !== suffix)) return facadeError(422, "VALIDATION_ERROR", requestId);
       body = JSON.stringify(parsed.data);
+      if (key.startsWith("contacts/") && ["preview", "assign", "collaborators", "archive", "restore", "merge"].includes(suffix)) ownershipIntent = intentSchema.parse(Object.fromEntries(Object.entries(parsed.data).filter(([name]) => name !== "preview_token")));
     } catch { return facadeError(422, "VALIDATION_ERROR", requestId); }
   }
   try {
@@ -53,6 +55,8 @@ export async function relayContacts(key: string, request: Request, requestId: st
       return Response.json({ error: { code, message: frenchApiError(code), field_errors: {}, request_id: requestId }, ...details }, { status: code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
     }
     const schema = suffix === "portfolio" ? ownerPortfolioSchema : suffix === "preview" ? previewSchema : suffix === "timeline" ? timelineSchema : suffix === "assignment-events" ? assignmentsSchema : key.startsWith("enquiries/") && (suffix === "archive" || suffix === "restore") ? recordLifecycleResultSchema : suffix ? commandResultSchema : key === "contacts/resolve-phone" ? z.object({ available: z.literal(true) }).strict() : key === "contacts/assignment-options" ? agentsSchema : request.method === "GET" && key === "contacts" ? contactsSchema : request.method === "GET" && key === "enquiries" ? enquiriesSchema : key.startsWith("contacts") ? contactSchema : enquirySchema;
-    return Response.json((key === "contacts/metadata" ? qualificationMetadataSchema : ["contacts/responsible-options", "enquiries/assigned-options"].includes(key) ? agentsSchema : schema).parse(upstream.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
+    const result = (key === "contacts/metadata" ? qualificationMetadataSchema : ["contacts/responsible-options", "enquiries/assigned-options"].includes(key) ? agentsSchema : schema).parse(upstream.body);
+    if (ownershipIntent && (suffix === "preview" ? !ownershipPreviewMatches(key.split("/")[1], ownershipIntent, previewSchema.parse(result)) : !ownershipResultMatches({ sourceId: key.split("/")[1], intent: ownershipIntent }, commandResultSchema.parse(result)))) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

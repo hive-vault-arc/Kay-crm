@@ -28,6 +28,18 @@ export const assignmentsSchema = numberedPage(z.object({ ...eventFields, previou
 export type ChangeIntent = z.infer<typeof intentSchema>;
 export type Operation = ChangeIntent["operation"];
 export type Preview = z.infer<typeof previewSchema>;
+export type OwnershipResult = z.infer<typeof commandResultSchema>;
+export type OwnershipReview = { sourceId: string; intent: ChangeIntent; preview: Preview; key: string };
+export function ownershipPreviewMatches(sourceId: string, intent: ChangeIntent, preview: Preview) {
+  const contacts = new Map(preview.impact.contacts.map(contact => [contact.id, contact]));
+  const source = contacts.get(sourceId), survivor = intent.operation === "merge" ? contacts.get(intent.survivor_id) : undefined;
+  if (!source || source.version !== intent.expected_version || contacts.size !== preview.impact.contacts.length) return false;
+  if (intent.operation === "merge" ? contacts.size !== 2 || intent.survivor_id === sourceId || !survivor || survivor.version !== intent.survivor_expected_version : contacts.size !== 1) return false;
+  return preview.impact.primary_agent_after.id === (intent.operation === "assign" ? intent.primary_agent_id : survivor?.primary_agent.id ?? source.primary_agent.id);
+}
+export function ownershipResultMatches(review: Pick<OwnershipReview, "sourceId" | "intent">, result: OwnershipResult) {
+  return result.contact_id === (review.intent.operation === "merge" ? review.intent.survivor_id : review.sourceId) && result.operation === review.intent.operation;
+}
 export const dealActivityLabels = { "deals.created": "Affaire créée", "deals.updated": "Affaire modifiée", "deals.transition": "Étape de l’affaire modifiée", "deals.customer_offer.created": "Proposition client enregistrée", "deals.customer_offer.updated": "Proposition client modifiée", "deals.contact_merged": "Affaire rattachée après fusion", "deals.reservation.created": "Offre réservée", "deals.reservation.released": "Réservation libérée", "deals.closed": "Affaire clôturée", "deals.reopened": "Affaire rouverte", "deals.stock.flagged": "Stock de l’affaire à vérifier" };
 export const activityLabels: Record<string, string> = { "tasks.created": "Tâche créée", "tasks.updated": "Tâche modifiée", "tasks.completed": "Tâche terminée", "tasks.cancelled": "Tâche annulée", "tasks.contact_merged": "Tâche rattachée après fusion", "requirements.created": "Recherche créée", "requirements.updated": "Recherche modifiée", "requirements.shortlisted": "Offre sélectionnée ou avis modifié", "requirements.unshortlisted": "Offre retirée de la sélection", "contacts.created": "Contact créé", "contacts.updated": "Identité modifiée", "enquiries.created": "Prospect créé", "enquiries.updated": "Demande modifiée", "contacts.assign": "Responsable changé", "contacts.collaborators": "Collaborateurs modifiés", "contacts.archive": "Contact archivé", "contacts.restore": "Contact restauré", "contacts.merge": "Fusion de contacts", "enquiries.assign": "Demande réattribuée", note: "Note", call: "Appel consigné", email: "E-mail consigné", meeting: "Rendez-vous consigné", other: "Interaction consignée" };
 Object.assign(activityLabels, { "visits.created": "Visite créée", "visits.updated": "Visite modifiée", "visits.confirmed": "Visite confirmée", "visits.rescheduled": "Visite replanifiée", "visits.completed": "Visite terminée", "visits.not_completed": "Visite non réalisée", "visits.cancelled": "Visite annulée", "visits.contact_merged": "Visite rattachée après fusion" });

@@ -1,5 +1,17 @@
 # Acceptance scenarios
 
+Selected contact/owner management recovery,2026-10-28 (AT-04/05/23/24):
+retain the selected contextual form and operation fields. Verify exact intent/
+version/proof/key after lost response, synchronous overlap refusal, cancel/
+Escape/edit/refresh locks, fresh same-actor/role proof and acknowledgement-only
+completion. Match preview/receipt IDs, versions, resulting owner and operation;
+reversed merge order must keep ID-correct headings. Alias refresh must offer an
+explicit link without retargeting. Current denial masks private parent/review
+content, lifetime disposal cancels late work and background version refresh
+cannot reset an unresolved command.639 frontend units pass,18 added; two native
+cases are prepared/typechecked, not run. Actual role/SQL/native/device review
+remains pending. Backend rules unchanged. [Contract](../04-design/ownership-recovery-local.md).
+
 Selected public reference form,2026-10-28 (AT-22/23/30):
 verify the optional property-reference field, existing optional message, combined
 normalized4000-codepoint text bound,100-character reference and8192-byte raw UTF-8

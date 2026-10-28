@@ -1,5 +1,22 @@
 # KAY security check for changes
 
+## Selected contact/owner management recovery,2026-10-28
+
+Fresh same-actor/role identity and CSRF precede preview/confirmation; restricted
+password and Agent nonmerge actions cannot dispatch. Exact reviewed intent/
+versions/proof/key remain pinned after unknown dispatch. Acknowledged completion
+cannot mutate again. Source/survivor IDs, versions, resulting owner and receipt
+target/action are checked at the client/facade boundaries; canonical reads remain
+valid but never implicitly retarget a mutation. Labels use IDs, not array order.
+Current denial masks private review/parents, aborts and refuses stale handlers;
+only this operation's known acknowledgement survives as a generic notice.
+Disposal and parent reads share lifetime cancellation. No persistent storage,
+backend permission/history/merge/lock/24-hour receipt change or new endpoint.
+639 frontend units and lint/types/build/history pass;18 added cases. Two native
+cases are prepared/not run. No backend rerun or actual app/DB/account/config/
+service/transfer/worker, migration, access workaround or final acceptance.
+[Contract](04-design/ownership-recovery-local.md).
+
 ## Selected public intake reference,2026-10-28
 
 Only the five public input fields and submission metadata enter the new form's

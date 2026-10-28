@@ -1919,3 +1919,17 @@ editable draft on local rejection. Explicitly whitelist public payload fields,
 keep an unknown send byte-for-byte, and guard stale callbacks after disposal.
 Extend the existing forbidden-control validator to every newly exposed text
 field instead of allowing it to fail later during queued processing.
+
+## Reviewed ownership commands and ID-based impact,2026-10-28
+
+Keep one operation owner across background version updates; key its lifetime by
+record/role, not version. A lost response must retain original reviewed intent,
+versions, proof and key; a known saved result retries completion only. Explicit
+alias reads must not silently retarget a mutation. Validate preview contact IDs,
+versions and resulting owner, then label merge source/survivor by ID rather than
+array order. Share cancellation with parent completion reads and mask current
+denial while retaining only the current operation's generic acknowledgement.
+Replace immutable attempt snapshots instead of mutating effect-owned objects,
+and explicitly narrow optional receipts before completion. Keep real denial
+phase tests, register new suites, and distinguish prepared browser cases from
+actual native/SQL acceptance.
