@@ -55,6 +55,7 @@ export const NotificationIcon = createPrototypeIcon("notification");
 export const NavigationMenuIcon = createPrototypeIcon("navigation-menu");
 export const CalendarIcon = createPrototypeIcon("calendar");
 export const DashboardIcon = createPrototypeIcon("dashboard");
+export const ChartIcon = createPrototypeIcon("chart");
 export const SettingsIcon = createPrototypeIcon("settings");
 export const SearchIcon = createPrototypeIcon("search");
 export const AddIcon = createPrototypeIcon("add");

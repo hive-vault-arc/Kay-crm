@@ -1800,3 +1800,12 @@ attributes. A source-hash-checked upstream snapshot may also need a narrow
 -whitespace exception for those CRLF bytes. Validate canonical staged blobs
 against manifest hashes as well as working-tree and wheel bytes; local renderer
 tests alone miss Git normalization.
+
+
+## Keep attribution-page recovery when a live list shrinks (2026-10-28)
+
+A retained chart/list page can become empty while its authoritative total remains
+positive. Render the pagination escape outside the nonempty branch and distinguish
+that state from a genuine zero total. Keep logical period identity separate from
+the response timestamp so a quiet refresh does not reset the retained page. When
+its original trigger disappears, back navigation must focus the returned heading.

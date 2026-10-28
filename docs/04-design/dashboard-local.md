@@ -1,5 +1,11 @@
 # Local dashboard reporting (SP-17)
 
+Selected report-drawer update,2026-10-28: [current workspace](report-workspace-local.md)
+ports the grouped metric cards, attribution tools and tonal record/alert lists.
+All13 M/A/12 Agent metrics, existing lazy Bklit attribution charts, exact amounts,
+datasets and current authority remain. Earlier inline/table layouts below are
+historical; native/full-stack acceptance remains pending.
+
 Selected dashboard migration addendum,2026-10-27: a separate read-only workspace
 projection supplies the four selected headline rowsets and short real previews,
 without altering this existing13-metric reporting contract. Current assignment

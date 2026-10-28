@@ -22,13 +22,13 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | Phase | Source state | Remaining acceptance/work |
 | --- | --- | --- |
 | P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
-| P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to63 source-pinned glyphs and selected status palette | Native review later |
+| P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to64 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and preferred Navigation API/classic history fallback source implemented | Remaining inventory/work/admin form parity, responsive focus and native interaction/cache/startup/gesture/frame checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery, selected server stationery and approved styled blank appendices with preserved originals/provenance/early replay | Remaining per-field context refinements; old native selectors and final native security/stock/focus/performance checks, including actual PDF transfer/replay |
 | P6 work/schedule | Task/notification entries, compact header inbox/shared full-list recovery, selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); old selectors and native workflow review |
-| P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
+| P7 remaining surfaces | Help/settings/dashboard/search, grouped report cards/attribution tools/tonal drills and alerts, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
 
@@ -2109,3 +2109,53 @@ content JSON's CRLF bytes; a narrow -text/-whitespace rule plus renormalization
 preserves its exact pinned digest. Working-tree/wheel/staged resource checks now
 agree. Protected35 unrelated lesson additions and the motion note remain unstaged;
 main stays e0bdc09. This checkpoint adds no native or product acceptance.
+
+## Selected supporting reports and coherent drills,2026-10-28
+
+Continued P7 after9743ab6. The old chart-first supporting Reports surface now
+follows frozen work-reports/app.css/drawer-cards.css: grouped metric cards,
+separate attribution tools and current-alert tool, with one existing drawer
+scroller and tonal record links. All13 M/A/12 Agent metrics, exact decimal money,
+current/period basis, existing lazy Bklit charts and numbered pages remain.
+Only dates initialize from the dashboard; current-portfolio agent filters do not
+become closing/activity attribution filters. No backend/grant/API/schema change.
+
+Selected projection checks bind complete/unique keys, units/basis/series totals,
+metric/period/page/size/flags and known row/target-link kinds. Direct identities
+keep their own links; event/outcome/offering/receipt IDs remain distinct from
+actual targets. Current child denial masks every report panel until fresh retry.
+Overview/attribution stay mounted across drills; back restores trigger/scroll,
+with heading fallback for removed nodes. Shrunk contributor pages retain an
+escape and do not falsely report zero. Draft dates survive loading/errors.
+
+The report heading requires ChartNoAxesCombined, absent from the earlier registry.
+ChartIcon now pins those exact frozen lucide1.59.0 nodes; all63 existing nodes
+also match that same package. Current registry64, existing notices retained,
+no runtime dependency. shadcn/Tailwind/shared primitives and selected tokens remain;
+a narrow owned stylesheet ports the final wrapping/media/full-card-focus cascade.
+React review applies conditional chart loading and ref-only DOM bookkeeping.
+Incumbent useQuery is retained rather than introducing SWR.
+
+520 frontend units, lint, types and production build pass;15 new actual model/
+controller/render/navigation cases plus updated report-entry coverage.64 glyphs/
+105 consumers/348 icon sites and495 Button sites have0 violations. Compiled
+history and10 emitted CSS checks pass. All254 frozen inputs remain unchanged.
+Report helpers/e2e/visible review now follow the selected drawer/tools/lists and
+retain complete chart/API/record, keyboard/touch/width/actual200% cases; they are
+prepared/type-checked, not run. Initial checks found a cross-VM array assertion
+and ref/dependency lint issues, corrected without suppressions. No native pass.
+
+[Contract](../04-design/report-workspace-local.md) and
+[evidence](design-migration-evidence/report-workspace-2026-10-28.json).
+Original-machine mandatory UI skills remain unavailable/not claimed; dense CRM
+reports exclude marketing design-taste, AFTER timing stays. Existing app-access
+rejection remains binding: no browser/CUA/CDP/HTTP workaround. No backend rerun,
+real DB/service/private config/records/migration/main/push/merge/deploy. Native
+current-authority/SQL/performance/race/CI/AFTER/product acceptance and remaining
+P0-P8 work stay open. The full redesign goal remains active.
+
+Reports checkpoint finalization: repository/index validation passes8821 files/
+0 refused/14 ignore probes; repository-only docs pass22 sprints/1259 links/
+42 mappings/13 Mermaid pairs/12 API JSON examples. Cached whitespace and all20
+canonical staged source hashes pass. The protected35 lesson additions/motion
+note remain unstaged; main remains e0bdc09. No native/product acceptance is added.

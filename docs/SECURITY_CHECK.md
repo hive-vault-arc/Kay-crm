@@ -1,5 +1,24 @@
 # KAY security check for changes
 
+## Selected supporting reports,2026-10-28
+
+Existing read-only report endpoints/session/facade/datasets and authority remain.
+Selected client checks reject partial/duplicate/wrong-unit/basis/series/metric/
+period/page/route-kind projections; finance remains a server-authorized agency
+metric with decimal-string amounts. Direct identity links bind their own IDs;
+outcome/activity/offering/receipt row IDs are distinct from target IDs. No new
+grant, mutation, client-side scope calculation, cache, browser storage or log.
+Current denied child reads also mask overview/attribution; fresh retry reloads
+the overview. Existing useQuery abort/late delivery and live topics stay.
+
+520 frontend units pass, including15 new actual model/controller/render/navigation
+cases; lint/types/build/compiled history and10 emitted CSS checks pass. Prepared
+real report/API/chart/record, touch/key/width/200% cases were updated/type-checked,
+not run. No backend test rerun, app-access workaround, real DB/service/private
+config/records/main/push/merge/deploy. Real current-authority/SQL/performance/race,
+native/CI/AFTER/owner gates and full redesign remain open.
+[Contract and evidence](04-design/report-workspace-local.md).
+
 ## Approved styled blank appendices,2026-10-28
 
 The owner approved the frozen selected appendix layout for future new PDFs.

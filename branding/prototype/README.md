@@ -46,3 +46,8 @@ nodes as MoreIcon, bringing the semantic registry to51; original notices apply.
 The Deal workspace batch adds8 further frozen aliases (FileText, Ban, CircleX,
 UserRoundPlus/Check/X, Handshake and Flag), registry59. This also separates the
 document action from the Search glyph retained for empty-state semantics.
+
+The selected Reports batch,2026-10-28, adds ChartIcon with the exact frozen
+ChartNoAxesCombined nodes used by `work-reports.js`, bringing the current registry
+to64. All63 earlier glyphs also match the same frozen lucide1.59.0 source package.
+The existing ISC/Feather notices apply; there is no new runtime dependency.

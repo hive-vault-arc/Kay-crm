@@ -58,6 +58,7 @@ try {
     "tests/unit/settings-forms.test.mjs",
     "tests/unit/workspace-reports.test.mjs",
     "tests/unit/workspace-dashboard.test.mjs",
+    "tests/unit/selected-reports.test.mjs",
     "tests/unit/search-workspace.test.mjs",
     "tests/unit/prepared-search.test.mjs",
     "tests/unit/prepared-history.test.mjs",

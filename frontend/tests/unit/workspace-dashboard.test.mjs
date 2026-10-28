@@ -62,12 +62,11 @@ test("Compact catalogue, visit and task previews preserve exact routes, civil ti
  const href=`/leads/${contact}?task=${task}`;v.tasks.items=[{id:task,title:"Synthetic task",owner_name:"Synthetic owner",due_at:"2030-01-02T09:00:00Z",due_local:"2030-01-02T10:00:00+01:00",href}];tree=previews.WorkspaceTasks({value:v.tasks,clock:v,action:null});assert.equal(find(tree,"Link")[0].props.href,href);assert.ok(text(tree).includes("En retard"));assert.ok(text(tree).includes("6tâche"));
 });
 
-test("Supporting reports retain every authorized metric and strip an unrelated current-portfolio filter",()=>{
- const h=hooks(),base=fixture(),agent=randomUUID(),metrics=reports.metricKey.options.map(key=>({key,label:`Synthetic ${key}`,total:1,value:"1",unit:"count",basis:"current",denominator:"none",series:[]}));
- paths.length=0;const {ReportDashboard}=loadServer("src/features/reports/report-dashboard.tsx",{modules:{...common(h,()=>({value:{...base,metrics},refresh(){}})),"@/lib/format":{formatMAD:value=>value},"./contracts":reports,"./drill-down":{DrillDown:"DrillDown"},"./exceptions":{Exceptions:"Exceptions"},"./kpi-summary":{KpiSummary:"LegacyKpis"}},globals:{document:{activeElement:null}}});
- const tree=h.render(()=>ReportDashboard({supporting:true,initialPeriod:{start_on:base.start_on,end_on:base.end_on,assigned_agent_id:agent}}));
- assert.equal(find(tree,"LegacyKpis").length,0);assert.ok(!paths.at(-1).includes(agent));assert.ok(!paths.at(-1).includes("assigned_agent_id"));
- const list=find(tree,"dl")[0];assert.equal(find(list,"dt").length,metrics.length);for(const metric of metrics)assert.ok(text(list).includes(metric.label));assert.equal(find(tree,"Exceptions").length,1);
+test("Reports open as the selected supporting drawer with a civil period and no legacy page",()=>{
+ const h=hooks(),value=fixture();const View=dashboard(h,()=>({value,refresh(){}}));const render=()=>h.render(()=>View({displayName:"Synthetic Person",role:"manager"}));render();let tree=render();
+ find(tree,"Button").find(node=>text(node)==="Rapports").props.onClick();tree=render();
+ const drawer=find(tree,"Drawer")[0];assert.equal(drawer.props.label,"Rapports détaillés");
+ const reports=find(drawer,"Lazy")[0];assert.ok(reports);assert.equal(reports.props.initialPeriod.start_on,value.start_on);assert.equal(reports.props.supporting,undefined);
 });
 
 test("Headline, stage and closing drawers use their proper scoped rowsets without passing portfolio filters to outcomes",()=>{

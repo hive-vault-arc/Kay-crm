@@ -109,3 +109,10 @@ No native/browser/app-HTTP, real database/performance/concurrent-scope/transfer,
 AFTER or product acceptance is claimed. The separate
 [data evidence](../03-planning/design-migration-evidence/dashboard-data-2026-10-27.json)
 retains its actual earlier310 backend units and prepared SQL acceptance cases.
+
+2026-10-28 supporting-report refinement: the [selected report workspace](report-workspace-local.md)
+now uses grouped metric cards and separate attribution/alert tools inside the
+same drawer. Existing Bklit charts and complete real metrics remain. Back restores
+the prior panel, page, trigger and scroll position; current denial hides all
+report panels.520 frontend units/lint/types/build/compiled checks pass. Native
+and real SQL/full-stack/product acceptance remain pending.

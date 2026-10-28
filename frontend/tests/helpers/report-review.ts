@@ -24,7 +24,7 @@ export async function geometry(page: Page) {
     await new Promise<void>(resolve => setTimeout(resolve, 20));
   });
   const result = await page.evaluate(() => {
-    const root = document.querySelector('[role="alertdialog"]') ?? document.querySelector("main") ?? document.body;
+    const root = document.querySelector('[role="alertdialog"]') ?? document.querySelector('[role="dialog"]') ?? document.querySelector("main") ?? document.body;
     const visible = (el: Element) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
     const canvas = document.createElement("canvas"); canvas.width = canvas.height = 1;
     const context = canvas.getContext("2d", { willReadFrequently: true })!;

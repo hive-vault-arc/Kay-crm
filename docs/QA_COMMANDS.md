@@ -1,5 +1,18 @@
 # KAY QA command register
 
+Selected supporting reports,2026-10-28: frontend `npm run test:unit`:520 pass,
+0 failed/skipped;15 added report model/controller/render/navigation cases.
+`npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass.64 glyphs/105 consumers/348 icon sites;495 Button
+sites/0 violations. A permitted PostCSS `node --input-type=module -` probe checks
+10 emitted rules in2 CSS chunks; this is not native layout proof. Frozen254
+inputs remain unchanged. Real report helpers/e2e/visible-review sources are
+updated/type-checked, not executed; no backend or real-stack rerun. Initial
+focused tests found a cross-VM array assertion; lint found ref/dependency usage,
+all corrected without suppressions. One focused rerun passed22 before a further
+contributor-refresh case; the final full suite includes all15 new cases.
+[Evidence](03-planning/design-migration-evidence/report-workspace-2026-10-28.json).
+
 Approved styled appendices,2026-10-28: backend explicit venv
 `.venv/Scripts/python.exe -m tests.unit_runner`:463 passed/700 integration
 deselected;46 added pure/stubbed cases,3 new real-stack cases prepared/not run.
@@ -2638,3 +2651,9 @@ Cached whitespace and23 canonical staged source hashes pass. The upstream
 content snapshot has a narrow byte/whitespace attribute exception to retain its
 published CRLF/hash; originals/selected/content staged hashes match provenance.
 This does not add real-stack/native acceptance.
+
+Selected-report checkpoint finalization,2026-10-28: repository/index check passes
+8821 files/0 refused/14 ignore probes; repository-only docs pass22 sprints/1259
+links/42 acceptance mappings/13 Mermaid pairs/12 API JSON samples. Cached
+whitespace and20 canonical staged source hashes pass. Main remains unchanged;
+this does not add native/real-stack acceptance.

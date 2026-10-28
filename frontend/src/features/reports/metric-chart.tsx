@@ -41,8 +41,8 @@ export function MetricChart({ metric, open }: { metric: Metric; open: (id?: stri
         </BarChart>
       </div>
       <ul aria-label={`Valeurs : ${metric.label}`} className="kay-work-list">{points.map((point, index) => <li key={point.id}><Button variant="quiet" className="min-h-control w-full justify-start gap-3 rounded-2xl bg-muted px-4 py-3 text-start" onFocus={() => setSelected(index)} onBlur={() => setSelected(null)} onClick={() => open(point.id)}><span aria-hidden="true" className="size-3 shrink-0 rounded-sm" style={{ backgroundColor: colors[((page - 1) * 10 + index) % colors.length] }} /><span className="min-w-0 flex-1 wrap-anywhere">{point.number}. {point.label}</span><strong className="tabular-nums">{point.value}</strong></Button></li>)}</ul>
-      <NumberedPages page={page} size={10} total={metric.series.length} change={next => { setPage(next); setSelected(null); }} label={`Pages du graphique ${metric.key}`} />
-    </> : <p>Aucune donnée pour ce graphique dans votre périmètre et cette période. Le total est 0.</p>}
+    </> : <p>{metric.series.length ? "Aucun contributeur sur cette page. Revenez à une page disponible." : "Aucune donnée pour ce graphique dans votre périmètre et cette période. Le total est 0."}</p>}
+    <NumberedPages compact page={page} size={10} total={metric.series.length} change={next => { setPage(next); setSelected(null); }} label={`Pages du graphique ${metric.key}`} />
     <Button action="preview" variant="outline" className="justify-self-start" onClick={() => open()}>Voir les dossiers : {metric.total}</Button>
   </section>;
 }
