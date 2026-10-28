@@ -1,5 +1,20 @@
 # KAY security check for changes
 
+## Selected prospect creation recovery,2026-10-28
+
+Creation shares the strict enquiry owner: route-bound originating actor/role,
+fresh unrestricted identity before first/retry dispatch, immutable original body/
+submission/key after unknown outcome and completion-only retry after acknowledgement.
+Creation response source/submission/creator/explicit existing contact must match.
+Known duplicate rejection permits only explicit currently authorized canonical
+contact reuse before a new undispatched draft. Validation/disposal/availability
+and stale controls cannot mutate or navigate late; current denial masks private
+form fields. Metadata outages retain the owner without enabling a new save.
+No backend/grant/atomicity/receipt/merge/history change or persistent storage.
+691 frontend units and frontend gates pass; two native cases prepared/not run.
+No backend rerun, actual access, migration, workaround or final acceptance.
+[Contract](04-design/prospect-creation-recovery-local.md).
+
 ## Selected full prospect edit recovery,2026-10-28
 
 The existing enquiry owner pins the atomic contact/qualification body, both

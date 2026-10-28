@@ -1975,3 +1975,17 @@ the editor or trapping a legitimate merge in permanent recovery. Keep host
 component state distinct in source tests, retain form owners across transient
 reads, and cancel late validation/completion on disposal. Begin a later save
 only for a real new draft; an unchanged repeated Save is not a new operation.
+
+
+## Prospect creation command ownership,2026-10-28
+
+A creation form must retain its original parsed body, submission UUID and key
+after an unknown dispatched outcome; a changed draft cannot replace that request.
+Bind first/retry proof to the originating account and role, verify creation
+provenance before navigation, and retain acknowledgement so completion failure
+never sends another create. Known duplicate rejection permits explicit scoped
+canonical contact reuse; metadata outages retain the owner while blocking new
+saves. Commit availability before pending validation resumes, avoid ref access
+during render, and abort/discard late validation/reuse on disposal. Tests must
+await void event handlers and traverse component slots; creation success fixtures
+need coherent source-submission and creator fields rather than a generic DTO.

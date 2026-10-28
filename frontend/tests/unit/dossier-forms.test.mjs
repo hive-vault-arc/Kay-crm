@@ -20,6 +20,7 @@ const qualification = loadServer("src/features/deals/qualification-contracts.ts"
 const deals = loadServer("src/features/deals/contracts.ts", { modules: { "@/features/contacts/contracts": contacts, "@/features/contacts/qualification-contracts": vocabulary, "@/features/inventory/contracts": inventory, "@/features/requirements/contracts": requirements, "./qualification-contracts": qualification } });
 class ApiError extends Error { constructor(code, status, details) { super(code); Object.assign(this, { code, status, details }); } }
 const at="2026-10-20T12:00:00Z";
+const createActorId=randomUUID();
 const metadata={ countries: [{ code:"MA", calling_code:"+212" }], languages: [{ value:"french", label:"Français" }], campaign_sources: [{value:"broker", label:"Courtier"}], purchase_reasons:[{value:"residence", label:"Résidence"}], budget_bands:[] };
 function contact() { return contacts.contactSchema.parse({ id:randomUUID(), name:"Synthetic contact", type:"person", primary_phone:"+212600000000", primary_email:"synthetic@example.invalid", primary_agent:{id:randomUUID(),display_name:"Synthetic agent"}, version:17, archived_at:null, country:"MA", nationality:"", languages:["french"], calling_code:"+212", phones:[{number:"+212600000000",label:"Mobile",is_primary:true},{number:"+212600000001",label:"Bureau",is_primary:false}], emails:[{email:"synthetic@example.invalid",label:"Bureau",is_primary:true}], roles:["buyer"], source:"manual", source_submission_id:null, created_by_user_id:null, created_at:at, updated_at:at, collaborators:[] }); }
 function summary(client) { return contacts.contactSummarySchema.parse(Object.fromEntries(Object.keys(contacts.contactSummarySchema.shape).map(key=>[key,client[key]]))); }
@@ -29,7 +30,7 @@ function clientFields(client) { return Object.fromEntries(["name","type","phones
 function harness() {
   let cursor=0,formCursor=0; const rootState=[],owners=new Map(),forms=[],guarded=[],navigated=[];let state=rootState;
   function useState(initial) { const index=cursor++,owner=state; if (!(index in owner)) owner[index]=typeof initial==="function"?initial():initial; return [owner[index],value=>{owner[index]=typeof value==="function"?value(owner[index]):value;}]; }
-  const react={useState,useEffect(){},useRef(initial){const index=cursor++;if(!(index in state))state[index]={current:initial};return state[index];}};
+  const react={useState,useEffect(){},useLayoutEffect(){},useRef(initial){const index=cursor++;if(!(index in state))state[index]={current:initial};return state[index];}};
   const hookForms={useForm({defaultValues}) { const index=formCursor++;if(!forms[index]) {let values=json(defaultValues);forms[index]={control:{index},formState:{errors:{},isSubmitting:false},getValues:key=>key?values[key]:values,reset:next=>{values=json(next);},setError(){},setFocus(){},setValue:(key,value)=>{values[key]=value;},trigger:async()=>true,handleSubmit:callback=>async event=>{event.preventDefault();await callback(values);}};}return forms[index];},useWatch({control,name}){const value=forms[control.index].getValues();return Array.isArray(name)?name.map(key=>value[key]):value;}};
   const draft=loadServer("src/components/shared/dossier-form.tsx",{modules:{react,"react/jsx-runtime":runtime,"./record-header":{RecordHeader:"RecordHeader"}}});
   const modules={react,"react/jsx-runtime":runtime,"react-hook-form":hookForms,"@hookform/resolvers/zod":{zodResolver(){}},"next/link":{default:"Link"},"next/navigation":{useRouter:()=>({push:path=>navigated.push(path)})},"@/components/shared/dossier-form":{...draft,DossierFormHeader:"Header"},"@/components/shared/record-workspace":{RecordSection:"Section"},"@/components/shared/record-header":{RecordHeader:"RecordHeader"},"@/components/shared/unsaved-guard":{useUnsavedGuard:()=>({request:callback=>guarded.push(callback),dialog:null})},"@/hooks/use-hydrated":{useHydrated:()=>true},"@/lib/api/client":{ApiError}};
@@ -39,7 +40,9 @@ function harness() {
   function expand(node){if(!node||typeof node!=="object")return node;if(Array.isArray(node))return node.map(expand);if(typeof node.type==="function"){let byKey=owners.get(node.type);if(!byKey){byKey=new Map();owners.set(node.type,byKey);}const key=node.key??"default";if(!byKey.has(key))byKey.set(key,[]);state=byKey.get(key);cursor=0;formCursor=0;return expand(node.type(node.props));}return{...node,props:{...node.props,...(node.props?.children!==undefined?{children:expand(node.props.children)}:{}),...(node.props?.actions!==undefined?{actions:expand(node.props.actions)}:{})}};}return {forms,guarded,navigated,modules,render(callback){state=rootState;cursor=0;formCursor=0;return expand(callback());}};
 }
 function leadModule(h, command, read=async()=>contact(), profile) {
-  const hook=loadEnquiryCommand({react:h.modules.react},{ApiError,command});
+  const identity={user:{id:createActorId,role:"manager"},must_change_password:false,csrf_token:"synthetic-csrf"};
+  const loadedHook=loadEnquiryCommand({react:h.modules.react},{ApiError,command,identity});
+  const hook={useEnquiryCommand:options=>{if(options.mode==="create")identity.user.role=options.role;return loadedHook.useEnquiryCommand(options);}};
   const local={"@/features/realtime/current-record":loadServer("src/features/realtime/current-record.ts"),"./use-enquiry-command":hook,"./contracts":contacts,"./contact-fields":{ContactFields:"ContactFields",blankContact:clientFields(contact())},"./agent-picker":{AgentPicker:"Agent"},"./contact-selector":{ContactSelector:"ContactSelector"},"./qualification-contracts":vocabulary,"./record-states":{RecordError:"Error",CommandError:"CommandError"},"./use-query":{useQuery:path=>({value:path.includes("metadata")?metadata:profile,refresh(){}})},"./lead-qualification-fields":{LeadQualificationFields:"Qualification",blankQualification:{initial_budget:"",campaign_source:"unknown",rating:"cold",status:"new"}}};
   return {modules:{...h.modules,...local,"@/lib/api/client":{ApiError,apiGet:read},"@/lib/api/command":{apiCommand:command}},globals:{crypto:{randomUUID}}};
 }
@@ -62,7 +65,7 @@ test("Dossier draft tracks actual values and accepts only the reviewed successfu
 
 test("Lead create renders one sheet with header actions, scoped reuse and a same-key retry",async()=>{
   const h=harness(),calls=[],client=contact(),result=enquiry(client);let interrupted=true;
-  const loaded=loadServer("src/features/contacts/lead-create.tsx",leadModule(h,async(...args)=>{calls.push(args);if(interrupted)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return result;}));
+  const loaded=loadServer("src/features/contacts/lead-create.tsx",leadModule(h,async(...args)=>{calls.push(args);if(interrupted)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return {...result,source_submission_id:args[1].source_submission_id,created_by_user_id:createActorId};}));
   const render=()=>h.render(()=>loaded.LeadCreate({role:"manager"}));let tree=render();
   assert.equal(find(tree,"fieldset").filter(n=>n.props.className?.includes("kay-form-sheet")).length,1);
   assert.deepEqual(find(tree,"Section").map(n=>n.props.title),["Contact","Qualification du prospect","Responsabilité"]);
@@ -70,7 +73,7 @@ test("Lead create renders one sheet with header actions, scoped reuse and a same
   find(tree,"Agent")[0].props.change(client.primary_agent.id);
   find(tree,"Qualification")[0].props.change({initial_budget:"1400000"});
   tree=render();submit(tree);await delay(0);assert.equal(calls.length,1);assert.equal(calls[0][1].new_contact.primary_agent_id,client.primary_agent.id);assert.equal(calls[0][1].source,"manual");
-  tree=render();assert.equal(find(tree,"form")[0].props["data-live-dirty"],"true");
+  tree=render();assert.equal(find(tree,"form")[0].props["data-live-dirty"],true);
   submit(tree);await delay(0);assert.equal(calls.length,2);assert.equal(calls[0][3],calls[1][3]);assert.deepEqual(json(calls[0][1]),json(calls[1][1]));
   interrupted=false;tree=render();submit(tree);await delay(0);assert.deepEqual(h.navigated,["/leads/"+result.id]);assert.equal(find(render(),"form")[0].props["data-live-dirty"],undefined);
 });

@@ -1,5 +1,18 @@
 # KAY QA command register
 
+Selected prospect creation recovery,2026-10-28: frontend cwd
+`npm run test:unit`:691 pass/0 failed/skipped,14 added actual route/controller/
+form/host cases. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2)
+and `npm run history:check` pass.64 glyphs/104 consumers/345 icon sites and501
+Button sites have0 violations. Static Frontend Taste app lint covers1 UI source,
+0 findings. Test-helper traversal/awaiting and coherent creation provenance were
+corrected; lint's render-ref findings were fixed using committed availability
+and stable origin state without suppression. Two native new/existing-contact
+lost-ack cases are prepared/typechecked, not run. Backend unchanged/not rerun.
+No actual app/DB/account/config/service/worker/transfer, migration, workaround,
+native/SQL/CI/AFTER/product or main/push/merge/deploy acceptance.
+[Contract](04-design/prospect-creation-recovery-local.md).
+
 Selected full prospect editor recovery,2026-10-28: frontend cwd
 `npm run test:unit`:677 pass/0 failed/skipped,11 added actual editor/host/
 controller cases. Existing dossier atomic-edit coverage remains with independent

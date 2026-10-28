@@ -1,5 +1,14 @@
 # HTTP contracts for `/api/v1`
 
+Selected prospect creation,2026-10-28: existing atomic enquiry POST, contact-mode
+XOR, source-submission UUID and bounded replay/authority contracts are unchanged.
+The client retains original body/key after unknown dispatch, binds current
+originating actor/role and verifies source/submission/creator/explicit contact
+before navigation. Acknowledged completion cannot POST again; known duplicate
+reuse reads the currently accessible canonical contact explicitly. No endpoint,
+backend permission, receipt retention, merge or history change.
+[Integration](prospect-creation-recovery-local.md).
+
 Selected full prospect editor,2026-10-28: existing atomic enquiry PATCH and
 optional complete `contact_fields`/contact version remain unchanged. The client
 retains original request identity after unknown dispatch and retries only reads

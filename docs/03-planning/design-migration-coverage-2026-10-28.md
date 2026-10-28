@@ -216,3 +216,23 @@ conversion, remaining domain commands/fields and older broad selectors remain;
 actual native/SQL/merge/device/AFTER/CI/product acceptance and migrations0036/0037
 are pending. Backend unchanged/not rerun; no actual access claimed. P0/P8 and the
 full redesign goal remain open.
+
+## Prospect creation follow-through,2026-10-28
+
+[Creation field/action map](../04-design/prospect-creation-recovery-local.md)
+retains the selected Contact/Qualification/Responsabilité sheet, complete contact
+collections, explicit existing-contact reuse, M/A owner/queue and Agent authority.
+Original POST body/submission/key stay pinned after unknown dispatch; first/retry
+proof binds the actual originating actor/role. Results must match provenance,
+creator and any explicit existing contact. Acknowledged completion retries only
+navigation, and a completed creation cannot rearm another POST. Known duplicate
+rejection permits explicit current canonical reuse. Metadata hosts retain drafts,
+block new saves while unavailable and keep original recovery usable. Committed
+availability, validation/disposal and current denial guard stale/late actions.
+
+691 frontend units pass,14 added; lint/types/build/history and static app lint1
+pass. Two native new/existing-contact lost-ack cases prepared/typechecked, not
+run. Backend unchanged/not rerun. Prospect conversion, remaining domain fields/
+commands/contexts and older broad selectors remain; actual native/SQL/device/
+AFTER/CI/product acceptance and migrations0036/0037 remain pending. No actual
+access or workaround, main/push/merge/deploy. P0/P8 and full redesign remain open.

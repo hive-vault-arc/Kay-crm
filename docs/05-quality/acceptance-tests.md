@@ -1,5 +1,18 @@
 # Acceptance scenarios
 
+Selected prospect creation recovery,2026-10-28 (AT-03/23/24): preserve both contact
+modes, full collections, qualification, M/A owner/queue and Agent authority in
+the selected sheet. Unknown POST retries its original body/submission/key; inputs,
+cancel and reuse cannot replace it. Bind first/retry dispatch to the originating
+current actor/role, verify result coherence and retry only navigation after
+acknowledgement. A completed creation cannot create again. Known duplicate reuse
+is explicit and currently scoped, including canonical reads. Metadata outages
+retain drafts and recovery, block new saves and mask on denial. Validation,
+disposal and identity replacement cannot dispatch/reset/navigate late.691 frontend
+units pass,14 added; two native new/existing-contact cases prepared/typechecked,
+not run. Backend unchanged; actual role/SQL/native/device checks remain pending.
+[Contract](../04-design/prospect-creation-recovery-local.md).
+
 Selected full prospect editor recovery,2026-10-28 (AT-05/23/24):
 verify both versioned atomic collections and all qualification fields in the
 selected sheet. Unknown saves retain original body/key; acknowledged contact-read

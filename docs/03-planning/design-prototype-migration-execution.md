@@ -2539,6 +2539,7 @@ main/push/merge/deploy. Full goal active.
 [Ownership recovery evidence](design-migration-evidence/ownership-recovery-2026-10-28.json)
 records synthetic/source checks separately from actual-stack acceptance.
 
+
 ## Selected notes, activities and assignment recovery,2026-10-28
 
 All existing note/activity/assignment fields remain in their selected contextual
@@ -2613,3 +2614,29 @@ worker/transfer access or workaround, main/push/merge/deploy. Full goal active.
 
 [Full editor evidence](design-migration-evidence/prospect-editor-recovery-2026-10-28.json)
 records synthetic/source checks separately from actual-stack acceptance.
+
+## Selected prospect creation recovery,2026-10-28
+
+The existing enquiry owner now also owns the selected creation sheet. Both
+contact modes, full collections/qualification, M/A responsibility/queue and Agent
+authority remain. Route-bound originating identity and fresh proof precede first
+and retry dispatch. Unknown creation freezes original body/submission/key;
+acknowledged completion can only navigate, and a completed create cannot rearm.
+Provenance/creator/explicit-contact result checks prevent wrong navigation.
+Known duplicate rejection permits explicit current canonical contact reuse before
+another undispatched draft. Metadata loading/outage retains the owner, blocks
+new saves and leaves original recovery usable. Validation/committed availability,
+disposal and denial prevent late/private actions without changing selected layout.
+[Contract](../04-design/prospect-creation-recovery-local.md).
+
+691 frontend units pass,14 added; lint/types/build/history and static app lint1
+pass. Creation fixture provenance, traversal/awaiting and lifecycle ref findings
+were corrected without suppression. Two native new/existing-contact lost-ack
+cases prepared/typechecked, not run. Backend unchanged/not rerun. Prospect
+conversion, other domain/field/context gaps and legacy selectors remain; actual
+native/SQL/device/AFTER/CI/product checks and migrations0036/0037 are pending.
+No actual app/DB/account/config/service/worker/transfer access or workaround,
+main/push/merge/deploy. Full goal remains active.
+
+[Creation evidence](design-migration-evidence/prospect-creation-recovery-2026-10-28.json)
+separates source/synthetic checks from pending actual-stack acceptance.

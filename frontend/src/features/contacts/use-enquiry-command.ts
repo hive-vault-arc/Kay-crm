@@ -5,17 +5,21 @@ import { useHydrated } from "@/hooks/use-hydrated";
 import { apiCommand, type CommandLifecycle } from "@/lib/api/command";
 import { apiGet, ApiError } from "@/lib/api/client";
 import { meSchema } from "@/lib/auth/contracts";
-import { editEnquirySchema, enquirySchema, type Enquiry } from "./contracts";
+import { editEnquirySchema, enquirySchema, newEnquirySchema, type Enquiry, type StaffRole } from "./contracts";
 
-type Attempt = { body: z.infer<typeof editEnquirySchema>; key: string; dispatched: boolean; uncertain: boolean; result?: Enquiry };
+type Attempt = ({ mode: "edit"; body: z.infer<typeof editEnquirySchema> } | { mode: "create"; body: z.infer<typeof newEnquirySchema> }) & { key: string; dispatched: boolean; uncertain: boolean; result?: Enquiry };
 export type EnquiryDenied = (error: ApiError, acknowledged?: boolean) => void;
-export function useEnquiryCommand({ id, contactId, saved, denied }: { id: string; contactId: string; saved: (result: Enquiry, signal: AbortSignal) => void | Promise<void>; denied?: EnquiryDenied }) {
+type Options = ({ mode?: "edit"; id: string; contactId: string } | { mode: "create"; role: StaffRole; actorId?: string }) & { saved: (result: Enquiry, signal: AbortSignal) => void | Promise<void>; denied?: EnquiryDenied };
+export function useEnquiryCommand(options: Options) {
+  const { saved, denied } = options;
+  const scopeKey = options.mode === "create" ? `create:${options.role}:${options.actorId ?? ""}` : `edit:${options.id}:${options.contactId}`;
+  const [initialBinding] = useState<{ actor?: string; role?: string }>(() => options.mode === "create" ? { actor: options.actorId, role: options.role } : {});
   const hydrated = useHydrated(), alive = useRef(true), lock = useRef(false), refused = useRef(false), finished = useRef(false), reviewValid = useRef(true);
-  const scope = useRef(`${id}:${contactId}`), attempt = useRef<Attempt | undefined>(undefined), request = useRef<AbortController | null>(null), binding = useRef<{ actor?: string; role?: string }>({});
+  const scope = useRef(scopeKey), attempt = useRef<Attempt | undefined>(undefined), request = useRef<AbortController | null>(null), binding = useRef(initialBinding);
   const [busy, setBusy] = useState(false), [uncertain, setUncertain] = useState(false), [acknowledged, setAcknowledged] = useState(false), [complete, setComplete] = useState(false), [needsReview, setNeedsReview] = useState(false);
   const [error, setError] = useState<ApiError>(), [accessError, setAccessError] = useState<ApiError>();
-  useEffect(() => { alive.current = true; return () => { alive.current = false; request.current?.abort(); attempt.current = undefined; binding.current = {}; }; }, []);
-  const current = () => alive.current && scope.current === `${id}:${contactId}`;
+  useEffect(() => { alive.current = true; binding.current = { ...initialBinding }; return () => { alive.current = false; request.current?.abort(); attempt.current = undefined; binding.current = {}; }; }, [initialBinding]);
+  const current = () => alive.current && scope.current === scopeKey;
   const locked = () => lock.current || Boolean(attempt.current?.uncertain);
   const canEdit = () => hydrated && current() && !refused.current && !finished.current && !locked();
   const authorize: NonNullable<CommandLifecycle["beforeDispatch"]> = identity => {
@@ -36,9 +40,11 @@ export function useEnquiryCommand({ id, contactId, saved, denied }: { id: string
     const controller = new AbortController(); request.current = controller; let owned = value;
     try {
       if (!owned.result) {
-        const result = await apiCommand(`/api/v1/enquiries/${id}`, owned.body, enquirySchema, owned.key, "PATCH", undefined, controller.signal, { beforeDispatch: authorize, dispatched: () => { owned = { ...owned, dispatched: true }; attempt.current = owned; } });
+        const result = await apiCommand(options.mode === "create" ? "/api/v1/enquiries" : `/api/v1/enquiries/${options.id}`, owned.body, enquirySchema, owned.key, owned.mode === "create" ? "POST" : "PATCH", undefined, controller.signal, { beforeDispatch: authorize, dispatched: () => { owned = { ...owned, dispatched: true }; attempt.current = owned; } });
         if (!current() || controller.signal.aborted) return false;
-        if (result.id !== id || result.contact.id !== contactId) throw new ApiError("INVALID_RESPONSE", 503);
+        if (options.mode === "create" && owned.mode === "create") {
+          if (result.source !== owned.body.source || result.source_submission_id !== (owned.body.source_submission_id ?? null) || result.created_by_user_id !== binding.current.actor || owned.body.contact_id && result.contact.id !== owned.body.contact_id) throw new ApiError("INVALID_RESPONSE", 503);
+        } else if (options.mode !== "create" && (result.id !== options.id || result.contact.id !== options.contactId)) throw new ApiError("INVALID_RESPONSE", 503);
         owned = { ...owned, result }; attempt.current = owned; setAcknowledged(true);
       }
       const result = owned.result; if (!result) throw new ApiError("INVALID_RESPONSE", 503);
@@ -51,20 +57,27 @@ export function useEnquiryCommand({ id, contactId, saved, denied }: { id: string
       if (![401, 403, 404].includes(failure.status)) {
         owned = { ...owned, uncertain: Boolean(owned.result) || owned.uncertain || owned.dispatched && (failure.status >= 500 || failure.code === "INVALID_RESPONSE") };
         attempt.current = owned.uncertain ? owned : undefined; setUncertain(owned.uncertain);
-        if (!owned.uncertain && failure.status === 409) { reviewValid.current = false; setNeedsReview(true); }
+        if (owned.mode === "edit" && !owned.uncertain && failure.status === 409) { reviewValid.current = false; setNeedsReview(true); }
       }
       return false;
     } finally { lock.current = false; if (current() && !controller.signal.aborted) setBusy(false); }
   }
   function begin() {
-    if (!hydrated || !current() || refused.current || locked()) return false;
+    if (!hydrated || !current() || refused.current || locked() || options.mode === "create" && finished.current) return false;
     finished.current = false; reviewValid.current = true; setComplete(false); setAcknowledged(false); setNeedsReview(false); setError(undefined); return true;
   }
   function submit(value: unknown) {
     if (!canEdit() || !reviewValid.current) return Promise.resolve(false);
-    const parsed = editEnquirySchema.safeParse(value);
-    if (!parsed.success) { setError(new ApiError("VALIDATION_ERROR", 422)); return Promise.resolve(false); }
-    const owned = { body: structuredClone(parsed.data), key: crypto.randomUUID(), dispatched: false, uncertain: false };
+    let owned: Attempt;
+    if (options.mode === "create") {
+      const parsed = newEnquirySchema.safeParse(value);
+      if (!parsed.success) { setError(new ApiError("VALIDATION_ERROR", 422)); return Promise.resolve(false); }
+      owned = { mode: "create", body: structuredClone(parsed.data), key: crypto.randomUUID(), dispatched: false, uncertain: false };
+    } else {
+      const parsed = editEnquirySchema.safeParse(value);
+      if (!parsed.success) { setError(new ApiError("VALIDATION_ERROR", 422)); return Promise.resolve(false); }
+      owned = { mode: "edit", body: structuredClone(parsed.data), key: crypto.randomUUID(), dispatched: false, uncertain: false };
+    }
     attempt.current = owned; setAcknowledged(false); return run(owned);
   }
   async function refresh(read: (signal: AbortSignal) => Promise<void>) {
