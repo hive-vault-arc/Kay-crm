@@ -1,5 +1,19 @@
 # KAY QA command register
 
+Selected full prospect editor recovery,2026-10-28: frontend cwd
+`npm run test:unit`:677 pass/0 failed/skipped,11 added actual editor/host/
+controller cases. Existing dossier atomic-edit coverage remains with independent
+component hook state and the real command hook; its DOM-equivalent dirty prop
+assertion was corrected. `npm run lint`, `npm run typecheck`, `npm run build`
+(Next16.4.2) and `npm run history:check` pass.64 glyphs/104 consumers/345 icon
+sites and501 Button sites have0 violations. Static Frontend Taste app lint
+covers1 UI source,0 findings. Two native atomic-save/read-outage cases are
+prepared/typechecked, not run. Canonical reads are verified through the current
+enquiry and finish read-only; unverified foreign reads cannot reset the form.
+Backend unchanged/not rerun. No actual app/DB/account/config/service/worker/
+transfer, migration, workaround, native/SQL/CI/AFTER/product or main/push/merge/
+deploy acceptance. [Contract](04-design/prospect-editor-recovery-local.md).
+
 Selected prospect status/inline recovery,2026-10-28: frontend cwd
 `npm run test:unit`:666 pass/0 failed/skipped,13 added actual hook/API-helper/
 dialog/inline/metadata/board/facade cases in the registered enquiry suite.

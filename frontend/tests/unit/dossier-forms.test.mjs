@@ -3,6 +3,7 @@ import test from "node:test";
 import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { loadServer } from "./load-server.mjs";
+import { loadEnquiryCommand } from "./enquiry-fixtures.mjs";
 
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
 const json = value => JSON.parse(JSON.stringify(value));
@@ -26,8 +27,8 @@ function enquiry(client) { return contacts.enquirySchema.parse({ id:randomUUID()
 function deal(client) { return deals.dealSchema.parse({ id:randomUUID(),version:7,title:"Synthetic deal",stage:"new",contact:summary(client),origin_contact_id:client.id,enquiry_id:null,requirement_id:null,offering:null,next_action:"Synthetic action",stock_review_required:false,archived_at:null,primary_agent_at_close_id:null,active_reservation:null,reservation_conflict:null,customer_offer_count:0,created_by_user_id:randomUUID(),updated_by_user_id:randomUUID(),created_at:at,updated_at:at,initial_budget:"1400000",campaign_source:"broker",rating:"cold",purchase_reasons:["residence"],client_snapshot:{},notes:"Synthetic note",payment_method:"mortgage",number_of_rooms:0,projects:[{position:1,name:"Synthetic project",development_id:null,property_id:null,external_name:"Synthetic project"}] }); }
 function clientFields(client) { return Object.fromEntries(["name","type","phones","emails","roles","country","nationality","languages"].map(key=>[key,client[key]])); }
 function harness() {
-  let cursor=0,formCursor=0; const state=[],forms=[],guarded=[],navigated=[];
-  function useState(initial) { const index=cursor++; if (!(index in state)) state[index]=typeof initial==="function"?initial():initial; return [state[index],value=>{state[index]=typeof value==="function"?value(state[index]):value;}]; }
+  let cursor=0,formCursor=0; const rootState=[],owners=new Map(),forms=[],guarded=[],navigated=[];let state=rootState;
+  function useState(initial) { const index=cursor++,owner=state; if (!(index in owner)) owner[index]=typeof initial==="function"?initial():initial; return [owner[index],value=>{owner[index]=typeof value==="function"?value(owner[index]):value;}]; }
   const react={useState,useEffect(){},useRef(initial){const index=cursor++;if(!(index in state))state[index]={current:initial};return state[index];}};
   const hookForms={useForm({defaultValues}) { const index=formCursor++;if(!forms[index]) {let values=json(defaultValues);forms[index]={control:{index},formState:{errors:{},isSubmitting:false},getValues:key=>key?values[key]:values,reset:next=>{values=json(next);},setError(){},setFocus(){},setValue:(key,value)=>{values[key]=value;},trigger:async()=>true,handleSubmit:callback=>async event=>{event.preventDefault();await callback(values);}};}return forms[index];},useWatch({control,name}){const value=forms[control.index].getValues();return Array.isArray(name)?name.map(key=>value[key]):value;}};
   const draft=loadServer("src/components/shared/dossier-form.tsx",{modules:{react,"react/jsx-runtime":runtime,"./record-header":{RecordHeader:"RecordHeader"}}});
@@ -35,10 +36,11 @@ function harness() {
   for(const [path,name] of [["button","Button"],["form","Form"],["label","Label"],["native-select","Select"],["textarea","Textarea"],["input","Input"],["checkbox","Checkbox"]])modules["@/components/ui/"+path]={[name]:name};
   modules["@/components/ui/native-select"]={NativeSelect:"Select"};
   modules["@/components/ui/form"]={Form:"Form",FormField:"FormField",FormItem:"FormItem",FormLabel:"FormLabel",FormControl:"Control",FormMessage:"Message"};
-  return {forms,guarded,navigated,modules,render(callback){cursor=0;formCursor=0;let node=callback();while(typeof node.type==="function"){cursor=0;formCursor=0;node=node.type(node.props);}return node;}};
+  function expand(node){if(!node||typeof node!=="object")return node;if(Array.isArray(node))return node.map(expand);if(typeof node.type==="function"){let byKey=owners.get(node.type);if(!byKey){byKey=new Map();owners.set(node.type,byKey);}const key=node.key??"default";if(!byKey.has(key))byKey.set(key,[]);state=byKey.get(key);cursor=0;formCursor=0;return expand(node.type(node.props));}return{...node,props:{...node.props,...(node.props?.children!==undefined?{children:expand(node.props.children)}:{}),...(node.props?.actions!==undefined?{actions:expand(node.props.actions)}:{})}};}return {forms,guarded,navigated,modules,render(callback){state=rootState;cursor=0;formCursor=0;return expand(callback());}};
 }
 function leadModule(h, command, read=async()=>contact(), profile) {
-  const local={"./contracts":contacts,"./contact-fields":{ContactFields:"ContactFields",blankContact:clientFields(contact())},"./agent-picker":{AgentPicker:"Agent"},"./contact-selector":{ContactSelector:"ContactSelector"},"./qualification-contracts":vocabulary,"./record-states":{RecordError:"Error",CommandError:"CommandError"},"./use-query":{useQuery:path=>({value:path.includes("metadata")?metadata:profile,refresh(){}})},"./lead-qualification-fields":{LeadQualificationFields:"Qualification",blankQualification:{initial_budget:"",campaign_source:"unknown",rating:"cold",status:"new"}}};
+  const hook=loadEnquiryCommand({react:h.modules.react},{ApiError,command});
+  const local={"@/features/realtime/current-record":loadServer("src/features/realtime/current-record.ts"),"./use-enquiry-command":hook,"./contracts":contacts,"./contact-fields":{ContactFields:"ContactFields",blankContact:clientFields(contact())},"./agent-picker":{AgentPicker:"Agent"},"./contact-selector":{ContactSelector:"ContactSelector"},"./qualification-contracts":vocabulary,"./record-states":{RecordError:"Error",CommandError:"CommandError"},"./use-query":{useQuery:path=>({value:path.includes("metadata")?metadata:profile,refresh(){}})},"./lead-qualification-fields":{LeadQualificationFields:"Qualification",blankQualification:{initial_budget:"",campaign_source:"unknown",rating:"cold",status:"new"}}};
   return {modules:{...h.modules,...local,"@/lib/api/client":{ApiError,apiGet:read},"@/lib/api/command":{apiCommand:command}},globals:{crypto:{randomUUID}}};
 }
 function dealModule(h,command,profile,read=async()=>profile) {
@@ -91,7 +93,7 @@ test("Lead create uses only the explicitly chosen existing contact and retains g
 test("Lead edit atomically retains contact collections, reloads both versions and clears only successful drafts",async()=>{
   const h=harness(),client=contact(),value=enquiry(client),calls=[];let fresh={...value,version:9,message:"Reloaded message"},freshClient={...client,version:19};
   const loaded=loadServer("src/features/contacts/lead-editor.tsx",leadModule(h,async(...args)=>{calls.push(args);return {...fresh,message:args[1].message,contact:summary(freshClient)};},async path=>path.includes("enquiries")?fresh:freshClient,client));
-  const render=()=>h.render(()=>loaded.LeadEditor({enquiry:value}));let tree=render();h.forms[0].setValue("name","Draft contact");h.forms[1].setValue("message","Draft request");tree=render();assert.equal(find(tree,"form")[0].props["data-live-dirty"],"true");submit(tree);await delay(0);
+  const render=()=>h.render(()=>loaded.LeadEditor({enquiry:value}));let tree=render();h.forms[0].setValue("name","Draft contact");h.forms[1].setValue("message","Draft request");tree=render();assert.equal(find(tree,"form")[0].props["data-live-dirty"],true);submit(tree);await delay(0);
   assert.equal(calls[0][1].expected_version,7);assert.equal(calls[0][1].contact_fields.expected_version,17);assert.deepEqual(json(calls[0][1].contact_fields.phones),json(client.phones));assert.deepEqual(json(calls[0][1].contact_fields.emails),json(client.emails));
   tree=render();assert.equal(find(tree,"form")[0].props["data-live-dirty"],undefined);h.forms[1].setValue("message","Second draft");tree=render();submit(tree);await delay(0);assert.equal(calls[1][1].expected_version,9);assert.equal(calls[1][1].contact_fields,undefined);
 });

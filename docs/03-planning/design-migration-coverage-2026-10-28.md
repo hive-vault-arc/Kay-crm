@@ -197,3 +197,22 @@ conversion recovery, remaining domain commands/fields and older broad selectors
 remain; actual native/SQL/device/AFTER/CI/product acceptance and migrations0036/
 0037 are pending. Backend unchanged/not rerun; no actual access claimed. P0/P8
 and the full redesign goal remain open.
+
+## Full prospect editor follow-through,2026-10-28
+
+[Full editor field/action map](../04-design/prospect-editor-recovery-local.md)
+retains selected Contact/Qualification grouping, all contact collections and
+qualification fields, plus the existing atomic contact/enquiry versions. Unknown
+saves keep the original request; acknowledged completion retries only the scoped
+contact read and resets server-normalized baselines. Genuine next drafts can
+begin another save, while unchanged repeated Save cannot write again. Host reads
+retain the owner through transient failure; validation, disposal and denial guard
+late updates. Verified canonical/converted reads end read-only with a real return
+path rather than silently retargeting the mutation.
+
+677 frontend units pass,11 added; lint/types/build/history and static app lint1
+pass. Two native cases are prepared/typechecked, not run. Prospect creation/
+conversion, remaining domain commands/fields and older broad selectors remain;
+actual native/SQL/merge/device/AFTER/CI/product acceptance and migrations0036/0037
+are pending. Backend unchanged/not rerun; no actual access claimed. P0/P8 and the
+full redesign goal remain open.

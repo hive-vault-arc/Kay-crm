@@ -74,5 +74,5 @@ export function useEnquiryCommand({ id, contactId, saved, denied }: { id: string
     catch (reason) { if (current() && !controller.signal.aborted) fail(reason); return false; }
     finally { lock.current = false; if (current() && !controller.signal.aborted) setBusy(false); }
   }
-  return { busy, uncertain, acknowledged, complete, needsReview, error, accessError, protected: busy || uncertain, locked, canEdit, deny, begin, submit, retry: () => attempt.current?.uncertain ? run(attempt.current) : Promise.resolve(false), refresh };
+  return { busy, uncertain, acknowledged, complete, needsReview, error, accessError, protected: busy || uncertain, active: () => current() && !refused.current, locked, canEdit, deny, begin, submit, retry: () => attempt.current?.uncertain ? run(attempt.current) : Promise.resolve(false), refresh };
 }

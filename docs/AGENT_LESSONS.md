@@ -1962,3 +1962,16 @@ dismiss guard while holding its own lock deadlocks. Optional proof/dispatched
 callbacks on the shared API helper preserve existing callers while distinguishing
 preflight from unknown write. Validate route/current/result identity before UI
 projection and keep canonical read exceptions explicit.
+
+## Atomic prospect editor completion and canonical reads,2026-10-28
+
+Retain the complete atomic request and both versions after a lost response; a
+known saved DTO must retry only its completion read. Reset full form baselines
+from authoritative normalized contact values, not a fresh local raw draft.
+Require current IDs and same-contact minimum version. Different canonical IDs
+have unrelated versions: verify the current enquiry/contact relationship and
+finish read-only with an explicit updated-record link instead of retargeting
+the editor or trapping a legitimate merge in permanent recovery. Keep host
+component state distinct in source tests, retain form owners across transient
+reads, and cancel late validation/completion on disposal. Begin a later save
+only for a real new draft; an unchanged repeated Save is not a new operation.

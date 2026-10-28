@@ -1,5 +1,18 @@
 # Acceptance scenarios
 
+Selected full prospect editor recovery,2026-10-28 (AT-05/23/24):
+verify both versioned atomic collections and all qualification fields in the
+selected sheet. Unknown saves retain original body/key; acknowledged contact-read
+failure must not PATCH again. Normalize/reset baselines only after scoped current
+read, refuse unchanged repeated save, permit a deliberate new draft, and retain
+required language/budget with optional empty message. Host transient reads keep
+the owner; validation/disposal/denial cannot publish late/private fields. Conflict
+reload is explicit and scoped; verified canonical/converted results end read-only
+without retargeting, and unverified/stale replies cannot reset the form.
+677 frontend units pass,11 added; two native cases prepared/typechecked, not run.
+Backend unchanged; actual role/SQL/merge/native/device checks remain pending.
+[Contract](../04-design/prospect-editor-recovery-local.md).
+
 Selected prospect status/inline recovery,2026-10-28 (AT-05/23/24):
 retain all menu groups/states and four inline editors. Verify original body/
 version/key after changed props/drafts, failed retry preflight, synchronous

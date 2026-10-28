@@ -1,5 +1,20 @@
 # KAY security check for changes
 
+## Selected full prospect edit recovery,2026-10-28
+
+The existing enquiry owner pins the atomic contact/qualification body, both
+versions and key after unknown dispatch, retaining fresh same-actor/role proof.
+Acknowledged recovery only reads/completes; disposal cancels validation/read
+callbacks and prevents late resets. Scoped result/current IDs and same-contact
+minimum version precede baseline updates. A canonical contact requires current
+enquiry relationship proof and ends read-only, never retargeting the mutation.
+Current denial removes private forms; owned completion can retain only a generic
+acknowledgement. Transient hosts retain the owner and block new saves. No source/
+assignment/grant/endpoint/backend/receipt/merge/history change or browser storage.
+677 frontend units and frontend gates pass; two native cases prepared/not run.
+No backend rerun, actual access, migration, workaround or final acceptance.
+[Contract](04-design/prospect-editor-recovery-local.md).
+
 ## Selected prospect status and inline recovery,2026-10-28
 
 Existing strict PATCH bodies retain their original enquiry/contact identity,

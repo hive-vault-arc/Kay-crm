@@ -1,5 +1,14 @@
 # HTTP contracts for `/api/v1`
 
+Selected full prospect editor,2026-10-28: existing atomic enquiry PATCH and
+optional complete `contact_fields`/contact version remain unchanged. The client
+retains original request identity after unknown dispatch and retries only reads
+after acknowledgement. Same-ID completion reads must meet the acknowledged
+contact version. Canonical Contact GET is preserved through current enquiry
+relationship proof and a read-only return path, without mutation retargeting.
+No endpoint, backend permission, receipt, transaction or merge-policy change.
+[Integration](prospect-editor-recovery-local.md).
+
 Selected prospect status/inline recovery,2026-10-28: existing enquiry PATCH DTO,
 atomic contact-field contract and endpoints remain. Current identity proof can
 be observed before dispatch through optional shared-command callbacks; original

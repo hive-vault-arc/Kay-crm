@@ -2588,3 +2588,28 @@ access or workaround, main/push/merge/deploy. Full goal active.
 
 [Prospect recovery evidence](design-migration-evidence/prospect-edit-recovery-2026-10-28.json)
 records synthetic/source checks separately from actual-stack acceptance.
+
+## Selected full prospect editor request recovery,2026-10-28
+
+The existing enquiry command owner now covers the selected full edit sheet.
+Atomic contact collections/qualification and both versions remain; unknown sends
+retain original body/key, while acknowledged completion retries only contact
+reads and resets normalized accepted values. Genuine later drafts can start a
+new review; unchanged repeated Save cannot mutate again. Synchronous validation,
+identity-bound hosts, transient read retention, explicit conflict reload and
+disposal/denial preserve the controller. Scoped current enquiry proof permits
+canonical contact reads to finish read-only without retargeting the mutation;
+converted reads likewise leave the writable form. No backend/endpoint/permission/
+receipt/version/atomic edit/merge/history policy change.
+[Contract](../04-design/prospect-editor-recovery-local.md).
+
+677 frontend units pass,11 added; lint/types/build/history and static app lint1
+pass. Existing dossier atomic-edit coverage retains both collections/versions
+with independent component hook state. Two native cases prepared/typechecked,
+not run. Backend unchanged/not rerun. Prospect creation/conversion and remaining
+domain/field/selector work, actual native/SQL/merge/device/AFTER/CI/product checks
+and migrations0036/0037 remain pending. No actual app/DB/account/config/service/
+worker/transfer access or workaround, main/push/merge/deploy. Full goal active.
+
+[Full editor evidence](design-migration-evidence/prospect-editor-recovery-2026-10-28.json)
+records synthetic/source checks separately from actual-stack acceptance.
