@@ -1,5 +1,13 @@
 # Generated Lead and Deal documents
 
+## Approved selected blank appendices,2026-10-28
+
+New PDFs use the owner-approved styled blank appendix with checked original/styled
+hashes and explicit derivation metadata. Originals and stored versions remain
+immutable; locked current-authority same-key replay precedes rendering/storage.
+The earlier unchanged-original checkpoint below is historical. See
+[M01 implementation and evidence](pdf-appendix-reconciliation.md#source-implementation-and-verification).
+
 ## Selected preparation-sheet renderer, 2026-10-27
 
 New PDFs now use the selected Manrope/wordmark/paired-field stationery with
@@ -23,7 +31,7 @@ current-user fallback are exposed. There is no migration or grant change.
 The selected preparation/history workspace uses this strict opt-in. Roll out
 the backend capability first; an older backend cannot satisfy the new frontend
 projection. Existing clients may continue omitting the flag. Selected tabs,
-per-model draft/recovery rules, native boundaries and unchanged PDF provenance
+per-model draft/recovery rules, native boundaries and PDF provenance
 are in the [workspace contract](document-workspace-local.md).
 
 ## Prepared-PDF discovery, 2026-10-27
@@ -59,8 +67,8 @@ The twelve owner-supplied blank PDFs under
 legal instruments. The CRM offers them from a dedicated Documents page on each
 Lead and Deal. Users choose a model, review editable prefilled fields, and generate
 a private PDF. The generated PDF begins with a branded preparation sheet
-containing the submitted values and appends the unchanged blank owner model for
-reference. Its original dotted fields are **not** filled; no electronic signature
+containing the submitted values and appends the approved selected KAY layout of
+the blank owner model for reference. Its fields are **not** filled; no electronic signature
 or legal approval is implied. The warning remains visible in both UI and PDF.
 
 Only models 10 (payment receipt draft) and 11 (commission invoice draft) are
@@ -92,7 +100,10 @@ Contact name, primary phone/email, agent name, budget, and linked Deal offering
 facts are proposed as editable prefill. Missing data remains blank; submitted
 values are rendered as entered, with no invented identity, financial or legal
 facts. A new request creates a new immutable PDF; it never edits a past one.
-Same-key same-body retries return the original document. The existing
+Same-key same-body retries return the original document before renderer/assets
+or storage initialization, after locked current role/scope and receipt binding
+checks. Metadata pins original/styled SHA-256, model code/source date/revision.
+Missing or altered resources fail503 for new generation, without fallback. The existing
 session-bound, one-use file permit controls download.
 
 ## Physical storage and release

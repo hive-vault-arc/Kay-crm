@@ -1,5 +1,31 @@
 # KAY security check for changes
 
+## Approved styled blank appendices,2026-10-28
+
+The owner approved the frozen selected appendix layout for future new PDFs.
+Strict bounded local provenance pins code/source/original/styled/content hashes,
+sizes/pages/date/revision. New rendering rejects missing/altered resources with
+a safe503 before storage. No runtime asset fetch, user-selected path, form fill,
+signature, API field, database migration, dependency or permission is added.
+Original references and stored versions remain immutable. Finance models10/11
+retain M/A-only visibility and current private transfer checks.
+
+Same-key replay now precedes new rendering/storage under locked current identity,
+template visibility and parent write authorization, retaining the exact legacy
+digest/operation/parent checks. Final publication rechecks visibility even when
+a concurrent receipt appears. No stale receipt can bypass a current finance-role
+or parent denial. New asset failure cannot rewrite a retained result.
+
+463 connection-forbidden units pass, including46 added content/provenance/tamper/
+legacy-replay/current-authority cases;700 integration cases are deselected.
+Three real PostgreSQL replay/byte-integrity cases are prepared, not run. Ruff/
+format7 paths and mypy218 sources pass. Offline wheel33 resources match source;
+all254 frozen inputs and12 originals retain hashes. Twelve synthetic PDFs/38
+Poppler pages were inspected locally, without app/browser/HTTP access. No real
+data, DB/service/private config, migration, main/push/merge/deploy. Real role/SQL/
+race/storage/download, native/CI/AFTER and owner acceptance remain pending.
+[Contract and evidence](04-design/pdf-appendix-reconciliation.md).
+
 ## Compact personal inbox,2026-10-28
 
 The preview/full inbox uses existing scoped GET and idempotent empty-body mark-read

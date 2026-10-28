@@ -34,7 +34,7 @@ from app.generated.stationery import (
 
 
 @pytest.mark.parametrize("template", TEMPLATES, ids=lambda item: item.code)
-def test_all_twelve_templates_keep_the_original_as_appendix(template):
+def test_all_twelve_templates_append_the_selected_blank_model_unchanged(template):
     content = render_pdf(
         template,
         {"client_name": "Personne synthétique", "conditions": "Une ligne\nUne autre"},
@@ -45,7 +45,7 @@ def test_all_twelve_templates_keep_the_original_as_appendix(template):
     assert len(content) < 20 * 1024 * 1024
     reader = PdfReader(BytesIO(content))
     assert len(reader.pages) >= 2
-    original = PdfReader(Path("app/generated/templates") / template.source)
+    original = PdfReader(Path("app/generated/styled_templates") / template.source)
     assert len(reader.pages) > len(original.pages)
     for output_page, source_page in zip(
         reader.pages[-len(original.pages) :], original.pages, strict=True
@@ -140,7 +140,8 @@ def test_selected_sheet_retains_private_parent_and_true_actor_with_literal_marku
     assert values["client_name"] in text
     assert all(not page.get("/Annots") for page in pdf.pages)
     assert f"1 / {len(sheet.pages) + 1}" in pdf.pages[0].extract_text()
-    assert "pointillés ne sont pas remplis automatiquement" in text
+    assert "Ses champs restent vierges" in text
+    assert "mise en page KAY" in text
 
 
 def test_linebreak_heavy_bounded_field_splits_across_pages_without_losing_its_end():
@@ -195,7 +196,13 @@ def test_bundled_document_fonts_logo_and_package_data_are_source_pinned():
     )
     project = tomllib.loads((ROOT.parents[1] / "pyproject.toml").read_text("utf-8"))
     includes = project["tool"]["setuptools"]["package-data"]["app.generated"]
-    assert {"assets/*.json", "fonts/*.ttf", "fonts/*-OFL.txt", "templates/*.pdf"} <= set(includes)
+    assert {
+        "assets/*.json",
+        "fonts/*.ttf",
+        "fonts/*-OFL.txt",
+        "templates/*.pdf",
+        "styled_templates/*.pdf",
+    } <= set(includes)
     assert CONTENT == WIDTH - 2 * MARGIN
 
 
@@ -236,10 +243,10 @@ def test_service_supplies_authorized_context_without_trusting_an_editable_repres
 
     @contextmanager
     def session():
-        yield SimpleNamespace()
+        yield SimpleNamespace(get=lambda *_: None)
 
     identity = SimpleNamespace(
-        user=SimpleNamespace(role="agent", display_name="Vrai auteur synthétique")
+        user=SimpleNamespace(id=uuid4(), role="agent", display_name="Vrai auteur synthétique")
     )
     events, captured = [], []
     monkeypatch.setattr(service, "current_identity", lambda *_: identity)

@@ -21,6 +21,7 @@ from app.files.contracts import MAX_FILE_BYTES
 from app.files.models import Document, DocumentVersion, FileReceipt
 from app.files.service import audit, authorize, locked_identity
 from app.files.storage import PrivateStorage
+from app.generated.appendix import AppendixUnavailable
 from app.generated.catalog import BY_CODE, TEMPLATES, Template
 from app.generated.contracts import GenerateRequest
 from app.generated.render import PreparationContext, render_pdf
@@ -195,6 +196,29 @@ def _history_actors(
     return actors
 
 
+def _receipt_result(
+    session: Session,
+    identity: CurrentIdentity,
+    key: UUID,
+    digest: bytes,
+    body: GenerateRequest,
+    template: Template,
+) -> dict[str, object] | None:
+    # Call only under locked_identity: a role/scope change must also apply to a replay.
+    if not _visible(identity, template):
+        raise IdentityError("FORBIDDEN", 403)
+    receipt = session.get(FileReceipt, (identity.user.id, key))
+    if receipt is None:
+        return None
+    if receipt.operation != "generate" or receipt.request_hash != digest:
+        raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
+    authorize(session, identity, body.parent_kind, body.parent_id, write=True)
+    previous = session.get(Document, receipt.document_id)
+    if previous is None or getattr(previous, f"{body.parent_kind}_id") != body.parent_id:
+        raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
+    return _row(session, previous)
+
+
 def generate(
     database: Database, settings: Settings, token: str, key: UUID, body: GenerateRequest
 ) -> dict[str, object]:
@@ -215,34 +239,39 @@ def generate(
             raise IdentityError("FORBIDDEN", 403)
         authorize(session, identity, body.parent_kind, body.parent_id, write=True)
         prepared_by = identity.user.display_name
+        has_receipt = session.get(FileReceipt, (identity.user.id, key)) is not None
+
+    if has_receipt:
+        # Old versions must remain replayable even when new renderer assets change
+        # or are unavailable. Reauthorize under the same publication locks first.
+        with database.session() as session, session.begin():
+            identity = locked_identity(session, token)
+            previous = _receipt_result(session, identity, key, digest, body, template)
+            if previous is not None:
+                return previous
 
     now = datetime.now(ZoneInfo("Africa/Casablanca"))
     document_id, version_id, object_key = uuid4(), uuid4(), uuid4()
     reference = document_id.hex[:8]
-    payload = render_pdf(
-        template,
-        body.values,
-        reference,
-        now.strftime("%d/%m/%Y"),
-        PreparationContext(body.parent_kind, body.parent_id, prepared_by),
-    )
+    try:
+        payload = render_pdf(
+            template,
+            body.values,
+            reference,
+            now.strftime("%d/%m/%Y"),
+            PreparationContext(body.parent_kind, body.parent_id, prepared_by),
+        )
+    except AppendixUnavailable:
+        raise IdentityError("DEPENDENCY_UNAVAILABLE", 503) from None
     if not payload or len(payload) > MAX_FILE_BYTES:
         raise IdentityError("FILE_TOO_LARGE", 413)
-    storage = PrivateStorage(settings)
     with database.session() as session, session.begin():
         identity = locked_identity(session, token)
-        receipt = session.get(FileReceipt, (identity.user.id, key))
-        if receipt:
-            if receipt.operation != "generate" or receipt.request_hash != digest:
-                raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
-            authorize(session, identity, body.parent_kind, body.parent_id, write=True)
-            previous = session.get(Document, receipt.document_id)
-            if previous is None or getattr(previous, f"{body.parent_kind}_id") != body.parent_id:
-                raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
-            return _row(session, previous)
-        if not _visible(identity, template):
-            raise IdentityError("FORBIDDEN", 403)
+        previous = _receipt_result(session, identity, key, digest, body, template)
+        if previous is not None:
+            return previous
         authorize(session, identity, body.parent_kind, body.parent_id, write=True)
+        storage = PrivateStorage(settings)
         filename = f"KAY-{template.code}-{reference}.pdf"
         document = Document(
             id=document_id,

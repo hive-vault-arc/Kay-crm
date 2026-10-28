@@ -164,8 +164,10 @@ without a scrollable desktop rail. [Scope and evidence](../03-planning/help-cent
 `/deals/{id}/documents` open from a visible record-header action. A responsive
 model list sits beside the editable prefilled preparation form; a separate
 numbered history exposes private permit-bound PDF downloads. There is no new
-global sidebar destination. Owner-supplied originals remain blank appendices;
-working-draft and finance/notary cautions are visible. See
+global sidebar destination. Since the2026-10-28 M01 decision, approved selected
+KAY layouts of the owner models are the blank appendices; original assets and
+stored versions retain their provenance. See [M01](pdf-appendix-reconciliation.md).
+Working-draft and finance/notary cautions are visible. See
 [generated documents](generated-documents.md).
 
 2026-10-19 inventory creation refinement: `/projects/new`,

@@ -1,0 +1,345 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "d9ea144e4e9c98415bf4f88bd94516485fbb7c1d",
+  "scope": "Approved selected styled blank appendices for future new PDFs; preserved originals/provenance and early locked current-authority receipt replay",
+  "ownerDecision": "Use selected styled appendix (recommended)",
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 463,
+      "deselected": 700,
+      "addedCases": 46,
+      "boundary": "Database connections patched to refuse; no app listener or real data"
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m ruff check <seven explicit changed Python paths>",
+      "exitCode": 0
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m ruff format --check <same seven explicit paths>",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 218
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m pip wheel --no-index --no-deps --no-build-isolation --wheel-dir .git/styled-appendix-wheel ./backend",
+      "exitCode": 0,
+      "frozenInputsUnchanged": 254,
+      "originalsUnchanged": 12,
+      "selectedMatchesApprovedHashes": 12,
+      "wheelBuild": "offline --no-index --no-deps --no-build-isolation",
+      "wheelSha256": "baf709da83d024bfccb0cefd1722491a91988b2e530c817273164c1dde70fd7b",
+      "wheelBytes": 1897841,
+      "requiredResources": 33,
+      "wheelResourcesMatchSource": true,
+      "installOrDeployment": false
+    },
+    {
+      "command": "Synthetic renderer and Poppler pdftoppm -r 85 -png; local view_image inspection",
+      "exitCode": 0,
+      "createMarkerOnce": true,
+      "syntheticOnly": true,
+      "appOrDatabaseAccess": false,
+      "samples": [
+        {
+          "code": "01",
+          "preparationPages": 1,
+          "selectedAppendixPages": 1,
+          "bytes": 38718,
+          "sha256": "ebf6801c4080c46433a3a20ecded2c538749df37c05aeeeb1cdfd396d3539ce1",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-01.pdf"
+        },
+        {
+          "code": "02",
+          "preparationPages": 1,
+          "selectedAppendixPages": 2,
+          "bytes": 47090,
+          "sha256": "0160f45ed73ffe6c2aad3843315666c37bb9c327479147ab9d956fc07ce1c8be",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-02.pdf"
+        },
+        {
+          "code": "03",
+          "preparationPages": 1,
+          "selectedAppendixPages": 2,
+          "bytes": 46468,
+          "sha256": "66108b60465cd4195f17562673b50125762f048f1d390cffdd3f897cfa20e545",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-03.pdf"
+        },
+        {
+          "code": "04",
+          "preparationPages": 1,
+          "selectedAppendixPages": 3,
+          "bytes": 51368,
+          "sha256": "f954ed7352c3f68ab59dcb33e1f60e002beaf25f0cce406bf64c2c7e7f969fb1",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-04.pdf"
+        },
+        {
+          "code": "05",
+          "preparationPages": 1,
+          "selectedAppendixPages": 2,
+          "bytes": 45815,
+          "sha256": "d4a95855b504dbbba622ffa9eb67b57df244021cac9ecbde8740d4851ea0870c",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-05.pdf"
+        },
+        {
+          "code": "06",
+          "preparationPages": 1,
+          "selectedAppendixPages": 3,
+          "bytes": 49964,
+          "sha256": "6c1b9478b9022e2ed41289d0f388d5b431b153461b139d8ecbfce90aa4dc1753",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-06.pdf"
+        },
+        {
+          "code": "07",
+          "preparationPages": 1,
+          "selectedAppendixPages": 2,
+          "bytes": 45495,
+          "sha256": "0fe0d0524fcf43a5ecedd3478f968183a5e265b3a09b1dc8e0381afa69112cdb",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-07.pdf"
+        },
+        {
+          "code": "08",
+          "preparationPages": 1,
+          "selectedAppendixPages": 2,
+          "bytes": 43867,
+          "sha256": "b5de1f8e425eb963cdb7744153ac05a927e388df15795436a7813cfb314e04b5",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-08.pdf"
+        },
+        {
+          "code": "09",
+          "preparationPages": 2,
+          "selectedAppendixPages": 3,
+          "bytes": 51020,
+          "sha256": "e2aeefe6e8d99e528404ab151804ac571c743c96eba3cc6a6b498774941d47fb",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-09.pdf"
+        },
+        {
+          "code": "10",
+          "preparationPages": 1,
+          "selectedAppendixPages": 1,
+          "bytes": 38274,
+          "sha256": "b69ac3212d885bedd23f8eed20100601eca0e81cca073b9289df04c65d171806",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-10.pdf"
+        },
+        {
+          "code": "11",
+          "preparationPages": 1,
+          "selectedAppendixPages": 1,
+          "bytes": 39301,
+          "sha256": "4183e4067c0a37a250f390e60920bd1f8153117c41be43f82d7de4377f6a617e",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-11.pdf"
+        },
+        {
+          "code": "12",
+          "preparationPages": 1,
+          "selectedAppendixPages": 3,
+          "bytes": 50616,
+          "sha256": "04b48e09ac2c56bcc8bea9412f00e6c4782ab68eba616c97c47e5acadab66b69",
+          "file": "tmp/pdfs/styled-appendix-validation/new-selected-12.pdf"
+        }
+      ],
+      "preparationPages": 13,
+      "appendixPages": 25,
+      "renderedPages": 38,
+      "all38ImagesOpened": true,
+      "observedAssemblyClippingOverlapGlyphOrPreparationFooterDefect": false,
+      "selectedSourceFlowAndPageBreaksRetained": true,
+      "nativeOrLegalAcceptance": false
+    },
+    {
+      "command": "Canonical staged byte/provenance checks",
+      "exitCode": 0,
+      "originalAndStyledPdfAssets": 24,
+      "contentDigestMatches": true,
+      "upstreamContentLineEndingsPreserved": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8814,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprintSpecifications": 22,
+      "localLinks": 1258,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "preparedNotRun": [
+    "Three PostgreSQL retained-byte/replay/new-asset-failure cases in test_generated_documents.py"
+  ],
+  "retainedNotRerun": {
+    "frontendUnits": 505,
+    "lint": true,
+    "typecheck": true,
+    "build": true,
+    "historyCheck": true,
+    "checkpoint": "d9ea144"
+  },
+  "corrections": [
+    "Ruff fixed a deferred-annotation quote and unused import before tests.",
+    "Canonical staging caught CRLF normalization of the byte-pinned content snapshot; a narrow -text/-whitespace attribute and explicit renormalization preserve upstream bytes."
+  ],
+  "sourceHashes": [
+    {
+      "file": ".gitattributes",
+      "bytes": 636,
+      "sha256": "2990f8bcdc0a92386e1a4c4a46a637d7cfd61d6a83e2ccfac051e1c6cdeda354",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/appendix.py",
+      "bytes": 3253,
+      "sha256": "c2545734c3db66bb633d1fb8922cc2dbbc78c74a92fe1d6d9c58b8211855cbe7",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/assets/appendix-content.json",
+      "bytes": 85391,
+      "sha256": "4b909e682843ab06b47ee0723d876aef2a324593355ff272f73f0cafdddff0c3",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/assets/appendix-provenance.json",
+      "bytes": 6442,
+      "sha256": "b1d7b61f56248b2b55776335600068efb5ef960770ca48b16424d0f4e600cb43",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/render.py",
+      "bytes": 4550,
+      "sha256": "59d4be79f36e60cf140ffca0bd064c6b827ae2140feb86a4d4439d18460ce9e4",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/service.py",
+      "bytes": 12584,
+      "sha256": "002af4e113440740850ea661ce86f6630ffe37cf8f1b4e416b1826117ee0c6b5",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/01_Bon_de_visite.pdf",
+      "bytes": 14254,
+      "sha256": "6fa9a77368f5000514af6fb274ba69373b2d2b7c54b07b077c461d01019c5386",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/02_Mandat_de_vente.pdf",
+      "bytes": 20976,
+      "sha256": "a4a37fc923af2fc87e4ab6f19459bb6e4e6b7163a3e40a8abae542a5af9c018d",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/03_Mandat_de_location.pdf",
+      "bytes": 20492,
+      "sha256": "f81077bc42b216a50fef1970d4ce74405c0901628b6e27ad4c3660c37418e8c6",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/04_Contrat_location_longue_duree.pdf",
+      "bytes": 24442,
+      "sha256": "e992d017697a515ba3ed085fcb1e76c1858dc0dc90e99aa6c138d2ba76045d85",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/05_Contrat_location_courte_duree.pdf",
+      "bytes": 19858,
+      "sha256": "bde79e9012ea338373b7a30dbe9e813a0e16d12b9ee77230cd3a90ff06f77f14",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/06_Contrat_bail_commercial.pdf",
+      "bytes": 23462,
+      "sha256": "3a6ba35d28a5864427124004481178457f449c046c9f9f9bc3f4d728fad2260e",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/07_Compromis_de_vente_PROJET_NOTAIRE.pdf",
+      "bytes": 19587,
+      "sha256": "7467f0b0ce0359c183d56a649d8d89d2d00e0597ad6067587777886aaf991aa7",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/08_Fiche_descriptive_bien_immobilier.pdf",
+      "bytes": 18247,
+      "sha256": "3c05fb4da924d82c17407bfeb0bd369f699cc76b18ca3414cee42555cea16e43",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/09_Fiches_clients_proprietaire_acquereur_locataire.pdf",
+      "bytes": 21558,
+      "sha256": "aff8026d6d0217582d80b14db65d81741847f96441c3b210124e4e0242b0380f",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/10_Recu_de_paiement.pdf",
+      "bytes": 13813,
+      "sha256": "59934beba3cd80e707addf6d97b748b3946652e540185220dfde4ae2df1d23c9",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/11_Facture_de_commission.pdf",
+      "bytes": 14643,
+      "sha256": "a81bcedb832366e63b64b0534d516124056dab0912ba66074c9ac768cd2f9ef4",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/generated/styled_templates/12_Etat_des_lieux_entree_et_sortie.pdf",
+      "bytes": 23180,
+      "sha256": "da3b359705f7716732d64650121af6c53552a691f80de861981e1af7cccb4d3b",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/pyproject.toml",
+      "bytes": 1847,
+      "sha256": "8d21fe0561f561f6a4fbeb57e3a3b4538edaa72402dc8af49b42689679e89d24",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/tests/test_generated_appendix_unit.py",
+      "bytes": 13413,
+      "sha256": "588ca53bf6b6c7c11173017ae6300f7ab0eefc781daae382bee1f1e556e7c07a",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/tests/test_generated_documents.py",
+      "bytes": 15534,
+      "sha256": "48754261364ca41c331358314a534c45fb6553b0581f0ca14da90437b662efbb",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/tests/test_generated_unit.py",
+      "bytes": 11272,
+      "sha256": "09e374217f60456d715c3eb73bddc51a579b9cb128438b7b2614e9b8da747cab",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/tests/unit_selection.py",
+      "bytes": 1293,
+      "sha256": "301046ab8b204c6125e945973580abfe2ef6fa1c0902cdc20d270c5b19a0312b",
+      "basis": "canonical staged Git blob"
+    }
+  ],
+  "limits": [
+    "No database/service/private configuration/real records/app/browser/CUA/CDP/HTTP access.",
+    "No migration/main/push/merge/deploy.",
+    "Real SQL/current-authority/concurrency/storage/private transfer/native/CI/AFTER/owner acceptance pending.",
+    "Full redesign goal remains active."
+  ]
+}

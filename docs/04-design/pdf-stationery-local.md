@@ -1,5 +1,10 @@
 # Selected preparation-sheet PDF stationery
 
+Current update,2026-10-28: [approved M01 implementation](pdf-appendix-reconciliation.md#source-implementation-and-verification)
+now uses the selected styled blank appendices for future new PDFs, preserving
+originals/provenance and old replay. The unchanged-original statements below
+describe this earlier preparation-sheet checkpoint, not the current renderer.
+
 Date:2026-10-27. Source implementation on `codex/redesign`, following the
 [document workspace](document-workspace-local.md) and
 [generation contract](generated-documents.md). This is a renderer checkpoint,

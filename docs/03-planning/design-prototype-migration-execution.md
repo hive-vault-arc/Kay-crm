@@ -26,7 +26,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and preferred Navigation API/classic history fallback source implemented | Remaining inventory/work/admin form parity, responsive focus and native interaction/cache/startup/gesture/frame checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
-| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery and selected server-rendered preparation stationery | Remaining restyled-appendix content/provenance and per-field context refinements; old native selectors and final native security/stock/focus/performance checks |
+| P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery, selected server stationery and approved styled blank appendices with preserved originals/provenance/early replay | Remaining per-field context refinements; old native selectors and final native security/stock/focus/performance checks, including actual PDF transfer/replay |
 | P6 work/schedule | Task/notification entries, compact header inbox/shared full-list recovery, selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); old selectors and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
@@ -2058,3 +2058,54 @@ ignore probes; repository-only docs pass1257 local links/42 acceptance mappings/
 13 Mermaid pairs/12 API JSON samples. Cached whitespace and all13 staged source
 hashes pass. The unrelated35 lesson additions/motion note remain unstaged; main
 is unchanged. These source checks do not add native or product acceptance.
+
+## Approved M01 styled blank appendices,2026-10-28
+
+Continued P5 afterd9ea144, applying the owner's explicit “Use selected styled
+appendix (recommended)” decision. All12 frozen selected PDF assets are copied
+exactly; all12 originals remain unchanged. A strict bounded manifest verifies
+code/source, original/styled/content hashes, bytes/pages/date/revision before new
+rendering. New PDFs append the selected blank pages unchanged, use accurate
+preparation/combined totals, identify the derived KAY layout and record provenance
+metadata. No autofill/signature/extra option, API field, migration or grant.
+
+Existing receipt replay moves before renderer/assets/storage under current
+locked identity/template/parent write authorization and legacy exact-body digest/
+operation/parent binding. Publication also checks current template visibility
+before returning a racing receipt. This preserves old objects even if new assets
+are unavailable and keeps M/A-only finance templates protected. Asset failure for
+a new key is a safe503. Private transfer/audit and all other file rules remain.
+
+463 connection-forbidden units pass/700 real integration cases deselected. The46
+added cases cover12 full-content comparisons, literal chunks, appended streams/
+text/boxes/rotation, provenance/tampering, old digest replay and authority races.
+Three PostgreSQL old-result/byte-integrity cases are prepared, not run. Explicit
+venv Ruff/format7 paths and mypy218 application sources pass. Offline wheel builds;
+all33 PDF/font/license/JSON resources match source, with no install/deployment.
+
+The PDF skill marker ran once before12 synthetic samples. All38 combined pages
+(13 preparation,25 appendix) were Poppler-rendered at85dpi and individually opened.
+No assembly clipping/overlap/glyph/preparation-footer collision was observed;
+selected source blank-rule flow and pagination are retained. Long09 continuation,
+repeated08/12 table headers and07/09 notices remain. This is local artifact
+inspection, not a legal review or native generation/download pass. All254 frozen
+inputs and12 originals retain hashes. Frontend505-unit/lint/type/build evidence
+is retained from the inbox checkpoint, not newly rerun for backend-only changes.
+
+[Current contract](../04-design/pdf-appendix-reconciliation.md) and
+[implementation evidence](design-migration-evidence/styled-appendix-2026-10-28.json).
+Original-machine mandatory UI skills remain unavailable/not claimed; selected
+system/PDF skill applies, dense CRM/PDF excludes marketing design-taste and AFTER
+timing stays. Existing app-access rejection remains binding. No app/browser/CUA/
+CDP/HTTP workaround, DB/service/private config/real data/migration/main/push/
+merge/deploy. Native current-authority/SQL/race/storage/transfer, CI/AFTER/product
+acceptance and other P0-P8 work remain open. The full redesign goal stays active.
+
+M01 checkpoint finalization: repository/index check passes8814 files/0 refused/
+14 ignore probes; repository-only docs pass22 sprints/1258 links/42 acceptance
+mappings/13 Mermaid pairs/12 API JSON samples. Cached whitespace and23 canonical
+staged source hashes pass. Canonical staging caught normalization of the upstream
+content JSON's CRLF bytes; a narrow -text/-whitespace rule plus renormalization
+preserves its exact pinned digest. Working-tree/wheel/staged resource checks now
+agree. Protected35 unrelated lesson additions and the motion note remain unstaged;
+main stays e0bdc09. This checkpoint adds no native or product acceptance.

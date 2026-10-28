@@ -1782,3 +1782,21 @@ bell and other inbox views refresh even with socket delivery off. Preserve acces
 to the complete inbox and its existing configured controls when the preview is
 small or empty. Test interrupted acknowledgement, scope loss during a pending
 read and delayed focus/scroll; compiled CSS is not native touch/focus acceptance.
+
+
+## Replay existing PDFs before new renderer dependencies (2026-10-28)
+
+When changing a generated artifact layout, resolve an existing exact-body receipt
+under locked current authority before rendering or opening storage. Otherwise an
+old immutable result becomes unavailable when new assets fail. Recheck template
+visibility before a racing receipt returns, including finance-only models. Keep
+the legacy digest and parent binding; prove these paths with a renderer/storage
+that raises, then prepare actual byte-integrity replay cases without claiming
+unexecuted database/native gates.
+
+For byte-pinned frozen JSON, preserve upstream line endings with a narrow
+-text attribute and explicitly renormalize an already-staged path after changing
+attributes. A source-hash-checked upstream snapshot may also need a narrow
+-whitespace exception for those CRLF bytes. Validate canonical staged blobs
+against manifest hashes as well as working-tree and wheel bytes; local renderer
+tests alone miss Git normalization.

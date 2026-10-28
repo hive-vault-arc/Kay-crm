@@ -1,18 +1,17 @@
-"""Selected KAY preparation sheet plus the unchanged owner-supplied blank model."""
+"""Selected preparation stationery and the approved styled blank-model appendix."""
 
 import re
 from dataclasses import dataclass
 from io import BytesIO
-from pathlib import Path
 from typing import Literal
 from uuid import UUID
 
 from pypdf import PdfReader, PdfWriter
+from pypdf.errors import PdfReadError
 
+from app.generated.appendix import AppendixUnavailable, selected_appendix
 from app.generated.catalog import Template
 from app.generated.stationery import Stationery
-
-ROOT = Path(__file__).resolve().parent
 
 
 @dataclass(frozen=True)
@@ -75,9 +74,9 @@ def preparation_sheet(
         if pending:
             sheet.fields(pending)
     sheet.paragraph(
-        "Le modèle de travail vierge original en annexe reste à compléter et à valider avant "
-        "toute signature. Ses pointillés ne sont pas remplis automatiquement ; aucune signature "
-        "électronique n’est créée.",
+        "Le modèle de travail en annexe reprend le contenu du modèle d’origine dans la mise "
+        "en page KAY. Il reste à compléter et à valider avant toute signature. Ses champs "
+        "restent vierges ; aucune signature électronique n’est créée.",
         after=0,
         together=True,
     )
@@ -91,20 +90,31 @@ def render_pdf(
     date_label: str,
     context: PreparationContext | None = None,
 ) -> bytes:
-    """Draw literal user strings; original clauses, blanks and warnings remain in the appendix."""
+    """New immutable output only; the fixed appendix retains its own blank fields."""
+    appendix = selected_appendix(template)
+    try:
+        selected = PdfReader(BytesIO(appendix.data))
+        if len(selected.pages) != appendix.record.selected_pages:
+            raise AppendixUnavailable("APPENDIX_UNAVAILABLE")
+    except PdfReadError:
+        raise AppendixUnavailable("APPENDIX_UNAVAILABLE") from None
     sheet = preparation_sheet(template, values, reference, date_label, context)
-    original = PdfReader(ROOT / "templates" / template.source)
     combined = BytesIO()
     writer = PdfWriter()
-    for page in PdfReader(BytesIO(sheet.pdf(len(original.pages)))).pages:
+    for page in PdfReader(BytesIO(sheet.pdf(len(selected.pages)))).pages:
         writer.add_page(page)
-    for page in original.pages:
+    for page in selected.pages:
         writer.add_page(page)
     writer.add_metadata(
         {
             "/Title": f"KAY - {template.title}",
             "/Author": "KAY",
-            "/Subject": "Préparation et modèle original KAY à compléter",
+            "/Subject": "Préparation et modèle vierge d’origine remis en page KAY",
+            "/KAYTemplateCode": template.code,
+            "/KAYTemplateSourceDate": appendix.source_date,
+            "/KAYAppendixFormat": appendix.revision,
+            "/KAYOriginalSHA256": appendix.record.original_sha256,
+            "/KAYAppendixSHA256": appendix.record.selected_sha256,
         }
     )
     writer.write(combined)

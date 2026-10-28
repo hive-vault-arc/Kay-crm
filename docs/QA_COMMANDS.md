@@ -1,5 +1,22 @@
 # KAY QA command register
 
+Approved styled appendices,2026-10-28: backend explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:463 passed/700 integration
+deselected;46 added pure/stubbed cases,3 new real-stack cases prepared/not run.
+Root `backend/.venv/Scripts/python.exe -m ruff check` and `-m ruff format --check`
+pass for `backend/app/generated/{appendix,render,service}.py`,
+`backend/tests/test_generated{_unit,_appendix_unit,_documents}.py` and
+`backend/tests/unit_selection.py` (actual explicit7 paths, no shell brace expansion).
+Backend explicit-venv `-m mypy app`:218 sources pass. Root explicit-venv
+`-m pip wheel --no-index --no-deps --no-build-isolation --wheel-dir
+.git/styled-appendix-wheel ./backend` passes; zip-byte validation checks33 PDF/
+font/license/JSON resources. No install/deploy. All254 frozen inputs/12 original
+PDFs retain hashes. Twelve synthetic combined PDFs/38 pages were Poppler-rendered
+at85dpi and all opened; blank appendix streams/geometry/metadata/total checks pass.
+The PDF create marker ran once before this phase. Frontend505-unit/lint/type/build
+evidence is retained, not rerun. No app/real-stack/SQL/native/CI acceptance.
+[Evidence](03-planning/design-migration-evidence/styled-appendix-2026-10-28.json).
+
 Selected notification inbox,2026-10-28:505 frontend units pass;17 new actual
 hook/render/model cases replace one older denial case with its coverage retained.
 `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
@@ -2612,3 +2629,12 @@ docs/03-planning/validate-sprints.ps1 -RepositoryOnly` passes22 sprint specs,
 samples. The Windows PowerShell invocation was refused by its script policy;
 the standard PowerShell7 invocation passed without a policy change. Cached
 whitespace check passes; this does not add native/runtime acceptance.
+
+Styled-appendix checkpoint finalization,2026-10-28: `node
+.github/scripts/repository-check.mjs` passes8814 files/0 refused/14 ignore probes.
+`pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly`
+passes22 sprints/1258 links/42 mappings/13 Mermaid pairs/12 API JSON examples.
+Cached whitespace and23 canonical staged source hashes pass. The upstream
+content snapshot has a narrow byte/whitespace attribute exception to retain its
+published CRLF/hash; originals/selected/content staged hashes match provenance.
+This does not add real-stack/native acceptance.
