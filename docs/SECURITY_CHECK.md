@@ -1,5 +1,22 @@
 # KAY security check for changes
 
+## Selected staff retry and target ownership,2026-10-28
+
+Fresh identity/CSRF checks require the same administrator and an unrestricted
+password before dispatch. Profile/security commands share one owner through
+validation, unknown outcome and completion. Only the original path/method/body/
+key/version can recover an unknown result; an acknowledged result never writes
+again. Credentials have no serialized fingerprint/draft/storage/log ownership,
+and input/request references clear on appropriate success/denial/disposal.
+Known wrong-admin-password correction and self-session revocation remain.
+
+Actor/target keyed editors abort old reads/commands; foreign detail or mutation
+successes fail closed at the facade and command boundary. Existing backend
+administrator/version/last-admin/receipt/history policies remain unchanged.
+585 frontend units pass; two real-stack cases are prepared, not run. No actual
+account/app/DB/private configuration, service, native/CI acceptance or access
+workaround. [Contract](04-design/staff-workflow-local.md).
+
 ## Selected shared unit listing wizard,2026-10-28
 
 The selected rich unit form retains real programme UUIDs, supported categories,

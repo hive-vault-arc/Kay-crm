@@ -29,6 +29,7 @@ try {
     "tests/unit/qualification.test.mjs",
     "tests/unit/activities.test.mjs",
     "tests/unit/users.test.mjs",
+    "tests/unit/staff-command.test.mjs",
     "tests/unit/calendar.test.mjs",
     "tests/unit/calendar-workspace.test.mjs",
     "tests/unit/projects.test.mjs",

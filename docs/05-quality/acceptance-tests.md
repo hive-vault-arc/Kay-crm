@@ -1,5 +1,17 @@
 # Acceptance scenarios
 
+Selected staff retry/editor ownership,2026-10-28 (AT-01/02/38/39):
+preserve D37 selected initial/reset passwords,24h expiry, own change/fresh login,
+confirmed Delete/history and last-admin rules. Check fresh same-actor admin
+before dispatch, synchronous shared profile/security ownership, preflight versus
+unknown response, pinned body/key/version retry and acknowledged completion
+without another write. Mask foreign detail/command responses and authority loss;
+abort old target lifetimes and ignore late callbacks. No secret draft snapshots,
+storage or diagnostics.585 frontend units pass, including12 added cases; two
+browser recovery journeys are prepared/typechecked, not run. Existing selected
+labels are reconciled in the older staff suite. Actual identity/SQL/native gates
+remain pending. [Contract](../04-design/staff-workflow-local.md).
+
 Selected shared unit listing wizard,2026-10-28 (AT-27/31/32/35/36/41):
 verify all five steps and full reviewed location/details/equipment/description,
 known zeros, missing unknowns, exact MAD and one atomic property/draft offer.

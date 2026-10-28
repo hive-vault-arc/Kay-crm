@@ -1,5 +1,19 @@
 # KAY QA command register
 
+Selected staff retry/editor ownership,2026-10-28: frontend cwd
+`npm run test:unit`:585 pass/0 failed/skipped,12 added command/scope/transport/
+editor/facade/form cases. The new staff-command suite is registered explicitly
+in `scripts/test-facade.mjs`; its isolated run also passes. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and `npm run history:check`
+pass.64 glyphs/104 consumers/345 icon sites and494 Button sites have0 violations.
+Static Frontend Taste app lint covers5 UI sources,0 findings; no native render
+claim. Two real-stack profile/reset recovery cases are prepared/typechecked,
+not run. Existing users browser selectors match current required labels.
+Backend rules/schema are unchanged; no new backend test execution is claimed.
+No app/DB/account/config access, service, migration, browser access workaround,
+native/SQL/CI/AFTER/product acceptance or main/push/merge/deploy.
+[Contract](04-design/staff-workflow-local.md).
+
 Selected unit/property listing workflow,2026-10-28: backend cwd explicit
 venv `.venv/Scripts/python.exe -m tests.unit_runner`:547 pass/720 integration
 deselected,13 added contract/actual hierarchy-stock guard/serialization cases.

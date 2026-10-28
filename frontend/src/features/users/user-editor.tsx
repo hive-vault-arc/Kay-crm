@@ -10,12 +10,19 @@ import { UserActions } from "./user-actions";
 import { SettingsWorkspace } from "./settings-workspace";
 
 export function UserEditor({ id, actorId }: { id: string; actorId: string }) {
+  return <StaffEditorLifetime key={`${actorId}:${id}`} id={id} actorId={actorId} />;
+}
+function StaffEditorLifetime({ id, actorId }: { id: string; actorId: string }) {
   const [user, setUser] = useState<StaffUser>(), [error, setError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
   const [retry, setRetry] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
-    apiGet(`/api/v1/users/${id}`, userSchema, controller.signal).then(value => { if (!controller.signal.aborted) setUser(value); }).catch(reason => {
+    apiGet(`/api/v1/users/${id}`, userSchema, controller.signal).then(value => {
+      if (controller.signal.aborted) return;
+      if (value.id !== id) throw new ApiError("INVALID_RESPONSE", 503);
+      setUser(value);
+    }).catch(reason => {
       if (!controller.signal.aborted) { setUser(undefined); setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
     });
     return () => controller.abort();

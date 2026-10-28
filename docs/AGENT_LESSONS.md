@@ -1872,3 +1872,15 @@ complete server paging, disable category mismatches and never copy defaults.
 Derived block selection must resolve to a real floor or be cleared, not silently
 disappear from the wire contract. Keep guarded drawer cancel contextual and
 migrate affected browser helpers without claiming they were executed.
+
+## Staff operation recovery and explicit test registration,2026-10-28
+
+A staff retry must retain its original body/path/method/key/version after an
+unknown dispatched result; edited passwords must not create a second operation.
+Use a shared profile/security owner, distinguish failed preflight from dispatch,
+and retain acknowledged results only for completion. Keep credentials out of
+serialized fingerprints/draft baselines and bind editor/reply identity to actor
+and target. Register a new frontend unit file in scripts/test-facade.mjs: a
+targeted node --test pass does not mean npm run test:unit actually includes it.
+Compare the full-run case count before recording coverage. Native/SQL cases
+remain prepared until executed; do not generalize source checks into acceptance.

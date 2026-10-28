@@ -2419,3 +2419,27 @@ native/SQL/CI/AFTER/product acceptance and migrations0036/0037 remain pending.
 
 [Shared unit workflow evidence](design-migration-evidence/unit-listing-workflow-2026-10-28.json)
 records current source/fixture checks and pending actual-stack gates separately.
+
+## Staff retry and editor ownership,2026-10-28
+
+Selected staff name/e-mail/role/initial-password/profile/security actions retain
+the current Settings layout and D37 behavior. No extra directory filters are
+invented. The profile and security dialog now share synchronous ownership;
+unknown outcomes pin the original body/path/method/key/version, and acknowledged
+completion never writes again. Fresh same-actor administrator identity precedes
+dispatch. Private actor/target editor lifetimes abort superseded reads/commands,
+and foreign detail/command responses fail closed. Passwords have only transient
+input/request ownership, with no serialized retry fingerprint or draft secret.
+[Contract](../04-design/staff-workflow-local.md).
+
+585 frontend units pass, including12 added cases registered in the real runner.
+Lint/types/build/history and static app lint5 pass; no backend behavior changed.
+Two new browser recovery cases are prepared/typechecked, not run; selected
+required labels in the older staff browser suite are reconciled. Actual stack/
+SQL/native/device/AFTER/CI/product gates remain pending under the existing access
+restriction. No app/DB/account/config access or workaround, service, migration,
+main/push/merge/deploy. Continue remaining per-field/action and legacy-selector
+coverage; this checkpoint does not complete P0/P8 or the redesign goal.
+
+[Staff workflow evidence](design-migration-evidence/staff-workflow-2026-10-28.json)
+records source/synthetic checks separately from final native acceptance.

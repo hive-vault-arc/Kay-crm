@@ -80,3 +80,19 @@ placement/stock locks, zero values and guarded cancel are source-covered. The
 illustrative vacancy default is not invented; current stock flags stay per offer.
 Four SQL/two native cases and the shared unit helper remain unrun. Continue exact
 remaining detail/settings/job coverage and broader legacy-selector migration.
+
+## Staff command and editor follow-through,2026-10-28
+
+[Staff field/action map](../04-design/staff-workflow-local.md) reconciles selected
+name/e-mail/role/initial password, profile save and reset/delete without inventing
+directory filters or changing the Settings layout. Real D37/version/last-admin/
+revocation/history contracts remain. Shared profile/security ownership now pins
+unknown retries and separates acknowledgement from completion. Fresh same-actor
+authority precedes dispatch; editor lifetimes and successful responses bind to
+the selected account, with credential-safe denial/disposal.
+
+585 frontend units pass, including12 new cases registered in the real unit
+runner. Two browser recovery cases are prepared/typechecked, not run; required
+staff labels in the older browser suite are reconciled. Actual account/SQL/
+native/device/AFTER/CI/product checks remain pending. Continue remaining exact
+detail/job/intake coverage and legacy-selector reconciliation; P0/P8 remain open.
