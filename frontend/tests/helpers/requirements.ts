@@ -5,21 +5,13 @@ import { staffCommand } from "./leads";
 
 export async function openRequirements(page: Page, contact: string) {
   await page.goto(`/contacts/${contact}`);
-  await expect(page.getByRole("tab", { name: "Recherches", exact: true })).toBeEnabled();
-  await page.getByRole("tab", { name: "Recherches", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Recherches du contact", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Recherches", exact: true }).click();
+  await expect(page.getByRole("heading", { name: /^Recherches du contact/ })).toBeVisible();
 }
-export async function expectCurrentSearch(page: Page, name: string) {
-  const region = page.getByRole("region", { name: "Recherches du contact", exact: true });
-  const active = region.getByRole("button", { name, exact: true });
-  await page.mouse.move(0, 0);
-  await expect(region.locator('button[aria-pressed="true"]')).toHaveCount(1);
-  await expect(active).toHaveAttribute("aria-pressed", "true");
-  await expect(active).toHaveAttribute("data-action", "select");
-  await expect(active.locator('svg[data-action-icon][data-kay-icon="completed"][data-icon-family="iconsax"]')).toBeVisible();
-  await expect(region.locator('button[aria-pressed="false"] svg[data-kay-icon="completed"]')).toHaveCount(0);
-  await expect(active).toHaveCSS("background-color", "rgb(238, 219, 168)");
-  await expect(active).toHaveCSS("border-top-color", "rgb(133, 135, 121)");
+export const requirementCard = (page: Page, id: string) => page.locator(`[data-requirement-id="${id}"]`);
+export async function expectCurrentSearch(page: Page, title: string) {
+  await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
+  await expect(page.getByRole("form", { name: /Nouvelle recherche|Modifier la recherche|Sélectionner une offre|Modifier l’avis ou retirer/ })).toHaveCount(0);
 }
 export async function beginRequirement(page: Page, title = "SP10 recherche locative synthétique", intent = "rental") {
   await page.getByRole("button", { name: "Nouvelle recherche", exact: true }).click();
@@ -30,11 +22,23 @@ export async function beginRequirement(page: Page, title = "SP10 recherche locat
 }
 export async function saveRequirement(page: Page) {
   const response = page.waitForResponse(r => r.request().method() === "POST" && new URL(r.url()).pathname === "/api/v1/requirements");
-  await page.getByRole("button", { name: "Enregistrer la recherche", exact: true }).click();
-  const result = await response;
-  expect(result.status()).toBe(200);
-  await expect(page.getByRole("region", { name: "Recherche sélectionnée", exact: true })).toBeVisible();
-  return (await result.json()).id as string;
+  const retry = page.getByRole("button", { name: "Réessayer la même opération", exact: true });
+  await (await retry.isVisible() ? retry : page.getByRole("button", { name: "Enregistrer la recherche", exact: true })).click();
+  const result = await response; expect(result.status()).toBe(200); const id = (await result.json()).id as string;
+  await expect(requirementCard(page, id)).toBeVisible();
+  await expect(page.getByRole("form", { name: "Nouvelle recherche", exact: true })).toHaveCount(0);
+  return id;
+}
+export async function openShortlist(page: Page, requirement: string, offering?: string) {
+  const card = requirementCard(page, requirement);
+  await (offering ? card.locator(`[data-shortlist-id="${offering}"]`).getByRole("button", { name: "Modifier l’avis / retirer", exact: true }) : card.getByRole("button", { name: "Sélectionner une offre", exact: true })).click();
+  const form = page.getByRole("form", { name: offering ? "Modifier l’avis ou retirer une offre" : "Sélectionner une offre", exact: true });
+  await expect(form).toBeVisible(); return form;
+}
+export async function saveShortlist(page: Page, requirement: string, edit = false) {
+  const response = page.waitForResponse(r => r.request().method() === "POST" && new URL(r.url()).pathname === `/api/v1/requirements/${requirement}/shortlist`);
+  await page.getByRole("button", { name: edit ? "Enregistrer l’avis" : "Enregistrer la sélection", exact: true }).click();
+  expect((await response).status()).toBe(200); await expect(requirementCard(page, requirement)).toBeVisible();
 }
 export async function inventoryFixture(page: Page, contact: string) {
   const reference = `SP10-${randomUUID().slice(0, 8)}`.toUpperCase();

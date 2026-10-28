@@ -1,5 +1,30 @@
 # KAY security check for changes
 
+## Selected contact search workspace,2026-10-27
+
+Existing scoped endpoints/session/CSRF/private facade TLS remain unchanged.
+Canonical contact identity keys the workspace; current denial hides/unmounts
+private forms and fresh retry starts a new lifetime. Requirement/shortlist rows
+are checked against their exact contact/ID and bounded pages; timeline retains
+its actual contact scope and actor. No customer fields enter a new browser store,
+logs, telemetry or URL beyond existing internal UUID links.
+
+Managed synchronous command locks preserve method/path/body/key after an unknown
+acknowledgement; acknowledged completion retries only its read. Explicit conflict
+comparison cannot adopt foreign/reparented/archived contexts or silently replace
+an offering. A new choice rechecks only its recorded page; retained historical
+entries remain editable/removable under the original server rules. Removal is
+confirmed, versioned and distinct from offering/reservation/stock commands.
+
+489 frontend units/lint/types/build and compiled history/layout checks pass;
+18 new cases include wrong identity/parent, scope loss, null/false/decimal truth,
+exact retry, abort/late delivery and explicit comparison. Prepared browser cases
+were updated, not run. No backend/API/grant/schema/migration changes or backend
+test rerun. No app-access workaround, DB/service/private-config/real-record/main/
+push/merge/deploy. Native authority/race/interaction and real CI/AFTER/owner review
+remain pending. [Contract](04-design/requirements-workspace-local.md) and
+[evidence](03-planning/design-migration-evidence/requirements-workspace-2026-10-27.json).
+
 ## Classic same-document draft protection,2026-10-27
 
 A fixed first-party root Script executes before hydration; it interpolates no

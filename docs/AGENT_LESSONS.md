@@ -1742,3 +1742,17 @@ that emitted function with synthetic globals, without loading the app/server.
 History metadata is UI bookkeeping, never authorization; preserve opaque router
 fields, never invent a direction for untracked entries or call go(0). VM/source
 checks do not prove native cache, CSP, frame, gesture or real-form behavior.
+
+
+## Exact manual selection recovery after a changed offering page,2026-10-27
+
+A manual inventory selection must retain its actual offering UUID and the bounded
+page where it was chosen. On a definite version conflict, reread that exact page
+and current canonical parent; require re-selection when the row moved or vanished.
+Do not invent a GET-by-ID route or scan every page merely to keep an old editor
+open. Retained shortlist entries instead compare their current requirement detail;
+an already-removed original must not silently become a new add. Keep unknown
+method/body/key retry separate from acknowledged completion reads, and test both
+with actual controllers. This migration also retains null versus false/zero,
+original rental periods and the selected card/one-form workflow. Source tests and
+emitted layout declarations do not establish native mobile/focus acceptance.

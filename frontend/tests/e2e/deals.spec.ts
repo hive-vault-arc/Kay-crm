@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { test, expect, createActor, removeActor, signIn, clearActorContext, changeActor } from "../helpers/auth";
 import { createLead, staffCommand } from "../helpers/leads";
-import { inventoryFixture, openRequirements } from "../helpers/requirements";
+import { inventoryFixture, openRequirements, requirementCard } from "../helpers/requirements";
 import { convertLead, dealBody, fillDeal, saveDeal, skipStage } from "../helpers/deals";
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(25_000); page.setDefaultNavigationTimeout(30_000); });
@@ -77,8 +77,7 @@ test("SP11: permitted requirement/exact offering prefill, stale target and propo
     expect(await (await page.request.get(`/api/v1/offerings?offering_id=${inventory.unitOffer}&state=all`)).json()).toEqual(original); expect((await (await page.request.get(`/api/v1/deals/${id}`)).json()).stage).toBe("new");
     expect((await page.request.get("/api/v1/deals?stage=new&stage=documents")).status()).toBe(422); expect((await page.request.get("/api/v1/deals?unexpected=1")).status()).toBe(422); expect((await staffCommand(page, `deals/${id}/unimplemented-future-command`, { expected_version: 3 })).status()).toBe(404); expect((await staffCommand(page, "deals", { ...dealBody(contact), offering_id: randomUUID(), expected_offering_version: 1 })).status()).toBe(404);
     await openRequirements(page, contact);
-    await page.getByRole("button", { name: "SP11 recherche à lier (location, 0 offre(s))", exact: true }).click();
-    await page.getByRole("button", { name: "Modifier la recherche", exact: true }).click();
+    await requirementCard(page, rid).getByRole("button", { name: "Modifier", exact: true }).click();
     const researchEdit = page.getByRole("form", { name: "Modifier la recherche", exact: true });
     await researchEdit.getByLabel("Type de recherche", { exact: true }).selectOption("sale");
     const researchResponse = page.waitForResponse(r => r.request().method() === "PATCH" && new URL(r.url()).pathname === `/api/v1/requirements/${rid}`);

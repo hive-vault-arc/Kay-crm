@@ -1,5 +1,14 @@
 # KAY screen map and navigation contract
 
+Selected Recherches workspace,2026-10-27: Contact overview and Lead/Deal
+qualification retain their supporting drawer. Twenty-row tonal requirement cards
+show criteria and inline exact-offer selections, followed by contact-wide history.
+One focused managed editor/picker replaces the collection; guarded cancel and
+acknowledged completion return to its retained page/action. Current canonical
+contact/denial and exact method/body/key recovery remain authoritative. No new
+main tab, route or backend capability. Native acceptance remains pending.
+[Contract](requirements-workspace-local.md).
+
 Classic navigation follow-up,2026-10-27: the root layout installs a closed local
 beforeInteractive history adapter only when native Navigation API entry keys
 are unavailable. The protected workspace uses the same draft/busy confirmation

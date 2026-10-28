@@ -1,5 +1,20 @@
 # KAY QA command register
 
+Latest Recherches workspace (2026-10-27):489 frontend units pass, including18
+new actual controller/model/render cases. `npm run lint`, `npm run typecheck`,
+`npm run build` (pinned Next16.4.2) and `npm run history:check` pass in frontend.
+Inventories:63 semantic glyphs,101 consumers/340 icon sites,484 Button sites,
+zero violations. A permitted `node --input-type=module -` emitted-CSS probe checks
+six shared layout declarations in two compiled CSS chunks; native layout is not
+verified. The first probe assumed declaration order/unmerged selectors; corrected
+selector/declaration inspection passes without changing CSS. All254 frozen inputs
+retain their registered bytes/hashes. Prepared SP-10 e2e/native and linked-Deal
+selectors compile but have not run. No backend rerun or real-stack acceptance.
+Native/CI/AFTER/owner gates and wider redesign work remain pending under the
+existing app-access restriction. No real DB/service/private-config/data/main/
+push/merge/deploy operation.
+[Evidence](03-planning/design-migration-evidence/requirements-workspace-2026-10-27.json).
+
 Latest classic-history compatibility slice (2026-10-27):471 frontend units pass,
 including17 new actual bootstrap/controller/workspace/installed-Next integration
 cases. Lint/typecheck and pinned Next16.4.2 build pass (63 glyphs,100 consumers/
@@ -2568,3 +2583,11 @@ ClamAV dependency running/healthy on loopback3310 for local uploads. Other
 containers/shared5432 are untouched. All changes remain local/unstaged on
 `codex/local-bug-sweep`; no commit, push, merge, production access or migration.
 
+
+Recherches checkpoint finalization,2026-10-28: repository/index check passes
+(8787 files,0 refused,14 ignore probes); `pwsh -NoProfile -File
+docs/03-planning/validate-sprints.ps1 -RepositoryOnly` passes22 sprint specs,
+1255 local links/anchors,42 acceptance mappings,13 Mermaid pairs and12 API JSON
+samples. The Windows PowerShell invocation was refused by its script policy;
+the standard PowerShell7 invocation passed without a policy change. Cached
+whitespace check passes; this does not add native/runtime acceptance.

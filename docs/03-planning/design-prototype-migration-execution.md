@@ -1909,3 +1909,60 @@ Original-machine mandatory skills remain unavailable; dense product UI excludes
 the marketing workflow. No backend rerun, database/service/private-config/real
 record/main/push/merge/deploy operation. The unrelated35 lesson lines and motion
 note remain outside this checkpoint. P0/P2/P3–P8 gaps and the full goal stay active.
+
+## Selected contact search collection and focused forms,2026-10-27
+
+Continued P5 after3d3d26d. The frozen requirements collection now maps to tonal
+20-row cards, known criteria/importance and original MAD budget/period, inline
+selections beneath their actions and one focused managed form. Existing contact-
+wide dossier history follows the collection. Contact overview and Lead/Deal
+qualification retain their drawers, without adding another main tab. Exact
+requirement/selected-offer create-Deal links and full offering target/hierarchy,
+price/period/status/conditions remain accessible.
+
+The editor retains every criterion, explicit null/false and monthly/yearly truth.
+The picker keeps manual exact-offer selection, all existing states and optional
+inventory/hierarchy filters; reusable unit types never become offering targets.
+Filters remain outside business-draft state. Active inventory discovery remains
+as before; historical/archived retained entries keep feedback/removal actions.
+The shared level picker gains optional disabled/denial/page-size support while
+its existing callers retain25-row pages. Denied/invalid options are masked.
+
+A contact-keyed authority boundary resolves aliases before reads and unmounts
+private state on current denial. Synchronous method/path/body/key recovery,
+acknowledged read-only completion, abort/late suppression, explicit comparison,
+guarded reload/cancel and confirmed version-only removal replace the earlier
+parallel feedback/edit mutation paths. Current versions are adopted only after
+review; a missing original or moved new-choice page requires selection again.
+Successful completion reads its actual same-contact detail at least at the
+acknowledged version before returning to the retained collection/action/scroll.
+Deferred focus respects intervening user focus.
+
+489 frontend units pass, including18 new actual controller/model/render cases.
+Lint/typecheck and pinned Next16.4.2 build pass:63 semantic glyphs,101 consumers,
+340 icon/484 Button sites, zero violations. `npm run history:check` still executes
+two emitted closed bootstrap variants without loading the app/server. Six shared
+card/related/form/pair/narrow/footer declarations pass emitted-CSS inspection.
+The first new test file had a missing fixture object brace; it was fixed before
+the focused/full passes. The first CSS probe assumed source declaration order
+and an unmerged selector; inspecting actual emitted rules corrected the probe
+without changing CSS. All254 frozen inputs remain unchanged. Prepared SP-10
+functional/native and linked-Deal selectors now follow cards/drawers; none ran.
+
+Original-machine mandatory skills remain unavailable/not claimed; dense CRM
+excludes marketing design-taste and AFTER timing remains. Native visual/a11y,
+desktop/mobile/touch/zoom/focus, real scope/race/replay/full-stack, real CI and owner
+review remain open under the existing app-access rejection. No backend rerun,
+API/grant/schema/migration/real DB/service/private-config/records/main/push/merge/
+deploy operation. The unrelated35 lesson additions and motion note remain outside
+this checkpoint. P0/P2/P3–P8 and the full active goal are not marked complete.
+[Contract](../04-design/requirements-workspace-local.md) and
+[evidence](design-migration-evidence/requirements-workspace-2026-10-27.json).
+
+Recherches checkpoint finalization,2026-10-28: repository/index check passes
+(8787 files,0 refused,14 ignore probes); `pwsh -NoProfile -File
+docs/03-planning/validate-sprints.ps1 -RepositoryOnly` passes22 sprint specs,
+1255 local links/anchors,42 acceptance mappings,13 Mermaid pairs and12 API JSON
+samples. The Windows PowerShell invocation was refused by its script policy;
+the standard PowerShell7 invocation passed without a policy change. Cached
+whitespace check passes; this does not add native/runtime acceptance.

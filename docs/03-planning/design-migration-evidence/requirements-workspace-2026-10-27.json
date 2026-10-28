@@ -1,0 +1,238 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "3d3d26d60c3f351f124468c0bf272653c8871255",
+  "scope": "Selected Recherches card collection, inline exact-offer selections, one focused managed form, explicit version/retry recovery and contact-wide dossier history",
+  "checks": [
+    {
+      "command": "node --test tests/unit/requirements-workspace.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 18,
+      "failed": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 489,
+      "failed": 0,
+      "newRegisteredCases": 18
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 101,
+      "iconSites": 340,
+      "buttonSites": 484,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true
+    },
+    {
+      "command": "node --input-type=module -",
+      "cwd": ".",
+      "purpose": "Inspect exact selector membership and declarations in emitted .next/static/chunks CSS",
+      "exitCode": 0,
+      "cssFiles": 2,
+      "checks": {
+        "fullWidthCard": true,
+        "compactRelatedCard": true,
+        "focusedDrawerForm": true,
+        "pairedDesktopFields": true,
+        "singleColumnNarrowFields": true,
+        "sharedFooter": true
+      },
+      "nativeLayoutVerified": false
+    },
+    {
+      "command": "PowerShell manifest bytes/SHA256 comparison",
+      "cwd": ".",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8787,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprintSpecifications": 22,
+      "localLinksAndAnchors": 1255,
+      "acceptanceMappings": 42,
+      "synchronizedMermaidPairs": 13,
+      "validApiJsonSamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "cwd": ".",
+      "exitCode": 0
+    }
+  ],
+  "correctedDuringVerification": [
+    "Initial new test fixture object missed a closing brace; corrected before focused/full passes.",
+    "Initial emitted-CSS probe assumed declaration order and an unmerged selector. Inspection was corrected to actual selector membership/declarations; CSS was unchanged.",
+    "Windows PowerShell documentation invocation was refused by its script execution policy; the standard PowerShell 7 invocation passed without changing policy."
+  ],
+  "retainedCapabilities": [
+    "Independent canonical-contact searches",
+    "All six null/false/positive value and importance pairs",
+    "Original month/year MAD budgets and exact server annual comparison",
+    "Manual offering selection with existing status/category/target/development/block/floor/type filters",
+    "Full original offering identity/hierarchy/status/conditions/price-period detail",
+    "Existing requirement and exact-offering create-Deal links",
+    "Retained historical entry feedback and confirmed version-only removal",
+    "Current contact-wide timeline actor/body/reason/time"
+  ],
+  "recovery": [
+    "Synchronous submit lock",
+    "Exact uncertain path/method/body/key retry",
+    "Acknowledged completion-read-only retry",
+    "Strict same-contact/current-ID detail and result versions",
+    "Explicit comparison keep versus guarded reload",
+    "Bounded recorded offering page recheck; no invented route or scan",
+    "Missing original/reparenting/changed intent blocked",
+    "Abort/late-result suppression",
+    "Authority boundary unmount before fresh retry",
+    "Deferred precise focus/scroll without stealing user focus"
+  ],
+  "preparedNotRun": [
+    "SP10 AT-07/08/36: independent searches, exact rents and real unit/whole offerings",
+    "SP10: zero rejection, interrupted committed response and explicit stale-version recovery",
+    "SP10 visible Chrome: qualification, exact targets, states, native touch and actual 200%",
+    "Existing linked-Deal requirement intent-in-use edit selectors"
+  ],
+  "limits": [
+    "Prior automatic app-access rejection remains binding; no app/browser/CUA/CDP/Playwright/HTTP workaround.",
+    "Source/model/compiled declarations do not establish native visual/focus/touch/zoom or real-stack acceptance.",
+    "No backend tests rerun; no backend/API/grant/schema/migration change.",
+    "No DB/service/private config/real records/main/push/merge/deploy.",
+    "Original-machine mandatory skills unavailable/not claimed; dense CRM marketing exclusion and AFTER timing retained.",
+    "Real isolated scope/race/replay, actual CI, AFTER and owner review remain open.",
+    "Full P0/P2/P3-P8 reconciliation and unbounded goal remain active."
+  ],
+  "protectedWork": {
+    "unrelatedLessonAdditionsUnstaged": 35,
+    "motionNote": "docs/03-planning/prototype-motion-plan-2026-10-23.md",
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+  },
+  "snapshots": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4057,
+      "sha256": "f2c59c4c281d8e1e5df85279c45fd75ff28c89b2b9f64367c89146c9312db76a",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/inventory/level-picker.tsx",
+      "bytes": 3138,
+      "sha256": "db97d388eed3fb4cac4ba33b7d0ef29682406f39d9aaef2761d64c0da55f5b37",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/requirements/development-filter.tsx",
+      "bytes": 3696,
+      "sha256": "169bd9bd8fdb3c454fb76383bc130ab4f22d10600328a88d0faa9daea4c4d665",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/requirements/model.ts",
+      "bytes": 6740,
+      "sha256": "49a2c6dfca071dc2d2d0ce39ee7b259d1205ebd7450c6bf1925de13561c7c7c8",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/requirements/offering-search.tsx",
+      "bytes": 10178,
+      "sha256": "86e6f74396f5bb8039b0fd56ff694878bc36d3108ef4eafbaf26b795eb813d0d",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/requirements/requirement-facts.tsx",
+      "bytes": 1697,
+      "sha256": "1e343c8ecda13a054055dcb9b6cc0bd76d87c12aeb2339f61a4f0471774f84a5",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/requirements/requirement-form.tsx",
+      "bytes": 10360,
+      "sha256": "5b917643dd5a0a2485b9c2a777a20f7d5511dbbf683a8ff95728a46f854f5025",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/requirements/requirement-panel.tsx",
+      "bytes": 14529,
+      "sha256": "4d905f2769b836baf5626597f93a95e54c5c67858a58e859ab97eabbd9f5c30f",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/requirements/shortlist-form.tsx",
+      "bytes": 8629,
+      "sha256": "021bbcd6965d2bbcfd0264f584f46cf0ee5ac94c735d575d271f8a49b7159025",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/requirements/use-requirement-command.tsx",
+      "bytes": 6885,
+      "sha256": "09f57775c91183b81fb96277495ee264a341d2ac68f35c56ecdff80b3a1942ab",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/e2e/deals.spec.ts",
+      "bytes": 15076,
+      "sha256": "42c02b0fd0bf5bc256770acc9c0869e62157b7f4fd83a79cfae762690dbf57dd",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/e2e/requirements.spec.ts",
+      "bytes": 10044,
+      "sha256": "3b2026429be3303f20423dfd249271e7f37ca7c5951d42ca55486c95488979eb",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/helpers/requirements.ts",
+      "bytes": 6903,
+      "sha256": "699d9968744d14c62de0199436b097cb5569c584ae781ea5e710699828343ba0",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/review/requirements.chrome.spec.ts",
+      "bytes": 14173,
+      "sha256": "f16bea727599b1310d425571f7e4c823ff8be658edc01a2ade9f35b699baa6f5",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/requirements-workspace.test.mjs",
+      "bytes": 33863,
+      "sha256": "4aa385f45a7208ec32e34f1be06a30276a5ccb2f5ca665eb1f730897fd010225",
+      "basis": "canonical staged Git blob"
+    }
+  ],
+  "finalizedDate": "2026-10-28"
+}

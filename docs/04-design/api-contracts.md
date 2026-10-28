@@ -1,5 +1,13 @@
 # HTTP contracts for `/api/v1`
 
+Selected Recherches presentation,2026-10-27: the existing SP-10 endpoints,
+scoped Contact detail and contact timeline now supply a twenty-row card workspace
+with inline selections and one focused editor. Commands retain strict versioned
+POST/PATCH/DELETE, method/body/key replay and current scope. A new-offer comparison
+uses only its originally selected inventory page; retained entries use current
+requirement detail. No new endpoint, grant, schema, migration or backend rule.
+[Workspace and recovery contract](requirements-workspace-local.md).
+
 Selected Finance collection extension,2026-10-27: M/A-only
 `GET /deals/{id}/finance-history` returns numbered immutable revisions across
 that scoped Deal's commissions. The existing revision projection adds only
