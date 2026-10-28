@@ -236,3 +236,24 @@ run. Backend unchanged/not rerun. Prospect conversion, remaining domain fields/
 commands/contexts and older broad selectors remain; actual native/SQL/device/
 AFTER/CI/product acceptance and migrations0036/0037 remain pending. No actual
 access or workaround, main/push/merge/deploy. P0/P8 and full redesign remain open.
+
+## Prospect conversion follow-through,2026-10-28
+
+[Conversion field/action map](../04-design/prospect-conversion-recovery-local.md)
+retains the selected separate project/budget/reason confirmation. Original source
+version/body/key survive unknown dispatch, newer converted props and metadata
+outages. Same-actor/role proof precedes dispatch and acknowledged current source/
+affair reads; destination identity/version/creator/canonical contact must agree
+before navigation. Read/navigation failure cannot repeat an acknowledged POST.
+Known conflicts require explicit source reload/new confirmation; canonical,
+archived and converted reads finish read-only. Synchronous dismissal protection,
+retained hosts, denial and disposal guard private/late actions. Board conversion
+receives current source availability while retaining its opening review.
+
+707 frontend units pass,16 added, plus existing board status/conversion coverage;
+lint/types/build/history and static app lint4 pass. Two native acknowledgement/
+destination-read cases prepared/typechecked, not run. Backend unchanged/not rerun.
+Remaining domain commands/fields/contexts and older browser selectors continue;
+actual native/SQL/device/AFTER/CI/product acceptance and migrations0036/0037 remain
+pending. No actual access or workaround, main/push/merge/deploy. P0/P8 and the
+full redesign goal remain open.

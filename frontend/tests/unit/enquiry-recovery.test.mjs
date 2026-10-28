@@ -107,13 +107,15 @@ test("Inline metadata loading/failure retains its editor owner while current den
   failure = new ApiError("FORBIDDEN", 403); assert.equal(find(render(), node => node.type?.name === "LeadFieldEditor").length, 0); assert.equal(failures[0].status, 403);
 });
 
-test("The board retains one opening status review across newer reads/loading/failure and removes it on denial", () => {
+test("The board retains status/conversion reviews across reads/outages, communicates current conversion availability and removes on denial", () => {
+  for (const target of ["qualified", "converted"]) {
   const parent = entryHarness(), child = entryHarness(); let active = parent, current = enquiryFixture(), failure; const opened = current, failures = [];
   const proxy = Object.fromEntries(Object.keys(parent.react).map(name => [name, (...args) => active.react[name](...args)]));
   const loaded = loadServer("src/features/contacts/lead-kanban.tsx", { modules: { ...ui(parent), react: { ...proxy, useCallback: value => value }, "next/link": { default: "Link" }, "@/components/shared/paged-kanban": { PagedKanban: "Board" }, "@/components/shared/kanban-record-card": { KanbanRecordCard: "Card" }, "@/components/shared/record-drawer": { RecordDrawer: "Drawer" }, "@/features/activities/activity-form": { ActivityForm: "Activity" }, "@/features/deals/convert-lead": { ConvertLead: "Convert" }, "./qualification-contracts": { ratingLabels: {} }, "./use-query": { useQuery: () => ({ value: current, error: failure, refresh() {} }) }, "./lead-status-menu": { LeadStatusMenu: "Status" } } });
   const props = { filters: {}, changed() {}, denied: error => failures.push(error), returnFocus: { current: null } }, renderParent = () => { active = parent; return parent.render(() => loaded.LeadKanban(props)); };
-  find(renderParent(), "Board")[0].props.move(current, "qualified"); const moving = find(renderParent(), node => node.type?.name === "LeadBoardMove")[0], render = () => { active = child; return child.render(() => moving.type(moving.props)); };
-  assert.equal(render().props.enquiry, opened); current = { ...opened, version: 42, status: "qualified" }; assert.equal(render().props.enquiry, opened); current = undefined; failure = new ApiError("DEPENDENCY_UNAVAILABLE", 503); assert.equal(render().type, "Status"); failure = new ApiError("FORBIDDEN", 403); assert.equal(find(render(), "Status").length, 0); assert.equal(failures[0].status, 403);
+  find(renderParent(), "Board")[0].props.move(current, target); const moving = find(renderParent(), node => node.type?.name === "LeadBoardMove")[0], render = () => { active = child; return child.render(() => moving.type(moving.props)); };
+  assert.equal(render().props.enquiry, opened); current = { ...opened, version: 42, status: target }; assert.equal(render().props.enquiry, target === "converted" ? current : opened); current = undefined; failure = new ApiError("DEPENDENCY_UNAVAILABLE", 503); assert.equal(render().type, target === "converted" ? "Convert" : "Status"); if (target === "converted") { assert.equal(render().props.unavailable, true); assert.equal(typeof render().props.denied, "function"); } failure = new ApiError("FORBIDDEN", 403); assert.equal(find(render(), target === "converted" ? "Convert" : "Status").length, 0); assert.equal(failures[0].status, 403);
+  }
 });
 
 test("The contact facade rejects foreign enquiry reads, PATCH receipts and conflict snapshots while retaining canonical contact reads", async () => {

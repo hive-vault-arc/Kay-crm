@@ -1989,3 +1989,17 @@ saves. Commit availability before pending validation resumes, avoid ref access
 during render, and abort/discard late validation/reuse on disposal. Tests must
 await void event handlers and traverse component slots; creation success fixtures
 need coherent source-submission and creator fields rather than a generic DTO.
+
+
+## Conversion receipt and destination proof,2026-10-28
+
+A conversion receipt creates a different record: retain it across current-read
+or navigation failure so completion cannot repeat the POST. Prove the current
+source, destination ID/minimum version, creator and canonical contact relationship
+before opening the affair; a foreign receipt is not proof of this conversion.
+Unknown recovery still uses its original body/key. Keep the opening review alive
+through newer converted props and metadata outages, and communicate current board
+availability separately. Guard dismissal synchronously before a busy render.
+Composite workflow test owners must include parent/key identity and enter a
+component through the renderer; directly calling a hook-using component bypasses
+its test owner and gives misleading failures.

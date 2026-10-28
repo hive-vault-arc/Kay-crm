@@ -1,5 +1,21 @@
 # KAY security check for changes
 
+## Selected prospect conversion recovery,2026-10-28
+
+Original source/version/body/key stay pinned after unknown conversion. Fresh
+same-actor/role proof governs dispatch and acknowledged completion reads; details
+also supply their originating identity. Result fields and source/destination
+IDs, minimum affair version, creator and current canonical contact are checked
+before navigation. Foreign reads cannot redirect; a proven foreign receipt may
+only retrieve the same original operation/key. Acknowledged read/navigation retry
+cannot POST again. Known conflicts require explicit current source review, with
+canonical/archived/converted states read-only. Synchronous dismissal protection,
+retained metadata/board hosts, disposal and propagated denial guard private and
+late actions. No backend/grant/receipt/atomicity/merge/history change or browser
+storage.707 frontend units/gates pass; two native cases prepared/not run.
+No backend rerun, actual access, migration, workaround or final acceptance.
+[Contract](04-design/prospect-conversion-recovery-local.md).
+
 ## Selected prospect creation recovery,2026-10-28
 
 Creation shares the strict enquiry owner: route-bound originating actor/role,

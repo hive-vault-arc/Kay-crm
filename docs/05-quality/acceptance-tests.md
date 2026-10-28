@@ -1,5 +1,18 @@
 # Acceptance scenarios
 
+Selected prospect conversion recovery,2026-10-28 (AT-23/24): preserve the separate
+selected project/budget/purchase-reason dialog and language prerequisite. Unknown
+POST keeps opening source/version/body/key through props/metadata changes;
+Cancel/Escape/stale handlers cannot discard it. Require same actor/role and prove
+receipt/source/affair/creator/current canonical contact before navigation.
+Acknowledged read/navigation recovery cannot POST again. Known conflicts require
+explicit source review/new confirmation; canonical/archived/converted reads finish
+read-only. Test malformed/foreign/proposal results, denial, disposal, hydration,
+board availability and completed-operation refusal.707 frontend units pass,
+16 added; two native acknowledgement/read-outage cases prepared/typechecked,
+not run. Backend unchanged; actual role/SQL/native/device checks remain pending.
+[Contract](../04-design/prospect-conversion-recovery-local.md).
+
 Selected prospect creation recovery,2026-10-28 (AT-03/23/24): preserve both contact
 modes, full collections, qualification, M/A owner/queue and Agent authority in
 the selected sheet. Unknown POST retries its original body/submission/key; inputs,

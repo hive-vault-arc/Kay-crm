@@ -1,5 +1,14 @@
 # HTTP contracts for `/api/v1`
 
+Selected prospect conversion,2026-10-28: existing versioned enquiry conversion
+POST and result DTO remain unchanged. Original body/key survive unknown outcome;
+acknowledged completion uses fresh identity plus existing scoped enquiry/affair
+GETs to prove the destination relationship before navigation. Invalid proposal
+result fields/foreign receipts cannot redirect. Known conflicts require explicit
+current source reload; canonical/archived/converted results are read-only.
+No new endpoint, backend permission, receipt retention, atomicity or history rule.
+[Integration](prospect-conversion-recovery-local.md).
+
 Selected prospect creation,2026-10-28: existing atomic enquiry POST, contact-mode
 XOR, source-submission UUID and bounded replay/authority contracts are unchanged.
 The client retains original body/key after unknown dispatch, binds current

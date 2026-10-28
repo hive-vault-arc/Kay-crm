@@ -1,5 +1,18 @@
 # KAY QA command register
 
+Selected prospect conversion recovery,2026-10-28: frontend cwd
+`npm run test:unit`:707 pass/0 failed/skipped,16 added actual dialog/controller/
+picker cases plus existing board status/conversion coverage. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and `npm run history:check`
+pass.64 glyphs/104 consumers/345 icon sites and502 Button sites have0 violations.
+Static Frontend Taste app lint covers4 changed UI sources,0 findings. A composite
+picker test invocation was corrected to enter its component hook owner, without
+suppression. Two native conversion acknowledgement/destination-read cases are
+prepared/typechecked, not run. Backend unchanged/not rerun. No actual app/DB/
+account/config/service/worker/transfer access, migration, workaround, native/SQL/
+CI/AFTER/product or main/push/merge/deploy acceptance.
+[Contract](04-design/prospect-conversion-recovery-local.md).
+
 Selected prospect creation recovery,2026-10-28: frontend cwd
 `npm run test:unit`:691 pass/0 failed/skipped,14 added actual route/controller/
 form/host cases. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2)

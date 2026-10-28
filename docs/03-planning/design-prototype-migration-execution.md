@@ -2640,3 +2640,30 @@ main/push/merge/deploy. Full goal remains active.
 
 [Creation evidence](design-migration-evidence/prospect-creation-recovery-2026-10-28.json)
 separates source/synthetic checks from pending actual-stack acceptance.
+
+## Selected prospect conversion recovery,2026-10-28
+
+The selected conversion dialog retains its fields, project modes, language rule
+and separate confirmation. It now owns original source/version/body/key through
+unknown outcome and newer converted props. Fresh same-actor/role proof precedes
+dispatch and acknowledged current enquiry/affair reads. IDs/version/creator and
+current canonical contact prove the destination before navigation. Receipt/read/
+navigation recovery remain distinct: read/navigation failure cannot POST again,
+while a proven foreign receipt may retrieve only the same original operation/key.
+Known conflicts require explicit current source review; canonical/archived/
+converted reads end read-only. Metadata/board availability retains owners and
+blocks new saves; synchronous protection, denial and disposal guard late/private
+actions. No backend/permission/receipt/atomicity/merge/history change.
+[Contract](../04-design/prospect-conversion-recovery-local.md).
+
+707 frontend units pass,16 added; lint/types/build/history and static app lint4
+pass. Composite picker invocation corrected without suppression; existing board
+coverage now includes status/conversion availability. Two native acknowledgement/
+destination-read cases prepared/typechecked, not run. Backend unchanged/not rerun.
+Remaining domain commands/fields/contexts and legacy selectors continue; actual
+native/SQL/device/AFTER/CI/product checks and migrations0036/0037 remain pending.
+No actual app/DB/account/config/service/worker/transfer access or workaround,
+main/push/merge/deploy. Full goal active.
+
+[Conversion evidence](design-migration-evidence/prospect-conversion-recovery-2026-10-28.json)
+separates source/synthetic evidence from pending actual-stack acceptance.
