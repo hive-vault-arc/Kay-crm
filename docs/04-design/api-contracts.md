@@ -1,5 +1,14 @@
 # HTTP contracts for `/api/v1`
 
+Selected note/activity/assignment recovery,2026-10-28: existing POST routes and
+strict fields remain. Client ownership now pins original target/body/key and
+fresh same-actor/role proof after unknown dispatch; completion of a known saved
+receipt does not write again. Facade note receipts match route contact/action;
+enquiry-assignment receipts match their operation, with original contact checked
+in the contextual client. Activity responses remain ID-only. No backend endpoint,
+DTO, role, transaction, receipt-retention or messaging change.
+[Client/facade integration](entry-recovery-local.md).
+
 Selected contact/owner management recovery,2026-10-28: existing preview and
 assign/collaborators/archive/restore/merge routes retain their bodies, methods
 and backend policies. Facade/client reject incoherent impact IDs/versions/owner

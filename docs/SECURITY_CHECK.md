@@ -1,5 +1,21 @@
 # KAY security check for changes
 
+## Selected note/activity/assignment request recovery,2026-10-28
+
+Only three existing route shapes and strict payloads enter the shared controller.
+Fresh unrestricted same-actor/role identity and CSRF precede dispatch; Agent
+assignment is refused. Original target/body/key remain pinned after unknown
+dispatch; acknowledged completion cannot mutate again. Note/assignment contact
+and operation coherence complements the facade checks; activities retain their
+ID-only result. No new business actor/time/project/stock authority enters a form.
+Current denial masks private form/history/parents and aborts transport; disposal
+refuses late callbacks. Transient options failure retains the unknown assignment
+while blocking new writes. Explicit same-scope refresh preserves the reason and
+cannot retarget an alias. No browser storage, backend/permission/receipt/merge/
+outbox or external messaging change.653 frontend units and frontend gates pass;
+four native cases are prepared/not run. No backend rerun, actual access,
+migration, workaround or final acceptance. [Contract](04-design/entry-recovery-local.md).
+
 ## Selected contact/owner management recovery,2026-10-28
 
 Fresh same-actor/role identity and CSRF precede preview/confirmation; restricted

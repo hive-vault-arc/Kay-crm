@@ -1933,3 +1933,17 @@ Replace immutable attempt snapshots instead of mutating effect-owned objects,
 and explicitly narrow optional receipts before completion. Keep real denial
 phase tests, register new suites, and distinguish prepared browser cases from
 actual native/SQL acceptance.
+
+## Contextual entries and retained assignment recovery,2026-10-28
+
+A changed editable fingerprint must not replace an unknown note/activity/
+assignment request. Snapshot its strict payload and target before dispatch,
+lock synchronously and retry only that operation with fresh same-actor proof.
+Keep acknowledgement separate from completion and refuse finished stale handlers.
+Version-keyed drawers can discard that owner; use record/contact identity and
+explicit version refresh instead. Retain the owner across transient option-read
+failures, derive denial projection before effect cancellation, and clear an old
+query error after a successful explicit refresh. Preserve every optional activity
+field and the real ID-only result rather than inventing a parent echo. Existing
+form tests should retain denial coverage in a fresh instance after verifying a
+completed stale submit cannot write again.

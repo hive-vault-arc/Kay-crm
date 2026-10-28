@@ -70,7 +70,7 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
         </RecordFacts></RecordSection>
         <ContactDossiers key={contact.id} contact={contact} role={role} />
       </> },
-      { id: "activity", label: "Activités", content: <><ContactTimeline id={contact.id} archived={!writable} revision={contact.version} /><details className="mt-6 border-t pt-3"><summary className="flex min-h-control cursor-pointer items-center font-medium">Historique des attributions</summary><div className="pt-4"><ContactAssignments id={contact.id} revision={contact.version} /></div></details></> },
+      { id: "activity", label: "Activités", content: <><ContactTimeline key={contact.id} id={contact.id} archived={!writable} revision={contact.version} denied={(failure, acknowledged) => { setNotice(acknowledged ? "L’entrée est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} /><details className="mt-6 border-t pt-3"><summary className="flex min-h-control cursor-pointer items-center font-medium">Historique des attributions</summary><div className="pt-4"><ContactAssignments id={contact.id} revision={contact.version} /></div></details></> },
     ]} aside={<>
       <ContactVisits contactId={contact.id} writable={writable} />
       <RecordSection title="Tâches" action={<RecordDrawer label="Voir les tâches" title="Tâches du contact" action="task" description="Tâches, échéances et responsables de ce contact." initialOpen={Boolean(initialTask)}><TaskPanel contactId={contact.id} writable={writable} initialTask={initialTask} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Retrouvez les tâches et leurs échéances.</p></RecordSection>

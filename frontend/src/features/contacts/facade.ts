@@ -56,6 +56,10 @@ export async function relayContacts(key: string, request: Request, requestId: st
     }
     const schema = suffix === "portfolio" ? ownerPortfolioSchema : suffix === "preview" ? previewSchema : suffix === "timeline" ? timelineSchema : suffix === "assignment-events" ? assignmentsSchema : key.startsWith("enquiries/") && (suffix === "archive" || suffix === "restore") ? recordLifecycleResultSchema : suffix ? commandResultSchema : key === "contacts/resolve-phone" ? z.object({ available: z.literal(true) }).strict() : key === "contacts/assignment-options" ? agentsSchema : request.method === "GET" && key === "contacts" ? contactsSchema : request.method === "GET" && key === "enquiries" ? enquiriesSchema : key.startsWith("contacts") ? contactSchema : enquirySchema;
     const result = (key === "contacts/metadata" ? qualificationMetadataSchema : ["contacts/responsible-options", "enquiries/assigned-options"].includes(key) ? agentsSchema : schema).parse(upstream.body);
+    if (suffix === "notes" && key.startsWith("contacts/") || suffix === "assign" && key.startsWith("enquiries/")) {
+      const receipt = commandResultSchema.parse(result);
+      if (receipt.operation !== (suffix === "notes" ? "notes" : "enquiry-assign") || suffix === "notes" && receipt.contact_id !== key.split("/")[1]) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    }
     if (ownershipIntent && (suffix === "preview" ? !ownershipPreviewMatches(key.split("/")[1], ownershipIntent, previewSchema.parse(result)) : !ownershipResultMatches({ sourceId: key.split("/")[1], intent: ownershipIntent }, commandResultSchema.parse(result)))) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
     return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }

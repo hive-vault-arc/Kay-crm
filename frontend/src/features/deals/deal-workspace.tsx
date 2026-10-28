@@ -26,6 +26,7 @@ import { ContactVisits } from "@/features/schedule/contact-visits";
 import { TaskPanel } from "@/features/work/task-panel";
 import { FinancePanel } from "@/features/finance/finance-panel";
 import type { ApiError } from "@/lib/api/client";
+import type { EntryDenied } from "@/features/activities/use-entry-command";
 import { paymentLabels } from "./qualification-contracts";
 import type { Deal } from "./contracts";
 import type { MutateDeal } from "./pipeline";
@@ -36,7 +37,7 @@ import { OutcomeHistory } from "./outcome-history";
 
 export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChanged, mutate, reload, error, notice, commandState, onEdit, editRef, initialTask, initialTab, contactChanged, denied }: {
   deal: Deal; role: StaffRole; writable: boolean; canArchive: boolean; busy: boolean; busyChanged: (value: boolean) => void; mutate: MutateDeal;
-  reload: () => Promise<unknown>; error?: ApiError; notice?: string; commandState?: ReactNode; onEdit: () => void; editRef?: Ref<HTMLButtonElement>; initialTask?: string; initialTab?: string; contactChanged?: () => void; denied?: (error: ApiError) => void;
+  reload: () => Promise<unknown>; error?: ApiError; notice?: string; commandState?: ReactNode; onEdit: () => void; editRef?: Ref<HTMLButtonElement>; initialTask?: string; initialTab?: string; contactChanged?: () => void; denied?: EntryDenied;
 }) {
   const [historyRevision, setHistoryRevision] = useState(0);
   const { request, dialog } = useUnsavedGuard();
@@ -62,7 +63,7 @@ export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChan
         <RecordSection title="Notes"><RecordFacts columns={1}><DealInlineField {...inline} icon={InboxIcon} label="Notes" field="notes" display={<span className="whitespace-pre-wrap">{deal.notes || "Aucune note renseignée."}</span>} /></RecordFacts></RecordSection>
       </> },
       { id: "projects", label: "Projets", content: <><RecordSection title="Projet et offre retenus"><RecordFacts columns={1}><DealInlineField {...inline} icon={PropertyIcon} label="Projets" field="projects" display={deal.projects.map(project => project.name).join(" · ") || "Non renseignés"} /></RecordFacts><div className="grid min-w-0 gap-3"><h3 className="text-sm font-medium">Offre d’inventaire liée</h3>{deal.offering ? <OfferingFacts offering={deal.offering} /> : <p className="text-sm text-muted-foreground">Aucune offre d’inventaire liée.</p>}</div></RecordSection><ProjectLinksPanel scope="deals" id={deal.id} writable={canAct} onChanged={() => setHistoryRevision(value => value + 1)} /><CustomerOffers key={deal.id} deal={deal} writable={writable} busy={busy} busyChanged={busyChanged} mutate={mutate} error={error} denied={denied} /></> },
-      { id: "activity", label: "Activités", content: <><ActivityHistory scope="deals" id={deal.id} writable={canAct} revision={deal.version + historyRevision} />{deal.enquiry_id ? <ActivityHistory scope="deals" id={deal.id} origin /> : null}<details className="kay-contact-more"><summary>Historique de l’affaire</summary><DealHistory id={deal.id} revision={deal.version} /></details><details className="kay-contact-more"><summary>Résultats, clôture et réouverture</summary><OutcomeHistory id={deal.id} revision={deal.version} /></details></> },
+      { id: "activity", label: "Activités", content: <><ActivityHistory scope="deals" id={deal.id} writable={canAct} denied={denied} revision={deal.version + historyRevision} />{deal.enquiry_id ? <ActivityHistory scope="deals" id={deal.id} origin /> : null}<details className="kay-contact-more"><summary>Historique de l’affaire</summary><DealHistory id={deal.id} revision={deal.version} /></details><details className="kay-contact-more"><summary>Résultats, clôture et réouverture</summary><OutcomeHistory id={deal.id} revision={deal.version} /></details></> },
       { id: "documents", label: "Documents", content: <><FilePanel parentKind="deal" parentId={deal.id} writable={writable && !busy} /><PreparedDocuments parentKind="deal" id={deal.id} /></> },
     ]} aside={<>
       <RecordSection title="Suivi"><RecordFacts columns={1}><DealInlineField {...inline} icon={DealIcon} label="Action prévue" field="next_action" display={<span className="whitespace-pre-wrap">{deal.next_action || "Aucune prochaine action renseignée."}</span>} /></RecordFacts><RecordDrawer label="Voir les tâches" title="Tâches de l’affaire" action="task" description="Échéances et responsables de cette affaire." initialOpen={Boolean(initialTask)}><TaskPanel contactId={deal.contact.id} dealId={deal.id} writable={canAct} initialTask={initialTask} /></RecordDrawer></RecordSection>

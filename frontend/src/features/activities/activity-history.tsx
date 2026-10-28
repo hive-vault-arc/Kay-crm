@@ -14,6 +14,8 @@ import { queryPath, useQuery } from "@/features/contacts/use-query";
 import { formatInstant } from "@/lib/format";
 import { activitiesSchema, activityKinds, directionLabels, kindLabels, type Activity } from "./contracts";
 import { ActivityForm } from "./activity-form";
+import type { ApiError } from "@/lib/api/client";
+import type { EntryDenied } from "./use-entry-command";
 
 const labels: Record<string, string> = { ...activityLabels, ...dealActivityLabels, ...kindLabels, "enquiries.converted": "Conversion en affaire" };
 function typeLabel(activity: Activity): string {
@@ -30,17 +32,19 @@ const columns: ColumnDef<Activity>[] = [
   { id: "actor", header: "Auteur", cell: ({ row }) => <span className="block min-w-table-text wrap-anywhere">{row.original.actor.display_name}</span> },
 ];
 
-export function ActivityHistory({ scope, id, origin = false, writable = false, revision }: { scope: "enquiries" | "deals"; id: string; origin?: boolean; writable?: boolean; revision?: number }) {
+export function ActivityHistory({ scope, id, origin = false, writable = false, revision, denied }: { scope: "enquiries" | "deals"; id: string; origin?: boolean; writable?: boolean; revision?: number; denied?: EntryDenied }) {
   const [page, setPage] = useState(1), [kind, setKind] = useState(""), [adding, setAdding] = useState(false), [notice, setNotice] = useState("");
   const selectId = useId(), addButton = useRef<HTMLButtonElement>(null);
+  const [accessError, setAccessError] = useState<ApiError>();
   const title = origin ? "Historique du prospect d’origine" : scope === "enquiries" ? "Historique du prospect" : "Activités de l’affaire";
   const path = `${scope}/${id}/${origin ? "origin-activities" : "activities"}`;
   const query = useQuery(queryPath(path, { page, page_size: 20, kind }), activitiesSchema, revision);
-  if (query.error && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED"].includes(query.error.code)) return <RecordError error={query.error} retry={query.refresh} />;
+  const failure = accessError ?? query.error;
+  if (failure && [401, 403, 404].includes(failure.status)) return <section className="grid gap-3">{notice ? <p role="status">{notice}</p> : null}<RecordError error={failure} retry={() => { setAccessError(undefined); setNotice(""); query.refresh(); }} /></section>;
   return <section className="grid min-w-0 gap-4 border-t pt-6" aria-label={title}>
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-section font-medium">{title}</h2><div className="flex flex-wrap gap-2"><Button liveRefresh action="refresh" variant="quiet" onClick={query.refresh}>Actualiser l’historique</Button>{writable && !origin ? <Button action="create" ref={addButton} aria-expanded={adding} onClick={() => { setAdding(true); setNotice(""); }}>Ajouter une activité</Button> : null}</div></div>
     {origin ? <p className="text-sm text-muted-foreground">Notes et échanges de la demande liée, conservés avec leur auteur et leur date d’origine. Lecture seule depuis l’affaire.</p> : null}
-    {adding && writable && !origin ? <RecordDrawer initialOpen hideTrigger label="Ajouter une activité" title="Ajouter une activité" description={scope === "enquiries" ? "Consignez un échange ou une note sur ce prospect." : "Consignez un échange ou une note sur cette affaire."} returnFocus={addButton} onClosed={() => setAdding(false)}>{(close, saved) => <ActivityForm path={`/api/v1/${scope}/${id}/activities`} cancel={close} saved={() => { saved(); setNotice("Activité enregistrée."); setPage(1); query.refreshQuietly(); }} />}</RecordDrawer> : null}
+    {adding && writable && !origin ? <RecordDrawer initialOpen hideTrigger label="Ajouter une activité" title="Ajouter une activité" description={scope === "enquiries" ? "Consignez un échange ou une note sur ce prospect." : "Consignez un échange ou une note sur cette affaire."} returnFocus={addButton} onClosed={() => setAdding(false)}>{(close, saved) => <ActivityForm path={`/api/v1/${scope}/${id}/activities`} cancel={close} denied={(failure, acknowledged) => { setAccessError(failure); setNotice(acknowledged ? "L’activité est enregistrée. Les droits d’accès ont changé." : ""); denied?.(failure, acknowledged); }} saved={() => { saved(); setNotice("Activité enregistrée."); setPage(1); query.refreshQuietly(); }} />}</RecordDrawer> : null}
     {notice ? <p role="status" className="text-success">{notice}</p> : null}
     <div className="grid gap-2 sm:w-64"><Label htmlFor={selectId}>Filtrer les activités</Label><NativeSelect id={selectId} value={kind} onChange={event => { setKind(event.target.value); setPage(1); }}><option value="">Toutes les activités</option>{activityKinds.map(code => <option key={code} value={code}>{kindLabels[code]}</option>)}<option value="system">Événements automatiques</option></NativeSelect></div>
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <div className="grid gap-2" role="status"><p>Chargement de l’historique…</p><div className="h-control rounded-md bg-muted" /></div> : <>

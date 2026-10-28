@@ -1,5 +1,17 @@
 # Acceptance scenarios
 
+Selected note/activity/assignment recovery,2026-10-28 (AT-05/23/24):
+verify all current note/activity/assignment fields in their selected drawers,
+immutable original retry after changed draft/parent/options failure, synchronous
+overlap refusal, fresh same-actor/role proof and acknowledgement-only completion.
+Current denial must mask private form/history/parents and abort late callbacks.
+Validate note/assignment receipt contact/action; retain activity ID-only results.
+Explicit assignment refresh must preserve reason/agent/queue, read actual versions,
+recover an initial query failure and reject alias retargeting.653 frontend units
+pass,14 added; four current-label native cases are prepared/typechecked, not run.
+Backend rules unchanged; actual role/SQL/native/device gates remain pending.
+[Contract](../04-design/entry-recovery-local.md).
+
 Selected contact/owner management recovery,2026-10-28 (AT-04/05/23/24):
 retain the selected contextual form and operation fields. Verify exact intent/
 version/proof/key after lost response, synchronous overlap refusal, cancel/

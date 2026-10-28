@@ -1,5 +1,19 @@
 # KAY QA command register
 
+Selected notes/activities/assignment recovery,2026-10-28: frontend cwd
+`npm run test:unit`:653 pass/0 failed/skipped,14 added cases in the newly
+registered entry suite. Existing activity hydration/context/retry/overlap/denial
+and history-drawer coverage is retained. `npm run lint`, `npm run typecheck`,
+`npm run build` (Next16.4.2) and `npm run history:check` pass.64 glyphs/104
+consumers/345 icon sites and498 Button sites have0 violations. Static Frontend
+Taste app lint covers11 changed UI sources,0 findings. Four native Contact/
+Prospect/Deal/assignment recovery cases are prepared/typechecked, not run.
+An assignment syntax diagnostic was corrected; explicit refresh now also clears
+an initial options-query failure, with regression coverage. Backend unchanged/
+not rerun. No actual app/DB/account/config/service/worker/transfer access,
+migration, workaround, native/SQL/CI/AFTER/product or main/push/merge/deploy
+acceptance. [Contract](04-design/entry-recovery-local.md).
+
 Selected contact/owner management recovery,2026-10-28: frontend cwd
 `npm run test:unit`:639 pass/0 failed/skipped,18 added hook/client/facade/dialog/
 parent cases in the newly registered ownership suite. Existing owner management

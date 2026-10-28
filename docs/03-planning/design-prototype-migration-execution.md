@@ -2538,3 +2538,28 @@ main/push/merge/deploy. Full goal active.
 
 [Ownership recovery evidence](design-migration-evidence/ownership-recovery-2026-10-28.json)
 records synthetic/source checks separately from actual-stack acceptance.
+
+## Selected notes, activities and assignment recovery,2026-10-28
+
+All existing note/activity/assignment fields remain in their selected contextual
+drawers, including activity duration/direction/three project labels and explicit
+assignment queue/reason/version. A shared strict entry owner now pins original
+request identity after unknown dispatch, obtains fresh same-actor/role proof,
+separates acknowledgement from completion and rejects stale/disposed callbacks.
+Current denial masks form/history/parent data; note/assignment receipts match
+contact/action. Assignment lifetimes survive background versions and transient
+options failures; explicit refresh retains draft choices, reads actual versions
+and refuses canonical retargeting. Backend/endpoint/receipt/history/permissions/
+merge/outbox/messaging policies and selected layouts remain unchanged.
+[Contract](../04-design/entry-recovery-local.md).
+
+653 frontend units pass,14 added; lint/types/build/history and static app lint11
+pass. Four native cases are prepared/typechecked, not run; existing activity
+form/hydration/overlap/denial coverage remains. Backend unchanged/not rerun.
+Actual native/SQL/device/AFTER/CI/product checks, migrations0036/0037, remaining
+menus/forms/detail/context and older broad selectors remain pending. No actual
+app/DB/account/config/service/worker/transfer access or workaround, main/push/
+merge/deploy. Full goal active.
+
+[Entry recovery evidence](design-migration-evidence/entry-recovery-2026-10-28.json)
+records synthetic/source checks separately from actual-stack acceptance.

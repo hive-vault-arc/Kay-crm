@@ -162,3 +162,20 @@ are prepared/typechecked, not run. Lint/types/build/history and static app lint4
 pass. Remaining detail/context, older broad selectors, actual native/SQL/device/
 AFTER/CI/product acceptance and migrations0036/0037 remain pending. No backend
 rerun or actual access is claimed. P0/P8 and the full redesign goal remain open.
+
+## Note/activity/assignment follow-through,2026-10-28
+
+[Entry field/action map](../04-design/entry-recovery-local.md) retains contact
+kind/text, full Prospect/Deal activity metadata and explicit assignment agent/
+queue/reason/version in selected drawers. Original immutable target/body/key
+and fresh same-actor/role proof own unknown retries; acknowledged completion
+does not write again. Current denial/disposal masks/cancels late work. Assignment
+identity survives version refresh, transient options errors retain recovery,
+and explicit scoped refresh preserves the draft while updating real versions.
+Client/facade receipt coherence retains unchanged backend authority/history.
+
+653 frontend units pass,14 added; lint/types/build/history and static app lint11
+pass. Four native cases are prepared/typechecked, not run. Remaining menus/forms,
+detail/context and older broad selectors continue; actual native/SQL/device/
+AFTER/CI/product acceptance and migrations0036/0037 remain pending. No backend
+rerun or actual access is claimed. P0/P8 and the full redesign goal remain open.
