@@ -48,6 +48,32 @@ Valid debounced or explicit application resets page once. Unit hierarchy deep
 links initialize independently of defaults, count as active, and reset immediately.
 Desktop property Cards/List preference survives the phone's cards-only override.
 
+### Programme presentation and current route selection
+
+The follow-up after8da316c uses one shared ProjectResultsView for both kinds:
+count/status, Cards/List, sort and compact responsive overrides. One parent-owned
+desktop preference survives kind switches and the phone's cards-only view.
+Programmes now have a real numbered desktop list with their thumbnail/name,
+reference/category, location, unit/availability counts and exact own-offer
+amounts/states. The list's phone fallback reuses the existing image card, and
+there is no added drawer table. No preparation/marketing phase is invented.
+
+Project kind derives from current server route props, rather than a one-time
+state initializer. Changes push the fixed internal kind route; Back/Forward
+props can update the active tab and matching create action. Both directories
+remain mounted, preserving filters and pages. No new storage or history shim
+is added. Programme sort now has one toolbar home, and a one-page result omits
+the redundant pager. Empty programme results provide reset; failed reads do
+not report retained counts as current. The selected existing CSS is reused.
+
+536 frontend units/lint/types/build/compiled history pass for this follow-up;
+four additional actual controller/render/navigation cases cover these paths.
+One browser journey for kind history, retained filters, desktop list and phone
+cards is prepared/type-checked, not executed. Static Frontend Taste app lint
+checks four changed UI sources with no findings. React derived-state guidance
+applies; no new state-mirroring effect, dependency or backend change is added.
+[Presentation evidence](../03-planning/design-migration-evidence/project-presentation-2026-10-28.json).
+
 ## Evidence and outstanding reconciliation
 
 532 frontend units pass, including12 new range/model/controller/facade cases.
@@ -61,10 +87,10 @@ current authorization, native focus/spacing, touch, zoom or responsive behavior.
 [Recorded evidence](../03-planning/design-migration-evidence/inventory-directory-2026-10-28.json).
 
 Remaining P0/P4 gaps are explicit: the prototype's programme preparation/marketing
-phase has no persisted equivalent yet; programme desktop Cards/List still needs
-parity; property category presentation retains the inherited multiselect; and
-project-kind URL Back/Forward synchronization needs reconciliation. No business
-default, migration or final completion is inferred from this slice.
+phase has no persisted equivalent yet, and property category presentation retains
+the inherited multiselect. Desktop programme view and route synchronization source
+are implemented above; actual native history/width/focus acceptance is pending.
+No business default, migration or final completion is inferred from these slices.
 
 Frontend Taste's app-screen guidance now applies under Ali's2026-10-28 instruction:
 grouped fields, consistent spacing, honest states and phone filter sheets. The

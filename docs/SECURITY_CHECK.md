@@ -1,5 +1,24 @@
 # KAY security check for changes
 
+## Selected project presentation,2026-10-28
+
+Existing property/programme read contracts, private thumbnail permits, scopes,
+numbered pages and exact offering strings are reused. Desktop list cells retain
+existing identity, unit availability and own offerings; no owner identity or
+invented programme phase is added. Kind navigation uses fixed internal routes
+and current server props. Shared transient view/filter state adds no browser
+storage, cache, credential, log, history shim, command or permission.
+Failed reads mask retained counts, and list/card/mobile transitions do not
+invent current inventory data. Programme empty-state reset and one-page pager
+suppression preserve actual totals.
+
+536 frontend units/lint/types/build/compiled history pass. Four new actual
+render/controller/navigation cases and static app lint cover source behavior;
+one native history/filters/phone-card journey is prepared/not executed.
+No backend rerun or app/browser/HTTP workaround, real DB/service/private config/
+records, migration, main/push/merge/deployment. Real current-scope/thumbnail/SQL,
+native/CI/AFTER/owner gates remain open. [Contract](04-design/inventory-directory-local.md).
+
 ## Selected inventory directory ranges,2026-10-28
 
 Existing read models now reach strict route/facade allowlists and bounded exact

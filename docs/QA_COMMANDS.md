@@ -1,5 +1,18 @@
 # KAY QA command register
 
+Selected project presentation,2026-10-28: frontend `npm run test:unit`:536 pass,
+0 failed/skipped;four added actual view/controller/list/navigation cases.
+`npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass;64 glyphs/105 consumers/348 sites and496 Button
+sites have0 violations. Frontend Taste `scripts/lint.mjs --app --json` checks
+four changed UI sources with0 findings. A new real browser journey is prepared,
+type-checked, not run. Initial focused checks found missing explicit test imports
+and a JSX whitespace assertion; both corrected. Type check caught passing an
+actor ID to cleanup expecting TestActor; corrected before the final build.
+No backend code/test rerun;8da316c retains476 connection-forbidden units/704
+integration deselected. No native or full-stack acceptance is inferred.
+[Evidence](03-planning/design-migration-evidence/project-presentation-2026-10-28.json).
+
 Selected inventory ranges,2026-10-28: frontend `npm run test:unit`:532 pass,
 0 failed/skipped;12 new actual range/controller/facade cases. `npm run lint`,
 `npm run typecheck`, `npm run build` (Next16.4.2) and `npm run history:check` pass.

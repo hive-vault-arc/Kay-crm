@@ -25,7 +25,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to64 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and preferred Navigation API/classic history fallback source implemented | Remaining inventory/work/admin form parity, responsive focus and native interaction/cache/startup/gesture/frame checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
-| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; mixed-programme typing and exact directory range filters/counts/facets wired through real reads | Programme phase storage, programme desktop Cards/List, selected property category presentation and project-kind URL synchronization; final per-domain/old-browser reconciliation and native review |
+| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; mixed-programme typing and exact directory range filters/counts/facets wired through real reads; shared desktop Cards/List and current kind-route selection | Programme phase storage and selected property category presentation; final per-domain/old-browser reconciliation and native history/layout review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery, selected server stationery and approved styled blank appendices with preserved originals/provenance/early replay | Remaining per-field context refinements; old native selectors and final native security/stock/focus/performance checks, including actual PDF transfer/replay |
 | P6 work/schedule | Task/notification entries, compact header inbox/shared full-list recovery, selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); old selectors and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, grouped report cards/attribution tools/tonal drills and alerts, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
@@ -2213,3 +2213,49 @@ changed UI sources with0 findings. Repository/index validation passes8830 files/
 canonical staged source hashes pass. All254 frozen inputs retain their hashes.
 The protected35 lesson additions and motion note remain unstaged; main remains
 e0bdc09. No native/full-stack or product acceptance is added.
+
+## Shared project presentation and kind-route recovery,2026-10-28
+
+Continued P4 after8da316c. The frozen selected directory has desktop Cards/List
+for both property kinds, with a shared presentation preference and cards-only
+phones. ProjectResultsView now supplies their common status/view/sort row.
+Programmes gain a real numbered list retaining thumbnail/name/reference/category,
+location, unit availability and exact own-offer price/state. Its phone fallback
+is the existing compact image card, not a drawer table or stretched desktop row.
+The missing programme preparation/marketing phase is not invented.
+
+Current kind route props now select the active tab and matching create action;
+the prior state initializer stayed stale after prop changes. Kind changes push
+fixed internal history entries instead of replacing them. Both directories stay
+mounted with their filters/page, and their shared desktop preference survives
+the phone override. There is no new history shim or storage. Programme sort has
+one toolbar home, empty results offer reset, and a single result page omits the
+redundant pager. Failed reads do not advertise retained counts as current.
+
+536 frontend units pass, including four additional actual controller/render/list/
+navigation cases. Lint64 glyphs/105 consumers/348 icon sites and496 Button sites
+has0 violations; type check, Next16.4.2 build and compiled history pass. Frontend
+Taste app static lint checks four changed UI sources with0 findings. One new
+real browser journey is prepared/type-checked, not executed. Early focused tests
+caught explicit import/JSX whitespace harness issues; type checking caught a
+cleanup actor-ID mismatch. These were corrected without weakening the checks.
+Backend is unchanged;8da316c's476-unit/704-deselected evidence is retained.
+
+[Contract](../04-design/inventory-directory-local.md) and
+[evidence](design-migration-evidence/project-presentation-2026-10-28.json).
+Frontend Taste app guidance applies within the frozen selected KAY identity;
+React review derives route state during render rather than mirroring it in an
+effect. Existing shadcn/Tailwind, semantic icons and CSS are reused. Original-
+machine mandatory skills remain unavailable/not claimed; AFTER timing stays.
+No browser/CUA/CDP/HTTP workaround, DB/service/private configuration/real records,
+migration/main/push/merge/deploy. Actual route history, thumbnail authorization,
+layout/focus/keyboard/touch/zoom, real CI/AFTER/owner review remain unverified.
+Programme phase storage, selected property category presentation, old-browser
+selector reconciliation and the full per-domain capability matrix stay open.
+
+Project-presentation checkpoint finalization: repository/index check passes8834
+files/0 refused/14 ignore probes; repository-only docs pass22 sprints/1261 links/
+42 mappings/13 Mermaid pairs/12 API JSON samples. Cached whitespace and all seven
+canonical staged source hashes pass;254 frozen inputs are unchanged. Protected
+35 unrelated lesson additions and the motion note remain unstaged; main stays
+e0bdc09. No native/full-stack/product pass or final branch completion is claimed.

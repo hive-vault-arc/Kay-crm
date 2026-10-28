@@ -27,6 +27,7 @@ export const typeFieldsSchema = z.object({ expected_version: version, developmen
 export const inventoryPageSchema = numberedPage(propertySummarySchema).extend({ development: developmentSummarySchema });
 export const archiveDevelopmentSchema = z.object({ expected_version: version, reason: z.string().trim().min(1).max(1000) }).strict();
 export type Development = z.infer<typeof developmentSchema>;
+export type DevelopmentSummary = z.infer<typeof developmentSummarySchema>;
 export type Block = z.infer<typeof blockSchema>;
 export type Floor = z.infer<typeof floorSchema>;
 export type UnitType = z.infer<typeof unitTypeSchema>;

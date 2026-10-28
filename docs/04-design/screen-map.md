@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+Selected project browsing,2026-10-28: property/programme results share a desktop
+Cards/List preference and sort home; phones retain image cards. Programme lists
+retain real unit availability and own offerings. Current kind route props select
+the tab/create action, and kind changes push a history entry while both filters
+stay mounted. Source checks pass; native history and layout are still pending.
+[Contract](inventory-directory-local.md).
+
 Selected inventory filters,2026-10-28: properties, programmes and unit drawers
 share labelled price/rent ranges; physical filters add surface/rooms. Invalid
 drafts retain applied results/page, explicit valid Apply closes, and reset clears
