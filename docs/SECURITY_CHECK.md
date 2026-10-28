@@ -1,5 +1,25 @@
 # KAY security check for changes
 
+## Selected shared unit listing wizard,2026-10-28
+
+The selected rich unit form retains real programme UUIDs, supported categories,
+required apartment floor/type, same-parent/category guards, aggregate locks and
+existing-offer identity/placement stock protection. BR-26 partial units can now
+retain known JSON facts in the same atomic create, instead of omitting all rich
+details; standalone rich completeness and supplied-field validation remain.
+Initial offers stay drafts and exact MAD; unit holiday offers remain forbidden.
+No owner/contact/file/price replacement, invented vacancy or template propagation.
+
+Readonly metadata retains full pages/counts, disables incompatible types and
+rejects forged new IDs; failures disable selection. Existing server authority
+remains decisive. Shared guarded cancel/pending/retry and full escaped review
+remain.547 connection-forbidden backend units and573 frontend units/lint/types/
+build/history pass; static app lint7 sources has0 findings. Four SQL/two native
+cases and the updated unit browser helper are prepared, not run. No migration,
+actual app/DB/service/account/config/record/worker/transfer, access workaround,
+main/push/merge/deploy or final acceptance.
+[Integration proposal](04-design/unit-listing-workflow-local.md).
+
 ## Selected dossier directory filters,2026-10-28
 
 The exact unassigned sentinel is read/export-only; NewEnquiry/assignment command

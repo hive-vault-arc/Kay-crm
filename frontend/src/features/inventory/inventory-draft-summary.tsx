@@ -4,7 +4,7 @@ import type { KayIconComponent } from "@/components/icons";
 export function InventoryDraftSummary({ icon: Icon, title, facts, next, onlyFilled = false, wide = false }: {
   icon: KayIconComponent;
   title: string;
-  facts: { label: string; value: ReactNode }[];
+  facts: { label: string; value: ReactNode; fullWidth?: boolean }[];
   next: string;
   onlyFilled?: boolean;
   wide?: boolean;
@@ -16,7 +16,7 @@ export function InventoryDraftSummary({ icon: Icon, title, facts, next, onlyFill
       <div className="min-w-0"><h2 className="text-section font-semibold">{title}</h2><p className="text-sm text-muted-foreground">Aperçu avant enregistrement</p></div>
     </div>
     <dl className={`grid min-w-0 gap-4 sm:grid-cols-2 ${wide ? "" : "xl:grid-cols-1 2xl:grid-cols-2"}`}>
-      {visibleFacts.map(fact => <div key={fact.label} className="min-w-0"><dt className="mb-1 text-xs font-medium text-muted-foreground">{fact.label}</dt><dd className="wrap-anywhere text-sm font-medium">{fact.value || <span className="font-normal text-muted-foreground">Non renseigné</span>}</dd></div>)}
+      {visibleFacts.map(fact => <div key={fact.label} className={`min-w-0${fact.fullWidth && wide ? " sm:col-span-2" : ""}`}><dt className="mb-1 text-xs font-medium text-muted-foreground">{fact.label}</dt><dd className="wrap-anywhere whitespace-pre-wrap text-sm font-medium">{fact.value !== null && fact.value !== undefined && fact.value !== "" ? fact.value : <span className="font-normal text-muted-foreground">Non renseigné</span>}</dd></div>)}
     </dl>
     <p className="border-t pt-4 text-sm text-muted-foreground">{next}</p>
   </aside>;

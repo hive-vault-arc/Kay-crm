@@ -1,5 +1,23 @@
 # KAY QA command register
 
+Selected unit/property listing workflow,2026-10-28: backend cwd explicit
+venv `.venv/Scripts/python.exe -m tests.unit_runner`:547 pass/720 integration
+deselected,13 added contract/actual hierarchy-stock guard/serialization cases.
+Ruff check/format--check pass4 changed Python paths; backend-cwd mypy passes220
+sources. Four new isolated PostgreSQL cases are prepared/not run.
+Frontend `npm run test:unit`:573 pass/0 failed/skipped, nine added actual wizard/
+review/metadata/schema/fixture cases; existing step-jump regression retained.
+`npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass;64 glyphs/104 consumers/345 icon sites and494 Button
+sites have0 violations after removing the duplicate creator. Static Frontend
+Taste app lint covers7 UI sources,0 findings; not native rendering. Two new
+browser journeys are typechecked/prepared, not run. The old shared unit-creation
+helper is migrated to the current five-step controls and receives a separate
+post-edit targeted lint/type check. No real SQL/native/service/access workaround,
+migration/private config/account/records/transfer/main/push/merge/deploy or
+whole-redesign/AFTER/product acceptance is claimed.
+[Contract](04-design/unit-listing-workflow-local.md).
+
 Selected dossier directory filters,2026-10-28: backend cwd explicit venv
 `.venv/Scripts/python.exe -m tests.unit_runner`:534 pass/716 integration
 deselected,15 added compiled SQL/stub-read/ASGI/query/write-boundary cases.

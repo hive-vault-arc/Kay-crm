@@ -261,7 +261,10 @@ class CreateProperty(PropertyFields):
     def allowed_market(self) -> CreateProperty:
         initial = self.initial_offering
         details = self.listing_details
-        if details is not None:
+        # Standalone listings retain their complete listing contract. Physical
+        # units retain BR-26's incomplete-draft capability, now with known detail
+        # fields instead of requiring callers to omit listing_details entirely.
+        if details is not None and self.development_id is None:
             if self.area_sqm is None or not details.region or not details.city or initial is None:
                 raise ValueError("LISTING_REQUIRED_FIELDS")
             if self.category in {"apartment", "house", "villa", "riad"} and (

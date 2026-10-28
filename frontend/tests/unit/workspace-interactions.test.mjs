@@ -163,7 +163,7 @@ test("Jumping around the property wizard preserves entered fields and final save
     "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/radio-group": { RadioGroup: "Radio", RadioGroupItem: "RadioItem" }, "@/components/ui/textarea": { Textarea: "Textarea" },
     "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/format": { formatMAD: value => value },
     "./contracts": contracts, "./inventory-draft-summary": { InventoryDraftSummary: "Summary" }, "./inventory-wizard-steps": { InventoryWizardSteps: "Steps" }, "./states": { InventoryError: "Error", Price: "Price" },
-    "./level-picker": { LevelPicker: "Picker" }, "./use-command": { useInventoryCommand: () => ({ pending: false, submit: (...args) => calls.push(args) }) },
+    "./listing-field-format": loadServer("src/features/inventory/listing-field-format.ts", { modules: { "./contracts": contracts } }), "./level-picker": { LevelPicker: "Picker" }, "./use-command": { useInventoryCommand: () => ({ pending: false, submit: (...args) => calls.push(args) }) },
   } });
   const render = () => harness.render(() => PropertyListingWizard({}));
   find(render(), "Input").find(field => field.props.id === "property-reference").props.onChange({ target: { value: "SYN-DRAFT" } });

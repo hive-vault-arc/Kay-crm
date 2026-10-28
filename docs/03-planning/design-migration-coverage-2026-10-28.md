@@ -68,3 +68,15 @@ all totals/status/stage counts/pages; command assignment remains UUID-only.
 Prepared earlier Contacts browser bodies now use a runtime-validated factory.
 Four real SQL/two new native cases remain unrun. Continue exact inventory/detail/
 settings/job field and command context coverage; this does not close P0.
+
+## Unit/property form field follow-through,2026-10-28
+
+[Shared listing field map](../04-design/unit-listing-workflow-local.md) records
+the selected five-step unit flow, every location/characteristic/equipment payload
+home and full review. The separate three-step unit creator is removed. Partial
+unit details retain BR-26 draft semantics while standalone rich requirements
+remain; the technical integration proposal awaits product review. Type choices,
+placement/stock locks, zero values and guarded cancel are source-covered. The
+illustrative vacancy default is not invented; current stock flags stay per offer.
+Four SQL/two native cases and the shared unit helper remain unrun. Continue exact
+remaining detail/settings/job coverage and broader legacy-selector migration.

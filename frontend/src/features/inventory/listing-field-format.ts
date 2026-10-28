@@ -9,8 +9,12 @@ const choices: Record<string, string> = {
 };
 const choiceFields = new Set(["condition", "age_band", "floor_type", "orientation", "land_delivery", "land_status"]);
 
-export function formatListingField(property: Property, key: keyof Property["listing_details"]): string | null {
-  const value = property.listing_details[key];
+export function formatListingValue(key: keyof Property["listing_details"], value: Property["listing_details"][keyof Property["listing_details"]]): string | null {
   if (value === null || value === undefined || value === "") return null;
+  if (typeof value === "number" && !Number.isFinite(value)) return "À vérifier";
   return Array.isArray(value) ? value.map(option => amenityLabels[option]).join(", ") || null : choiceFields.has(key) ? choices[String(value)] ?? String(value) : String(value);
+}
+
+export function formatListingField(property: Property, key: keyof Property["listing_details"]): string | null {
+  return formatListingValue(key, property.listing_details[key]);
 }

@@ -1,5 +1,17 @@
 # Acceptance scenarios
 
+Selected shared unit listing wizard,2026-10-28 (AT-27/31/32/35/36/41):
+verify all five steps and full reviewed location/details/equipment/description,
+known zeros, missing unknowns, exact MAD and one atomic property/draft offer.
+Apartment placement must still require a same-programme floor/type; other unit
+categories can remain direct. Block-only intent cannot silently disappear,
+incompatible types are visible but disabled with complete server paging, and
+existing offers lock identity/placement. Category changes clear incompatible
+types without copying defaults. Cancel uses the drawer guard. Standalone rich
+requirements remain.13 backend/9 frontend cases pass; four PostgreSQL/two native
+cases and a migrated shared unit browser helper are prepared/not run.
+[Source contract and limits](../04-design/unit-listing-workflow-local.md).
+
 Selected dossier directory filters,2026-10-28 (AT-03/04/22/24/29/39):
 verify M/A queue filtering/status totals/paging/export, Agent empty queue and
 UUID-only assignment writes. Enquiry assignee choices must reflect assigned

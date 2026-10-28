@@ -1,5 +1,13 @@
 # Data model: dictionary, conceptual, logical, and physical views
 
+Selected unit rich drafts,2026-10-28: the existing property.listing_details
+JSON stores known partial unit facts; missing facts remain null/unknown. This
+preserves existing incomplete-unit drafts without dropping entered details.
+Templates never populate or propagate physical facts. No column/table/backfill/
+migration or ownership/stock model changes. Existing guarded floor/type links
+and original history remain.
+[Current source boundary](unit-listing-workflow-local.md).
+
 Selected programme phase,2026-10-28: prepared revision0037_development_phase adds
 nullable development.phase and inventory_event.development_phase with bounded
 preparation/marketing checks and a deferred same-version snapshot guard. No

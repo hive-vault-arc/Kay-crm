@@ -2398,3 +2398,24 @@ job field/action coverage from the current matrix. No migration or main promotio
 
 [Directory follow-through evidence](design-migration-evidence/dossier-directory-2026-10-28.json)
 records this checkpoint independently of final native/SQL/owner acceptance.
+
+## Shared unit/property listing workflow,2026-10-28
+
+The selected five-step form now replaces the separate minimal unit creator and
+serves both unit/property create/edit. It includes all known rich fields and full
+review, real programme/placement labels, supported category choices, complete
+metadata pages with incompatible types disabled, known zero values and central
+guarded cancel. BR-26 partial-unit JSON facts persist atomically; standalone rich
+requirements, template independence, apartment bindings, stock/version/authority
+and draft offer contracts remain. [Contract](../04-design/unit-listing-workflow-local.md).
+The partial-detail reconciliation is a technical integration proposal pending
+product review, not a new stock rule. No vacancy status or owner/file grant added.
+
+547 connection-forbidden backend units/720 deselected,573 frontend units, Ruff4/
+mypy220, lint/types/build/history and static app lint7 pass. Four SQL/two native
+cases and the migrated shared unit browser helper are prepared, not run.
+Continue remaining per-field/action coverage and legacy-selector migration;
+native/SQL/CI/AFTER/product acceptance and migrations0036/0037 remain pending.
+
+[Shared unit workflow evidence](design-migration-evidence/unit-listing-workflow-2026-10-28.json)
+records current source/fixture checks and pending actual-stack gates separately.

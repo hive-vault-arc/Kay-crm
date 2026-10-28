@@ -51,23 +51,24 @@ export async function createType(page: Page, code = "T2", label = "T2 / 80 m²")
 }
 export async function createUnit(page: Page, did: string, floor = "F2", category = "apartment", area = "80,00", price = "900000,01") {
   await openDevelopment(page, did, "Unités");
-  await page.getByRole("button", { name: "Créer une unité physique", exact: true }).click();
-  const form = page.getByRole("form", { name: "Créer une unité physique" });
+  await page.getByRole("button", { name: "Créer une unité", exact: true }).click();
+  const form = page.getByRole("form", { name: "Créer une unité", exact: true });
   const navigation = form.getByRole("group", { name: "Navigation du formulaire" });
   const reference = `SP08-U-${randomUUID().slice(0, 8)}`.toUpperCase();
-  await page.getByLabel("Référence du bien", { exact: true }).fill(reference);
-  await page.getByLabel("Catégorie", { exact: true }).selectOption(category);
-  await page.getByLabel("Prix de vente demandé en MAD", { exact: true }).fill(price);
-  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
-  await expect(form.getByText("Étape 2 sur 3")).toBeVisible();
-  await page.getByLabel(category === "land" ? "Surface du terrain en m² (facultative)" : category === "commercial" ? "Surface du local en m² (facultative)" : "Surface en m² (facultative)", { exact: true }).fill(area);
+  await form.locator("#property-reference").fill(reference);
+  await form.locator("#property-category").selectOption(category);
+  await form.locator("#property-price_mad").fill(price.replace(",", "."));
   if (category === "apartment") {
-    await page.getByLabel("Bloc de l’unité", { exact: true }).selectOption({ label: "B1 · Bloc synthétique B1" });
-    await page.getByLabel("Étage de l’unité", { exact: true }).selectOption({ label: `${floor} · Étage synthétique ${floor}` });
-    await page.getByLabel("Type réutilisable de l’unité", { exact: true }).selectOption({ label: "T2 · T2 / 80 m²" });
+    await form.getByLabel("Bloc de l’unité", { exact: true }).selectOption({ label: "B1 · Bloc synthétique B1" });
+    await form.getByLabel("Étage de l’unité", { exact: true }).selectOption({ label: `${floor} · Étage synthétique ${floor}` });
+    await form.getByLabel("Type réutilisable de l’unité", { exact: true }).selectOption({ label: "T2 · T2 / 80 m²" });
   }
   await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
-  await expect(form.getByText("Étape 3 sur 3")).toBeVisible();
+  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
+  await form.locator("#property-area_sqm").fill(area.replace(",", "."));
+  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
+  await navigation.getByRole("button", { name: "Suivant", exact: true }).click();
+  await expect(form.getByRole("button", { name: "Étape 5 sur 5 : Vérification", exact: true })).toHaveAttribute("aria-current", "step");
   await navigation.getByRole("button", { name: "Créer l’unité", exact: true }).click();
   await expect(page.getByRole("heading", { name: reference, exact: true })).toBeVisible();
   return { id: new URL(page.url()).pathname.split("/")[3], reference };

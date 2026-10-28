@@ -1,0 +1,234 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "641e7e35961b83f3cb1cf894b8cd06da65594b84",
+  "scope": "Shared selected five-step property/unit create/edit, rich incomplete unit facts under BR-26, full submitted-value review, scoped compatible type pages, guarded contextual cancel and migrated unit browser helper",
+  "integrationProposal": "Preserve existing incomplete-unit draft semantics while atomically retaining known listing_details; standalone rich completeness and legacy bare-draft shapes remain. Product review pending, no new stock or authority rule.",
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 547,
+      "deselected": 720,
+      "additionalCases": 13,
+      "boundary": "Connections forbidden; Pydantic, real hierarchy/stock guards with stubs and pure property serialization; no actual database/app."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check <4 changed Python paths> and ruff format --check <same paths>",
+      "cwd": "backend",
+      "exitCode": 0,
+      "paths": [
+        "backend/app/inventory/contracts.py",
+        "backend/tests/unit_selection.py",
+        "backend/tests/test_unit_listing_draft_unit.py",
+        "backend/tests/test_unit_listing_draft.py"
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 220
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 573,
+      "failed": 0,
+      "skipped": 0,
+      "additionalCases": 9,
+      "boundary": "Synthetic Node/facade/TLS/actual form/metadata/review/schema/fixture checks, not browser rendering."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttons": 494,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2
+    },
+    {
+      "command": "node C:/Users/ali-a/.codex/skills/design-taste-frontend/scripts/lint.mjs --app --json <7 changed UI paths>",
+      "exitCode": 0,
+      "files": 7,
+      "findings": 0,
+      "boundary": "Static skill lint, not native/aesthetic review."
+    },
+    {
+      "command": "npx eslint tests/helpers/developments.ts --max-warnings=0 and npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "boundary": "After migrating the shared unit helper; app source unchanged since full build/unit gate."
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8865,
+      "refusedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1266,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": {
+    "postgresFile": "backend/tests/test_unit_listing_draft.py",
+    "postgresCases": 4,
+    "browserFile": "frontend/tests/e2e/unit-listing-wizard.spec.ts",
+    "browserCases": 2,
+    "migratedBrowserHelper": "frontend/tests/helpers/developments.ts",
+    "fixtureFactory": "frontend/tests/helpers/unit-listing-fixtures.ts",
+    "typechecked": true,
+    "runtimeFixtureFactoryTestPassed": true
+  },
+  "preserved": {
+    "apartmentFloorTypeAndSameProgramme": true,
+    "categoryStockLocks": true,
+    "templateDefaultsNotCopied": true,
+    "exactMadInitialDraftOffer": true,
+    "standaloneRichRequirements": true,
+    "legacyBareDraftShape": true,
+    "noInventedVacancy": true,
+    "filesOwnersPricesAndPermissions": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notPerformed": [
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/account/customer records/private configuration/import/export/transfer",
+    "Executed migration0036 or0037",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceHashes": [
+    {
+      "file": "backend/app/inventory/contracts.py",
+      "bytes": 16945,
+      "sha256": "444474d4b6895c55d3815717d5b21c312b4e0066ee1a1945bd10a60492bf2400"
+    },
+    {
+      "file": "backend/tests/unit_selection.py",
+      "bytes": 1514,
+      "sha256": "9bd3b5dd69b5629f1def0c247974bb0680f7604dc37204bb1a392159857af7f4"
+    },
+    {
+      "file": "backend/tests/test_unit_listing_draft_unit.py",
+      "bytes": 4652,
+      "sha256": "cff30ba603e47ce5cfb1116a4b639d6904ec1c256af99f9a76d49d75fc45b0ea"
+    },
+    {
+      "file": "backend/tests/test_unit_listing_draft.py",
+      "bytes": 4516,
+      "sha256": "cb174680ee534a096a0379be9a8be48259a3ab3b55d239806b35228847e6ab78"
+    },
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4381,
+      "sha256": "67ce38fb6c3aeb0b1e9c13056983e49463c25e0a1de2eec78a27db1da9a9c679"
+    },
+    {
+      "file": "frontend/src/features/inventory/contracts.ts",
+      "bytes": 15507,
+      "sha256": "e1f56ddff9ca7bfe202bb24ddf6bcce17ab99e6245703933833673184acf8233"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-record.tsx",
+      "bytes": 9004,
+      "sha256": "cfa561682f623c36c32b0bb24873e5523569b6a224ab0c8553f4df6523d36e39"
+    },
+    {
+      "file": "frontend/src/features/inventory/inventory-draft-summary.tsx",
+      "bytes": 1709,
+      "sha256": "442be47ad9fb7d6602456b688ecbf12fb2eb99a1020bd32e69dc94aaf8e1ecb6"
+    },
+    {
+      "file": "frontend/src/features/inventory/level-picker.tsx",
+      "bytes": 3970,
+      "sha256": "28672164088b77b9b8359c456cb0208b70b6105480a47ed4c0106a7c46c64d64"
+    },
+    {
+      "file": "frontend/src/features/inventory/listing-field-format.ts",
+      "bytes": 2245,
+      "sha256": "4ffa8c3bfda0b461bcf506dc088c37a827afb6fd60ca954d7bf52a8a4db713b3"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-creation-wizard.tsx",
+      "bytes": 364,
+      "sha256": "5643b91197f794b1c6d28a1903598d21067a3cf520b000daa0858b354f6fa7b9"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-editor.tsx",
+      "bytes": 596,
+      "sha256": "906b7aa0976d76b6498f0b8c6fcda59dbececb4efbe816025c1a47ddc4a2b700"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-listing-wizard.tsx",
+      "bytes": 30267,
+      "sha256": "fe9367568b9ae63f762b055c390fb0ec4b5cc6560fed29929e3a37c9bcf3f686"
+    },
+    {
+      "file": "frontend/src/features/inventory/unit-directory.tsx",
+      "bytes": 8610,
+      "sha256": "8533e353928b15cdbc3204719658c778ccffbed85c53d03badcd28bc11f6cf4f"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 31851,
+      "sha256": "b578e96e8a68e72e0f1409f83f22e013fd12823d2dd5c4e4e09c77c8a0d29085"
+    },
+    {
+      "file": "frontend/tests/unit/unit-listing-wizard.test.mjs",
+      "bytes": 14500,
+      "sha256": "d0e297dafc6c26ab255566875b2aba63f1e7d8e324a72e247c70c3825fb27e58"
+    },
+    {
+      "file": "frontend/tests/e2e/unit-listing-wizard.spec.ts",
+      "bytes": 3542,
+      "sha256": "68fd7f0d5ff7517fb0fcd005791fbce73e460caff66ccb4719208405e48a415a"
+    },
+    {
+      "file": "frontend/tests/helpers/unit-listing-fixtures.ts",
+      "bytes": 396,
+      "sha256": "01c902d35c008911505b52dc9128bbec844322864ad0d11d4b8c99b26addfc11"
+    },
+    {
+      "file": "frontend/tests/helpers/developments.ts",
+      "bytes": 5486,
+      "sha256": "417f1040718075a26795261d5ff6f5ffece2341650b38c27f942ecbc12756723"
+    }
+  ]
+}

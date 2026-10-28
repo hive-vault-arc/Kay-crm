@@ -1,5 +1,14 @@
 # HTTP contracts for `/api/v1`
 
+Selected unit/property listing workflow,2026-10-28: shared five-step
+creation/edit/review now covers rich unit facts, supported categories and real
+placement. BR-26 incomplete units can include known partial listing_details
+atomically; standalone rich-listing completeness and legacy bare-draft shapes
+remain. Supplied fields, holiday exclusion, apartment floor/type, same-programme/
+category, current authority, stock and exact draft-offer checks still apply. No
+new endpoint, migration, grant or stock transition.
+[Integration proposal and contract](unit-listing-workflow-local.md).
+
 Selected dossier directory filters,2026-10-28: enquiry list/export
 `assigned_agent_id=unassigned` is read-only and preserves Agent exclusion of
 unassigned enquiries. New `GET /enquiries/assigned-options` returns only current

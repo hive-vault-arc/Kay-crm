@@ -1859,3 +1859,16 @@ label each meaning, and intersect both ranges explicitly. Prepared browser bodie
 can typecheck as generic objects while violating a strict facade (for example
 missing email arrays/phone labels); validate shared synthetic payload factories
 against the real runtime schema before issuing commands.
+
+
+## Shared listing workflows and partial unit facts,2026-10-28
+
+Do not retain a smaller legacy unit form when the selected design shares the
+full listing workflow. Preserve BR-26 incomplete units while storing their known
+details atomically; do not force callers to omit rich JSON or weaken standalone
+rich-listing requirements. A final review must show the submitted values, names
+and zero quantities, not only counts/placeholders. Unit template choices retain
+complete server paging, disable category mismatches and never copy defaults.
+Derived block selection must resolve to a real floor or be cleared, not silently
+disappear from the wire contract. Keep guarded drawer cancel contextual and
+migrate affected browser helpers without claiming they were executed.
