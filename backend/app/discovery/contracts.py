@@ -37,15 +37,7 @@ class NewExport(StrictBody):
     def complete_result(self) -> NewExport:
         if self.filters.page != 1 or self.filters.page_size != 50:
             raise ValueError("EXPORT_ALL_FILTERED_ROWS_NOT_A_PAGE")
-        if self.kind == "contacts" and (
-            self.filters.status
-            or self.filters.source
-            or self.filters.assigned_agent_id
-            or self.filters.received_from
-            or self.filters.received_to
-            or self.filters.sort == "-received_at"
-        ):
-            raise ValueError("CONTACT_FILTERS_REQUIRED")
+        self.filters.validate_kind(self.kind)
         return self
 
 

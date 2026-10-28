@@ -1,0 +1,233 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "c6c7177c553e22bed178e70e2489443ca0af915e",
+  "scope": "Selected Contacts directory complete scoped filters, readable responsibility, dossier counts, applied filtered exports with legacy projection/receipt compatibility and current P0 capability cluster map",
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 519,
+      "deselected": 712,
+      "additionalCases": 20,
+      "boundary": "Database connections forbidden; compiled SQL and stubbed real functions/ASGI/replay, no app/listener/database."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 220
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 556,
+      "failed": 0,
+      "skipped": 0,
+      "additionalCases": 6,
+      "boundary": "Synthetic Node/facade/TLS/components, no real app."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 497,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2
+    },
+    {
+      "command": "node C:/Users/ali-a/.codex/skills/design-taste-frontend/scripts/lint.mjs --app --json <2 changed UI paths>",
+      "exitCode": 0,
+      "files": 2,
+      "findings": 0,
+      "boundary": "Static lint only, not native/aesthetic audit."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check <9 changed Python paths> and ruff format --check <same paths>",
+      "cwd": "backend",
+      "exitCode": 0,
+      "paths": [
+        "backend/app/contacts/contracts.py",
+        "backend/app/contacts/directory.py",
+        "backend/app/contacts/queries.py",
+        "backend/app/contacts/router.py",
+        "backend/app/discovery/contracts.py",
+        "backend/app/discovery/exports.py",
+        "backend/tests/unit_selection.py",
+        "backend/tests/test_contact_directory_unit.py",
+        "backend/tests/test_contact_directory.py"
+      ]
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8851,
+      "refusedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": {
+    "postgresFile": "backend/tests/test_contact_directory.py",
+    "postgresCases": 4,
+    "browserFile": "frontend/tests/e2e/contact-directory.spec.ts",
+    "browserCases": 2,
+    "typechecked": true
+  },
+  "retainedCorrections": [
+    "Hardcoded Casablanca offsets in later/current months replaced by pinned known January civil-day fixture; actual timezone policy unchanged.",
+    "SQL test distinguishes selected User.state from state predicates.",
+    "Actual Contacts UI harness supplies its country formatter; existing toolbar harness gains shared directory-filter state."
+  ],
+  "protected": {
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notPerformed": [
+    "App/browser/CUA/CDP/HTTP access or alternate access workaround",
+    "Database/service/worker/scanner/account/import/export/transfer/private configuration operations",
+    "Applied migration0036 or0037",
+    "Native/actual SQL/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceHashes": [
+    {
+      "file": "backend/app/contacts/contracts.py",
+      "bytes": 8237,
+      "sha256": "184a8b493a33cd2d266bdcdf29ed06ecc5c14b67c36278aab4f11c9e3ae4997f"
+    },
+    {
+      "file": "backend/app/contacts/directory.py",
+      "bytes": 3202,
+      "sha256": "b7099db74b20022524f227d9d984c658f933c6acd8a9d79b7ffe4d4d6ae0ccbc"
+    },
+    {
+      "file": "backend/app/contacts/queries.py",
+      "bytes": 13090,
+      "sha256": "fa3a215624089a3df1474804c8f0302e72fad3efb7e87049c68318f05c47ce89"
+    },
+    {
+      "file": "backend/app/contacts/router.py",
+      "bytes": 5897,
+      "sha256": "d70a721d4283ed76e29d016742298327599fe60e6d3eb3b163de31f06d87df97"
+    },
+    {
+      "file": "backend/app/discovery/contracts.py",
+      "bytes": 2254,
+      "sha256": "d1b664d4c08f490fa36d854e5e15e79a0be117e779c914046f85e22cdd2fefde"
+    },
+    {
+      "file": "backend/app/discovery/exports.py",
+      "bytes": 6243,
+      "sha256": "886d85fe3ad9fbdc95502bc697c7d18f313dab01c114b4aa798c4db1be72da87"
+    },
+    {
+      "file": "backend/tests/unit_selection.py",
+      "bytes": 1429,
+      "sha256": "3198238735b70fed8e21205a9936e47b8dead6452175dcd185e316a1ba2d123a"
+    },
+    {
+      "file": "backend/tests/test_contact_directory_unit.py",
+      "bytes": 10639,
+      "sha256": "109d0118876389c82898dc557d6d139bfb7d24ade18e1805af4a76512dd1b264"
+    },
+    {
+      "file": "backend/tests/test_contact_directory.py",
+      "bytes": 5522,
+      "sha256": "dffe60476d2e16a321dfe9e05e21f06af930571779994eed62284d6175a96a89"
+    },
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4289,
+      "sha256": "79ac8cc91030aaaab3026d8c9bf74959c50a9a73227d80535ac70ec544e0dde3"
+    },
+    {
+      "file": "frontend/src/features/contacts/agent-picker.tsx",
+      "bytes": 3095,
+      "sha256": "39619bda79d1006a6e2edc486f49178479723bb19eb12a27f772a3c1e9d1f116"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-directory.tsx",
+      "bytes": 9826,
+      "sha256": "875584cf53b0135a0a16014c0bebd111deadf13837ea437625278d7f51082850"
+    },
+    {
+      "file": "frontend/src/features/contacts/contracts.ts",
+      "bytes": 10908,
+      "sha256": "beb6920f68ca2de62ff9f454d64eb25f379ee6432a35ec5b0a40bf6663b18c54"
+    },
+    {
+      "file": "frontend/src/features/contacts/facade.ts",
+      "bytes": 7169,
+      "sha256": "09e61ee7d44f13b5c5f1cc601cf993eecd55b67ec5418364daf81dd43f19fd1d"
+    },
+    {
+      "file": "frontend/src/features/discovery/contracts.ts",
+      "bytes": 5457,
+      "sha256": "a4f32d9610b39a14baf455cb6b520e351348e003560cab8594d96c789ae4d9b2"
+    },
+    {
+      "file": "frontend/src/features/discovery/export-review.ts",
+      "bytes": 2803,
+      "sha256": "12353fe2e958922b2203cac890c3243b27b7479f17fc58724af3c1bba36957da"
+    },
+    {
+      "file": "frontend/src/lib/api/facade.ts",
+      "bytes": 5519,
+      "sha256": "248df37dae6536a9571448eaac43ee96f7a2e8dabe9b5aeb82f3269020dc5cd4"
+    },
+    {
+      "file": "frontend/tests/unit/contact-directory.test.mjs",
+      "bytes": 10468,
+      "sha256": "5f5b29197a7fb3f2b6b8c7dc2d2aea923c132983908df8ec8d0dc1555fad1010"
+    },
+    {
+      "file": "frontend/tests/unit/exports-workspace.test.mjs",
+      "bytes": 21683,
+      "sha256": "26e94c53bafe6beb665e9ae67b7230a41aa8d12989e2f4b501770becb35a0d16"
+    },
+    {
+      "file": "frontend/tests/unit/facade-tls.test.mjs",
+      "bytes": 8677,
+      "sha256": "3b02eb9341af32f8c052b02fb5a0aaf56065750b4d435f834eebbf0ea23ce9e8"
+    },
+    {
+      "file": "frontend/tests/e2e/contact-directory.spec.ts",
+      "bytes": 3000,
+      "sha256": "6204e9abb77d6754c10a0475f7570141378961a59c77901878062c1070571ab3"
+    }
+  ]
+}

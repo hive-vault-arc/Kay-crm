@@ -21,10 +21,10 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 
 | Phase | Source state | Remaining acceptance/work |
 | --- | --- | --- |
-| P0 reference/coverage | Frozen snapshot and starting inventory prepared; source unchanged; command/field reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
+| P0 reference/coverage | Frozen snapshot protected; current domain route/field/command/service cluster matrix prepared; exact field/context reconciliation ongoing | Complete per-domain coverage and genuine conflict resolutions |
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to64 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and preferred Navigation API/classic history fallback source implemented | Remaining inventory/work/admin form parity, responsive focus and native interaction/cache/startup/gesture/frame checks |
-| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
+| P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Contacts responsibility/language/linked/country/role/created/archive/sort and scoped dossier counts/import/export source reconciled; remaining document/per-field parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms; exact directory ranges/counts/facets, shared desktop views/current kind route/single category; descriptive programme phase storage/API/forms/filter/badges/original history source | Migrations0036/0037 prepared/unapplied; final per-domain/old-browser reconciliation and real SQL/native history/layout review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery, selected server stationery and approved styled blank appendices with preserved originals/provenance/early replay | Remaining per-field context refinements; old native selectors and final native security/stock/focus/performance checks, including actual PDF transfer/replay |
 | P6 work/schedule | Task/notification entries, compact header inbox/shared full-list recovery, selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); old selectors and native workflow review |
@@ -151,8 +151,9 @@ eight Contact tabs require migration during the remaining implementation.
 
 ## Next work
 
-Continue P0 with a concrete per-domain route/field/command coverage matrix against
-the frozen selected reference and real services. Reconcile missing or moved
+Continue P0 from the [current capability cluster map](design-migration-coverage-2026-10-28.md),
+completing exact per-field/control/command coverage against the frozen reference
+and real services. Reconcile missing or moved
 capabilities and historical native selectors from current source, preserving
 typed authority and selected organization. The inventory range/view/category/
 phase gaps now have source slices; migrations0036/0037 and actual SQL/native
@@ -2355,3 +2356,25 @@ Phase checkpoint finalization: repository/index check passes8843 files/0 refused
 staged source hashes pass;254 frozen inputs retain hashes. Protected35 unrelated
 lesson additions/motion note remain unstaged and main remains e0bdc09. No native,
 real SQL, executed migration or final product/branch acceptance is added.
+
+## Contacts directory and current coverage map,2026-10-28
+
+The [current coverage map](design-migration-coverage-2026-10-28.md) assigns selected
+capability clusters to real routes/UI/service owners and records unresolved
+field/context/native work. It exposed Contacts q/archive-only filtering and
+missing scoped dossier counts. This source slice connects the selected full
+filter set, complete applied export criteria and current readable responsibility
+options to real predicates. Legacy list/summary shapes and pre-extension export
+receipt hashes remain; count semantics match ContactDossiers working lists.
+[Contract](../04-design/contact-directory-local.md). No migration required.
+
+Continue exact field/action coverage from the matrix; this cluster map and one
+source slice do not complete P0 or the redesign. The approved styled PDF appendix
+choice remains implemented in the earlier checkpoint. Actual SQL/native/AFTER/CI/
+owner review and main promotion remain pending under the recorded boundaries.
+
+Contacts source gate:519 connection-forbidden backend units/712 deselected,
+556 frontend units, Ruff9 paths/mypy220, frontend lint/types/build/history and
+static app lint2 files pass. Four SQL/two native cases are prepared, not run.
+Repository-only documentation and index checks pass.
+[Checkpoint evidence](design-migration-evidence/contact-directory-2026-10-28.json).

@@ -60,6 +60,19 @@ test("local HTTPS accepts the explicit local CA", async t => {
   assert.equal((await facade.relayHealth("/api/v1/health/live", "synthetic-id")).status, 200);
 });
 
+test("contact directory negotiation reaches only exact GET contacts", async t => {
+  const port = await server(t, (incoming, response) => response.end('{}'));
+  const { facade, observed } = facadeFor(port);
+  for (const [pathname, expected] of [["/api/v1/contacts", "1"], ["/api/v1/contacts?page=1", "1"], ["/api/v1/contacts/responsible-options", undefined], ["/api/v1/contacts/" + "a".repeat(36), undefined], ["/api/v1/contacts-other", undefined], ["/api/v1/enquiries", undefined]]) {
+    await facade.upstreamRequest(pathname, "synthetic-id", { contactDirectory: true });
+    assert.equal(observed.at(-1).headers["X-Kay-Contact-Directory"], expected);
+  }
+  for (const options of [{}, { contactDirectory: true, method: "POST" }]) {
+    await facade.upstreamRequest("/api/v1/contacts", "synthetic-id", options);
+    assert.equal(observed.at(-1).headers["X-Kay-Contact-Directory"], undefined);
+  }
+});
+
 test("visit notes negotiation is opt-in and absent from free/busy and other domains", async t => {
   const port = await server(t, (incoming, response) => response.end('{}'));
   const { facade, observed } = facadeFor(port);

@@ -1,5 +1,14 @@
 # HTTP contracts for `/api/v1`
 
+Selected Contacts directory,2026-10-28: exact GET Contacts opt-in
+`X-Kay-Contact-Directory:1` adds coherent page-bounded dossier counts.
+Responsibility/linked-dossier/role/creation filters and creation sort precede
+scoped count/page and flow unchanged through private filtered exports.
+`/contacts/responsible-options` reads only currently readable responsibility,
+including inactive staff; active assignment eligibility is unchanged. Legacy
+summary/list shapes and pre-extension export receipt hashes are preserved.
+[Contract](contact-directory-local.md).
+
 Selected programme phase,2026-10-28: optional nullable `phase` on existing
 programme create/edit preserves omission, stored values and old receipt identity;
 explicit null clears. Programme list alone accepts its bounded phase filter.

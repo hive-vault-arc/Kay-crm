@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { listQuerySchema, numberedPage } from "@/features/contacts/contracts";
+import { listQuerySchema, numberedPage, validListKind } from "@/features/contacts/contracts";
 
 const date = z.iso.datetime({ offset: true });
 const page = { page: z.coerce.number().int().min(1).max(1000000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional() };
@@ -23,7 +23,7 @@ export const exportSchema = z.object({ id: z.uuid(), kind: z.enum(["contacts", "
 export const exportsSchema = numberedPage(exportSchema);
 export const newExportSchema = z.object({ kind: z.enum(["contacts", "enquiries"]), filters: listQuerySchema }).strict().superRefine(({ kind, filters }, context) => {
   if (filters.page !== undefined && filters.page !== 1 || filters.page_size !== undefined && filters.page_size !== 50) context.addIssue({ code: "custom", message: "EXPORT_ALL_FILTERED_ROWS_NOT_A_PAGE" });
-  if (kind === "contacts" && (filters.status || filters.source || filters.assigned_agent_id || filters.received_from || filters.received_to || filters.sort === "-received_at")) context.addIssue({ code: "custom", message: "CONTACT_FILTERS_REQUIRED" });
+  if (!validListKind(kind, filters)) context.addIssue({ code: "custom", message: "DIRECTORY_KIND_FILTER_MISMATCH" });
 });
 export type ExportJob = z.infer<typeof exportSchema>;
 export const permitSchema = z.object({ token: z.string().min(20).max(128), expires_at: date, export_id: z.uuid(), transfer_url: z.url().max(500) }).strict();

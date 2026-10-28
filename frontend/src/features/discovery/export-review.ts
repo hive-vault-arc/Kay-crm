@@ -1,5 +1,5 @@
 import { newExportSchema } from "./contracts";
-import { receivedSourceLabels, statusLabels } from "@/features/contacts/contracts";
+import { receivedSourceLabels, roleLabels, statusLabels } from "@/features/contacts/contracts";
 import { campaignLabels, languageLabels, ratingLabels } from "@/features/contacts/qualification-contracts";
 
 export function exportReview(kind: "contacts" | "enquiries", filters: Record<string, string | number | undefined>, total: number) {
@@ -18,6 +18,12 @@ export function exportReview(kind: "contacts" | "enquiries", filters: Record<str
   if (f.country) labels.push(`Pays : ${new Intl.DisplayNames("fr", { type: "region" }).of(f.country) ?? f.country}`);
   if (f.language) labels.push(`Langue : ${languageLabels[f.language] ?? f.language}`);
   if (f.assigned_agent_id) labels.push("Agent choisi dans la liste");
+  if (f.primary_agent_id) labels.push("Agent responsable choisi dans la liste");
+  if (f.linked) labels.push(`Dossiers non archivés : ${{ enquiries: "avec prospects hors convertis", deals: "avec affaires", none: "sans prospect ni affaire" }[f.linked]}`);
+  if (f.role) labels.push(`Rôle : ${roleLabels[f.role]}`);
+  if (f.created_from) labels.push(`Contacts créés à partir du ${f.created_from}`);
+  if (f.created_to) labels.push(`Contacts créés jusqu’au ${f.created_to}`);
+  if (f.sort) labels.push(`Tri : ${{ "-updated_at": "modification récente", "-received_at": "réception récente", "-created_at": "création récente", name: "nom du contact" }[f.sort]}`);
   if (f.contact_id) labels.push("Contact de ce dossier");
   if (f.owner_directory) labels.push("Propriétaires uniquement");
   const archive = { active: "Actifs", archived: "Archivés", all: "Actifs et archivés" };

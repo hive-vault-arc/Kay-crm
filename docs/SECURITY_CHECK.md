@@ -1,5 +1,23 @@
 # KAY security check for changes
 
+## Selected Contacts directory,2026-10-28
+
+Canonical current Contact scope/merge/archive authority precedes every new
+responsibility/linked/role/created predicate, total and page. Shared page-bounded
+dossier counts retain current parent scope and existing nonarchived child rules;
+Agent enquiries still need assignment. Responsible-name choices derive only from
+readable contacts, never unrelated staff; inactive responsibility is separate
+from active assignability. No owner/public-inventory grant is introduced.
+
+The facade sets its fixed opt-in only on exact GET Contacts. Strict coherent
+legacy/extended projections, kind-specific filters and duplicate/unknown guards
+prevent silent partial or copied filtering. Current denial masks prior result
+rows/totals/export. Full applied export filters use the existing current-identity
+worker and unchanged private CSV/permit flow; omitted new keys preserve old
+receipt hashes. Prepared real SQL/browser cases remain unrun. No migration, real
+DB/account/config/records, app-access workaround, main/push/merge or deployment.
+[Detailed contract](04-design/contact-directory-local.md).
+
 ## Selected programme phase,2026-10-28
 
 Prepared nullable phase storage/snapshot checks and a deferred same-version guard

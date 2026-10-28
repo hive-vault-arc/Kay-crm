@@ -1,5 +1,16 @@
 # Acceptance scenarios
 
+Selected Contacts directory,2026-10-28 (AT-03/04/22/24/29/39): verify
+current scope before responsibility/role/language/country/creation/linked filters
+and whole-result counts/pages/CSV. Working-dossier counts must match Contact detail,
+including conversion/archive and the Agent assignment restriction; revocation
+must remove private labels/counts/choices. Inactive responsibility is filterable
+without granting assignment. Reject copied/duplicate/invalid parameters, mixed
+legacy counts and changed-filter same-key exports. Check desktop Agent and phone
+M/A filter/reset/empty/denied states and compact cards. Four PostgreSQL cases and
+two browser journeys are prepared, not run.
+[Contract and boundary](../04-design/contact-directory-local.md).
+
 Selected programme phase,2026-10-28 (AT-27/31/32/35/36/41): verify real shared
 agent/manager phase create/edit/read/filter, unknown legacy records, immutable
 original phase/actor/version snapshots, same-key legacy replay and omitted-field

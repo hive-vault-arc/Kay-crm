@@ -49,6 +49,7 @@ test("The actual Contacts toolbar hoists export ownership above its Popover and 
  const path="src/features/contacts/contact-directory.tsx",h=hooks();
  const{ContactDirectory}=loadServer(path,{modules:{
   ...childModules(path),...common(h),
+  "./use-directory-filters":{useDirectoryFilters:()=>({draft:{q:""},filters:{q:""},page:1,activeCount:0})},
   "./use-query":{queryPath:()=>"/api/v1/contacts",useQuery:()=>({value:{items:[],total:52}})},
  }});
  let view=h.render(()=>ContactDirectory({role:"manager"}));const action=find(view,"CrmDirectoryHeader")[0].props.actions;assert.equal(action.type,"ExportAction");assert.equal(typeof action.props.renderActions,"function");assert.equal(find(action.props.renderActions("export controls"),"ExportAction").length,0);view=h.render(()=>ContactDirectory({role:"agent"}));assert.equal(find(view,"CrmDirectoryHeader")[0].props.actions.type,"CrmDirectoryToolbar");

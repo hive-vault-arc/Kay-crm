@@ -1,5 +1,26 @@
 # KAY QA command register
 
+Selected Contacts directory,2026-10-28: backend cwd explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:519 passed/712 integration
+deselected,20 added pure/compiled SQL/stubbed function/ASGI/export replay cases.
+Ruff check/format--check cover9 changed Python paths; backend-cwd mypy passes220
+sources. Four new isolated PostgreSQL cases are prepared, not run.
+Frontend `npm run test:unit`:556 passed/0 failed/skipped, six additional cases
+including exact TLS negotiation. `npm run lint`, `npm run typecheck`,
+`npm run build` (Next16.4.2) and `npm run history:check` pass;64 glyphs/105
+consumers/349 icon sites and497 Button sites have0 violations. Two new browser
+journeys are typechecked/prepared, not run. Frontend Taste static app lint covers
+two changed UI files with0 findings; this is not a native/aesthetic review.
+
+Initial cases exposed hardcoded future/current Casablanca offsets in the test,
+a test checking selected User.state rather than a state predicate, and a missing
+country formatter in the UI harness. They were corrected with the pinned known
+January fixture, predicate-specific assertion and helper stub; no timezone,
+authority or compatibility policy was weakened. The final full runs above pass.
+No app/browser/HTTP workaround, real database/service/private-config access,
+executed migration, main/push/merge/deploy or final product acceptance.
+[Scope and prepared cases](04-design/contact-directory-local.md).
+
 Selected programme phase,2026-10-28: backend cwd explicit venv
 `.venv/Scripts/python.exe -m tests.unit_runner`:499 pass/708 integration
 deselected;23 added contract/payload/actual command/history/summary/compiled SQL/

@@ -1833,3 +1833,16 @@ projections; freeze reviewed capability choices before a create retry. Unknown
 current values can invite completion, but unknown immutable history must not.
 Inventory paths with rg --files before reading them, and assert edit-script
 anchors changed before launching gates; an unmatched replacement is not a fix.
+
+
+## Contacts directory and canonical export compatibility,2026-10-28
+
+A selected filter is complete only when current scope precedes its SQL predicate,
+total and numbered page, and the applied criteria survive export review, saved
+job identity and worker execution. Responsibility filters need readable existing
+responsibility, including inactive staff, not assignment eligibility. Reuse
+existing child-list semantics for counts and state them explicitly. Adding
+defaulted filter fields to model_dump changes old export receipt hashes: omit
+only new, unsupplied keys from canonical payloads and test the real replay path.
+Casablanca offsets in a future/current month are not a test constant; use the
+pinned known civil-day fixture and retain authoritative backend tzdata.
