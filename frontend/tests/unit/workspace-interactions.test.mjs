@@ -106,7 +106,7 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
     "@/components/shared/page-header": { PageHeader: "PageHeader" }, "@/components/icons": {},
     "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": { useQuery: () => ({ value: development, refreshQuietly() {} }) },
     "@/features/discovery/lifecycle-panel": { LifecyclePanel: "Lifecycle" }, "@/features/files/file-panel": { FilePanel: "Files" },
-    "./development-contracts": {}, "./development-editor": { DevelopmentEditor: "Editor" }, "./hierarchy-panel": { HierarchyPanel: "Hierarchy" },
+    "./development-contracts": {}, "./development-phase": { DevelopmentPhaseBadge: "Phase" }, "./development-editor": { DevelopmentEditor: "Editor" }, "./hierarchy-panel": { HierarchyPanel: "Hierarchy" },
     "./unit-directory": { UnitDirectory: "Units" }, "./owner-editor": { OwnerEditor: "OwnerEditor" }, "./inventory-history": { InventoryHistory: "History" },
     "./use-command": { InventoryBusyContext: { Provider: "Provider" } }, "./contracts": { categoryLabels: {} },
     "./inventory-support": { InventoryPhotoRail: "Photos", InventoryParty: "Party" }, "./inventory-offer-section": { InventoryOfferSection: "Offers" },
@@ -125,6 +125,11 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
     assert.equal(Boolean(owners.props.action), role !== "agent");
     assert.equal(find(header.props.actions, "Lifecycle").length, role === "agent" ? 0 : 1);
   }
+  development = { ...development, phase_supported: true, phase: "marketing" };
+  const phase = find(find(render("agent"), "Workspace")[0].props.tabs[0].content, "Fact").find(node => node.props.label === "État du programme");
+  assert.equal(phase.props.children.type, "Phase"); assert.equal(phase.props.children.props.phase, "marketing");
+  assert.equal(find(find(render("agent"), "Workspace")[0].props.tabs[0].content, "Fact").length, 4);
+  assert.ok(find(render("agent"), "Header")[0].props.reference.includes("Mixte"));
   development = { ...development, archived_at: "2026-10-26T00:00:00Z" };
   const archived = render("manager"), workspace = find(archived, "Workspace")[0];
   assert.equal(find(render("agent", true), "Editor").length, 0);

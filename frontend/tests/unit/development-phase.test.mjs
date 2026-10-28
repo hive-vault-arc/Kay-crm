@@ -1,0 +1,67 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { randomUUID } from "node:crypto";
+import { loadServer } from "./load-server.mjs";
+
+const vocabulary=loadServer("src/features/contacts/qualification-contracts.ts"),contacts=loadServer("src/features/contacts/contracts.ts",{modules:{"./qualification-contracts":vocabulary}});
+const inventory=loadServer("src/features/inventory/contracts.ts",{modules:{"@/features/contacts/contracts":contacts}}),contracts=loadServer("src/features/inventory/development-contracts.ts",{modules:{"./contracts":inventory,"@/features/contacts/contracts":contacts}});
+const range=loadServer("src/features/inventory/inventory-range.ts",{modules:{"./contracts":inventory}}),requirements=loadServer("src/features/requirements/contracts.ts",{modules:{"@/features/contacts/contracts":contacts,"@/features/inventory/contracts":inventory}}),outcomes=loadServer("src/features/inventory/outcome-contracts.ts",{modules:{"@/features/contacts/contracts":contacts,"@/features/inventory/contracts":inventory,"@/features/requirements/contracts":requirements,"./contracts":inventory}});
+const dto=()=>({id:randomUUID(),reference:"SYN-PHASE",name:"Programme synthétique",category:"mixed",location:null,version:4,created_at:"2030-01-01T10:00:00Z",updated_at:"2030-01-01T10:00:00Z",archived_at:null,unit_count:0,available_unit_count:0,offerings:[]});
+const page=(items=[],supported)=>({items,total:items.length,page:1,page_size:20,has_previous:false,has_next:false,...(supported?{phase_supported:true}:{})});
+const detail=phase=>({...dto(),owners:[],developer:{contact:null,marketing_display:null},briefing_text:null,...(phase!==undefined?{phase_supported:true,phase}:{})});
+const fields={reference:"SYN-PHASE",name:"Programme synthétique",category:"mixed",location:null,briefing_text:null,developer_contact_id:null,developer_marketing_display:null};
+const jsx=(type,props,key)=>({type,props,key}),runtime={jsx,jsxs:jsx,Fragment:"Fragment"};
+function find(node,type){if(!node||typeof node!=="object")return[];if(Array.isArray(node))return node.flatMap(child=>find(child,type));return[...(node.type===type?[node]:[]),...find(node.props?.children,type)];}
+
+test("Programme phase distinguishes legacy absence, explicitly unknown phase and both stored choices",()=>{
+ assert.equal(contracts.developmentFieldsSchema.safeParse(fields).success,true);assert.equal(Object.hasOwn(contracts.developmentFieldsSchema.parse(fields),"phase"),false);
+ for(const phase of [null,"preparation","marketing"]){assert.equal(contracts.developmentFieldsSchema.safeParse({...fields,phase}).success,true);assert.equal(contracts.developmentSchema.safeParse({...detail(),phase_supported:true,phase}).success,true);}
+ for(const phase of ["draft","available","Préparation","",true])assert.equal(contracts.developmentFieldsSchema.safeParse({...fields,phase}).success,false);
+ for(const changes of [{phase:"marketing"},{phase_supported:true},{phase_supported:false,phase:null}])assert.equal(contracts.developmentSummarySchema.safeParse({...dto(),...changes}).success,false);
+ assert.equal(contracts.developmentsSchema.safeParse(page([],true)).success,true);assert.equal(contracts.developmentsSchema.safeParse(page([dto()])).success,true);assert.equal(contracts.developmentsSchema.safeParse(page([{...dto(),phase:null,phase_supported:true}],true)).success,true);
+ assert.equal(contracts.developmentsSchema.safeParse(page([dto()],true)).success,false);assert.equal(contracts.developmentsSchema.safeParse(page([{...dto(),phase:null,phase_supported:true}])).success,false);assert.equal(contracts.programmePhaseLabel(null),"À renseigner");
+});
+
+function facade(body){const calls=[];const {relayInventory}=loadServer("src/features/inventory/facade.ts",{modules:{"next/headers":{cookies:async()=>({get:()=>({value:"synthetic-session"})})},"@/lib/auth/facade":{boundedJson:request=>request.json(),frontendOrigin:()=>"https://synthetic.invalid"},"@/lib/auth/contracts":{SESSION_COOKIE:"session"},"@/lib/api/facade":{upstreamRequest:async(...args)=>{calls.push(args);return{status:200,body};},facadeError:(status,code)=>Response.json({error:{code}},{status})},"@/lib/api/errors":{frenchApiError:code=>code},"./contracts":inventory,"./inventory-range":range,"./development-contracts":contracts,"./outcome-contracts":outcomes}});return{calls,relay:relayInventory};}
+test("Programme phase relay preserves old/new response shapes and rejects copied filters before upstream",async()=>{
+ for(const body of [page(),page([{...dto(),phase:"marketing",phase_supported:true}],true)]){const f=facade(body);const response=await f.relay("developments",new Request("https://synthetic.invalid/api/v1/developments?phase=marketing"),"request");assert.equal(response.status,200);assert.equal(f.calls[0][2].developmentPhase,true);assert.deepEqual(await response.json(),body);}
+ for(const suffix of ["phase=available","phase=marketing&phase=preparation","phase_supported=1"]){const f=facade(page());assert.equal((await f.relay("developments",new Request("https://synthetic.invalid/api/v1/developments?"+suffix),"request")).status,422);assert.equal(f.calls.length,0);}
+ for(const key of ["properties","offerings","developments/"+randomUUID()+"/inventory"]){const f=facade(page());assert.equal((await f.relay(key,new Request("https://synthetic.invalid/api/v1/"+key+"?phase=marketing"),"request")).status,422);assert.equal(f.calls.length,0);}
+ const f=facade(page([dto()],true));assert.equal((await f.relay("developments",new Request("https://synthetic.invalid/api/v1/developments"),"request")).status,503);
+});
+test("Programme edit sends only the explicit phase and keeps versioned strict command validation",async()=>{
+ const id=randomUUID(),f=facade({development_id:id,offering_id:null,version:5,event_id:randomUUID()});const request=body=>new Request("https://synthetic.invalid/api/v1/developments/"+id,{method:"PATCH",headers:{Origin:"https://synthetic.invalid","Idempotency-Key":randomUUID(),"Content-Type":"application/json"},body:JSON.stringify(body)});
+ assert.equal((await f.relay("developments/"+id,request({...fields,expected_version:4,phase:null}),"request")).status,200);assert.equal(JSON.parse(f.calls[0][2].body).phase,null);
+ for(const changes of [{phase_supported:true},{phase:"available"}])assert.equal((await f.relay("developments/"+id,request({...fields,expected_version:4,...changes}),"request")).status,422);assert.equal(f.calls.length,1);
+});
+
+function formSetup(kind,{source=detail(),capabilities={value:page([],true),refresh(){}}}={}){
+ const slots=[];let cursor=0,values,errors={};const calls=[];
+ const react={useState(initial){const i=cursor++;if(!(i in slots))slots[i]=typeof initial==="function"?initial():initial;return[slots[i],next=>{slots[i]=typeof next==="function"?next(slots[i]):next;}];},useRef(initial){const i=cursor++;return slots[i]??={current:initial};}};
+ const form={formState:{errors},register:key=>({name:key,onChange:event=>{values[key]=event.target.value;}}),getValues:()=>({...values}),clearErrors(){errors={};form.formState.errors=errors;},setError(key,value){errors[key]=value;},getFieldState:key=>({invalid:Boolean(errors[key])}),setFocus(){},handleSubmit:run=>()=>run({...values}),control:{}};
+ const modules={react,"react/jsx-runtime":runtime,"next/link":{default:"Link"},"next/navigation":{useRouter:()=>({push(){}})},"react-hook-form":{useForm:options=>{values??={...options.defaultValues};return form;},useWatch:()=>({...values})},"@/components/icons":{},"@/components/shared/section-heading":{SectionHeading:"Heading"},"@/components/ui/button":{Button:"Button"},"@/components/ui/input":{Input:"Input"},"@/components/ui/label":{Label:"Label"},"@/components/ui/native-select":{NativeSelect:"Select"},"@/components/ui/textarea":{Textarea:"Textarea"},"@/features/contacts/contact-selector":{ContactSelector:"Contact"},"@/features/contacts/use-query":{useQuery:()=>capabilities},"@/features/contacts/record-states":{RecordError:"Error"},"@/hooks/use-hydrated":{useHydrated:()=>true},"./contracts":inventory,"./development-contracts":contracts,"./inventory-draft-summary":{InventoryDraftSummary:"Summary"},"./inventory-wizard-steps":{InventoryWizardSteps:"Steps"},"./states":{InventoryError:"Error"},"./use-command":{useInventoryCommand:()=>({pending:false,submit:async(...args)=>{calls.push(args);},clear(){}})},"./development-creation-wizard":{DevelopmentCreationWizard:"Wizard"}};
+ const loaded=loadServer("src/features/inventory/"+(kind==="create"?"development-creation-wizard":"development-editor")+".tsx",{modules,globals:{requestAnimationFrame:fn=>fn()}});let component=loaded.DevelopmentCreationWizard;
+ if(kind!=="create")component=loaded.DevelopmentEditor({development:source}).type;
+ const render=()=>{cursor=0;return component(kind==="create"?{}:{development:source});};
+ return{calls,render,set(key,value){render();values[key]=value;},setCapabilities(value){capabilities=value;},async save(){let tree=render();if(kind==="create"){find(tree,"Steps")[0].props.change(2);tree=render();}find(tree,"form")[0].props.onSubmit({preventDefault(){}});await Promise.resolve();}};
+}
+test("Programme creation includes the reviewed phase and refuses to save before capability metadata is read",async()=>{
+ const state=formSetup("create",{capabilities:{refresh(){}}});state.set("reference","SYN-PHASE");state.set("name","Programme synthétique");await state.save();assert.equal(state.calls.length,0);state.setCapabilities({value:page([],true),refresh(){}});state.set("phase","marketing");await state.save();assert.equal(state.calls.length,1);assert.equal(state.calls[0][1].phase,"marketing");assert.equal(state.calls[0][2],"POST");
+});
+test("Legacy creation omits phase and a later capability refresh cannot alter an already reviewed retry body",async()=>{
+ const state=formSetup("create",{capabilities:{value:page(),refresh(){}}});state.set("reference","SYN-PHASE");state.set("name","Programme synthétique");await state.save();assert.equal(Object.hasOwn(state.calls[0][1],"phase"),false);state.setCapabilities({value:page([],true),refresh(){}});await state.save();assert.equal(JSON.stringify(state.calls[0][1]),JSON.stringify(state.calls[1][1]));find(state.render(),"Steps")[0].props.change(0);assert.equal(find(state.render(),"Select").some(node=>node.props.id==="development-phase"),false);
+});
+test("Programme edit keeps unknown phase explicit and does not send phase to a legacy backend",async()=>{
+ const current=formSetup("edit",{source:detail("marketing")});assert.ok(find(current.render(),"Select").some(node=>node.props.id==="development-phase"));current.set("phase","");await current.save();assert.equal(current.calls[0][1].phase,null);assert.equal(current.calls[0][1].expected_version,4);assert.equal(Object.hasOwn(current.calls[0][1],"developer_contact_id"),false);
+ const legacy=formSetup("edit");legacy.set("phase","marketing");await legacy.save();assert.equal(Object.hasOwn(legacy.calls[0][1],"phase"),false);assert.equal(find(legacy.render(),"Select").some(node=>node.props.id==="development-phase"),false);
+});
+test("Programme badge labels unknown metadata honestly and never treats phase as an offering state",()=>{
+ const {DevelopmentPhaseBadge}=loadServer("src/features/inventory/development-phase.tsx",{modules:{"react/jsx-runtime":runtime,"@/components/ui/badge":{Badge:"Badge"},"./development-contracts":contracts}});
+ for(const[phase,label]of[[null,"À renseigner"],["preparation","Préparation"],["marketing","Commercialisation"]]){const node=DevelopmentPhaseBadge({phase});assert.equal(node.props.children,label);assert.equal(node.props["aria-label"],"État du programme : "+label);}
+});
+
+test("Programme history renders the recorded phase without inferring it from current programme metadata",()=>{
+ const event={id:randomUUID(),action:"developments.updated",actor:{display_name:"Acteur synthétique"},occurred_at:"2030-01-01T10:00:00Z",property_version:4,development_phase:"marketing"};
+ const {InventoryHistory}=loadServer("src/features/inventory/inventory-history.tsx",{modules:{react:{useState:()=>[1,()=>{}]},"react/jsx-runtime":runtime,"@/features/contacts/numbered-pages":{NumberedPages:"Pages"},"@/features/contacts/record-states":{RecordError:"Error"},"@/features/contacts/use-query":{queryPath:(key)=>key,useQuery:path=>({value:page(path.endsWith("history")?[event]:[]),refresh(){}})},"@/lib/format":{formatBusinessDate:String,formatInstant:String,formatMAD:String},"./contracts":inventory,"./states":{InventoryStatus:"Status",Price:"Price"},"./development-contracts":contracts,"./history-labels":{inventoryActionLabels:{}}}});
+ const words=node=>node==null?"":Array.isArray(node)?node.map(words).join(" "):typeof node==="object"?words(node.props?.children):String(node);assert.ok(words(InventoryHistory({id:randomUUID(),level:"development"})).includes("Commercialisation"));event.development_phase=null;assert.ok(words(InventoryHistory({id:randomUUID(),level:"development"})).includes("Non renseigné"));assert.equal(words(InventoryHistory({id:randomUUID(),level:"development"})).includes("À renseigner"),false);event.development_phase="marketing";assert.equal(words(InventoryHistory({id:randomUUID()})).includes("Commercialisation"),false);
+});

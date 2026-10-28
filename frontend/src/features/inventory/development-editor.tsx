@@ -13,13 +13,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { ContactSelector } from "@/features/contacts/contact-selector";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { categoryLabels } from "./contracts";
-import { developmentFieldsSchema, type Development } from "./development-contracts";
+import { developmentFieldsSchema, developmentPhaseLabels, programmePhaseLabel, type Development } from "./development-contracts";
 import { InventoryError } from "./states";
 import { useInventoryCommand } from "./use-command";
 import { InventoryDraftSummary } from "./inventory-draft-summary";
 import { DevelopmentCreationWizard } from "./development-creation-wizard";
 
-type Values = { reference: string; name: string; category: Development["category"]; location: string; briefing_text: string; developer_marketing_display: string };
+type Values = { phase: "" | keyof typeof developmentPhaseLabels; reference: string; name: string; category: Development["category"]; location: string; briefing_text: string; developer_marketing_display: string };
 export function DevelopmentEditor({ development }: { development?: Development }) {
   return development ? <DevelopmentEditForm development={development} /> : <DevelopmentCreationWizard />;
 }
@@ -29,12 +29,13 @@ function DevelopmentEditForm({ development }: { development: Development }) {
   const [developer, setDeveloper] = useState(development?.developer.contact ?? null);
   const [developerChanged, setDeveloperChanged] = useState(false);
   const [notice, setNotice] = useState("");
-  const form = useForm<Values>({ defaultValues: { reference: development?.reference ?? "", name: development?.name ?? "", category: development?.category ?? "mixed", location: development?.location ?? "", briefing_text: development?.briefing_text ?? "", developer_marketing_display: development?.developer.marketing_display ?? "" } });
+  const form = useForm<Values>({ defaultValues: { phase: development.phase ?? "", reference: development?.reference ?? "", name: development?.name ?? "", category: development?.category ?? "mixed", location: development?.location ?? "", briefing_text: development?.briefing_text ?? "", developer_marketing_display: development?.developer.marketing_display ?? "" } });
   const draft = useWatch({ control: form.control });
   async function save(values: Values) {
     form.clearErrors();
-    const parsed = developmentFieldsSchema.safeParse({ ...values, location: values.location.trim() || null, briefing_text: values.briefing_text.trim() || null, developer_contact_id: developer?.id ?? null, developer_marketing_display: values.developer_marketing_display.trim() || null });
-    if (!parsed.success) { setNotice("Vérifiez les champs : référence et nom obligatoires, présentation de 10 000 caractères maximum."); const fields = parsed.error.issues.map(issue => issue.path[0]).filter((key): key is keyof Values => typeof key === "string" && ["reference", "name", "category", "location", "briefing_text", "developer_marketing_display"].includes(key)); fields.forEach(key => form.setError(key, { type: "validate" })); form.setFocus(fields[0] ?? "reference"); return; }
+    const { phase, ...shared } = values;
+    const parsed = developmentFieldsSchema.safeParse({ ...shared, ...(development.phase_supported ? { phase: phase || null } : {}), location: values.location.trim() || null, briefing_text: values.briefing_text.trim() || null, developer_contact_id: developer?.id ?? null, developer_marketing_display: values.developer_marketing_display.trim() || null });
+    if (!parsed.success) { setNotice("Vérifiez les champs : référence et nom obligatoires, présentation de 10 000 caractères maximum."); const fields = parsed.error.issues.map(issue => issue.path[0]).filter((key): key is keyof Values => typeof key === "string" && ["reference", "name", "category", "phase", "location", "briefing_text", "developer_marketing_display"].includes(key)); fields.forEach(key => form.setError(key, { type: "validate" })); form.setFocus(fields[0] ?? "reference"); return; }
     const { developer_contact_id, ...fields } = parsed.data;
     setNotice(""); await command.submit(development ? `/api/v1/developments/${development.id}` : "/api/v1/developments", { ...fields, ...(!development || developerChanged ? { developer_contact_id } : {}), ...(development ? { expected_version: version } : {}) }, development ? "PATCH" : "POST", id => router.push(`/projects/${id}`));
   }
@@ -45,6 +46,7 @@ function DevelopmentEditForm({ development }: { development: Development }) {
     <fieldset disabled={!hydrated || command.pending} className="grid min-w-0 gap-4 sm:grid-cols-2">
       <div className="grid gap-2"><Label htmlFor="development-reference">Référence du programme</Label><Input id="development-reference" maxLength={80} required aria-invalid={Boolean(form.formState.errors.reference)} aria-describedby={form.formState.errors.reference ? "development-validation" : undefined} {...form.register("reference")} /></div>
       <div className="grid gap-2"><Label htmlFor="development-name">Nom du programme</Label><Input id="development-name" maxLength={160} required aria-invalid={Boolean(form.formState.errors.name)} aria-describedby={form.formState.errors.name ? "development-validation" : undefined} {...form.register("name")} /></div>
+      {development.phase_supported ? <div className="grid gap-2"><Label htmlFor="development-phase">État du programme</Label><NativeSelect id="development-phase" aria-invalid={Boolean(form.formState.errors.phase)} aria-describedby={form.formState.errors.phase ? "development-validation" : undefined} {...form.register("phase")}><option value="">À renseigner</option>{Object.entries(developmentPhaseLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div> : null}
       <div className="grid gap-2"><Label htmlFor="development-category">Catégorie du programme</Label><NativeSelect id="development-category" {...form.register("category")}><option value="mixed">Mixte</option>{Object.entries(categoryLabels).filter(([value]) => ["villa", "house", "apartment", "land", "commercial"].includes(value)).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
       <div className="grid gap-2 sm:col-span-2"><Label htmlFor="development-location">Localisation du programme (facultative)</Label><Input id="development-location" maxLength={500} aria-invalid={Boolean(form.formState.errors.location)} aria-describedby={form.formState.errors.location ? "development-validation" : undefined} {...form.register("location")} /></div>
       <div className="grid gap-2 sm:col-span-2"><Label htmlFor="development-briefing">Présentation partagée (facultative)</Label><Textarea id="development-briefing" rows={5} aria-invalid={Boolean(form.formState.errors.briefing_text)} aria-describedby="briefing-help development-validation" {...form.register("briefing_text")} /><p id="briefing-help" className="text-sm text-muted-foreground">Texte simple, 10 000 caractères maximum. Aucune coordonnée, note ou pièce privée. Laissez vide pour effacer la présentation.</p></div>
@@ -57,6 +59,7 @@ function DevelopmentEditForm({ development }: { development: Development }) {
     <InventoryDraftSummary icon={DevelopmentIcon} title="Programme en préparation" facts={[
       { label: "Référence", value: draft.reference?.trim() },
       { label: "Nom", value: draft.name?.trim() },
+      ...(development.phase_supported ? [{ label: "État du programme", value: programmePhaseLabel(draft.phase || null) }] : []),
       { label: "Catégorie", value: !draft.category || draft.category === "mixed" ? "Mixte" : categoryLabels[draft.category] },
       { label: "Localisation", value: draft.location?.trim() },
       { label: "Promoteur affiché", value: draft.developer_marketing_display?.trim() },

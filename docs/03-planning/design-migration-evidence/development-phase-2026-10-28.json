@@ -1,0 +1,344 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "d3a83138ac182810f0b109862adb624b89419a6c",
+  "scope": "Selected descriptive programme phase through nullable storage/original snapshots/current versioned commands/negotiated reads/filters/forms/cards/list/overview/history",
+  "migration": {
+    "revision": "0037_development_phase",
+    "downRevision": "0036_visit_notes",
+    "applied": false,
+    "noBackfill": true,
+    "legacyUnknownPolicy": "Technical integration proposal pending product review; unknown until explicitly chosen, never inferred from current stock."
+  },
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 499,
+      "deselected": 708,
+      "additionalCases": 23,
+      "boundary": "Connections forbidden; pure actual command/history/summary/compiled SQL/stubbed ASGI and op-stub migration cases, no DB/listener."
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m ruff check <14 explicit changed Python paths>",
+      "exitCode": 0,
+      "paths": [
+        "backend/alembic/versions/0037_development_phase.py",
+        "backend/app/inventory/commands.py",
+        "backend/app/inventory/contracts.py",
+        "backend/app/inventory/hierarchy_commands.py",
+        "backend/app/inventory/hierarchy_contracts.py",
+        "backend/app/inventory/hierarchy_models.py",
+        "backend/app/inventory/hierarchy_queries.py",
+        "backend/app/inventory/hierarchy_router.py",
+        "backend/app/inventory/history.py",
+        "backend/app/inventory/models.py",
+        "backend/tests/test_development_phase.py",
+        "backend/tests/test_development_phase_unit.py",
+        "backend/tests/test_inventory_directory_filters_unit.py",
+        "backend/tests/unit_selection.py"
+      ]
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m ruff format --check <same14 paths>",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 219
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 550,
+      "failed": 0,
+      "skipped": 0,
+      "additionalCases": 11,
+      "expandedRoleAndFourFactLayoutCoverage": true
+    },
+    {
+      "command": "node --test tests/unit/development-phase.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 8,
+      "boundary": "Focused final historical-unknown wording after full suite; no other code changed."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "consumers": 105,
+      "iconSites": 349,
+      "buttonSites": 496,
+      "violations": 0
+    },
+    {
+      "command": "npx eslint src/features/inventory/inventory-history.tsx tests/unit/development-phase.test.mjs --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2",
+      "boundary": "Final build after the historical-unknown wording change."
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true,
+      "compiledFunctions": [
+        {
+          "file": ".next/server/chunks/ssr/frontend_src_components_shared_unsaved-guard_tsx_1bn5-aixvkna7._.js",
+          "bytes": 2686,
+          "sha256": "95f540189a71100fd6516ab65544218b65390bf52e62dda6c2871a08f6440540"
+        },
+        {
+          "file": ".next/server/chunks/ssr/_0zkov84junom8._.js",
+          "bytes": 2684,
+          "sha256": "ef766e113bf8d733999a3610b97423921d544fecf925dd73ec464e6745d5b7f7"
+        }
+      ]
+    },
+    {
+      "command": "node <installed Frontend Taste>/scripts/lint.mjs --app --json <nine changed UI sources>",
+      "exitCode": 0,
+      "files": 9,
+      "findings": []
+    },
+    {
+      "command": "Read-only frozen source hash comparison",
+      "exitCode": 0,
+      "inputs": 254,
+      "drift": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8843,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1263,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "corrections": [
+    "Initial Python formatting/late-bound test environment lambda corrected without suppression.",
+    "Existing exact read-path summary stub updated for the explicit phase_enabled keyword; an initial nonmatching replacement was not a fix.",
+    "Atomic edit-script anchor/declaration failures left inputs unchanged; corrected before final source verification.",
+    "Unknown historical phase says Non renseigné, distinct from the current actionable À renseigner.",
+    "Four-fact overview retains category in header context instead of creating an orphan summary fact."
+  ],
+  "preparedNotExecuted": [
+    "Four isolated PostgreSQL role/filter/legacy omission/replay/original snapshot/deferred commit-guard cases.",
+    "One synthetic real browser create/edit/phase filter/original history/phone filter and image-card journey."
+  ],
+  "skills": {
+    "frontendTaste": "Current app-screen guidance and static app lint; selected four-fact hierarchy, quiet labels, honest missing states, compact shared fields/cards. Frozen identity replaces a new draw/palette/shell.",
+    "reactReview": "Derived presentation/event validation and first-submission capability snapshot avoid mirrored effects and implicit retry-body changes; incumbent useQuery retained.",
+    "originalMachineRequiredSkills": "Unavailable/not claimed.",
+    "antislopTiming": "AFTER unchanged."
+  },
+  "noAppBrowserHttpWorkaround": true,
+  "noRealDatabaseServicePrivateConfigOrRecords": true,
+  "noMigrationExecuted": true,
+  "noMainPushMergeOrDeploy": true,
+  "remaining": [
+    "Accept/apply prepared0036/0037 only in authorized isolated targets before real acceptance.",
+    "Complete per-domain capability/field reconciliation and historical native selector migration.",
+    "Actual SQL/trigger/current scope/race/native/CI/AFTER/owner acceptance."
+  ],
+  "sourceHashMode": "Canonical staged Git blobs; normalized working inputs match.",
+  "sourceHashes": [
+    {
+      "file": "backend/alembic/versions/0037_development_phase.py",
+      "bytes": 2734,
+      "sha256": "d571dcd99907ca36296ecddfdcfd5a858064773e94e48f9fc2e2f0b795ee5d7b"
+    },
+    {
+      "file": "backend/app/inventory/commands.py",
+      "bytes": 20036,
+      "sha256": "1dd7e734d4445330dbdf87e698adaf664c1b5e5a53c3c7d83ecf6c7a433e0e04"
+    },
+    {
+      "file": "backend/app/inventory/contracts.py",
+      "bytes": 16672,
+      "sha256": "5423e004705e8f793ca227cf427441c50d8c63c1d692d7ba7c47bb7b56f13151"
+    },
+    {
+      "file": "backend/app/inventory/hierarchy_commands.py",
+      "bytes": 7449,
+      "sha256": "9f2853ba453d61e2cd28053d29abd5048c02a2654ed7d68ca2db3d4b88d82b07"
+    },
+    {
+      "file": "backend/app/inventory/hierarchy_contracts.py",
+      "bytes": 2463,
+      "sha256": "ca4bfab7a1ddf736dc435a3fb11e0d2460f05aa0759c06fa74953d0a4da7c4a8"
+    },
+    {
+      "file": "backend/app/inventory/hierarchy_models.py",
+      "bytes": 5663,
+      "sha256": "0c8bfd55fd23e0a2ad86ca3fc9a2b24701ed58b45ddc5332002a1b79449939cb"
+    },
+    {
+      "file": "backend/app/inventory/hierarchy_queries.py",
+      "bytes": 14475,
+      "sha256": "7f2293a318bb11ac324cd9c41ea3fee9c38550de4d96007904867f7d025bcb23"
+    },
+    {
+      "file": "backend/app/inventory/hierarchy_router.py",
+      "bytes": 7326,
+      "sha256": "759e5ee24660bac63ca178ae59b36d0c5cbc9c74b58b387d8965b7798413e43e"
+    },
+    {
+      "file": "backend/app/inventory/history.py",
+      "bytes": 1743,
+      "sha256": "b420f8db887386f06a6aa60a03d88cdade89391f864bdcb0b562b18415500025"
+    },
+    {
+      "file": "backend/app/inventory/models.py",
+      "bytes": 9625,
+      "sha256": "ff25019b95140f5001427cafb2dfeebc86b1ac5b4b8a1424c63bb9484ca86ad1"
+    },
+    {
+      "file": "backend/tests/test_development_phase.py",
+      "bytes": 4252,
+      "sha256": "5240cf33b606ce7bb518ae0a7e3f1cd497c01e7c2f63976cf5d6ba9e260a2485"
+    },
+    {
+      "file": "backend/tests/test_development_phase_unit.py",
+      "bytes": 11070,
+      "sha256": "e2b3ca66383da91fbef30bdae26110c797628cf50d08a4a2c9b0ce23adbebe99"
+    },
+    {
+      "file": "backend/tests/test_inventory_directory_filters_unit.py",
+      "bytes": 8810,
+      "sha256": "9256b739483354e72fa8d460aabd37fc1c59d75b74617ef493b72039844d7a46"
+    },
+    {
+      "file": "backend/tests/unit_selection.py",
+      "bytes": 1387,
+      "sha256": "7b09fd72c80b7925e03878b51a1760555a1055484dcecbf3ca45b8707083df99"
+    },
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4244,
+      "sha256": "68574f8c8581c706e46893b8b06cdb40c17449d16b006242828b3a21d76918c1"
+    },
+    {
+      "file": "frontend/src/features/inventory/contracts.ts",
+      "bytes": 14750,
+      "sha256": "1de81bd366c2d5d71c5d242872aa62cda5113416ab728ce4eb98af39594e4eb7"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-card.tsx",
+      "bytes": 3304,
+      "sha256": "1621287382a8862da0abeebbe9f30def5bb3d467148002984879f0a9990de69d"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-contracts.ts",
+      "bytes": 4843,
+      "sha256": "c9b530b1aaf39512781e9abc1fc52561ec6d75fdb6331dc340928a5cd2590ab3"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-creation-wizard.tsx",
+      "bytes": 12031,
+      "sha256": "794f7459106b462fb7555b410865ff9fb33cc99a99debdba6f5104691c3e5c99"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-directory.tsx",
+      "bytes": 6755,
+      "sha256": "aa2bb2e23368a2f85b95f7f4b0b893cfe44deb0e9caeed218bd84cc0ec8cc605"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-editor.tsx",
+      "bytes": 9580,
+      "sha256": "8a8e003c4bdd0c8e9a3cc05b8ddffdba9186229b1597a3a297784ac4da799d61"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-phase.tsx",
+      "bytes": 398,
+      "sha256": "51e8146e0e21984cbb2ec15cc9f9b2bf7fb9c9d16d2a7cb672601d17556c7173"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-record.tsx",
+      "bytes": 8968,
+      "sha256": "8db030facf7ab9dd5a5cd925444389d0d616bf9e895d77f1e6074ab6044fc907"
+    },
+    {
+      "file": "frontend/src/features/inventory/facade.ts",
+      "bytes": 7624,
+      "sha256": "2cdfcf9a4931e3e9bc1ae123f670dd4e0307c8f53523699fa744c7e6b452a2bd"
+    },
+    {
+      "file": "frontend/src/features/inventory/inventory-card.tsx",
+      "bytes": 2281,
+      "sha256": "d0c5645574fb77ac013b1e5ff99f4cdd72d4141e8c808667cbe6d6b8436a64ae"
+    },
+    {
+      "file": "frontend/src/features/inventory/inventory-history.tsx",
+      "bytes": 4129,
+      "sha256": "bfa57bb455841c5ba4f6508f7dcc00e94a3a4dc443895a143994bec68221c5d2"
+    },
+    {
+      "file": "frontend/src/features/inventory/states.tsx",
+      "bytes": 6172,
+      "sha256": "e8feddf4fb64a840bba4584bb9d736c9b26986030dd10de2d74799786094961d"
+    },
+    {
+      "file": "frontend/src/lib/api/facade.ts",
+      "bytes": 5326,
+      "sha256": "796207c0be7c3ce1e1bd1ea71719a0b07829b531cb4e642ae77416d5c1bc411f"
+    },
+    {
+      "file": "frontend/tests/e2e/development-phase.spec.ts",
+      "bytes": 3190,
+      "sha256": "2f2e3ceb1fecd7e988c909f634d276b60f0f389f2a1b31a61f9668ad979695c1"
+    },
+    {
+      "file": "frontend/tests/unit/development-phase.test.mjs",
+      "bytes": 13211,
+      "sha256": "d92d9dfeaf1bdc6a32472e93de4322b72586acac43547f0c7e01dbbaf127e759"
+    },
+    {
+      "file": "frontend/tests/unit/facade-tls.test.mjs",
+      "bytes": 7774,
+      "sha256": "1d193c3ed4e3e59b1bd253597f7b04ecd8486f19adafc2a74478853dbc3e2c05"
+    },
+    {
+      "file": "frontend/tests/unit/inventory-directory.test.mjs",
+      "bytes": 23429,
+      "sha256": "64ca1c01e0e11014be36b872170bb0ec02c9745ac179263b78ac8fb89320470e"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 31720,
+      "sha256": "0a75cd9932c1cb41e9d66f1727d855f8a841c3231f04328818cb69474f064d41"
+    }
+  ]
+}

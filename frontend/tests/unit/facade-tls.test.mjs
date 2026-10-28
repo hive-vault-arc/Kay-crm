@@ -82,6 +82,20 @@ test("photo capability negotiation is opt-in and restricted to document metadata
   assert.equal(observed.at(-1).headers["X-Kay-Photo-Capabilities"], undefined);
 });
 
+test("programme phase negotiation reaches only opted-in programme GET metadata", async t => {
+  const port = await server(t, (incoming, response) => response.end('{}'));
+  const { facade, observed } = facadeFor(port);
+  const id = "00000000-0000-4000-8000-000000000001";
+  for (const [pathname, expected] of [["/api/v1/developments", "1"], ["/api/v1/developments?page=1", "1"], [`/api/v1/developments/${id}`, "1"], [`/api/v1/developments/${id}/inventory?page=1`, "1"], [`/api/v1/developments/${id}/history`, "1"], [`/api/v1/developments/${id}/owners`, undefined], ["/api/v1/developments-other", undefined], ["/api/v1/properties", undefined]]) {
+    await facade.upstreamRequest(pathname, "synthetic-id", { developmentPhase: true });
+    assert.equal(observed.at(-1).headers["X-Kay-Development-Phase"], expected);
+  }
+  await facade.upstreamRequest("/api/v1/developments", "synthetic-id", { developmentPhase: true, method: "POST" });
+  assert.equal(observed.at(-1).headers["X-Kay-Development-Phase"], undefined);
+  await facade.upstreamRequest("/api/v1/developments", "synthetic-id");
+  assert.equal(observed.at(-1).headers["X-Kay-Development-Phase"], undefined);
+});
+
 for (const scenario of ["untrusted certificate", "wrong hostname", "wrong local CA", "missing local CA file"]) {
   test(`TLS remains fail-closed: ${scenario}`, async t => {
     let received = 0;

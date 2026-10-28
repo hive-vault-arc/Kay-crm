@@ -25,7 +25,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to64 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and preferred Navigation API/classic history fallback source implemented | Remaining inventory/work/admin form parity, responsive focus and native interaction/cache/startup/gesture/frame checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
-| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; mixed-programme typing and exact directory ranges/counts/facets; shared desktop Cards/List/current kind route and selected single-category controls | Programme phase storage; final per-domain/old-browser reconciliation and native history/layout review |
+| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms; exact directory ranges/counts/facets, shared desktop views/current kind route/single category; descriptive programme phase storage/API/forms/filter/badges/original history source | Migrations0036/0037 prepared/unapplied; final per-domain/old-browser reconciliation and real SQL/native history/layout review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery, selected server stationery and approved styled blank appendices with preserved originals/provenance/early replay | Remaining per-field context refinements; old native selectors and final native security/stock/focus/performance checks, including actual PDF transfer/replay |
 | P6 work/schedule | Task/notification entries, compact header inbox/shared full-list recovery, selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); old selectors and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, grouped report cards/attribution tools/tonal drills and alerts, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
@@ -151,11 +151,13 @@ eight Contact tabs require migration during the remaining implementation.
 
 ## Next work
 
-Continue the inventory/owner slice and remaining shared inline/form/PDF patterns,
-preserving the current typed services and current authority.
-Use the coverage ledger to prevent omission of a moved or less-visible action.
-Do not stop at a token-only restyle or call the whole branch complete while
-feature layouts remain unported.
+Continue P0 with a concrete per-domain route/field/command coverage matrix against
+the frozen selected reference and real services. Reconcile missing or moved
+capabilities and historical native selectors from current source, preserving
+typed authority and selected organization. The inventory range/view/category/
+phase gaps now have source slices; migrations0036/0037 and actual SQL/native
+acceptance remain pending. Do not call the whole branch complete from scoped
+source checks or attempt a workaround around the recorded app-access restriction.
 
 ## Deal workspace batch
 
@@ -2298,3 +2300,58 @@ Category checkpoint finalization: repository/index validation passes8835 files/
 canonical staged source hashes pass;254 frozen inputs remain unchanged. Protected
 35 lesson additions and the motion note stay unstaged; main remains e0bdc09.
 No native/product pass or full branch completion is inferred.
+
+## Descriptive selected programme phase,2026-10-28
+
+Continued P0/P4 afterd3a8313. Frozen programme state/filter had no CRM persistence.
+Phase now uses bounded preparation/marketing metadata, independent of offering/
+stock transitions, under existing D34 shared-fact rights/locks/version checks.
+Prepared0037 follows unapplied0036: nullable current and original event fields,
+no backfill, matching same-version deferred history guard and guarded downgrade.
+Neither migration ran. Unknown legacy treatment is an explicit technical proposal
+for product review, not a guessed preparation/marketing fact or new business gate.
+
+Phase-omitting edits preserve the stored value and pre-phase receipt payload;
+explicit null is distinct. Central history captures the original phase/actor/
+version. Facade-owned exact programme GET opt-in retains legacy strict shapes;
+new schemas reject half-attested metadata/mixed pages. Actual programme phase
+filters run before count/page with existing criteria/scope. Other domains reject
+copied phase parameters. No new endpoint, grant, stock rule or dependency.
+
+Existing create/edit/review, overview, image cards, desktop list, directory rail/
+phone sheet, current comparison and original history show stored phase. Overview
+keeps four facts; category remains in header context. Unsupported legacy views
+keep category/no empty phase column. Current unknown is À renseigner; historical
+unknown is Non renseigné, never an invitation to rewrite immutable events.
+Creation waits for the current protected metadata read and freezes the reviewed
+support choice so refresh cannot alter an attempted body automatically. An active
+phase filter remains clearable if support disappears. Shared shadcn/Tailwind/
+icons/CSS remain, with no new tab, drawer table, palette or stylesheet.
+
+499 connection-forbidden backend units pass,23 added cases/708 integration
+deselected; Ruff/format14 paths and backend mypy219 pass. Four PostgreSQL cases
+are prepared/not run.550 frontend units pass,11 added cases and expanded existing
+role/layout coverage; lint64 glyphs/105 consumers/349 sites and496 Button sites
+has0 violations. Types, Next16.4.2 build and compiled history pass. Final historical
+unknown wording has an eight-case focused rerun, targeted ESLint and final build.
+Static Frontend Taste app lint checks nine UI sources. One browser journey is
+prepared/type-checked, not run. Early check corrections cover the explicit summary
+keyword mock, formatting/loop binding and an atomic edit-script declaration; no
+checks were weakened. No real SQL/trigger/native pass is claimed.
+
+[Contract](../04-design/development-phase-local.md) and
+[evidence](design-migration-evidence/development-phase-2026-10-28.json).
+Frontend Taste app guidance and React event/derived-state review apply within the
+selected identity; no new draw replaces it. Original-machine mandatory skills
+remain unavailable/not claimed; AFTER stays. No app/browser/CUA/CDP/HTTP workaround,
+real DB/service/private configuration/records, migration/main/push/merge/deploy.
+The complete per-domain capability/field matrix, old native selector migration,
+real SQL/current scope/races/native/CI/AFTER/owner gates and full branch completion
+remain open. The redesign goal stays active.
+
+Phase checkpoint finalization: repository/index check passes8843 files/0 refused/
+14 ignore probes; repository-only docs pass22 sprints/1263 links/42 mappings/
+13 Mermaid pairs/12 API JSON samples. Cached whitespace and all33 canonical
+staged source hashes pass;254 frozen inputs retain hashes. Protected35 unrelated
+lesson additions/motion note remain unstaged and main remains e0bdc09. No native,
+real SQL, executed migration or final product/branch acceptance is added.

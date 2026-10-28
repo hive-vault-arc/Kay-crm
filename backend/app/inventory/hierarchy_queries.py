@@ -34,7 +34,9 @@ def scoped_contact(
     return {"id": str(contact.id), "name": contact.name}
 
 
-def summary(session: Session, items: list[Development]) -> list[dict[str, object]]:
+def summary(
+    session: Session, items: list[Development], *, phase_enabled: bool = False
+) -> list[dict[str, object]]:
     ids = [item.id for item in items]
     offerings: dict[UUID, list[dict[str, object]]] = {did: [] for did in ids}
     rows = session.scalars(
@@ -87,12 +89,15 @@ def summary(session: Session, items: list[Development]) -> list[dict[str, object
             "unit_count": counts.get(item.id, 0),
             "available_unit_count": available.get(item.id, 0),
             "offerings": offerings[item.id],
+            **({"phase": item.phase, "phase_supported": True} if phase_enabled else {}),
         }
         for item in items
     ]
 
 
-def detail(session: Session, identity: CurrentIdentity, did: UUID) -> dict[str, object]:
+def detail(
+    session: Session, identity: CurrentIdentity, did: UUID, *, phase_enabled: bool = False
+) -> dict[str, object]:
     item = development_record(session, did)
     links = session.scalars(
         select(DevelopmentOwner)
@@ -123,7 +128,7 @@ def detail(session: Session, identity: CurrentIdentity, did: UUID) -> dict[str, 
             }
         )
     return {
-        **summary(session, [item])[0],
+        **summary(session, [item], phase_enabled=phase_enabled)[0],
         "briefing_text": item.briefing_text,
         "developer": {
             "marketing_display": item.developer_marketing_display,
@@ -156,6 +161,8 @@ def read_hierarchy(
     operation: str,
     target: UUID | None,
     query: InventoryQuery | DevelopmentQuery,
+    *,
+    phase_enabled: bool = False,
 ) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
@@ -164,7 +171,7 @@ def read_hierarchy(
         if operation == "detail":
             if target is None:
                 raise IdentityError("NOT_FOUND", 404)
-            return detail(session, identity, target)
+            return detail(session, identity, target, phase_enabled=phase_enabled)
         if operation == "developments":
             filters: list[ColumnElement[bool]] = []
             if query.archive != "all":
@@ -188,6 +195,8 @@ def read_hierarchy(
                 )
             if query.category:
                 filters.append(Development.category == query.category)
+            if isinstance(query, DevelopmentQuery) and query.phase:
+                filters.append(Development.phase == query.phase)
             filters.extend(directory_filters(query, development=True))
             total = (
                 session.scalar(select(func.count()).select_from(Development).where(*filters)) or 0
@@ -204,7 +213,10 @@ def read_hierarchy(
                 .offset((query.page - 1) * query.page_size)
                 .limit(query.page_size)
             ).all()
-            return numbered(summary(session, list(rows)), total, query)
+            return {
+                **numbered(summary(session, list(rows), phase_enabled=phase_enabled), total, query),
+                **({"phase_supported": True} if phase_enabled else {}),
+            }
         if operation in {"blocks", "unit-types", "history", "owners", "inventory"}:
             if target is None:
                 raise IdentityError("NOT_FOUND", 404)
@@ -241,6 +253,11 @@ def read_hierarchy(
                                 "display_name": row.actor_display_name,
                             },
                             "action": row.action,
+                            **(
+                                {"development_phase": row.development_phase}
+                                if phase_enabled
+                                else {}
+                            ),
                             "property_version": row.property_version,
                             "offering_version": row.offering_version,
                             "state": row.state,
@@ -301,7 +318,7 @@ def read_hierarchy(
                 ).all()
                 return {
                     **numbered(properties_view(session, units), total, query),
-                    "development": summary(session, [item])[0],
+                    "development": summary(session, [item], phase_enabled=phase_enabled)[0],
                 }
             model = Block if operation == "blocks" else UnitType
             filters_level = model.development_id == target

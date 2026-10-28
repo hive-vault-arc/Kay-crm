@@ -1,5 +1,31 @@
 # KAY security check for changes
 
+## Selected programme phase,2026-10-28
+
+Prepared nullable phase storage/snapshot checks and a deferred same-version guard
+retain original actor/history. No migration ran. D34 current shared-fact rights,
+aggregate locks/versions, existing marketability checks, private contacts/owners,
+managed offers/files/archives and stock transitions remain. Legacy phase omission
+preserves the stored value and canonical receipt payload; explicit null is distinct.
+No retrospective history backfill or inference from current stock is performed.
+
+Facade-owned opt-in reaches only exact programme GET metadata. Legacy shapes stay
+unchanged; strict new schemas reject half-attested/mixed projections. Query capability
+overrides and copied/duplicate/invalid phase filters fail before relay. The new
+filter applies before count/page with current identity; there is no owner join.
+Creation waits for real support metadata and freezes its reviewed support choice
+across retry. Unsupported views do not pretend persistence exists. Current unknown
+and immutable historical unknown have distinct, truthful labels.
+
+499 connection-forbidden backend units/708 integration deselected, Ruff14 paths/
+mypy219 and frontend550 units/lint/types/build/history pass; final eight-case
+focused history check passes. Static app lint covers nine changed UI sources.
+Four PostgreSQL cases and one browser journey are prepared, not run. No real
+DB/service/private config/records, app/browser/HTTP workaround, executed migration,
+main/push/merge/deploy. Real trigger/current-scope/SQL/race/transfer/native/CI/AFTER/
+owner acceptance and full redesign completion remain open.
+[Complete contract](04-design/development-phase-local.md).
+
 ## Selected property category choices,2026-10-28
 
 The selected radio presentation continues the existing strict categories query;

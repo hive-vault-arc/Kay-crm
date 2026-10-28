@@ -160,7 +160,9 @@ def read_setup(monkeypatch, *, denied=False):
     monkeypatch.setattr(queries, "properties_view", lambda *_: [])
     monkeypatch.setattr(hierarchy_queries, "properties_view", lambda *_: [])
     monkeypatch.setattr(
-        hierarchy_queries, "summary", lambda session, rows: [{"id": str(uuid4())} for _ in rows]
+        hierarchy_queries,
+        "summary",
+        lambda session, rows, *, phase_enabled=False: [{"id": str(uuid4())} for _ in rows],
     )
     monkeypatch.setattr(
         hierarchy_queries, "development_record", lambda *_: SimpleNamespace(archived_at=None)

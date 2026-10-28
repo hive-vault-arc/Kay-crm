@@ -112,10 +112,11 @@ not executed. Compiled SQL and stubbed routes do not prove real SQL results,
 current authorization, native focus/spacing, touch, zoom or responsive behavior.
 [Recorded evidence](../03-planning/design-migration-evidence/inventory-directory-2026-10-28.json).
 
-Remaining P0/P4 gaps are explicit: the prototype's programme preparation/marketing
-phase has no persisted equivalent yet. Selected category, desktop programme view
-and route synchronization source are implemented above; actual native history/
-width/focus acceptance and the full per-domain reconciliation remain pending.
+The programme phase now has a source-level storage/API/UI/history slice with
+prepared, unapplied migration0037; see the [phase contract](development-phase-local.md).
+Selected category, desktop programme view and route synchronization source are
+implemented above. Actual SQL/migration/native history/width/focus acceptance and
+the full per-domain reconciliation remain pending.
 No business default, migration or final completion is inferred from these slices.
 
 Frontend Taste's app-screen guidance now applies under Ali's2026-10-28 instruction:

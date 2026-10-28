@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+Selected programme phase,2026-10-28: the existing identity/review forms, compact
+overview, image cards, desktop list, directory filters and original history now
+use real nullable programme phase. Overview retains four facts; category remains
+in header context. Legacy backends show no pretend phase support, current unknown
+is À renseigner and historical unknown is Non renseigné. No tab or side table.
+Migration/native acceptance remain pending. [Contract](development-phase-local.md).
+
 Selected property categories,2026-10-28: the filter rail/sheet uses one category
 or Toutes with real facet counts, without inherited checkbox/colour markers.
 Choosing Toutes retains other criteria; selected legacy Maison remains available

@@ -12,20 +12,21 @@ import { RecordError } from "@/features/contacts/record-states";
 import { queryPath, useQuery } from "@/features/contacts/use-query";
 import { useDirectoryFilters } from "@/features/contacts/use-directory-filters";
 import { useHydrated } from "@/hooks/use-hydrated";
-import { developmentsSchema, developmentFieldsSchema } from "./development-contracts";
+import { developmentsSchema, developmentFieldsSchema, developmentPhaseLabels } from "./development-contracts";
 import { categoryLabels, kindLabels, stateLabels } from "./contracts";
 import { DevelopmentCard, DevelopmentList } from "./development-card";
 import { ProjectResultsView, type ProjectViewState } from "./project-results-view";
 import { InventoryRangeFields } from "./inventory-range-fields";
 import { inventoryRangeDefaults, inventoryRangeError, inventoryRangeQuery } from "./inventory-range";
 
-const defaults = { archive: "active", q: "", category: "", offering_kind: "", state: "", sort: "-updated_at", page_size: 20, ...inventoryRangeDefaults };
+const defaults = { archive: "active", q: "", category: "", phase: "", offering_kind: "", state: "", sort: "-updated_at", page_size: 20, ...inventoryRangeDefaults };
 export function DevelopmentDirectory({ writable, view, changeView }: { writable: boolean } & ProjectViewState) {
   const { draft, setDraft, filters, page, setPage, apply, reset, activeCount, invalid } = useDirectoryFilters(defaults, undefined, undefined, inventoryRangeError);
   const hydrated = useHydrated();
   const result = useQuery(queryPath("developments", { ...filters, ...inventoryRangeQuery(filters), page }), developmentsSchema);
   return <FilterResultsLayout title="Filtres des programmes" reference active={activeCount > 0} activeCount={activeCount} reset={reset} filters={close => <form aria-label="Filtres des programmes" onSubmit={event => { event.preventDefault(); apply(close); }}><fieldset disabled={!hydrated} className="grid gap-4">
     <div className="grid gap-2"><Label htmlFor="development-search">Rechercher</Label><Input placeholder="Nom ou référence" id="development-search" maxLength={160} value={draft.q} onChange={event => setDraft({ ...draft, q: event.target.value })} /></div>
+    {result.value?.phase_supported || draft.phase ? <div className="grid gap-2"><Label htmlFor="development-list-phase">Statut du programme</Label><NativeSelect id="development-list-phase" value={draft.phase} onChange={event => { if (!event.target.value || result.value?.phase_supported) setDraft(current => ({ ...current, phase: event.target.value })); }}><option value="">Tous les statuts</option>{Object.entries(developmentPhaseLabels).map(([value, label]) => <option key={value} value={value} disabled={!result.value?.phase_supported}>{label}</option>)}</NativeSelect></div> : null}
     <div className="grid gap-2"><Label htmlFor="development-list-category">Catégorie</Label><NativeSelect id="development-list-category" value={draft.category} onChange={event => setDraft({ ...draft, category: event.target.value })}><option value="">Toutes les catégories</option>{developmentFieldsSchema.shape.category.options.map(value => <option key={value} value={value}>{value === "mixed" ? "Mixte" : categoryLabels[value]}</option>)}</NativeSelect></div>
     <div className="grid gap-2"><Label htmlFor="development-list-kind">Offre du programme</Label><NativeSelect id="development-list-kind" value={draft.offering_kind} onChange={event => setDraft({ ...draft, offering_kind: event.target.value })}><option value="">Vente et location</option>{(["sale", "rental"] as const).map(value => <option key={value} value={value}>{kindLabels[value]}</option>)}</NativeSelect></div>
     <div className="grid gap-2"><Label htmlFor="development-list-state">État de l’offre</Label><NativeSelect id="development-list-state" value={draft.state} onChange={event => setDraft({ ...draft, state: event.target.value })}><option value="">Tous les états</option>{Object.entries(stateLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>

@@ -1,5 +1,13 @@
 # HTTP contracts for `/api/v1`
 
+Selected programme phase,2026-10-28: optional nullable `phase` on existing
+programme create/edit preserves omission, stored values and old receipt identity;
+explicit null clears. Programme list alone accepts its bounded phase filter.
+Facade-owned `X-Kay-Development-Phase:1` negotiates complete nullable phase/
+support metadata and original history snapshots on exact programme GET paths;
+legacy strict shapes remain unchanged. No new endpoint, grant or stock transition.
+Migration0037 is prepared, not applied. [Contract](development-phase-local.md).
+
 Selected inventory ranges,2026-10-28: existing property/development/unit query
 fields now reach route/facade allowlists and real list predicates before
 counts/facets/pages. Exact same-offering sale/annual ordinary rent bounds retain

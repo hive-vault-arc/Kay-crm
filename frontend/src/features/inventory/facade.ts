@@ -29,6 +29,7 @@ export async function relayInventory(key: string, request: Request, requestId: s
   }
   if (inventoryRangeError(Object.fromEntries(params))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (key === "properties") allowed.push("categories");
+  if (key === "developments") allowed.push("phase");
   if (["properties", "developments"].includes(key) || suffix === "inventory") allowed.push("archive");
   if (allowed && params.some(([name]) => !allowed.includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (key === "offerings" && url.searchParams.has("target_level") && !["property", "development", "standalone", "unit"].includes(url.searchParams.get("target_level")!)) return facadeError(422, "VALIDATION_ERROR", requestId);
@@ -46,7 +47,7 @@ export async function relayInventory(key: string, request: Request, requestId: s
   }
   try {
     const jar = await cookies();
-    const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: request.method as "GET" | "POST" | "PATCH" | "PUT", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: mutation ? frontendOrigin() : undefined, idempotencyKey: retryKey, maxResponseBytes: 2 * 1024 * 1024 });
+    const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: request.method as "GET" | "POST" | "PATCH" | "PUT", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: mutation ? frontendOrigin() : undefined, idempotencyKey: retryKey, developmentPhase: true, maxResponseBytes: 2 * 1024 * 1024 });
     if (upstream.status !== 200) {
       const parsed = z.object({ error: z.object({ code: z.string() }) }).safeParse(upstream.body);
       const code = parsed.success && known.has(parsed.data.error.code) ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE";

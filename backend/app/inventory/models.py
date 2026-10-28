@@ -164,6 +164,11 @@ class InventoryEvent(Base):
     __table_args__ = (
         Index("ix_inventory_event_property_time", "property_id", "occurred_at", "id"),
         CheckConstraint(
+            "development_phase IS NULL OR (development_id IS NOT NULL "
+            "AND development_phase IN ('preparation','marketing'))",
+            name="inventory_event_development_phase",
+        ),
+        CheckConstraint(
             "price_mad IS NULL OR (price_mad > 0 AND price_mad != 'NaN'::numeric)",
             name="inventory_event_price",
         ),
@@ -176,6 +181,7 @@ class InventoryEvent(Base):
     offering_id: Mapped[UUID | None] = mapped_column(ForeignKey("offering.id", ondelete="RESTRICT"))
     actor_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     actor_display_name: Mapped[str] = mapped_column(String(160))
+    development_phase: Mapped[str | None] = mapped_column(String(16))
     action: Mapped[str] = mapped_column(String(40))
     property_version: Mapped[int] = mapped_column(BigInteger)
     offering_version: Mapped[int | None] = mapped_column(BigInteger)

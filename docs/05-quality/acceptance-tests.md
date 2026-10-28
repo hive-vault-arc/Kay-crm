@@ -1,5 +1,16 @@
 # Acceptance scenarios
 
+Selected programme phase,2026-10-28 (AT-27/31/32/35/36/41): verify real shared
+agent/manager phase create/edit/read/filter, unknown legacy records, immutable
+original phase/actor/version snapshots, same-key legacy replay and omitted-field
+preservation. Reject copied/duplicate/invalid filters and half-attested projections;
+retain exact legacy shapes and stock/private-owner authority. A direct phase
+change without matching history must fail at commit. Check form capability load/
+reviewed retry, four-fact overview, compact phone image cards/filter sheets and
+phase history across create/edit.23 added backend units and11 frontend cases
+pass; four PostgreSQL cases and one browser journey are prepared/not run.
+[Contract and current limits](../04-design/development-phase-local.md).
+
 Selected dashboard projection,2026-10-27 (AT-18/19/23/36/39): verify complete
 scoped headline/record parity and preview limits, private/copied responsible filters,
 current ownership transfer, immutable closing attribution, UUID-backed catalogue

@@ -1821,3 +1821,15 @@ Filter deep-link initialization is separate from reset defaults; invalid drafts
 retain applied page/results until corrected. A correct backend-configured mypy
 command runs from backend, rather than changing unrelated code to satisfy a
 root-cwd invocation with different settings.
+
+
+## Add a nullable shared field without rewriting its past (2026-10-28)
+
+A selected programme label needs real storage, current commands, count/page
+filters and original history, not an inference from current stock. Keep legacy
+omission distinct from explicit null in both update loops and canonical receipt
+payloads. Negotiate additive fields for strict old clients and reject half-attested
+projections; freeze reviewed capability choices before a create retry. Unknown
+current values can invite completion, but unknown immutable history must not.
+Inventory paths with rg --files before reading them, and assert edit-script
+anchors changed before launching gates; an unmatched replacement is not a fix.

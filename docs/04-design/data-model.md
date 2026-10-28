@@ -1,5 +1,13 @@
 # Data model: dictionary, conceptual, logical, and physical views
 
+Selected programme phase,2026-10-28: prepared revision0037_development_phase adds
+nullable development.phase and inventory_event.development_phase with bounded
+preparation/marketing checks and a deferred same-version snapshot guard. No
+backfill or inference; current unknown and historical missing state stay unknown.
+Old phase-omitting edits/receipts preserve their value/identity. The field is
+descriptive, separate from offering/stock state. Migration is not applied.
+[Meaning, compatibility and proposed legacy policy](development-phase-local.md).
+
 Selected migration addendum,2026-10-26: prepared revision0036_visit_notes adds
 visit.notes, an empty-default bounded string separate from overlap_reason/outcome.
 New event snapshots include it and a deferred guard matches current row/event.

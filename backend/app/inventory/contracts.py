@@ -412,6 +412,7 @@ class InventoryQuery(InventoryQueryFields):
 
 class DevelopmentQuery(InventoryQueryFields):
     category: Literal["mixed", "villa", "house", "apartment", "land", "commercial"] | None = None
+    phase: Literal["preparation", "marketing"] | None = None
 
 
 class PropertiesQuery(InventoryQuery):

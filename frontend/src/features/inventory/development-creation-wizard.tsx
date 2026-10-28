@@ -7,19 +7,21 @@ import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { ContactSelector } from "@/features/contacts/contact-selector";
+import { useQuery } from "@/features/contacts/use-query";
+import { RecordError } from "@/features/contacts/record-states";
 import { useHydrated } from "@/hooks/use-hydrated";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { categoryLabels } from "./contracts";
-import { developmentFieldsSchema, type Development } from "./development-contracts";
+import { developmentFieldsSchema, developmentsSchema, developmentPhaseLabels, programmePhaseLabel, type Development } from "./development-contracts";
 import { InventoryDraftSummary } from "./inventory-draft-summary";
 import { InventoryWizardSteps } from "./inventory-wizard-steps";
 import { InventoryError } from "./states";
 import { useInventoryCommand } from "./use-command";
 
-type Values = { reference: string; name: string; category: Development["category"]; location: string; briefing_text: string; developer_marketing_display: string };
+type Values = { phase: "" | keyof typeof developmentPhaseLabels; reference: string; name: string; category: Development["category"]; location: string; briefing_text: string; developer_marketing_display: string };
 const steps = [
   { label: "Identité du programme", mobileLabel: "Programme", icon: DevelopmentIcon },
   { label: "Localisation et contexte", mobileLabel: "Détails", icon: LocationIcon },
@@ -30,15 +32,20 @@ export function DevelopmentCreationWizard() {
   const router = useRouter();
   const hydrated = useHydrated();
   const command = useInventoryCommand();
+  const capabilities = useQuery("/api/v1/developments?page=1&page_size=1", developmentsSchema);
+  const [reviewedPhaseSupport, setReviewedPhaseSupport] = useState<boolean>();
+  const phaseSupported = reviewedPhaseSupport ?? capabilities.value?.phase_supported === true;
+  const phaseReady = reviewedPhaseSupport !== undefined || Boolean(capabilities.value);
   const [step, setStep] = useState(0);
   const heading = useRef<HTMLHeadingElement>(null);
   const [developer, setDeveloper] = useState<Development["developer"]["contact"]>(null);
   const [showDeveloper, setShowDeveloper] = useState(false);
   const [validation, setValidation] = useState("");
-  const form = useForm<Values>({ defaultValues: { reference: "", name: "", category: "mixed", location: "", briefing_text: "", developer_marketing_display: "" }, shouldUnregister: false });
+  const form = useForm<Values>({ defaultValues: { phase: "preparation", reference: "", name: "", category: "mixed", location: "", briefing_text: "", developer_marketing_display: "" }, shouldUnregister: false });
   const draft = useWatch({ control: form.control });
-  const details = (values: Values) => ({
+  const details = ({ phase, ...values }: Values) => ({
     ...values,
+    ...(phaseSupported ? { phase: phase || null } : {}),
     location: values.location.trim() || null,
     briefing_text: values.briefing_text.trim() || null,
     developer_contact_id: developer?.id ?? null,
@@ -62,21 +69,24 @@ export function DevelopmentCreationWizard() {
     return true;
   }
   function next() {
-    if (check(step === 0 ? ["reference", "name", "category"] : ["location", "briefing_text", "developer_marketing_display"])) focusStep(step + 1);
+    if (check(step === 0 ? ["reference", "name", "category", "phase"] : ["location", "briefing_text", "developer_marketing_display"])) focusStep(step + 1);
   }
   async function save(values: Values) {
-    if (!check(["reference", "name", "category", "location", "briefing_text", "developer_marketing_display"])) {
-      const first = ["reference", "name", "category"].some(field => form.getFieldState(field as keyof Values).invalid);
+    if (!phaseReady) { setValidation("Le statut du programme est en cours de chargement. Réessayez dans un instant."); return; }
+    if (!check(["reference", "name", "category", "phase", "location", "briefing_text", "developer_marketing_display"])) {
+      const first = ["reference", "name", "category", "phase"].some(field => form.getFieldState(field as keyof Values).invalid);
       focusStep(first ? 0 : 1);
       return;
     }
     const parsed = developmentFieldsSchema.safeParse(details(values));
     if (!parsed.success) return;
+    if (reviewedPhaseSupport === undefined) setReviewedPhaseSupport(phaseSupported);
     await command.submit("/api/v1/developments", parsed.data, "POST", id => router.push(`/projects/${id}`));
   }
   const facts = [
     { label: "Référence", value: draft.reference?.trim() },
     { label: "Nom", value: draft.name?.trim() },
+    ...(phaseSupported ? [{ label: "État du programme", value: programmePhaseLabel(draft.phase || null) }] : []),
     { label: "Catégorie", value: !draft.category || draft.category === "mixed" ? "Mixte" : categoryLabels[draft.category] },
     { label: "Localisation", value: draft.location?.trim() },
     { label: "Présentation", value: draft.briefing_text?.trim() ? "Renseignée" : null },
@@ -95,6 +105,7 @@ export function DevelopmentCreationWizard() {
         {step === 0 ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
           <div className="grid gap-2"><Label htmlFor="development-reference">Référence du programme</Label><Input id="development-reference" maxLength={80} required aria-invalid={Boolean(form.formState.errors.reference)} aria-describedby={form.formState.errors.reference ? "development-validation" : undefined} {...form.register("reference")} /></div>
           <div className="grid gap-2"><Label htmlFor="development-name">Nom du programme</Label><Input id="development-name" maxLength={160} required aria-invalid={Boolean(form.formState.errors.name)} aria-describedby={form.formState.errors.name ? "development-validation" : undefined} {...form.register("name")} /></div>
+          {phaseSupported ? <div className="grid gap-2 sm:col-span-2"><Label htmlFor="development-phase">État du programme</Label><NativeSelect id="development-phase" aria-invalid={Boolean(form.formState.errors.phase)} aria-describedby={form.formState.errors.phase ? "development-validation" : undefined} {...form.register("phase")}><option value="">À renseigner</option>{Object.entries(developmentPhaseLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div> : null}
           <div className="grid gap-2 sm:col-span-2"><Label htmlFor="development-category">Catégorie du programme</Label><NativeSelect id="development-category" {...form.register("category")}><option value="mixed">Mixte</option>{Object.entries(categoryLabels).filter(([value]) => ["villa", "house", "apartment", "land", "commercial"].includes(value)).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
         </div> : null}
         {step === 1 ? <div className="grid min-w-0 gap-4">
@@ -105,10 +116,11 @@ export function DevelopmentCreationWizard() {
         {step === 2 ? <InventoryDraftSummary icon={DevelopmentIcon} title="Programme à créer" facts={facts} onlyFilled wide next="Après la création, structurez les blocs, les étages et les unités physiques. Les offres du programme restent distinctes de celles des unités." /> : null}
       </fieldset>
       {validation ? <p id="development-validation" role="alert" className="text-danger">{validation}</p> : null}
+      {capabilities.error && reviewedPhaseSupport === undefined ? <RecordError error={capabilities.error} retry={capabilities.refresh} /> : null}
       <InventoryError level="development" error={command.error} />
       <div role="group" aria-label="Navigation du formulaire" className="flex flex-wrap gap-2 border-t pt-4">
         {step > 0 ? <Button action="back" type="button" variant="outline" disabled={command.pending} onClick={() => { setValidation(""); focusStep(step - 1); }}>Précédent</Button> : null}
-        {step < 2 ? <Button action="forward" variant="creation" type="button" disabled={!hydrated || command.pending} onClick={event => { event.preventDefault(); next(); }}>Suivant</Button> : <Button action="create" type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : "Créer le programme"}</Button>}
+        {step < 2 ? <Button action="forward" variant="creation" type="button" disabled={!hydrated || command.pending} onClick={event => { event.preventDefault(); next(); }}>Suivant</Button> : <Button action="create" type="submit" disabled={!hydrated || command.pending || !phaseReady}>{command.pending ? "Enregistrement…" : "Créer le programme"}</Button>}
         <Button action="cancel" variant="outline" asChild><Link href="/projects">Annuler</Link></Button>
       </div>
     </div>

@@ -1,5 +1,22 @@
 # KAY QA command register
 
+Selected programme phase,2026-10-28: backend cwd explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:499 pass/708 integration
+deselected;23 added contract/payload/actual command/history/summary/compiled SQL/
+stubbed ASGI/migration cases. Root explicit-venv Ruff check/format--check pass14
+changed Python paths; backend `.venv/Scripts/python.exe -m mypy app`:219 sources
+pass. Four PostgreSQL cases are prepared, not run; migration0037 is not applied.
+Frontend `npm run test:unit`:550 pass/0 failed/skipped,11 added cases plus expanded
+role/layout coverage. `npm run lint`, `npm run typecheck`, `npm run build`
+(Next16.4.2) and `npm run history:check` pass;64 glyphs/105 consumers/349 icon
+sites and496 Button sites have0 violations. The final historical-unknown label
+has an eight-case focused rerun/targeted ESLint and final production build.
+Static Frontend Taste app lint checks nine UI sources; one browser journey is
+prepared/type-checked, not executed. An old summary test stub needed its new
+explicit keyword; initial formatting/loop binding and one atomic edit-script
+declaration error were corrected. No app/native/real SQL/CI pass is inferred.
+[Evidence](03-planning/design-migration-evidence/development-phase-2026-10-28.json).
+
 Selected property category choices,2026-10-28: frontend `npm run test:unit`:
 539 pass/0 failed/skipped, three added actual radio/controller recovery cases
 plus revised category-choice semantics. `npm run lint`, `npm run typecheck`,

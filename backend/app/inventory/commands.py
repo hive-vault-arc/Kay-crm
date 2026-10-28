@@ -424,6 +424,17 @@ def result(receipt: InventoryReceipt) -> dict[str, object]:
     }
 
 
+def command_payload(body: Body) -> dict[str, object]:
+    payload = body.model_dump(mode="json")
+    if isinstance(body, CreateProperty) and body.initial_offering is None:
+        payload.pop("initial_offering")
+    if isinstance(body, EditDevelopment) and "developer_contact_id" not in body.model_fields_set:
+        payload.pop("developer_contact_id")
+    if isinstance(body, DevelopmentFields) and "phase" not in body.model_fields_set:
+        payload.pop("phase")
+    return payload
+
+
 def command(
     database: Database,
     token: str,
@@ -434,11 +445,7 @@ def command(
     target: UUID | None = None,
 ) -> dict[str, object]:
     route = f"{operation}/{target or ''}"
-    payload = body.model_dump(mode="json")
-    if isinstance(body, CreateProperty) and body.initial_offering is None:
-        payload.pop("initial_offering")
-    if isinstance(body, EditDevelopment) and "developer_contact_id" not in body.model_fields_set:
-        payload.pop("developer_contact_id")
+    payload = command_payload(body)
     digest = keyed_digest(
         secret,
         "inventory-command",

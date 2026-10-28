@@ -33,6 +33,7 @@ try {
     "tests/unit/calendar-workspace.test.mjs",
     "tests/unit/projects.test.mjs",
     "tests/unit/inventory-directory.test.mjs",
+    "tests/unit/development-phase.test.mjs",
     "tests/unit/directory-filters.test.mjs",
     "tests/unit/owners.test.mjs",
     "tests/unit/owner-forms.test.mjs",
