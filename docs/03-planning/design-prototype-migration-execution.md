@@ -25,7 +25,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P1 foundation | Committed `fed7ded`; selected theme, Inter/assets, controls, shell/auth and Contacts entry; later batches extend to64 source-pinned glyphs and selected status palette | Native review later |
 | P2 shared interactions | Shared compact directory/record headers, responsive cards, retained lazy tabs, sections, drawers, one-at-a-time inline fields, click/unload guards and preferred Navigation API/classic history fallback source implemented | Remaining inventory/work/admin form parity, responsive focus and native interaction/cache/startup/gesture/frame checks |
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
-| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; mixed-programme typing and exact directory range filters/counts/facets wired through real reads; shared desktop Cards/List and current kind-route selection | Programme phase storage and selected property category presentation; final per-domain/old-browser reconciliation and native history/layout review |
+| P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; mixed-programme typing and exact directory ranges/counts/facets; shared desktop Cards/List/current kind route and selected single-category controls | Programme phase storage; final per-domain/old-browser reconciliation and native history/layout review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery, selected server stationery and approved styled blank appendices with preserved originals/provenance/early replay | Remaining per-field context refinements; old native selectors and final native security/stock/focus/performance checks, including actual PDF transfer/replay |
 | P6 work/schedule | Task/notification entries, compact header inbox/shared full-list recovery, selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); old selectors and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, grouped report cards/attribution tools/tonal drills and alerts, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
@@ -2259,3 +2259,42 @@ files/0 refused/14 ignore probes; repository-only docs pass22 sprints/1261 links
 canonical staged source hashes pass;254 frozen inputs are unchanged. Protected
 35 unrelated lesson additions and the motion note remain unstaged; main stays
 e0bdc09. No native/full-stack/product pass or final branch completion is claimed.
+
+## Selected property category choices,2026-10-28
+
+Continued P4 after3587553. Inherited checkbox rows and coloured category markers
+now follow the frozen selected single-choice radio list with Toutes. Existing
+shadcn RadioGroup and44px associated labels retain keyboard/checked semantics.
+Toutes maps to every known category, not the API empty selection; category changes
+retain other criteria and reset page through the shared controller. Counts are
+actual server facets/unfiltered total, with unknown values disabled/unknown.
+Legacy Maison appears with records and stays visible if selected at zero. Older
+multi/empty API semantics remain, with explicit truthful UI descriptions instead
+of a false Toutes selection. No backend/grant/schema/storage/style/dependency.
+
+539 frontend units pass, including three added actual radio/controller recovery
+cases and revised semantic coverage. Lint64 glyphs/105 consumers/348 icon sites
+and496 Button sites has0 violations; types, Next16.4.2 build and compiled history
+pass. Static Frontend Taste app lint checks the filter source with0 findings.
+Photo/campaign/rail browser sources now use radios, counts, legacy house, empty
+recovery, annual-rent bounds, compact card routing/current programme labels and
+labelled radio touch targets. Updated/type-checked, not executed; unchanged app
+sources retain the build after a final test-only heading-assertion correction.
+No backend rerun;8da316c retains476 units/704 integration deselected.
+
+[Contract](../04-design/inventory-directory-local.md) and
+[evidence](design-migration-evidence/property-category-2026-10-28.json).
+Frontend Taste app and React derived-state guidance apply within the selected
+identity, with no new draw/palette or state-mirroring effect. Original-machine
+mandatory skills remain unavailable/not claimed; AFTER stays. No browser/CUA/
+CDP/HTTP workaround, DB/service/private configuration/real records, migration/
+main/push/merge/deploy. Programme phase storage, complete capability/field matrix,
+historical browser selector reconciliation and native/real-stack/CI/AFTER/owner
+acceptance remain open. The redesign goal stays active.
+
+Category checkpoint finalization: repository/index validation passes8835 files/
+0 refused/14 ignore probes; repository-only docs pass22 sprints/1262 links/
+42 mappings/13 Mermaid pairs/12 API JSON samples. Cached whitespace and all six
+canonical staged source hashes pass;254 frozen inputs remain unchanged. Protected
+35 lesson additions and the motion note stay unstaged; main remains e0bdc09.
+No native/product pass or full branch completion is inferred.

@@ -1,5 +1,22 @@
 # KAY security check for changes
 
+## Selected property category choices,2026-10-28
+
+The selected radio presentation continues the existing strict categories query;
+Toutes maps to every known category, distinct from the retained empty query.
+Only known choices enter the draft. Server category facets/total supply counts,
+unknown counts stay unknown, and selected legacy house remains available at zero.
+Other filters and exact prices remain applied. No backend authorization, endpoint,
+scope, write, schema, migration, storage, dependency or private-data display changes.
+Legacy multi/empty API semantics are not silently widened to All.
+
+539 frontend units/lint/types/build/compiled history pass; three additional actual
+radio/controller recovery cases plus updated model semantics. Static app lint has
+0 findings. Native photo/campaign/rail checks are updated/type-checked, not run.
+No backend rerun, app/browser/HTTP workaround, real DB/service/private config/
+records, main/push/merge/deploy. Real scope/counts/SQL and native/CI/AFTER/owner
+gates remain open. [Contract](04-design/inventory-directory-local.md).
+
 ## Selected project presentation,2026-10-28
 
 Existing property/programme read contracts, private thumbnail permits, scopes,

@@ -1,5 +1,18 @@
 # KAY QA command register
 
+Selected property category choices,2026-10-28: frontend `npm run test:unit`:
+539 pass/0 failed/skipped, three added actual radio/controller recovery cases
+plus revised category-choice semantics. `npm run lint`, `npm run typecheck`,
+`npm run build` (Next16.4.2) and `npm run history:check` pass.64 glyphs/105
+consumers/348 sites and496 Button sites have0 violations. Frontend Taste static
+app lint checks the changed filter UI with0 findings. Photo/campaign/rail browser
+sources now cover selected radios, real counts, legacy house, empty recovery,
+annual-rent bounds and labelled touch targets; updated/type-checked, not run.
+A final test-only record-heading assertion was checked with targeted ESLint and
+typecheck after the build; application sources were unchanged. No backend rerun;
+8da316c retains476 connection-forbidden units/704 integration deselected.
+[Evidence](03-planning/design-migration-evidence/property-category-2026-10-28.json).
+
 Selected project presentation,2026-10-28: frontend `npm run test:unit`:536 pass,
 0 failed/skipped;four added actual view/controller/list/navigation cases.
 `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and

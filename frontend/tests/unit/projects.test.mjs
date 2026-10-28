@@ -48,12 +48,10 @@ test("property paths keep empty selection, encoded literal search and server num
   assert.equal(url.search.includes("+"), false);
   assert.match(url.pathname + url.search, /^\/api\/v1\/[a-zA-Z0-9/?=&_.%-]+$/);
 });
-test("unchecking every visible category sends none without an invisible empty-house selection", () => {
-  let selection = model.propertyDefaults.categories;
-  for (const category of ["land", "apartment", "villa", "commercial", "riad", "room", "office", "farm"]) selection = model.togglePropertyCategory(selection, category, true);
-  assert.equal(selection, "");
-  assert.equal(model.togglePropertyCategory("villa,house", "villa", false), "house");
-  assert.equal(model.togglePropertyCategory("", "house", false), "house");
+test("selected category choices distinguish all, one and retained legacy multiple/empty semantics", () => {
+ assert.equal(model.propertyCategoryChoice(model.propertyDefaults.categories),"all");assert.equal(model.propertyCategoryChoice([...contracts.propertyCategoryOrder].reverse().join(",")),"all");
+ for(const category of contracts.propertyCategoryOrder)assert.equal(model.propertyCategoryChoice(category),category);
+ for(const selection of ["","villa,house","villa,villa","castle",model.propertyDefaults.categories+",castle"])assert.equal(model.propertyCategoryChoice(selection),"");
 });
 function facade(response) {
   const calls = [];

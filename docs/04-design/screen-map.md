@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+Selected property categories,2026-10-28: the filter rail/sheet uses one category
+or Toutes with real facet counts, without inherited checkbox/colour markers.
+Choosing Toutes retains other criteria; selected legacy Maison remains available
+at zero. Multi/empty API selections retain their semantics and are described
+truthfully if presented. Source checks pass; native acceptance remains pending.
+[Contract](inventory-directory-local.md).
+
 Selected project browsing,2026-10-28: property/programme results share a desktop
 Cards/List preference and sort home; phones retain image cards. Programme lists
 retain real unit availability and own offerings. Current kind route props select

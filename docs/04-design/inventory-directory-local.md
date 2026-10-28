@@ -74,6 +74,32 @@ checks four changed UI sources with no findings. React derived-state guidance
 applies; no new state-mirroring effect, dependency or backend change is added.
 [Presentation evidence](../03-planning/design-migration-evidence/project-presentation-2026-10-28.json).
 
+### Selected property category choices
+
+The follow-up after3587553 replaces inherited checkbox rows/coloured markers
+with the selected single-choice radio list and explicit Toutes. The existing
+shadcn RadioGroup supplies keyboard/checked behavior; each associated label
+remains at least44px tall. Toutes sends the existing canonical complete category
+selection, not the API's empty selection. Choosing one category or Toutes retains
+search, range and other criteria, and the shared controller resets page once.
+
+Counts are the existing server category facets and `unfiltered_total` under the
+other applied criteria. Missing counts stay unknown/disabled, never invented zero.
+Legacy Maison appears when records use it; a selected Maison remains visible at
+zero so another filter cannot make the selection disappear. Older multi/empty
+query semantics remain accepted by the API. If such a selection is presented,
+the UI states it explicitly instead of mislabelling it Toutes. No backend, grant,
+storage, dependency, schema, migration or stylesheet changes.
+
+539 frontend units pass, with three additional actual radio/controller recovery
+cases and revised semantic model coverage. Lint/types/build/compiled history and
+static app lint pass. Prepared photo/campaign browser journeys now use selected
+radios, empty-category recovery, exact annual-price bounds, compact card links
+and current programme labels; touch target geometry includes labelled radios.
+They are updated/type-checked, not executed. Other historical native selectors
+and actual keyboard/touch/zoom/focus acceptance remain pending.
+[Category evidence](../03-planning/design-migration-evidence/property-category-2026-10-28.json).
+
 ## Evidence and outstanding reconciliation
 
 532 frontend units pass, including12 new range/model/controller/facade cases.
@@ -87,9 +113,9 @@ current authorization, native focus/spacing, touch, zoom or responsive behavior.
 [Recorded evidence](../03-planning/design-migration-evidence/inventory-directory-2026-10-28.json).
 
 Remaining P0/P4 gaps are explicit: the prototype's programme preparation/marketing
-phase has no persisted equivalent yet, and property category presentation retains
-the inherited multiselect. Desktop programme view and route synchronization source
-are implemented above; actual native history/width/focus acceptance is pending.
+phase has no persisted equivalent yet. Selected category, desktop programme view
+and route synchronization source are implemented above; actual native history/
+width/focus acceptance and the full per-domain reconciliation remain pending.
 No business default, migration or final completion is inferred from these slices.
 
 Frontend Taste's app-screen guidance now applies under Ali's2026-10-28 instruction:
