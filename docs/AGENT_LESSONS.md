@@ -1756,3 +1756,16 @@ method/body/key retry separate from acknowledged completion reads, and test both
 with actual controllers. This migration also retains null versus false/zero,
 original rental periods and the selected card/one-form workflow. Source tests and
 emitted layout declarations do not establish native mobile/focus acceptance.
+
+
+## PDF provenance comparison must separate page furniture from body text,2026-10-28
+
+A raw extracted token diff between original and restyled blank models can report
+removed repeated headers, notices and writing rules as missing body words. Pair a
+whole-body comparison with punctuation-preserving literal paragraph/field/cell
+checks, and record each explicit normalization and original/styled hash. Negative
+controls must reject actual added/deleted/changed text and punctuation. Extraction
+cannot establish visual placement or legal equivalence; preserve provenance and
+obtain a document-contract choice where the current generation promises unchanged
+original bytes. A read-only comparison utility must refuse output into its source
+PDF/JSON tree. Keep native/real-stack/owner gates separate from this evidence.

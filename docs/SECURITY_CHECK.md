@@ -1,5 +1,25 @@
 # KAY security check for changes
 
+## Read-only PDF appendix reconciliation,2026-10-28
+
+The comparison tool imports only standard library and pypdf, never application,
+configuration, identity, database, service or storage modules. Inputs are the
+existing owner-supplied blank originals and frozen selected reference assets;
+there are no client values or real documents. Output is restricted to JSON under
+the repository evidence or .git directory. An attempted output to the frozen
+prototype source JSON is refused before comparison; its digest remains unchanged.
+No PDF is regenerated or modified, and no runtime appendix/file contract changes.
+
+All12 comparisons pass, including641 literal chunks and complementary whole-body
+checks. Four negative controls reject added/changed/deleted text and punctuation.
+Exact original/styled/source hashes are recorded; all254 frozen inputs remain
+unchanged. Ruff/format/mypy pass for the one unshipped tool. Two first-page renders
+were inspected locally, without app/browser/HTTP access. This does not establish
+legal equivalence, all-page appearance, real scope/race/download/SQL/CI acceptance
+or owner approval. The M01 appendix choice remains pending; no backend application
+or frontend suite rerun, database/service/private-config/record/main/push/merge/
+deploy. [Comparison proposal](04-design/pdf-appendix-reconciliation.md).
+
 ## Selected contact search workspace,2026-10-27
 
 Existing scoped endpoints/session/CSRF/private facade TLS remain unchanged.

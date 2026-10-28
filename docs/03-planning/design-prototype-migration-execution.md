@@ -1,6 +1,6 @@
 # Selected KAY workspace migration: execution
 
-Updated: 2026-10-27
+Updated: 2026-10-28
 Branch: `codex/redesign`
 Base/main: `e0bdc09feed0c3920b63cda635e5cf4cf42e08b1`
 Plan: [selected-design migration](design-prototype-migration-2026-10-25.md)
@@ -1966,3 +1966,41 @@ docs/03-planning/validate-sprints.ps1 -RepositoryOnly` passes22 sprint specs,
 samples. The Windows PowerShell invocation was refused by its script policy;
 the standard PowerShell7 invocation passed without a policy change. Cached
 whitespace check passes; this does not add native/runtime acceptance.
+
+## Concrete M01 appendix comparison,2026-10-28
+
+Afterabe76e9, the read-only comparison tool inspects all12 frozen selected/original
+blank-model pairs. All three original copies remain byte-identical. All641
+paragraph/heading/field/cell chunks appear in both extracted texts after bounded
+case/whitespace/blank-rule normalization; punctuation is retained. A complementary
+whole-body comparison passes after known page furniture/repeated notices/table
+headings. Four negative controls reject an added clause, changed word, deleted
+field and punctuation change. This is extraction/provenance evidence, not legal
+equivalence, all-page visual proof or permission to change document contracts.
+
+The selected models reflow31 original pages to25. Both first pages of model02
+were Poppler-rendered at90dpi and visually inspected for the differing layouts.
+The [concrete proposal](../04-design/pdf-appendix-reconciliation.md) preserves
+original assets, derives future blank appendices from the frozen selected files
+and records explicit hashes without changing old versions/replay/authority. The
+owner's appendix choice is pending through an asynchronous question; independent
+source work continues. No runtime appendix substitution is implemented here.
+
+Explicit-venv Ruff/format and mypy1 source pass. The first Ruff pass found two
+long description strings, now split without changing their text. The tool imports
+no app/config/database/service module; it writes only a JSON report under the
+repository's evidence or .git directory, never a source/prototype PDF or JSON.
+[Machine comparison](design-migration-evidence/pdf-appendix-comparison-2026-10-28.json)
+records the exact source hashes/normalization/negative controls and limits.
+No application/backend suite or frontend/native/real-stack rerun is claimed.
+Existing app-access rejection, unavailable original-machine UI skills, dense
+marketing exclusion and AFTER timing remain. No real data/service/private-config/
+main/push/merge/deploy, no change to the protected35 lesson lines or motion note.
+M01 review and the full P0-P8 goal remain open.
+
+M01 checkpoint repository/index check passes8790 files/0 refused/14 ignore probes;
+repository-only docs pass1256 links/42 mappings/13 Mermaid pairs/12 JSON samples.
+Cached whitespace and the canonical staged tool hash pass. Independent P6 source
+inspection identifies the header inbox still using the old large Sheet rather
+than the frozen compact notification popover; its correction is next, without
+changing the pending appendix choice.

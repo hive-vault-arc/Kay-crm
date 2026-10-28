@@ -99,3 +99,8 @@ design-taste workflow. AFTER timing remains. Native desktop/phone, keyboard,
 touch, zoom, accessibility, real scope/download/SQL/races, full-stack/CI and owner
 review remain pending, alongside the rest of P0–P8. Main/merge/deployment are
 untouched; this is not completion of the redesign branch.
+
+Read-only M01 follow-up,2026-10-28: the [concrete appendix comparison and
+proposal](pdf-appendix-reconciliation.md) checks all12 selected/original pairs
+and641 literal chunks. The provenance choice is pending; this does not change
+the current unchanged-original renderer or imply legal/native acceptance.

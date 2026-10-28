@@ -1,0 +1,347 @@
+{
+  "date": "2026-10-28",
+  "readOnly": true,
+  "passed": true,
+  "legalEquivalenceClaimed": false,
+  "runtimeChanged": false,
+  "contentSha256": "4b909e682843ab06b47ee0723d876aef2a324593355ff272f73f0cafdddff0c3",
+  "normalization": [
+    "Literal chunks: NFC, case and whitespace; dotted/underscore blank writing rules.",
+    "Whole body: alphanumeric stream after known page furniture and repeated first notice.",
+    "Table headings removed only for comparison; each literal cell/heading is separately checked.",
+    "No legal/public-source lookup or validation; extraction does not prove visual placement."
+  ],
+  "rows": [
+    {
+      "code": "01",
+      "source": "01_Bon_de_visite.pdf",
+      "title": "Bon de visite immobilière",
+      "originalSha256": "2ff5cbeea00bb5e83753cceaae90e450489c01a30a521531034135a069d66176",
+      "selectedSha256": "6fa9a77368f5000514af6fb274ba69373b2d2b7c54b07b077c461d01019c5386",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 1,
+      "selectedPages": 1,
+      "literalParts": 27,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 1221,
+      "normalizedBodySha256": "4c3d8c3d7e4783f0377417385b307a7c10c235cb46f07f2b3cfa0788d9ea0c9d",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": []
+    },
+    {
+      "code": "02",
+      "source": "02_Mandat_de_vente.pdf",
+      "title": "Mandat de vente immobilière",
+      "originalSha256": "b4f6ce17d62fdedd436ba49b1f086ac0cf5495db52b2cf5d86c3b59bc8fa4331",
+      "selectedSha256": "a4a37fc923af2fc87e4ab6f19459bb6e4e6b7163a3e40a8abae542a5af9c018d",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 3,
+      "selectedPages": 2,
+      "literalParts": 62,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 3404,
+      "normalizedBodySha256": "97f1c56d4dd9b7d7a3b8ad84501ac0f0947dfa30798ebca614419317e6a5beca",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": []
+    },
+    {
+      "code": "03",
+      "source": "03_Mandat_de_location.pdf",
+      "title": "Mandat de mise en location",
+      "originalSha256": "f333bf20bffa5def00aac2eec370dda6e20411cb2faccbc38f8468e39681f9a1",
+      "selectedSha256": "f81077bc42b216a50fef1970d4ce74405c0901628b6e27ad4c3660c37418e8c6",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 3,
+      "selectedPages": 2,
+      "literalParts": 60,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 2856,
+      "normalizedBodySha256": "0a221c64bd0a1e4156ec8fb24f23367e86c3348a16b03103ac0b69dc6b573d7d",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": []
+    },
+    {
+      "code": "04",
+      "source": "04_Contrat_location_longue_duree.pdf",
+      "title": "Location longue durée - habitation",
+      "originalSha256": "bded4e8baeeebbb08a38ede7a80e17dcc1fb6e55744d31d746c94c90d829f03a",
+      "selectedSha256": "e992d017697a515ba3ed085fcb1e76c1858dc0dc90e99aa6c138d2ba76045d85",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 4,
+      "selectedPages": 3,
+      "literalParts": 75,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 4020,
+      "normalizedBodySha256": "78d5ea366a08e69562de18434f2ae96a57e63da0a656a541af8368d83b00c971",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": []
+    },
+    {
+      "code": "05",
+      "source": "05_Contrat_location_courte_duree.pdf",
+      "title": "Contrat de location courte durée",
+      "originalSha256": "89f8e8564ce2722712248abd99d23d0ae1e6b0e2e92fd2ce9996b8d0bc20ecac",
+      "selectedSha256": "bde79e9012ea338373b7a30dbe9e813a0e16d12b9ee77230cd3a90ff06f77f14",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 3,
+      "selectedPages": 2,
+      "literalParts": 59,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 2982,
+      "normalizedBodySha256": "6bf9958c30a64f55bb698d671451c7f413e04a189036d3338a6f6a3b5748ed3c",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": []
+    },
+    {
+      "code": "06",
+      "source": "06_Contrat_bail_commercial.pdf",
+      "title": "Projet de bail commercial",
+      "originalSha256": "599889dee93c79b9ac88fcc8543bdc7f2a29d89adaaaae3ce31ee72cdfca4562",
+      "selectedSha256": "3a6ba35d28a5864427124004481178457f449c046c9f9f9bc3f4d728fad2260e",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 4,
+      "selectedPages": 3,
+      "literalParts": 67,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 3583,
+      "normalizedBodySha256": "523d43453d440e789522c48e586d3af2dc28a161e9bef581ff7ba0f7f00707ad",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": []
+    },
+    {
+      "code": "07",
+      "source": "07_Compromis_de_vente_PROJET_NOTAIRE.pdf",
+      "title": "Compromis de vente - préparation",
+      "originalSha256": "71f074aeb208e3877fdcfdf0eb486e20664344c8ee8027500ca5f4b0f01683c5",
+      "selectedSha256": "7467f0b0ce0359c183d56a649d8d89d2d00e0597ad6067587777886aaf991aa7",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 3,
+      "selectedPages": 2,
+      "literalParts": 55,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 2764,
+      "normalizedBodySha256": "1c1a257701aa1f88a9cd6a33e7af91455dc73e4ef3e917fefac406b73cb8c9ab",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": []
+    },
+    {
+      "code": "08",
+      "source": "08_Fiche_descriptive_bien_immobilier.pdf",
+      "title": "Fiche descriptive du bien",
+      "originalSha256": "fd552087f5ed468f311b0cec9f19bb0e3f60393bed04bc3d859a896be0d210fe",
+      "selectedSha256": "3c05fb4da924d82c17407bfeb0bd369f699cc76b18ca3414cee42555cea16e43",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 2,
+      "selectedPages": 2,
+      "literalParts": 40,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 1753,
+      "normalizedBodySha256": "85fa5bb78e523fecdf84985a7ac805545d1c288a44a9883eeb09aa79a4352841",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": [
+        {
+          "original": 1,
+          "selected": 2
+        }
+      ]
+    },
+    {
+      "code": "09",
+      "source": "09_Fiches_clients_proprietaire_acquereur_locataire.pdf",
+      "title": "Fiches clients - trois profils",
+      "originalSha256": "be5b5acbf5fc3ab979347ebd3adb6ffad141ca416ccd2fd862814c227583ebbe",
+      "selectedSha256": "aff8026d6d0217582d80b14db65d81741847f96441c3b210124e4e0242b0380f",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 3,
+      "selectedPages": 3,
+      "literalParts": 81,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 4210,
+      "normalizedBodySha256": "c16b96b8721226844e6267beecb8c500cc7245bc6bb30aa4f1bef2bacddcbe9f",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": []
+    },
+    {
+      "code": "10",
+      "source": "10_Recu_de_paiement.pdf",
+      "title": "Reçu de paiement",
+      "originalSha256": "6b57f8128ebfc82705b9786b3764eab062a17f0eb7326f07d07c4357779cafd9",
+      "selectedSha256": "59934beba3cd80e707addf6d97b748b3946652e540185220dfde4ae2df1d23c9",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 1,
+      "selectedPages": 1,
+      "literalParts": 25,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 1190,
+      "normalizedBodySha256": "673419191edf300f4b5d07ecf4600c1d91eb190763cbed8b9b6ef99de71acc74",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": []
+    },
+    {
+      "code": "11",
+      "source": "11_Facture_de_commission.pdf",
+      "title": "Facture de commission - gabarit",
+      "originalSha256": "0620280b660a5b4a7011fbed301b944b24ee21339fde888eec8d07817cd124a4",
+      "selectedSha256": "a81bcedb832366e63b64b0534d516124056dab0912ba66074c9ac768cd2f9ef4",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 1,
+      "selectedPages": 1,
+      "literalParts": 30,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 1352,
+      "normalizedBodySha256": "f8c342004bd9d524ea7ae70bb73c5540707facc77158b0994c9c36de40c2bd88",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": [
+        {
+          "original": 1,
+          "selected": 1
+        }
+      ]
+    },
+    {
+      "code": "12",
+      "source": "12_Etat_des_lieux_entree_et_sortie.pdf",
+      "title": "État des lieux - entrée / sortie",
+      "originalSha256": "04ea5926d8e5d94bfb3f15c73013d57482a1751d5bcaec7c5f80e97f451b36ab",
+      "selectedSha256": "da3b359705f7716732d64650121af6c53552a691f80de861981e1af7cccb4d3b",
+      "allThreeOriginalCopiesEqual": true,
+      "originalPages": 3,
+      "selectedPages": 3,
+      "literalParts": 60,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalentAfterExplicitLayoutNormalization": true,
+      "bodyCharacters": 2333,
+      "normalizedBodySha256": "c93560c466eeef0ed64826b7a4781f17cd0666426500c15e43c205923b1cced6",
+      "originalFirstNoticeRetained": true,
+      "tableHeaderOccurrences": [
+        {
+          "original": 1,
+          "selected": 1
+        },
+        {
+          "original": 1,
+          "selected": 2
+        },
+        {
+          "original": 1,
+          "selected": 1
+        }
+      ]
+    }
+  ],
+  "negativeControls": [
+    {
+      "case": "added_clause",
+      "rejected": true,
+      "literalPartsPresentInBoth": true,
+      "bodyEquivalent": false
+    },
+    {
+      "case": "changed_clause",
+      "rejected": true,
+      "literalPartsPresentInBoth": false,
+      "bodyEquivalent": false
+    },
+    {
+      "case": "deleted_field",
+      "rejected": true,
+      "literalPartsPresentInBoth": false,
+      "bodyEquivalent": false
+    },
+    {
+      "case": "changed_punctuation",
+      "rejected": true,
+      "literalPartsPresentInBoth": false,
+      "bodyEquivalent": true
+    }
+  ],
+  "checks": [
+    {
+      "command": "backend/.venv/Scripts/python.exe backend/tools/compare_pdf_appendices.py --prototype <frozen-root> --output <comparison-json>",
+      "models": 12,
+      "exitCode": 0
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m ruff check backend/tools/compare_pdf_appendices.py",
+      "exitCode": 0
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m ruff format --check backend/tools/compare_pdf_appendices.py",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy tools/compare_pdf_appendices.py",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sources": 1
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8790,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprintSpecifications": 22,
+      "localLinksAndAnchors": 1256,
+      "acceptanceMappings": 42,
+      "synchronizedMermaidPairs": 13,
+      "validApiJsonSamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "cwd": ".",
+      "exitCode": 0
+    }
+  ],
+  "visualInspection": {
+    "renderer": "Poppler pdftoppm",
+    "dpi": 90,
+    "pagesInspected": [
+      "original02/page1",
+      "selected02/page1"
+    ],
+    "allPagesInspected": false
+  },
+  "toolSource": "backend/tools/compare_pdf_appendices.py",
+  "toolSha256": "2e19bfbb0b60ab6281a3d6ff17159445db4b1531b019e6855dceeb29c7673bb1",
+  "proposal": "Use selected styled blank appendices for future new PDFs; retain original assets, record explicit derivation hashes, keep immutable old versions/replay and current authority.",
+  "ownerChoice": "pending",
+  "limits": [
+    "Technical extraction comparison, not legal equivalence or approval.",
+    "Only first original/selected model02 pages visually inspected.",
+    "Current original appendix contract and renderer unchanged; no substitution without the recorded choice.",
+    "No browser/app HTTP/CDP/CUA or database/service/private-config/real-record access.",
+    "Backend application/full-stack suites and frontend checks not rerun for this read-only work.",
+    "Final real CI/AFTER/owner/native review and full redesign goal remain open."
+  ],
+  "sourceOutputGuard": {
+    "rejectedProtectedPrototypeJson": true,
+    "protectedInputUnchanged": true,
+    "outputRestrictedToEvidenceOrGitJson": true
+  },
+  "frozenInputs": {
+    "checked": 254,
+    "changed": 0
+  },
+  "correctedDuringVerification": [
+    "Initial Ruff found two long description strings; split without changing their text.",
+    "After adding the report-output guard, format check required collapsing the shorter write_text call; formatted and rerun."
+  ]
+}

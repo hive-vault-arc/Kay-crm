@@ -92,3 +92,8 @@ pending. Source tests and the wheel do not prove those gates. Original-machine
 antislop/design-system-ops prerequisites remain unavailable and are not claimed
 executed; dense CRM/PDF preparation excludes marketing design-taste. M01 and the
 other P0–P8 gaps stay open. Main/push/merge/deployment are untouched.
+
+Read-only M01 follow-up,2026-10-28: the [concrete appendix comparison and
+proposal](pdf-appendix-reconciliation.md) checks all12 selected/original pairs
+and641 literal chunks. The provenance choice is pending; this does not change
+the current unchanged-original renderer or imply legal/native acceptance.

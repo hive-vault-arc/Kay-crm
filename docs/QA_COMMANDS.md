@@ -1,5 +1,15 @@
 # KAY QA command register
 
+Read-only appendix comparison,2026-10-28: explicit backend venv Python runs
+`backend/tools/compare_pdf_appendices.py --prototype <frozen-root> --output
+docs/03-planning/design-migration-evidence/pdf-appendix-comparison-2026-10-28.json`
+from root, checking12 models/641 literal chunks and whole-body normalization.
+Four separate negative controls reject changed/added/removed text or punctuation.
+Explicit-venv Ruff check/format and mypy pass for that one tool. Two model02 first
+pages were Poppler-rendered/visually inspected; no all-page/native/app/SQL/real-
+stack/frontend rerun or legal equivalence. Current appendix bytes stay unchanged
+pending the [M01 choice](04-design/pdf-appendix-reconciliation.md).
+
 Latest Recherches workspace (2026-10-27):489 frontend units pass, including18
 new actual controller/model/render cases. `npm run lint`, `npm run typecheck`,
 `npm run build` (pinned Next16.4.2) and `npm run history:check` pass in frontend.
