@@ -1,5 +1,11 @@
 # Local tasks and internal reminders (SP-15)
 
+2026-10-28 selected inbox: the header opens a bounded ten-row compact Popover;
+Tout voir opens the retained twenty-row full drawer with the same filter and
+existing push controls. Both share current-scope read-state/recovery behavior,
+without new backend/API/worker/permission changes. Native verification remains
+pending. [Inbox contract](notification-inbox-local.md).
+
 2026-10-26 selected-design migration: task create/edit now exposes the existing
 optional physical property context using scoped inventory reads, numbered pages
 and explicit choose/remove. Off-page or archived links are retained and explained;

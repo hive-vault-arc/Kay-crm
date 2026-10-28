@@ -44,6 +44,7 @@ try {
     "tests/unit/document-workspace.test.mjs",
     "tests/unit/finance-workspace.test.mjs",
     "tests/unit/requirements-workspace.test.mjs",
+    "tests/unit/notifications-workspace.test.mjs",
     "tests/unit/project-links.test.mjs",
     "tests/unit/theme.test.mjs",
     "tests/unit/workspace.test.mjs",

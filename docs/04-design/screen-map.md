@@ -1,5 +1,12 @@
 # KAY screen map and navigation contract
 
+Selected header inbox,2026-10-28: compact Popover with ten server-backed entries,
+quick filters and read icons replaces the first-click large Sheet. Tout voir
+opens the shared full drawer with the active filter; `/notifications` remains.
+Read recovery, current denial, discreet full-count accessible bell indicator and
+fallback local invalidation use existing scoped APIs. Native review is pending.
+[Contract](notification-inbox-local.md).
+
 Selected Recherches workspace,2026-10-27: Contact overview and Lead/Deal
 qualification retain their supporting drawer. Twenty-row tonal requirement cards
 show criteria and inline exact-offer selections, followed by contact-wide history.

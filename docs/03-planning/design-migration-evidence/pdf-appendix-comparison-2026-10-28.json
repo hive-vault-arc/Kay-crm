@@ -322,11 +322,11 @@
   "toolSource": "backend/tools/compare_pdf_appendices.py",
   "toolSha256": "2e19bfbb0b60ab6281a3d6ff17159445db4b1531b019e6855dceeb29c7673bb1",
   "proposal": "Use selected styled blank appendices for future new PDFs; retain original assets, record explicit derivation hashes, keep immutable old versions/replay and current authority.",
-  "ownerChoice": "pending",
+  "ownerChoice": "Use selected styled appendix (recommended)",
   "limits": [
     "Technical extraction comparison, not legal equivalence or approval.",
     "Only first original/selected model02 pages visually inspected.",
-    "Current original appendix contract and renderer unchanged; no substitution without the recorded choice.",
+    "Owner approved the selected styled appendix; runtime implementation and its verification remain pending.",
     "No browser/app HTTP/CDP/CUA or database/service/private-config/real-record access.",
     "Backend application/full-stack suites and frontend checks not rerun for this read-only work.",
     "Final real CI/AFTER/owner/native review and full redesign goal remain open."
@@ -343,5 +343,7 @@
   "correctedDuringVerification": [
     "Initial Ruff found two long description strings; split without changing their text.",
     "After adding the report-output guard, format check required collapsing the shorter write_text call; formatted and rerun."
-  ]
+  ],
+  "ownerDecisionDate": "2026-10-28",
+  "implementationStatus": "Approved; runtime substitution not yet implemented."
 }

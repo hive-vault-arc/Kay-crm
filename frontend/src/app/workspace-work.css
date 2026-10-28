@@ -47,3 +47,39 @@
 }
 @media(max-width:360px) { .kay-entry-meta { grid-template-columns:minmax(0,1fr); } }
 @media(forced-colors:active) { .kay-record-entry { border-color:CanvasText; background:Canvas; color:CanvasText; } }
+
+/* Frozen work-reports.js / app.css inbox; Radix owns placement and focus. */
+.kay-notification-bell { display:inline-flex; position:relative; }
+.kay-notification-dot { position:absolute; top:-2px; right:-1px; width:5px; height:5px; border-radius:50%; background:var(--riviera-color-stage-yellow-fill); box-shadow:0 0 0 2px var(--workspace-paper); }
+.kay-notification-popover[data-slot=popover-content] { display:flex; flex-direction:column; gap:0; width:min(360px,calc(100vw - 24px)); min-width:0; max-height:min(420px,var(--radix-popover-content-available-height,calc(100dvh - 24px))); overflow:hidden; padding:16px; border-radius:24px; transform-origin:var(--radix-popover-content-transform-origin); }
+.kay-notification-preview { display:flex; flex-direction:column; min-width:0; min-height:0; }
+.kay-notification-heading { display:flex; flex:none; justify-content:space-between; align-items:center; gap:12px; padding-bottom:14px; }
+.kay-notification-heading > div { display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:0; }
+.kay-notification-heading h2 { margin:0; font-size:16px; line-height:1.4; font-weight:600; }
+.kay-notification-heading > button { flex:none; }
+.kay-notification-filters { display:flex; flex:none; gap:6px; min-width:0; }
+.kay-notification-filters [data-slot=button] { flex:1; min-width:0; min-height:44px; padding:7px 10px; border:0; border-radius:999px; background:var(--workspace-field); color:var(--workspace-muted); font-size:13px; font-weight:550; }
+.kay-notification-filters [aria-pressed=true] { background:var(--workspace-selected); color:var(--workspace-ink); font-weight:600; }
+.kay-notification-filters [data-slot=button]:hover { background:var(--workspace-hover); }
+.kay-notification-preview > div:has(> .kay-notification-filters) { flex:none; padding-bottom:14px; }
+.kay-notification-preview-list { display:grid; gap:8px; min-width:0; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding-right:4px; }
+.kay-notification-preview-list > ul { display:grid; gap:4px; min-width:0; margin:0; padding:0; list-style:none; }
+.kay-notification-preview-entry { display:grid; grid-template-columns:minmax(0,1fr) 44px; align-items:center; gap:4px; min-width:0; padding:8px 8px 8px 12px; border-radius:12px; background:var(--workspace-field); }
+.kay-notification-copy { display:grid; align-content:center; gap:2px; min-height:44px; min-width:0; border-radius:8px; color:var(--workspace-ink); }
+.kay-notification-copy strong { overflow-wrap:anywhere; font-size:13px; line-height:18px; font-weight:600; }
+.kay-notification-copy small { overflow-wrap:anywhere; color:var(--workspace-muted); font-size:12px; line-height:16px; }
+.kay-notification-preview-entry[data-read=true] strong { font-weight:500; }
+.kay-notification-copy:hover { color:var(--workspace-ink); background:var(--workspace-hover); }
+.kay-notification-copy:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
+.kay-notification-read[data-slot=button] { width:44px; height:44px; padding:14px; border:0; border-radius:50%; background:transparent; color:var(--workspace-muted); }
+.kay-notification-read[data-slot=button]:hover { color:var(--workspace-ink); background:var(--workspace-hover); }
+.kay-notification-read-state { display:grid; place-items:center; width:44px; min-height:44px; color:var(--workspace-muted); font-size:11px; }
+.kay-notification-empty { display:grid; justify-items:center; gap:10px; padding:28px 12px; color:var(--workspace-muted); text-align:center; }
+.kay-notification-empty p { margin:0; font-size:13px; }
+.kay-notification-all[data-slot=button] { flex:none; width:100%; margin-top:8px; }
+@media(max-height:360px) {
+  .kay-notification-popover[data-slot=popover-content] { overflow-y:auto; }
+  .kay-notification-preview { flex:none; }
+  .kay-notification-preview-list { overflow:visible; }
+}
+@media(forced-colors:active) { .kay-notification-dot { background:Highlight; } .kay-notification-preview-entry { border:1px solid CanvasText; background:Canvas; color:CanvasText; } }

@@ -1,5 +1,25 @@
 # KAY security check for changes
 
+## Compact personal inbox,2026-10-28
+
+The preview/full inbox uses existing scoped GET and idempotent empty-body mark-read
+POST. Backend recipient/schedule/contact authority remains unchanged. Current
+denial masks private rows/counts, aborts pending requests and clears their retry
+identity before fresh authority reads. Unknown acknowledgement pins the same
+notification/body/method/key; hydration, synchronous locks and unmount suppress
+unsafe or late UI writes. No optimistic read time is invented. A successful read
+emits only the existing notifications topic, without private values, so fallback
+counts refresh even when socket delivery is off. There is no new browser storage,
+log, server command/grant/schema/worker/push integration or automatic permission
+request. Existing configured complete-inbox PushControl remains available.
+
+505 frontend units/lint/types/build pass;17 new cases expand the previous denial
+coverage. Compiled history and seven emitted CSS checks pass. Prepared real-stack
+commit-loss/retry/filter/focus/touch cases are not executed. No backend rerun,
+app-access workaround, real DB/service/private configuration/records/main/push/
+merge/deploy. Native current-scope/race/real CI/AFTER/owner gates remain pending.
+[Contract](04-design/notification-inbox-local.md).
+
 ## Read-only PDF appendix reconciliation,2026-10-28
 
 The comparison tool imports only standard library and pypdf, never application,

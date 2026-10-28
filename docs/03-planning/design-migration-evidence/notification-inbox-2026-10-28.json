@@ -1,0 +1,257 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "79e7656",
+  "scope": "Selected compact notification Popover, shared full inbox, bounded current read-state/recovery, real accessible bell count and fallback scoped invalidation",
+  "checks": [
+    {
+      "command": "node --test tests/unit/notifications-workspace.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 17,
+      "failed": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 505,
+      "failed": 0,
+      "newRegisteredCases": 17,
+      "replacedLegacyDenialCase": 1,
+      "netAdditionalCases": 16
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 102,
+      "iconSites": 341,
+      "buttonSites": 489,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true
+    },
+    {
+      "command": "node --input-type=module -",
+      "cwd": ".",
+      "purpose": "PostCSS inspect actual emitted rules without app import",
+      "exitCode": 0,
+      "cssFiles": 2,
+      "checks": {
+        "compactWidth": true,
+        "boundedAvailableHeight": true,
+        "selectedPanelGeometry": true,
+        "compactTwoColumnRow": true,
+        "readTouchTarget": true,
+        "filterTouchTarget": true,
+        "shortWindowScroll": true
+      },
+      "nativeLayoutVerified": false
+    },
+    {
+      "command": "PowerShell frozen manifest bytes/SHA256 comparison",
+      "cwd": ".",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8797,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprintSpecifications": 22,
+      "localLinksAndAnchors": 1257,
+      "acceptanceMappings": 42,
+      "synchronizedMermaidPairs": 13,
+      "validApiJsonSamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "cwd": ".",
+      "exitCode": 0
+    },
+    {
+      "command": "Explicit-venv staged-source SHA256 verification",
+      "cwd": ".",
+      "exitCode": 0,
+      "snapshots": 13,
+      "matched": 13
+    }
+  ],
+  "sourceReference": [
+    "src/work-reports.js",
+    "src/popovers.js",
+    "src/app.css",
+    "src/dropdowns.css",
+    "src/motion.css"
+  ],
+  "retainedCapabilities": [
+    "Personal current-scope inbox and unread_total",
+    "All/unread/read server filters",
+    "Strict empty-body idempotent mark-read POST",
+    "Full twenty-row inbox and existing route",
+    "Kind/due/created/context/dossier metadata in full list",
+    "Configured PushControl in complete inbox",
+    "Backend recipient/schedule/contact/obsolete-reminder rules"
+  ],
+  "recovery": [
+    "Synchronous hydration/submit lock",
+    "Exact unknown notification ID/body/method/key retry",
+    "Query/read authority masking and request abort",
+    "Fresh retry without an earlier private attempt",
+    "No invented read time",
+    "Unmount suppresses late completion and invalidation",
+    "Explicit notifications-only fallback invalidation without private values",
+    "Popover/full/route focus scopes",
+    "Delayed filter/scroll restoration respects intervening focus"
+  ],
+  "technicalUxProposals": [
+    "Keep Tout voir at ten or fewer rows to retain complete inbox/push access.",
+    "Use 44px close/filter controls rather than frozen 32/36px minima under the project touch rule."
+  ],
+  "preparedNotRun": [
+    "selected notification inbox: compact preview, exact recovery, full list and native touch",
+    "Two legacy notification dialog name selectors migrated; unrelated old browser cases remain open."
+  ],
+  "skillReview": {
+    "skill": "vercel:react-best-practices",
+    "read": true,
+    "rules": [
+      "client-event-listeners",
+      "rerender-move-effect-to-event",
+      "rerender-use-ref-transient-values"
+    ],
+    "application": "Reused existing deduplicated event subscriptions and useQuery; user mutations remain in event handlers; transient lock/focus/scroll refs stay local.",
+    "architectureOverride": "No SWR/dependency substitution.",
+    "originalMachineMandatoryUiSkillsAvailable": false,
+    "marketingDesignTaste": "excluded for dense CRM",
+    "antislopTiming": "AFTER unchanged"
+  },
+  "correctedDuringVerification": [
+    "Three initial new fixture failures came from the test text helper inserting extra spaces between JSX children; whitespace comparison was corrected without changing UI copy."
+  ],
+  "ownerPdfDecision": {
+    "answer": "Use selected styled appendix (recommended)",
+    "date": "2026-10-28",
+    "runtimeSubstitution": "not implemented in this inbox checkpoint; approved work is next"
+  },
+  "limits": [
+    "Prior automatic app-access rejection remains binding; no browser/app HTTP/CUA/CDP/Playwright workaround.",
+    "Source/controller/compiled declarations do not establish native visual/focus/keyboard/touch/zoom/real-stack acceptance.",
+    "No backend test rerun or backend/API/grant/schema/worker/push integration change.",
+    "No DB/service/private configuration/real records/main/push/merge/deploy.",
+    "Real scope/race/replay/full-stack, actual CI, AFTER and owner acceptance remain open.",
+    "Full redesign goal and remaining P0-P8 work stay active."
+  ],
+  "protectedWork": {
+    "unrelatedLessonAdditionsUnstaged": 35,
+    "motionNote": "docs/03-planning/prototype-motion-plan-2026-10-23.md",
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+  },
+  "snapshots": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4108,
+      "sha256": "655d978c6c3149bc05ed3e6249307cf6e44eb5f15823379e04f789cafbeb291b",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/app/workspace-work.css",
+      "bytes": 8371,
+      "sha256": "e44c93bf8e824600366d9148d9fa151fdc18b6283ebb513f47a36be140e1f9d3",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/realtime/notification-bell.tsx",
+      "bytes": 813,
+      "sha256": "83ee08243b6260fc5df88974c9f1021834f5ed3a740a19bc8005522e7fdd3b6e",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/shell/workspace-shell.tsx",
+      "bytes": 4567,
+      "sha256": "b2a027c1327cf0d1c1d86848087e9b419989f6c7de95bb9385f80578c2c79d19",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/work/notification-controls.tsx",
+      "bytes": 1527,
+      "sha256": "3fc6d69d6d0d5ebd88ccfaf0c7bc5dd29bc45783ca96f9ae922df48498ba7df1",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/work/notification-feed.ts",
+      "bytes": 4893,
+      "sha256": "25cac8bbff06226225f8810fc1fb31b3ae015f1481a573797dc982246df9cf57",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/work/notification-inbox.tsx",
+      "bytes": 6757,
+      "sha256": "d80e4a6a3432fe3045ff815bb6d6eabb83e836a6df7078b0b4708c0a6a6da38c",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/work/notification-panel.tsx",
+      "bytes": 3824,
+      "sha256": "a38c455d65c68fbf77af460318a4ea570c16c3159aeb418f0eb52c9157aac327",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/e2e/dashboard-header.spec.ts",
+      "bytes": 11887,
+      "sha256": "5c638a8f3d58d83639b7ae2080a9a735b2e73d0028d7fe2723ae3fdf2888a7bb",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/e2e/notifications-inbox.spec.ts",
+      "bytes": 6332,
+      "sha256": "e7652d68d804855dd3fc48aa627f301b3953feb5c934b794b5469b037d6ea0e0",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/review/v3.chrome.spec.ts",
+      "bytes": 13481,
+      "sha256": "18b4ea2bc6d0238da487a99fcdaacf2b2e6bc68cd70669016828568550d78866",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/notifications-workspace.test.mjs",
+      "bytes": 23344,
+      "sha256": "53102b6edb88222fc822aa04bb57e1b41652c752b6226917caac3216f61c3ff7",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 31138,
+      "sha256": "d5c94141bf2cb8359df9298a1a6c955c0a635d82c881cce90caecb64f8b14a5a",
+      "basis": "canonical staged Git blob"
+    }
+  ]
+}

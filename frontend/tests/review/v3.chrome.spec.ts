@@ -98,7 +98,7 @@ test("Approved V3: nine compositions, unpictured routes and contextual panels", 
       await page.getByRole("tab", { name: label, exact: true }).click(); await capture(`project-tab-${label}`); await geometry(page);
     }
     await page.getByRole("button", { name: "Rechercher", exact: true }).click(); await expect(page.getByRole("dialog", { name: "Recherche globale", exact: true })).toBeVisible(); await capture("global-search"); await page.keyboard.press("Escape");
-    await page.getByRole("button", { name: "Ouvrir les notifications", exact: true }).click(); await expect(page.getByRole("dialog", { name: "Votre boîte de réception", exact: true })).toBeVisible(); await capture("notification-sheet"); await page.getByRole("button", { name: "Fermer les notifications", exact: true }).click();
+    await page.getByRole("button", { name: "Ouvrir les notifications", exact: true }).click(); await expect(page.getByRole("dialog", { name: "Notifications", exact: true })).toBeVisible(); await capture("notification-popover"); await page.getByRole("button", { name: "Fermer les notifications", exact: true }).click();
     await page.goto("/leads/new");
     for (const width of [320, 360, 390, 768, 1024, 1440]) { await page.setViewportSize({ width, height: 900 }); await geometry(page); }
     await page.setViewportSize({ width: 390, height: 844 }); await capture("lead-form-mobile", true);

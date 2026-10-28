@@ -265,29 +265,6 @@ test("Numbered pages keep an escape from a reduced last page and omit disabled s
   assert.equal(find(NumberedPages({ ...props, page: 1, total: 0 }), "Button").length, 0);
 });
 
-test("Notification read denial hides the previous scoped entries and unread count", async () => {
-  const harness = stateHarness(), calls = [];
-  class ApiError extends Error { constructor(code, status) { super(code); this.code = code; this.status = status; } }
-  const item = { id: randomUUID(), title: "Synthetic scoped notification", context: "Synthetic context", kind: "task.due", href: "/contacts/" + randomUUID(), read_at: null, due_local: "2038-10-26T12:00:00+01:00", created_at: "2038-10-26T00:00:00Z" };
-  const { NotificationPanel } = loadServer("src/features/work/notification-panel.tsx", { globals: { crypto: { randomUUID } }, modules: {
-    react: harness.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" }, "@/components/icons": {},
-    "@/components/shared/crm-presentation": { CrmStatusBadge: "Badge" }, "@/components/shared/record-entry": { RecordEntry: "Entry" }, "@/lib/format": { formatInstant: value => value },
-    "@/components/ui/button": { Button: "Button" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" },
-    "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/contacts/record-states": { RecordError: "Error" },
-    "@/features/contacts/use-query": { queryPath: (_path, args) => { calls.push({ type: "query", args }); return "synthetic"; }, useQuery: () => ({ value: { items: [item], total: 1, page: 1, page_size: 20, unread_total: 1 }, refresh() {} }) },
-    "@/features/schedule/time": { localLabel: value => value }, "@/hooks/use-hydrated": { useHydrated: () => true },
-    "@/lib/api/client": { ApiError }, "@/lib/api/command": { apiCommand: async (path, body) => { calls.push({ type: "read", path, body }); throw new ApiError("FORBIDDEN", 403); } },
-    "./contracts": {}, "@/features/realtime/push-control": { PushControl: "Push" },
-  } });
-  const render = () => harness.render(NotificationPanel);
-  const view = render(); assert.equal(find(view, "Entry").length, 1);
-  find(find(view, "Entry")[0].props.actions, "Button").find(button => button.props.action === "read").props.onClick(); await delay(0);
-  assert.equal(find(render(), "Entry").length, 0);
-  assert.equal(find(render(), "span").some(span => span.props.className === "kay-work-count"), false);
-  const read = calls.find(call => call.type === "read"); assert.equal(read.path, `/api/v1/notifications/${item.id}/read`); assert.deepEqual(JSON.parse(JSON.stringify(read.body)), {});
-  assert.ok(calls.filter(call => call.type === "query").every(call => call.args.page_size === 20));
-});
-
 test("Unsaved guard retains drafts on cancel, blocks pending commands and discards only after confirmation", () => {
   const harness = stateHarness();
   class Element { dataset = {}; focus() {} }

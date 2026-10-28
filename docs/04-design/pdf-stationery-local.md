@@ -95,5 +95,6 @@ other P0–P8 gaps stay open. Main/push/merge/deployment are untouched.
 
 Read-only M01 follow-up,2026-10-28: the [concrete appendix comparison and
 proposal](pdf-appendix-reconciliation.md) checks all12 selected/original pairs
-and641 literal chunks. The provenance choice is pending; this does not change
-the current unchanged-original renderer or imply legal/native acceptance.
+and641 literal chunks. The owner subsequently chose the selected styled appendix
+on2026-10-28. That approved implementation and its gates are next; the renderer
+is still unchanged at this inbox checkpoint, without legal/native acceptance.

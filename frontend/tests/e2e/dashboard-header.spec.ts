@@ -58,7 +58,7 @@ test("Dashboard header: full-width photo hero, utility actions and direct audit 
   await page.setViewportSize({ width: 1440, height: 900 });
   const notifications = header.getByRole("button", { name: "Ouvrir les notifications" });
   await notifications.click();
-  await expect(page.getByRole("dialog", { name: "Votre boîte de réception" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Notifications" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(notifications).toBeFocused();
   const account = header.getByRole("button", { name: /^Compte de / });

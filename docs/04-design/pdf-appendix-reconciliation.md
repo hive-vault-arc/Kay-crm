@@ -13,9 +13,10 @@ fields, clauses/sources/warnings, current finance restrictions and the absence
 of automatic filling/signatures. Stored versions and same-key replay remain
 immutable. No duplicate appendix or new user-facing generation option is proposed.
 
-This proposal awaits the owner's appendix choice. Runtime substitution has not
-been implemented. The alternative keeps the current unchanged original appendix;
-both options retain the selected preparation sheet already ported.
+Owner decision,2026-10-28: “Use selected styled appendix (recommended)”. This
+authorizes the proposed future-new-PDF substitution, preserved original assets
+and recorded provenance. Implementation and its technical/native gates remain
+pending; current runtime output is still unchanged at this checkpoint.
 
 The [migration plan's M01 boundary](../03-planning/design-prototype-migration-2026-10-25.md#6-known-integration-gaps-and-how-they-fit)
 says “Do not silently substitute either document.” The current
@@ -90,5 +91,5 @@ No app/browser/CUA/CDP/HTTP workaround, database/service/private configuration,
 real records, main, push/merge/deploy. Native generation/download, full-stack,
 all-page visual, actual CI/AFTER and owner acceptance remain open.
 
-Owner choice: pending. Continue independent migration work while it is pending;
-the full redesign goal remains active.
+Owner choice: approved for the selected styled appendix. Apply the approved
+change after the current inbox slice; the full redesign goal remains active.

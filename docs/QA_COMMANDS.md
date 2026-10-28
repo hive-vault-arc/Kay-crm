@@ -1,5 +1,16 @@
 # KAY QA command register
 
+Selected notification inbox,2026-10-28:505 frontend units pass;17 new actual
+hook/render/model cases replace one older denial case with its coverage retained.
+`npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass in frontend. Inventories:63 semantic glyphs,
+102 consumers/341 icon sites,489 Button sites/0 violations. A permitted PostCSS
+`node --input-type=module -` probe checks seven emitted geometry/touch/short-window
+rules in two CSS chunks; it does not prove native layout. All254 frozen inputs
+are unchanged. One new real-stack/touch journey and two legacy dialog selectors
+are prepared/type-checked, not run. No backend rerun or app/real-stack acceptance.
+[Evidence](03-planning/design-migration-evidence/notification-inbox-2026-10-28.json).
+
 Read-only appendix comparison,2026-10-28: explicit backend venv Python runs
 `backend/tools/compare_pdf_appendices.py --prototype <frozen-root> --output
 docs/03-planning/design-migration-evidence/pdf-appendix-comparison-2026-10-28.json`

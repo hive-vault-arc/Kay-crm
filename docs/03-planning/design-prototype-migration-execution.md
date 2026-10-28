@@ -27,7 +27,7 @@ private data/file rules stay intact. No demo data is migrated into the CRM.
 | P3 Leads/Contacts | Contacts2-tab overview/activity, dossiers below responsibility, supporting drawers; Leads4-tab detail/status picker; Lead/Contact/Deal directory cards and compact tool placement; desktop-only paged Kanban, per-value editing and full Contact/Lead create/edit sheet implemented | Remaining document parity, browser selector migration and native review |
 | P4 inventory/owners | Selected compact image cards, programme2-tab/standalone dossier, Units filter drawer, right-only Patrimoine, clickable short steppers, owner identity/reuse, legal-owner/hierarchy forms, photo gallery/upload, owner directory/drawers and focused per-offer actions/forms implemented; typed mixed-programme query correction | Final per-domain/old-browser reconciliation and native review |
 | P5 Deals/finance/PDF | Deal4-tab workspace, selected project/stock/proposal home, focused proposal forms/current comparison, ordinary/status/reservation/outcome menu, per-value editing, full create/edit sheet, role-gated Finance drawer with inline receipts/dossier history/focused forms/exact retry, selected2-tab PDF preparation/true-creator history with per-model draft recovery and selected server-rendered preparation stationery | Remaining restyled-appendix content/provenance and per-field context refinements; old native selectors and final native security/stock/focus/performance checks |
-| P6 work/schedule | Task/notification entries plus selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); inbox refinements and native workflow review |
+| P6 work/schedule | Task/notification entries, compact header inbox/shared full-list recovery, selected day-column calendar, drawer filters, phone agenda, date-only booking, grouped task/activity forms plus routed visit drawers and retained calendar implemented; current commands retained | Prepared separate general Notes storage/API/history (migration0036 unapplied); old selectors and native workflow review |
 | P7 remaining surfaces | Help/settings/dashboard/search, prepared-PDF discovery/history, export review/jobs, selected audit/typed attribution, contact import and public intake implemented; template visibility shared across reads | Remaining report/directory refinements and final per-domain reconciliation; native/real SQL/full-stack/product review |
 | P8 final verification | Pending owner-directed after-implementation stage | Native/full-stack/visual/accessibility/CI gate |
 | P9 merge | Not authorized yet | Owner confirmation of final verified candidate |
@@ -2004,3 +2004,57 @@ Cached whitespace and the canonical staged tool hash pass. Independent P6 source
 inspection identifies the header inbox still using the old large Sheet rather
 than the frozen compact notification popover; its correction is next, without
 changing the pending appendix choice.
+
+Owner M01 decision,2026-10-28: “Use selected styled appendix (recommended)”.
+The concrete proposal is approved for future new PDFs, preserving originals and
+explicit derivation hashes. No repeat permission is needed for that implementation.
+Apply after the inbox slice and verify it; current renderer remains unchanged
+until that work. This is not branch merge or native/product acceptance.
+
+## Selected compact personal inbox,2026-10-28
+
+Continued P6 after79e7656. The header now opens the selected360px/ten-row
+Popover with quick filters, compact tonal link/context entries, read icons and
+discreet real-count accessible attention dot. Tout voir transfers the active
+filter to the shared twenty-row full drawer; the existing route/push controls
+remain. The CTA remains for small/empty lists to retain those real capabilities.
+Close/filter targets use44px rather than the prototype32/36px, under the existing
+touch rule. Available viewport height and a short-window scroll fallback prevent
+clipped controls. Existing theme/menu motion/reduced-motion tokens are reused.
+
+Preview/full share an existing-API feed with exact page/state/ID validation,
+synchronous hydration/write locks, same-ID/body/POST/key unknown recovery and
+abort/late suppression. Current query/read denial masks rows/counts and clears
+private attempts before fresh retry. Successful reads refresh the feed and emit
+only the notifications invalidation topic, including when socket updates are
+disabled. There is no invented read time, business transition or new backend grant.
+Close/all/route focus scopes avoid taking focus from a new drawer/destination;
+read completion restores filter/scroll only without intervening user focus.
+
+505 frontend units/lint/typecheck and pinned Next16.4.2 build pass. Seventeen new
+actual hook/render/model tests replace one older notification denial case,
+retaining its coverage; the initial three fixture failures came from a test text
+helper inserting extra spaces between JSX fragments, corrected without changing
+UI copy. Inventory:63 glyphs,102 consumers/341 icon sites,489 Buttons/0 violations.
+The production history bootstrap executes standalone; seven emitted CSS geometry/
+touch/short-window checks pass. All254 frozen inputs remain unchanged. A real
+isolated-stack/touch journey and two old notification dialog selectors are
+prepared/type-checked, not run; broader old native suites remain unreconciled.
+
+React best-practices and its event/listener/transient-ref guidance were read and
+applied. Existing useQuery/shared listeners remain; no SWR/dependency substitute.
+Original-machine mandatory skills remain unavailable/not claimed, dense CRM
+excludes marketing design-taste and AFTER timing remains. Existing app-access
+rejection stays binding. No backend rerun, API/schema/grant/worker/push change,
+real DB/service/private configuration/records/main/push/merge/deploy. Native
+current-role/stock/race/focus/zoom/visual/full-stack/CI/AFTER/owner gates and full
+P0-P8 goal remain open. The owner approved styled PDF appendices during this
+slice; record/original provenance remains preserved and implementation is next.
+[Contract](../04-design/notification-inbox-local.md) and
+[evidence](design-migration-evidence/notification-inbox-2026-10-28.json).
+
+Inbox checkpoint repository/index validation passes8797 files/0 refused/14
+ignore probes; repository-only docs pass1257 local links/42 acceptance mappings/
+13 Mermaid pairs/12 API JSON samples. Cached whitespace and all13 staged source
+hashes pass. The unrelated35 lesson additions/motion note remain unstaged; main
+is unchanged. These source checks do not add native or product acceptance.

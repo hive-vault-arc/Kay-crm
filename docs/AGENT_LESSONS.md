@@ -1769,3 +1769,16 @@ cannot establish visual placement or legal equivalence; preserve provenance and
 obtain a document-contract choice where the current generation promises unchanged
 original bytes. A read-only comparison utility must refuse output into its source
 PDF/JSON tree. Keep native/real-stack/owner gates separate from this evidence.
+
+
+## Compact notification previews must share current authority and read recovery,2026-10-28
+
+A header preview cannot use a different read-state controller from the full inbox.
+Keep bounded server filters/totals, exact uncertain ID/body/method/key retry and
+abort/late suppression in one controller. Current read/query denial must mask
+previous entries and counts before a fresh read can expose them. Publish only the
+existing scoped invalidation topic after acknowledged read-state changes so the
+bell and other inbox views refresh even with socket delivery off. Preserve access
+to the complete inbox and its existing configured controls when the preview is
+small or empty. Test interrupted acknowledgement, scope loss during a pending
+read and delayed focus/scroll; compiled CSS is not native touch/focus acceptance.

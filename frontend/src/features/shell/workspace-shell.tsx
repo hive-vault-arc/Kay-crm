@@ -10,8 +10,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { SearchTrigger } from "@/features/discovery/search-trigger";
 import { SessionMonitor } from "@/features/auth/session-controls";
 import { LiveUpdates } from "@/features/realtime/live-updates";
-import { LiveNotificationIcon } from "@/features/realtime/notification-bell";
-import { NotificationPanel } from "@/features/work/notification-panel";
+import { NotificationInbox } from "@/features/work/notification-inbox";
 import { useHydrated } from "@/hooks/use-hydrated";
 import type { PublicIdentity } from "@/lib/auth/contracts";
 import { HelpNavigationItem, Navigation, SettingsNavigationItem } from "./navigation";
@@ -48,7 +47,7 @@ export function AppShell({ children, identity }: { children: ReactNode; identity
         <Link href="/dashboard" aria-label="KAY · Tableau de bord"><Brand appearance="transparent" /></Link>
       </div>
       <div className="kay-global-tools"><div className="kay-global-search"><SearchTrigger responsive /></div><ThemeControl />
-        <Sheet><SheetTrigger asChild><Button variant="ghost" size="icon" aria-label="Ouvrir les notifications" disabled={!hydrated}><LiveNotificationIcon /></Button></SheetTrigger><SheetContent closeLabel="Fermer les notifications" className="overflow-y-auto p-6"><SheetHeader className="mb-6 p-0 pr-8 text-left"><SheetTitle>Notifications</SheetTitle><SheetDescription>Votre suivi et les notifications internes accessibles.</SheetDescription></SheetHeader><NotificationPanel /></SheetContent></Sheet>
+        <NotificationInbox />
         <WorkspaceAccount user={identity.user} />
       </div>
     </header>
