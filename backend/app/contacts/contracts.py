@@ -173,7 +173,7 @@ class ListQuery(StrictBody):
     q: str = Field(default="", max_length=160)
     status: EnquiryStatus | Literal["converted"] | None = None
     source: ManualSource | Literal["website"] | None = None
-    assigned_agent_id: UUID | None = None
+    assigned_agent_id: UUID | Literal["unassigned"] | None = None
     received_from: date | None = None
     received_to: date | None = None
     contact_id: UUID | None = None

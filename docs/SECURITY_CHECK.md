@@ -1,5 +1,25 @@
 # KAY security check for changes
 
+## Selected dossier directory filters,2026-10-28
+
+The exact unassigned sentinel is read/export-only; NewEnquiry/assignment command
+models remain UUID-only. Current canonical Contact scope and the Agent non-null
+enquiry-assignment rule precede null filtering/count/page, preventing queue
+existence/count leaks. Scoped option metadata reflects actual enquiry assignees
+and contact responsibility separately, including inactive readable history, not
+assignment eligibility or unrelated staff. Known contacts/identity live topics
+already cover these reads. Duplicate/unknown/scope overrides fail closed.
+
+Affair creation/modification dates use independent validated Casablanca civil
+bounds before totals/stage counts/pages; maximum end dates avoid overflow.
+Existing revocable identity, business writes/versions, CSV/private transfer and
+canonical receipt behavior remain.534 connection-forbidden backend units and564
+frontend units/lint/types/build/history/static app checks pass. Four real SQL/two
+new native cases remain prepared/not run; previous prepared Contacts payloads
+now parse their real facade schema. No DB/app-access workaround, migration,
+private config/account/real record/worker/transfer, main/push/merge/deploy.
+[Contract](04-design/dossier-directory-local.md).
+
 ## Selected Contacts directory,2026-10-28
 
 Canonical current Contact scope/merge/archive authority precedes every new

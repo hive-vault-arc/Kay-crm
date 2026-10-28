@@ -1,5 +1,17 @@
 # Acceptance scenarios
 
+Selected dossier directory filters,2026-10-28 (AT-03/04/22/24/29/39):
+verify M/A queue filtering/status totals/paging/export, Agent empty queue and
+UUID-only assignment writes. Enquiry assignee choices must reflect assigned
+users rather than contact ownership, include readable inactive history and
+disappear after contact revocation. Affair creation and modification civil-day
+ranges must intersect before scoped counts/pages; invalid drafts preserve both
+applied ranges and page. Retain legacy response shapes and compact phone/list/
+desktop board behavior.15 backend and8 frontend cases pass; four PostgreSQL and
+two browser cases are prepared/not run. Earlier Contacts browser fixture bodies
+are now runtime-schema validated before a command, still not browser-verified.
+[Scope](../04-design/dossier-directory-local.md).
+
 Selected Contacts directory,2026-10-28 (AT-03/04/22/24/29/39): verify
 current scope before responsibility/role/language/country/creation/linked filters
 and whole-result counts/pages/CSV. Working-dossier counts must match Contact detail,

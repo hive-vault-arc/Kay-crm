@@ -57,3 +57,14 @@ filters. Review aliases and migrate old selectors against current selected
 markup. Keep genuine missing capability work separate from unselected AFTER
 visual findings. P8 is still the final actual-stack/native/device/CI review;
 P9 merge remains owner-gated. App restrictions do not authorize alternate access.
+
+## Directory field follow-through,2026-10-28
+
+[Prospect/Affair filter source reconciliation](../04-design/dossier-directory-local.md)
+now covers the selected unassigned prospect choice, separate actual enquiry
+assignees/contact responsibility (including inactive readable labels), and Affair
+creation dates alongside retained modification criteria. Read scope precedes
+all totals/status/stage counts/pages; command assignment remains UUID-only.
+Prepared earlier Contacts browser bodies now use a runtime-validated factory.
+Four real SQL/two new native cases remain unrun. Continue exact inventory/detail/
+settings/job field and command context coverage; this does not close P0.

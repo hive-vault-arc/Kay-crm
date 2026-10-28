@@ -1,5 +1,28 @@
 # KAY QA command register
 
+Selected dossier directory filters,2026-10-28: backend cwd explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:534 pass/716 integration
+deselected,15 added compiled SQL/stub-read/ASGI/query/write-boundary cases.
+Ruff check and format--check pass8 changed Python paths; backend-cwd mypy
+passes220 sources. Four new isolated PostgreSQL cases are prepared/not run.
+Frontend `npm run test:unit`:564 pass/0 failed/skipped, eight added schema/
+facade/actual picker/directory/hook/fixture cases. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass;64 glyphs/105 consumers/349 icon sites and497
+Button sites have0 violations. Static Frontend Taste app lint covers four
+changed UI files,0 findings; no native/aesthetic review is claimed. Two new
+browser journeys and two corrected earlier Contacts journeys are prepared and
+typechecked, not run. Their command factory also passes actual facade schema
+validation in a pure test.
+
+A reused SQL-loop variable first failed mypy; the date loop now has its own
+name and the final220-source gate passes. Source review found missing emails/
+phone labels in earlier prepared browser fixtures, corrected before any run.
+No tests/authority/type/compatibility gates were weakened. No actual SQL/app/
+browser/HTTP/DB/service/config/account/import/export/transfer/migration,
+main/push/merge/deploy or final review.
+[Contract](04-design/dossier-directory-local.md).
+
 Selected Contacts directory,2026-10-28: backend cwd explicit venv
 `.venv/Scripts/python.exe -m tests.unit_runner`:519 passed/712 integration
 deselected,20 added pure/compiled SQL/stubbed function/ASGI/export replay cases.

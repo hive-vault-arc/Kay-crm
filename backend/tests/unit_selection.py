@@ -22,6 +22,7 @@ MODULES = frozenset(
         "test_inventory_directory_filters_unit.py",
         "test_development_phase_unit.py",
         "test_contact_directory_unit.py",
+        "test_dossier_directory_unit.py",
         "test_visit_notes_unit.py",
         "test_workspace_reports_unit.py",
         "test_prepared_search_unit.py",

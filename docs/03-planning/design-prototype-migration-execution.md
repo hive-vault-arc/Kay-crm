@@ -2378,3 +2378,23 @@ Contacts source gate:519 connection-forbidden backend units/712 deselected,
 static app lint2 files pass. Four SQL/two native cases are prepared, not run.
 Repository-only documentation and index checks pass.
 [Checkpoint evidence](design-migration-evidence/contact-directory-2026-10-28.json).
+
+## Prospect/Affair directory field follow-through,2026-10-28
+
+The selected unassigned queue option is now a strict read/export sentinel,
+not a write identity. The filter picker distinguishes active assignment, current
+Contact responsibility and actual enquiry assignment; Agent directory choices
+remain scoped. Affair creation dates and modification dates are separate and
+intersect before totals/stages/pages. The existing layout, compact cards/desktop
+boards, lifecycle/stock and exact commands remain.
+[Contract](../04-design/dossier-directory-local.md).
+
+534 connection-forbidden backend units/716 deselected,564 frontend units, Ruff8/
+mypy220, frontend lint/types/build/history and static app lint4 pass. Four SQL/two
+new native cases are prepared/not run. Two earlier prepared Contacts journeys now
+use command bodies validated against the facade before issuing a request; source
+correction is not native acceptance. Continue P0 exact detail/inventory/settings/
+job field/action coverage from the current matrix. No migration or main promotion.
+
+[Directory follow-through evidence](design-migration-evidence/dossier-directory-2026-10-28.json)
+records this checkpoint independently of final native/SQL/owner acceptance.

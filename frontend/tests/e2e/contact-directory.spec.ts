@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { test, expect, createActor, removeActor, signIn, clearActorContext } from "../helpers/auth";
 import { staffCommand } from "../helpers/leads";
+import { directoryLeadDraft } from "../helpers/directory-fixtures";
 
 for (const [role, width] of [["agent", 1440], ["manager", 390]] as const) {
   test(`selected Contacts filters and dossier counts stay scoped for ${role} at ${width}px`, async ({ page }) => {
@@ -9,10 +10,7 @@ for (const [role, width] of [["agent", 1440], ["manager", 390]] as const) {
     try {
       await signIn(page, account);
       const name = `SYN-DIRECTORY-${randomUUID().slice(0, 8)}`;
-      const response = await staffCommand(page, "enquiries", {
-        new_contact: { name, type: "person", phones: [{ number: "+212600000099", is_primary: true }], roles: ["buyer"], country: "MA", languages: ["french"], ...(role === "manager" ? { primary_agent_id: owner.id } : {}) },
-        message: "Demande synthétique de réconciliation", source: "phone", initial_budget: "500000", campaign_source: "facebook", ...(role === "manager" ? { assigned_agent_id: owner.id } : {}),
-      });
+      const response = await staffCommand(page, "enquiries", directoryLeadDraft(name, "+212600000099", role === "manager" ? { primaryAgentId: owner.id, assignedAgentId: owner.id } : {}));
       expect(response.status()).toBe(200);
       await page.setViewportSize({ width, height: 900 });
       await page.goto("/contacts");

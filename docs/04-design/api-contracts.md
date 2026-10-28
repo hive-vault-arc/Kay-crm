@@ -1,5 +1,13 @@
 # HTTP contracts for `/api/v1`
 
+Selected dossier directory filters,2026-10-28: enquiry list/export
+`assigned_agent_id=unassigned` is read-only and preserves Agent exclusion of
+unassigned enquiries. New `GET /enquiries/assigned-options` returns only current
+scoped assignee id/name pages, including inactive assignees; write assignment
+remains UUID-only. Affairs add independent inclusive creation-date bounds while
+retaining modification dates and unchanged response shapes.
+[Contract](dossier-directory-local.md).
+
 Selected Contacts directory,2026-10-28: exact GET Contacts opt-in
 `X-Kay-Contact-Directory:1` adds coherent page-bounded dossier counts.
 Responsibility/linked-dossier/role/creation filters and creation sort precede

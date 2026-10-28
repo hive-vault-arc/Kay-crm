@@ -1,5 +1,12 @@
 # SP-11 implemented deal contract
 
+Selected affair directory dates/responsibility,2026-10-28: the existing
+selected filters now distinguish creation and modification periods and use current
+readable contact responsibility rather than active assignment eligibility. Both
+periods intersect before scoped totals/stage counts/paging. No stage/offer/stock,
+write, receipt or ownership policy changes.
+[Directory contract](dossier-directory-local.md).
+
 Selected workspace integration, 2026-10-27: proposals live in Projets, with
 desktop table/phone cards and one focused create/edit drawer. Existing commands,
 exact amounts/periods, both reviewed versions and stock independence remain.

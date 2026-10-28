@@ -76,7 +76,7 @@ export const duplicateSchema = z.object({ contacts: z.array(z.object({ id: z.uui
 export const listQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(1000000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional(),
   q: z.string().trim().max(160).optional(), sort: z.enum(["-updated_at", "-received_at", "-created_at", "name"]).optional(), status: statusSchema.optional(), source: receivedSourceSchema.optional(),
-  assigned_agent_id: z.uuid().optional(), received_from: z.iso.date().optional(), received_to: z.iso.date().optional(), contact_id: z.uuid().optional(),
+  assigned_agent_id: z.union([z.uuid(), z.literal("unassigned")]).optional(), received_from: z.iso.date().optional(), received_to: z.iso.date().optional(), contact_id: z.uuid().optional(),
   archive: z.enum(["active", "archived", "all"]).optional(),
   record_archive: z.enum(["active", "archived", "all"]).optional(),
   owner_directory: z.literal("true").optional(),
@@ -97,7 +97,7 @@ export type StaffRole = "administrator" | "manager" | "agent";
 export function contactRoute(key: string, method: string) {
   if (["contacts", "enquiries"].includes(key)) return method === "GET" || method === "POST";
   if (key === "contacts/resolve-phone") return method === "POST";
-  if (["contacts/assignment-options", "contacts/responsible-options", "contacts/metadata"].includes(key)) return method === "GET";
+  if (["contacts/assignment-options", "contacts/responsible-options", "enquiries/assigned-options", "contacts/metadata"].includes(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/(timeline|assignment-events)$/.test(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/portfolio$/.test(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/collaborators$/.test(key)) return method === "PUT";

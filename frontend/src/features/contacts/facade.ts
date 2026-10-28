@@ -19,11 +19,11 @@ export async function relayContacts(key: string, request: Request, requestId: st
   const suffix = key.split("/")[2];
   const history = suffix === "timeline" || suffix === "assignment-events";
   const portfolio = suffix === "portfolio";
-  const list = ["contacts", "enquiries", "contacts/assignment-options", "contacts/responsible-options"].includes(key) || history || portfolio;
+  const list = ["contacts", "enquiries", "contacts/assignment-options", "contacts/responsible-options", "enquiries/assigned-options"].includes(key) || history || portfolio;
   const mutation = request.method !== "GET";
   const params = [...url.searchParams];
   if ((url.search && (!list || mutation)) || new Set(params.map(([name]) => name)).size !== params.length || !(portfolio ? ownerPortfolioQuerySchema : listQuerySchema).safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
-  if (["contacts/assignment-options", "contacts/responsible-options"].includes(key) && params.some(([name]) => !["q", "page", "page_size"].includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);
+  if (["contacts/assignment-options", "contacts/responsible-options", "enquiries/assigned-options"].includes(key) && params.some(([name]) => !["q", "page", "page_size"].includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (["contacts", "enquiries"].includes(key) && !validListKind(key as "contacts" | "enquiries", listQuerySchema.parse(Object.fromEntries(params)))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (history && params.some(([name]) => !["page", "page_size"].includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (key === "enquiries" && params.some(([name]) => name === "owner_directory")) return facadeError(422, "VALIDATION_ERROR", requestId);
@@ -53,6 +53,6 @@ export async function relayContacts(key: string, request: Request, requestId: st
       return Response.json({ error: { code, message: frenchApiError(code), field_errors: {}, request_id: requestId }, ...details }, { status: code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
     }
     const schema = suffix === "portfolio" ? ownerPortfolioSchema : suffix === "preview" ? previewSchema : suffix === "timeline" ? timelineSchema : suffix === "assignment-events" ? assignmentsSchema : key.startsWith("enquiries/") && (suffix === "archive" || suffix === "restore") ? recordLifecycleResultSchema : suffix ? commandResultSchema : key === "contacts/resolve-phone" ? z.object({ available: z.literal(true) }).strict() : key === "contacts/assignment-options" ? agentsSchema : request.method === "GET" && key === "contacts" ? contactsSchema : request.method === "GET" && key === "enquiries" ? enquiriesSchema : key.startsWith("contacts") ? contactSchema : enquirySchema;
-    return Response.json((key === "contacts/metadata" ? qualificationMetadataSchema : key === "contacts/responsible-options" ? agentsSchema : schema).parse(upstream.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
+    return Response.json((key === "contacts/metadata" ? qualificationMetadataSchema : ["contacts/responsible-options", "enquiries/assigned-options"].includes(key) ? agentsSchema : schema).parse(upstream.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

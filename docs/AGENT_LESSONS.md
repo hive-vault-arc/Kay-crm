@@ -1846,3 +1846,16 @@ defaulted filter fields to model_dump changes old export receipt hashes: omit
 only new, unsupplied keys from canonical payloads and test the real replay path.
 Casablanca offsets in a future/current month are not a test constant; use the
 pinned known civil-day fixture and retain authoritative backend tzdata.
+
+
+## Dossier directory filter identity and prepared fixtures,2026-10-28
+
+Enquiry assignment and canonical Contact responsibility are different fields:
+filter options must derive the actual readable relation, not active assignable
+accounts or the other relation. A managerial unassigned queue is a read sentinel,
+never a UUID substitute in writes; retain Agent non-null scope before counts.
+Match date controls to the selected predicate (creation versus modification),
+label each meaning, and intersect both ranges explicitly. Prepared browser bodies
+can typecheck as generic objects while violating a strict facade (for example
+missing email arrays/phone labels); validate shared synthetic payload factories
+against the real runtime schema before issuing commands.

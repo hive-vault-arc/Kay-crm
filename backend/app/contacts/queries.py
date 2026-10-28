@@ -187,10 +187,12 @@ def list_in_session(
             enquiries = enquiries.where(Enquiry.rating == query.rating)
         if query.source:
             enquiries = enquiries.where(Enquiry.source == query.source)
-        if query.assigned_agent_id:
+        if query.assigned_agent_id == "unassigned":
+            enquiries = enquiries.where(Enquiry.assigned_agent_id.is_(None))
+        elif query.assigned_agent_id:
             enquiries = enquiries.where(Enquiry.assigned_agent_id == query.assigned_agent_id)
         for value, end in ((query.received_from, False), (query.received_to, True)):
-            if value:
+            if value and not (end and value == datetime.max.date()):
                 bound = datetime.combine(
                     value + timedelta(days=1) if end else value,
                     time.min,
@@ -289,6 +291,17 @@ def assignment_options(database: Database, token: str, query: ListQuery) -> dict
 
 def responsible_options(database: Database, token: str, query: ListQuery) -> dict[str, object]:
     """Filter choices are readable responsibility, not active assignability."""
+    return filter_agent_options(database, token, query)
+
+
+def enquiry_assignee_options(database: Database, token: str, query: ListQuery) -> dict[str, object]:
+    """Assignment labels only from currently readable enquiries, including inactive staff."""
+    return filter_agent_options(database, token, query, enquiries=True)
+
+
+def filter_agent_options(
+    database: Database, token: str, query: ListQuery, *, enquiries: bool = False
+) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
         identity = current_identity(session, token)
@@ -297,7 +310,15 @@ def responsible_options(database: Database, token: str, query: ListQuery) -> dic
         )
         if identity.user.role == "agent":
             contacts = contacts.where(Contact.archived_at.is_(None))
-        users = select(User).where(User.id.in_(contacts))
+        selected = (
+            select(Enquiry.assigned_agent_id).where(
+                Enquiry.contact_id.in_(contacts.with_only_columns(Contact.id)),
+                Enquiry.assigned_agent_id.is_not(None),
+            )
+            if enquiries
+            else contacts
+        )
+        users = select(User).where(User.id.in_(selected))
         if query.q:
             users = users.where(User.display_name.contains(query.q, autoescape=True))
         total = session.scalar(select(func.count()).select_from(users.subquery())) or 0

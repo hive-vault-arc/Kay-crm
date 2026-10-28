@@ -17,7 +17,7 @@ export function exportReview(kind: "contacts" | "enquiries", filters: Record<str
   if (f.received_to) labels.push(`Reçus jusqu’au ${f.received_to}`);
   if (f.country) labels.push(`Pays : ${new Intl.DisplayNames("fr", { type: "region" }).of(f.country) ?? f.country}`);
   if (f.language) labels.push(`Langue : ${languageLabels[f.language] ?? f.language}`);
-  if (f.assigned_agent_id) labels.push("Agent choisi dans la liste");
+  if (f.assigned_agent_id) labels.push(f.assigned_agent_id === "unassigned" ? "Prospects non attribués" : "Agent attribué choisi dans la liste");
   if (f.primary_agent_id) labels.push("Agent responsable choisi dans la liste");
   if (f.linked) labels.push(`Dossiers non archivés : ${{ enquiries: "avec prospects hors convertis", deals: "avec affaires", none: "sans prospect ni affaire" }[f.linked]}`);
   if (f.role) labels.push(`Rôle : ${roleLabels[f.role]}`);
