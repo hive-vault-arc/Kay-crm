@@ -42,17 +42,17 @@ const committed = source => ({ ...source, state: "committed", result: { batch_id
 
 function controller(command = async () => { throw new Error("Unexpected synthetic command"); }, initial = batch()) {
   const h = hooks(), calls = [], blocked = [], denied = [], drafts = [];
-  let projection = initial, readError, refreshes = 0, uploadBusy = false;
+  let projection = initial, readError, refreshes = 0, uploadBusy = false, dispatch = true, synchronousUpload = false;
   const blockedChanged = value => blocked.push(value), authorityDenied = failure => denied.push(failure);
   const loaded = loadServer("src/features/imports/use-import-review.ts", { modules: {
     react: h.react, "@/components/shared/dossier-form": { useDossierDraft: (...args) => drafts.push(args) },
     "@/features/contacts/use-query": { useQuery: () => ({ value: projection, error: readError, refresh: () => { refreshes++; projection = undefined; } }) },
     "@/lib/api/client": { ApiError }, "./approval-review": reviewModule, "./contracts": contracts,
-    "./client": { importCommand: async (...args) => { calls.push(args); return command(...args); } },
+    "./client": { importCommand: async (...args) => { calls.push(args); if(dispatch)args[5]?.dispatched?.();return command(...args); } },
   }, globals: { AbortController, crypto: { randomUUID } } });
-  const render = () => { const result = h.render(() => loaded.useImportReview(initial.id, uploadBusy, blockedChanged, authorityDenied)); h.flush(); return result; };
+  const render = () => { const result = h.render(() => loaded.useImportReview(initial.id, uploadBusy, blockedChanged, authorityDenied, () => synchronousUpload)); h.flush(); return result; };
   render(); render();
-  return { render, calls, blocked, denied, drafts, dispose: h.dispose, change: next => { projection = next; }, fail: failure => { projection = undefined; readError = failure; }, upload: value => { uploadBusy = value; }, refreshes: () => refreshes };
+  return { render, calls, blocked, denied, drafts, dispose: h.dispose, change: next => { projection = next; }, fail: failure => { projection = undefined; readError = failure; }, upload: value => { uploadBusy = value; }, uploadLock: value => { synchronousUpload = value; }, dispatch: value => { dispatch = value; }, refreshes: () => refreshes };
 }
 
 test("Import approval freezes validated file/hash/fallback/counts and detects every changed preview", () => {
@@ -117,12 +117,13 @@ test("The batch report keeps actions above rows, hides stale counts during appro
     react: h.react, "react/jsx-runtime": runtime, "@/components/ui/badge": { Badge: "Badge" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/alert-dialog": Object.fromEntries(["AlertDialog", "AlertDialogCancel", "AlertDialogContent", "AlertDialogDescription", "AlertDialogTitle"].map(name => [name, name])),
     "@/components/shared/record-workspace": { RecordSection: "RecordSection" }, "@/components/shared/file-picker": { fileSizeLabel: () => "2 Ko" }, "@/features/contacts/agent-picker": { AgentPicker: "AgentPicker" }, "@/features/contacts/numbered-pages": { NumberedPages: "NumberedPages" }, "@/features/contacts/record-states": { RecordError: "RecordError" }, "@/lib/format": { formatInstant: value => value }, "./use-import-review": { useImportReview: () => model }, "./import-rows": { ImportRows: "ImportRows" },
   } });
-  const render = () => h.render(() => loaded.BatchReview({ id: source.id, uploadBusy: false, blockedChanged() {}, authorityDenied() {} }));
+  const resumed=[];const render = () => h.render(() => loaded.BatchReview({ id: source.id, uploadBusy: false, blockedChanged() {}, authorityDenied() {},resume:value=>resumed.push(value.id) }));
   let view = render(); assert.equal(nodes(nodes(view, "RecordSection")[0].props.action, "Button").length, 3); assert.equal(nodes(view, "ImportRows").length, 1); assert.equal(nodes(view, "Badge").length, 4);
   model = { ...model, data: { ...source, counts: { ...source.counts, eligible: 999 } }, staleReview: true }; view = render();
   assert.ok(text(nodes(view, "AlertDialogDescription")[0]).includes("2 nouveau(x)")); assert.ok(!text(nodes(view, "AlertDialogDescription")[0]).includes("999"));
   assert.equal(nodes(view, "Button").find(button => text(button) === "Confirmer l’import").props.disabled, true);
   for (const pending of [{ uncertain: true }, { uncertain: false, busy: true, operation: "approval" }]) { model = { ...model, ...pending }; view = render(); assert.equal(nodes(view, "ImportRows").length, 0); assert.equal(nodes(view, "Badge").length, 0); assert.equal(nodes(view, "AgentPicker").length, 0); assert.ok(text(view).includes("aucun résultat définitif")); }
+  model={...model,busy:false,uncertain:false,disabled:false,data:{...source,state:"awaiting_upload"},counts:{success:false},canPreview:false};view=render();const resume=nodes(nodes(view,"RecordSection")[0].props.action,"Button").find(button=>text(button)==="Reprendre le transfert");resume.props.onClick();assert.deepEqual(resumed,[source.id]);model={...model,disabled:true};assert.equal(nodes(nodes(render(),"RecordSection")[0].props.action,"Button").find(button=>text(button)==="Reprendre le transfert").props.disabled,true);
 });
 
 function row(changes = {}) { return contracts.rowSchema.parse({ row_number: 3, values: { name: "Synthetic quoted\nCSV contact", primary_phone: "+212600111001", other_phones: "+33612345678", primary_email: "synthetic@example.invalid", other_emails: "other@example.invalid", roles: "buyer|tenant", agent_email: "agent@example.invalid", notes: "Synthetic CSV note" }, values_truncated: true, status: "eligible", errors: [], agent_id: randomUUID(), agent_name: "Synthetic agent", contact_id: null, ...changes }); }
@@ -158,7 +159,7 @@ test("An agent lookup denial hides the previously selected name and reports lost
 });
 
 function uploadSetup(overrides = {}) {
-  const source = batch({ state: "uploaded" }), calls = [], transfers = [], identity = { csrf_token: "synthetic-session-proof" };
+  const source = batch({ state: "uploaded" }), calls = [], transfers = [], identity = { user:{id:randomUUID(),role:"manager"},must_change_password:false,csrf_token: "synthetic-session-proof" };
   const permit = { batch_id: source.id, token: "s".repeat(43), expires_at: "2026-10-20T15:02:00+01:00", transfer_url: `https://api.synthetic.invalid/api/v1/transfers/imports/${source.id}` };
   class Xhr {
     constructor() { this.upload = {}; this.headers = {}; transfers.push(this); }
@@ -169,11 +170,12 @@ function uploadSetup(overrides = {}) {
   }
   const apiGet = async (path, schema, signal, options) => {
     calls.push({ path, signal, options });
-    const value = path.endsWith("/me") ? identity : path.endsWith("/upload-permit") ? { ...permit, ...overrides.permit } : path.includes("?") ? { ...source, ...overrides.batch } : source;
-    return path.endsWith("/me") ? value : schema.parse(path === "/api/v1/imports" ? Object.fromEntries(Object.entries(value).filter(([name]) => !["items", "page", "page_size", "total", "has_next", "has_previous"].includes(name))) : value);
+    if(path==="/api/v1/imports"&&overrides.creationFailure)throw overrides.creationFailure;
+    const value = path.endsWith("/me") ? identity : path.endsWith("/upload-permit") ? { ...permit, ...overrides.permit } : path.includes("?") ? { ...source, ...overrides.batch } : path==="/api/v1/imports" ? {...source,...overrides.created} : source;
+    return path.endsWith("/me") ? value : schema.parse(schema === contracts.batchSchema ? Object.fromEntries(Object.entries(value).filter(([name]) => !["items", "page", "page_size", "total", "has_next", "has_previous"].includes(name))) : value);
   };
   const loaded = loadServer("src/features/imports/client.ts", { modules: { "@/lib/api/client": { apiGet, ApiError }, "@/lib/auth/contracts": { meSchema: {} }, "@/features/files/transfers": { transferError: () => new ApiError("FILE_TRANSFER_INTERRUPTED", 503) }, "./contracts": contracts }, globals: { XMLHttpRequest: Xhr } });
-  return { ...loaded, source, calls, transfers, file: { name: source.filename, size: source.size_bytes }, attempt: { key: randomUUID(), batchId: source.id } };
+  return { ...loaded, source, calls, transfers, identity, file: { name: source.filename, size: source.size_bytes }, attempt: { key: randomUUID(), batchId: source.id } };
 }
 test("Private CSV upload rejects aborted/resumed foreign metadata and permits before sending any bytes", async () => {
   const stopped = uploadSetup(), abort = new AbortController(); abort.abort();
@@ -212,18 +214,18 @@ test("Import facade preserves current-session/CSRF/key boundaries and rejects mi
   }
 });
 
-function composerSetup({ selected = randomUUID(), command } = {}) {
+function composerSetup({ selected = randomUUID(), command, upload, hydrated = true } = {}) {
   const h = hooks(), uploads = [], commands = [], navigations = [], scopes = [], baseline = [];
   const source = batch({ id: selected }), loaded = loadServer("src/features/imports/import-panel.tsx", { modules: {
     react: h.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" }, "next/navigation": { useRouter: () => ({ replace: (...args) => navigations.push(args) }) },
     "@/components/ui/button": { Button: "Button" }, "@/components/shared/file-picker": { FilePicker: "FilePicker" }, "@/components/shared/record-workspace": { RecordSection: "RecordSection" },
     "@/components/shared/dossier-form": { useDossierDraft: () => ({ dirty: false, accept: value => baseline.push(value) }) }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request: (run, scope) => { scopes.push(scope); run(); }, dialog: null }) },
-    "@/features/contacts/agent-picker": { AgentPicker: "AgentPicker" }, "@/features/contacts/record-states": { RecordError: "RecordError" }, "@/lib/api/client": { ApiError }, "@/hooks/use-hydrated": { useHydrated: () => true },
-    "./contracts": contracts, "./batch-review": { BatchReview: "BatchReview" }, "./client": { uploadImport: async (file, attempt, progress, signal) => { uploads.push({ file, attempt, signal }); attempt.batchId = selected; progress(100); return selected; }, importCommand: async (...args) => { commands.push(args); if (command) return command(...args); return source; } },
+    "@/features/contacts/agent-picker": { AgentPicker: "AgentPicker" }, "@/features/contacts/record-states": { RecordError: "RecordError" }, "@/lib/api/client": { ApiError }, "@/hooks/use-hydrated": { useHydrated: () => hydrated },
+    "./contracts": contracts, "./batch-review": { BatchReview: "BatchReview" }, "./client": { uploadImport: async (file, attempt, progress, signal) => { uploads.push({ file, attempt, signal }); if(upload)return upload(file,attempt,progress,signal);attempt.batchId = selected; progress(100); return selected; }, importCommand: async (...args) => { commands.push(args); if (command) return command(...args); return source; } },
   }, globals: { AbortController, crypto: { randomUUID } } });
   const render = () => h.render(() => { const root = loaded.ImportPanel({ role: "manager", batchId: selected }); return root.type(root.props); });
   let view = render(); nodes(view, "div").find(node => node.props.ref).props.ref.current = { syntheticReviewScope: true }; h.flush();
-  return { render, uploads, commands, navigations, scopes, baseline, source, deniedView: () => loaded.ImportPanel({ role: "agent", batchId: selected }), flush: h.flush };
+  return { render, uploads, commands, navigations, scopes, baseline, source, dispose:h.dispose,root:id=>loaded.ImportPanel({role:"manager",batchId:id}),deniedView: () => loaded.ImportPanel({ role: "agent", batchId: selected }), flush: h.flush };
 }
 test("The importer guards only existing review drafts, sends initial fallback, refreshes the same batch and blocks replacement during unknown approval", async () => {
   const s = composerSetup(), agent = randomUUID(); let view = s.render(); assert.equal(s.deniedView().type, "RecordError");
@@ -241,4 +243,74 @@ test("Same-batch interrupted previews refresh the review; current denial removes
   let view = s.render(); assert.equal(nodes(view, "BatchReview")[0].key.endsWith(":1"), true); assert.ok(nodes(view, "FilePicker")[0].props.selected);
   nodes(view, "BatchReview")[0].props.authorityDenied(new ApiError("FORBIDDEN", 403)); view = s.render(); assert.equal(view.type, "RecordError"); assert.equal(nodes(view, "FilePicker").length, 0); assert.equal(nodes(view, "BatchReview").length, 0);
   view.props.retry(); view = s.render(); assert.equal(nodes(view, "FilePicker")[0].props.selected, undefined); assert.equal(nodes(view, "BatchReview")[0].key.endsWith(":2"), true);
+});
+
+test("Reopened import routes have distinct private composer lifetimes", () => {
+  const s=composerSetup(),other=randomUUID();assert.equal(s.root(s.source.id).key,s.source.id);assert.equal(s.root(other).key,other);assert.notEqual(s.root(s.source.id).key,s.root(other).key);assert.equal(s.root(undefined).key,"new");
+});
+
+test("Resume chooses the existing batch, validates file metadata even through a stale chooser, and previews without creating another batch", async () => {
+  const s=composerSetup(),initial=s.render(),oldChooser=nodes(initial,"FilePicker")[0].props.choose,pending={...s.source,state:"awaiting_upload",file_hash:null,preview_hash:null,counts:{}};
+  nodes(initial,"BatchReview")[0].props.resume(pending);let view=s.render();assert.ok(text(view).includes("La reprise utilise le lot existant"));assert.equal(nodes(view,"details")[0].props.open,true);
+  oldChooser({name:"different.csv",size:pending.size_bytes});view=s.render();assert.equal(nodes(view,"FilePicker")[0].props.selected,undefined);assert.equal(nodes(view,"RecordError")[0].props.error.code,"IMPORT_FILE_INVALID");assert.equal(s.uploads.length,0);
+  oldChooser({name:pending.filename,size:pending.size_bytes+1});assert.equal(nodes(s.render(),"FilePicker")[0].props.selected,undefined);
+  const file={name:pending.filename,size:pending.size_bytes,lastModified:1};oldChooser(file);nodes(s.render(),"form")[0].props.onSubmit({preventDefault(){}});await delay(0);assert.equal(s.uploads.length,1);assert.equal(s.uploads[0].attempt.batchId,pending.id);assert.equal(s.uploads[0].file,file);assert.equal(s.commands[0][0],`/api/v1/imports/${pending.id}/preview`);assert.equal(nodes(s.render(),"FilePicker")[0].props.selected,undefined);
+});
+
+test("Resume refuses foreign or completed batches and leaving resume explicitly returns to a new lot", () => {
+  const s=composerSetup();let view=s.render();const resume=nodes(view,"BatchReview")[0].props.resume;
+  resume({...s.source,id:randomUUID(),state:"awaiting_upload"});assert.ok(!text(s.render()).includes("La reprise utilise le lot existant"));resume(s.source);assert.ok(!text(s.render()).includes("La reprise utilise le lot existant"));
+  resume({...s.source,state:"uploading"});view=s.render();assert.ok(text(view).includes("La reprise utilise le lot existant"));nodes(view,"Button").find(node=>node.props.action==="back"&&node.props.onClick).props.onClick();assert.ok(!text(s.render()).includes("La reprise utilise le lot existant"));
+});
+
+test("Unknown metadata creation pins the original file, fallback and key and synchronously blocks the previous batch review", async () => {
+  let fail=true;const s=composerSetup({upload:async(file,attempt,progress)=>{attempt.metadataDispatched=true;if(fail)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);attempt.batchId=s.source.id;progress(100);return s.source.id;}}),agent=randomUUID(),file={name:"contacts-synthetic.csv",size:2048,lastModified:1};
+  let view=s.render();const oldChoose=nodes(view,"FilePicker")[0].props.choose,oldFallback=nodes(view,"AgentPicker")[0].props.change;oldChoose(file);oldFallback(agent);nodes(s.render(),"form")[0].props.onSubmit({preventDefault(){}});await delay(0);view=s.render();
+  assert.equal(nodes(view,"form")[0].props["aria-busy"],true);assert.equal(nodes(view,"FilePicker")[0].props.disabled,true);assert.equal(nodes(view,"BatchReview")[0].props.uploadBusy,true);assert.equal(nodes(view,"BatchReview")[0].props.uploadLocked(),true);const key=s.uploads[0].attempt.key;
+  oldChoose({name:"replacement.csv",size:5});oldFallback(randomUUID());assert.equal(nodes(s.render(),"FilePicker")[0].props.selected,file);assert.equal(nodes(s.render(),"AgentPicker")[0].props.value,agent);
+  fail=false;nodes(s.render(),"form")[0].props.onSubmit({preventDefault(){}});await delay(0);assert.equal(s.scopes.length,1);assert.equal(s.uploads.length,2);assert.equal(s.uploads[1].attempt.key,key);assert.equal(s.uploads[1].file,file);assert.equal(s.commands[0][1].fallback_agent_id,agent);assert.equal(nodes(s.render(),"form")[0].props["aria-busy"],false);
+});
+
+test("Metadata failure before dispatch remains editable and a disposed composer refuses stale guard/chooser/resume callbacks", async () => {
+  const s=composerSetup({upload:async()=>{throw new ApiError("DEPENDENCY_UNAVAILABLE",503);}});let view=s.render();const choose=nodes(view,"FilePicker")[0].props.choose,submit=nodes(view,"form")[0].props.onSubmit,resume=nodes(view,"BatchReview")[0].props.resume;
+  choose({name:"contacts-synthetic.csv",size:2048});nodes(s.render(),"form")[0].props.onSubmit({preventDefault(){}});await delay(0);view=s.render();assert.equal(nodes(view,"FilePicker")[0].props.disabled,false);assert.equal(nodes(view,"form")[0].props["aria-busy"],false);
+  choose({name:"replacement.csv",size:5});assert.equal(nodes(s.render(),"FilePicker")[0].props.selected.name,"replacement.csv");s.dispose();submit({preventDefault(){}});resume({...s.source,state:"awaiting_upload"});choose(undefined);await delay(0);assert.equal(s.uploads.length,1);assert.equal(s.scopes.length,1);
+});
+
+test("Disposed transfer ignores late upload completion/progress and never starts a preview or navigation", async () => {
+  let release,progress;const s=composerSetup({upload:async(file,attempt,report)=>{progress=report;return new Promise(resolve=>{release=resolve;});}});nodes(s.render(),"FilePicker")[0].props.choose({name:"contacts-synthetic.csv",size:2048});nodes(s.render(),"form")[0].props.onSubmit({preventDefault(){}});await delay(0);s.dispose();assert.equal(s.uploads[0].signal.aborted,true);progress(100);release(s.source.id);await delay(0);assert.equal(s.commands.length,0);assert.equal(s.navigations.length,0);
+});
+
+test("Synchronous upload ownership blocks even a previously rendered approval, mapping and page handler", async () => {
+  const s=controller();s.render().openReview();const old=s.render();s.uploadLock(true);await old.approve();await old.preview();old.changeFallback(randomUUID());old.changeRow(2,randomUUID());old.changePage(2);old.refresh();assert.equal(s.calls.length,0);assert.equal(s.render().fallback,"");assert.equal(s.render().page,1);assert.deepEqual(plain(s.render().overrides),{});assert.equal(s.refreshes(),0);
+});
+
+test("Import approval distinguishes preflight failure from unknown dispatch and keeps an earlier unknown through another preflight failure", async () => {
+  const source=batch(),s=controller(async()=>{throw new ApiError("DEPENDENCY_UNAVAILABLE",503);},source);s.dispatch(false);s.render().openReview();await s.render().approve();assert.equal(s.render().uncertain,false);assert.equal(s.blocked.at(-1),false);
+  s.change(source);s.dispatch(true);s.render().openReview();await s.render().approve();assert.equal(s.render().uncertain,true);const key=s.calls[1][3];s.dispatch(false);await s.render().approve();assert.equal(s.render().uncertain,true);assert.equal(s.calls[2][3],key);
+});
+
+test("Acknowledged import approval refuses stale repeat writes while allowing a result refresh", async () => {
+  const source=batch(),s=controller(async()=>committed(source),source);s.render().openReview();const old=s.render();await old.approve();await old.approve();await old.preview();assert.equal(s.calls.length,1);s.render().refresh();assert.equal(s.refreshes(),2);
+});
+
+test("Disposed batch review aborts approval and never publishes a late result, refresh or another stale write", async () => {
+  const source=batch();let release;const s=controller(async()=>new Promise(resolve=>{release=resolve;}),source);s.render().openReview();const old=s.render(),pending=old.approve();s.dispose();assert.equal(s.calls[0][4].aborted,true);release(committed(source));await pending;await old.approve();await old.preview();old.refresh();assert.equal(s.calls.length,1);assert.equal(s.refreshes(),0);
+});
+
+test("A foreign batch read exposes neither its rows nor counts and cannot enable approval", async () => {
+  const s=controller();s.change(batch());const view=s.render();assert.equal(view.data,undefined);assert.equal(view.error.code,"INVALID_RESPONSE");assert.equal(view.canApprove,false);view.openReview();await s.render().approve();assert.equal(s.calls.length,0);
+});
+
+test("Import transport requires an unrestricted current M/A actor and binds a resumed pipeline to that actor", async () => {
+  for(const kind of ["agent","restricted","foreign"]){const s=uploadSetup();s.source.state="awaiting_upload";if(kind==="agent")s.identity.user.role="agent";if(kind==="restricted")s.identity.must_change_password=true;if(kind==="foreign")s.attempt.actorId=randomUUID();await assert.rejects(s.uploadImport(s.file,s.attempt,()=>{},new AbortController().signal),error=>error.code===(kind==="restricted"?"PASSWORD_CHANGE_REQUIRED":"FORBIDDEN"));assert.equal(s.calls.length,1);assert.equal(s.transfers.length,0);}
+  const s=uploadSetup();s.source.state="awaiting_upload";await s.uploadImport(s.file,s.attempt,()=>{},new AbortController().signal);assert.equal(s.attempt.actorId,s.identity.user.id);assert.equal(s.calls.filter(call=>call.path==="/api/v1/imports").length,0);assert.equal(s.transfers.length,1);
+});
+
+test("Import command marks dispatch only after current proof and carries the original actor binding", async () => {
+  const s=uploadSetup(),binding={},signal=new AbortController().signal;let dispatched=0;await s.importCommand(`/api/v1/imports/${s.source.id}/preview`,{fallback_agent_id:null},contracts.batchSchema,undefined,signal,{binding,dispatched:()=>{dispatched++;}});assert.equal(binding.actorId,s.identity.user.id);assert.equal(dispatched,1);s.identity.user.id=randomUUID();await assert.rejects(s.importCommand(`/api/v1/imports/${s.source.id}/preview`,{fallback_agent_id:null},contracts.batchSchema,undefined,signal,{binding,dispatched:()=>{dispatched++;}}),error=>error.code==="FORBIDDEN");assert.equal(dispatched,1);
+});
+
+test("Lost or foreign import metadata acknowledgements retain their sent identity without starting a byte transfer",async()=>{
+  for(const change of [{creationFailure:new ApiError("DEPENDENCY_UNAVAILABLE",503)},{created:{filename:"foreign.csv"}},{created:{size_bytes:99}}]){const s=uploadSetup(change),key=s.attempt.key;s.source.state="awaiting_upload";s.attempt.batchId="";await assert.rejects(s.uploadImport(s.file,s.attempt,()=>{},new AbortController().signal),ApiError);assert.equal(s.attempt.metadataDispatched,true);assert.equal(s.attempt.key,key);assert.equal(s.attempt.batchId,"");assert.equal(s.transfers.length,0);}
 });

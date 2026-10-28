@@ -1,5 +1,22 @@
 # KAY security check for changes
 
+## Selected import resume and ownership,2026-10-28
+
+Fresh unrestricted M/A identity/CSRF and original actor binding precede commands
+and transfer permits. Existing shared M/A batch authority is unchanged. Resume
+uses the current batch UUID and matching file name/size, then existing private
+issuing-session/generation/hash checks; it never exposes raw CSV or creates a
+replacement batch implicitly. Advanced batches receive no replacement bytes.
+
+Unknown metadata creation pins File/fallback/key and locks sibling review; its
+original retry does not deadlock on the lock it owns. New uploads still guard
+review drafts. Synchronous ownership, dispatched-approval tracking, stale-write
+refusal after acknowledgement, route lifetimes, foreign-reply checks and aborted
+late-callback guards retain atomic/permanent result/provenance contracts.
+612 frontend units pass; three native cases are prepared/not run. No backend
+rule/schema change, actual app/DB/account/config/transfer/worker access, migration,
+workaround or native/CI acceptance. [Contract](04-design/import-resume-local.md).
+
 ## Selected export operation recovery,2026-10-28
 
 An unrestricted current M/A identity and fresh CSRF proof precede dispatch;

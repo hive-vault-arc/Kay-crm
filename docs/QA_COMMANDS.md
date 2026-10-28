@@ -1,5 +1,19 @@
 # KAY QA command register
 
+Selected import resume/ownership,2026-10-28: frontend cwd
+`npm run test:unit`:612 pass/0 failed/skipped,14 added cases in the registered
+import suite. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2)
+and `npm run history:check` pass.64 glyphs/104 consumers/345 icon sites and496
+Button sites have0 violations; two conditional resume/new-lot actions added.
+Static Frontend Taste app lint covers2 changed UI sources,0 findings, not native
+render. The initial dependency warning was corrected without suppression;
+source review also found and fixed an owned-retry/child-guard deadlock, with
+explicit regression coverage and a prepared third native case.
+Three native cases are prepared/typechecked, not run. Backend behavior/schema
+unchanged; no backend rerun, actual app/DB/account/config access, transfer/worker,
+migration, workaround, final native/SQL/CI/AFTER/product or main/push/merge/deploy
+acceptance. [Contract](04-design/import-resume-local.md).
+
 Selected export request ownership,2026-10-28: frontend cwd
 `npm run test:unit`:598 pass/0 failed/skipped,13 added recovery/transport/facade/
 host/UI cases in the already-registered export suite. `npm run lint`,

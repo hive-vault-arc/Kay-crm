@@ -9,6 +9,13 @@ not new commercial or real-data retention decisions.
 
 ## CSV and row meaning
 
+Selected migration2026-10-28: reopened awaiting/uploading batches now have an
+explicit same-batch resume action. Route-keyed composition, pinned unknown
+metadata recovery, synchronous upload/review ownership and current actor/proof
+checks preserve this contract without changing CSV or approval semantics. See
+[resume workflow](import-resume-local.md); actual native/SQL acceptance remains
+pending.
+
 UTF-8 (optional BOM), comma separator, standard CSV quoting, exact ordered header:
 `name,primary_phone,other_phones,primary_email,other_emails,roles,agent_email,notes`.
 `|` separates multiple phones/emails/roles. International phones reuse the

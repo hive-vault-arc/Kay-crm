@@ -13,6 +13,7 @@ import type { ApiError } from "@/lib/api/client";
 import { formatInstant } from "@/lib/format";
 import { useImportReview } from "./use-import-review";
 import { ImportRows } from "./import-rows";
+import type { Batch } from "./contracts";
 
 export function batchStatus(state: string, uncertain: boolean, approving: boolean) {
   if (uncertain || approving) return "Résultat d’approbation à vérifier : aucun résultat définitif n’est confirmé ici.";
@@ -22,8 +23,8 @@ export function batchStatus(state: string, uncertain: boolean, approving: boolea
   return "Aperçu uniquement : aucun contact de ce lot n’a encore été créé.";
 }
 
-export function BatchReview({ id, uploadBusy, blockedChanged, authorityDenied }: { id: string; uploadBusy: boolean; blockedChanged: (blocked: boolean) => void; authorityDenied: (error: ApiError) => void }) {
-  const model = useImportReview(id, uploadBusy, blockedChanged, authorityDenied);
+export function BatchReview({ id, uploadBusy, blockedChanged, authorityDenied, uploadLocked, resume }: { id: string; uploadBusy: boolean; blockedChanged: (blocked: boolean) => void; authorityDenied: (error: ApiError) => void; uploadLocked?: () => boolean; resume?: (batch: Batch) => void }) {
+  const model = useImportReview(id, uploadBusy, blockedChanged, authorityDenied, uploadLocked);
   const { data, counts, busy, uncertain, operation, committed, canPreview, review } = model;
   const trigger = useRef<HTMLButtonElement>(null), heading = useRef<HTMLHeadingElement>(null);
   const approving = busy && operation === "approval", hiddenRows = uncertain || approving;
@@ -31,6 +32,7 @@ export function BatchReview({ id, uploadBusy, blockedChanged, authorityDenied }:
     <h2 ref={heading} tabIndex={-1} className="sr-only">Aperçu et résultat du lot</h2>
     <RecordSection title={committed ? "Résultat du lot" : "Aperçu du lot"} action={<>
       <Button liveRefresh action="refresh" type="button" variant="outline" disabled={busy || uploadBusy} onClick={model.refresh}>Actualiser le lot</Button>
+      {resume && data && ["awaiting_upload", "uploading"].includes(data.state) ? <Button action="upload" type="button" variant="outline" disabled={model.disabled} onClick={() => resume(data)}>Reprendre le transfert</Button> : null}
       {uncertain ? <Button action="retry" type="button" disabled={busy || uploadBusy || committed} onClick={() => void model.approve()}>Réessayer l’approbation</Button> : canPreview ? <>
         <Button action="preview" type="button" variant="outline" disabled={model.disabled} onClick={() => void model.preview()}>Générer un nouvel aperçu</Button>
         <Button action="confirm" ref={trigger} type="button" disabled={!model.canApprove} onClick={model.openReview}>Approuver l’import</Button>

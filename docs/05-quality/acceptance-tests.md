@@ -1,5 +1,17 @@
 # Acceptance scenarios
 
+Selected import resume/ownership,2026-10-28 (AT-20/21/23/39):
+reopen awaiting/uploading batches, resume with matching file metadata and no
+second batch create, preserve the previous batch when explicitly starting a new
+lot, and bind the composer to its route. Unknown sent metadata must pin its
+original file/fallback/key and bypass only its own child lock on retry; ordinary
+new uploads retain the draft guard. Check synchronous upload/review exclusion,
+preflight versus unknown approval, stale acknowledged callbacks, fresh same-actor
+M/A proof, foreign reads and disposal/denial.612 frontend units pass, including14
+added cases; three current-label browser cases are prepared/typechecked, not
+run. No backend/CSV/atomic/permanent replay rule changed. Actual transfer/SQL/
+native/device/role checks remain pending. [Contract](../04-design/import-resume-local.md).
+
 Selected export operation recovery,2026-10-28 (AT-22/24/29/39):
 verify the opening kind/filters/count, fresh same-actor M/A proof, exact original
 key/body retry after lost response, parent-list loading/error survival, guarded

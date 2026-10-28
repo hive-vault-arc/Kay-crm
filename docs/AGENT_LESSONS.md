@@ -1895,3 +1895,15 @@ operation. Retain the owner, disable new requests when reads are unavailable, ma
 denial during render and use effects only to cancel external transport. Preserve
 kind/filters/key/actor through uncertainty; completion after acknowledgement must
 not create another job. Do not suppress hook rules to synchronize derived state.
+
+## Resumed imports and retry-owned child guards,2026-10-28
+
+A reopened awaiting/uploading batch must resume its existing UUID; choosing a
+file in the new-lot form is not a resume. Bind the workspace to the route and
+check expected file metadata without claiming original-byte identity. Preserve
+unknown sent metadata with its original File/fallback/key. A retry must not call
+an unsaved guard on the child region that the same operation has marked busy: it
+would deadlock itself. Only that original owned retry can cross its child lock;
+a new upload still guards review drafts. Check the real guard implementation,
+not merely a permissive test double, and prepare a native recovery case. Use a
+synchronous upload-owner getter so stale review handlers cannot overlap writes.

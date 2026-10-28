@@ -2467,3 +2467,27 @@ Continue import/intake/detail field/action coverage; full goal remains active.
 
 [Export recovery evidence](design-migration-evidence/export-recovery-2026-10-28.json)
 records this checkpoint separately from final actual-stack acceptance.
+
+## Import resume and batch ownership,2026-10-28
+
+Selected file/fallback/mapping/preview/approval organization and all eight CSV
+fields remain. Reopened interrupted batches now have explicit same-batch resume,
+metadata matching and route-bound composer lifetimes. Unknown sent metadata
+retains its original File/fallback/key; only its owned retry crosses the child
+lock. Synchronous transfer/review ownership, fresh same-actor M/A proof,
+dispatched-approval tracking, acknowledged stale-write refusal, current result
+refresh and disposal/foreign/denial guards preserve the real contracts.
+No backend/CSV/shared-batch/atomic/permanent receipt/provenance rules change.
+[Contract](../04-design/import-resume-local.md).
+
+612 frontend units pass, including14 added cases; lint/types/build/history and
+static app lint2 pass. The hook dependency warning and source-discovered retry/
+guard self-lock were corrected without suppression. Three native cases are
+prepared/typechecked, not run, with synthetic previews and no contact approval
+or worker. Actual transfer/SQL/native/device/AFTER/CI/product acceptance and
+migrations0036/0037 remain pending. No actual app/DB/account/config/service/
+transfer/worker access or workaround, main/push/merge/deploy. Continue intake/
+detail/legacy-selector coverage; the full goal remains active.
+
+[Import resume evidence](design-migration-evidence/import-resume-2026-10-28.json)
+records source/synthetic checks separately from actual-stack acceptance.

@@ -112,3 +112,21 @@ cases are prepared/typechecked, not run. Older broad discovery fixture/helpers/
 selectors still need reconciliation; actual worker/private CSV/native/device/
 AFTER/CI/product checks remain pending. Continue remaining import/intake/detail
 coverage; this does not close P0/P8 or the full redesign goal.
+
+## Import transfer/review follow-through,2026-10-28
+
+[Import action/field map](../04-design/import-resume-local.md) retains file/
+fallback, all eight logical-row fields, mapping/preview and atomic approval in
+the selected layout. Reopened awaiting/uploading batches can explicitly resume
+without another metadata create. Route lifetimes prevent an old selection from
+surviving a changed batch URL. Unknown metadata pins original file/fallback/key;
+its own retry can cross its child lock while new uploads retain the draft guard.
+Synchronous transfer/review ownership, fresh same-actor M/A proof, dispatched
+approval tracking, acknowledgement/disposal and foreign-reply guards are covered.
+Shared backend M/A access, CSV/hash/generation/permanent-result/provenance and
+atomic rules remain unchanged.
+
+612 frontend units pass, including14 added cases; three current-label native
+cases are prepared/typechecked, not run. Actual transfer/SQL/native/device/AFTER/
+CI/product gates remain pending. Continue intake/detail and broader old-selector
+coverage; this does not complete P0/P8 or the redesign goal.
