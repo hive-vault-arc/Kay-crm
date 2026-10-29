@@ -2017,3 +2017,15 @@ affair into its detail owner instead of starting a second unowned reload, releas
 parent busy state when closing, and retain verified output beside a transient
 old read error. Exact prefill IDs and removal/announcement of a previous contact
 search prevent silently saving another linked context.
+
+
+## Affair action result ownership,2026-10-29
+
+A shared command must pin the strict original intent/key and the initiating UI
+completion callback after an unknown write. A confirmed receipt followed by a
+failed refresh retries identity/current reads and completion only. Carry the
+originating account/role through board actions as well as detail forms; require
+an exact offered current snapshot before conflict rebase, preserving unrelated
+current fields. Guard stale field/open/cancel handlers with the synchronous
+owner lock, not only a previous render’s busy flag. Synthetic fixtures must
+model real dispatch identity, receipts and newer follow-up records.

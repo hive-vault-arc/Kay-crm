@@ -2765,3 +2765,21 @@ verify the known project CA; disposable headed browser TLS exceptions are not a
 production policy. Final browser-build scan:4 roots/351 JS/zero configured secret
 matches. Guarded test-only cleanup and a separate read-only development check are
 recorded in [startup execution](06-delivery-and-operations/local-startup-execution.md).
+
+
+## Selected affair action review,2026-10-29
+
+The shared ordinary-transition/inline/proposal owner pins strict parent/proposal
+identity, method/body/versions/key and originating account/role. Unknown retries
+cannot replace input; acknowledged completion retries only identity/current
+reads and UI handoff. Receipt identity/kind/version and monotonic read/explicit
+comparison proof precede private completion. Authority loss masks private state;
+scope replacement/disposal aborts late work. The facade rejects a foreign record,
+parent mutation or edited proposal response. No storage or permission expansion.
+
+751 synthetic frontend tests pass,24 added, with lint/types/build/history.
+[Contract](04-design/deal-action-recovery-local.md) records exact coverage and
+prepared-not-run native cases. Backend unchanged/not rerun; reservation/outcome
+controllers and actual SQL/native security acceptance remain separate pending
+work. No actual app/DB/account/private config/service/worker/transfer access,
+workaround, migration, main/push/merge/deploy; this is not a release approval.

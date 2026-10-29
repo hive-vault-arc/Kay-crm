@@ -1173,3 +1173,17 @@ the browser uses `noopener noreferrer` for opening them. New categories are
 standalone-only; holiday offerings are distinct from ordinary rental and do
 not enter existing Lead/Deal reservation or outcome flows. See the
 [field and scope contract](../03-planning/property-listing-fields-2026-10-22.md).
+
+
+## Affair action client recovery,2026-10-29
+
+The selected ordinary-transition, inline qualification and client-proposal
+controllers now retain an unknown command's original method/path/body/versions/
+key, with originating account/role proof. Acknowledged completion retries current
+identity/affair reads and UI handoff without another mutation. Result identity,
+proposal fields and newer submitted versions must agree; known conflicts require
+explicit accepted current comparison. The facade rejects a response for another
+requested record, parent mutation or edited proposal. Endpoints, backend grants,
+atomicity, history and bounded receipt retention are unchanged. See the
+[action contract](deal-action-recovery-local.md); stock/outcome reconciliation
+and actual SQL/native acceptance remain pending.

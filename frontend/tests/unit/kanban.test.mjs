@@ -6,6 +6,7 @@ import { createElement } from "react";
 import * as jsxRuntime from "react/jsx-runtime";
 import { renderToStaticMarkup } from "react-dom/server";
 import { loadServer } from "./load-server.mjs";
+import { loadActionCommand } from "./deal-action-fixtures.mjs";
 
 const jsx = (type, props, key) => ({ type, props, key });
 const runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
@@ -119,18 +120,14 @@ test("Deal board policy cannot bypass archived state, stock reservation or expli
 
 test("Shared deal command serializes writes and retains the retry key even when the authoritative reload fails", async () => {
   const state = harness(), calls = [], current = deal(); let interrupted = true, release;
-  const { useDealCommand } = loadServer("src/features/deals/use-deal-command.ts", { globals: { crypto: { randomUUID } }, modules: {
-    react: state.react, "./contracts": contracts,
-    "@/lib/api/client": { ApiError, apiGet: async () => { if (interrupted) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return current; } },
-    "@/lib/api/command": { apiCommand: async (...args) => { calls.push(args); if (release) await release; } },
-  } });
+  const { useDealCommand } = loadActionCommand(state, { ErrorType: ApiError, read: async () => { if (interrupted) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return { ...current, version: 9 }; }, command: async (...args) => { calls.push(args); if (release) await release; return { id: current.id, version: 8, customer_offer_id: null, offer_version: null }; } });
   const render = () => state.render(() => useDealCommand(current.id));
   const path = `/api/v1/deals/${current.id}/transition`, body = { expected_version: 7, stage: "visit", reason: "Synthetic reason" };
   assert.equal(await render().mutate(path, body), false); assert.equal(render().error.code, "DEPENDENCY_UNAVAILABLE");
-  interrupted = false; assert.equal(await render().mutate(path, body), true); assert.equal(calls[0][3], calls[1][3]); assert.equal(calls[1][4], "POST"); assert.equal(render().fresh, current);
+  interrupted = false; assert.equal(await render().mutate(path, body), true); assert.equal(calls.length, 1); assert.equal(calls[0][4], "POST"); assert.equal(render().fresh.id, current.id); assert.equal(render().fresh.version, 9);
   let unlock; release = new Promise(resolve => { unlock = resolve; });
   const pending = render().mutate(path, { ...body, reason: "Changed reviewed reason" });
-  assert.equal(await render().mutate(path, body), false); assert.equal(calls.length, 3); assert.notEqual(calls[2][3], calls[1][3]);
+  assert.equal(await render().mutate(path, body), false); await delay(0); assert.equal(calls.length, 2); assert.notEqual(calls[1][3], calls[0][3]);
   unlock(); await pending; assert.equal(render().busy, false);
 });
 

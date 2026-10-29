@@ -552,3 +552,17 @@ copied private links and existing French desktop/mobile/keyboard/touch/200%.
 Browser-engine emulation does not pass actual iOS Safari/assistive-technology
 checks. No SP-17 KPI, real-device, production, load, backup/recovery or human
 approval is implied by the implemented AT-16/17/23 variants.
+
+
+## Selected affair action source coverage,2026-10-29
+
+751 synthetic frontend units pass,24 added for strict intent/identity/receipt/
+version checks, frozen unknown retries, completion-only reads, explicit conflict
+acceptance, all nine inline fields, legacy financing, original dialog callback,
+dismissal and account/role-bound board handoff. Existing exact proposal/period/
+version and full-form cases remain. Two isolated browser cases in
+`frontend/tests/e2e/deal-action-recovery.spec.ts` are prepared/typechecked,
+not run: phone stage lost acknowledgement and desktop inline result-read outage.
+See the [contract](../04-design/deal-action-recovery-local.md). This is not actual
+SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance or
+completion of reservation/outcome controllers.

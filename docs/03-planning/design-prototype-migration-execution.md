@@ -2699,3 +2699,33 @@ main/push/merge/deploy. Full goal remains active.
 
 [Affair form evidence](design-migration-evidence/deal-form-recovery-2026-10-29.json)
 records source/synthetic gates separately from pending actual-stack acceptance.
+
+
+## Selected affair stage/inline/proposal recovery,2026-10-29
+
+Ordinary transitions, all nine inline qualification fields and exact client
+proposals now share strict intent and request ownership. Unknown input cannot
+replace the original body/versions/key; acknowledged current-read/parent
+completion failures retry completion without POST/PATCH. Current originating
+actor/role proof, parent/proposal receipt identity and newer versions, monotonic
+scoped reads and explicit offered comparison guard private results. Inline
+conflict keep uses current unrelated values; legacy financing is visible and
+explicitly remediated. Stage selection retains destination/reason/prerequisites.
+
+Selected detail/metadata hosts retain transient drafts; denial/disposal/scope
+replacement masks late/private work. Unknown forms protect input/new actions/
+Cancel/Escape and retain their once-only originating UI callback for local or
+global retry. Board actions carry directory account/role. The four-tab layout,
+phone cards, selected tokens/motion and dedicated stock/outcome workflows stay.
+[Contract](../04-design/deal-action-recovery-local.md).
+
+751 frontend units pass,24 added; lint/types/build/history and static app lint11
+pass. Two native stage-lost-ack/inline-result-read cases prepared/typechecked,
+not run. Backend unchanged/not rerun. Reservation/outcome controllers, remaining
+field/action/context reconciliation and old native selectors continue; actual
+SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product checks and
+migrations0036/0037 remain pending. No actual app/DB/account/private config/
+service/worker/transfer access or workaround, main/push/merge/deploy. Goal active.
+
+[Action evidence](design-migration-evidence/deal-action-recovery-2026-10-29.json)
+separates source/synthetic checks from pending actual acceptance.

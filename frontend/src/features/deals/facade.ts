@@ -62,6 +62,9 @@ export async function relayDeals(key: string, request: Request, requestId: strin
       return facadeError(code === "DEPENDENCY_UNAVAILABLE" ? 503 : response.status, code, requestId);
     }
     const schema = lifecycle ? recordLifecycleResultSchema : mutation ? resultSchema : list ? dealsSchema : record ? dealSchema : review ? dealStockReviewSchema : outcomes ? outcomesSchema : offers ? offersSchema : historySchema;
-    return Response.json(schema.parse(response.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
+    const result = schema.parse(response.body);
+    const parent = key.startsWith("deals/") ? key.split("/")[1] : undefined;
+    if (parent && (record || mutation) && (result as { id?: string }).id !== parent || offer && (result as { customer_offer_id?: string }).customer_offer_id !== key.split("/")[1]) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

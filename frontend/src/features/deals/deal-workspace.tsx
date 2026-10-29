@@ -32,20 +32,21 @@ import type { Deal } from "./contracts";
 import type { MutateDeal } from "./pipeline";
 import { DealStageMenu } from "./deal-stage-menu";
 import { CustomerOffers } from "./customer-offers";
+import type { DealCommandRecovery } from "./deal-command-intent";
 import { DealHistory } from "./deal-history";
 import { OutcomeHistory } from "./outcome-history";
 
-export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChanged, mutate, reload, error, notice, commandState, onEdit, editRef, initialTask, initialTab, contactChanged, denied }: {
+export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChanged, mutate, reload, error, notice, commandState, onEdit, editRef, initialTask, initialTab, contactChanged, denied, recovery }: {
   deal: Deal; role: StaffRole; writable: boolean; canArchive: boolean; busy: boolean; busyChanged: (value: boolean) => void; mutate: MutateDeal;
-  reload: () => Promise<unknown>; error?: ApiError; notice?: string; commandState?: ReactNode; onEdit: () => void; editRef?: Ref<HTMLButtonElement>; initialTask?: string; initialTab?: string; contactChanged?: () => void; denied?: EntryDenied;
+  reload: () => Promise<unknown>; error?: ApiError; notice?: string; commandState?: ReactNode; onEdit: () => void; editRef?: Ref<HTMLButtonElement>; initialTask?: string; initialTab?: string; contactChanged?: () => void; denied?: EntryDenied; recovery?: DealCommandRecovery;
 }) {
   const [historyRevision, setHistoryRevision] = useState(0);
   const { request, dialog } = useUnsavedGuard();
   const canAct = !deal.contact.archived_at && !deal.archived_at;
-  const edit = () => request(onEdit);
-  const inline = { deal, writable, busy, mutate, error, denied };
+  const edit = () => { if (!recovery?.protected && !recovery?.locked()) request(onEdit); };
+  const inline = { deal, writable, busy, mutate, error, denied, recovery };
   return <InlineEditScope><div className="kay-record-page">
-    <CrmRecordHeader contact={deal.contact} title={deal.title} route={`/deals/${deal.id}`} backHref="/deals" badges={<><DealStageMenu deal={deal} writable={canAct} busy={busy} busyChanged={busyChanged} mutate={mutate} saved={reload} error={error} /><CrmStatusBadge state={deal.rating} dot={false}>{ratingLabels[deal.rating]}</CrmStatusBadge>{deal.archived_at ? <CrmStatusBadge state="archived">Archivée</CrmStatusBadge> : null}</>} actions={<>{writable ? <Button action="edit" ref={editRef} variant="outline" disabled={busy} onClick={edit}>Modifier</Button> : null}{canArchive ? <RecordActions><RecordLifecycleAction kind="deals" id={deal.id} version={deal.version} archivedAt={deal.archived_at} label={deal.title} onChanged={() => void reload()} /></RecordActions> : null}</>} />
+    <CrmRecordHeader contact={deal.contact} title={deal.title} route={`/deals/${deal.id}`} backHref="/deals" badges={<><DealStageMenu deal={deal} writable={canAct} busy={busy} busyChanged={busyChanged} mutate={mutate} saved={reload} error={error} recovery={recovery} /><CrmStatusBadge state={deal.rating} dot={false}>{ratingLabels[deal.rating]}</CrmStatusBadge>{deal.archived_at ? <CrmStatusBadge state="archived">Archivée</CrmStatusBadge> : null}</>} actions={<>{writable ? <Button action="edit" ref={editRef} variant="outline" disabled={busy || recovery?.protected} onClick={edit}>Modifier</Button> : null}{canArchive ? <RecordActions disabled={recovery?.protected}><RecordLifecycleAction kind="deals" id={deal.id} version={deal.version} archivedAt={deal.archived_at} label={deal.title} onChanged={() => void reload()} /></RecordActions> : null}</>} />
     {!canAct ? <p role="status" className="mb-3 text-sm text-muted-foreground">{deal.contact.archived_at ? "Contact archivé : dossier conservé en lecture seule." : "Affaire archivée : historique conservé, restauration possible pendant 30 jours."}</p> : null}
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{commandState}
     <RecordWorkspace label="Rubriques de l’affaire" initialTab={initialTab} tabs={[
@@ -62,7 +63,7 @@ export function DealWorkspace({ deal, role, writable, canArchive, busy, busyChan
         </RecordFacts></RecordSection>
         <RecordSection title="Notes"><RecordFacts columns={1}><DealInlineField {...inline} icon={InboxIcon} label="Notes" field="notes" display={<span className="whitespace-pre-wrap">{deal.notes || "Aucune note renseignée."}</span>} /></RecordFacts></RecordSection>
       </> },
-      { id: "projects", label: "Projets", content: <><RecordSection title="Projet et offre retenus"><RecordFacts columns={1}><DealInlineField {...inline} icon={PropertyIcon} label="Projets" field="projects" display={deal.projects.map(project => project.name).join(" · ") || "Non renseignés"} /></RecordFacts><div className="grid min-w-0 gap-3"><h3 className="text-sm font-medium">Offre d’inventaire liée</h3>{deal.offering ? <OfferingFacts offering={deal.offering} /> : <p className="text-sm text-muted-foreground">Aucune offre d’inventaire liée.</p>}</div></RecordSection><ProjectLinksPanel scope="deals" id={deal.id} writable={canAct} onChanged={() => setHistoryRevision(value => value + 1)} /><CustomerOffers key={deal.id} deal={deal} writable={writable} busy={busy} busyChanged={busyChanged} mutate={mutate} error={error} denied={denied} /></> },
+      { id: "projects", label: "Projets", content: <><RecordSection title="Projet et offre retenus"><RecordFacts columns={1}><DealInlineField {...inline} icon={PropertyIcon} label="Projets" field="projects" display={deal.projects.map(project => project.name).join(" · ") || "Non renseignés"} /></RecordFacts><div className="grid min-w-0 gap-3"><h3 className="text-sm font-medium">Offre d’inventaire liée</h3>{deal.offering ? <OfferingFacts offering={deal.offering} /> : <p className="text-sm text-muted-foreground">Aucune offre d’inventaire liée.</p>}</div></RecordSection><ProjectLinksPanel scope="deals" id={deal.id} writable={canAct} onChanged={() => setHistoryRevision(value => value + 1)} /><CustomerOffers key={deal.id} deal={deal} writable={writable} busy={busy} busyChanged={busyChanged} mutate={mutate} error={error} denied={denied} recovery={recovery} /></> },
       { id: "activity", label: "Activités", content: <><ActivityHistory scope="deals" id={deal.id} writable={canAct} denied={denied} revision={deal.version + historyRevision} />{deal.enquiry_id ? <ActivityHistory scope="deals" id={deal.id} origin /> : null}<details className="kay-contact-more"><summary>Historique de l’affaire</summary><DealHistory id={deal.id} revision={deal.version} /></details><details className="kay-contact-more"><summary>Résultats, clôture et réouverture</summary><OutcomeHistory id={deal.id} revision={deal.version} /></details></> },
       { id: "documents", label: "Documents", content: <><FilePanel parentKind="deal" parentId={deal.id} writable={writable && !busy} /><PreparedDocuments parentKind="deal" id={deal.id} /></> },
     ]} aside={<>

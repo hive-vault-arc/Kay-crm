@@ -2931,3 +2931,15 @@ Selected-report checkpoint finalization,2026-10-28: repository/index check passe
 links/42 acceptance mappings/13 Mermaid pairs/12 API JSON samples. Cached
 whitespace and20 canonical staged source hashes pass. Main remains unchanged;
 this does not add native/real-stack acceptance.
+
+
+## Selected affair actions,2026-10-29
+
+751 frontend units pass,24 added across actual shared command/intent/facade,
+selected stage/inline/board and proposal protection cases. Lint/types/build/
+history and static Frontend Taste app lint11 pass,0 findings. See the
+[contract](04-design/deal-action-recovery-local.md) and checkpoint evidence.
+Two isolated native stage-lost-ack/inline-result-read cases are prepared and
+typechecked, not run. Backend unchanged/not rerun; actual SQL/native/device/
+visual/focus/zoom/CI/AFTER/product acceptance and migrations0036/0037 remain
+pending. No actual access/workaround, main/push/merge/deploy.

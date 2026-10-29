@@ -96,7 +96,7 @@ export function DealList({ role, actorId, contactId, archived = false, revision 
         <NumberedPages compact={!contactId} label="Pages des affaires" page={page} total={query.value.total} size={query.value.page_size} change={setPage} />
         </div>
       </>}
-      {boardVisited && !contactId && !scopeDenied && !boardFailure ? <DealKanban key={boardEpoch} active={board && Boolean(query.value) && !query.error} filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : filters.archive, record_archive: recordArchive }} revision={revision} changed={query.refreshQuietly} denied={boardDenied} returnFocus={listRef} /> : null}
+      {boardVisited && !contactId && !scopeDenied && !boardFailure ? <DealKanban key={`${boardEpoch}:${actorId ?? ""}:${role}`} actorId={actorId} role={role} active={board && Boolean(query.value) && !query.error} filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : filters.archive, record_archive: recordArchive }} revision={revision} changed={query.refreshQuietly} denied={boardDenied} returnFocus={listRef} /> : null}
     </FilterResultsLayout>
   </div>;
 }

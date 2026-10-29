@@ -1,0 +1,228 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "55dd1bfac74ec6a123a3972f331b244160978e66",
+  "scope": "Selected ordinary affair transitions, nine inline fields and client proposals: strict original request/actor/result ownership, explicit current conflict acceptance, retained hosts, synchronous protection and once-only initiating UI completion",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 751,
+      "additionalCases": 24,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Actual source compiled in synthetic command/UI/facade harnesses; no actual app or DB"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 510,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <11 changed UI sources>",
+      "exitCode": 0,
+      "files": 11,
+      "findings": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8933,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1278,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/deal-action-recovery.spec.ts",
+      "cases": 2,
+      "scenarios": [
+        "phone ordinary-stage lost acknowledgement",
+        "desktop inline acknowledged result-read outage"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedWorkspaceHeaderPhoneCardsTokensAndMotion": true,
+    "exactValuesAndAllNineInlineFields": true,
+    "strictParentProposalRoutesAndBodies": true,
+    "originalBodyVersionsKeyAndCompletionCallback": true,
+    "originatingActorRoleFirstRetryAndCompletion": true,
+    "receiptIdentityKindAndNewerVersions": true,
+    "completionOnlyAfterAcknowledgement": true,
+    "explicitOfferedCurrentComparison": true,
+    "unrelatedCurrentFieldsPreserved": true,
+    "retainedDetailMetadataWithCurrentDenial": true,
+    "synchronousInputDismissalAndActionProtection": true,
+    "disposalAndScopeChangeFencing": true,
+    "backendAuthorityStockHistoryReceiptRetentionUnchanged": true,
+    "noPersistentBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Dedicated reservation/release and outcome/reopen controllers",
+    "Remaining exact domain field/action/context reconciliation",
+    "Broader legacy browser selectors/helpers"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/simulator/account/private configuration/customer records/import/export/transfer access",
+    "Migrations0036/0037 or other migrations",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4825,
+      "sha256": "e56836f281b3b3a5ba14626f2dcaa805388778a496a229039377cf93ad4c0d5c"
+    },
+    {
+      "file": "frontend/src/components/shared/inline-record-field.tsx",
+      "bytes": 5113,
+      "sha256": "5d294bcb7b980908b255e717862b95e8c128ba90693ed514f8ec9934d90978dc"
+    },
+    {
+      "file": "frontend/src/components/shared/record-actions.tsx",
+      "bytes": 883,
+      "sha256": "95f4ad81447befb074f29cfadb599a7801cd167228d2ebb579b515bfbcc75eca"
+    },
+    {
+      "file": "frontend/src/features/deals/customer-offer-form.tsx",
+      "bytes": 14367,
+      "sha256": "d23224db7fed6273d943d9ce5d7037312b073cea8fa690ee99c13e5170904912"
+    },
+    {
+      "file": "frontend/src/features/deals/customer-offers.tsx",
+      "bytes": 5720,
+      "sha256": "de01594da5a6a0f2b44735d4acf411ba1c4242759fab73906aac84cc66695cef"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-command-intent.ts",
+      "bytes": 2733,
+      "sha256": "85ad362eb6c61cfc19102764013002f304f1a81cf3b12607da7f3cbe6e3c08f5"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-inline-field.tsx",
+      "bytes": 14829,
+      "sha256": "2e8b763a67b9987d1e4ccae8e2b1d5fea01a48f16a1068e0747d76741421623e"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-kanban.tsx",
+      "bytes": 5024,
+      "sha256": "964a582defc135c8d3cac3dc42f8bc9ed42070b7a3050b9ff9e7bc27daf6b945"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-list.tsx",
+      "bytes": 17135,
+      "sha256": "aaf3877695d7ffd87a28fc677415a5cf669eb4d1bd51dc58becef43140c6e715"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-record.tsx",
+      "bytes": 7116,
+      "sha256": "face4d3de5398365a57ed83e5d8b5781b67fcb1f3faf75692602a94511d950ba"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-stage-menu.tsx",
+      "bytes": 8529,
+      "sha256": "33ef1049d71c3051e914a1aa7f980c0baa572e4dca1632522df2bed036a459ac"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-workspace.tsx",
+      "bytes": 9853,
+      "sha256": "f4bddc8aada36c8ac489ded05df025f0902ef378d64e8c8c4aeabb467df89539"
+    },
+    {
+      "file": "frontend/src/features/deals/facade.ts",
+      "bytes": 7264,
+      "sha256": "e1e124a5330aba9a096fb58826fa1f15b57408e3f6c9595b449a0fa51a250397"
+    },
+    {
+      "file": "frontend/src/features/deals/pipeline.tsx",
+      "bytes": 3301,
+      "sha256": "40c91ccc1a73bffc91575555cd4590edb4de75adf4d3694be0d66742d79ee37c"
+    },
+    {
+      "file": "frontend/src/features/deals/use-deal-command.ts",
+      "bytes": 11277,
+      "sha256": "84b8707e07313f5cd3452c5309ed6b0233987197b021bcf1b4161b221828d984"
+    },
+    {
+      "file": "frontend/tests/unit/customer-proposals.test.mjs",
+      "bytes": 31643,
+      "sha256": "58bd27e677185e6c03cea4e7c0bf231f4127fff49faa72123b68254f5e3e66a7"
+    },
+    {
+      "file": "frontend/tests/unit/deal-action-fixtures.mjs",
+      "bytes": 3684,
+      "sha256": "412d31a2414d6bf20160835d2676bca00e8fde7c92eeadc5a36ddbb89a2c9c8e"
+    },
+    {
+      "file": "frontend/tests/unit/deal-action-recovery.test.mjs",
+      "bytes": 13337,
+      "sha256": "60d9b85bef010b35acf2304f4becdb49757c14d2ba95df127bc3f9a6b78a15f3"
+    },
+    {
+      "file": "frontend/tests/unit/deal-action-ui.test.mjs",
+      "bytes": 13101,
+      "sha256": "566f800930165a26b360d2bd71e3383588b293bbfda3a3174cd024052b29e4ff"
+    },
+    {
+      "file": "frontend/tests/unit/deal-form-recovery.test.mjs",
+      "bytes": 21240,
+      "sha256": "c8eee5ed556b6062d049ad96c9eebe2d25445326a4c5a50f34dd8b52cd694224"
+    },
+    {
+      "file": "frontend/tests/unit/kanban.test.mjs",
+      "bytes": 22493,
+      "sha256": "c77ebb3e17c08bf08a56fa1ae841faaa4e864fe64c67d4be7eb351a66258546e"
+    },
+    {
+      "file": "frontend/tests/e2e/deal-action-recovery.spec.ts",
+      "bytes": 5680,
+      "sha256": "af8db82eba24fabc336805aee1a5b1dc313fce862457efc95af2a8cc1f908cfe"
+    }
+  ]
+}

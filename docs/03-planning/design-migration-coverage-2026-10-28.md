@@ -278,3 +278,24 @@ not rerun. Other domain actions/fields/contexts and broader old selectors remain
 actual native/SQL/device/AFTER/CI/product checks and migrations0036/0037 remain
 pending. No actual access or workaround, main/push/merge/deploy. P0/P8 and the
 full redesign goal remain open.
+
+
+## Affair action follow-through,2026-10-29
+
+[Action field/map contract](../04-design/deal-action-recovery-local.md) retains
+the selected workspace/header/menu, all nine inline fields and Projects-tab
+client proposals. The shared owner pins strict parent/proposal intent and
+unknown body/key, proves originating actor/role and validated current results,
+and retries acknowledged completion without another write. Known conflicts
+require offered/current acceptance; inline keep preserves current unrelated
+values. Unknown work protects input/dismissal/new actions and retains its
+original once-only UI callback, including global retry. Transient metadata/detail
+reads retain authorized drafts; current denial still masks them. Board scope
+now forwards the directory actor/role. Legacy financing is explicitly remediated.
+
+751 frontend units pass,24 added; lint/types/build/history and static app lint11
+pass. Two native phone stage-lost-ack/desktop inline-result-read cases prepared/
+typechecked, not run. Backend unchanged/not rerun. Dedicated reservation/outcome
+commands, exact remaining field/context reconciliation and old selectors remain;
+actual SQL/native/device/AFTER/CI/product checks and migrations0036/0037 remain
+pending. No actual access/workaround, main/push/merge/deploy. P0/P8/full goal open.
