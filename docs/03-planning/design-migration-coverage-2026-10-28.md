@@ -587,3 +587,15 @@ inventory consumers remain unaccepted. [Contract](../04-design/owner-form-recove
 and [evidence](design-migration-evidence/owner-form-recovery-2026-10-29.json).
 Actual SQL/native/device/security/CI/AFTER/product and remaining exact field/job/
 alias/legacy-selector review remain open; P0/P8/full goal are not closed.
+
+
+## Standalone inventory selected paths,2026-10-29
+
+Seven native source scenarios and shared inventory helpers use selected sections,
+right owners/offer/availability/Documents/history drawers, category radios and
+property wizard unknown-result/fresh-comparison behavior. Three direct business
+commands,6 timeouts and3 service-control calls remain unchanged. Focused lint and
+types pass; native scenarios and the wider8 helper consumers remain unaccepted.
+Production unchanged; prior977 frontend/573 backend gates retained. P0/P8/full
+goal and exact remaining field/job/alias/selector work stay open.
+[Path map](../05-quality/inventory-native-paths-local.md).

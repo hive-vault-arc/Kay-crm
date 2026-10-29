@@ -3166,3 +3166,19 @@ migration/push/merge/deploy. Actual SQL/native/device/security/CI/AFTER/product,
 migrations0036/0037 and remaining exact field/job/alias/legacy-selector work stay
 pending. Full goal active.
 [Evidence](design-migration-evidence/owner-form-recovery-2026-10-29.json).
+
+
+## Standalone inventory native-path follow-through,2026-10-29
+
+Shared test helpers and seven standalone scenarios now target the selected
+single detail region, offers/owners/availability drawers, category radios,
+Documents/history and property wizard recovery/fresh comparison. Production and
+API fixture purpose are unchanged. AST review preserves3 direct business commands,
+6 timeouts and3 existing service-control calls; one held-owner title reflects
+current drawer controls. Focused ESLint/types pass; no native execution/listing/
+import or outage/service control. Eight helper consumers exist and their wider
+paths are not certified. Prior977 frontend/573 backend units and production gates
+retained, not rerun. Frozen254/main/unrelated work preserved. Actual SQL/native/
+device/security/CI/AFTER/product and remaining exact field/job/alias/selectors stay
+open; full goal active. [Path map](../05-quality/inventory-native-paths-local.md)
+and [evidence](design-migration-evidence/inventory-native-paths-2026-10-29.json).

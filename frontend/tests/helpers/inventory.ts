@@ -4,18 +4,19 @@ import { expect } from "./auth";
 
 export async function propertyEditStep(page: Page, target: number) {
   const form = page.getByRole("form", { name: "Modifier le bien", exact: true });
-  const progress = form.getByRole("navigation", { name: "Progression de la modification", exact: true }).getByRole("status");
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const current = Number((await progress.textContent())?.match(/Étape (\d+)/)?.[1]) - 1;
-    if (current === target) return;
-    await form.getByRole("button", { name: current < target ? "Suivant" : "Précédent", exact: true }).click();
-  }
-  await expect(progress).toHaveText(`Étape ${target + 1} sur 5`);
+  const progress = form.getByRole("navigation", { name: "Progression de la modification", exact: true });
+  const step = progress.getByRole("button", { name: new RegExp(`^Étape ${target + 1} sur 5 : `) });
+  if (await step.getAttribute("aria-current") !== "step") await step.click();
+  await expect(step).toHaveAttribute("aria-current", "step");
 }
 
 export async function savePropertyEdit(page: Page) {
+  const form = page.getByRole("form", { name: "Modifier le bien", exact: true });
+  if (await form.getAttribute("data-write-recovery") === "true") {
+    await form.getByRole("button", { name: /^(Réessayer la même opération|Actualiser le résultat)$/ }).click(); return;
+  }
   await propertyEditStep(page, 4);
-  await page.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+  await form.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
 }
 
 export async function createProperty(page: Page, category = "apartment", reference = `SP07-${randomUUID()}`) {
@@ -38,15 +39,26 @@ export async function createProperty(page: Page, category = "apartment", referen
   await expect(page.getByRole("heading", { name: reference.toUpperCase(), exact: true })).toBeVisible();
   return id;
 }
-export async function openProperty(page: Page, id: string, tab = "Aperçu") {
+export function inventorySection(page: Page, name: string | RegExp) {
+  return page.getByRole("heading", { name, exact: true }).locator("..").locator("..");
+}
+export async function openInventoryHistory(page: Page) {
+  await page.getByRole("button", { name: "Actions", exact: true }).click();
+  await page.getByRole("button", { name: "Historique", exact: true }).click();
+  const drawer = page.getByRole("dialog", { name: "Historique", exact: true }); await expect(drawer).toBeVisible(); return drawer;
+}
+export async function openProperty(page: Page, id: string, section = "Aperçu") {
   await page.goto(`/projects/properties/${id}`);
-  await expect(page.getByRole("tab", { name: tab, exact: true })).toBeEnabled();
-  await page.getByRole("tab", { name: tab, exact: true }).click();
+  await expect(page.getByRole("region", { name: "Informations du bien", exact: true })).toBeVisible();
+  if (section === "Historique") await openInventoryHistory(page);
+  else if (section !== "Aperçu") await inventorySection(page, section).scrollIntoViewIfNeeded();
+}
+export async function openOwnerEditor(page: Page) {
+  await inventorySection(page, "Propriétaires").getByRole("button", { name: "Modifier", exact: true }).click();
+  const drawer = page.getByRole("dialog", { name: "Propriétaires légaux", exact: true }); await expect(drawer).toBeVisible(); return drawer;
 }
 export async function addOwners(page: Page, names: string[]) {
-  const owners = page.getByRole("heading", { name: "Propriétaires", exact: true }).locator("..");
-  await owners.getByRole("button", { name: "Modifier", exact: true }).click();
-  const drawer = page.getByRole("dialog", { name: "Propriétaires légaux", exact: true });
+  const drawer = await openOwnerEditor(page);
   for (const [index, name] of names.entries()) {
     await drawer.getByLabel("Rechercher un contact accessible", { exact: true }).fill(name);
     await drawer.getByRole("button", { name: "Rechercher", exact: true }).click();
@@ -57,23 +69,25 @@ export async function addOwners(page: Page, names: string[]) {
   await drawer.getByRole("button", { name: "Enregistrer", exact: true }).click();
   await expect(drawer).not.toBeVisible();
   await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
-  await expect(owners.getByRole("button", { name: "Modifier", exact: true })).toBeEnabled();
+  await expect(inventorySection(page, "Propriétaires").getByRole("button", { name: "Modifier", exact: true })).toBeEnabled();
 }
 export async function createCampaign(page: Page, kind: "sale" | "rental", price = "1234,56", period = "month") {
-  await page.getByRole("tab", { name: "Offres", exact: true }).click();
   const label = kind === "sale" ? "vente" : "location";
-  await page.getByRole("button", { name: `Créer une campagne ${label}`, exact: true }).click();
-  await page.getByLabel(`Prix ${kind === "sale" ? "de vente" : "de location"} en MAD (facultatif)`, { exact: true }).fill(price);
-  if (kind === "rental") await page.getByLabel("Période du loyer d’origine", { exact: true }).selectOption(period);
-  await page.getByLabel("Conditions d’origine (facultatives)", { exact: true }).fill(`SP07 conditions initiales ${label}`);
-  await page.getByRole("button", { name: "Créer la campagne", exact: true }).click();
-  await expect(page.getByRole("tab", { name: "Aperçu", exact: true })).toHaveAttribute("aria-selected", "true");
-  await expect(page.getByRole("tab", { name: "Offres", exact: true })).toBeEnabled();
+  await page.getByRole("button", { name: `Créer une offre de ${label}`, exact: true }).click();
+  const drawer = page.getByRole("dialog", { name: `Créer une offre de ${label}`, exact: true });
+  await drawer.getByLabel("Prix (MAD, facultatif)", { exact: true }).fill(price);
+  if (kind === "rental") await drawer.getByLabel("Période du tarif d’origine", { exact: true }).selectOption(period);
+  await drawer.getByLabel("Conditions d’origine (facultatives)", { exact: true }).fill(`SP07 conditions initiales ${label}`);
+  await drawer.getByRole("button", { name: "Créer la campagne", exact: true }).click();
+  await expect(drawer).not.toBeVisible(); await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
+}
+export async function openAvailability(page: Page, kind: "sale" | "rental") {
+  await page.getByRole("button", { name: `Confirmer la disponibilité ${kind === "sale" ? "vente" : "location"}`, exact: true }).click();
+  const drawer = page.getByRole("dialog", { name: "Confirmer la disponibilité", exact: true }); await expect(drawer).toBeVisible(); return drawer;
 }
 export async function confirmCampaign(page: Page, kind: "sale" | "rental") {
-  await page.getByRole("tab", { name: "Offres", exact: true }).click();
-  const section = page.getByRole("region", { name: kind === "sale" ? "Vente" : "Location", exact: true });
-  await section.getByLabel("Motif de la confirmation de disponibilité", { exact: true }).fill("SP07 vérification synthétique de disponibilité");
-  await section.getByRole("button", { name: "Confirmer la disponibilité", exact: true }).click();
-  await expect(page.getByRole("tab", { name: "Aperçu", exact: true })).toHaveAttribute("aria-selected", "true");
+  const drawer = await openAvailability(page, kind);
+  await drawer.getByLabel("Motif de confirmation", { exact: true }).fill("SP07 vérification synthétique de disponibilité");
+  await drawer.getByRole("button", { name: /^(Reconfirmer|Confirmer) la disponibilité$/ }).click();
+  await expect(drawer).not.toBeVisible(); await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
 }

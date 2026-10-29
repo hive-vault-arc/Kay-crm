@@ -3148,3 +3148,17 @@ captures off. Backend unchanged/prior573 units retained; actual SQL/session/
 role-loss/native/security/CI and Ruff/mypy acceptance stay pending. No real app,
 DB, credentials, accounts, files, services or transfer access/workaround, migration,
 main/push/merge/deploy. [Contract](04-design/owner-form-recovery-local.md).
+
+
+## Inventory native path preparation boundary,2026-10-29
+
+Source-only selector/navigation reconciliation retains inventory legal-owner,
+price/stock, private identity/403/404, session/logout, exact retry/history and
+role-revocation assertions. All3 direct business command calls and3 existing
+service-control calls are unchanged and were not executed; no new mock success,
+permission, fixture or production edit. Focused ESLint/types pass. Native/SQL/
+actual service, identity and security/CI acceptance remain pending;8 shared helper
+consumers' wider flows are not certified. Prior977 frontend/573 backend units
+retained. No actual app/DB/account/config/service/outage/file/worker access or
+workaround, migration/main/push/merge/deploy.
+[Path map](05-quality/inventory-native-paths-local.md).

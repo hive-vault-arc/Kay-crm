@@ -848,3 +848,15 @@ prepared/typechecked, not run. Other inventory helper consumers retain unreviewe
 paths. Backend unchanged/prior573 units retained. No AT-wide SQL/native/security/
 CI/AFTER/product or full-goal acceptance inferred.
 [Contract](../04-design/owner-form-recovery-local.md).
+
+
+## Standalone inventory selected native paths,2026-10-29
+
+AT-06/08/23/27/31/39 source scenarios keep exact price/annual comparison, current
+stock/ownership, unrelated agent privacy/403/404, single history write, interrupted
+acknowledgement, real-outage and explicit conflict/role-revocation assertions.
+Selected section/drawer/radio/stepper paths replace removed standalone tabs.
+Focused ESLint/types and AST preservation checks pass. Seven scenarios prepared,
+not run; wider8 shared helper consumers and actual SQL/native/device/security/CI/
+AFTER/product gates pending. Production/prior977 frontend/573 backend evidence
+retained, not rerun. [Path map](inventory-native-paths-local.md).

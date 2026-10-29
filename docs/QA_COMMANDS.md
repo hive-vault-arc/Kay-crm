@@ -3251,3 +3251,23 @@ services/worker/transfer or workaround, migration/main/push/merge/deploy. Actual
 SQL/native/device/security/CI/AFTER/product checks and wider consumers remain
 pending. [Contract](04-design/owner-form-recovery-local.md) and
 [evidence](03-planning/design-migration-evidence/owner-form-recovery-2026-10-29.json).
+
+
+## Standalone inventory native path preparation,2026-10-29
+
+npx eslint tests/helpers/inventory.ts tests/e2e/inventory.spec.ts --max-warnings=0
+and npm run typecheck exit0. TypeScript AST comparison confirms all3 direct
+staffCommand calls/arguments,6 test timeouts and3 apiProcess calls unchanged;
+7 cases remain, one purpose title changes from removed tabs to drawer controls.
+Current selected component labels/section and portal boundaries were inspected
+in source. No old standalone tab/tabpanel target remains in that scenario file.
+No new mirrored unit test, mock write success or timeout increase.
+
+Prepared/typechecked only, no Playwright listing/import/execution, app/browser/
+HTTP/DB/accounts/private config/service/outage control/transfer or workaround,
+migration/main/push/merge/deploy. Production unchanged; prior977 frontend units/
+build/history/lint and573 backend units retained, not rerun. The8 direct helper
+consumers retain wider unreviewed paths; actual SQL/native/device/security/CI/
+AFTER/product acceptance remains pending.
+[Path map](05-quality/inventory-native-paths-local.md) and
+[evidence](03-planning/design-migration-evidence/inventory-native-paths-2026-10-29.json).

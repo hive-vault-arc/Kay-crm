@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { clearActorContext, test, expect, createActor, removeActor, signIn, changeActor } from "../helpers/auth";
 import { createLead, staffCommand } from "../helpers/leads";
-import { addOwners, confirmCampaign, createCampaign, createProperty, openProperty, propertyEditStep, savePropertyEdit } from "../helpers/inventory";
+import { addOwners, confirmCampaign, createCampaign, createProperty, inventorySection, openAvailability, openInventoryHistory, openOwnerEditor, openProperty, propertyEditStep, savePropertyEdit } from "../helpers/inventory";
 import { apiProcess } from "../helpers/api-process";
 
 test.beforeEach(({ page }) => { page.setDefaultNavigationTimeout(30_000); page.setDefaultTimeout(20_000); });
@@ -56,28 +56,27 @@ test("SP07 AT-23/39: failed logout restores normal session-expiry handling", asy
   } finally { await removeActor(actor); }
 });
 
-test("SP07 AT-23: held owner acknowledgement locks tabs and clears the prior success", async ({ page }) => {
+test("SP07 AT-23: held owner acknowledgement locks drawer controls and clears the prior success", async ({ page }) => {
   test.setTimeout(80_000);
   const manager = await createActor("manager");
   let release = () => {};
   try {
     await signIn(page, manager); const id = await createProperty(page);
     await createCampaign(page, "sale", "900000,01");
-    await expect(page.getByLabel("Prix demandés")).toContainText("900 000,01 MAD");
+    await expect(inventorySection(page, "Offres")).toContainText("900 000,01 MAD");
     await createCampaign(page, "rental");
     await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
-    await page.getByRole("tab", { name: "Propriétaires", exact: true }).click();
-    await page.getByRole("button", { name: "Modifier les propriétaires", exact: true }).click();
+    const drawer = await openOwnerEditor(page);
     const gate = new Promise<void>(resolve => { release = resolve; });
     await page.route(`**/api/v1/properties/${id}/owners`, async route => { const response = await route.fetch(); await gate; await route.fulfill({ response }); }, { times: 1 });
-    await page.getByRole("button", { name: "Enregistrer les propriétaires", exact: true }).click();
-    await expect(page.getByRole("tab", { name: "Offres", exact: true })).toBeDisabled();
+    await drawer.getByRole("button", { name: "Enregistrer", exact: true }).click();
+    await expect(drawer.getByRole("button", { name: "Annuler", exact: true })).toBeDisabled();
     await expect(page.getByText("Inventaire enregistré.", { exact: true })).toHaveCount(0);
-    await expect(page.getByText("Enregistrement en cours, veuillez patienter…", { exact: true })).toBeVisible();
+    await expect(drawer.getByRole("button", { name: "Enregistrement…", exact: true })).toBeDisabled();
     release();
     await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
-    await page.getByRole("tab", { name: "Offres", exact: true }).click();
-    await expect(page.getByRole("tabpanel", { name: "Offres", exact: true }).getByText("Comparaison annuelle : 14 814,72 MAD / an", { exact: true })).toBeVisible();
+    await expect(drawer).not.toBeVisible();
+    await expect(inventorySection(page, "Offres").getByText("Comparaison annuelle : 14 814,72 MAD / an", { exact: true })).toBeVisible();
   } finally { release(); await removeActor(manager); }
 });
 
@@ -97,19 +96,23 @@ test("SP07 AT-06/08/27/31: manager standalone inventory, separate prices and unr
     await signIn(page, manager);
     const id = await createProperty(page);
     await createCampaign(page, "sale", "900000,01");
-    await expect(page.getByLabel("Prix demandés")).toContainText("900 000,01 MAD");
-    await page.getByRole("tab", { name: "Offres", exact: true }).click();
-    const sale = page.getByRole("region", { name: "Vente", exact: true });
-    await sale.getByLabel("Motif de la confirmation de disponibilité", { exact: true }).fill("SP07 vérification sans propriétaire");
+    await expect(inventorySection(page, "Offres")).toContainText("900 000,01 MAD");
+    const sale = await openAvailability(page, "sale");
+    await sale.getByLabel("Motif de confirmation", { exact: true }).fill("SP07 vérification sans propriétaire");
     await sale.getByRole("button", { name: "Confirmer la disponibilité", exact: true }).click();
     await expect(sale.getByRole("alert")).toContainText("au moins un propriétaire légal");
+    await sale.getByRole("button", { name: "Annuler", exact: true }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: "Quitter sans enregistrer", exact: true }).click();
     await addOwners(page, ["SP07 propriétaire privé synthétique", "SP07 second propriétaire privé synthétique"]);
     await createCampaign(page, "rental");
     await confirmCampaign(page, "sale"); await confirmCampaign(page, "rental");
-    await expect(page.getByRole("tabpanel", { name: "Aperçu" }).getByText("1 234,56 MAD / mois", { exact: true })).toBeVisible();
-    await expect(page.getByRole("tabpanel", { name: "Aperçu", exact: true }).getByText("Comparaison annuelle : 14 814,72 MAD / an", { exact: true })).toBeVisible();
-    await expect(page.getByLabel("Prix demandés").getByText("900 000,01 MAD", { exact: true })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Pièces jointes", exact: true }).getByText("Aucune pièce jointe sur cette page. Ajoutez un fichier pour commencer.", { exact: true })).toBeVisible();
+    await expect(inventorySection(page, "Offres").getByText("1 234,56 MAD / mois", { exact: true })).toBeVisible();
+    await expect(inventorySection(page, "Offres").getByText("Comparaison annuelle : 14 814,72 MAD / an", { exact: true })).toBeVisible();
+    await expect(inventorySection(page, "Offres").getByText("900 000,01 MAD", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Documents", exact: true }).click();
+    const documents = page.getByRole("dialog", { name: "Documents", exact: true });
+    await expect(documents.getByText("Aucune pièce jointe sur cette page. Ajoutez un document pour commencer.", { exact: true })).toBeVisible();
+    await page.keyboard.press("Escape");
     await clearActorContext(agent); await signIn(agent, unrelated); await openProperty(agent, id, "Propriétaires");
     await expect(agent.getByText("SP07 vendeur autorisé 1", { exact: true })).toBeVisible();
     await expect(agent.getByRole("link", { name: "SP07 propriétaire privé synthétique", exact: true })).toHaveCount(0);
@@ -117,7 +120,7 @@ test("SP07 AT-06/08/27/31: manager standalone inventory, separate prices and unr
     expect(facts.owners.every((value: { contact: unknown }) => value.contact === null)).toBe(true);
     expect(JSON.stringify(facts).includes(contact.id)).toBe(false);
     expect((await agent.request.get(`/api/v1/contacts/${contact.id}`)).status()).toBe(404);
-    await agent.getByRole("tab", { name: "Offres", exact: true }).click();
+    await inventorySection(agent, "Offres").scrollIntoViewIfNeeded();
     await expect(agent.getByRole("button", { name: /Modifier la campagne/ })).toHaveCount(0);
     expect((await staffCommand(agent, `properties/${id}/owners`, { owners: [], expected_version: facts.version }, "PUT")).status()).toBe(403);
     await agent.goto(`/projects/properties/${id}/edit`);
@@ -129,11 +132,11 @@ test("SP07 AT-06/08/27/31: manager standalone inventory, separate prices and unr
     await openProperty(page, id, "Offres");
     await page.getByRole("button", { name: "Modifier la campagne location", exact: true }).click();
     await page.getByLabel("Statut de la campagne", { exact: true }).selectOption("withdrawn");
-    await page.getByLabel("Motif de la modification de l’offre", { exact: true }).fill("SP07 retrait synthétique");
+    await page.getByLabel("Motif de modification", { exact: true }).fill("SP07 retrait synthétique");
     await page.getByRole("button", { name: "Enregistrer la campagne", exact: true }).click();
-    await expect(page.getByRole("tab", { name: "Aperçu", exact: true })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("dialog", { name: "Modifier l’offre", exact: true })).not.toBeVisible();
     await createCampaign(page, "rental", "15000,01", "year");
-    await page.getByRole("tab", { name: "Historique", exact: true }).click();
+    await openInventoryHistory(page);
     await expect(page.getByRole("heading", { name: "Campagne retirée", exact: true })).toBeVisible();
     await expect(page.getByText("SP07 conditions initiales location", { exact: true }).first()).toBeVisible();
     const campaigns = await (await page.request.get(`/api/v1/offerings?property_id=${id}`)).json();
@@ -154,10 +157,11 @@ test("SP07 AT-27/31: all standalone categories, incomplete drafts and availabili
     }
     const landPath = new URL(page.url()).pathname;
     await page.goto("/projects");
-    await expect(page.getByRole("checkbox", { name: "Local commercial" })).toBeVisible();
+    await expect(page.getByRole("radio", { name: "Local commercial", exact: true })).toBeVisible();
     for (const label of ["Villa", "Appartement", "Terrain", "Maison"]) {
-      await page.getByRole("checkbox", { name: label, exact: true }).uncheck();
+      await expect(page.getByRole("radio", { name: label, exact: true })).toBeVisible();
     }
+    await page.getByRole("radio", { name: "Local commercial", exact: true }).check();
     await expect(page.getByText("1 bien correspondant", { exact: true })).toBeVisible();
     await expect(page.getByText("Local commercial", { exact: true }).last()).toBeVisible();
     const literalSearch = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === "/api/v1/properties" && url.searchParams.get("q") === ".."; });
@@ -168,21 +172,22 @@ test("SP07 AT-27/31: all standalone categories, incomplete drafts and availabili
     expect((await literalResult.json()).total).toBe(0);
     await expect(page.getByText("0 bien correspondant", { exact: true })).toBeVisible();
     await page.goto(landPath);
-    await expect(page.getByRole("tab", { name: "Offres", exact: true })).toBeEnabled();
+    await expect(inventorySection(page, "Offres")).toBeVisible();
     await createCampaign(page, "rental", "");
-    await page.getByRole("tab", { name: "Offres", exact: true }).click();
-    const rental = page.getByRole("region", { name: "Location", exact: true });
+    const rental = await openAvailability(page, "rental");
     await rental.getByRole("button", { name: "Confirmer la disponibilité", exact: true }).click();
-    await expect(rental.getByRole("alert")).toContainText("Saisissez le motif");
-    await rental.getByLabel("Motif de la confirmation de disponibilité", { exact: true }).fill("SP07 prix encore inconnu");
+    await expect(rental.getByRole("alert")).toContainText("Indiquez le motif");
+    await rental.getByLabel("Motif de confirmation", { exact: true }).fill("SP07 prix encore inconnu");
     await rental.getByRole("button", { name: "Confirmer la disponibilité", exact: true }).click();
     await expect(rental.getByRole("alert")).toContainText("prix strictement positif");
+    await rental.getByRole("button", { name: "Annuler", exact: true }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: "Quitter sans enregistrer", exact: true }).click();
     await page.getByRole("button", { name: "Modifier la campagne location", exact: true }).click();
-    await page.getByLabel("Prix de location en MAD (facultatif)", { exact: true }).fill("0");
-    await page.getByLabel("Motif de la modification de l’offre", { exact: true }).fill("SP07 invalide");
+    await page.getByLabel("Prix (MAD, facultatif)", { exact: true }).fill("0");
+    await page.getByLabel("Motif de modification", { exact: true }).fill("SP07 invalide");
     await page.getByRole("button", { name: "Enregistrer la campagne", exact: true }).click();
-    await expect(page.getByRole("form", { name: "Modifier la campagne location", exact: true }).getByRole("alert")).toContainText("Prix positif");
-    await expect(page.getByLabel("Prix de location en MAD (facultatif)", { exact: true })).toHaveValue("0");
+    await expect(page.getByRole("form", { name: "Modifier la campagne location", exact: true }).getByRole("alert")).toContainText("prix positif");
+    await expect(page.getByLabel("Prix (MAD, facultatif)", { exact: true })).toHaveValue("0");
   } finally { await removeActor(manager); }
 });
 
@@ -191,18 +196,20 @@ test("SP07 AT-23: lost acknowledgement and real outage preserve draft, retry is 
   const manager = await createActor("manager"); let stopped = false;
   try {
     await signIn(page, manager); const id = await createProperty(page);
-    await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
+    await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await page.getByLabel("Titre de l’annonce (facultatif)", { exact: true }).fill("SP07 accusé interrompu");
     await page.route(`**/api/v1/properties/${id}`, async route => { if (route.request().method() === "PATCH") { await route.fetch(); await route.abort("failed"); } else await route.continue(); }, { times: 1 });
     await savePropertyEdit(page);
     await expect(page.getByRole("alert").filter({ hasText: "service local est indisponible" })).toBeVisible();
-    await propertyEditStep(page, 0);
-    await expect(page.getByLabel("Titre de l’annonce (facultatif)", { exact: true })).toHaveValue("SP07 accusé interrompu");
+    const recovering = page.getByRole("form", { name: "Modifier le bien", exact: true });
+    await expect(recovering).toHaveAttribute("data-write-recovery", "true");
+    await expect(recovering.getByRole("navigation", { name: "Progression de la modification", exact: true }).getByRole("button").first()).toBeDisabled();
+    await expect(recovering.getByText("SP07 accusé interrompu", { exact: true })).toBeVisible();
     await savePropertyEdit(page);
-    await expect(page.getByRole("link", { name: "Modifier le bien", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Modifier", exact: true })).toBeVisible();
     const history = await (await page.request.get(`/api/v1/properties/${id}/history`)).json();
     expect(history.items.filter((event: { action: string }) => event.action === "properties.updated")).toHaveLength(1);
-    await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
+    await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await propertyEditStep(page, 1);
     await page.getByLabel("Repère ou localisation courte (facultatif)", { exact: true }).fill("SP07 saisie pendant panne");
     await apiProcess("stop"); stopped = true;
@@ -222,15 +229,17 @@ test("SP07 AT-23: current version comparison preserves edits and revoked role ca
   const manager = await createActor("manager");
   try {
     await signIn(page, manager); const id = await createProperty(page);
-    await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
+    await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await expect(page.getByRole("form", { name: "Modifier le bien", exact: true }).getByRole("button", { name: "Suivant", exact: true })).toBeEnabled();
     await page.getByLabel("Titre de l’annonce (facultatif)", { exact: true }).fill("SP07 saisie conservée");
     const current = await (await page.request.get(`/api/v1/properties/${id}`)).json();
     expect((await staffCommand(page, `properties/${id}`, { reference: current.reference, category: current.category, marketing_name: "SP07 version concurrente", location: current.location, area_sqm: current.area_sqm, listing_details: { ...current.listing_details, city: "Ville concurrente synthétique", unit_floor: 0 }, expected_version: current.version }, "PATCH")).status()).toBe(200);
     await savePropertyEdit(page);
-    await expect(page.getByRole("region", { name: "Version actuelle du bien", exact: true })).toContainText("SP07 version concurrente");
+    await page.getByRole("button", { name: "Comparer la version actuelle", exact: true }).click();
+    const comparison = inventorySection(page, `Version actuelle ${current.version + 1}`);
+    await expect(comparison).toContainText("SP07 version concurrente");
     await page.getByText("Comparer les caractéristiques actuelles", { exact: true }).click();
-    await expect(page.getByRole("region", { name: "Version actuelle du bien", exact: true })).toContainText("Ville concurrente synthétique");
+    await expect(comparison).toContainText("Ville concurrente synthétique");
     await propertyEditStep(page, 0);
     await expect(page.getByLabel("Titre de l’annonce (facultatif)", { exact: true })).toHaveValue("SP07 saisie conservée");
     await page.getByRole("button", { name: "Conserver ma saisie sur cette version", exact: true }).click();
