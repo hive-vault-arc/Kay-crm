@@ -3014,3 +3014,15 @@ phone independent/unit create lost-ack and desktop edit result-read cases are
 prepared/typechecked, not run. Backend unchanged/not rerun. Actual SQL/concurrent
 stock/native/device/focus/zoom/visual/CI/AFTER/product acceptance and migrations
 0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected inventory lifecycle recovery,2026-10-29
+
+865 frontend units pass,17 added actual intent/review/controller/panel/host/facade
+cases. Lint/types/build/history and static Frontend Taste app lint3 pass,0 findings.
+[Contract](04-design/inventory-lifecycle-recovery-local.md). Two native phone
+manager property archive lost-ack/desktop manager programme restore result-read
+cases prepared/typechecked, not run. Backend unchanged/not rerun. Source/test
+search confirms0 useInventoryCommand references. Actual SQL/concurrent stock/
+native/device/focus/zoom/visual/CI/AFTER/product acceptance and migrations0036/0037
+pending. No actual access/workaround, main/push/merge/deploy.

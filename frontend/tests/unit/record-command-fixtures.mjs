@@ -13,6 +13,7 @@ export function loadRecordCommand(h, { source, ErrorType = ExternalApiError, com
     const body = args[1], target = "property_id" in receipt ? receipt.property_id : receipt.development_id;
     if (target !== source.id) return;
     commits++; server = { ...server, version: receipt.version };
+    if (/\/(archive|restore)$/.test(args[0])) server.archived_at = args[0].endsWith("/archive") ? "2026-10-29T12:00:00Z" : null;
     if (root === "developments" && args[0] === `/api/v1/developments/${source.id}` && args[4] === "PATCH") {
       const contactId = body.developer_contact_id, display = body.developer_marketing_display, fields = { ...body }; delete fields.expected_version; delete fields.developer_contact_id; delete fields.developer_marketing_display;
       server = { ...server, ...fields, developer: { marketing_display: display, contact: Object.hasOwn(body, "developer_contact_id") ? contactId ? { id: contactId, name: "Synthetic selected developer" } : null : server.developer.contact } };

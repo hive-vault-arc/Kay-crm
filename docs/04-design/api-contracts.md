@@ -1270,3 +1270,17 @@ retry completion only. Hierarchy/offering references must cohere; explicit curre
 comparison/reload cannot lower a newer host counter or retarget a moved unit.
 No new endpoint/grant/backend effect. [Contract](property-listing-recovery-local.md);
 actual SQL/native acceptance pending.
+
+
+## Inventory lifecycle client completion,2026-10-29
+
+Existing property/development archive/restore POSTs retain strict expected_version
+and nonblank reason, current M/A authority and conservative stock/history rules.
+The selected client pins the opening operation and original key/body/callback;
+current identity and exact newer root/null-offering receipt/current record precede
+completion. The facade binds that receipt to the requested root/ID/counter. Exact
+receipt-version state is checked; later inverse actions do not erase history.
+Known conflicts require explicit current acceptance; blocked stock/state change
+ends read-only. No release/override, endpoint, grant or retention change.
+[Contract](inventory-lifecycle-recovery-local.md); actual SQL/native acceptance
+remains pending.

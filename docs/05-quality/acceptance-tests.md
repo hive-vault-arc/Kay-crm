@@ -655,3 +655,19 @@ drawer creation lost acknowledgement and desktop edit result-read outage.
 [Contract](../04-design/property-listing-recovery-local.md). Backend unchanged/not
 rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/product
 acceptance and broader legacy selectors remain pending. No AT-wide closure.
+
+
+## Selected inventory lifecycle source coverage,2026-10-29
+
+865 synthetic frontend units pass,17 added for both inventory roots/operations,
+M/A/current authority, strict body/path/counter, frozen reason/key/action, stale
+outer controls, one commit, completion-only read/partial parent recovery, exact/
+historical state proof, explicit conflicts, current campaigns/any child, no action
+flip, validation/hydration/source, saved generic denial, double dispatch, deferred
+discard/result disposal, verified host installation and facade rejection. Two
+cases in frontend/tests/e2e/inventory-lifecycle-recovery.spec.ts are prepared/
+typechecked, not run: phone manager property archive lost acknowledgement and
+desktop manager programme restore result-read outage.
+[Contract](../04-design/inventory-lifecycle-recovery-local.md). Backend unchanged/
+not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
+product acceptance and broader legacy selectors remain pending. No AT-wide closure.

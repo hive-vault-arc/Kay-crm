@@ -63,6 +63,11 @@ export async function relayInventory(key: string, request: Request, requestId: s
       const rightTarget = root === "properties" ? "property_id" in receipt && receipt.property_id === targetId : "development_id" in receipt && receipt.development_id === targetId;
       if (!rightTarget || receipt.offering_id !== input.offering_id || receipt.version <= input.expected_version) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
     }
+    if (mutation && ["archive", "restore"].includes(suffix)) {
+      const input = archiveDevelopmentSchema.parse(JSON.parse(body!)), receipt = resultSchema.parse(result);
+      const rightTarget = root === "properties" ? "property_id" in receipt && receipt.property_id === targetId : "development_id" in receipt && receipt.development_id === targetId;
+      if (!rightTarget || receipt.offering_id !== null || receipt.version <= input.expected_version) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    }
     return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

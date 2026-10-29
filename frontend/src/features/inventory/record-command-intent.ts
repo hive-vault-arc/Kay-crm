@@ -1,16 +1,19 @@
 import { z } from "zod";
 import { confirmSchema, editOfferingSchema, newOfferingSchema, ownersSchema } from "./contracts";
-import { editDevelopmentSchema, structureFieldsSchema, typeFieldsSchema } from "./development-contracts";
+import { archiveDevelopmentSchema, editDevelopmentSchema, structureFieldsSchema, typeFieldsSchema } from "./development-contracts";
+import type { InventoryRecord } from "./record-scope";
 
 export type RecordCommandScope = { root: "properties" | "developments"; id: string; version: number } & (
   { kind: "owners" } |
   { kind: "development-facts" } |
+  { kind: "lifecycle"; operation: "archive" | "restore" } |
   { kind: "offering"; campaign: "sale" | "rental" | "holiday"; offeringId?: string; availability?: boolean } |
   { kind: "structure"; element: "blocks" | "floors" | "unit-types"; parent: string; itemId?: string }
 );
 export type RecordCommandIntent = { path: `/api/v1/${string}`; method: "POST" | "PATCH" | "PUT"; expectedVersion: number } & (
   { kind: "owners"; body: z.infer<typeof ownersSchema> } |
   { kind: "development-facts"; body: z.infer<typeof editDevelopmentSchema> } |
+  { kind: "lifecycle"; body: z.infer<typeof archiveDevelopmentSchema> } |
   { kind: "offering-create"; body: z.infer<typeof newOfferingSchema> } |
   { kind: "offering-edit"; body: z.infer<typeof editOfferingSchema> } |
   { kind: "availability"; body: z.infer<typeof confirmSchema> } |
@@ -19,6 +22,9 @@ export type RecordCommandIntent = { path: `/api/v1/${string}`; method: "POST" | 
 export function recordCommandIntent(scope: RecordCommandScope, path: `/api/v1/${string}`, value: unknown, method: "POST" | "PATCH" | "PUT"): RecordCommandIntent | undefined {
   if (!["properties", "developments"].includes(scope.root) || !z.uuid().safeParse(scope.id).success || !Number.isSafeInteger(scope.version) || scope.version < 1) return;
   const common = { path, method };
+  if (scope.kind === "lifecycle" && ["archive", "restore"].includes(scope.operation) && path === `/api/v1/${scope.root}/${scope.id}/${scope.operation}` && method === "POST") {
+    const body = archiveDevelopmentSchema.safeParse(value); if (body.success) return { ...common, kind: "lifecycle", body: body.data, expectedVersion: body.data.expected_version };
+  }
   if (scope.kind === "development-facts" && scope.root === "developments" && path === `/api/v1/developments/${scope.id}` && method === "PATCH") {
     const body = editDevelopmentSchema.safeParse(value); if (body.success) return { ...common, kind: "development-facts", body: body.data, expectedVersion: body.data.expected_version };
   }
@@ -43,4 +49,10 @@ export function recordCommandIntent(scope: RecordCommandScope, path: `/api/v1/${
     const body = scope.element === "unit-types" ? typeFieldsSchema.safeParse(value) : structureFieldsSchema.safeParse(value);
     if (body.success && (!("development_id" in body.data) || body.data.development_id === scope.id)) return { ...common, kind: "structure", body: body.data, expectedVersion: body.data.expected_version };
   }
+}
+
+export function lifecycleReview(scope: { root: "properties" | "developments"; id: string; operation: "archive" | "restore" }, record: InventoryRecord): "ready" | "changed" | "stock" {
+  if (record.id !== scope.id || (scope.root === "developments") !== ("unit_count" in record) || Boolean(record.archived_at) !== (scope.operation === "restore")) return "changed";
+  if (scope.operation === "archive" && (record.offerings.some(offering => offering.is_current) || scope.root === "developments" && "unit_count" in record && record.unit_count > 0)) return "stock";
+  return "ready";
 }

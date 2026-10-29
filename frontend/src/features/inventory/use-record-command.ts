@@ -10,7 +10,7 @@ import { propertySchema, resultSchema } from "./contracts";
 import { developmentSchema } from "./development-contracts";
 import { InventoryRecordContext, type InventoryRecord } from "./record-scope";
 import { InventoryBusyContext } from "./use-command";
-import { recordCommandIntent, type RecordCommandIntent, type RecordCommandScope } from "./record-command-intent";
+import { lifecycleReview, recordCommandIntent, type RecordCommandIntent, type RecordCommandScope } from "./record-command-intent";
 
 type Completion = (record: InventoryRecord, signal: AbortSignal) => void | Promise<void>;
 type Attempt = { intent: RecordCommandIntent; key: string; fingerprint: string; dispatched: boolean; uncertain: boolean; receipt?: z.infer<typeof resultSchema>; completed: Completion };
@@ -29,7 +29,7 @@ export function useInventoryRecordCommand(scope: RecordCommandScope) {
   const authorize: NonNullable<CommandLifecycle["beforeDispatch"]> = identity => {
     if (!active() || hostRef.current?.id !== scope.id || hostRef.current.root !== scope.root) throw new ApiError("FORBIDDEN", 403);
     if (identity.must_change_password) throw new ApiError("PASSWORD_CHANGE_REQUIRED", 403);
-    if ((scope.kind === "owners" || scope.kind === "offering") && identity.user.role === "agent" || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
+    if ((scope.kind === "owners" || scope.kind === "offering" || scope.kind === "lifecycle") && identity.user.role === "agent" || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
     binding.current = { actor: identity.user.id, role: identity.user.role };
   };
   async function prove(signal: AbortSignal) { const identity = await apiGet("/api/v1/auth/me", meSchema, signal); if (!current() || signal.aborted) return false; authorize(identity); return true; }
@@ -61,6 +61,7 @@ export function useInventoryRecordCommand(scope: RecordCommandScope) {
       const path = `/api/v1/${scope.root}/${scope.id}` as const, value = scope.root === "properties" ? await apiGet(path, propertySchema, controller.signal) : await apiGet(path, developmentSchema, controller.signal);
       if (!current() || controller.signal.aborted) return;
       const record = parseRecord(value, Math.max(minimum.current, owned.receipt.version));
+      if (scope.kind === "lifecycle" && record.version === owned.receipt.version && Boolean(record.archived_at) !== (scope.operation === "archive")) throw new ApiError("INVALID_RESPONSE", 503);
       if (scope.kind === "offering" && scope.offeringId && owned.intent.kind === "offering-edit") { const offering = record.offerings.find(value => value.id === scope.offeringId); if (offering && offering.version <= owned.intent.body.expected_version) throw new ApiError("INVALID_RESPONSE", 503); }
       await owned.completed(record, controller.signal);
       if (!current() || controller.signal.aborted) return;
@@ -91,6 +92,6 @@ export function useInventoryRecordCommand(scope: RecordCommandScope) {
     catch (reason) { const failure = current() && !controller.signal.aborted ? fail(reason) : new ApiError("DEPENDENCY_UNAVAILABLE", 503); throw failure; }
     finally { callerSignal?.removeEventListener("abort", abort); lock.current = false; if (current()) { setPending(false); if (!attempt.current?.uncertain) busy(false); } }
   }
-  function accept(value: unknown) { if (!hydrated || !active() || locked() || !offered.current || offered.current.value !== value || offered.current.record.version < minimum.current) return false; minimum.current = offered.current.record.version; offered.current = undefined; validReview.current = true; finished.current = undefined; setNeedsReview(false); setError(undefined); return true; }
+  function accept(value: unknown) { if (!hydrated || !active() || locked() || !offered.current || offered.current.value !== value || offered.current.record.version < minimum.current || scope.kind === "lifecycle" && lifecycleReview(scope, offered.current.record) !== "ready") return false; minimum.current = offered.current.record.version; offered.current = undefined; validReview.current = true; finished.current = undefined; setNeedsReview(false); setError(undefined); return true; }
   return { error, pending, uncertain, acknowledged, needsReview, protected: pending || uncertain, active, locked, canEdit, submit, inspect, accept, deny: (failure: ApiError) => { if (active() && [401, 403, 404].includes(failure.status)) fail(failure); }, retry: () => attempt.current?.uncertain ? run(attempt.current) : Promise.resolve(undefined) };
 }

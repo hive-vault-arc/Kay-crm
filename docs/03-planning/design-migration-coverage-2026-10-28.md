@@ -402,3 +402,19 @@ exact domain reconciliation and old selectors continue. Backend unchanged/not
 rerun; actual SQL/native/concurrent stock/device/AFTER/CI/product acceptance and
 migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
 P0/P8/full goal remain open.
+
+
+## Inventory lifecycle follow-through,2026-10-29
+
+[Lifecycle map](../04-design/inventory-lifecycle-recovery-local.md) retains the
+selected confirmation/reason and conservative archive/restore boundary. Scoped
+original action/key/body/callback, current M/A proof, exact receipt/current state,
+protected unknown work and verified parent completion replace the generic writer.
+Explicit current review cannot flip actions or bypass campaigns/children; ordinary
+refresh is separate from saved completion. 865 frontend units pass,17 added; lint/
+types/build/history/static app lint3 pass. Two native cases prepared/typechecked,
+not run. Zero legacy generic references remain in frontend source/tests. Separate
+enquiry/deal lifecycle controls, exact remaining domain reconciliation and old
+selectors continue. Backend unchanged/not rerun; actual SQL/native/concurrent stock/
+device/AFTER/CI/product acceptance and migrations0036/0037 pending. No actual access/
+workaround, main/push/merge/deploy. P0/P8/full goal remain open.

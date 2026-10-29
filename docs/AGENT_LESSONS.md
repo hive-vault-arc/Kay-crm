@@ -2099,3 +2099,17 @@ declared reconciliation that preserves other input and restores current placemen
 Search every frontend feature for shared handler consumers, not only inventory;
 archive/restore in discovery was an additional consumer. Validate retained draft
 and final verified completion in tests, rather than only asserting a sent body.
+
+
+## Lifecycle confirmation outlives parent archive-state changes,2026-10-29
+
+Pin archive/restore per explicit confirmation, not to mutable parent props. A
+partially completed saved callback can already update archived/version while its
+supplementary work fails; keep the original reason/key/action and retry completion
+only. Guard stale outer toggles and deferred discard callbacks, and keep ordinary
+read refresh separate from saved handoff. Exact receipt-version state must match
+the action, while later inverse operations remain historical completion. Inspect
+stock counts: programme unit_count includes all physical children, so archive
+review cannot treat archived children as an override. Remove the generic writer
+only after repository-wide caller search; other direct domain lifecycle controls
+remain a separate audit even when the inventory symbol has zero references.

@@ -112,3 +112,12 @@ zoom/visual/performance/CI/AFTER/product acceptance is pending. No actual app/
 browser/HTTP/DB/account/private configuration/service/worker/scanner/simulator/
 import/export/transfer access or workaround. Migrations0036/0037 remain unapplied;
 main and254 frozen inputs are unchanged. No push/merge/deploy. Goal active.
+
+
+## Subsequent inventory lifecycle checkpoint,2026-10-29
+
+[Inventory lifecycle recovery](inventory-lifecycle-recovery-local.md) migrates the
+additional generic consumer found in discovery. The older generic writer is now
+removed; source/test search has0 references. The earlier remaining list records
+its original checkpoint boundary. Separate enquiry/deal archive controls and
+broader source/native reconciliation remain open.

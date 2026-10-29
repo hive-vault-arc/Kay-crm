@@ -273,3 +273,12 @@ scope3.578→2.707ms; audit1.163→0.099ms with chosen indexes used. Initial con
 fixture count label said1,000; SQL generated4,000 and the label is corrected.
 All probe rows/candidate DDL rolled back; no extension or broad benchmark claim.
 Existing primary-agent, phone/email and typed-parent indexes are retained.
+
+
+## Subsequent selected inventory lifecycle recovery,2026-10-29
+
+[Inventory lifecycle recovery](inventory-lifecycle-recovery-local.md) adds scoped
+original command ownership, explicit current comparison and verified completion
+to the selected Gérer le dossier panel. The SP-19 stock, authority, retention and
+no-hard-delete contract above remains. This source/synthetic checkpoint does not
+execute actual archive/restore, SQL guards, retention CLI or native acceptance.

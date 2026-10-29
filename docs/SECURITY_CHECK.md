@@ -2892,3 +2892,23 @@ prepared/typechecked, not run. Backend unchanged/not rerun. No actual access/
 workaround, migration, main/push/merge/deploy; actual SQL/native/security/product
 acceptance pending. Repository-wide search also identified the still-generic
 archive/restore consumer in discovery/lifecycle-panel.tsx for separate source work.
+
+
+## Inventory archive/restore owner and receipt review,2026-10-29
+
+Strict root/ID/operation/version/reason intent, current originating M/A proof and
+original request/key/callback govern both inventory lifecycle actions. Exact
+null-offering/newer root receipts and matching current records precede verified
+parent handoff. At the receipt counter the state must match; later inverse actions
+retain historical completion. Acknowledged failures retry completion only. Reasons/
+outer controls/dismissal are protected; changed state/current campaigns/any physical
+child cannot authorize current acceptance. Guarded read-only refresh never invokes
+the saved callback. Current denial masks input and disposal blocks late work.
+865 synthetic frontend units pass,17 added; lint/types/build/history/static checks
+pass. [Contract](04-design/inventory-lifecycle-recovery-local.md). Two native cases
+prepared/typechecked, not run. The generic writer is removed; backend role/agency/
+version/stock locks, history/finance retention and no-hard-delete boundary remain.
+No actual archive/DB/account/private config/service/worker/transfer/retention CLI
+access, workaround, migration, main/push/merge/deploy. Actual SQL/native/security/
+product acceptance pending. Enquiry/deal lifecycle controls remain separate source
+work, not covered by this inventory checkpoint.

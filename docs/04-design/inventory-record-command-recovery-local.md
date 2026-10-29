@@ -111,3 +111,13 @@ development-facts PATCH and its scoped edit host. All scoped forms also reject a
 offered comparison that becomes older than a newly received parent version before
 acceptance. The earlier remaining list records its original checkpoint boundary;
 development creation and property listing still require generic-owner recovery.
+
+
+## Subsequent lifecycle intent,2026-10-29
+
+[Inventory lifecycle recovery](inventory-lifecycle-recovery-local.md) extends this
+scoped owner with strict fixed archive/restore intents, current M/A proof and
+receipt-version state verification. Explicit offered acceptance also enforces
+unchanged action/state and the existing current-campaign/any-child boundary.
+Later inverse state changes retain historical acknowledged completion. Existing
+non-lifecycle roles/fields remain; the generic fingerprint writer is removed.

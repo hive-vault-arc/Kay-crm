@@ -2872,3 +2872,25 @@ exact remaining domain fields/actions/contexts and old selectors. Backend unchan
 not rerun; actual SQL/native/concurrent stock/device/AFTER/CI/product acceptance and
 migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
 Goal active. [Listing evidence](design-migration-evidence/property-listing-recovery-2026-10-29.json).
+
+
+## Selected inventory lifecycle follow-through,2026-10-29
+
+The existing full-width Gérer le dossier panel now owns each explicit archive/
+restore confirmation independently of parent state updates. Strict original
+root/action/reason/version/key/callback and current M/A proof precede verified
+receipt/current record/awaited parent completion. Acknowledged failures retry
+completion only; unknown controls/dismissal are protected. Current review cannot
+flip the action or bypass current campaigns/any physical child. Read-only refresh
+is separate from saved handoff. The final generic writer and unused stub are
+removed; the shared record busy context remains.
+[Contract](../04-design/inventory-lifecycle-recovery-local.md).
+
+865 frontend units pass,17 added; lint/types/build/history/static app lint3 pass.
+Two native archive-ack/restore-read cases prepared/typechecked, not run. Source/
+test search confirms0 legacy generic references. Separate enquiry/deal lifecycle
+controls, remaining exact domain reconciliation and old selectors continue.
+Backend unchanged/not rerun; actual SQL/concurrent stock/native/device/AFTER/CI/
+product acceptance and migrations0036/0037 pending. No actual access/workaround,
+main/push/merge/deploy. Goal active.
+[Lifecycle evidence](design-migration-evidence/inventory-lifecycle-recovery-2026-10-29.json).
