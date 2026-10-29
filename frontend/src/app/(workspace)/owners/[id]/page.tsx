@@ -13,5 +13,5 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   if (identity.state !== "authenticated") return <AuthUnavailable path={route} />;
   const query = await searchParams;
   const tab = query.tab === "activity" ? "activity" : "overview", portfolio = query.status === "past" ? "past" : "current";
-  return <OwnerRecord key={`${id}:${tab}:${portfolio}`} id={id} role={identity.profile.user.role} initialTab={tab} initialPortfolio={portfolio} />;
+  return <OwnerRecord key={`${id}:${identity.profile.user.id}:${identity.profile.user.role}:${tab}:${portfolio}`} actorId={identity.profile.user.id} id={id} role={identity.profile.user.role} initialTab={tab} initialPortfolio={portfolio} />;
 }

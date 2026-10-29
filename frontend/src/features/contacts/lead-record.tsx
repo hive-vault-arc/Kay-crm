@@ -60,7 +60,7 @@ function LeadRecordLifetime({ id, edit = false, role = "agent", actorId, initial
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}
     <RecordWorkspace label="Rubriques du prospect" initialTab={initialTab} tabs={[
       { id: "overview", label: "Aperçu", content: <>
-        <ContactProfilePanel contact={enquiry.contact} writable={writable && enquiry.status !== "converted"} changed={refreshQuietly} denied={setScopeError} />
+        <ContactProfilePanel actorId={actorId} role={role} contact={enquiry.contact} writable={writable && enquiry.status !== "converted"} changed={refreshQuietly} denied={setScopeError} />
         <RecordSection title="Qualification" action={<RecordDrawer label="Recherches" action="search" description="Critères de recherche liés à ce contact."><RequirementPanel contactId={enquiry.contact.id} writable={writable} /></RecordDrawer>}><RecordFacts>
           <LeadInlineField {...inline} field="initial_budget" icon={FinanceIcon} label="Budget" display={enquiry.initial_budget ?? "À qualifier"} />
           <LeadInlineField {...inline} field="rating" icon={RadioIndicatorIcon} label="Qualification" display={<CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge>} />

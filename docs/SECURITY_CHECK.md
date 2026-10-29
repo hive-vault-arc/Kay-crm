@@ -3035,3 +3035,25 @@ No backend production/API/schema/permission/stock/file change or new grant. No
 actual account/app/DB/config/service/transfer access or workaround, migration,
 main/push/merge/deploy. Actual security/SQL/native/CI acceptance remains pending.
 [Contract](04-design/hierarchy-picker-context-local.md).
+
+
+## Canonical Contact edit operation ownership,2026-10-29
+
+Full and inline coordinates now pin the actual Contact/actor/role, exact body,
+expected counter, key and original completion callback. Existing backend scope,
+normalization, private-phone rejection,24-hour replay and immutable history stay
+authoritative. Exact-root/next-counter/coherent-method acknowledgement precedes
+fresh identity/current scoped read and awaited completion. Acknowledged recovery
+cannot repeat PATCH; unknown409 cannot become a fresh operation. Alias mismatch,
+current denial, stale projections and disposal cannot install private completion.
+Metadata outages preserve disabled drafts;401/403/404 hides fields/comparisons,
+retaining only a generic notice when acknowledgement is known. No private storage
+or permission grants added; ownership/provenance commands remain separate.
+
+949 frontend units/eleven added and frontend gates pass; three isolated native
+cases are prepared/typechecked, not run, with trace/video/screenshots off and
+detached cleanup. Backend unchanged; prior573 connection-forbidden units retained.
+No actual app/DB/account/private configuration/service/transfer access or
+workaround, migration/main/push/merge/deploy. Actual security/SQL/concurrency/
+native/CI and Ruff/mypy acceptance remain pending.
+[Contract](04-design/contact-edit-recovery-local.md).

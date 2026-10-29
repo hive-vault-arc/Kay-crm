@@ -7,11 +7,12 @@ import { ContactInlineField } from "@/features/contacts/contact-inline-field";
 import { roleLabels, type Contact } from "@/features/contacts/contracts";
 import { formatInstant } from "@/lib/format";
 import type { ApiError } from "@/lib/api/client";
+import type { ContactEditBinding } from "@/features/contacts/contact-edit-intent";
 
-export function OwnerDetails({ contact, compact = false, saved, denied, editAction, managementAction }: {
+export function OwnerDetails({ contact, compact = false, saved, denied, editAction, managementAction, actorId, role }: {
   contact: Contact; compact?: boolean; saved: (value: Contact) => void; denied: (error: ApiError) => void; editAction?: ReactNode; managementAction?: ReactNode;
-}) {
-  const inline = { contact, saved, denied, writable: !contact.archived_at };
+} & ContactEditBinding) {
+  const inline = { contact, saved, denied, actorId, role, writable: !contact.archived_at };
   const methods = (field: "phones" | "emails", primary: boolean) => {
     const values = field === "phones" ? contact.phones.filter(item => item.is_primary === primary).map(item => `${item.number}${item.label ? ` · ${item.label}` : ""}`) : contact.emails.filter(item => item.is_primary === primary).map(item => `${item.email}${item.label ? ` · ${item.label}` : ""}`);
     return <span className="whitespace-pre-wrap">{values.join("\n") || (primary ? "Non renseigné" : "Aucun")}</span>;

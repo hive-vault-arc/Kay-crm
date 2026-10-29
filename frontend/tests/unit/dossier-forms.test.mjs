@@ -5,6 +5,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { loadServer } from "./load-server.mjs";
 import { loadEnquiryCommand } from "./enquiry-fixtures.mjs";
 import { loadDealFormCommand } from "./conversion-fixtures.mjs";
+import { contactEditFormModules } from "./contact-edit-fixtures.mjs";
 
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
 const json = value => JSON.parse(JSON.stringify(value));
@@ -44,8 +45,10 @@ function leadModule(h, command, read=async()=>contact(), profile) {
   const identity={user:{id:createActorId,role:"manager"},must_change_password:false,csrf_token:"synthetic-csrf"};
   const loadedHook=loadEnquiryCommand({react:h.modules.react},{ApiError,command,identity});
   const hook={useEnquiryCommand:options=>{if(options.mode==="create")identity.user.role=options.role;return loadedHook.useEnquiryCommand(options);}};
-  const local={"@/features/realtime/current-record":loadServer("src/features/realtime/current-record.ts"),"./use-enquiry-command":hook,"./contracts":contacts,"./contact-fields":{ContactFields:"ContactFields",blankContact:clientFields(contact())},"./agent-picker":{AgentPicker:"Agent"},"./contact-selector":{ContactSelector:"ContactSelector"},"./qualification-contracts":vocabulary,"./record-states":{RecordError:"Error",CommandError:"CommandError"},"./use-query":{useQuery:path=>({value:path.includes("metadata")?metadata:profile,refresh(){}})},"./lead-qualification-fields":{LeadQualificationFields:"Qualification",blankQualification:{initial_budget:"",campaign_source:"unknown",rating:"cold",status:"new"}}};
-  return {modules:{...h.modules,...local,"@/lib/api/client":{ApiError,apiGet:read},"@/lib/api/command":{apiCommand:command}},globals:{crypto:{randomUUID}}};
+  const contactEdit = contactEditFormModules({ react: h.modules.react }, { request: command, contracts: contacts, ErrorType: ApiError });
+  const recovery = loadServer("src/features/contacts/contact-edit-recovery.tsx", { modules: { "react/jsx-runtime": runtime, "@/components/ui/button": { Button: "Button" }, "./record-states": { CommandError: "CommandError" } } });
+  const local={"./contact-edit-intent":contactEdit.intent,"./use-contact-edit-command":contactEdit.command,"./contact-edit-recovery":recovery,"./qualification-inputs":{countryLabel:value=>value},"@/features/realtime/current-record":loadServer("src/features/realtime/current-record.ts"),"./use-enquiry-command":hook,"./contracts":contacts,"./contact-fields":{ContactFields:"ContactFields",blankContact:clientFields(contact())},"./agent-picker":{AgentPicker:"Agent"},"./contact-selector":{ContactSelector:"ContactSelector"},"./qualification-contracts":vocabulary,"./record-states":{RecordError:"Error",CommandError:"CommandError"},"./use-query":{useQuery:path=>({value:path.includes("metadata")?metadata:profile,refresh(){}})},"./lead-qualification-fields":{LeadQualificationFields:"Qualification",blankQualification:{initial_budget:"",campaign_source:"unknown",rating:"cold",status:"new"}}};
+  return {modules:{...h.modules,...local,"@/lib/api/client":{ApiError,apiGet:read},"@/lib/api/command":{apiCommand:command}},globals:{crypto:{randomUUID},structuredClone}};
 }
 function dealModule(h,command,profile,{read,initial=deal(profile)}={}) {
   const actorId=randomUUID();let role="agent",serverDeal=initial,serverContact=profile;
@@ -133,7 +136,7 @@ test("Deal conflict retains the draft until an explicit complete version reload"
 
 test("Full contact editor preserves collections, version and retry identity; only success clears its managed draft",async()=>{
   const h=harness(),client=contact(),calls=[];let interrupted=true,saved=0;
-  const options=leadModule(h,async(...args)=>{calls.push(args);if(interrupted)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return {...client,version:18};},async()=>client,client);
+  const options=leadModule(h,async(...args)=>{calls.push(args);if(interrupted)throw new ApiError("DEPENDENCY_UNAVAILABLE",503);return {...client,name:args[1].name,version:18};},async()=>client,client);
   const loaded=loadServer("src/features/contacts/contact-editor.tsx",options);
   const render=()=>h.render(()=>loaded.ContactEditor({contact:client,saved:()=>saved++,cancel(){}}));let tree=render();assert.equal(find(tree,"ContactFields")[0].props.workspace,true);h.forms[0].setValue("name","Draft name");tree=render();submit(tree);await delay(0);tree=render();assert.equal(find(tree,"form")[0].props["data-live-dirty"],"true");interrupted=false;submit(tree);await delay(0);assert.equal(saved,1);assert.equal(calls[0][3],calls[1][3]);assert.equal(calls[1][1].expected_version,17);assert.deepEqual(json(calls[1][1].phones),json(client.phones));assert.deepEqual(json(calls[1][1].emails),json(client.emails));assert.equal(find(render(),"form")[0].props["data-live-dirty"],undefined);
 });
@@ -158,4 +161,29 @@ test("Navigation leaves managed picker input clean and blocks page links for an 
   busy=false;click();assert.equal(prevented,1);assert.equal(h.navigated.length,0);
   form.dataset.liveDirty="true";click();assert.equal(prevented,2);assert.equal(h.navigated.length,0);
   const dialog=render();find(dialog,"Button").find(n=>n.props.action==="forward").props.onClick();assert.deepEqual(h.navigated,["/leads"]);assert.equal(form.dataset.liveDirty,undefined);
+});
+
+test("Full contact recovery owns the confirmed draft and callback even if raw form values change", async () => {
+  const h = harness(), client = contact(), calls = [], received = []; let first = true;
+  const options = leadModule(h, async (...args) => { calls.push(args); if (first) { first = false; throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } return { ...client, name: args[1].name, version: client.version + 1 }; }, async () => client, client);
+  const loaded = loadServer("src/features/contacts/contact-editor.tsx", options);
+  const props = { contact: client, saved: value => received.push(value), cancel() {} }, render = () => h.render(() => loaded.ContactEditor(props));
+  render(); h.forms[0].setValue("name", "Synthetic first confirmed name"); submit(render()); await delay(0);
+  assert.equal(find(render(), "form")[0].props["data-write-recovery"], true); assert.equal(find(render(), "fieldset")[0].props.disabled, true);
+  h.forms[0].setValue("name", "Synthetic unsent replacement"); props.saved = () => { throw Error("Wrong current callback"); };
+  submit(render()); await delay(0); assert.equal(calls.length, 2); assert.equal(calls[0][3], calls[1][3]); assert.equal(calls[1][1].name, "Synthetic first confirmed name");
+  assert.equal(received.length, 1); assert.equal(received[0].name, "Synthetic first confirmed name");
+  assert.equal(find(render(), "form")[0].props["data-live-dirty"], "true");
+  assert.equal(find(render(), "Button").find(node => node.props.type === "submit").props.disabled, true);
+});
+
+test("Metadata outage and a newer host keep the full contact draft while current denial removes private fields", () => {
+  const h = harness(), client = contact(), options = leadModule(h, async () => { throw Error("No write expected"); }, async () => client, client);
+  let problem; options.modules["./use-query"] = { useQuery: () => problem ? { error: problem, refresh() {} } : { value: metadata, refresh() {} } };
+  const loaded = loadServer("src/features/contacts/contact-editor.tsx", options), props = { contact: client, saved() {}, cancel() {} }, render = () => h.render(() => loaded.ContactEditor(props));
+  render(); h.forms[0].setValue("name", "Synthetic retained identity draft"); props.contact = { ...client, version: 21 }; problem = new ApiError("DEPENDENCY_UNAVAILABLE", 503);
+  let tree = render(); assert.equal(find(tree, "ContactFields").length, 1); assert.equal(h.forms[0].getValues("name"), "Synthetic retained identity draft");
+  assert.equal(find(tree, "fieldset")[0].props.disabled, true); assert.equal(find(tree, "form")[0].props["data-live-dirty"], "true");
+  problem = undefined; tree = render(); assert.equal(find(tree, "ContactFields").length, 1); assert.equal(h.forms.length, 1); assert.equal(h.forms[0].getValues("name"), "Synthetic retained identity draft");
+  problem = new ApiError("FORBIDDEN", 403); tree = render(); assert.equal(find(tree, "ContactFields").length, 0); assert.equal(find(tree, "form").length, 0);
 });

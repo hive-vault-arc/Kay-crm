@@ -7,6 +7,7 @@ import * as jsxRuntime from "react/jsx-runtime";
 import { renderToStaticMarkup } from "react-dom/server";
 import { loadServer } from "./load-server.mjs";
 import { loadEnquiryCommand } from "./enquiry-fixtures.mjs";
+import { contactEditFormModules } from "./contact-edit-fixtures.mjs";
 
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
 function harness() {
@@ -20,7 +21,7 @@ function harness() {
 function find(node, type) {
   if (!node || typeof node !== "object") return [];
   if (Array.isArray(node)) return node.flatMap(child => find(child, type));
-  return [...(node.type === type || typeof type === "function" && type(node) ? [node] : []), ...find(node.props?.children, type)];
+  return [...(node.type === type || typeof type === "function" && type(node) ? [node] : []), ...find(node.props?.children, type), ...find(node.props?.review, type)];
 }
 const vocabulary = loadServer("src/features/contacts/qualification-contracts.ts");
 const contacts = loadServer("src/features/contacts/contracts.ts", { modules: { "./qualification-contracts": vocabulary } });
@@ -53,9 +54,12 @@ function formHarness(value) {
   };
   return form;
 }
-function contactInline(state, form, command) {
+function contactInline(state, form, command, { read } = {}) {
+  const contact = contactEditFormModules(state, { request: command, read, contracts: contacts, ErrorType: ApiError });
+  const recovery = loadServer("src/features/contacts/contact-edit-recovery.tsx", { modules: { "react/jsx-runtime": runtime, "@/components/ui/button": { Button: "Button" }, "./record-states": { CommandError: "CommandError" } } });
+  const invoke = (type, props, key) => type === recovery.ContactEditRecovery ? type(props) : jsx(type, props, key);
   return loadServer("src/features/contacts/contact-inline-field.tsx", { globals: { crypto: { randomUUID } }, modules: {
-    react: state.react, "react/jsx-runtime": runtime, "@hookform/resolvers/zod": { zodResolver() {} }, "react-hook-form": { useForm: () => form }, "@/components/icons": { PhoneIcon: "Phone", EmailIcon: "Mail" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/form": { Form: "Form" }, "@/components/shared/inline-record-field": { InlineFieldForm: "InlineForm", InlineRecordField: "Field" },
+    react: state.react, "react/jsx-runtime": { jsx: invoke, jsxs: invoke, Fragment: "Fragment" }, "./contact-edit-intent": contact.intent, "./use-contact-edit-command": contact.command, "./contact-edit-recovery": recovery, "@hookform/resolvers/zod": { zodResolver() {} }, "react-hook-form": { useForm: () => form }, "@/components/icons": { PhoneIcon: "Phone", EmailIcon: "Mail" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/form": { Form: "Form" }, "@/components/shared/inline-record-field": { InlineFieldForm: "InlineForm", InlineRecordField: "Field" },
     "@/lib/api/command": { apiCommand: command }, "@/lib/api/client": { ApiError }, "@/hooks/use-hydrated": { useHydrated: () => true }, "./contact-fields": { ContactFields: "ContactFields" }, "./contracts": contacts, "./qualification-inputs": { countryLabel: value => value }, "./qualification-contracts": vocabulary, "./record-states": { RecordError: "Error", CommandError: "CommandError" }, "./use-query": {},
   } });
 }
@@ -91,7 +95,7 @@ test("Only one inline editor opens after guarded consent; explicit cancel restor
 
 test("Contact inline save preserves complete collections, original version and same retry identity", async () => {
   const state = harness(), value = contact(), calls = [], acknowledged = [], form = formHarness({ name: value.name, type: value.type, phones: value.phones, emails: value.emails, roles: value.roles, country: value.country, nationality: value.nationality, languages: value.languages }); let fail = true;
-  const loaded = contactInline(state, form, async (...args) => { calls.push(args); assert.equal(args[2], contacts.contactSchema); if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return { ...value, name: "Edited synthetic contact", version: 18 }; });
+  const loaded = contactInline(state, form, async (...args) => { calls.push(args); assert.equal(args[2], contacts.contactSchema); if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return { ...value, name: "Edited synthetic contact", version: 18 }; }, { read: (_path, schema) => schema.parse(props.contact) });
   let props = { contact: value, metadata, field: "name", label: "Nom", controls: { saved: () => acknowledged.push(true), cancel() {} }, saved() {}, denied() {} };
   const render = () => state.render(() => loaded.ContactFieldEditor(props)); render(); form.setValue("name", "Edited synthetic contact");
   find(render(), "InlineForm")[0].props.submit({ preventDefault() {} }); await delay(0); assert.equal(acknowledged.length, 0);
@@ -102,9 +106,10 @@ test("Contact inline save preserves complete collections, original version and s
 
 test("Keeping a conflicted contact field rebases only that field onto the current full contact", async () => {
   const state = harness(), original = contact(), calls = [], current = { ...original, name: "Current synthetic name", version: 19, nationality: "FR" }, form = formHarness({ name: original.name, type: original.type, phones: original.phones, emails: original.emails, roles: original.roles, country: original.country, nationality: original.nationality, languages: original.languages });
-  const loaded = contactInline(state, form, async (...args) => { calls.push(args); if (calls.length === 1) throw new ApiError("VERSION_CONFLICT", 409, { current }); return current; });
+  const loaded = contactInline(state, form, async (...args) => { calls.push(args); if (calls.length === 1) throw new ApiError("VERSION_CONFLICT", 409, { current }); return { ...current, country: args[1].country, version: 20 }; });
   const props = { contact: original, metadata, field: "country", label: "Pays", controls: { saved() {}, cancel() {} }, saved() {}, denied() {} }, render = () => state.render(() => loaded.ContactFieldEditor(props));
   render(); form.setValue("country", "ES"); find(render(), "InlineForm")[0].props.submit({ preventDefault() {} }); await delay(0);
+  find(render(), "Button").find(node => node.props.children === "Comparer les coordonnées actuelles").props.onClick(); await delay(0);
   find(render(), "Button").find(node => node.props.children === "Conserver ma saisie").props.onClick();
   assert.equal(form.getValues("country"), "ES"); assert.equal(form.formState.isDirty, true); assert.equal(form.getValues("name"), current.name); assert.equal(form.getValues("nationality"), "FR");
   find(render(), "InlineForm")[0].props.submit({ preventDefault() {} }); await delay(0); assert.equal(calls[1][1].expected_version, 19); assert.equal(calls[1][1].name, current.name); assert.notEqual(calls[0][3], calls[1][3]);
@@ -200,4 +205,15 @@ test("Contact profile keeps primary methods stable and loads secondary methods o
   assert.equal(find(body, "Field").length, 2); assert.equal(find(body, "Field")[0].props.methodScope, "secondary"); assert.match(find(body, "Field")[0].props.display.props.children, /Bureau/);
   remote = { ...remote, version: 18, name: "Authoritative same-version name" }; view = render();
   assert.equal(find(view, "Field").find(node => node.props.field === "name").props.contact.name, remote.name);
+});
+
+test("Canonical inline recovery freezes nested methods and permits only its original retry during metadata outage", async () => {
+  const state = harness(), client = contact(), calls = [], form = formHarness({ name: client.name, type: client.type, phones: client.phones, emails: client.emails, roles: client.roles, country: client.country, nationality: client.nationality, languages: client.languages }); let first = true, completed = 0;
+  const loaded = contactInline(state, form, async (...args) => { calls.push(args); if (first) { first = false; throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } return { ...client, version: client.version + 1 }; });
+  const props = { contact: client, metadata, field: "phones", label: "Téléphones", controls: { saved: () => completed++, cancel() {} }, saved() {}, denied() {} }, render = () => state.render(() => loaded.ContactFieldEditor(props));
+  find(render(), "InlineForm")[0].props.submit({ preventDefault() {} }); await delay(0);
+  let tree = render(); assert.equal(find(tree, "InlineForm")[0].props.recovering, true);
+  const changed = client.phones.map(value => ({ ...value, label: "Synthetic unsent label" })); form.setValue("phones", changed); props.unavailable = true;
+  tree = render(); find(tree, "InlineForm")[0].props.submit({ preventDefault() {} }); await delay(0);
+  assert.equal(calls.length, 2); assert.equal(calls[0][3], calls[1][3]); assert.deepEqual(calls[1][1].phones, client.phones); assert.equal(completed, 1);
 });

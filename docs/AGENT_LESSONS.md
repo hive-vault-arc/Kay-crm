@@ -2188,3 +2188,13 @@ do not claim a durable financial creation result from green frontend units.
   block field or making every unit require a floor.
 - Anchor scripted edits to their explicit cwd and stop dependent checks if an
   edit fails. Update fixtures to real parent metadata instead of weakening guards.
+
+
+## Canonical Contact editor recovery,2026-10-29
+
+A legacy draft fingerprint can accidentally replace an unknown confirmed edit.
+Freeze body/key/counter/actor and original completion callback together; separate
+exact acknowledgement from fresh scoped read and awaited parent completion.
+Retain mounted forms across metadata/version refreshes, and hide private fields
+on current denial. A same-version parent projection may contain newer canonical
+Contact data; inspect its existing reconciliation before adding a new rule.

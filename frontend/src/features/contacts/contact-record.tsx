@@ -25,7 +25,7 @@ import { OwnershipControls } from "./ownership-controls";
 import { operationLabels, type Operation } from "./ownership-contracts";
 import { ContactDossiers } from "./contact-dossiers";
 
-export function ContactRecord({ id, role, initialTask }: { id: string; role: StaffRole; actorId?: string; initialTask?: string }) {
+export function ContactRecord({ id, role, actorId, initialTask }: { id: string; role: StaffRole; actorId?: string; initialTask?: string }) {
   const query = useQuery(`/api/v1/contacts/${id}`, contactSchema);
   const [edited, setEdited] = useState<Contact>();
   const [scopeError, setScopeError] = useState<ApiError>();
@@ -42,8 +42,8 @@ export function ContactRecord({ id, role, initialTask }: { id: string; role: Sta
   if (scopeError) return <>{heading}{notice ? <p role="status">{notice}</p> : null}<RecordError error={scopeError} retry={() => { setScopeError(undefined); setEdited(undefined); setNotice(""); query.refresh(); }} /></>;
   if (!contact) return <>{heading}<p role="status">Chargement du contact…</p></>;
   const writable = !contact.archived_at;
-  const editAction = writable ? <RecordDrawer label="Modifier" action="edit" title="Coordonnées du contact" description="Les coordonnées sont partagées par les dossiers de ce contact.">{(close, saved) => <ContactEditor key={`${contact.id}:${contact.version}`} contact={contact} saved={value => { setEdited(value); setNotice("Contact enregistré."); saved(); }} cancel={close} />}</RecordDrawer> : undefined;
-  const inline = { contact, writable, saved: (value: Contact) => { setEdited(value); setNotice("Contact enregistré."); }, denied: setScopeError };
+  const editAction = <RecordDrawer hideTrigger={!writable} label="Modifier" action="edit" title="Coordonnées du contact" description="Les coordonnées sont partagées par les dossiers de ce contact.">{(close, saved) => <ContactEditor key={`${contact.id}:${actorId ?? ""}:${role}`} actorId={actorId} role={role} denied={(error, acknowledged) => { setNotice(acknowledged ? "Les coordonnées sont enregistrées. Les droits d’accès ont changé." : ""); setScopeError(error); }} contact={contact} saved={value => { setEdited(value); setNotice("Contact enregistré."); saved(); }} cancel={close} />}</RecordDrawer>;
+  const inline = { contact, writable, actorId, role, saved: (value: Contact) => { setEdited(value); setNotice("Contact enregistré."); }, denied: setScopeError };
   return <InlineEditScope><div className="kay-record-page">
     <CrmRecordHeader contact={contact} title={contact.name} route={`/contacts/${id}`} backHref="/contacts" showContact={false} reference="Contact" badges={<CrmStatusBadge state={contact.archived_at ? "archived" : "active"}>{contact.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge>} actions={editAction} />
     {contact.id !== id ? <p>Cette fiche a été fusionnée. Vous consultez la <Link className="inline-flex min-h-control items-center text-link underline" href={`/contacts/${contact.id}`}>fiche conservée</Link>.</p> : null}

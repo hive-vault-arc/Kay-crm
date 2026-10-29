@@ -763,3 +763,21 @@ Two390/1440 cases simulate foreign read then healthy retry and guard0 POSTs;
 they are prepared/typechecked, not run, and do not prove backend leakage or
 native geometry. No AT-wide SQL/rights/stock/native/device/CI/AFTER/product closure.
 Backend unchanged;573 prior connection-forbidden units retained, not rerun.
+
+
+## Canonical Contact full/inline recovery follow-through,2026-10-29
+
+The eight-field Contact map preserves every phone/e-mail and profile value;
+four Enquiry and nine Deal inline fields retain their separate command owners.
+Eleven added synthetic cases cover original nested body/key/callback ownership,
+completion-only retry, exact-root/counter/method receipts, explicit comparison,
+unknown409, identity/alias/stale/late refusal, full dirty form retention across
+metadata/version changes and denial masking.949 frontend units and frontend
+gates pass. Existing same-version parent reconciliation already favors fresh
+related Contact data; no new root-version rule is introduced.
+
+Three390/1440 native cases prepare real isolated PATCH/readback with lost receipt
+and completion-read failure in Contact/Prospect/Deal surfaces. Prepared/typechecked
+only: no native geometry, SQL race/permission/security/CI/AFTER/product acceptance
+is inferred. Backend unchanged/prior573 units retained.
+[Contract](../04-design/contact-edit-recovery-local.md).

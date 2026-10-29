@@ -3129,3 +3129,28 @@ account/config/service access or workaround, migration/main/push/merge/deploy.
 Actual SQL/native/device/security/CI/AFTER/product gates and migrations0036/0037
 remain pending. [Contract](04-design/hierarchy-picker-context-local.md) and
 [evidence](03-planning/design-migration-evidence/hierarchy-picker-context-2026-10-29.json).
+
+
+## Canonical Contact full/inline edit recovery,2026-10-29
+
+Source review found the remaining canonical Contact editors reused draft-derived
+keys after interrupted saves, did not await parent completion and remounted dirty
+forms on metadata/version changes. The shared owner now retains original body,
+key, counter, actor/role and callback; exact acknowledgement is separate from a
+fresh scoped read/completion. Definite conflicts need explicit current comparison.
+All eight Contact groups and existing selected layouts remain.
+
+Focused node --test tests/unit/contact-edit-command.test.mjs
+ tests/unit/inline-editing.test.mjs tests/unit/dossier-forms.test.mjs passes32.
+The first full lint exits1 on one exhaustive-dependencies warning in alias
+refusal construction; memoization fixes it without suppression. Final frontend
+npm run test:unit passes949/949,0 failed/skipped, eleven added; npm run lint,
+npm run typecheck, npm run build and npm run history:check exit0. Static
+Frontend Taste --app --json scans11 changed UI files with0 findings; static only.
+Three390/1440 cases in tests/e2e/contact-edit-recovery.spec.ts are prepared and
+typechecked, not run. Backend production unchanged; prior573 connection-forbidden
+units retained, not rerun. No actual app/browser/HTTP/DB/accounts/config/services
+or workaround, migration/main/push/merge/deploy. SQL/native/device/security/CI/
+AFTER/product gates and migrations0036/0037 remain pending.
+[Contract](04-design/contact-edit-recovery-local.md) and
+[evidence](03-planning/design-migration-evidence/contact-edit-recovery-2026-10-29.json).

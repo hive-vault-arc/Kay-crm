@@ -41,6 +41,7 @@ try {
     "tests/unit/dossier-directory.test.mjs",
     "tests/unit/unit-listing-wizard.test.mjs",
     "tests/unit/hierarchy-picker-context.test.mjs",
+    "tests/unit/contact-edit-command.test.mjs",
     "tests/unit/property-listing-recovery.test.mjs",
     "tests/unit/inventory-lifecycle-recovery.test.mjs",
     "tests/unit/record-lifecycle-recovery.test.mjs",

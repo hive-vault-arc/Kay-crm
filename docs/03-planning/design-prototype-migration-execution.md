@@ -3033,3 +3033,27 @@ All254 frozen inputs and unrelated work remain. Other exact field/context/alias/
 legacy-selector work and P8 actual SQL/native/device/security/CI/AFTER/product
 acceptance, plus migrations0036/0037, remain. Full goal active.
 [Evidence](design-migration-evidence/hierarchy-picker-context-2026-10-29.json).
+
+
+## Canonical Contact editor field/recovery reconciliation,2026-10-29
+
+The exact-source field review locates eight canonical Contact groups, four
+Enquiry inline fields and nine Deal inline fields. Remaining full/inline Contact
+editors still used legacy mutable retry identity and unawaited completion. They
+now share an immutable origin/body/key/counter/callback owner with exact receipt,
+fresh identity/current read and completion-only recovery. Transient metadata
+outages and changing host versions retain dirty forms; denial masks private
+fields. Actual Contact/Owner/Prospect/Deal roots forward actor/role. No selected
+style, tabs, glyphs, motion or business/ownership/provenance rule changes.
+[Contract](../04-design/contact-edit-recovery-local.md).
+
+Focused32 and final949 frontend units pass, eleven added; lint/types/build/
+history/static app lint11 pass. Intermediate lint warning was fixed with stable
+alias refusal memoization, no suppression. Three390/1440 isolated Contact/
+Prospect/Deal recovery cases are prepared/typechecked, not run. Backend unchanged;
+prior573 connection-forbidden units retained, not rerun. Frozen254 inputs, main
+and unrelated work preserved; no actual app/DB/account/config/service access or
+workaround, migration/push/merge/deploy. Remaining exact settings/job/alias/legacy
+selector review and P8 actual SQL/native/device/security/CI/AFTER/product gates,
+plus migrations0036/0037, stay open. Full goal remains active.
+[Evidence](design-migration-evidence/contact-edit-recovery-2026-10-29.json).

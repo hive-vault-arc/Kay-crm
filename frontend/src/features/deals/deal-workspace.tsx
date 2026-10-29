@@ -51,7 +51,7 @@ export function DealWorkspace({ deal, role, actorId, lifecycleHeldChanged, lifec
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{commandState}
     <RecordWorkspace label="Rubriques de l’affaire" initialTab={initialTab} tabs={[
       { id: "overview", label: "Aperçu", content: <>
-        <ContactProfilePanel contact={deal.contact} writable={writable} changed={contactChanged} denied={denied} />
+        <ContactProfilePanel actorId={actorId} role={role} contact={deal.contact} writable={writable} changed={contactChanged} denied={denied} />
         <RecordSection title="Qualification" action={<RecordDrawer label="Recherches" action="search" description="Critères de recherche liés au contact."><RequirementPanel contactId={deal.contact.id} writable={canAct} /></RecordDrawer>}><RecordFacts>
           <DealInlineField {...inline} icon={FinanceIcon} label="Budget" field="initial_budget" display={deal.initial_budget || "À qualifier"} />
           <DealInlineField {...inline} icon={RadioIndicatorIcon} label="Qualification" field="rating" display={ratingLabels[deal.rating]} />
