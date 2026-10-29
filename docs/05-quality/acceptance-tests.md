@@ -808,3 +808,16 @@ prepared/typechecked only; the prior AT-40 case now opens the selected drawer an
 uses current labels. No actual scheduling/SQL/permission/concurrency/native/CI/
 AFTER/product acceptance is inferred. Backend unchanged/prior573 units retained.
 [Contract](../04-design/policy-command-recovery-local.md).
+
+
+## AT-04/05/23/24 selected Contact native-path preparation,2026-10-29
+
+Five existing ownership scenarios now use actual selected Aperçu/Activités,
+management/activity/assignment drawers, attribution disclosure, linked dossiers
+and current archive controls. Permission, exact replay/entry count, true-author,
+relationship, source identity and stale-impact assertions remain. One deal Contact
+timeline segment uses current visible link labels/counts/destinations. Focused
+ESLint/typecheck pass; these scenarios remain prepared, not run. No AT-wide
+native/SQL/security/CI/AFTER/product closure or full helper-consumer acceptance.
+Production unchanged; prior961 frontend/573 backend units retained, not rerun.
+[Path map](contact-native-paths-local.md).

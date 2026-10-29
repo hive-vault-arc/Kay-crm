@@ -3101,3 +3101,23 @@ preserved; no actual access/workaround/migration/push/merge/deploy. Wider exact
 job/filter/alias/legacy-selector work, migrations0036/0037 and P8 actual SQL/native/
 device/security/CI/AFTER/product gates remain. Full goal active.
 [Evidence](design-migration-evidence/policy-command-recovery-2026-10-29.json).
+
+
+## Contact ownership native-path reconciliation,2026-10-29
+
+Source review of old ownership helpers finds removed Identité/Historique/
+Attributions tabs and inline entry assumptions. Helpers now target actual selected
+Aperçu/Activités, portal drawers and attribution disclosure; management controls
+and confirmation scope to their current owner. Five ownership scenarios retain
+denial/true-author/original-entry/archive/merge-provenance assertions; one deal
+Contact timeline segment keeps current visible links/counts/destinations. No
+production source, test timeout, mock success or backend mutation body changes.
+[Path map](../05-quality/contact-native-paths-local.md).
+
+Focused ESLint/types pass; actual native cases and seven helper consumers' wider
+paths remain unrun/unaccepted. Prior961 frontend/573 backend units/build/history
+retained, not rerun. Frozen254 inputs, main and unrelated work preserved. No app/
+DB/account/config/service restart/transfer/screenshot or workaround, migration/
+push/merge/deploy. Other exact job/filter/alias/legacy-selector review and P8
+SQL/native/device/security/CI/AFTER/product gates, migrations0036/0037 remain.
+Full goal active. [Evidence](design-migration-evidence/contact-native-paths-2026-10-29.json).

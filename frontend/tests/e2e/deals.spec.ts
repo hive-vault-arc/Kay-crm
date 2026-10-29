@@ -3,6 +3,7 @@ import { test, expect, createActor, removeActor, signIn, clearActorContext, chan
 import { createLead, staffCommand } from "../helpers/leads";
 import { inventoryFixture, openRequirements, requirementCard } from "../helpers/requirements";
 import { convertLead, dealBody, fillDeal, saveDeal, skipStage } from "../helpers/deals";
+import { contactActivity } from "../helpers/ownership";
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(25_000); page.setDefaultNavigationTimeout(30_000); });
 test("Qualified conversion from Lead, accepted proposal and stage skipping", async ({ page }) => {
@@ -24,10 +25,10 @@ test("Qualified conversion from Lead, accepted proposal and stage skipping", asy
     const timeline = await (await page.request.get(`/api/v1/contacts/${before.contact.id}/timeline?page_size=25`)).json();
     expect(timeline.items.filter((item: { deal_id: string | null }) => item.deal_id === id).map((item: { action: string }) => item.action)).toEqual(["deals.transition", "deals.customer_offer.created", "deals.created"]);
     expect(timeline.items.find((item: { action: string }) => item.action === "enquiries.converted")).toMatchObject({ enquiry_id: lead, deal_id: null, body: expect.stringContaining("Prospect converti en affaire le") });
-    await page.goto(`/contacts/${before.contact.id}`); await page.getByRole("tab", { name: "Historique", exact: true }).click();
-    const dealLinks = page.getByRole("link", { name: "Voir l’affaire liée", exact: true }); await expect(dealLinks).toHaveCount(3);
+    await page.goto(`/contacts/${before.contact.id}`); const activity = await contactActivity(page);
+    const dealLinks = activity.getByRole("link", { name: "Voir l’affaire", exact: true }).filter({ visible: true }); await expect(dealLinks).toHaveCount(3);
     for (const link of await dealLinks.all()) await expect(link).toHaveAttribute("href", `/deals/${id}`);
-    await expect(page.getByText(/Prospect converti en affaire le/)).toHaveCount(2);
+    await expect(activity.getByText(/Prospect converti en affaire le/).filter({ visible: true })).toHaveCount(2);
   } finally { await clearActorContext(page); await removeActor(agent); }
 });
 

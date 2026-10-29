@@ -549,3 +549,15 @@ cases and one revised AT-40 source scenario remain prepared/unrun.
 [evidence](design-migration-evidence/policy-command-recovery-2026-10-29.json).
 Backend unchanged; actual SQL/native/security/CI/AFTER/product and remaining exact
 job/filter/alias/legacy-selector review are not closed.
+
+
+## Contact ownership native-path follow-through,2026-10-29
+
+Prepared helpers/scenarios now target actual selected two-tab Contact homes,
+attribution disclosure and portal management/entry/assignment; no old tabs are
+restored. Five ownership cases and one deal Contact timeline segment keep their
+business assertions. ESLint/types pass, native cases unrun; wider seven helper
+consumers and other selectors remain pending. Production unchanged; prior gates
+retained. [Path map](../05-quality/contact-native-paths-local.md) and
+[evidence](design-migration-evidence/contact-native-paths-2026-10-29.json).
+No actual SQL/native/security/CI/AFTER/product or full-goal completion inferred.

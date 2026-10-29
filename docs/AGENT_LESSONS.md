@@ -2217,3 +2217,12 @@ a known receipt with current identity/read instead of PUT again. Derive form
 fixture previews from their actual proposed fields and next counter: old fixed
 responses hid mismatched proposal acknowledgements. Retain drafts across parent
 read outages and require a new impact preview after explicit current acceptance.
+
+
+## Prepared Contact browser paths,2026-10-29
+
+Migrate native helpers to selected Aperçu/Activités, disclosures and portal
+drawers; do not restore removed product tabs to satisfy old selectors. Preserve
+HTTP denial/command/true-author/provenance assertions and original timeouts.
+Typechecking/source agreement prepares a scenario; it does not execute it or
+certify its helper consumers’ other paths.

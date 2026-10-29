@@ -3094,3 +3094,17 @@ prior573 units retained, not rerun. No actual app/DB/account/config/service/priv
 transfer access or workaround, migration/main/push/merge/deploy. Actual security/
 SQL/concurrency/native/CI and Ruff/mypy acceptance remain pending.
 [Contract](04-design/policy-command-recovery-local.md).
+
+
+## Contact native-path preparation,2026-10-29
+
+Only prepared test sources/helpers change. Current selected Contact paths replace
+obsolete tabs and inline entry/assignment assumptions. Former-session/private404,
+current scope, true historical authors, exact one-entry replay, archive links and
+merge-origin/collaborator withdrawal assertions remain; no production authority,
+backend, schema, command body or timeout change. Focused ESLint/types pass;
+native cases unrun. Prior961 frontend/573 backend units retained, not rerun.
+No Playwright listing/import/execution, actual app/DB/accounts/private config/
+service restart/transfer/screenshot or workaround, migration/main/push/merge/
+deploy. Actual native/SQL/security/CI acceptance and wider paths stay pending.
+[Path map](05-quality/contact-native-paths-local.md).

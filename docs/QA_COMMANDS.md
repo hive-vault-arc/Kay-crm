@@ -3189,3 +3189,23 @@ unchanged/prior573 units retained; no actual access/workaround/migration/main/
 push/merge/deploy. Real SQL/native/device/security/CI/AFTER/product gates remain.
 [Contract](04-design/policy-command-recovery-local.md) and
 [evidence](03-planning/design-migration-evidence/policy-command-recovery-2026-10-29.json).
+
+
+## Contact ownership native-path preparation,2026-10-29
+
+Focused npx eslint tests/helpers/ownership.ts tests/e2e/ownership.spec.ts
+ tests/e2e/deals.spec.ts --max-warnings=0 and npm run typecheck exit0. Actual-source
+review maps removed Identité/Historique/Attributions/Demandes tabs to selected
+Aperçu/Activités, attribution disclosure, linked dossier section and management/
+activity/assignment drawers. Five ownership scenarios and one Contact segment of
+the deal scenario retain actual denial/one-entry retry/author/archive/merge-origin
+assertions. Shared helper has seven direct consumers; their unrelated paths are
+not certified. No production edit, new mock success or browser timeout increase.
+
+Prepared/typechecked only, not run or listed/imported through Playwright. Prior961
+frontend units/build/history and573 backend units retained, not rerun. No actual
+app/browser/HTTP/DB/accounts/private config/services/restart/transfer or workaround,
+migration/main/push/merge/deploy. Actual SQL/native/device/security/CI/AFTER/product
+gates, migrations0036/0037 and wider selectors remain pending.
+[Path map](05-quality/contact-native-paths-local.md) and
+[evidence](03-planning/design-migration-evidence/contact-native-paths-2026-10-29.json).
