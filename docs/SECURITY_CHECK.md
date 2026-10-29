@@ -3057,3 +3057,19 @@ No actual app/DB/account/private configuration/service/transfer access or
 workaround, migration/main/push/merge/deploy. Actual security/SQL/concurrency/
 native/CI and Ruff/mypy acceptance remain pending.
 [Contract](04-design/contact-edit-recovery-local.md).
+
+
+## Canonical Contact alias projection,2026-10-29
+
+The existing backend survivor scope remains authoritative; old IDs grant no
+access. Contact now reconciles local saves against the scoped canonical identity,
+matching Owner. A management completion must match active canonical target/read
+to install fields; another survivor clears local state and refreshes the original
+scoped read. No inferred redirect, new authority, merge/API/schema/retention rule
+or global helper change. Query denial still masks private fields. Two workspace
+regressions fail before correction; focused46/final951 frontend units and gates
+pass. One extra synthetic native case is prepared/typechecked, not run; no raw
+artifacts. Backend unchanged/prior573 units retained, not rerun. No actual app/DB/
+account/config/service/transfer access or workaround, migration/main/push/merge/
+deploy; real SQL/security/concurrency/native/CI acceptance stays pending.
+[Contract](04-design/contact-alias-projection-local.md).

@@ -3154,3 +3154,20 @@ or workaround, migration/main/push/merge/deploy. SQL/native/device/security/CI/
 AFTER/product gates and migrations0036/0037 remain pending.
 [Contract](04-design/contact-edit-recovery-local.md) and
 [evidence](03-planning/design-migration-evidence/contact-edit-recovery-2026-10-29.json).
+
+
+## Canonical Contact alias display,2026-10-29
+
+Corrected regressions in node --test tests/unit/ownership-recovery.test.mjs
+first fail2: a canonical full save keeps the old heading; archive keeps the old
+active state through a merged URL. One first-draft test traversal error was
+corrected before this observed pair. The Contact caller now reconciles against
+the scoped canonical ID, matching Owner, and installs management completion only
+for its canonical target/read. Focused ownership/owner/realtime checks pass46;
+final frontend951 units pass,0 failed/skipped, two added. Lint/types/build/history
+and static app lint1 exit0. One additional390px real-merge/retained-alias-read/
+canonical-edit native case is prepared/typechecked only, not run. No backend
+change/rerun; prior573 units retained. No actual access/workaround/migration/
+main/push/merge/deploy. Actual SQL/native/security/CI/AFTER/product gates remain.
+[Contract](04-design/contact-alias-projection-local.md) and
+[evidence](03-planning/design-migration-evidence/contact-alias-projection-2026-10-29.json).

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { Page } from "@playwright/test";
-import { contactSchema, enquirySchema } from "@/features/contacts/contracts";
+import { contactSchema, enquirySchema, newContactSchema } from "@/features/contacts/contracts";
+import { commandResultSchema, intentSchema, previewSchema } from "@/features/contacts/ownership-contracts";
 import { newDealSchema } from "@/features/deals/contracts";
 import { clearActorContext, createActor, expect, removeActor, signIn, test } from "../helpers/auth";
 import { dealBody } from "../helpers/deals";
@@ -41,6 +42,35 @@ test("Selected contact drawer recovers its confirmed edit after an interrupted r
     expect(attempts.length === 2 && attempts[0].key === attempts[1].key && attempts[0].body === attempts[1].body).toBe(true);
     const response = await page.request.get(`/api/v1/contacts/${contact.id}`); if (response.status() !== 200) throw new Error("SYNTHETIC_CONTACT_EDIT_COMPLETION_FAILED");
     const current = contactSchema.parse(await response.json()); expect(current.name === name && current.version === contact.version + 1).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  } finally { await clearActorContext(page); await removeActor(actor); }
+});
+
+test("Selected merged Contact URL displays a saved canonical edit while an older alias read is retained at 390px", async ({ page }) => {
+  test.setTimeout(120_000); const actor = await createActor("agent");
+  try {
+    await signIn(page, actor); const contacts = [];
+    for (const label of ["source", "survivor"]) {
+      const created = await staffCommand(page, "contacts", newContactSchema.parse({ name: `SYN-ALIAS-${label}-${randomUUID().slice(0, 8)}`, type: "person", roles: ["buyer"], phones: [{ number: `+212611${String(Math.floor(Math.random() * 1_000_000)).padStart(6, "0")}`, label: "", is_primary: true }], emails: [], country: "MA", languages: ["french"] }));
+      if (created.status() !== 200) throw new Error("SYNTHETIC_CONTACT_ALIAS_CREATION_FAILED");
+      contacts.push(contactSchema.parse(await created.json()));
+    }
+    const [source, survivor] = contacts, intent = intentSchema.parse({ operation: "merge", expected_version: source.version, survivor_id: survivor.id, survivor_expected_version: survivor.version, reason: "Synthetic canonical projection review" });
+    const preview = await staffCommand(page, `contacts/${source.id}/preview`, intent); if (preview.status() !== 200) throw new Error("SYNTHETIC_CONTACT_ALIAS_PREVIEW_FAILED");
+    const proof = previewSchema.parse(await preview.json()), merged = await staffCommand(page, `contacts/${source.id}/merge`, { ...intent, preview_token: proof.preview_token });
+    if (merged.status() !== 200 || commandResultSchema.parse(await merged.json()).contact_id !== survivor.id) throw new Error("SYNTHETIC_CONTACT_ALIAS_MERGE_FAILED");
+    const current = await page.request.get(`/api/v1/contacts/${source.id}`); if (current.status() !== 200) throw new Error("SYNTHETIC_CONTACT_ALIAS_READ_FAILED");
+    const canonical = contactSchema.parse(await current.json()); if (canonical.id !== survivor.id) throw new Error("SYNTHETIC_CONTACT_ALIAS_RESOLUTION_FAILED");
+    // Retain the first authorized alias projection to exercise immediate local
+    // completion independently of later live invalidation/read timing.
+    await page.route(`**/api/v1/contacts/${source.id}`, route => route.request().method() === "GET" ? route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(canonical) }) : route.continue());
+    await page.setViewportSize({ width: 390, height: 900 }); await page.goto(`/contacts/${source.id}`);
+    await page.getByRole("button", { name: "Modifier", exact: true }).click();
+    const drawer = page.getByRole("dialog", { name: "Coordonnées du contact", exact: true }), name = `Synthetic canonical saved ${randomUUID().slice(0, 8)}`;
+    await drawer.getByLabel("Nom du contact", { exact: true }).fill(name); await drawer.getByRole("button", { name: "Enregistrer le contact", exact: true }).click();
+    await expect.poll(() => drawer.count()).toBe(0); await expect.poll(async () => (await page.getByRole("heading", { level: 1 }).innerText()) === name).toBe(true);
+    const saved = await page.request.get(`/api/v1/contacts/${survivor.id}`); if (saved.status() !== 200) throw new Error("SYNTHETIC_CONTACT_ALIAS_COMPLETION_FAILED");
+    const result = contactSchema.parse(await saved.json()); expect(result.id === survivor.id && result.name === name && result.version === canonical.version + 1).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
   } finally { await clearActorContext(page); await removeActor(actor); }
 });

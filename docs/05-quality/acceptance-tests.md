@@ -781,3 +781,15 @@ and completion-read failure in Contact/Prospect/Deal surfaces. Prepared/typechec
 only: no native geometry, SQL race/permission/security/CI/AFTER/product acceptance
 is inferred. Backend unchanged/prior573 units retained.
 [Contract](../04-design/contact-edit-recovery-local.md).
+
+
+## Contact alias projection follow-through,2026-10-29
+
+Two actual workspace regressions demonstrate stale name and archive state through
+a merged Contact URL; both fail before correction. Canonical local full/inline
+saves now show immediately, same-counter authoritative reads win, and another
+survivor requires the scoped root refresh. Current denial masks the record.
+Focused46/final951 frontend units and gates pass; one390px synthetic real-merge/
+retained-alias-read/edit/readback browser case is prepared/typechecked only. No
+actual SQL/merge/scope/native/security/CI/AFTER/product acceptance is inferred.
+[Contract](../04-design/contact-alias-projection-local.md).

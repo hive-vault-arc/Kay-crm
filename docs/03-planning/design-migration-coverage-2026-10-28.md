@@ -524,3 +524,15 @@ not run. [Contract](../04-design/contact-edit-recovery-local.md) and
 [evidence](design-migration-evidence/contact-edit-recovery-2026-10-29.json).
 Continue exact settings/job/alias/legacy-selector review and P8; this is not full
 branch or actual SQL/native/security/CI/AFTER/product acceptance.
+
+
+## Canonical Contact alias projection follow-through,2026-10-29
+
+Contact now uses its scoped canonical identity for saved projections, matching
+Owner; two actual-workspace regressions prove the stale name/archive correction.
+Different survivors refresh the original scoped root; same-counter fresh reads
+still win.951 frontend units pass; one added native case prepared, not run.
+[Contract](../04-design/contact-alias-projection-local.md) and
+[evidence](design-migration-evidence/contact-alias-projection-2026-10-29.json).
+This closes the located source projection gap, not all aliases/merge/permissions/
+legacy selectors or P8 actual acceptance.

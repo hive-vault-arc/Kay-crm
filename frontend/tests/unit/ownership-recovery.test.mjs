@@ -196,6 +196,37 @@ test("The real ownership dialog protects its reviewed fields, cancel and Escape 
 
 const recordModules = { "react/jsx-runtime": runtime, "next/link": { default: "Link" }, "@/components/shared/page-header": { PageHeader: "Header" }, "@/components/shared/crm-presentation": { CrmRecordHeader: "RecordHeader", CrmStatusBadge: "Badge" }, "@/components/shared/record-workspace": { RecordSection: "Section", RecordWorkspace: "Workspace" }, "@/components/shared/record-drawer": { RecordDrawer: "Drawer" }, "@/components/shared/inline-record-field": { InlineEditScope: "Scope" }, "@/lib/api/client": { ApiError }, "@/lib/format": { formatInstant: value => value }, "@/components/icons": {} };
 
+function contactAliasWorkspace() {
+  const h = hooks(), canonical = ownershipContact(), id = randomUUID(), query = { value: canonical, refresh() {}, refreshQuietly() { refreshes++; } }; let refreshes = 0, fresh = canonical;
+  const loaded = loadServer("src/features/contacts/contact-record.tsx", { modules: { ...recordModules, react: h.react,
+    "@/components/shared/record-facts": { RecordFact: "Fact", RecordFacts: "Facts" }, "./contact-inline-field": { ContactInlineField: "Field" }, "@/lib/api/client": { ApiError, apiGet: async () => fresh },
+    "@/features/files/file-panel": { FilePanel: "Files" }, "@/features/work/task-panel": { TaskPanel: "Tasks" }, "@/features/schedule/contact-visits": { ContactVisits: "Visits" }, "@/features/realtime/current-record": loadServer("src/features/realtime/current-record.ts"), "./contracts": contactContracts, "./use-query": { useQuery: () => query }, "./record-states": { RecordError: "Error" }, "./contact-editor": { ContactEditor: "Editor" }, "./contact-history": { ContactAssignments: "Assignments", ContactTimeline: "Timeline" }, "./ownership-controls": { OwnershipControls: "Controls" }, "./ownership-contracts": ownershipContracts, "./contact-dossiers": { ContactDossiers: "Dossiers" },
+  } });
+  return { canonical, id, query, read: value => { fresh = value; }, refreshes: () => refreshes, render: () => h.render(() => loaded.ContactRecord({ id, role: "manager" })) };
+}
+
+test("A merged Contact URL immediately displays full and inline canonical edits and accepts a same-counter current read", () => {
+  const s = contactAliasWorkspace(); let view = s.render();
+  const drawer = find(view, "RecordHeader")[0].props.actions, editor = drawer.props.children(() => {}, () => {});
+  const first = { ...s.canonical, version: s.canonical.version + 1, name: "Synthetic canonical full edit" }; editor.props.saved(first);
+  view = s.render(); assert.equal(find(view, "RecordHeader")[0].props.title, first.name);
+  const inline = find(find(view, "Workspace")[0].props.tabs[0].content, "Field").find(value => value.props.field === "name"), second = { ...first, version: first.version + 1, name: "Synthetic canonical inline edit" };
+  assert.equal(inline.props.contact.id, s.canonical.id); inline.props.saved(second); assert.equal(find(s.render(), "RecordHeader")[0].props.title, second.name);
+  s.query.value = { ...second, name: "Synthetic authoritative same-counter projection" }; assert.equal(find(s.render(), "RecordHeader")[0].props.title, s.query.value.name);
+  s.query.error = new ApiError("NOT_FOUND", 404); assert.equal(find(s.render(), "RecordHeader").length, 0);
+});
+
+test("Contact management on a merged URL publishes only its canonical target and refreshes after a changed survivor", async () => {
+  const s = contactAliasWorkspace(), control = () => find(find(s.render(), "Workspace")[0].props.tabs[0].content, "Section").find(value => value.props.title === "Responsabilité").props.action.props.children(() => {}, () => {});
+  const archived = { ...s.canonical, version: s.canonical.version + 1, archived_at: "2026-10-29T12:00:00Z" }; s.read(archived);
+  await control().props.changed(s.canonical.id, "archive", new AbortController().signal);
+  assert.equal(find(s.render(), "RecordHeader")[0].props.contact.archived_at, archived.archived_at);
+  const survivor = { ...archived, id: randomUUID(), name: "Synthetic later survivor" }; s.read(survivor);
+  await control().props.changed(survivor.id, "merge", new AbortController().signal);
+  assert.equal(s.refreshes(), 1); assert.notEqual(find(s.render(), "RecordHeader")[0].props.title, survivor.name);
+  s.query.value = survivor; assert.equal(find(s.render(), "RecordHeader")[0].props.contact.id, survivor.id);
+});
+
 test("Contact management keeps one lifetime across version refresh and ignores an aborted completion read before masking acknowledged denial", async () => {
   const h = hooks(); let contact = ownershipContact(), release, done = 0, readSignal;
   const loaded = loadServer("src/features/contacts/contact-record.tsx", { modules: { ...recordModules, react: h.react,

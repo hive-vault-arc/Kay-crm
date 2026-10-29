@@ -2198,3 +2198,12 @@ exact acknowledgement from fresh scoped read and awaited parent completion.
 Retain mounted forms across metadata/version refreshes, and hide private fields
 on current denial. A same-version parent projection may contain newer canonical
 Contact data; inspect its existing reconciliation before adding a new rule.
+
+
+## Canonical identity at the Contact projection caller,2026-10-29
+
+A merged route ID can differ from its currently readable Contact. Reconcile
+committed local fields against the scoped canonical ID, as Owner already does,
+while refreshing the original route for another survivor. Keep the actual
+currentRecord helper in workspace regressions: an edited-or-remote stub hid the
+stale saved name/archive bug. URL aliases grant no additional authority.

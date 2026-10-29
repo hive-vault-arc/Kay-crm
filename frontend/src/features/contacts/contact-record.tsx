@@ -30,11 +30,12 @@ export function ContactRecord({ id, role, actorId, initialTask }: { id: string; 
   const [edited, setEdited] = useState<Contact>();
   const [scopeError, setScopeError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
-  const contact = currentRecord(query.value, edited, id);
+  const canonicalId = query.value?.id ?? id;
+  const contact = currentRecord(query.value, edited, canonicalId);
   async function changed(target: string, operation: Operation, signal: AbortSignal) {
     const fresh = await apiGet(`/api/v1/contacts/${target}`, contactSchema, signal);
     if (signal.aborted) return;
-    if (target === id) setEdited(fresh); else { setEdited(undefined); query.refreshQuietly(); }
+    if (target === canonicalId && fresh.id === canonicalId) setEdited(fresh); else { setEdited(undefined); query.refreshQuietly(); }
     setNotice(`${operationLabels[operation]} : opération enregistrée.`);
   }
   const heading = <PageHeader title="Fiche contact" description="Coordonnées et dossiers accessibles." route={`/contacts/${id}`} />;

@@ -3057,3 +3057,23 @@ workaround, migration/push/merge/deploy. Remaining exact settings/job/alias/lega
 selector review and P8 actual SQL/native/device/security/CI/AFTER/product gates,
 plus migrations0036/0037, stay open. Full goal remains active.
 [Evidence](design-migration-evidence/contact-edit-recovery-2026-10-29.json).
+
+
+## Contact canonical alias projection,2026-10-29
+
+Follow-up source review finds Contact's root passed the old URL ID to the shared
+projection helper after a canonical read; Owner already passed the canonical ID.
+Two corrected actual-workspace regressions reproduce stale name/archive state
+before the fix. Contact now matches Owner, keeps committed canonical full/inline
+updates, preserves authoritative same-counter reads, and requires scoped root
+refresh for a different management survivor. No selected appearance or backend
+authority/API/schema change. [Contract](../04-design/contact-alias-projection-local.md).
+
+Focused46/final951 frontend units and lint/types/build/history/static app lint1
+pass; one390px real synthetic merge/retained alias/edit/readback native case is
+prepared/typechecked, not run. Backend unchanged; prior573 units retained.
+Frozen254 inputs, main and unrelated work preserved. No actual access/workaround/
+migration/push/merge/deploy; remaining exact field/job/legacy-selector work,
+migrations0036/0037 and P8 actual SQL/native/device/security/CI/AFTER/product gates
+stay open. Full goal remains active.
+[Evidence](design-migration-evidence/contact-alias-projection-2026-10-29.json).
