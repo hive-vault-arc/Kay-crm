@@ -1299,3 +1299,18 @@ cannot prove noncommit after24-hour receipt pruning. Backend30-day restoration,
 contact state, reservation/visit/task blockers and immutable history remain.
 [Contract](record-lifecycle-recovery-local.md). No endpoint, grant, retention or
 backend change; actual SQL/native acceptance pending.
+
+
+## Financial client intent and completion proof,2026-10-29
+
+Existing create/recognize/commission correction/receipt/receipt correction POSTs
+retain their strict decimal-string schemas, nullable values and version targets.
+The selected owner binds exact routes/context/current originating M/A and freezes
+body/key/callback after unknown dispatch. Creation receipt version1 is distinct
+from expected_deal_version; other receipts bind exact commission ID/newer counter
+in the facade and owner. Current matching dossier/head/creator/action/actor/terms/
+reason/receipt proof precedes completion. Acknowledged retry only reads/completes;
+later historical revisions do not trigger another write. Explicit current
+acceptance cannot rebase unknown work, including409 after24-hour receipt pruning.
+No endpoint/grant/calculation/ledger/history/backend change.
+[Contract](finance-command-recovery-local.md); actual SQL/native acceptance pending.

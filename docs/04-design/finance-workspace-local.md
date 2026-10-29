@@ -140,3 +140,15 @@ full-stack/CI, maximum-page performance, final Finance fidelity and other P0–P
 work remain open.
 Main, real records/services/private configuration, push/merge/deployment and
 production are untouched.
+
+
+## Subsequent command-owner follow-through,2026-10-29
+
+[Financial command recovery](finance-command-recovery-local.md) now binds the
+actual dossier/actor/role, all five strict intents, original body/key/callback,
+exact receipt/current revision and explicit current acceptance. Form baselines
+follow awaited completion; current denial masks local fields. Historical creation
+version1, true-actor/terms checks and sticky unknown409 after receipt pruning
+are explicit. The selected composition and deliberate recovery-departure warning
+above remain. Historical evidence is not expanded into actual ledger/native
+acceptance.

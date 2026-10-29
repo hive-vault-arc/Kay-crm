@@ -2126,3 +2126,15 @@ briefly revive private data before a fresh authorized read. Preserve the distinc
 prospect assigned-agent and affair primary-agent rules; inventory authority is
 not interchangeable. Receipt pruning means a conflict after an unknown outcome
 does not prove noncommit. Cover owner, real hosts, disposal and denial retry.
+
+
+## Financial command counters and retention boundary,2026-10-29
+
+Commission creation returns version1 independently of expected_deal_version;
+existing financial commands append one commission revision. Keep original
+intent/key/callback and accept draft baselines after parent completion. Preserve
+the selected explicit recovery-departure warning. Audit late replay separately:
+FinanceReceipt pruning after24 hours plus an unchanged parent Deal version can
+allow duplicate creation. Immediate retry tests do not prove expiry safety.
+This source-inferred gap requires authoritative reconciliation before readiness;
+do not claim a durable financial creation result from green frontend units.

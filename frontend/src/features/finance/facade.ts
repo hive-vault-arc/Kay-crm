@@ -4,7 +4,7 @@ import { z } from "zod";
 import { boundedJson, frontendOrigin } from "@/lib/auth/facade";
 import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
-import { commissionSchema, commissionsSchema, correctionSchema, financeHistorySchema, financeQuerySchema, newCommissionSchema, receiptCommandSchema, receiptsSchema, recognitionSchema, resultSchema, revisionsSchema } from "./contracts";
+import { commissionSchema, commissionsSchema, correctionSchema, financeResultMatches, financeHistorySchema, financeQuerySchema, newCommissionSchema, receiptCommandSchema, receiptsSchema, recognitionSchema, resultSchema, revisionsSchema } from "./contracts";
 
 const id = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}";
 const errors = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONTACT_ARCHIVED", "RECORD_ARCHIVED", "IDEMPOTENCY_CONFLICT", "VERSION_CONFLICT", "COMMISSION_ALREADY_RECOGNIZED", "COMMISSION_NOT_RECOGNIZED", "COMMISSION_BELOW_COLLECTIONS", "OVER_COLLECTION", "RECEIPT_ALREADY_CORRECTED", "INVALID_FINANCIAL_EVIDENCE"]);
@@ -30,6 +30,8 @@ export async function relayFinance(key: string, request: Request, requestId: str
       const code = parsed.success && errors.has(parsed.data.error.code) ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE";
       return facadeError(code === "DEPENDENCY_UNAVAILABLE" ? 503 : response.status, code, requestId);
     }
-    return Response.json((mutation ? resultSchema : list ? commissionsSchema : detail ? commissionSchema : history ? revisionsSchema : dealHistory ? financeHistorySchema : receiptsSchema).parse(response.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
+    const result = (mutation ? resultSchema : list ? commissionsSchema : detail ? commissionSchema : history ? revisionsSchema : dealHistory ? financeHistorySchema : receiptsSchema).parse(response.body);
+    if (mutation && (!body || !financeResultMatches(list ? undefined : key.split("/")[1], list ? newCommissionSchema.parse(JSON.parse(body)).expected_deal_version : recognitionSchema.parse({ expected_version: JSON.parse(body).expected_version }).expected_version, resultSchema.parse(result)))) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

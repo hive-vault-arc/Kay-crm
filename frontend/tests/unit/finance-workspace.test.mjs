@@ -37,9 +37,18 @@ ui["./collection"] = { CommissionReceipts: "Receipts", FinanceHistory: "History"
 function setup({ recognized = false, existing = true, kind = "terms", command, read, saved, hydrated = true, writable = true, verify, original: editingReceipt = false } = {}) {
   const h = harness(), parent = deal(), value = commission(parent.id, recognized), original = editingReceipt ? receipt(value.id) : undefined, calls = [], reads = [], denies = [], decisions = [], events = []; let completed = 0, closed = 0;
   const props = { dealId: parent.id, dealVersion: parent.version, value: existing ? value : undefined, contactId: parent.contact.id, original, writable, denied: error => denies.push(error), saved: async result => { completed++; if (saved) await saved(result); }, cancel: () => closed++ };
-  const apiGet = async (path, schema, signal) => { reads.push({ path, signal }); return schema.parse(read ? await read(path, schema, signal) : path.includes("receipts?") ? page(original ? [original] : []) : path.includes("/deals/") ? parent : value); };
+  let server = structuredClone(value); const identity = { user: { id: value.current.actor.id, role: "manager" }, must_change_password: false }; h.react.useLayoutEffect = h.react.useEffect;
+  const apiGet = async (path, schema, signal) => { if (path.endsWith("/auth/me")) return identity; reads.push({ path, signal }); return schema.parse(read ? await read(path, schema, signal) : path.includes("receipts?") ? page(original ? [original] : []) : path.includes("/deals/") ? parent : server); };
   const model = loadServer("src/features/finance/model.ts", { modules: { "@/lib/api/client": { apiGet, ApiError }, "@/features/deals/contracts": deals, "./contracts": finance } });
-  const commands = loadServer("src/features/finance/mutation.tsx", { modules: { ...ui, react: h.react, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/lib/api/client": { ApiError }, "@/lib/api/command": { apiCommand: async (...args) => { calls.push(args); return args[2].parse(command ? await command(...args) : { id: value.id, version: 2 }); } }, "./model": model }, globals: { AbortController, crypto: { randomUUID } } });
+  const intents = loadServer("src/features/finance/command-intent.ts", { modules: { "./contracts": finance } });
+  const owner = loadServer("src/features/finance/use-finance-command.ts", { modules: { ...ui, react: h.react, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/lib/api/client": { ApiError, apiGet }, "@/lib/auth/contracts": { meSchema: {} }, "./command-intent": intents, "./model": model, "@/lib/api/command": { apiCommand: async (...args) => {
+    args[7].beforeDispatch(identity); args[6].throwIfAborted(); args[7].dispatched(); calls.push(args);
+    const body = args[1], create = args[0].startsWith("/api/v1/deals/"), result = args[2].parse(command ? await command(...args) : { id: value.id, version: create ? 1 : body.expected_version + 1 });
+    const kind = create ? "create" : args[0].endsWith("/recognize") ? "recognize" : args[0].endsWith("/receipts") ? "receipt" : body.target === "commission" ? "terms" : "receipt-correct";
+    const terms = create || kind === "terms" ? { kind: body.kind, base_mad: body.base_mad, rate_percent: body.rate_percent, amount_mad: finance.calculatedAmount(body), due_on: body.due_on } : {};
+    server = { ...server, id: result.id, version: result.version, created_by_user_id: create ? identity.user.id : server.created_by_user_id, current: { ...server.current, ...terms, version: result.version, actor: { id: identity.user.id, display_name: "Synthetic current manager" }, action: { create: "created", recognize: "recognized", receipt: "receipt", terms: "commission_corrected", "receipt-correct": "receipt_corrected" }[kind], state: create ? "expected" : kind === "recognize" ? "recognized" : server.current.state, reason: body.reason ?? "", receipt_id: kind === "receipt" || kind === "receipt-correct" ? randomUUID() : null } }; return result;
+  } } }, globals: { AbortController, structuredClone, crypto: { randomUUID } } });
+  const commands = loadServer("src/features/finance/mutation.tsx", { modules: { ...ui, "./use-finance-command": owner } });
   const draft = loadServer("src/components/shared/dossier-form.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "./record-header": {} }, globals: { Event, window: { dispatchEvent: event => events.push(event.type) } } });
   const modules = { ...ui, react: h.react, "@/components/shared/dossier-form": draft, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request: (run, scope) => decisions.push({ run, scope }), dialog: null }) }, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/features/contacts/use-query": { useQuery: () => ({}) }, "@/features/schedule/time": { localLabel: value => value }, "@/lib/api/client": { ApiError }, "./model": model, "./mutation": commands, "./terms-form": { FinanceField: "Field", TermsForm: "Terms" }, "./receipt-form": { ReceiptForm: "Receipt" } };
   const terms = loadServer("src/features/finance/terms-form.tsx", { modules });
@@ -70,14 +79,14 @@ test("unknown acknowledgement pins path/body/key and never allows comparison to 
 
 test("confirmed write followed by failed refresh retries only the completion read, even after the context becomes read-only", async () => {
   let fail = true; const s = setup({ kind: "hook", saved: async () => { if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } }); const path = `/api/v1/commissions/${s.value.id}/recognize`;
-  await s.render().save(path, { expected_version: 1 }); let m = s.render(); assert.equal(m.acknowledged, true); assert.equal(m.uncertain, true); await m.compare(); assert.equal(s.reads.length, 0);
+  await s.render().save(path, { expected_version: 1 }); let m = s.render(); assert.equal(m.acknowledged, true); assert.equal(m.uncertain, true); await m.compare(); assert.equal(s.reads.length, 1);
   s.props.writable = false; fail = false; m = s.render(); await m.retry(); assert.equal(s.calls.length, 1); assert.equal(s.completed, 2); assert.equal(s.render().uncertain, false);
 });
 
 test("definite conflict compares current exact parent identity and only explicit acceptance changes the next request version", async () => {
-  const s = setup({ kind: "hook", command: async () => { throw new ApiError("VERSION_CONFLICT", 409); } }); const path = `/api/v1/commissions/${s.value.id}/recognize`;
-  await s.render().save(path, { expected_version: 1 }); await s.render().compare(); const m = s.render(); assert.equal(m.comparison.commission.id, s.value.id); assert.equal(s.calls.length, 1);
-  let accepted; const view = s.commands.FinanceFailure({ mutation: m, acceptVersion: version => accepted = version }); button(view, "Conserver ma saisie avec cette version").props.onClick(); assert.equal(accepted, 1); await s.render().save(path, { expected_version: 2 }); assert.notEqual(s.calls[1][3], s.calls[0][3]);
+  const s = setup({ kind: "hook", read: () => s.value, command: async () => { throw new ApiError("VERSION_CONFLICT", 409); } }); const path = `/api/v1/commissions/${s.value.id}/recognize`;
+  await s.render().save(path, { expected_version: 1 }); s.value.version = 2; s.value.current.version = 2; await s.render().compare(); const m = s.render(); assert.equal(m.comparison.commission.id, s.value.id); assert.equal(s.calls.length, 1);
+  let accepted; const view = s.commands.FinanceFailure({ mutation: m, acceptVersion: version => accepted = version }); button(view, "Conserver ma saisie avec cette version").props.onClick(); assert.equal(accepted, 2); await s.render().save(path, { expected_version: 2 }); assert.notEqual(s.calls[1][3], s.calls[0][3]);
 });
 
 test("foreign or incoherent financial reads cannot provide a comparison baseline", async () => {
@@ -116,6 +125,21 @@ test("unknown form mutation keeps fields, recovery markers and the original requ
   const s = setup({ command: async () => { throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } }); s.change("reason", "Synthetic correction"); s.submit(); await find(s.render(), "Confirmation")[0].props.confirm(); await tick(); const view = s.render(); assert.equal(find(view, "form")[0].props["data-write-recovery"], true); assert.equal(find(view, "fieldset")[0].props.disabled, true); s.change("amount", "11.00"); s.submit(); assert.equal(find(s.render(), "Confirmation").length, 0); assert.equal(s.calls.length, 1); assert.equal(find(s.render(), "Input").find(node => node.props.name === "amount").props.value, "10000.00");
 });
 
+for (const kind of ["terms", "receipt", "recognize"]) test(`actual ${kind} finance editor masks private fields after current denial`, async () => {
+  const s = setup({ kind, recognized: kind === "receipt", command: async () => { throw new ApiError("FORBIDDEN", 403); } });
+  if (kind !== "recognize") { s.change("reason", "Synthetic financial reason"); if (kind === "receipt") { s.change("amount", "123.45"); s.change("date", "2026-10-29"); } s.submit(); }
+  await find(s.render(), "Confirmation")[0].props.confirm(); await tick(); const denied = s.render(); assert.equal(s.denies.length, 1); assert.equal(find(denied, "form").length, 0); assert.equal(find(denied, "Input").length, 0); assert.equal(find(denied, "Error").length, 1);
+});
+
+test("a failed parent completion retains the real finance draft baseline until acknowledged recovery succeeds", async () => {
+  let failed = true; const s = setup({ saved: () => { if (failed) throw Error("Synthetic parent outage"); } }); s.change("amount", "12345.67"); s.change("reason", "Synthetic retained correction"); s.submit(); await find(s.render(), "Confirmation")[0].props.confirm(); await tick();
+  let view = s.render(); assert.equal(find(view, "form")[0].props["data-live-dirty"], true); const owner = find(view, s.commands.FinanceFailure)[0].props.mutation; assert.equal(owner.acknowledged, true); assert.equal(owner.uncertain, true); failed = false; await owner.retry(); view = s.render(); assert.equal(find(view, "form")[0].props["data-live-dirty"], false); assert.equal(s.calls.length, 1);
+});
+
+test("a completed finance editor refuses stale submit callbacks and cannot open a second confirmation", async () => {
+  const s = setup(); s.change("reason", "Synthetic one financial correction"); const stale = find(s.render(), "form")[0]; s.submit(); await find(s.render(), "Confirmation")[0].props.confirm(); await tick(); assert.equal(find(s.render(), "fieldset")[0].props.disabled, true); stale.props.onSubmit({ preventDefault() {} }); assert.equal(find(s.render(), "Confirmation").length, 0); assert.equal(s.completed, 1); assert.equal(s.calls.length, 1);
+});
+
 test("terms cancel uses the shared dirty boundary and current comparison keeps the draft rather than replacing inputs", async () => {
   const s = setup({ command: async () => { throw new ApiError("VERSION_CONFLICT", 409); } }); s.change("amount", "12345.67"); s.change("reason", "Synthetic reason"); button(s.render(), "Annuler").props.onClick(); assert.equal(s.closed, 0); assert.equal(s.decisions.length, 1); s.submit(); await find(s.render(), "Confirmation")[0].props.confirm(); await tick(); const failure = find(s.render(), s.commands.FinanceFailure)[0]; await failure.props.mutation.compare(); const next = find(s.render(), s.commands.FinanceFailure)[0]; next.props.acceptVersion(2, { ...s.value, version: 2, current: { ...s.value.current, version: 2, amount_mad: "11000.00" } }); next.props.mutation.clear(); assert.equal(find(s.render(), "Input").find(node => node.props.name === "amount").props.value, "12345.67");
 });
@@ -152,10 +176,10 @@ test("finance workspace uses tonal cards and direct actions, keeps one focused e
 
 test("finance authority boundary removes the private controller and retries with a fresh lifetime for the same dossier", () => {
   const h = harness(), parent = deal(), loaded = loadServer("src/features/finance/finance-panel.tsx", { modules: { ...ui, react: h.react, "@/components/shared/unsaved-guard": {}, "@/hooks/use-hydrated": {}, "@/features/contacts/use-query": {}, "@/lib/api/client": { ApiError }, "./commission-record": {}, "./model": {}, "./terms-form": {} } });
-  const panel = loaded.FinancePanel({ deal: parent }), other = loaded.FinancePanel({ deal: deal() }); assert.equal(panel.key, parent.id); assert.notEqual(other.key, panel.key);
+  const panel = loaded.FinancePanel({ deal: parent }), other = loaded.FinancePanel({ deal: deal() }); assert.equal(panel.key, `${parent.id}::`); assert.notEqual(other.key, panel.key);
   const render = () => h.render(() => panel.type(panel.props)), controller = render(); assert.equal(controller.type, loaded.FinanceWorkspace); assert.equal(controller.props.deal.id, parent.id);
-  const error = new ApiError("FORBIDDEN", 403); controller.props.onDenied(error); let view = render(); assert.equal(view.type, "Error"); assert.equal(view.props.error, error); assert.equal(find(view, loaded.FinanceWorkspace).length, 0);
-  view.props.retry(); view = render(); assert.equal(view.type, loaded.FinanceWorkspace); assert.notEqual(view.key, controller.key); assert.equal(view.props.deal.id, parent.id);
+  const error = new ApiError("FORBIDDEN", 403); controller.props.onDenied(error); let view = render(); const failure = find(view, "Error")[0]; assert.equal(failure.props.error, error); assert.equal(find(view, loaded.FinanceWorkspace).length, 0);
+  failure.props.retry(); view = render(); assert.equal(view.type, loaded.FinanceWorkspace); assert.notEqual(view.key, controller.key); assert.equal(view.props.deal.id, parent.id);
 });
 
 

@@ -31,6 +31,7 @@ export const correctCommissionSchema = z.object({ ...fields, target: z.literal("
 export const correctReceiptSchema = z.object({ target: z.literal("receipt"), expected_version: version, receipt_id: z.uuid(), replacement: receiptFieldsSchema.nullable(), reason }).strict();
 export const correctionSchema = z.union([correctCommissionSchema, correctReceiptSchema]);
 export const resultSchema = z.object({ id: z.uuid(), version }).strict();
+export function financeResultMatches(commissionId: string | undefined, expectedVersion: number, result: z.infer<typeof resultSchema>) { return commissionId ? result.id === commissionId && result.version === expectedVersion + 1 : result.version === 1; }
 const actor = z.object({ id: z.uuid(), display_name: z.string().min(1).max(160) }).strict();
 export const revisionSchema = z.object({ id: z.uuid(), version, previous_revision_id: z.uuid().nullable(), ...fields, amount_mad: amount,
   state: z.enum(["expected", "recognized"]), review_required: z.boolean(), action: z.enum(["created", "recognized", "commission_corrected", "receipt", "receipt_corrected", "reopen_review"]), reason: z.string().max(1000), actor, receipt_id: z.uuid().nullable(), reopening_id: z.uuid().nullable(), created_at: z.iso.datetime({ offset: true }), created_local: z.iso.datetime({ offset: true }), calculation_policy: z.literal("MAD_FINAL_ROUND_HALF_UP_2") }).strict();

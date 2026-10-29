@@ -3037,3 +3037,15 @@ Two isolated native phone prospect archive lost-ack/desktop affair restore resul
 read cases prepared/typechecked, not run. Backend unchanged/not rerun. Actual
 SQL/concurrency/native/device/focus/zoom/visual/CI/AFTER/product acceptance and
 migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected financial command recovery,2026-10-29
+
+915 frontend units pass,25 added across actual intents/owner/facade/origin wiring
+and all three editors. Lint/types/build/history and static Frontend Taste app
+lint6 pass,0 findings. [Contract](04-design/finance-command-recovery-local.md).
+Two isolated native phone new commission lost-ack/desktop receipt result-read
+cases prepared/typechecked, not run. Backend unchanged/not rerun. Actual SQL/
+ledger/concurrency/native/device/focus/zoom/visual/security/CI/AFTER/product
+acceptance and migrations0036/0037 pending. No actual access/workaround,
+main/push/merge/deploy.

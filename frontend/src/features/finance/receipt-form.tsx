@@ -19,27 +19,28 @@ import { ApiError } from "@/lib/api/client";
 import { correctReceiptSchema, mad, receiptCommandSchema, type Commission, type Receipt } from "./contracts";
 import { FinanceConfirmation } from "./confirmation";
 import { FINANCE_PAGE_SIZE, financeDenied, financePageValid, receiptStillCurrent } from "./model";
-import { FinanceFailure, useFinanceMutation, type Denied, type Saved } from "./mutation";
+import { FinanceFailure, useFinanceMutation, type Denied, type Saved, type FinanceBinding } from "./mutation";
 import { FinanceField } from "./terms-form";
 
 type Pending = { body: unknown; amount: string; date: string; reason: string; balance: string; voiding: boolean };
-export function ReceiptForm({ value, contactId, original, originalPage = 1, saved, denied, cancel, writable = true }: { value: Commission; contactId: string; original?: Receipt; originalPage?: number; saved: Saved; denied: Denied; cancel: () => void; writable?: boolean }) {
+export function ReceiptForm({ value, contactId, original, originalPage = 1, saved, denied, cancel, writable = true, binding }: { value: Commission; contactId: string; original?: Receipt; originalPage?: number; saved: Saved; denied: Denied; cancel: () => void; writable?: boolean; binding?: FinanceBinding }) {
   const id = useId(), submit = useRef<HTMLButtonElement>(null), form = useRef<HTMLFormElement>(null), alive = useRef(true);
   const [source, setSource] = useState(value), [expected, setExpected] = useState(value.version);
   const [fields, setFields] = useState({ amount: original?.amount_mad ?? "", date: original?.received_on ?? "", reason: original?.reason ?? "", correctionReason: "", voiding: false, evidence: original?.evidence_document_id ?? null as string | null });
   const [invalid, setInvalid] = useState<Record<string, string>>({}), [pending, setPending] = useState<Pending>();
   const guard = useUnsavedGuard(), hydrated = useHydrated();
-  const mutation = useFinanceMutation(value.deal_id, value.id, onSaved, denied, async (current, signal) => current.current.state !== "recognized" ? "La commission n’est pas reconnue. Revenez au suivi financier avant d’enregistrer un versement." : original ? receiptStillCurrent(value.id, original, originalPage, signal) : undefined, writable);
+  const mutation = useFinanceMutation(value.deal_id, value.id, onSaved, denied, async (current, signal) => current.current.state !== "recognized" ? "La commission n’est pas reconnue. Revenez au suivi financier avant d’enregistrer un versement." : original ? receiptStillCurrent(value.id, original, originalPage, signal) : undefined, writable, { ...binding, version: value.version });
   const draft = useDossierDraft({ ...fields, recovery: mutation.uncertain }, mutation.busy);
-  async function onSaved(result: { id: string; version: number }) { draft.accept({ ...fields, recovery: false }); await saved(result); }
+  async function onSaved(result: { id: string; version: number }) { await saved(result); if (alive.current) draft.accept({ ...fields, recovery: false }); }
   useEffect(() => { alive.current = true; form.current?.querySelector<HTMLElement>("input,select,textarea")?.focus(); return () => { alive.current = false; }; }, []);
   useEffect(() => { if (Object.keys(invalid).length) form.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(); }, [invalid]);
-  const disabled = !hydrated || mutation.busy || mutation.uncertain || !writable || Boolean(pending), label = original ? "Confirmer la correction d’encaissement" : "Confirmer l’encaissement";
-  function change<K extends keyof typeof fields>(key: K, next: typeof fields[K]) { if (disabled || mutation.isBusy()) return; setFields(current => ({ ...current, [key]: next })); setInvalid({}); }
+  const disabled = !hydrated || mutation.busy || mutation.uncertain || !writable || Boolean(pending) || !mutation.canEdit(), label = original ? "Confirmer la correction d’encaissement" : "Confirmer l’encaissement";
+  function change<K extends keyof typeof fields>(key: K, next: typeof fields[K]) { if (disabled || !mutation.canEdit()) return; setFields(current => ({ ...current, [key]: next })); setInvalid({}); }
   async function save(body: unknown) { if (!hydrated || !writable) return; await mutation.save(`/api/v1/commissions/${value.id}/${original ? "correct" : "receipts"}`, body); if (alive.current) setPending(undefined); }
   function close() { if (!mutation.isBusy()) guard.request(cancel, form.current ?? undefined); }
+  if (mutation.accessError) return <>{mutation.acknowledged ? <p role="status">L’opération est enregistrée. Les droits d’accès ont changé.</p> : null}<RecordError error={mutation.accessError} /></>;
   return <form ref={form} className="kay-drawer-form" data-draft-managed data-live-dirty={draft.dirty} data-write-recovery={mutation.uncertain} aria-busy={mutation.busy} aria-label={original ? "Correction d’encaissement" : "Nouvel encaissement"} noValidate onSubmit={event => {
-    event.preventDefault(); if (disabled || mutation.isBusy() || source.current.state !== "recognized") return;
+    event.preventDefault(); if (disabled || !mutation.canEdit() || source.current.state !== "recognized") return;
     const replacement = { amount_mad: fields.amount.trim().replace(",", "."), received_on: fields.date, reason: fields.reason, evidence_document_id: fields.evidence };
     const parsed = original ? correctReceiptSchema.safeParse({ target: "receipt", expected_version: expected, receipt_id: original.id, replacement: fields.voiding ? null : replacement, reason: fields.correctionReason }) : receiptCommandSchema.safeParse({ ...replacement, expected_version: expected });
     if (!parsed.success) { setInvalid(Object.fromEntries(parsed.error.issues.map(issue => [issue.path.join("."), issue.message]))); return; }

@@ -2914,3 +2914,31 @@ Remaining exact domain reconciliation and old native selectors continue; actual
 SQL/concurrency/native/device/AFTER/CI/product acceptance and migrations0036/0037
 remain pending. No actual access/workaround, main/push/merge/deploy. Goal active.
 [Evidence](design-migration-evidence/record-lifecycle-recovery-2026-10-29.json).
+
+
+## Financial field/command follow-through,2026-10-29
+
+[Five-command field map](../04-design/finance-command-recovery-local.md) retains
+the selected M/A drawer/forms/confirmations, exact MAD/date/evidence/null values,
+original receipt identity, cards/history and explicit recovery-departure warning.
+Actual actor/role, strict typed body/path/version, original key/callback and
+verified receipt/current commission now govern each operation. Creation counter1
+is separated from the dossier counter; exact revision checks and historical
+completion are explicit. Unknown409 cannot become a fresh correction. Parent
+handoff precedes draft acceptance, local denial removes private fields and
+completed owners refuse stale submits.
+
+915 frontend units pass,25 added; lint/types/build/history/static app lint6 pass.
+Two native cases prepared/typechecked, not run. Backend unchanged/not rerun.
+Remaining exact domain reconciliation and old selectors continue; actual ledger/
+SQL/concurrency/native/device/security/AFTER/CI/product acceptance and migrations
+0036/0037 pending. No actual access/workaround, main/push/merge/deploy. Goal active.
+[Evidence](design-migration-evidence/finance-command-recovery-2026-10-29.json).
+
+
+Required source follow-through: Finance creation checks but does not advance its
+Deal version, while backend retry receipts expire after24 hours. Source review
+therefore identifies a possible duplicate creation on replay after pruning if
+the parent counter is unchanged. Durable or authoritative safe creation replay
+must be reconciled before readiness; the current immediate-retry frontend cases
+are not retention-expiry/ledger proof. No backend retention policy changed.

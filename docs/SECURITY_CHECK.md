@@ -2933,3 +2933,33 @@ prepared/typechecked, not run. Backend unchanged/not rerun. No actual archive/DB
 account/private config/service/worker/transfer/retention access or workaround,
 migration, main/push/merge/deploy. Actual SQL/native/security/product acceptance
 remains pending.
+
+
+## Financial command origin and current-revision review,2026-10-29
+
+Actual affair actor/role flows into every financial editor. Strict typed paths/
+body/version, current same-origin unrestricted M/A proof and cloned original
+body/key/callback protect first dispatch, replay, comparison and completion.
+Creation receipts require version1; existing operations require exact newer
+commission counters. Both facade and owner bind receipts; strict current
+commission/dossier/head/creator/action/actor/terms/reason/receipt proof precedes
+parent handoff. Later revisions retain historical completion. Acknowledged
+recovery cannot POST again; unknown409 stays unknown after24-hour receipt pruning.
+Exact current acceptance, local-field masking, fresh denied-controller retry,
+post-completion draft acceptance and disposal protect private and late work.
+The existing explicit recovery-departure warning remains; no rollback is implied.
+915 synthetic frontend units pass,25 added; frontend gates pass.
+[Contract](04-design/finance-command-recovery-local.md). Two native cases prepared/
+typechecked, not run. Backend locks, M/A/agency/record/file authority, exact MAD
+calculation, immutable originals/history and finance optionality are unchanged.
+No actual financial fact/DB/account/private config/service/transfer access or
+workaround, migration, main/push/merge/deploy; actual ledger/security acceptance
+pending.
+
+
+Required source follow-through: Finance creation checks but does not advance its
+Deal version, while backend retry receipts expire after24 hours. Source review
+therefore identifies a possible duplicate creation on replay after pruning if
+the parent counter is unchanged. Durable or authoritative safe creation replay
+must be reconciled before readiness; the current immediate-retry frontend cases
+are not retention-expiry/ledger proof. No backend retention policy changed.

@@ -10,31 +10,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
+import { RecordError } from "@/features/contacts/record-states";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { calculatedAmount, correctCommissionSchema, mad, newCommissionSchema, type Commission } from "./contracts";
 import { FinanceConfirmation } from "./confirmation";
-import { FinanceFailure, useFinanceMutation, type Denied, type Saved } from "./mutation";
+import { FinanceFailure, useFinanceMutation, type Denied, type Saved, type FinanceBinding } from "./mutation";
 
 type Pending = { body: unknown; preview: string; before?: string; base: string; rate: string | null; reason: string };
 const initial = (value?: Commission) => ({ kind: value?.current.kind ?? "fixed", base: value?.current.base_mad ?? "", rate: value?.current.rate_percent ?? "", amount: value?.current.kind === "fixed" ? value.current.amount_mad : "", due: value?.current.due_on ?? "", reason: "" });
-export function TermsForm({ dealId, dealVersion, value, saved, denied, cancel, writable = true }: { dealId: string; dealVersion: number; value?: Commission; saved: Saved; denied: Denied; cancel: () => void; writable?: boolean }) {
+export function TermsForm({ dealId, dealVersion, value, saved, denied, cancel, writable = true, binding }: { dealId: string; dealVersion: number; value?: Commission; saved: Saved; denied: Denied; cancel: () => void; writable?: boolean; binding?: FinanceBinding }) {
   const form = useRef<HTMLFormElement>(null), id = useId(), first = useRef<HTMLSelectElement>(null), submit = useRef<HTMLButtonElement>(null), alive = useRef(true);
   const [source, setSource] = useState(value), [fields, setFields] = useState(() => initial(value)), [expected, setExpected] = useState(value?.version ?? dealVersion);
   const [invalid, setInvalid] = useState<Record<string, string>>({}), [pending, setPending] = useState<Pending>();
   const hydrated = useHydrated(), guard = useUnsavedGuard();
-  const mutation = useFinanceMutation(dealId, value?.id, onSaved, denied, undefined, writable);
+  const mutation = useFinanceMutation(dealId, value?.id, onSaved, denied, undefined, writable, { ...binding, version: value?.version ?? dealVersion });
   const draft = useDossierDraft({ ...fields, recovery: mutation.uncertain }, mutation.busy);
-  async function onSaved(result: { id: string; version: number }) { draft.accept({ ...fields, recovery: false }); await saved(result); }
+  async function onSaved(result: { id: string; version: number }) { await saved(result); if (alive.current) draft.accept({ ...fields, recovery: false }); }
   useEffect(() => { alive.current = true; first.current?.focus(); return () => { alive.current = false; }; }, []);
   useEffect(() => { if (Object.keys(invalid).length) form.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(); }, [invalid]);
   const terms = { kind: fields.kind, base_mad: fields.base.trim().replace(",", "."), rate_percent: fields.kind === "percentage" ? fields.rate.trim().replace(",", ".") : null, amount_mad: fields.kind === "fixed" ? fields.amount.trim().replace(",", ".") : null, due_on: fields.due || null };
-  const preview = calculatedAmount(terms), disabled = !hydrated || mutation.busy || mutation.uncertain || !writable || Boolean(pending);
+  const preview = calculatedAmount(terms), disabled = !hydrated || mutation.busy || mutation.uncertain || !writable || Boolean(pending) || !mutation.canEdit();
   const label = value ? "Confirmer la correction de commission" : "Enregistrer la commission prévue";
-  function change(key: keyof typeof fields, next: string) { if (disabled || mutation.isBusy()) return; setFields(current => ({ ...current, [key]: next })); setInvalid({}); }
+  function change(key: keyof typeof fields, next: string) { if (disabled || !mutation.canEdit()) return; setFields(current => ({ ...current, [key]: next })); setInvalid({}); }
   async function save(body: unknown) { if (!hydrated || !writable) return; await mutation.save(value ? `/api/v1/commissions/${value.id}/correct` : `/api/v1/deals/${dealId}/commissions`, body); if (alive.current) setPending(undefined); }
   function close() { if (!mutation.isBusy()) guard.request(cancel, form.current ?? undefined); }
+  if (mutation.accessError) return <>{mutation.acknowledged ? <p role="status">L’opération est enregistrée. Les droits d’accès ont changé.</p> : null}<RecordError error={mutation.accessError} /></>;
   return <form ref={form} className="kay-drawer-form" data-draft-managed data-live-dirty={draft.dirty} data-write-recovery={mutation.uncertain} aria-busy={mutation.busy} aria-label={value ? "Correction de commission" : "Nouvelle commission"} noValidate onSubmit={event => {
-    event.preventDefault(); if (disabled || mutation.isBusy()) return;
+    event.preventDefault(); if (disabled || !mutation.canEdit()) return;
     const parsed = value ? correctCommissionSchema.safeParse({ ...terms, target: "commission", expected_version: expected, reason: fields.reason }) : newCommissionSchema.safeParse({ ...terms, expected_deal_version: expected });
     if (!parsed.success) { setInvalid(Object.fromEntries(parsed.error.issues.map(issue => [String(issue.path[0]), issue.message]))); return; }
     setInvalid({}); if (value) setPending({ body: parsed.data, preview: preview!, before: source?.current.amount_mad, base: terms.base_mad, rate: terms.rate_percent, reason: fields.reason }); else void save(parsed.data);

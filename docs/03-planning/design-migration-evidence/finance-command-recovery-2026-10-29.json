@@ -1,0 +1,227 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "a1e573a0026134440013dcf3aed61209d1e57cf2",
+  "scope": "Selected Finance five-command field/action reconciliation: exact typed intent, originating M/A, original body/key/callback, current commission proof, explicit version acceptance, private-field masking and post-handoff draft ownership",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 915,
+      "additionalCases": 25,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Actual intent/owner/facade/affair-drawer origin and three editors in synthetic harnesses; no actual ledger or app"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttonSites": 522,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <six changed UI files>",
+      "exitCode": 0,
+      "files": 6,
+      "findings": 0
+    },
+    {
+      "command": "Read-only finance creation and receipt-pruning source audit",
+      "exitCode": 0,
+      "boundary": "Source inference only; no actual ledger reproduction",
+      "files": [
+        "backend/app/finance/commands.py",
+        "backend/app/identity/service.py"
+      ],
+      "finding": "NewCommission leaves parent version unchanged; finance retry receipts expire after24h while staff sessions can last7days. Safe late creation replay remains required source work."
+    },
+    {
+      "command": "Frozen reference/main/protected-state review",
+      "exitCode": 0,
+      "inputs": 254,
+      "stagedSourceFiles": 15,
+      "protectedUnstagedLessonsAdditions": 35,
+      "motionNoteUnstaged": true
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8990,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1287,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check and exact staged allowlist/hash/protected-state review",
+      "exitCode": 0,
+      "stagedFiles": 25,
+      "canonicalSourceHashes": 15
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/finance-command-recovery.spec.ts",
+      "cases": 2,
+      "scenarios": [
+        "phone manager new commission lost acknowledgement",
+        "desktop manager receipt acknowledged completion-read outage"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedFinancialDrawerCardsFormsFieldsConfirmationFooterPagingHistoryMotion": true,
+    "fiveExactTypedRoutesAndStrictDecimalDateNullEvidenceReceiptBodies": true,
+    "actualAffairOriginActorRoleAndNewDrawerLifetime": true,
+    "currentUnrestrictedSameOriginManagerAdministratorProof": true,
+    "strictModeRestoresOriginBinding": true,
+    "clonedOriginalIntentKeyAndAwaitedCallback": true,
+    "creationCounterOneIndependentOfDealCounter": true,
+    "exactNewerExistingCommissionReceiptsAndFacadeBinding": true,
+    "strictCurrentCommissionDossierHeadVersionCreatorActionActorTermsReasonReceiptProof": true,
+    "canonicalDecimalComparisonWithoutFloatOrBodyRewrite": true,
+    "laterRevisionRetainsHistoricalCompletion": true,
+    "acknowledgedCompletionOnlyAfterReadOrCallbackFailure": true,
+    "unknownConflictRemainsUnknownAfterReceiptPruning": true,
+    "exactOfferedCurrentAcceptanceAndHostMinimum": true,
+    "existingRecognitionAndSelectedReceiptReviewPreserved": true,
+    "privateLocalFieldsAndControllerMaskedOnDenial": true,
+    "draftBaselineAcceptedAfterSuccessfulParentCompletion": true,
+    "refreshBeforeCreateEditorClose": true,
+    "completedOwnerRefusesStaleSubmit": true,
+    "explicitRecoveryDepartureWarningPreservedNoRollbackClaim": true,
+    "disposedScopeAbortsAndCannotDeliverLateCompletion": true,
+    "backendAuthorityLocksCalculationsLedgerHistoryOptionalityUnchanged": true,
+    "noPersistentBrowserStorage": true,
+    "exactNextExistingCommissionCounterRejectsSkippedReceipt": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Critical source-inferred gap: commission creation does not advance parent Deal version; 24-hour FinanceReceipt pruning permits potential duplicate creation on late replay. Reconcile durable/authoritative safe creation replay before readiness; immediate retry units are not expiry proof.",
+    "Remaining exact domain field/action/context reconciliation",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged; M/A scope, version1 creation, exact terms/actions/true-actor revisions, 24-hour receipts and write authority inspected in source only",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "Actual finance/ledger/DB/accounts/private configuration/records/services/workers/scanners/simulator/import/export/transfer access",
+    "Migrations0036/0037 or other migration execution",
+    "Actual SQL/ledger/concurrency/native/device/focus/zoom/visual/security/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5298,
+      "sha256": "982edabd2889e3f9891d7f8cc0d6080ab4050d5033c69bcc63aaf44bac9ad85d"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-workspace.tsx",
+      "bytes": 10245,
+      "sha256": "a3bdbf04ec195f50b3585e2bb30b632cb81cfeb8f59e405fdfc652dca6022120"
+    },
+    {
+      "file": "frontend/src/features/finance/command-intent.ts",
+      "bytes": 3950,
+      "sha256": "e78ba033a8146016399d45132e2493e16437a69ae17ce23be1b10a15655c83b3"
+    },
+    {
+      "file": "frontend/src/features/finance/commission-record.tsx",
+      "bytes": 5932,
+      "sha256": "d6b88f2063fb26aa9dd81619fe7575233544674be00397e64c5a153ced3eaa0b"
+    },
+    {
+      "file": "frontend/src/features/finance/contracts.ts",
+      "bytes": 6243,
+      "sha256": "14fdfec948c03a67327f8e462c56977dfe56a346ed8672ae1a2e225b90af7665"
+    },
+    {
+      "file": "frontend/src/features/finance/facade.ts",
+      "bytes": 4339,
+      "sha256": "98a91a57e170793a95a62e44a54cad7316ac2b556714b477a531c08cc44eaec5"
+    },
+    {
+      "file": "frontend/src/features/finance/finance-panel.tsx",
+      "bytes": 9520,
+      "sha256": "f670baecc9a0e28730414444580ab6dc75a1183066aebebce1c9df62b5fd6a24"
+    },
+    {
+      "file": "frontend/src/features/finance/mutation.tsx",
+      "bytes": 3378,
+      "sha256": "149fc1db444939fb2a739eb2e49b5ac0425579a054f069c907333b5019cf1c33"
+    },
+    {
+      "file": "frontend/src/features/finance/receipt-form.tsx",
+      "bytes": 12556,
+      "sha256": "48a12f7885cf43d30581ce96df951cfb8e49adb50d98f23dcf6324d6924a6bb4"
+    },
+    {
+      "file": "frontend/src/features/finance/terms-form.tsx",
+      "bytes": 9666,
+      "sha256": "aedd929140d3aa8555377eb8bc8d6f2ac4d6ce8472cd8a9c76c1261ed02220cd"
+    },
+    {
+      "file": "frontend/src/features/finance/use-finance-command.ts",
+      "bytes": 10009,
+      "sha256": "3c27e3c306b1d56b7054bf992a54ba1f232154b60a6be6c54be51681691d4338"
+    },
+    {
+      "file": "frontend/tests/e2e/finance-command-recovery.spec.ts",
+      "bytes": 5264,
+      "sha256": "d7995b87d84a9d471089c90efefa73ef4726850aface8f05fe287900b5737966"
+    },
+    {
+      "file": "frontend/tests/unit/finance-command-fixtures.mjs",
+      "bytes": 5977,
+      "sha256": "d93d5a22405238ad1e82455b09bcb2e62b8e119be0414494e987d07ba221957a"
+    },
+    {
+      "file": "frontend/tests/unit/finance-command-recovery.test.mjs",
+      "bytes": 15551,
+      "sha256": "7c2435b34602409b12165507a540c77b439c89653bb2227d27126b574270a392"
+    },
+    {
+      "file": "frontend/tests/unit/finance-workspace.test.mjs",
+      "bytes": 53226,
+      "sha256": "06dca791397ff1e837d17f9ec50618d4ed671b5958f9e701ffa8956e37b05cb5"
+    }
+  ]
+}

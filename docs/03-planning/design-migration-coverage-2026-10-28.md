@@ -433,3 +433,27 @@ Two native cases prepared/typechecked, not run. Exact remaining domain
 reconciliation and legacy selectors continue. Backend unchanged/not rerun; actual
 SQL/native/concurrency/device/AFTER/CI/product acceptance and migrations0036/0037
 pending. No actual access/workaround, main/push/merge/deploy. P0/P8/full goal open.
+
+
+## Financial command follow-through,2026-10-29
+
+[Financial field/action map](../04-design/finance-command-recovery-local.md)
+reconciles all five existing command bodies and selected form/confirmation homes.
+Actual originating M/A, strict cloned intent, original key/callback, exact receipt/
+current proof, explicit current acceptance and post-handoff draft acceptance
+replace fingerprint-only ownership. Private denial, stale submits and sticky
+unknown409 are covered; recovery departure retains its existing warning.
+915 frontend units pass,25 added; lint/types/build/history/static app lint6 pass.
+Two native cases prepared/typechecked, not run. Backend unchanged/not rerun;
+remaining exact domain reconciliation and legacy selectors continue. Actual
+ledger/SQL/native/concurrency/device/security/AFTER/CI/product acceptance and
+migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
+P0/P8/full goal remain open.
+
+
+Required source follow-through: Finance creation checks but does not advance its
+Deal version, while backend retry receipts expire after24 hours. Source review
+therefore identifies a possible duplicate creation on replay after pruning if
+the parent counter is unchanged. Durable or authoritative safe creation replay
+must be reconciled before readiness; the current immediate-retry frontend cases
+are not retention-expiry/ledger proof. No backend retention policy changed.

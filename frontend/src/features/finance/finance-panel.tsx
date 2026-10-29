@@ -17,21 +17,22 @@ import { CommissionRecord } from "./commission-record";
 import { CommissionReceipts, FinanceHistory } from "./collection";
 import { FINANCE_PAGE_SIZE, financeDenied, financePageValid, restoreFinanceReturn, type FinanceReturn, type FinanceSelection } from "./model";
 import { TermsForm } from "./terms-form";
+import type { Denied, FinanceBinding } from "./mutation";
 
-export function FinancePanel({ deal }: { deal: Deal }) { return <FinanceBoundary key={deal.id} deal={deal} />; }
-function FinanceBoundary({ deal }: { deal: Deal }) {
-  const [denial, setDenial] = useState<ApiError>(), [generation, setGeneration] = useState(0);
+export function FinancePanel({ deal, actorId, role }: { deal: Deal } & FinanceBinding) { return <FinanceBoundary key={`${deal.id}:${actorId ?? ""}:${role ?? ""}`} deal={deal} binding={{ actorId, role }} />; }
+function FinanceBoundary({ deal, binding }: { deal: Deal; binding?: FinanceBinding }) {
+  const [denial, setDenial] = useState<{ error: ApiError; acknowledged?: boolean }>(), [generation, setGeneration] = useState(0);
   function retry() { setGeneration(value => value + 1); setDenial(undefined); }
-  return denial ? <RecordError error={denial} retry={retry} /> : <FinanceWorkspace key={generation} deal={deal} onDenied={setDenial} />;
+  return denial ? <>{denial.acknowledged ? <p role="status">L’opération est enregistrée. Les droits d’accès ont changé.</p> : null}<RecordError error={denial.error} retry={retry} /></> : <FinanceWorkspace key={generation} deal={deal} binding={binding} onDenied={(error, acknowledged) => setDenial({ error, acknowledged })} />;
 }
-export function FinanceWorkspace({ deal, onDenied }: { deal: Deal; onDenied: (error: ApiError) => void }) {
+export function FinanceWorkspace({ deal, onDenied, binding }: { deal: Deal; onDenied: Denied; binding?: FinanceBinding }) {
   const [page, setPage] = useState(1), [selection, setSelection] = useState<FinanceSelection>(), [creating, setCreating] = useState<Deal>(), [denial, setDenial] = useState<ApiError>(), [notice, setNotice] = useState("");
   const [receiptPages, setReceiptPages] = useState<Record<string, number>>({}), [historyPage, setHistoryPage] = useState(1);
   const scope = useRef<HTMLDivElement>(null), heading = useRef<HTMLHeadingElement>(null), restore = useRef<FinanceReturn | undefined>(undefined);
   const guard = useUnsavedGuard(), hydrated = useHydrated();
   const parent = useQuery(`/api/v1/deals/${deal.id}`, dealSchema);
   const query = useQuery(`/api/v1/deals/${deal.id}/commissions?page=${page}&page_size=${FINANCE_PAGE_SIZE}`, commissionsSchema);
-  const deny = useCallback((error: ApiError) => { setDenial(error); setSelection(undefined); setCreating(undefined); setReceiptPages({}); setHistoryPage(1); setNotice(""); restore.current = undefined; onDenied(error); }, [onDenied]);
+  const deny = useCallback((error: ApiError, acknowledged?: boolean) => { setDenial(error); setSelection(undefined); setCreating(undefined); setReceiptPages({}); setHistoryPage(1); setNotice(""); restore.current = undefined; onDenied(error, acknowledged); }, [onDenied]);
   const authority = [parent.error, query.error].find(error => error && financeDenied(error));
   // Hide immediately below, then unmount the complete private controller. A retry
   // must start fresh queries rather than remounting an earlier financial draft.
@@ -49,11 +50,11 @@ export function FinanceWorkspace({ deal, onDenied }: { deal: Deal; onDenied: (er
   function close() { setCreating(undefined); setSelection(undefined); }
   function retry() { close(); setNotice(""); restore.current = undefined; parent.refresh(); query.refresh(); setDenial(undefined); }
   function updated() { setNotice("Opération financière enregistrée. Les originaux restent conservés."); query.refresh(); }
-  function saved() { close(); updated(); }
+  function saved() { updated(); close(); }
   return <div ref={scope} className="grid min-w-0 gap-5">
     {problem ? <RecordError error={problem} retry={retry} /> : !current && !selection && !creating ? parent.error ? <RecordError error={parent.error} retry={parent.refresh} /> : <p role="status">Chargement du contexte financier…</p> : <>
       {selection || creating ? <Button action="back" type="button" variant="quiet" className="justify-self-start" onClick={() => guard.request(close, scope.current ?? undefined)}>Commissions et encaissements</Button> : null}
-      {creating ? <TermsForm dealId={creating.id} dealVersion={creating.version} writable={writable} saved={saved} denied={deny} cancel={close} /> : selection ? <CommissionRecord key={`${selection.commission.id}:${selection.mode}:${selection.original?.id ?? "new"}`} initial={selection} dealId={deal.id} contactId={current?.contact.id ?? deal.contact.id} dealVersion={current?.version ?? deal.version} writable={writable} changed={updated} denied={deny} close={close} /> : <><RecordSection title="Commissions" count={!query.error ? query.value?.total : undefined} headingRef={heading} action={writable ? <Button action="create" type="button" disabled={!hydrated} onClick={() => { if (!current) return; remember(undefined, "create"); setCreating(current); }}>Prévoir une commission</Button> : undefined} description="Facultatif : reconnaissance et encaissement sont deux confirmations distinctes.">
+      {creating ? <TermsForm binding={binding} dealId={creating.id} dealVersion={creating.version} writable={writable} saved={saved} denied={deny} cancel={close} /> : selection ? <CommissionRecord binding={binding} key={`${selection.commission.id}:${selection.mode}:${selection.original?.id ?? "new"}`} initial={selection} dealId={deal.id} contactId={current?.contact.id ?? deal.contact.id} dealVersion={current?.version ?? deal.version} writable={writable} changed={updated} denied={deny} close={close} /> : <><RecordSection title="Commissions" count={!query.error ? query.value?.total : undefined} headingRef={heading} action={writable ? <Button action="create" type="button" disabled={!hydrated} onClick={() => { if (!current) return; remember(undefined, "create"); setCreating(current); }}>Prévoir une commission</Button> : undefined} description="Facultatif : reconnaissance et encaissement sont deux confirmations distinctes.">
         {notice ? <p role="status" className="text-sm text-success">{notice}</p> : null}
         {!writable ? <p className="text-sm text-muted-foreground">Dossier ou contact archivé : la finance est conservée en lecture seule.</p> : null}
         {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des commissions…</p> : <>

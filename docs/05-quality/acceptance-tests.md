@@ -688,3 +688,21 @@ read outage. [Contract](../04-design/record-lifecycle-recovery-local.md). Backen
 unchanged/not rerun. Actual SQL/concurrency/native/device/focus/zoom/visual/CI/
 AFTER/product acceptance and broader legacy selectors remain pending. No AT-wide
 closure.
+
+
+## Selected Finance owner and current-completion cases,2026-10-29
+
+915 synthetic frontend units pass,25 added for all five typed financial intents,
+exact roots/body/version/decimal/null/evidence/receipt identity, current M/A
+origin, strict receipt and current financial proof, historical completion,
+original nested body/key/callback, unknown409, completion-only retries, exact
+current acceptance, read-only/blocked receipt review, local denial masking,
+completion baselines, stale submits, actor-lifetime wiring and disposal. Existing
+Finance field/calculation/confirmation/collection/history/departure cases remain.
+Two cases in frontend/tests/e2e/finance-command-recovery.spec.ts are prepared/
+typechecked, not run: phone new commission lost acknowledgement and desktop
+receipt completion-read outage, retaining the recovery-departure prompt.
+[Contract](../04-design/finance-command-recovery-local.md). Backend unchanged/not
+rerun; actual ledger/SQL/concurrency/native/device/focus/zoom/visual/security/CI/
+AFTER/product acceptance and broader legacy selectors remain pending. No AT-wide
+closure.
