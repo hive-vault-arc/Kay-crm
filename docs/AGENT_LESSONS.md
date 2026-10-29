@@ -2113,3 +2113,16 @@ stock counts: programme unit_count includes all physical children, so archive
 review cannot treat archived children as an override. Remove the generic writer
 only after repository-wide caller search; other direct domain lifecycle controls
 remain a separate audit even when the inventory symbol has zero references.
+
+
+## Lifecycle selected-page and denial lifetime,2026-10-29
+
+An archive can remove its own selected row before a lost response is recovered.
+Hold the selected page and lock selection for the confirmation lifetime; keep
+the original action/body/key/callback. Refresh and release the held page before
+clearing selection, which can immediately unmount its owner.
+A current access refusal must also clear the held projection, so retry cannot
+briefly revive private data before a fresh authorized read. Preserve the distinct
+prospect assigned-agent and affair primary-agent rules; inventory authority is
+not interchangeable. Receipt pruning means a conflict after an unknown outcome
+does not prove noncommit. Cover owner, real hosts, disposal and denial retry.

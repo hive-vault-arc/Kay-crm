@@ -671,3 +671,20 @@ desktop manager programme restore result-read outage.
 [Contract](../04-design/inventory-lifecycle-recovery-local.md). Backend unchanged/
 not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
 product acceptance and broader legacy selectors remain pending. No AT-wide closure.
+
+
+## Selected prospect/affair archive and restore recovery,2026-10-29
+
+890 synthetic frontend units pass,25 added for exact kind/ID/action/body/counter,
+both operations, current origin identity and assigned-versus-primary authority,
+strict receipt/current proof, historical later state, lost acknowledgement and
+completion-only read/callback recovery. Actual dialog and all four hosts cover
+protected edits/duplicate/dismissal, explicit current comparison, authoritative
+expiry/linked blockers, selection/page retention, verified result installation,
+current-denial projection clearing and disposal. Two native cases in frontend/
+tests/e2e/record-lifecycle-recovery.spec.ts are prepared/typechecked, not run:
+phone prospect archive lost acknowledgement and desktop affair restore result-
+read outage. [Contract](../04-design/record-lifecycle-recovery-local.md). Backend
+unchanged/not rerun. Actual SQL/concurrency/native/device/focus/zoom/visual/CI/
+AFTER/product acceptance and broader legacy selectors remain pending. No AT-wide
+closure.

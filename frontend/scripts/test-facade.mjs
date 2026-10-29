@@ -42,6 +42,7 @@ try {
     "tests/unit/unit-listing-wizard.test.mjs",
     "tests/unit/property-listing-recovery.test.mjs",
     "tests/unit/inventory-lifecycle-recovery.test.mjs",
+    "tests/unit/record-lifecycle-recovery.test.mjs",
     "tests/unit/directory-filters.test.mjs",
     "tests/unit/owners.test.mjs",
     "tests/unit/owner-forms.test.mjs",

@@ -2912,3 +2912,24 @@ No actual archive/DB/account/private config/service/worker/transfer/retention CL
 access, workaround, migration, main/push/merge/deploy. Actual SQL/native/security/
 product acceptance pending. Enquiry/deal lifecycle controls remain separate source
 work, not covered by this inventory checkpoint.
+
+
+## Prospect/affair lifecycle ownership and retained-view review,2026-10-29
+
+Original kind/ID/action/reason/version/key/callback and current originating
+actor/role govern both lifecycle controls. Prospect assigned-agent and affair
+primary-agent rules remain distinct; backend30-day restore and linked reservation/
+visit/task blockers are unchanged. Exact newer receipts and fresh scoped current
+dossiers precede awaited parent completion; acknowledged retries cannot POST
+again. Sticky unknown409 preserves ambiguity after24-hour receipt pruning.
+Explicit current acceptance cannot change the operation or bypass state/authority.
+All four hosts retain unfinished work through quiet reads, then install verified
+results. Current denial removes held projections, preventing private snapshot
+revival during retry. Synchronous duplicate/edit/dismissal guards and disposal
+protect original work; no persistent browser storage, endpoint/grant/history/
+retention change. 890 synthetic frontend units pass,25 added; frontend gates
+pass. [Contract](04-design/record-lifecycle-recovery-local.md). Two native cases
+prepared/typechecked, not run. Backend unchanged/not rerun. No actual archive/DB/
+account/private config/service/worker/transfer/retention access or workaround,
+migration, main/push/merge/deploy. Actual SQL/native/security/product acceptance
+remains pending.

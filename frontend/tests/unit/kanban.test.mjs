@@ -16,7 +16,7 @@ function harness() {
     useState(initial) { const index = cursor++; if (!(index in state)) state[index] = typeof initial === "function" ? initial() : initial; return [state[index], value => { state[index] = typeof value === "function" ? value(state[index]) : value; }]; },
     useRef(initial) { const index = cursor++; if (!(index in state)) state[index] = { current: initial }; return state[index]; },
     useCallback: callback => callback, useEffect() {}, useId: () => "synthetic-control",
-  }, render(fn) { cursor = 0; return fn(); }, reset() { state.length = 0; cursor = 0; } };
+  }, render(fn) { cursor = 0; let value = fn(); while (typeof value?.type === "function") value = value.type(value.props); return value; }, reset() { state.length = 0; cursor = 0; } };
 }
 function find(node, type) {
   if (!node || typeof node !== "object") return [];
@@ -165,7 +165,7 @@ test("Both real directory controllers preserve the board owner across responsive
     const columns = { visible: ["name"], change() {}, notice: "" };
     const filters = () => ({ draft: { ...applied, page_size: 20 }, setDraft() {}, filters: applied, page: 1, setPage() {}, invalid: "", apply() {}, reset() {}, activeCount: 1 });
     const common = {
-      react: state.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" },
+      "@/features/discovery/use-lifecycle-projection": loadServer("src/features/discovery/use-lifecycle-projection.ts", { modules: { react: state.react } }), react: state.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" },
       "@/components/ui/button": buttons, "@/components/ui/input": { Input: "Input" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/label": { Label: "Label" },
       "@/components/shared/filter-results-layout": { FilterResultsLayout: "Layout" }, "@/components/shared/scrollable-results-table": { ScrollableResultsTable: "Scroll" }, "@/components/shared/data-table": { DataTable: "Table" },
       "@/components/shared/crm-presentation": { CrmAgent: "Agent", CrmContactCell: "ContactCell", CrmDirectoryHeader: "Header", CrmDirectoryToolbar: "Toolbar", CrmStatusBadge: "Badge" },

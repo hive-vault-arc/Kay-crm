@@ -1,0 +1,247 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "f2f7ed350b73110db5d2cfae2f8e31e8f62bedb3",
+  "scope": "Selected prospect/affair archive and restore controls: original confirmation intent, current assigned/primary authority, exact receipt/current result, protected detail and selected-page lifetimes and awaited parent completion",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 890,
+      "additionalCases": 25,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Actual owner/dialog/contracts/facades and four hosts in synthetic harnesses; no actual app or SQL"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttonSites": 522,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <seven changed UI files>",
+      "exitCode": 0,
+      "files": 7,
+      "findings": 0
+    },
+    {
+      "command": "Frozen reference/main/protected worktree verification",
+      "exitCode": 0,
+      "inputs": 254,
+      "stagedSourceFiles": 22,
+      "protectedUnstagedLessonsAdditions": 35,
+      "motionNoteUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8983,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1286,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check and exact staged allowlist/hash/protected-state review",
+      "exitCode": 0,
+      "stagedFiles": 32,
+      "canonicalSourceHashes": 22
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/record-lifecycle-recovery.spec.ts",
+      "cases": 2,
+      "scenarios": [
+        "phone manager prospect archive lost acknowledgement",
+        "desktop manager affair restore acknowledged result-read outage"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedConfirmationReasonCopyTokensGlyphsSpacingCardsTabsMotion": true,
+    "distinctProspectAssignedAgentAndAffairPrimaryAgentAuthority": true,
+    "currentOriginIdentityFirstReplayComparisonCompletion": true,
+    "strictOriginalRootActionBodyKeyReasonVersionCallback": true,
+    "replaysDoNotRequireObsoletePreState": true,
+    "exactNewerReceiptAndFreshScopedCurrentRecord": true,
+    "receiptVersionStateAndLaterHistoricalCompletion": true,
+    "acknowledgedCompletionOnlyIncludingPartialCallbackFailure": true,
+    "stickyUnknownConflictAfterReceiptPruning": true,
+    "explicitOfferedCurrentAcceptanceNoOperationFlip": true,
+    "backendRestoreDeadlineAndReservationVisitTaskBlockersPreserved": true,
+    "synchronousReasonSubmitDismissalProtectionAndDirtyGuard": true,
+    "fourHostsRetainOpenDetailAndSelectedPage": true,
+    "selectionLockedAndRefreshBeforeClear": true,
+    "verifiedDetailInstallBeforeRelease": true,
+    "currentDenialClearsHeldPrivateProjectionBeforeRetry": true,
+    "disposalAndDeferredDiscardNoLateUpdates": true,
+    "noPersistentBrowserStorage": true,
+    "selectionRefreshAndHeldPageReleaseBeforeOwnerUnmount": true,
+    "completedTriggerReadyForNextExplicitOpening": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Remaining exact domain field/action/context reconciliation",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged; prospect/affair authority, 30-day restore, 24-hour receipts and linked blockers inspected in source only",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "Actual archive/restore, DB/accounts/private configuration/records/services/workers/scanners/simulator/import/export/transfer/retention CLI access",
+    "Migrations0036/0037 or other migration execution",
+    "Actual SQL/concurrent stock/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5246,
+      "sha256": "7f45440fc37caa5f29ce3939dfbcf3899e822ab30554e7645c3a1b67c871ea5a"
+    },
+    {
+      "file": "frontend/src/components/shared/data-table.tsx",
+      "bytes": 6577,
+      "sha256": "68a4fa8febbb76f23929bac91908cbb522ec10dc2ec3cf146248991b6f236adc"
+    },
+    {
+      "file": "frontend/src/features/contacts/contracts.ts",
+      "bytes": 11172,
+      "sha256": "3d25935cfa0765c4b2024785c4dc3e7bcef81a3c4c53b90e88544c8e52bbdf5d"
+    },
+    {
+      "file": "frontend/src/features/contacts/facade.ts",
+      "bytes": 9256,
+      "sha256": "7fc524ae31dde0631cc610b2b0ae666ce8302acf76c6440e8f04cc6e76de3ef3"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-list.tsx",
+      "bytes": 17379,
+      "sha256": "209c55b473d74dd75f37dcdef11089d179ef4bd22e00583518c43b13fef17c52"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-record.tsx",
+      "bytes": 10974,
+      "sha256": "25d3d43f872759fd3a8422901c3beb5fc4f6f65e9a89822913e4a9da909005a1"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-list.tsx",
+      "bytes": 17896,
+      "sha256": "63c8a2b8b149209a99b7d221f4273df717de2907b15c7b5bdb6793eaf6540fb4"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-record.tsx",
+      "bytes": 7695,
+      "sha256": "22066d21ea6a2497bf477ff0533f61f57fea573ba765bf6ecc565c05aa52fd30"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-workspace.tsx",
+      "bytes": 10215,
+      "sha256": "604f095c11df16f4cac19d65b0c36eb800fead182b8ad7a93562ad5a54d3fe26"
+    },
+    {
+      "file": "frontend/src/features/deals/facade.ts",
+      "bytes": 7535,
+      "sha256": "b585c7f544e3ce6b4a72b302998f2d56c0ce123519aa5a911e9158facd181d21"
+    },
+    {
+      "file": "frontend/src/features/discovery/record-lifecycle-action.tsx",
+      "bytes": 9606,
+      "sha256": "a46fe77bd7621a1b3153b1eb9f56de6dbdebc3ef5f46166097ee1fceef45eaf8"
+    },
+    {
+      "file": "frontend/src/features/discovery/record-lifecycle-contract.ts",
+      "bytes": 1001,
+      "sha256": "9971875d6bc402eed7ff3877e16725c56e01791aa6907db1232af33a59138188"
+    },
+    {
+      "file": "frontend/src/features/discovery/use-lifecycle-projection.ts",
+      "bytes": 672,
+      "sha256": "51104024b7d8b44dd087448060a8fe1c6cd1f8491f4dfb111327418d09d3ab00"
+    },
+    {
+      "file": "frontend/src/features/discovery/use-record-lifecycle-command.ts",
+      "bytes": 9350,
+      "sha256": "eb89b4012fb2b6d0e46feaf5b1d94a30fc517e20d55c215ac2eabf6eebf425a9"
+    },
+    {
+      "file": "frontend/tests/e2e/record-lifecycle-recovery.spec.ts",
+      "bytes": 5461,
+      "sha256": "1e614991db800b2aa91131fa3173c1ec43c27ab4d0185e145debae8d64eb71b5"
+    },
+    {
+      "file": "frontend/tests/unit/deal-form-recovery.test.mjs",
+      "bytes": 21380,
+      "sha256": "2ec821df01ea66a9e2c93d68ff4bf3022b2e36c21e9feb1933698f02a900c0df"
+    },
+    {
+      "file": "frontend/tests/unit/dossier-directory.test.mjs",
+      "bytes": 14969,
+      "sha256": "54a11abd4140d668a1531cc74a57de23c5ef13c8beccc3f6f274948ad3826052"
+    },
+    {
+      "file": "frontend/tests/unit/exports-workspace.test.mjs",
+      "bytes": 35250,
+      "sha256": "5492274bdcd8854bedf9a65d089cad6c16c5eb004d193b9a2e9a29cb092831f8"
+    },
+    {
+      "file": "frontend/tests/unit/kanban.test.mjs",
+      "bytes": 22739,
+      "sha256": "cba9543f4f9ed32485d6a2a2d2ee153ee2230eb0fcb3b7cdea1a52847a3637e5"
+    },
+    {
+      "file": "frontend/tests/unit/prepared-history.test.mjs",
+      "bytes": 14322,
+      "sha256": "7f193b3a9c4dd94ffeef78cc7f15e199baaaa1b5b0ee6f0754c5b5bd4f11a5a8"
+    },
+    {
+      "file": "frontend/tests/unit/record-lifecycle-fixtures.mjs",
+      "bytes": 3298,
+      "sha256": "57b13a1ca8643724684097ea459e23d9dd93f8d81117de274c96e00d2cd23119"
+    },
+    {
+      "file": "frontend/tests/unit/record-lifecycle-recovery.test.mjs",
+      "bytes": 24188,
+      "sha256": "3ee8e4db80824e13859b82773ebdb99cfa0f13cb7e9b8f32026aaa04f6960632"
+    }
+  ]
+}

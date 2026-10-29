@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useLifecycleProjection } from "@/features/discovery/use-lifecycle-projection";
 import { currentRecord } from "@/features/realtime/current-record";
 import { LeadInlineField } from "./lead-inline-field";
 import { InlineEditScope } from "@/components/shared/inline-record-field";
@@ -34,15 +35,18 @@ import { campaignLabels, ratingLabels } from "./qualification-contracts";
 import { ContactProfilePanel } from "./contact-profile-panel";
 import { LeadStatusMenu } from "./lead-status-menu";
 
-export function LeadRecord({ id, edit = false, role = "agent", actorId, initialTab }: { id: string; edit?: boolean; role?: StaffRole; actorId?: string; initialTab?: string }) {
+type Props = { id: string; edit?: boolean; role?: StaffRole; actorId?: string; initialTab?: string };
+export function LeadRecord(props: Props) { return <LeadRecordLifetime key={`${props.id}:${props.actorId ?? ""}:${props.role ?? "agent"}`} {...props} />; }
+function LeadRecordLifetime({ id, edit = false, role = "agent", actorId, initialTab }: Props) {
   const [edited, setEdited] = useState<Enquiry>();
   const [scopeError, setScopeError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
   const [historyRevision, setHistoryRevision] = useState(0);
-  const { value: remote, error, refresh, refreshQuietly } = useQuery(`/api/v1/enquiries/${id}`, enquirySchema);
-  const enquiry = currentRecord(remote, edited, id);
+  const { value: remote, error: readError, refresh, refreshQuietly } = useQuery(`/api/v1/enquiries/${id}`, enquirySchema);
+  const projection = useLifecycleProjection(currentRecord(remote, edited, id), readError), enquiry = projection.value, error = projection.error;
+  if (readError && [401, 403, 404].includes(readError.status) && edited) setEdited(undefined);
   const heading = <PageHeader title={edit ? "Modifier le prospect" : "Prospect"} description="Coordonnées, qualification et suivi." route={`/leads/${id}`} />;
-  if (error) return <>{heading}<RecordError error={error} retry={refresh} /></>;
+  if (error && (!enquiry || [401, 403, 404].includes(error.status))) return <>{heading}<RecordError error={error} retry={refresh} /></>;
   if (scopeError) return <>{heading}{notice ? <p role="status">{notice}</p> : null}<RecordError error={scopeError} retry={() => { setScopeError(undefined); setEdited(undefined); setNotice(""); refresh(); }} /></>;
   if (!enquiry) return <>{heading}<p role="status">Chargement du prospect…</p></>;
   if (edit && !enquiry.contact.archived_at && !enquiry.archived_at) return <LeadEditor key={id} enquiry={enquiry} />;
@@ -50,7 +54,8 @@ export function LeadRecord({ id, edit = false, role = "agent", actorId, initialT
   const canArchive = !enquiry.contact.archived_at && (role !== "agent" || (actorId && enquiry.assigned_agent?.id === actorId));
   const inline = { enquiry, writable, saved: (value: Enquiry) => { setEdited(value); setNotice("Prospect enregistré."); refreshQuietly(); }, denied: (failure: ApiError, acknowledged?: boolean) => { setNotice(acknowledged ? "La modification est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); } };
   return <InlineEditScope><div className="kay-record-page">
-    <CrmRecordHeader contact={enquiry.contact} title={enquiry.contact.name} route={`/leads/${id}`} backHref="/leads" badges={<><LeadStatusMenu enquiry={enquiry} writable={writable} denied={(failure, acknowledged) => { setNotice(acknowledged ? "Le statut est enregistré. Les droits d’accès ont changé." : ""); setScopeError(failure); }} changed={saved => { setNotice(saved ? "Statut enregistré." : "Version actualisée."); refreshQuietly(); }} /><CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge>{enquiry.archived_at ? <CrmStatusBadge state="archived">Archivé</CrmStatusBadge> : null}</>} actions={<>{writable && enquiry.status !== "converted" ? <Button action="edit" asChild variant="outline"><Link href={`/leads/${id}/edit`}>Modifier</Link></Button> : null}<RecordActions>{writable ? <ConvertLead enquiry={enquiry} actorId={actorId} role={role} onRefresh={refreshQuietly} denied={(failure, acknowledged) => { setNotice(acknowledged ? "La conversion est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} /> : null}{canArchive ? <RecordLifecycleAction kind="enquiries" id={id} version={enquiry.version} archivedAt={enquiry.archived_at} label={enquiry.contact.name} onChanged={refreshQuietly} /> : null}</RecordActions></>} />
+    {error ? <RecordError error={error} retry={refreshQuietly} /> : null}
+    <CrmRecordHeader contact={enquiry.contact} title={enquiry.contact.name} route={`/leads/${id}`} backHref="/leads" badges={<><LeadStatusMenu enquiry={enquiry} writable={writable} denied={(failure, acknowledged) => { setNotice(acknowledged ? "Le statut est enregistré. Les droits d’accès ont changé." : ""); setScopeError(failure); }} changed={saved => { setNotice(saved ? "Statut enregistré." : "Version actualisée."); refreshQuietly(); }} /><CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge>{enquiry.archived_at ? <CrmStatusBadge state="archived">Archivé</CrmStatusBadge> : null}</>} actions={<>{writable && enquiry.status !== "converted" ? <Button action="edit" asChild variant="outline"><Link href={`/leads/${id}/edit`}>Modifier</Link></Button> : null}<RecordActions>{writable ? <ConvertLead enquiry={enquiry} actorId={actorId} role={role} onRefresh={refreshQuietly} denied={(failure, acknowledged) => { setNotice(acknowledged ? "La conversion est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} /> : null}{canArchive || projection.holding ? <RecordLifecycleAction role={role} actorId={actorId} heldChanged={projection.hold} denied={(failure, acknowledged) => { setNotice(acknowledged ? "L’opération est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} kind="enquiries" id={id} version={enquiry.version} archivedAt={enquiry.archived_at} label={enquiry.contact.name} onChanged={async (record, signal) => { if (signal.aborted) return; setEdited(record); setNotice("État du prospect enregistré."); refreshQuietly(); }} /> : null}</RecordActions></>} />
     {!writable ? <p role="status" className="mb-3 text-sm text-muted-foreground">{enquiry.contact.archived_at ? "Contact archivé : restaurez-le pour modifier ce prospect." : "Prospect archivé : historique conservé, restauration possible pendant 30 jours."}</p> : null}
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}
     <RecordWorkspace label="Rubriques du prospect" initialTab={initialTab} tabs={[

@@ -2894,3 +2894,23 @@ Backend unchanged/not rerun; actual SQL/concurrent stock/native/device/AFTER/CI/
 product acceptance and migrations0036/0037 pending. No actual access/workaround,
 main/push/merge/deploy. Goal active.
 [Lifecycle evidence](design-migration-evidence/inventory-lifecycle-recovery-2026-10-29.json).
+
+
+## Prospect/affair lifecycle follow-through,2026-10-29
+
+Separate enquiry/deal archive/restore controls now use their own confirmation
+owner, preserving distinct agent relationships, 30-day restore and linked affair
+blockers. Original action/body/key/callback, current proof, strict newer receipt,
+verified current dossier and awaited parent handoff cover all four detail/list
+entry points. Unknown work cannot be replaced; acknowledged recovery completes
+without another POST. Explicit comparison and protected selected-page retention
+prevent lost work; current denial clears private projections before read retry.
+Selected dialogs/tokens/desktop/phone composition remain.
+[Contract](../04-design/record-lifecycle-recovery-local.md).
+
+890 frontend units pass,25 added; lint/types/build/history/static app lint7 pass.
+Two native cases prepared/typechecked, not run. Backend unchanged/not rerun.
+Remaining exact domain reconciliation and old native selectors continue; actual
+SQL/concurrency/native/device/AFTER/CI/product acceptance and migrations0036/0037
+remain pending. No actual access/workaround, main/push/merge/deploy. Goal active.
+[Evidence](design-migration-evidence/record-lifecycle-recovery-2026-10-29.json).

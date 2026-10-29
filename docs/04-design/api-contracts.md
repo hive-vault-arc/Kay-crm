@@ -1284,3 +1284,18 @@ Known conflicts require explicit current acceptance; blocked stock/state change
 ends read-only. No release/override, endpoint, grant or retention change.
 [Contract](inventory-lifecycle-recovery-local.md); actual SQL/native acceptance
 remains pending.
+
+
+## Prospect/affair lifecycle client completion,2026-10-29
+
+Existing enquiries/deals archive/restore POSTs keep strict expected_version/reason
+and their distinct assigned-agent/primary-agent authority. The selected client
+pins original operation/body/key/callback, requires current identity and binds
+receipt ID/newer counter in both facades. Matching current dossier and state at
+the exact receipt counter precede completion; later inverse actions retain
+historical completion. Acknowledged retry reads/completes only. Unknown replay
+does not require the obsolete pre-state; a conflict after ambiguous dispatch
+cannot prove noncommit after24-hour receipt pruning. Backend30-day restoration,
+contact state, reservation/visit/task blockers and immutable history remain.
+[Contract](record-lifecycle-recovery-local.md). No endpoint, grant, retention or
+backend change; actual SQL/native acceptance pending.

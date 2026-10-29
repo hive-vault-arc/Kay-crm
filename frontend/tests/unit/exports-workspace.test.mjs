@@ -10,7 +10,7 @@ const jsx=(type,props,key)=>({type,props,key}),runtime={jsx,jsxs:jsx,Fragment:"F
 function find(node,type){if(!node||typeof node!=="object")return[];if(Array.isArray(node))return node.flatMap(child=>find(child,type));return[...(node.type===type?[node]:[]),...find(node.props?.children,type)];}
 function text(node){if(node==null||typeof node==="boolean")return"";if(Array.isArray(node))return node.map(text).join("");return typeof node==="object"?text(node.props?.children):String(node);}
 const plain=value=>JSON.parse(JSON.stringify(value));
-function hooks(){const slots=[],effects=[];let cursor=0;return{react:{useCallback:fn=>fn,useState(initial){const i=cursor++;if(!(i in slots))slots[i]=typeof initial==="function"?initial():initial;return[slots[i],next=>{slots[i]=typeof next==="function"?next(slots[i]):next;}];},useRef(initial){const i=cursor++;return slots[i]??={current:initial};},useId:()=>"synthetic-export",useEffect(run,deps){const i=cursor++,prior=slots[i];if(!prior||deps.some((value,n)=>!Object.is(value,prior.deps[n]))){const current={deps};slots[i]=current;effects.push(()=>{prior?.cleanup?.();current.cleanup=run();});}}},render(fn){cursor=0;return fn();},effects(){effects.splice(0).forEach(run=>run());},dispose(){slots.forEach(slot=>slot?.cleanup?.());}};}
+function hooks(){const slots=[],effects=[];let cursor=0;return{react:{useCallback:fn=>fn,useState(initial){const i=cursor++;if(!(i in slots))slots[i]=typeof initial==="function"?initial():initial;return[slots[i],next=>{slots[i]=typeof next==="function"?next(slots[i]):next;}];},useRef(initial){const i=cursor++;return slots[i]??={current:initial};},useId:()=>"synthetic-export",useEffect(run,deps){const i=cursor++,prior=slots[i];if(!prior||deps.some((value,n)=>!Object.is(value,prior.deps[n]))){const current={deps};slots[i]=current;effects.push(()=>{prior?.cleanup?.();current.cleanup=run();});}}},render(fn){cursor=0;let value=fn();while(typeof value?.type==="function")value=value.type(value.props);return value;},effects(){effects.splice(0).forEach(run=>run());},dispose(){slots.forEach(slot=>slot?.cleanup?.());}};}
 class ApiError extends Error{constructor(code,status){super(code);this.code=code;this.status=status;}}
 const vocabulary=loadServer("src/features/contacts/qualification-contracts.ts"),contacts=loadServer("src/features/contacts/contracts.ts",{modules:{"./qualification-contracts":vocabulary}}),contracts=loadServer("src/features/discovery/contracts.ts",{modules:{"@/features/contacts/contracts":contacts}});
 const reviewModel=loadServer("src/features/discovery/export-review.ts",{modules:{"./contracts":contracts,"@/features/contacts/contracts":contacts,"@/features/contacts/qualification-contracts":vocabulary}});
@@ -49,7 +49,7 @@ function childModules(path){const source=ts.createSourceFile(path,readFileSync(n
 test("The actual Contacts toolbar hoists export ownership above its Popover and never grants an agent the action",()=>{
  const path="src/features/contacts/contact-directory.tsx",h=hooks();
  const{ContactDirectory}=loadServer(path,{modules:{
-  ...childModules(path),...common(h),
+  ...childModules(path),"@/features/discovery/use-lifecycle-projection":loadServer("src/features/discovery/use-lifecycle-projection.ts",{modules:{react:h.react}}),...common(h),
   "./use-directory-filters":{useDirectoryFilters:()=>({draft:{q:""},filters:{q:""},page:1,activeCount:0})},
   "./use-query":{queryPath:()=>"/api/v1/contacts",useQuery:()=>({value:{items:[],total:52}})},
  }});
@@ -59,7 +59,7 @@ test("The actual Contacts toolbar hoists export ownership above its Popover and 
 test("The real Lead toolbar owns the same surviving export review",()=>{
  const path="src/features/contacts/lead-list.tsx",h=hooks();h.react.useCallback=fn=>fn;
  const{LeadList}=loadServer(path,{modules:{
-  ...childModules(path),...common(h),
+  ...childModules(path),"@/features/discovery/use-lifecycle-projection":loadServer("src/features/discovery/use-lifecycle-projection.ts",{modules:{react:h.react}}),...common(h),
   "@/hooks/use-phone-layout":{usePhoneLayout:()=>false},
   "@/components/shared/directory-view-switch":{DirectoryViewSwitch:"Switch",useDirectoryView:()=>({value:"list"})},
   "./column-chooser":{ColumnChooser:"Columns",useLeadColumns:()=>({visible:["name"]})},
@@ -72,7 +72,7 @@ test("The real Lead toolbar owns the same surviving export review",()=>{
 test("Directory and contextual prospect export owners stay mounted while their query loads or fails",()=>{
  for(const [path,name,contextual] of [["src/features/contacts/contact-directory.tsx","ContactDirectory",false],["src/features/contacts/lead-list.tsx","LeadList",false],["src/features/contacts/lead-list.tsx","LeadList",true]]){
   const h=hooks();let value={items:[],total:31,page:1,page_size:20},error;
-  const loaded=loadServer(path,{modules:{...childModules(path),...common(h),"@/hooks/use-phone-layout":{usePhoneLayout:()=>false},"@/components/shared/directory-view-switch":{DirectoryViewSwitch:"Switch",useDirectoryView:()=>({value:"list"})},"./column-chooser":{ColumnChooser:"Columns",useLeadColumns:()=>({visible:["name"]})},"./use-directory-filters":{useDirectoryFilters:()=>({draft:{q:""},filters:{q:""},page:1,activeCount:0})},"./use-query":{queryPath:()=>"/api/v1/contacts",useQuery:()=>({value,error})}}});
+  const loaded=loadServer(path,{modules:{...childModules(path),"@/features/discovery/use-lifecycle-projection":loadServer("src/features/discovery/use-lifecycle-projection.ts",{modules:{react:h.react}}),...common(h),"@/hooks/use-phone-layout":{usePhoneLayout:()=>false},"@/components/shared/directory-view-switch":{DirectoryViewSwitch:"Switch",useDirectoryView:()=>({value:"list"})},"./column-chooser":{ColumnChooser:"Columns",useLeadColumns:()=>({visible:["name"]})},"./use-directory-filters":{useDirectoryFilters:()=>({draft:{q:""},filters:{q:""},page:1,activeCount:0})},"./use-query":{queryPath:()=>"/api/v1/contacts",useQuery:()=>({value,error})}}});
   const render=()=>h.render(()=>loaded[name]({role:"manager",...(contextual?{contactId:randomUUID()}:{} )}));const owner=tree=>contextual?find(tree,"ExportAction")[0]:find(tree,"CrmDirectoryHeader")[0].props.actions;
   let tree=render();assert.equal(owner(tree).type,"ExportAction");assert.equal(owner(tree).props.available,true);
   value=undefined;tree=render();assert.equal(owner(tree).type,"ExportAction");assert.equal(owner(tree).props.available,false);assert.equal(owner(tree).props.total,0);
@@ -82,7 +82,7 @@ test("Directory and contextual prospect export owners stay mounted while their q
 
 test("Contact overview retains one prospect export owner through scoped dossier read failure",()=>{
  const path="src/features/contacts/contact-dossiers.tsx",h=hooks();let value={items:[],total:7,page:1,page_size:20},error;
- const loaded=loadServer(path,{modules:{...childModules(path),...common(h),"./use-query":{queryPath:kind=>`/api/v1/${kind}`,useQuery:()=>({value,error})}}});const contact={id:randomUUID(),version:1,archived_at:null};const render=()=>h.render(()=>loaded.ContactDossiers({contact,role:"manager"}));let tree=render();assert.equal(find(tree,"ExportAction").length,1);assert.equal(find(tree,"ExportAction")[0].props.available,true);value=undefined;error=new ApiError("DEPENDENCY_UNAVAILABLE",503);tree=render();assert.equal(find(tree,"ExportAction").length,1);assert.equal(find(tree,"ExportAction")[0].props.available,false);assert.equal(find(tree,"ExportAction")[0].props.scopeError,error);
+ const loaded=loadServer(path,{modules:{...childModules(path),"@/features/discovery/use-lifecycle-projection":loadServer("src/features/discovery/use-lifecycle-projection.ts",{modules:{react:h.react}}),...common(h),"./use-query":{queryPath:kind=>`/api/v1/${kind}`,useQuery:()=>({value,error})}}});const contact={id:randomUUID(),version:1,archived_at:null};const render=()=>h.render(()=>loaded.ContactDossiers({contact,role:"manager"}));let tree=render();assert.equal(find(tree,"ExportAction").length,1);assert.equal(find(tree,"ExportAction")[0].props.available,true);value=undefined;error=new ApiError("DEPENDENCY_UNAVAILABLE",503);tree=render();assert.equal(find(tree,"ExportAction").length,1);assert.equal(find(tree,"ExportAction")[0].props.available,false);assert.equal(find(tree,"ExportAction")[0].props.scopeError,error);
 });
 
 test("The actual menu exposes an event-time focus callback for its surviving trigger",()=>{

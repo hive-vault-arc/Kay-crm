@@ -40,6 +40,7 @@ export const editEnquirySchema = z.object({ expected_version: z.number().int().p
 export const resolveSchema = z.object({ phone: z.string().trim().min(1).max(48) }).strict();
 export const recordLifecycleSchema = z.object({ expected_version: z.number().int().positive(), reason: z.string().trim().min(1).max(1000) }).strict();
 export const recordLifecycleResultSchema = z.object({ id: z.uuid(), version: z.number().int().positive() }).strict();
+export function lifecycleReceiptMatches(id: string, expectedVersion: number, receipt: z.infer<typeof recordLifecycleResultSchema>) { return receipt.id === id && receipt.version > expectedVersion; }
 export const contactSummarySchema = z.object({
   id: z.uuid(), name: z.string().min(1).max(160), type: z.enum(["person", "organization"]),
   primary_agent: agentSchema, primary_phone: z.string().regex(/^\+[1-9][0-9]{6,14}$/), primary_email: z.string().max(254).nullable(), version: z.number().int().positive(),

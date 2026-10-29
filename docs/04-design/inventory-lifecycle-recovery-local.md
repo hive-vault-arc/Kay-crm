@@ -98,3 +98,9 @@ CI/AFTER/product acceptance is pending. No actual app/browser/HTTP/DB/account/pr
 configuration/service/worker/scanner/simulator/import/export/transfer access or
 workaround. Migrations0036/0037 remain unapplied; main and254 frozen inputs are
 unchanged. No push/merge/deploy. Full redesign goal remains active.
+
+
+The separate prospect/affair controls noted above now have their own
+[source follow-through](record-lifecycle-recovery-local.md); they retain distinct
+agent/30-day/linked-workflow rules rather than adopting inventory M/A guards.
+Historical evidence above remains scoped to this inventory checkpoint.

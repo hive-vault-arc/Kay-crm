@@ -9,7 +9,7 @@ import { releaseSchema, reserveSchema } from "./contracts";
 import { closeSchema, reopenSchema, dealStockReviewSchema, outcomesSchema } from "@/features/inventory/outcome-contracts";
 import { convertLeadSchema } from "./qualification-contracts";
 import { duplicateSchema, privateConflictSchema } from "@/features/contacts/contracts";
-import { recordLifecycleResultSchema, recordLifecycleSchema } from "@/features/contacts/contracts";
+import { lifecycleReceiptMatches, recordLifecycleResultSchema, recordLifecycleSchema } from "@/features/contacts/contracts";
 import { frenchApiError } from "@/lib/api/errors";
 
 const id = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}";
@@ -65,6 +65,7 @@ export async function relayDeals(key: string, request: Request, requestId: strin
     const result = schema.parse(response.body);
     const parent = key.startsWith("deals/") ? key.split("/")[1] : undefined;
     if (parent && (record || mutation) && (result as { id?: string }).id !== parent || offer && (result as { customer_offer_id?: string }).customer_offer_id !== key.split("/")[1]) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    if (lifecycle && (!body || !lifecycleReceiptMatches(key.split("/")[1], recordLifecycleSchema.parse(JSON.parse(body)).expected_version, recordLifecycleResultSchema.parse(result)))) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
     return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

@@ -418,3 +418,18 @@ enquiry/deal lifecycle controls, exact remaining domain reconciliation and old
 selectors continue. Backend unchanged/not rerun; actual SQL/native/concurrent stock/
 device/AFTER/CI/product acceptance and migrations0036/0037 pending. No actual access/
 workaround, main/push/merge/deploy. P0/P8/full goal remain open.
+
+
+## Prospect/affair lifecycle follow-through,2026-10-29
+
+[Lifecycle map](../04-design/record-lifecycle-recovery-local.md) closes the separate
+source-control gap identified after inventory lifecycle. The selected confirmation
+retains original kind/action/body/key/callback, current identity and distinct
+agent relationships, exact newer receipt/current proof and verified parent result.
+All four detail/list hosts retain unfinished work; current denial clears held
+private views. Backend30-day restoration and linked affair blockers remain.
+890 frontend units pass,25 added; lint/types/build/history/static app lint7 pass.
+Two native cases prepared/typechecked, not run. Exact remaining domain
+reconciliation and legacy selectors continue. Backend unchanged/not rerun; actual
+SQL/native/concurrency/device/AFTER/CI/product acceptance and migrations0036/0037
+pending. No actual access/workaround, main/push/merge/deploy. P0/P8/full goal open.

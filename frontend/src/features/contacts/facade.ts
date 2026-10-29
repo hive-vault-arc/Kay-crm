@@ -9,7 +9,7 @@ import { agentsSchema, contactRoute, contactSchema, contactsSchema, duplicateSch
 import { assignmentsSchema, commandResultSchema, confirmedChangeSchema, enquiryAssignmentSchema, intentSchema, noteSchema, previewSchema, timelineSchema, ownershipPreviewMatches, ownershipResultMatches, type ChangeIntent } from "./ownership-contracts";
 import { qualificationMetadataSchema } from "./qualification-contracts";
 import { ownerPortfolioQuerySchema, ownerPortfolioSchema } from "@/features/owners/contracts";
-import { validListKind } from "./contracts";
+import { validListKind, lifecycleReceiptMatches } from "./contracts";
 
 const known = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "INVALID_PHONE", "INVALID_ASSIGNEE", "PHONE_OWNED_ELSEWHERE", "DUPLICATE_CONFIRMATION_REQUIRED", "VERSION_CONFLICT", "SOURCE_SUBMISSION_CONFLICT", "IDEMPOTENCY_CONFLICT", "RATE_LIMITED", "OWNERSHIP_VERSION_CONFLICT", "IMPACT_CHANGED", "CONTACT_ARCHIVED", "CONTACT_NOT_ARCHIVED", "CONTACT_MERGED", "ASSIGNMENT_UNCHANGED", "PRIMARY_NOT_COLLABORATOR", "MERGE_LINKS_UNSUPPORTED", "MERGE_IDENTITY_LIMIT"]);
 export async function relayContacts(key: string, request: Request, requestId: string) {
@@ -17,6 +17,7 @@ export async function relayContacts(key: string, request: Request, requestId: st
   if (!contactRoute(key, request.method)) return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url);
   const suffix = key.split("/")[2];
+  const lifecycle = key.startsWith("enquiries/") && (suffix === "archive" || suffix === "restore");
   const enquiryRecord = key.startsWith("enquiries/") && key.split("/").length === 2 && z.uuid().safeParse(key.split("/")[1]).success;
   const history = suffix === "timeline" || suffix === "assignment-events";
   const portfolio = suffix === "portfolio";
@@ -53,12 +54,13 @@ export async function relayContacts(key: string, request: Request, requestId: st
       if (code === "PHONE_OWNED_ELSEWHERE") details = privateConflictSchema.parse(upstream.body);
       if (code === "DUPLICATE_CONFIRMATION_REQUIRED") details = duplicateSchema.parse(upstream.body);
       if (code === "VERSION_CONFLICT") details = z.object({ current: key.startsWith("contacts/") ? contactSchema : enquirySchema }).parse(upstream.body);
-      if (code === "VERSION_CONFLICT" && enquiryRecord && enquirySchema.parse((details as { current: unknown }).current).id !== key.split("/")[1]) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+      if (code === "VERSION_CONFLICT" && (enquiryRecord || lifecycle) && enquirySchema.parse((details as { current: unknown }).current).id !== key.split("/")[1]) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
       return Response.json({ error: { code, message: frenchApiError(code), field_errors: {}, request_id: requestId }, ...details }, { status: code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
     }
     const schema = suffix === "portfolio" ? ownerPortfolioSchema : suffix === "preview" ? previewSchema : suffix === "timeline" ? timelineSchema : suffix === "assignment-events" ? assignmentsSchema : key.startsWith("enquiries/") && (suffix === "archive" || suffix === "restore") ? recordLifecycleResultSchema : suffix ? commandResultSchema : key === "contacts/resolve-phone" ? z.object({ available: z.literal(true) }).strict() : key === "contacts/assignment-options" ? agentsSchema : request.method === "GET" && key === "contacts" ? contactsSchema : request.method === "GET" && key === "enquiries" ? enquiriesSchema : key.startsWith("contacts") ? contactSchema : enquirySchema;
     const result = (key === "contacts/metadata" ? qualificationMetadataSchema : ["contacts/responsible-options", "enquiries/assigned-options"].includes(key) ? agentsSchema : schema).parse(upstream.body);
     if (enquiryRecord && enquirySchema.parse(result).id !== key.split("/")[1]) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    if (lifecycle && (!body || !lifecycleReceiptMatches(key.split("/")[1], recordLifecycleSchema.parse(JSON.parse(body)).expected_version, recordLifecycleResultSchema.parse(result)))) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
     if (suffix === "notes" && key.startsWith("contacts/") || suffix === "assign" && key.startsWith("enquiries/")) {
       const receipt = commandResultSchema.parse(result);
       if (receipt.operation !== (suffix === "notes" ? "notes" : "enquiry-assign") || suffix === "notes" && receipt.contact_id !== key.split("/")[1]) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);

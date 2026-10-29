@@ -3026,3 +3026,14 @@ cases prepared/typechecked, not run. Backend unchanged/not rerun. Source/test
 search confirms0 useInventoryCommand references. Actual SQL/concurrent stock/
 native/device/focus/zoom/visual/CI/AFTER/product acceptance and migrations0036/0037
 pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected prospect/affair lifecycle recovery,2026-10-29
+
+890 frontend units pass,25 added for actual owner/dialog/contracts/facades and all
+four detail/list hosts. Lint/types/build/history and static Frontend Taste app
+lint7 pass,0 findings. [Contract](04-design/record-lifecycle-recovery-local.md).
+Two isolated native phone prospect archive lost-ack/desktop affair restore result-
+read cases prepared/typechecked, not run. Backend unchanged/not rerun. Actual
+SQL/concurrency/native/device/focus/zoom/visual/CI/AFTER/product acceptance and
+migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
