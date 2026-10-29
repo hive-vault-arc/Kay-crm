@@ -1216,3 +1216,17 @@ match the requested route/query/body. No new endpoint, backend permission, stock
 effect, receipt retention or financial effect. See the
 [external-result contract](external-stock-recovery-local.md); actual SQL/native
 acceptance remains pending.
+
+
+## Inventory record-form command ownership,2026-10-29
+
+Existing owners PUT, offering POST/PATCH, availability POST and block/floor/type
+POST/PATCH retain their exact payloads, parent/offering counters and role grants.
+The selected client now binds opening parent/item/actor, parses strict intent and
+retains original key/body/callback across unknown results. Matching newer receipts
+and scoped current records precede completion; acknowledged failures retry only
+completion. Known conflicts require explicit current comparison acceptance.
+Indirect offering/floor membership remains an existing UI/backend responsibility,
+without invented request fields. No new endpoint or backend effect.
+[Contract](inventory-record-command-recovery-local.md); actual SQL/native
+acceptance remains pending.

@@ -2788,3 +2788,26 @@ service/worker/transfer access or workaround, main/push/merge/deploy. Goal activ
 
 [External-result evidence](design-migration-evidence/external-stock-recovery-2026-10-29.json)
 separates source/synthetic results from pending actual acceptance.
+
+
+## Selected inventory record forms,2026-10-29
+
+Owners, offering creation/edit/availability and block/floor/reusable-type forms
+now use strict scoped original command/key/callback ownership. Current originating
+identity/role and matching parent/item are required; unknown input/dismissal stays
+protected. Matching receipts/current records precede awaited verified host handoff;
+acknowledged failures retry completion only. Known conflicts retain drafts and
+require explicit exact-current acceptance. Existing fields/layout, exact MAD/null
+prices, selected tabs/glyphs/motion and backend rules remain.
+[Contract](../04-design/inventory-record-command-recovery-local.md).
+
+804 frontend units pass,22 added; lint/types/build/history and static app lint8
+pass. Three isolated native owner-ack/offer-read/agent-block-ack cases prepared/
+typechecked, not run. Development creation/edit and property listing still use
+the old generic owner; exact remaining domain contexts/fields/actions and legacy
+selectors continue. Backend unchanged/not rerun; actual SQL/concurrent stock/
+native/device/AFTER/CI/product checks and migrations0036/0037 remain pending. No
+actual access/workaround, main/push/merge/deploy. Goal active.
+
+[Record-form evidence](design-migration-evidence/inventory-record-command-recovery-2026-10-29.json)
+separates source/synthetic checks from pending actual acceptance.

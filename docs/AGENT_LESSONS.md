@@ -2052,3 +2052,15 @@ private work. Bind view and dialog lifetimes to the originating actor/role and
 target/offering. Bracket stock facts with coherent parent/offering reads, and
 await UI handoff before accepting the verified target. Another generic form
 using an older command hook is not covered merely by sharing the record host.
+
+
+## Inventory form recovery and verified host handoff,2026-10-29
+
+A generic fingerprint retry must not replace an unknown owner/offering/structure
+request or repeat an acknowledged write after callback failure. Bind the strict
+intent to its opening parent/item/account/role, freeze original body/key/callback,
+require exact current comparison acceptance after known conflict, then await a
+matching current record and install it through the real drawer-to-host callback.
+Model nullable clears with field presence in synthetic persistence fixtures; null
+is an explicit value, not a missing prior value. Keep existing role/backend
+membership checks authoritative and mark prepared native cases as not run.

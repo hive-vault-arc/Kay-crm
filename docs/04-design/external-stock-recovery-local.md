@@ -91,3 +91,11 @@ No actual app/browser/HTTP/DB/account/private config/service/worker/scanner/
 simulator/import/export/transfer access or workaround. Migrations0036/0037 remain
 unapplied; main and all254 frozen inputs remain unchanged. No push/merge/deploy.
 The full redesign goal remains active.
+
+
+## Subsequent record-form checkpoint,2026-10-29
+
+[Owners/offering/availability/structure recovery](inventory-record-command-recovery-local.md)
+now extends the retained host to those three form families. The earlier remaining
+list above records this checkpoint's original boundary. Development creation/edit
+and property listing still require separate generic-command reconciliation.

@@ -3,6 +3,7 @@ import test from "node:test";
 import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { loadServer } from "./load-server.mjs";
+import { loadRecordCommand } from "./record-command-fixtures.mjs";
 
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
 const plain = value => JSON.parse(JSON.stringify(value));
@@ -36,9 +37,9 @@ function setup(kind = "owners", { source = development(), item, read, command, h
   const apiGet = async (...args) => { reads.push(args); if (!read) throw new Error("unexpected read"); return read(...args); };
   const fields = model(apiGet);
   const draft = loadServer("src/components/shared/dossier-form.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "./record-header": {} }, globals: { window: { dispatchEvent: event => events.push(event.type) }, Event } });
-  const useCommand = loadServer("src/features/inventory/use-command.ts", { modules: { react: h.react, "@/lib/api/client": { ApiError }, "@/lib/api/command": { apiCommand: async (...args) => { calls.push(args); return command ? command(...args) : { development_id: source.id }; } }, "./contracts": contracts }, globals: { crypto: { randomUUID } } });
+  const useCommand = loadRecordCommand(h, { source, ErrorType: ApiError, hydrated, command: async (...args) => { calls.push(args); return command ? command(...args) : undefined; } })
   const loaded = loadServer(`src/features/inventory/${kind === "owners" ? "owner-editor" : "hierarchy-editor"}.tsx`, { modules: {
-    react: h.react, "react/jsx-runtime": runtime, "@/components/icons": { OwnerIcon: "OwnerIcon", BlockIcon: "BlockIcon" }, "@/components/shared/dossier-form": draft, "@/components/shared/record-entry": { RecordEntry: "Entry" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: "Discard dialog", request: (run, scope) => decisions.push({ run, scope }) }) }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/features/contacts/contact-selector": { ContactSelector: "Chooser" }, "@/features/contacts/record-states": { RecordError: "RecordError" }, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/lib/api/client": { apiGet, ApiError }, "./contracts": contracts, "./development-contracts": developments, "./inventory-form-model": fields, "./states": { InventoryError: "Error" }, "./use-command": useCommand,
+    react: h.react, "react/jsx-runtime": runtime, "@/components/icons": { OwnerIcon: "OwnerIcon", BlockIcon: "BlockIcon" }, "@/components/shared/dossier-form": draft, "@/components/shared/record-entry": { RecordEntry: "Entry" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: "Discard dialog", request: (run, scope) => decisions.push({ run, scope }) }) }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/features/contacts/contact-selector": { ContactSelector: "Chooser" }, "@/features/contacts/record-states": { RecordError: "RecordError" }, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/lib/api/client": { apiGet, ApiError }, "./contracts": contracts, "./development-contracts": developments, "./inventory-form-model": fields, "./states": { InventoryError: "Error" }, "./use-record-command": useCommand,
   }, globals: { AbortController } });
   const props = kind === "owners" ? { property: { ...source, inventoryLevel: "development" }, saved: () => saved++, cancel: () => cancelled++ } : { development: source, kind, parent: kind === "floors" ? item?.block_id ?? randomUUID() : source.id, item, saved: () => saved++, cancel: () => cancelled++ };
   const render = () => { const tree = h.render(() => kind === "owners" ? loaded.OwnerEditor(props) : loaded.HierarchyEditor(props)); const form = find(tree, "form")[0]; if (form?.props.ref) form.props.ref.current = { querySelector: () => ({ focus() {} }) }; return tree; };
@@ -99,7 +100,7 @@ test("Legal owner selection is managed data, deduplicates rapid choices and neve
 test("Legal-owner interrupted commands retain exact retry identity, lock duplicates and protect the active draft", async () => {
   let release, fail = true; const source = development({ owners: [owner()] });
   const s = setup("owners", { source, command: async () => { if (fail) await new Promise(resolve => { release = resolve; }); if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return { development_id: source.id }; } });
-  find(s.render(), "Input")[0].props.onChange({ target: { value: "Draft display" } }); s.submit(); s.submit(); assert.equal(s.calls.length, 1); assert.equal(find(s.render(), "form")[0].props["aria-busy"], true); release(); await delay(0);
+  find(s.render(), "Input")[0].props.onChange({ target: { value: "Draft display" } }); s.submit(); s.submit(); await delay(0); assert.equal(s.calls.length, 1); assert.equal(find(s.render(), "form")[0].props["aria-busy"], true); release(); await delay(0);
   assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], "true"); fail = false; s.submit(); await delay(0); assert.equal(s.calls[0][3], s.calls[1][3]); assert.deepEqual(plain(s.calls[0][1]), plain(s.calls[1][1])); assert.equal(s.saved(), 1);
 });
 
@@ -114,13 +115,13 @@ test("Legal-owner conflicts compare complete current links before explicit rebas
 
 test("Legal-owner denial removes private fields, foreign snapshots cannot be adopted and unmount prevents late success", async () => {
   const source = development({ owners: [owner()] }), denied = setup("owners", { source, command: async () => { throw new ApiError("FORBIDDEN", 403); } }); denied.submit(); await delay(0); assert.equal(find(denied.render(), "Input").length, 0); assert.equal(find(denied.render(), "RecordError")[0].props.error.code, "FORBIDDEN");
-  const foreign = setup("owners", { source: development({ owners: [{ contact: null, marketing_display: null }] }), read: async () => source }); button(foreign.render(), "Recharger les propriétaires").props.onClick(); await delay(0); assert.equal(find(foreign.render(), "Chooser").length, 0); assert.equal(find(foreign.render(), "RecordError")[0].props.error.code, "DEPENDENCY_UNAVAILABLE");
-  let release; const late = setup("owners", { source, command: () => new Promise(resolve => { release = resolve; }) }); late.submit(); late.unmount(); release({ development_id: source.id }); await delay(0); assert.equal(late.saved(), 0);
+  const foreign = setup("owners", { source: development({ owners: [{ contact: null, marketing_display: null }] }), read: async () => source }); button(foreign.render(), "Recharger les propriétaires").props.onClick(); await delay(0); assert.equal(find(foreign.render(), "Chooser").length, 0); assert.equal(find(foreign.render(), "RecordError")[0].props.error.code, "INVALID_RESPONSE");
+  let release; const late = setup("owners", { source, command: () => new Promise(resolve => { release = resolve; }) }); late.submit(); await delay(0); late.unmount(); release({ development_id: source.id }); await delay(0); assert.equal(late.saved(), 0);
 });
 
 test("Hierarchy form validates before writing, retains the draft on failure and routes each kind correctly", async () => {
   for (const kind of ["blocks", "floors", "unit-types"]) {
-    let fail = true; const s = setup(kind, { command: async () => { if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return { development_id: randomUUID() }; } });
+    let fail = true; const s = setup(kind, { command: async () => { if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return {}; } });
     s.submit(); assert.equal(s.calls.length, 0); s.change("code", " New "); s.change("label", " New element "); s.submit(); await delay(0);
     assert.equal(s.calls[0][4], "POST"); assert.equal(s.calls[0][0], `/api/v1/${kind === "floors" ? "blocks" : "developments"}/${s.props.parent}/${kind}`); assert.equal(s.calls[0][1].expected_version, 7); assert.equal(s.calls[0][1].code, "New"); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], "true");
     fail = false; s.submit(); await delay(0); assert.equal(s.calls[0][3], s.calls[1][3]); assert.equal(s.saved(), 1);
@@ -143,9 +144,22 @@ test("Archived hierarchy and protected comparison state cannot write; a denial c
 
 test("Hierarchy comparison reads abort on unmount, and pre-hydration submissions never issue commands", async () => {
   let resolve, signal; const s = setup("blocks", { command: async () => { throw new ApiError("INVENTORY_VERSION_CONFLICT", 409); }, read: (...args) => { signal = args[2]; return new Promise(done => { resolve = done; }); } });
-  s.change("code", "X"); s.change("label", "X"); s.submit(); await delay(0); button(s.render(), "Comparer la version actuelle").props.onClick();
+  s.change("code", "X"); s.change("label", "X"); s.submit(); await delay(0); button(s.render(), "Comparer la version actuelle").props.onClick(); await delay(0);
   assert.equal(find(s.render(), "form")[0].props["aria-busy"], true); s.unmount(); assert.equal(signal.aborted, true); resolve(s.props.development); await delay(0);
   const cold = setup("blocks", { hydrated: false }); cold.change("code", "X"); cold.change("label", "X"); cold.submit(); assert.equal(cold.calls.length, 0);
+});
+
+test("Unknown legal-owner saves retain the full original list and block stale picker, input and cancel handlers", async () => {
+  let lost = true; const source = development({ owners: [owner()] }), s = setup("owners", { source, command: () => { if (lost) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return {}; } });
+  const initial = s.render(), input = find(initial, "Input")[0], chooser = find(initial, "Chooser")[0]; input.props.onChange({ target: { value: "Original shared owner label" } }); s.submit(); await delay(0);
+  const view = s.render(); assert.equal(find(view, "form")[0].props["data-write-recovery"], true); assert.equal(button(view, "Annuler").props.disabled, true); button(view, "Annuler").props.onClick(); assert.equal(s.cancelled(), 0);
+  input.props.onChange({ target: { value: "Replacement" } }); chooser.props.choose({ id: randomUUID(), name: "Other synthetic contact" }); assert.equal(find(s.render(), "Input")[0].props.value, "Original shared owner label");
+  lost = false; s.submit(); await delay(0); assert.equal(s.calls.length, 2); assert.equal(s.calls[0][3], s.calls[1][3]); assert.equal(s.calls[1][1].owners.length, 1); assert.equal(s.calls[1][1].owners[0].marketing_display, "Original shared owner label"); assert.equal(s.saved(), 1);
+});
+test("Unknown hierarchy saves retain the opening block/type fields and protect Return without another intent", async () => {
+  let lost = true; const s = setup("unit-types", { command: () => { if (lost) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return {}; } }); s.change("code", "SYN-TYPE"); s.change("label", "Synthetic type"); s.change("default_area_sqm", "108,50"); s.change("default_rooms", "3"); const original = s.render(); s.submit(); await delay(0);
+  const view = s.render(); assert.equal(find(view, "fieldset")[0].props.disabled, true); assert.equal(button(view, "Retour").props.disabled, true); button(view, "Retour").props.onClick(); assert.equal(s.cancelled(), 0);
+  find(original, "Input").find(node => node.props.name === "code").props.onChange({ target: { value: "OTHER" } }); assert.equal(find(s.render(), "Input").find(node => node.props.name === "code").props.value, "SYN-TYPE"); lost = false; s.submit(); await delay(0); assert.equal(s.calls[1][1].code, "SYN-TYPE"); assert.equal(s.calls[1][1].default_area_sqm, "108.50"); assert.equal(s.calls[0][3], s.calls[1][3]); assert.equal(s.saved(), 1);
 });
 
 test("Structure panels query one collection, replace the list with one editor and guard returning to its cards", () => {

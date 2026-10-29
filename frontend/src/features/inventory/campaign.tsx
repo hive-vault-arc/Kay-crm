@@ -1,4 +1,5 @@
 "use client";
+import type { InventoryRecord } from "./record-scope";
 import { RecordDrawer } from "@/components/shared/record-drawer";
 import { RecordSection } from "@/components/shared/record-workspace";
 import { formatInstant } from "@/lib/format";
@@ -7,14 +8,14 @@ import { Availability, OfferingEditor } from "./offering-editor";
 import { InventoryStatus, Price } from "./states";
 import { ExternalOutcome } from "./external-outcome";
 
-export function CampaignActions({ property, offering, writable, busy, saved }: { property: InventoryTarget; offering: Offering; writable: boolean; busy: boolean; saved: () => void }) {
+export function CampaignActions({ property, offering, writable, busy, saved }: { property: InventoryTarget; offering: Offering; writable: boolean; busy: boolean; saved: (record?: InventoryRecord) => void }) {
   const ordinary = writable && offering.is_current && ["draft", "available"].includes(offering.state);
   const external = writable && offering.is_current && offering.kind !== "holiday" && ["available", "reserved"].includes(offering.state);
   const label = kindLabels[offering.kind].toLocaleLowerCase("fr");
   return <div className="flex min-w-0 flex-wrap items-center justify-end gap-1">
     {ordinary ? <>
-      <RecordDrawer iconOnly label={`Modifier la campagne ${label}`} title="Modifier l’offre" action="edit" busy={busy} description="Prix, période et conditions de cette campagne.">{(close, done) => <OfferingEditor property={property} kind={offering.kind} offering={offering} saved={() => { saved(); done(); }} cancel={close} />}</RecordDrawer>
-      <RecordDrawer iconOnly label={`Confirmer la disponibilité ${label}`} title="Confirmer la disponibilité" action="confirm" busy={busy} description="Vérifier le prix, les propriétaires et l’état du stock.">{(close, done) => <Availability property={property} offering={offering} saved={() => { saved(); done(); }} cancel={close} />}</RecordDrawer>
+      <RecordDrawer iconOnly label={`Modifier la campagne ${label}`} title="Modifier l’offre" action="edit" busy={busy} description="Prix, période et conditions de cette campagne.">{(close, done) => <OfferingEditor property={property} kind={offering.kind} offering={offering} saved={record => { saved(record); done(); }} cancel={close} />}</RecordDrawer>
+      <RecordDrawer iconOnly label={`Confirmer la disponibilité ${label}`} title="Confirmer la disponibilité" action="confirm" busy={busy} description="Vérifier le prix, les propriétaires et l’état du stock.">{(close, done) => <Availability property={property} offering={offering} saved={record => { saved(record); done(); }} cancel={close} />}</RecordDrawer>
     </> : <RecordDrawer iconOnly label={`Détails de l’offre de ${label}`} title={`Offre de ${label}`} action="preview" busy={busy} description="Conditions et état actuel de cette campagne."><Campaign property={property} kind={offering.kind} /></RecordDrawer>}
     {external ? <ExternalOutcome target={property} offering={offering} saved={saved} iconOnly disabled={busy} /> : null}
   </div>;

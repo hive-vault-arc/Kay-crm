@@ -342,3 +342,18 @@ creation/edit, hierarchy, offering/availability, owners, property listing wizard
 remaining exact field/context reconciliation and old selectors continue. Actual
 SQL/concurrent stock/native/device/AFTER/CI/product checks and migrations0036/0037
 remain pending. No actual access/workaround, main/push/merge/deploy. Goal active.
+
+
+## Inventory record-form follow-through,2026-10-29
+
+[Record-form map](../04-design/inventory-record-command-recovery-local.md) retains
+selected owners/offering/availability/hierarchy homes and fields. Scoped strict
+original requests/keys/callbacks, current actor/role proof, exact receipts/current
+parent, protected unknown work, explicit current conflict acceptance and awaited
+monotonic host handoff cover those three form families. 804 frontend units pass,22
+added; lint/types/build/history/static app lint8 pass. Three native cases prepared/
+typechecked, not run. Development creation/edit and property listing generic
+commands, remaining exact domain field/action/context reconciliation and legacy
+selectors continue. Backend unchanged/not rerun. Actual SQL/native/concurrent
+stock/device/AFTER/CI/product acceptance and migrations0036/0037 remain pending.
+No actual access/workaround, main/push/merge/deploy. P0/P8/full goal remain open.

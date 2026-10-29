@@ -594,3 +594,18 @@ not run: phone property acknowledged-read outage and desktop programme lost
 acknowledgement. [Contract](../04-design/external-stock-recovery-local.md). No
 actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/product
 acceptance or full AT closure; backend unchanged/not rerun.
+
+
+## Selected inventory record-form source coverage,2026-10-29
+
+804 synthetic frontend units pass,22 added for strict intent routes, original
+body/key/callback, one commit, completion-only reads/async handoff, foreign/stale
+receipts/records, explicit conflicts, exact values/nulls, roles/hydration/source
+outage, protected stale input/dismissal, disposal and verified host installation.
+Three cases in frontend/tests/e2e/inventory-record-recovery.spec.ts are prepared/
+typechecked, not run: phone owner lost acknowledgement, desktop offering read
+outage and phone agent block lost acknowledgement.
+[Contract](../04-design/inventory-record-command-recovery-local.md). Backend
+unchanged/not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/
+CI/AFTER/product acceptance and broad old-selector audit remain pending. No AT-wide
+closure or runtime acceptance is inferred.

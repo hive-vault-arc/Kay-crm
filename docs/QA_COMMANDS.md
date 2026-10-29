@@ -2970,3 +2970,14 @@ property-read/programme-ack cases prepared/typechecked, not run. Backend unchang
 not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
 product acceptance and migrations0036/0037 remain pending. No actual app/DB/
 account/config/service/worker/transfer access or workaround, main/push/merge/deploy.
+
+
+## Selected inventory record-form recovery,2026-10-29
+
+804 frontend units pass,22 added actual strict intent/controller/form/host/handoff
+cases. Lint/types/build/history and static Frontend Taste app lint8 pass,0 findings.
+[Contract](04-design/inventory-record-command-recovery-local.md). Three isolated
+native owner lost-ack, offering result-read and agent block lost-ack cases are
+prepared/typechecked, not run. Backend unchanged/not rerun. Actual SQL/concurrent
+stock/native/device/focus/zoom/visual/CI/AFTER/product acceptance and migrations
+0036/0037 remain pending. No actual access/workaround, main/push/merge/deploy.

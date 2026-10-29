@@ -1,4 +1,5 @@
 "use client";
+import type { InventoryRecord } from "./record-scope";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RecordSection } from "@/components/shared/record-workspace";
@@ -13,13 +14,13 @@ import type { HierarchyItem, HierarchyKind } from "./inventory-form-model";
 type StructurePage = { items: (Block | UnitType)[]; page: number; page_size: number; total: number; has_previous: boolean; has_next: boolean };
 type Editing = { kind: HierarchyKind; parent: string; parentLabel?: string; item?: HierarchyItem };
 
-export function HierarchyPanel({ development, writable, saved, types = false }: { development: Development; writable: boolean; saved: () => void; types?: boolean }) {
+export function HierarchyPanel({ development, writable, saved, types = false }: { development: Development; writable: boolean; saved: (record?: InventoryRecord) => void; types?: boolean }) {
   const [page, setPage] = useState(1), [block, setBlock] = useState<Block>(), [editing, setEditing] = useState<Editing>(), [revision, setRevision] = useState(0);
   const scope = useRef<HTMLDivElement>(null), guard = useUnsavedGuard();
   const kind = types ? "unit-types" : "blocks";
   const result = useQuery<StructurePage>(queryPath(`developments/${development.id}/${kind}`, { page, page_size: 25 }), types ? unitTypesSchema : blocksSchema);
   const allowed = writable && !development.archived_at;
-  function committed() { setEditing(undefined); setRevision(value => value + 1); result.refresh(); saved(); }
+  function committed(record?: InventoryRecord) { saved(record); setEditing(undefined); setRevision(value => value + 1); result.refresh(); }
   function leave() { guard.request(() => setEditing(undefined), scope.current ?? undefined); }
   const denied = result.error && [401, 403, 404].includes(result.error.status);
   return <>{guard.dialog}<div ref={scope} className="min-w-0">

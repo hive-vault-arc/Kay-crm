@@ -2821,3 +2821,20 @@ rule, retention, persistent browser storage or grant change. No actual app/DB/
 account/private config/service/worker/transfer access, workaround, migration or
 main/push/merge/deploy. Actual SQL/native/security/product acceptance is pending;
 other generic inventory form controllers remain separate source work.
+
+
+## Inventory record-form ownership review,2026-10-29
+
+Owners, offerings/availability and structure commands bind opening parent/item/
+account/role, strict body/path/method/versions and original key/callback. Current
+identity/role proof precedes dispatch/retry/comparison/completion. Strict matching
+receipts and current records precede awaited parent handoff; unknown input and
+dismissal are protected. Known conflicts require exact offered-current acceptance;
+denial masks private content, and disposal aborts late work/releases busy. Existing
+indirect parent membership and backend authority remain, with no new grants,
+retention, stock effects or browser storage. 804 synthetic frontend units pass,22
+added; lint/types/build/history/static checks pass.
+[Contract](04-design/inventory-record-command-recovery-local.md). Three native
+cases prepared/typechecked, not run. No actual app/DB/account/private config/
+service/worker/transfer access, workaround, migration or main/push/merge/deploy.
+Actual SQL/native/security/product acceptance remains pending.

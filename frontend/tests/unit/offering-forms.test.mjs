@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { randomUUID } from "node:crypto";
 import { loadServer } from "./load-server.mjs";
+import { loadRecordCommand } from "./record-command-fixtures.mjs";
 
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" }, plain = value => JSON.parse(JSON.stringify(value));
 function find(node, type) { if (!node || typeof node !== "object") return []; if (Array.isArray(node)) return node.flatMap(child => find(child, type)); return [...(node.type === type || node.type?.name === type ? [node] : []), ...find(node.props?.children, type), ...find(node.props?.action, type)]; }
@@ -33,12 +34,12 @@ function setup({ source = target(), creating = false, availability = false, comm
   const apiGet = async (...args) => { reads.push(args); if (!read) throw new Error("unexpected read"); return read(...args); };
   const fields = model(apiGet), props = { property: source, kind: source.offerings[0]?.kind ?? "sale", offering: creating ? undefined : source.offerings[0], saved: () => saved++, cancel: () => cancelled++ };
   const draft = loadServer("src/components/shared/dossier-form.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "./record-header": {} }, globals: { window: { dispatchEvent: event => events.push(event.type) }, Event } });
-  const commands = loadServer("src/features/inventory/use-command.ts", { modules: { react: h.react, "@/lib/api/client": { ApiError }, "@/lib/api/command": { apiCommand: async (...args) => { calls.push(args); return command ? command(...args) : { property_id: source.id, offering_id: props.offering?.id ?? randomUUID(), version: 8, event_id: randomUUID() }; } }, "./contracts": contracts }, globals: { crypto: { randomUUID } } });
-  const loaded = loadServer("src/features/inventory/offering-editor.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "@/components/icons": { PropertyIcon: "Icon" }, "@/components/shared/dossier-form": draft, "@/components/shared/record-entry": { RecordEntry: "Entry" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: null, request: (run, scope) => decisions.push({ run, scope }) }) }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/lib/api/client": { ApiError }, "./contracts": contracts, "./offering-form-model": fields, "./states": { InventoryError: "InventoryError", InventoryStatus: "Status", Price: "Price" }, "./use-command": commands }, globals: { AbortController } });
+  const commands = loadRecordCommand(h, { source, ErrorType: ApiError, hydrated, command: async (...args) => { calls.push(args); return command ? command(...args) : undefined; } })
+  const loaded = loadServer("src/features/inventory/offering-editor.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "@/components/icons": { PropertyIcon: "Icon" }, "@/components/shared/dossier-form": draft, "@/components/shared/record-entry": { RecordEntry: "Entry" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: null, request: (run, scope) => decisions.push({ run, scope }) }) }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/lib/api/client": { ApiError }, "./contracts": contracts, "./offering-form-model": fields, "./states": { InventoryError: "InventoryError", InventoryStatus: "Status", Price: "Price" }, "./use-record-command": commands }, globals: { AbortController } });
   const render = () => h.render(() => { const wrapper = availability ? loaded.Availability(props) : loaded.OfferingEditor(props), view = wrapper.type(wrapper.props), form = find(view, "form")[0]; if (form?.props.ref) form.props.ref.current = { querySelector: name => ({ focus: () => focused.push(name) }) }; return view; });
   render();
   const change = (name, value) => { const input = ["Input", "Select", "Textarea"].flatMap(type => find(render(), type)).find(node => node.props.name === name); assert.ok(input, name); input.props.onChange({ target: { value } }); };
-  return { ...h, render, props, fields, calls, reads, decisions, focused, events, change, saved: () => saved, cancelled: () => cancelled, submit() { find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); } };
+  return { ...h, render, props, fields, calls, reads, decisions, focused, events, change, accepted: commands.accepted, saved: () => saved, cancelled: () => cancelled, submit() { find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); } };
 }
 
 test("Offering values retain exact original rent/conditions, unknown prices and market-specific defaults", () => {
@@ -82,13 +83,13 @@ test("Offering creation is one managed focused form with shared sections/footer 
 
 test("Offering edit validates the real fields, retains original annual rent and does not coerce incomplete prices", async () => {
   const s = setup({ source: target("property", "rental") }); s.submit(); await tick(); assert.equal(s.calls.length, 0); assert.ok(s.focused.includes('[name="reason"]'));
-  s.change("reason", "Synthetic edit"); s.change("price", ""); s.submit(); await tick(); assert.equal(s.calls[0][4], "PATCH"); assert.equal(s.calls[0][1].price_mad, null); assert.equal(s.calls[0][1].price_period, "year"); assert.equal(s.calls[0][1].expected_version, 3); assert.equal(s.calls[0][1].expected_property_version, 7);
+  s.change("reason", "Synthetic edit"); s.change("price", ""); s.submit(); await tick(); assert.equal(s.calls[0][4], "PATCH"); assert.equal(s.calls[0][1].price_mad, null); assert.equal(s.calls[0][1].price_period, "year"); assert.equal(s.calls[0][1].expected_version, 3); assert.equal(s.calls[0][1].expected_property_version, 7); assert.equal(s.accepted[0].offerings[0].price_mad, null); assert.equal(s.accepted[0].offerings[0].price_period, "year");
 });
 
-test("Offering submissions serialize commands and preserve the exact interrupted request key until the body changes", async () => {
+test("Offering submissions serialize commands and retain the original request despite changed input handlers", async () => {
   let release, first = true; const s = setup({ command: () => first ? new Promise((_resolve, reject) => { release = () => { first = false; reject(new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }; }) : Promise.reject(new ApiError("DEPENDENCY_UNAVAILABLE", 503)) });
-  s.change("reason", "Synthetic retry"); s.submit(); s.submit(); assert.equal(s.calls.length, 1); assert.equal(find(s.render(), "form")[0].props["aria-busy"], true); release(); await tick(); s.submit(); await tick(); assert.equal(s.calls.length, 2); assert.equal(s.calls[1][3], s.calls[0][3]); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], "true");
-  s.change("price", "200"); s.submit(); await tick(); assert.notEqual(s.calls[2][3], s.calls[1][3]); const cold = setup({ hydrated: false }); cold.change("reason", "Synthetic"); cold.submit(); await tick(); assert.equal(cold.calls.length, 0);
+  s.change("reason", "Synthetic retry"); s.submit(); s.submit(); await tick(); assert.equal(s.calls.length, 1); assert.equal(find(s.render(), "form")[0].props["aria-busy"], true); release(); await tick(); s.submit(); await tick(); assert.equal(s.calls.length, 2); assert.equal(s.calls[1][3], s.calls[0][3]); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], "true");
+  s.change("price", "200"); s.submit(); await tick(); assert.equal(s.calls[2][3], s.calls[1][3]); assert.equal(s.calls[2][1].price_mad, s.calls[0][1].price_mad); const cold = setup({ hydrated: false }); cold.change("reason", "Synthetic"); cold.submit(); await tick(); assert.equal(cold.calls.length, 0);
 });
 
 test("Offering conflict comparison preserves inputs until explicit keep or guarded reload and uses both current versions", async () => {
@@ -106,20 +107,27 @@ test("Archived, engaged or replaced comparison cannot become an editable baselin
   }
 });
 
-test("Offering current denial clears private input before fresh retry while transient failures retain drafts", async () => {
-  const source = target(), s = setup({ source, read: async () => ({ ...source, version: 9 }), command: () => { throw new ApiError("FORBIDDEN", 403); } }); s.change("conditions", "Synthetic private edit"); s.change("reason", "Synthetic reason"); s.submit(); await tick(); assert.equal(find(s.render(), "form").length, 0); assert.equal(find(s.render(), "Textarea").length, 0); find(s.render(), "Error")[0].props.retry(); await tick(); assert.equal(find(s.render(), "form").length, 1); assert.equal(find(s.render(), "Textarea").find(node => node.props.name === "conditions").props.value, source.offerings[0].conditions);
+test("Offering current denial remains masked for that owner while transient failures retain drafts", async () => {
+  const source = target(), s = setup({ source, read: async () => ({ ...source, version: 9 }), command: () => { throw new ApiError("FORBIDDEN", 403); } }); s.change("conditions", "Synthetic private edit"); s.change("reason", "Synthetic reason"); s.submit(); await tick(); assert.equal(find(s.render(), "form").length, 0); assert.equal(find(s.render(), "Textarea").length, 0); find(s.render(), "Error")[0].props.retry(); await tick(); assert.equal(find(s.render(), "form").length, 0); assert.equal(find(s.render(), "Textarea").length, 0);
   const transient = setup({ command: () => { throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } }); transient.change("reason", "Synthetic retained"); transient.submit(); await tick(); assert.equal(find(transient.render(), "Textarea").find(node => node.props.name === "reason").props.value, "Synthetic retained");
 });
 
 test("Offering departure aborts comparison and suppresses late or foreign command success", async () => {
   const source = target(); let releaseRead, releaseSave;
-  const r = setup({ source, read: () => new Promise(resolve => { releaseRead = resolve; }), command: () => { throw new ApiError("INVENTORY_VERSION_CONFLICT", 409); } }); r.change("reason", "Synthetic"); r.submit(); await tick(); button(r.render(), "Comparer l’offre actuelle").props.onClick(); assert.equal(r.reads.length, 1); r.unmount(); assert.equal(r.reads[0][2].aborted, true); releaseRead({ ...source, version: 9 }); await tick(); assert.equal(r.saved(), 0);
-  const s = setup({ source, command: () => new Promise(resolve => { releaseSave = resolve; }) }); s.change("reason", "Synthetic"); s.submit(); s.unmount(); releaseSave({ property_id: source.id }); await tick(); assert.equal(s.saved(), 0);
-  const foreign = setup({ source, command: async () => ({ property_id: randomUUID() }) }); foreign.change("reason", "Synthetic"); foreign.submit(); await tick(); assert.equal(foreign.saved(), 0); assert.equal(find(foreign.render(), "Error")[0].props.error.status, 503);
+  const r = setup({ source, read: () => new Promise(resolve => { releaseRead = resolve; }), command: () => { throw new ApiError("INVENTORY_VERSION_CONFLICT", 409); } }); r.change("reason", "Synthetic"); r.submit(); await tick(); button(r.render(), "Comparer l’offre actuelle").props.onClick(); await tick(); assert.equal(r.reads.length, 1); r.unmount(); assert.equal(r.reads[0][2].aborted, true); releaseRead({ ...source, version: 9 }); await tick(); assert.equal(r.saved(), 0);
+  const s = setup({ source, command: () => new Promise(resolve => { releaseSave = resolve; }) }); s.change("reason", "Synthetic"); s.submit(); await tick(); s.unmount(); releaseSave({ property_id: source.id }); await tick(); assert.equal(s.saved(), 0);
+  const foreign = setup({ source, command: async () => ({ property_id: randomUUID() }) }); foreign.change("reason", "Synthetic"); foreign.submit(); await tick(); assert.equal(foreign.saved(), 0); assert.equal(find(foreign.render(), "InventoryError")[0].props.error.status, 503);
 });
 
 test("Availability uses a focused reason-only form and exact target/offering versions for both physical and whole targets", async () => {
   for (const level of ["property", "development"]) { const source = target(level), s = setup({ source, availability: true }); assert.equal(find(s.render(), "Input").length, 0); assert.equal(find(s.render(), "Textarea").length, 1); s.submit(); await tick(); assert.equal(s.calls.length, 0); s.change("reason", "Synthetic stock verification"); s.submit(); await tick(); assert.equal(s.calls[0][0], `/api/v1/${level === "property" ? "properties" : "developments"}/${source.id}/confirm-availability`); assert.deepEqual(plain(s.calls[0][1]), { expected_version: 7, offering_id: source.offerings[0].id, expected_offering_version: 3, reason: "Synthetic stock verification" }); assert.equal(s.calls[0][4], "POST"); assert.equal(s.saved(), 1); }
+});
+
+test("Unknown offer/availability saves keep exact original fields and protect Cancel and comparison", async () => {
+  for (const availability of [false, true]) {
+    let lost = true; const s = setup({ source: target("property", "rental"), availability, command: () => { if (lost) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return {}; } }); s.change("reason", "Original shared reason"); const initial = s.render(); s.submit(); await tick(); const view = s.render(); assert.equal(find(view, "form")[0].props["data-write-recovery"], true); assert.equal(button(view, "Annuler").props.disabled, true); button(view, "Annuler").props.onClick(); assert.equal(s.cancelled(), 0);
+    find(initial, "Textarea").find(node => node.props.name === "reason").props.onChange({ target: { value: "Replacement" } }); assert.equal(find(s.render(), "Textarea").find(node => node.props.name === "reason").props.value, "Original shared reason"); lost = false; s.submit(); await tick(); assert.equal(s.calls[0][3], s.calls[1][3]); assert.equal(s.calls[1][1].reason, "Original shared reason"); assert.equal(s.saved(), 1);
+  }
 });
 
 test("Offer row actions open one focused editor per command and retain readonly/reservation/holiday boundaries", () => {
