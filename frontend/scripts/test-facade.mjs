@@ -35,6 +35,7 @@ try {
     "tests/unit/projects.test.mjs",
     "tests/unit/inventory-directory.test.mjs",
     "tests/unit/development-phase.test.mjs",
+    "tests/unit/development-edit-recovery.test.mjs",
     "tests/unit/contact-directory.test.mjs",
     "tests/unit/dossier-directory.test.mjs",
     "tests/unit/unit-listing-wizard.test.mjs",

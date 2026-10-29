@@ -102,3 +102,12 @@ No actual app/browser/HTTP/DB/account/private configuration/service/worker/
 scanner/simulator/import/export/transfer access or workaround. Migrations0036/
 0037 remain unapplied; main and all254 frozen inputs remain unchanged. No push,
 merge or deployment. Full redesign goal remains active.
+
+
+## Subsequent programme editor checkpoint,2026-10-29
+
+[Programme editor recovery](development-edit-recovery-local.md) adds the strict
+development-facts PATCH and its scoped edit host. All scoped forms also reject an
+offered comparison that becomes older than a newly received parent version before
+acceptance. The earlier remaining list records its original checkpoint boundary;
+development creation and property listing still require generic-owner recovery.

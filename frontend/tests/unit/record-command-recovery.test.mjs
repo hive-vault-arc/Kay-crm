@@ -68,6 +68,15 @@ test("Offered review cannot be foreign/stale, inspection abort releases ownershi
   let release; const pending = new Promise(resolve => { release = resolve; }), abort = new AbortController(), read = s.render().inspect(async () => { await pending; return s.source; }, abort.signal); await tick(); abort.abort(); release(); await assert.rejects(() => read); assert.equal(s.render().pending, false); assert.equal(s.publications.at(-1), false);
   const blocked = fixture(); blocked.host.available = false; await blocked.save(); assert.equal(blocked.calls.length, 0);
 });
+
+test("A programme or property comparison cannot lower a newer parent version received before acceptance", async () => {
+  for (const root of ["properties", "developments"]) {
+    let conflict = true; const s = fixture("owners", { root, dispatch: ({ commit }) => { if (conflict) throw new ApiError("INVENTORY_VERSION_CONFLICT", 409); return commit(); } });
+    await s.save(); const offered = await s.render().inspect(async () => ({ ...s.source, version: 8 }));
+    s.scope.version = 9; const current = s.render(); assert.equal(current.accept(offered), false); assert.equal(current.canEdit(), false); await s.save({ ...s.body, expected_version: 8 }); assert.equal(s.calls.length, 1);
+    const latest = await s.render().inspect(async () => ({ ...s.source, version: 9 })); assert.equal(s.render().accept(latest), true); conflict = false; await s.save({ ...s.body, expected_version: 9 }); assert.equal(s.commits(), 1); assert.equal(s.completed[0].version, 10);
+  }
+});
 test("Original uncertain recovery survives unavailable source but not a changed role/account/password authority", async () => {
   for (const change of [value => ({ ...value, user: { ...value.user, id: randomUUID() } }), value => ({ ...value, user: { ...value.user, role: "agent" } }), value => ({ ...value, must_change_password: true })]) {
     let revoked = false, id, roleValue; const s = fixture("owners", { proof: async () => { const value = { user: { id, role: roleValue }, must_change_password: false }; return revoked ? change(value) : value; }, dispatch: ({ commit }) => { commit(); throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } }); id = s.host.actorId; roleValue = s.host.role;

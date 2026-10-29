@@ -2838,3 +2838,20 @@ added; lint/types/build/history/static checks pass.
 cases prepared/typechecked, not run. No actual app/DB/account/private config/
 service/worker/transfer access, workaround, migration or main/push/merge/deploy.
 Actual SQL/native/security/product acceptance remains pending.
+
+
+## Programme editor command and promoter projection review,2026-10-29
+
+Strict exact-programme PATCH uses the scoped original actor/role/body/key/callback
+owner; all existing staff roles retain shared-fact editing. Backend source retains
+scoped checks for changed promoter links, version/archive/marketability rules and
+authoritative grants. Unknown fields/dismissal are protected; current proof and
+matching receipts/records precede navigation. Acknowledged failures retry only
+completion. Explicit current comparisons cannot lower a newer received parent
+version. Unchanged hidden promoter links remain omitted; explicit null/selection
+remain distinct, private names never fill shared labels, and newly hidden current
+names disappear. 815 synthetic frontend units pass,11 added; lint/types/build/
+history/static checks pass. [Contract](04-design/development-edit-recovery-local.md).
+Two native cases prepared/typechecked, not run. No backend runtime verification,
+new grants, retention, storage or effect. No actual access/workaround, migration,
+main/push/merge/deploy; actual SQL/native/security/product acceptance pending.

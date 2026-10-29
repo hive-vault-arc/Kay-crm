@@ -2811,3 +2811,23 @@ actual access/workaround, main/push/merge/deploy. Goal active.
 
 [Record-form evidence](design-migration-evidence/inventory-record-command-recovery-2026-10-29.json)
 separates source/synthetic checks from pending actual acceptance.
+
+
+## Selected programme editor follow-through,2026-10-29
+
+The existing programme editor now shares the scoped record/account/role/busy owner
+and strict exact-programme PATCH intent. Unknown body/key/phase/promoter intent
+and callback stay frozen; acknowledged read/navigation failure retries completion
+only. Known conflicts require explicit current comparison or guarded reload.
+Comparison acceptance cannot lower a newer received parent version. Normalized
+drafts, unsupported phase omission, hidden-link omission, explicit promoter null/
+selection and fresh private-name masking preserve the existing contracts/layout.
+[Contract](../04-design/development-edit-recovery-local.md).
+
+815 frontend units pass,11 added; lint/types/build/history/static app lint2 pass.
+Two native phone agent ack/desktop agent read cases prepared/typechecked, not run.
+Development creation and property listing generic owners, exact remaining domain
+fields/actions/contexts and old selectors continue. Backend unchanged/not rerun;
+actual SQL/concurrent stock/native/device/AFTER/CI/product acceptance and
+migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
+Goal active. [Programme-editor evidence](design-migration-evidence/development-edit-recovery-2026-10-29.json).

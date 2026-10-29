@@ -2981,3 +2981,14 @@ native owner lost-ack, offering result-read and agent block lost-ack cases are
 prepared/typechecked, not run. Backend unchanged/not rerun. Actual SQL/concurrent
 stock/native/device/focus/zoom/visual/CI/AFTER/product acceptance and migrations
 0036/0037 remain pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected programme editor recovery,2026-10-29
+
+815 frontend units pass,11 added actual intent/form/controller/host cases.
+Lint/types/build/history and static Frontend Taste app lint2 pass,0 findings.
+[Contract](04-design/development-edit-recovery-local.md). Two isolated native
+phone agent lost-ack/desktop agent result-read cases prepared/typechecked, not
+run. Backend unchanged/not rerun. Actual SQL/concurrent stock/native/device/
+focus/zoom/visual/CI/AFTER/product acceptance and migrations0036/0037 remain
+pending. No actual access/workaround, main/push/merge/deploy.

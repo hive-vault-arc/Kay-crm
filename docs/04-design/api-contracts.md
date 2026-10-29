@@ -1230,3 +1230,16 @@ Indirect offering/floor membership remains an existing UI/backend responsibility
 without invented request fields. No new endpoint or backend effect.
 [Contract](inventory-record-command-recovery-local.md); actual SQL/native
 acceptance remains pending.
+
+
+## Programme editor client recovery,2026-10-29
+
+The existing development PATCH and strict expected-version/phase/promoter contract
+remain. A development-facts scoped intent now retains original request/key and
+awaited navigation callback. Current identity and exact receipt/current programme
+precede completion; acknowledged failure never repeats PATCH. Explicit comparison
+acceptance cannot downgrade a newly received parent version. Unchanged protected
+association omission, explicit dissociation null and selected promoter ID remain
+distinct; existing backend scoped-contact/version/marketability rules prevail.
+No new endpoint or grant. [Contract](development-edit-recovery-local.md); actual
+SQL/native acceptance pending.

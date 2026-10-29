@@ -609,3 +609,18 @@ outage and phone agent block lost acknowledgement.
 unchanged/not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/
 CI/AFTER/product acceptance and broad old-selector audit remain pending. No AT-wide
 closure or runtime acceptance is inferred.
+
+
+## Selected programme editor source coverage,2026-10-29
+
+815 synthetic frontend units pass,11 added for all three staff roles, strict
+programme intent, unknown phase/association omission/null/selection, frozen
+request/key/callback, completion-only recovery, explicit comparison/reload, newer
+parent acceptance race, foreign/stale/archived review, normalization, current
+privacy masking, validation/hydration/source outage, denial/disposal and actual
+scoped edit host. Two cases in frontend/tests/e2e/development-edit-recovery.spec.ts
+are prepared/typechecked, not run: phone agent lost acknowledgement and desktop
+agent acknowledged result-read outage.
+[Contract](../04-design/development-edit-recovery-local.md). Backend unchanged/
+not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
+product acceptance and broader selectors remain pending. No AT-wide closure.

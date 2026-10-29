@@ -1,14 +1,16 @@
 import { z } from "zod";
 import { confirmSchema, editOfferingSchema, newOfferingSchema, ownersSchema } from "./contracts";
-import { structureFieldsSchema, typeFieldsSchema } from "./development-contracts";
+import { editDevelopmentSchema, structureFieldsSchema, typeFieldsSchema } from "./development-contracts";
 
 export type RecordCommandScope = { root: "properties" | "developments"; id: string; version: number } & (
   { kind: "owners" } |
+  { kind: "development-facts" } |
   { kind: "offering"; campaign: "sale" | "rental" | "holiday"; offeringId?: string; availability?: boolean } |
   { kind: "structure"; element: "blocks" | "floors" | "unit-types"; parent: string; itemId?: string }
 );
 export type RecordCommandIntent = { path: `/api/v1/${string}`; method: "POST" | "PATCH" | "PUT"; expectedVersion: number } & (
   { kind: "owners"; body: z.infer<typeof ownersSchema> } |
+  { kind: "development-facts"; body: z.infer<typeof editDevelopmentSchema> } |
   { kind: "offering-create"; body: z.infer<typeof newOfferingSchema> } |
   { kind: "offering-edit"; body: z.infer<typeof editOfferingSchema> } |
   { kind: "availability"; body: z.infer<typeof confirmSchema> } |
@@ -17,6 +19,9 @@ export type RecordCommandIntent = { path: `/api/v1/${string}`; method: "POST" | 
 export function recordCommandIntent(scope: RecordCommandScope, path: `/api/v1/${string}`, value: unknown, method: "POST" | "PATCH" | "PUT"): RecordCommandIntent | undefined {
   if (!["properties", "developments"].includes(scope.root) || !z.uuid().safeParse(scope.id).success || !Number.isSafeInteger(scope.version) || scope.version < 1) return;
   const common = { path, method };
+  if (scope.kind === "development-facts" && scope.root === "developments" && path === `/api/v1/developments/${scope.id}` && method === "PATCH") {
+    const body = editDevelopmentSchema.safeParse(value); if (body.success) return { ...common, kind: "development-facts", body: body.data, expectedVersion: body.data.expected_version };
+  }
   if (scope.kind === "owners" && path === `/api/v1/${scope.root}/${scope.id}/owners` && method === "PUT") {
     const body = ownersSchema.safeParse(value); if (body.success) return { ...common, kind: "owners", body: body.data, expectedVersion: body.data.expected_version };
   }

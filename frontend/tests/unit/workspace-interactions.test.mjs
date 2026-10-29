@@ -116,7 +116,10 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
   const render = (role, edit = false) => harness.render(() => DevelopmentRecord({ id: development.id, role, edit }));
   for (const role of ["agent", "manager", "administrator"]) {
     const view = render(role), workspace = find(view, "Workspace")[0];
-    assert.equal(render(role, true).type, "Editor");
+    const editing = render(role, true);
+    assert.equal(find(editing, "Editor")[0].props.development.id, development.id);
+    assert.equal(find(editing, "RecordScope")[0].props.value.role, role);
+    assert.equal(find(editing, "Provider").length, 1);
     assert.equal(workspace.props.tabs[1].content.props.writable, true);
     assert.ok(find(workspace.props.tabs[1].content.props.structureAction, "Hierarchy").every(node => node.props.writable));
     assert.equal(find(workspace.props.tabs[0].content, "Offers")[0].props.writable, role !== "agent");

@@ -29,7 +29,7 @@ export function useInventoryRecordCommand(scope: RecordCommandScope) {
   const authorize: NonNullable<CommandLifecycle["beforeDispatch"]> = identity => {
     if (!active() || hostRef.current?.id !== scope.id || hostRef.current.root !== scope.root) throw new ApiError("FORBIDDEN", 403);
     if (identity.must_change_password) throw new ApiError("PASSWORD_CHANGE_REQUIRED", 403);
-    if (scope.kind !== "structure" && identity.user.role === "agent" || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
+    if ((scope.kind === "owners" || scope.kind === "offering") && identity.user.role === "agent" || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
     binding.current = { actor: identity.user.id, role: identity.user.role };
   };
   async function prove(signal: AbortSignal) { const identity = await apiGet("/api/v1/auth/me", meSchema, signal); if (!current() || signal.aborted) return false; authorize(identity); return true; }
@@ -91,6 +91,6 @@ export function useInventoryRecordCommand(scope: RecordCommandScope) {
     catch (reason) { const failure = current() && !controller.signal.aborted ? fail(reason) : new ApiError("DEPENDENCY_UNAVAILABLE", 503); throw failure; }
     finally { callerSignal?.removeEventListener("abort", abort); lock.current = false; if (current()) { setPending(false); if (!attempt.current?.uncertain) busy(false); } }
   }
-  function accept(value: unknown) { if (!hydrated || !active() || locked() || !offered.current || offered.current.value !== value) return false; minimum.current = offered.current.record.version; offered.current = undefined; validReview.current = true; finished.current = undefined; setNeedsReview(false); setError(undefined); return true; }
+  function accept(value: unknown) { if (!hydrated || !active() || locked() || !offered.current || offered.current.value !== value || offered.current.record.version < minimum.current) return false; minimum.current = offered.current.record.version; offered.current = undefined; validReview.current = true; finished.current = undefined; setNeedsReview(false); setError(undefined); return true; }
   return { error, pending, uncertain, acknowledged, needsReview, protected: pending || uncertain, active, locked, canEdit, submit, inspect, accept, deny: (failure: ApiError) => { if (active() && [401, 403, 404].includes(failure.status)) fail(failure); }, retry: () => attempt.current?.uncertain ? run(attempt.current) : Promise.resolve(undefined) };
 }

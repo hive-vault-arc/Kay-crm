@@ -2064,3 +2064,14 @@ matching current record and install it through the real drawer-to-host callback.
 Model nullable clears with field presence in synthetic persistence fixtures; null
 is an explicit value, not a missing prior value. Keep existing role/backend
 membership checks authoritative and mark prepared native cases as not run.
+
+
+## Explicit current comparison cannot move a record backwards,2026-10-29
+
+Check the offered comparison against the latest known parent counter when the
+user accepts it, not only when it was read. A background current response can
+advance the parent between those events. Programme route editors must share the
+record/account/busy owner, preserve omission versus null for hidden promoter
+links, mask newly hidden names and navigate only after a matching receipt/current
+record. Synthetic host tests should locate the editor inside that provider and
+assert its role/identity rather than require an unowned root element.

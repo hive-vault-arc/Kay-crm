@@ -357,3 +357,19 @@ commands, remaining exact domain field/action/context reconciliation and legacy
 selectors continue. Backend unchanged/not rerun. Actual SQL/native/concurrent
 stock/device/AFTER/CI/product acceptance and migrations0036/0037 remain pending.
 No actual access/workaround, main/push/merge/deploy. P0/P8/full goal remain open.
+
+
+## Programme editor follow-through,2026-10-29
+
+[Programme editor map](../04-design/development-edit-recovery-local.md) retains
+selected fields/adjacent summary, phase capability and promoter privacy contracts.
+Scoped original PATCH/key/callback, current identity, protected unknown work,
+completion-only recovery, explicit current acceptance/reload and normalized dirty
+baselines cover the edit route. All scoped record comparisons now reject a version
+older than a parent received before acceptance. 815 frontend units pass,11 added;
+lint/types/build/history/static app lint2 pass. Two native cases prepared/typechecked,
+not run. Development creation/property listing generic owners, exact remaining
+domain reconciliation and old selectors continue. Backend unchanged/not rerun;
+actual SQL/native/concurrent stock/device/AFTER/CI/product acceptance and
+migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
+P0/P8/full goal remain open.

@@ -13,6 +13,10 @@ export function loadRecordCommand(h, { source, ErrorType = ExternalApiError, com
     const body = args[1], target = "property_id" in receipt ? receipt.property_id : receipt.development_id;
     if (target !== source.id) return;
     commits++; server = { ...server, version: receipt.version };
+    if (root === "developments" && args[0] === `/api/v1/developments/${source.id}` && args[4] === "PATCH") {
+      const contactId = body.developer_contact_id, display = body.developer_marketing_display, fields = { ...body }; delete fields.expected_version; delete fields.developer_contact_id; delete fields.developer_marketing_display;
+      server = { ...server, ...fields, developer: { marketing_display: display, contact: Object.hasOwn(body, "developer_contact_id") ? contactId ? { id: contactId, name: "Synthetic selected developer" } : null : server.developer.contact } };
+    }
     if (body.owners) server.owners = body.owners.map(value => ({ contact: { id: value.contact_id, name: source.owners.find(owner => owner.contact?.id === value.contact_id)?.contact?.name ?? "Synthetic current legal owner" }, marketing_display: value.marketing_display }));
     if (receipt.offering_id) {
       const previous = server.offerings.find(value => value.id === receipt.offering_id), confirmation = args[0].endsWith("confirm-availability");
