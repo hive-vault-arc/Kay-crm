@@ -599,3 +599,15 @@ types pass; native scenarios and the wider8 helper consumers remain unaccepted.
 Production unchanged; prior977 frontend/573 backend gates retained. P0/P8/full
 goal and exact remaining field/job/alias/selector work stay open.
 [Path map](../05-quality/inventory-native-paths-local.md).
+
+
+## Programme selected structure/unit paths,2026-10-29
+
+Five existing development scenarios and shared helpers follow current programme
+name/reference, counted Unit tab, filters/structure/internal tabs and offer
+commands. Incomplete apartment input, per-unit values/defaults, private identity,
+whole offer, explicit discard and unknown/conflict recovery assertions remain.
+AST preserves titles/direct commands/timeouts/service calls. Focused ESLint/types
+pass; native and wider8 consumers unrun. Production unchanged; prior977 frontend/
+573 backend gates retained. P0/P8/full goal and remaining exact field/job/alias/
+selector work stay open. [Path map](../05-quality/development-native-paths-local.md).

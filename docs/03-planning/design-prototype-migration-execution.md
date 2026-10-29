@@ -3182,3 +3182,22 @@ retained, not rerun. Frozen254/main/unrelated work preserved. Actual SQL/native/
 device/security/CI/AFTER/product and remaining exact field/job/alias/selectors stay
 open; full goal active. [Path map](../05-quality/inventory-native-paths-local.md)
 and [evidence](design-migration-evidence/inventory-native-paths-2026-10-29.json).
+
+
+## Programme hierarchy/unit native-path follow-through,2026-10-29
+
+Five development scenarios and their shared helpers now target selected counted
+Unités, filter/structure/offer/availability drawers, internal structure tabs,
+scoped hierarchy fields and canonical programme linkage. Header name/reference,
+creation step status, five-step incomplete unit retention, explicit dirty leave,
+unknown edit retry and fresh conflict comparison match current source. No
+production/fixture/business change. AST preserves5 titles/3 direct commands/
+4 timeouts/3 service-control calls. Initial-save/retry source order was checked
+and a replacement mismatch corrected before final gates. Focused ESLint/types
+pass; no native/listing/import/service/outage execution. Wider8 helper consumers
+remain unaccepted; prior977 frontend/573 backend units and production gates
+retained. Frozen254/main/unrelated work preserved; no alternate app access,
+migration/push/merge/deploy. Actual SQL/native/security/CI/AFTER/product and
+remaining field/job/alias/selectors stay open. Full goal active.
+[Path map](../05-quality/development-native-paths-local.md) and
+[evidence](design-migration-evidence/development-native-paths-2026-10-29.json).

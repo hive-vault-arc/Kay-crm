@@ -3271,3 +3271,24 @@ consumers retain wider unreviewed paths; actual SQL/native/device/security/CI/
 AFTER/product acceptance remains pending.
 [Path map](05-quality/inventory-native-paths-local.md) and
 [evidence](03-planning/design-migration-evidence/inventory-native-paths-2026-10-29.json).
+
+
+## Programme hierarchy/unit native path preparation,2026-10-29
+
+npx eslint tests/helpers/developments.ts tests/e2e/developments.spec.ts
+--max-warnings=0 and npm run typecheck exit0. TypeScript AST comparison preserves
+5 titles,3 direct staffCommand argument sets,4 timeouts and3 apiProcess calls.
+Current components supply scoped drawer/tab/form/stepper labels, explicit
+current comparison and recovery. Source review corrected a broad-replacement
+initial-save/retry mismatch before final gates; no compiler/native success is
+inferred from that review. No obsolete root structure/presentation/offer tabs
+remain in the five-case scenario file.
+
+Prepared/typechecked only. No Playwright listing/import/execution, actual app/
+browser/HTTP/DB/account/config/service/outage/file/worker/transfer or workaround,
+migration/main/push/merge/deploy. Production unchanged; prior977 frontend units/
+lint/build/history and573 backend units retained, not rerun. Wider8 development
+helper consumers and shared inventory consumers still require their own path
+review and actual SQL/native/device/security/CI/AFTER/product verification.
+[Path map](05-quality/development-native-paths-local.md) and
+[evidence](03-planning/design-migration-evidence/development-native-paths-2026-10-29.json).

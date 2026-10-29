@@ -3162,3 +3162,17 @@ consumers' wider flows are not certified. Prior977 frontend/573 backend units
 retained. No actual app/DB/account/config/service/outage/file/worker access or
 workaround, migration/main/push/merge/deploy.
 [Path map](05-quality/inventory-native-paths-local.md).
+
+
+## Programme native path preparation boundary,2026-10-29
+
+Source-only navigation reconciliation retains protected developer/legal-owner
+identity/403/404, authorized hierarchy write, exact stock/price/unit separation,
+safe plain-text briefing and idempotent edit/outage assertions. Three direct
+business commands and3 existing service-control calls are unchanged and unrun.
+No success mock, new permission, production or fixture change. Focused ESLint/
+types pass; actual identity/SQL/native/service/security/CI acceptance and wider
+8 development helper consumers remain pending. Prior977 frontend/573 backend
+units retained. No actual app/DB/account/config/service/outage/files/worker
+access/workaround, migration/main/push/merge/deploy.
+[Path map](05-quality/development-native-paths-local.md).

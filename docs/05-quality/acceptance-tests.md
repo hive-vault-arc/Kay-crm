@@ -860,3 +860,16 @@ Focused ESLint/types and AST preservation checks pass. Seven scenarios prepared,
 not run; wider8 shared helper consumers and actual SQL/native/device/security/CI/
 AFTER/product gates pending. Production/prior977 frontend/573 backend evidence
 retained, not rerun. [Path map](inventory-native-paths-local.md).
+
+
+## Programme selected hierarchy/unit paths,2026-10-29
+
+AT-23/31/32/35/36/41's five development source scenarios retain mixed-unit stock,
+per-unit surface/price independence, reusable defaults, whole offering, plain
+briefing/unsafe-script nonexecution, private identity/403/404, authorized hierarchy
+write, exact retry/outage/counter, incomplete input/focus and editor identity.
+Selected scoped structure/filter/offer drawers and explicit discard/current
+comparison replace removed tabs. Focused ESLint/types and AST preservation checks
+pass. Prepared only; actual SQL/native/device/security/CI/AFTER/product and wider
+8 helper consumers remain unaccepted. Production/prior977 frontend/573 backend
+evidence retained. [Path map](development-native-paths-local.md).

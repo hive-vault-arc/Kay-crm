@@ -2247,3 +2247,13 @@ require fresh protected completion and separate acknowledged recovery from write
 Conflict tests must use an independent current read, strict next-version receipts
 and value equality; exception snapshots and convenient invalid success fixtures
 can hide the missing boundary. Record native preparation separately from runs.
+
+
+## Native path rewrites require operation-order review,2026-10-29
+
+A broad replacement can change the initial save into a retry even when types and
+lint pass. Review the complete initial-save, fault, recovery and completion
+sequence after selector edits. Pin command arguments, test titles/timeouts and
+service-control calls with source AST comparison, but do not mistake that check
+for native execution. Scope current drawer forms and preserve explicit dirty
+leave choices instead of restoring removed global tabs.
