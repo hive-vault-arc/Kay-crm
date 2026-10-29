@@ -3108,3 +3108,24 @@ No Playwright listing/import/execution, actual app/DB/accounts/private config/
 service restart/transfer/screenshot or workaround, migration/main/push/merge/
 deploy. Actual native/SQL/security/CI acceptance and wider paths stay pending.
 [Path map](05-quality/contact-native-paths-local.md).
+
+
+## Current export delivery ownership,2026-10-29
+
+An actual-component synthetic fault proves known list403 did not cancel a pending
+download. Current metadata denial/job withdrawal now aborts delivery; stale
+row/read/hydration/disposed callbacks cannot start a request. Actual SSR actor/role
+binds the owner and fresh M/A/password/actor/role proof precedes the permit. The
+client checks a live owner guard before browser URL creation, preventing late
+refused handoff. Unrelated pages do not imply lost authority. Backend ownership,
+private permit/session/Origin/CSRF/hash/size/consumption/audit remain decisive.
+No new grant, job mutation, public URL/storage, worker/API/schema/retention rule.
+
+966 frontend units/five added and gates pass. Two native frontend fault cases
+prepared/typechecked, not run: synthetic metadata, pending aborted permit, no
+worker/CSV bytes/successful permit; captures off and boolean probe removed. This
+is not proof of actual backend disclosure or actual revocation/stream acceptance.
+Backend unchanged/prior573 units retained. No actual app/DB/account/config/service/
+worker/transfer access or workaround, migration/main/push/merge/deploy. Real
+SQL/security/worker/private transfer/native/CI and Ruff/mypy acceptance pending.
+[Contract](04-design/export-delivery-local.md).

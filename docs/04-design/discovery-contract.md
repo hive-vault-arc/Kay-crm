@@ -1,5 +1,11 @@
 # SP-19 search, controlled exports, lifecycle and audit
 
+Current selected export delivery,2026-10-29: the
+[history/client guard](export-delivery-local.md) cancels known current denial or
+job withdrawal, rejects stale handlers and binds fresh identity plus browser
+handoff to the owner. Backend permits/scope/transfer rules remain authoritative;
+actual worker/private-transfer/native acceptance remains pending.
+
 Implementation contract2026-10-15; technical results live in
 [execution](../03-planning/sprints/sp-19-execution.md), product review independent.
 C11/C14/C02/C04/C13; BR-04/06/21/23; AT-22 search/pagination, AT-24/29.

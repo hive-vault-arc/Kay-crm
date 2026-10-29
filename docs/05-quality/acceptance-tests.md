@@ -821,3 +821,16 @@ ESLint/typecheck pass; these scenarios remain prepared, not run. No AT-wide
 native/SQL/security/CI/AFTER/product closure or full helper-consumer acceptance.
 Production unchanged; prior961 frontend/573 backend units retained, not rerun.
 [Path map](contact-native-paths-local.md).
+
+
+## Export file-delivery follow-through,2026-10-29
+
+The new actual-component regression fails before correction on a pending signal
+after list403. Five added cases cover cancellation/current row readiness, read/
+hydration/disposal, known withdrawal versus unrelated pages, fresh identity/role/
+password before permit and refused late blob handoff. Focused31/full966 frontend
+units and gates pass. Two390/1440 prepared native cases simulate metadata denial
+while a permit is held; no real export job, worker or CSV success is substituted.
+Prepared/typechecked only, not run. Backend unchanged/prior573 units retained.
+Actual SQL/native/private-transfer/role-revocation/security/CI/AFTER/product
+acceptance remains pending. [Contract](../04-design/export-delivery-local.md).

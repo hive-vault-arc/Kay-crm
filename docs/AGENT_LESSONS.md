@@ -2226,3 +2226,13 @@ drawers; do not restore removed product tabs to satisfy old selectors. Preserve
 HTTP denial/command/true-author/provenance assertions and original timeouts.
 Typechecking/source agreement prepares a scenario; it does not execute it or
 certify its helper consumers’ other paths.
+
+
+## Current export delivery owner,2026-10-29
+
+Cancel pending private delivery on known list denial or explicit job withdrawal;
+a discarded component is not the only way authority changes. Gate stale row
+handlers with current hydrated/read/ready state, bind fresh identity to the SSR
+owner, and check a live handoff guard before making a blob URL. Absence from an
+unrelated result page is not permission loss. A simulated list/permit browser
+case prepares UI cancellation evidence, not real worker or transfer acceptance.

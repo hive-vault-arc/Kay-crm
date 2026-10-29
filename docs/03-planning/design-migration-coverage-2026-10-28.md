@@ -561,3 +561,15 @@ consumers and other selectors remain pending. Production unchanged; prior gates
 retained. [Path map](../05-quality/contact-native-paths-local.md) and
 [evidence](design-migration-evidence/contact-native-paths-2026-10-29.json).
 No actual SQL/native/security/CI/AFTER/product or full-goal completion inferred.
+
+
+## Export history/delivery follow-through,2026-10-29
+
+Selected four columns/cards/complete totals/paging/polling remain. Known current
+list denial/withdrawal cancels pending delivery; stale/read/hydration/disposed
+handlers cannot dispatch. Actual actor/role and live client handoff are bound.
+966 frontend units pass; two simulated metadata/held-permit native cases prepared,
+not run. [Contract](../04-design/export-delivery-local.md) and
+[evidence](design-migration-evidence/export-delivery-2026-10-29.json).
+Backend unchanged; no real worker/private transfer/role-revocation/SQL/native/CI/
+AFTER/product acceptance or wider job/filter/alias/legacy-selector closure.

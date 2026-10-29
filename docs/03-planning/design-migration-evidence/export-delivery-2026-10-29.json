@@ -1,0 +1,191 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "12c98eb8f07458b81acb4ca18058f7809ea77c93",
+  "scope": "Current export-history owner and file delivery cancellation preserving selected four columns/cards/paging/polling",
+  "fieldMap": {
+    "desktop": [
+      "Date",
+      "Contenu",
+      "État",
+      "Fichier"
+    ],
+    "cards": [
+      "kind",
+      "created/completed time",
+      "state",
+      "row count/size/error hint",
+      "ready-only file action"
+    ],
+    "paging": "Complete server total, numbered ten-job pages",
+    "polling": "Visible queued pages every5seconds; current errors stop polling"
+  },
+  "checks": [
+    {
+      "command": "node --test tests/unit/exports-workspace.test.mjs",
+      "phase": "before fix",
+      "exitCode": 1,
+      "observed": "Actual component leaves pending transfer signal active after current list403; synthetic response fault, not backend leakage"
+    },
+    {
+      "command": "node --test tests/unit/exports-workspace.test.mjs",
+      "phase": "final",
+      "exitCode": 0,
+      "passed": 31
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 966,
+      "additionalCases": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 524,
+      "buttonFiles": 160,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste lint.mjs --app --json <changed UI sources>",
+      "exitCode": 0,
+      "files": 2,
+      "findings": 0,
+      "boundary": "Static only"
+    },
+    {
+      "command": "Focused native case ESLint and npm run typecheck",
+      "phase": "after preserving fetch receiver",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "productionChanged": false
+    },
+    {
+      "command": "Backend",
+      "executed": false,
+      "productionChanged": false,
+      "retainedPriorConnectionForbiddenUnits": 573
+    },
+    {
+      "command": "Frozen/main/protected review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9029,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1305,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/export-delivery-denial.spec.ts",
+    "cases": 2,
+    "widths": [
+      390,
+      1440
+    ],
+    "typechecked": true,
+    "executed": false,
+    "scenario": "Simulated owned-job metadata and held/aborted permit; current403 via existing live-invalidation event cancels signal and removes actions",
+    "realJob": false,
+    "successfulPermit": false,
+    "worker": false,
+    "csvBytes": false,
+    "boundary": "Frontend fault preparation only, not backend revocation/private-transfer proof",
+    "probe": "Transient native fetch/boolean started/aborted only; original receiver restored and probe removed",
+    "artifactPolicy": {
+      "trace": false,
+      "video": false,
+      "screenshot": false
+    }
+  },
+  "behavior": [
+    "Current ready-row/hydration/read/lifetime gates reject stale handlers",
+    "Known metadata authority loss or job withdrawal aborts pending delivery",
+    "Unrelated result pages do not revoke already-authorized exact-job delivery",
+    "Actual SSR actor/role keys owner; fresh M/A/password/actor/role proof precedes permit",
+    "Live owner handoff check before browser URL creation rejects late refused blob",
+    "Existing foreign-permit/MIME/size/no-store/cookie-free/private transfer checks remain",
+    "No backend grant/job/API/schema/worker/retention/layout/token/glyph/motion change"
+  ],
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Actual SQL/native/device/worker/private-transfer/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Remaining exact job/filter/alias/legacy-selector reconciliation"
+  ],
+  "status": "Source delivery checkpoint and synthetic evidence only; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/src/app/(workspace)/leads/page.tsx",
+      "bytes": 1642,
+      "sha256": "8c84fc973c6fcb14359f03e54c9c0d4bc3c650cc38f3fa3d7f51fe2cc4dc664a"
+    },
+    {
+      "file": "frontend/src/features/discovery/client.ts",
+      "bytes": 2187,
+      "sha256": "84fb74775384d1f1f23da0aed7f00c2d5829be73690c62994422fba3a656b8d9"
+    },
+    {
+      "file": "frontend/src/features/discovery/exports-panel.tsx",
+      "bytes": 9010,
+      "sha256": "7d4dfa9c2ed54ac958f120160b1a4b1cb30782fca5d453e239294f25ad8d7e30"
+    },
+    {
+      "file": "frontend/tests/unit/exports-workspace.test.mjs",
+      "bytes": 39309,
+      "sha256": "7cf003925feb254f22dc560c0156b750143e994074a83f9a538ab50c83b90653"
+    },
+    {
+      "file": "frontend/tests/e2e/export-delivery-denial.spec.ts",
+      "bytes": 3460,
+      "sha256": "905a2be6141ecab478fa5dbb7407842899f19b864b1a625e83f959b7fb0496a1"
+    }
+  ]
+}

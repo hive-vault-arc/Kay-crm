@@ -3209,3 +3209,23 @@ migration/main/push/merge/deploy. Actual SQL/native/device/security/CI/AFTER/pro
 gates, migrations0036/0037 and wider selectors remain pending.
 [Path map](05-quality/contact-native-paths-local.md) and
 [evidence](03-planning/design-migration-evidence/contact-native-paths-2026-10-29.json).
+
+
+## Current export file delivery,2026-10-29
+
+Initial node --test tests/unit/exports-workspace.test.mjs exits1: current list403
+does not abort the pending download signal. Current owner/read/ready-row guards
+now cancel known denial/withdrawal and refuse stale or disposed handlers. Client
+checks actual M/A actor/role/password context before permit and live handoff.
+Focused31/full966 frontend units pass, five added; npm run lint/typecheck/build/
+history:check exit0. Static Frontend Taste --app --json scans2 UI files,0 findings,
+static only. Native probe fetch receiver was preserved; its focused lint/typecheck
+pass again after that test-only edit. Two390/1440 simulated list-denial/held-permit
+cases are prepared/typechecked, not run; no CSV bytes, worker or successful permit.
+
+Backend unchanged/prior573 units retained, not rerun. No actual app/browser/HTTP/
+DB/accounts/private config/service/worker/transfer or workaround, migration/main/
+push/merge/deploy. Real SQL/native/device/worker/private transfer/security/CI/AFTER/
+product gates, migrations0036/0037 and remaining exact domain work stay pending.
+[Contract](04-design/export-delivery-local.md) and
+[evidence](03-planning/design-migration-evidence/export-delivery-2026-10-29.json).

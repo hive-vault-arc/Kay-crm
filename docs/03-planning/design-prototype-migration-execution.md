@@ -3121,3 +3121,25 @@ DB/account/config/service restart/transfer/screenshot or workaround, migration/
 push/merge/deploy. Other exact job/filter/alias/legacy-selector review and P8
 SQL/native/device/security/CI/AFTER/product gates, migrations0036/0037 remain.
 Full goal active. [Evidence](design-migration-evidence/contact-native-paths-2026-10-29.json).
+
+
+## Export history and current delivery reconciliation,2026-10-29
+
+Source review confirms the selected four-column/cards/total/paging/polling homes,
+then a new actual-component regression proves current403 leaves a pending
+download active. Current owner/ready-row/read/hydration/disposal guards now bind
+delivery; known metadata denial/job withdrawal cancels, unrelated pages do not.
+SSR actual actor/role reaches the owner. Fresh matching M/A/password context
+precedes permits and a live guard precedes browser URL creation. No selected
+layout/tokens/glyphs/motion or backend file/job/authority/API/schema changes.
+[Contract](../04-design/export-delivery-local.md).
+
+Focused31/full966 frontend units, lint/types/build/history/static app lint2 pass,
+five cases added. Native probe receiver preserved, then its focused lint/types
+pass. Two390/1440 simulated metadata/held-permit cancellation cases are prepared/
+typechecked, not run; no CSV bytes/worker/successful permit. Backend unchanged;
+prior573 units retained. Frozen254 inputs, main and unrelated work preserved.
+No actual access/workaround/migration/push/merge/deploy. Actual SQL/native/device/
+worker/private transfer/security/CI/AFTER/product gates, migrations0036/0037 and
+remaining exact job/filter/alias/legacy-selector work remain. Full goal active.
+[Evidence](design-migration-evidence/export-delivery-2026-10-29.json).
