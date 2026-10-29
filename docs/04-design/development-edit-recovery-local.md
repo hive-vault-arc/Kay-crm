@@ -77,3 +77,11 @@ product acceptance is pending. No actual app/browser/HTTP/DB/account/private
 configuration/service/worker/scanner/simulator/import/export/transfer access or
 workaround. Migrations0036/0037 remain unapplied; main and254 frozen inputs are
 unchanged. No push/merge/deploy. Full redesign goal remains active.
+
+
+## Subsequent creation checkpoint,2026-10-29
+
+[Programme creation recovery](development-creation-recovery-local.md) replaces its
+older generic handler while retaining the separate selected wizard. The earlier
+remaining list records this checkpoint's original boundary; the property listing
+wizard still requires generic-owner recovery.

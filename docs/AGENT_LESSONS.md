@@ -2075,3 +2075,14 @@ record/account/busy owner, preserve omission versus null for hidden promoter
 links, mask newly hidden names and navigate only after a matching receipt/current
 record. Synthetic host tests should locate the editor inside that provider and
 assert its role/identity rather than require an unowned root element.
+
+
+## Programme creation retry owns the original result destination,2026-10-29
+
+A creation form has no opening record ID. Keep its original strict POST/body/key
+and callback, validate the development/no-offering/initial-counter receipt, then
+read that same current programme under the originating account before navigation.
+After acknowledgement retry only completion. Capability/source refresh must not
+replace unknown phase/promoter intent; current denial masks private input and
+retains only a generic saved fact. Carry the real route actor/role through wrapper
+keys, and protect stale stepper/Previous/Cancel handlers as well as inputs.

@@ -2855,3 +2855,21 @@ history/static checks pass. [Contract](04-design/development-edit-recovery-local
 Two native cases prepared/typechecked, not run. No backend runtime verification,
 new grants, retention, storage or effect. No actual access/workaround, migration,
 main/push/merge/deploy; actual SQL/native/security/product acceptance pending.
+
+
+## Programme creation original-command review,2026-10-29
+
+The real route keys/forwards its authenticated actor/role. The dedicated owner
+requires current matching unrestricted identity and strict creation fields before
+the fixed programme POST. Original body/key/phase/promoter/callback stay frozen
+through unknown results; current matching receipt/record precede navigation.
+Acknowledged failure retries only completion. Initial counter1/no-offering receipt
+constraints match inspected backend source; changed promoter scope remains backend
+authoritative. Capability/picker/current identity denial masks input and retains
+only a generic acknowledged saved fact. Scope replacement/disposal abort late work;
+no new grants, default records, storage, effects or retention. 828 synthetic frontend
+units pass,13 added; lint/types/build/history/static checks pass.
+[Contract](04-design/development-creation-recovery-local.md). Two native cases
+prepared/typechecked, not run. Backend unchanged/not rerun; actual SQL/native/
+security/product acceptance pending. No actual access/workaround, migration,
+main/push/merge/deploy.

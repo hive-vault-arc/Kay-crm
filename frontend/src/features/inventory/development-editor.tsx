@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
+import type { StaffRole } from "@/features/contacts/contracts";
 import { ContactSelector } from "@/features/contacts/contact-selector";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { apiGet, ApiError } from "@/lib/api/client";
@@ -32,8 +33,8 @@ function currentValues(development: Development): Values {
 function draftValues(values: Partial<Values>, developerId?: string | null, phaseSupported = true) {
   return { reference: values.reference?.trim() ?? "", name: values.name?.trim() ?? "", category: values.category ?? "mixed", phase: phaseSupported ? values.phase ?? "" : "", location: values.location?.trim() ?? "", briefing_text: values.briefing_text?.trim() ?? "", developer_marketing_display: values.developer_marketing_display?.trim() ?? "", developerId };
 }
-export function DevelopmentEditor({ development }: { development?: Development }) {
-  return development ? <DevelopmentEditForm development={development} /> : <DevelopmentCreationWizard />;
+export function DevelopmentEditor({ development, actorId, role }: { development?: Development; actorId?: string; role?: StaffRole }) {
+  return development ? <DevelopmentEditForm development={development} /> : <DevelopmentCreationWizard key={`${actorId ?? ""}:${role ?? ""}`} actorId={actorId} role={role} />;
 }
 function DevelopmentEditForm({ development }: { development: Development }) {
   const router = useRouter(); const hydrated = useHydrated(); const command = useInventoryRecordCommand({ kind: "development-facts", root: "developments", id: development.id, version: development.version });

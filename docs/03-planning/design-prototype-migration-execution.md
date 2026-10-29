@@ -2831,3 +2831,22 @@ fields/actions/contexts and old selectors continue. Backend unchanged/not rerun;
 actual SQL/concurrent stock/native/device/AFTER/CI/product acceptance and
 migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
 Goal active. [Programme-editor evidence](design-migration-evidence/development-edit-recovery-2026-10-29.json).
+
+
+## Selected programme creation follow-through,2026-10-29
+
+The selected three-step programme wizard now pins strict original fields/phase/
+promoter intent/key/callback, protects unknown input/stepper/Previous/Cancel and
+requires current originating identity plus exact receipt/current programme before
+navigation. Acknowledged read/UI failure retries completion only; explicit known
+reference correction gets a fresh key. Real creation route keys/forwards actor/role.
+Phase capability/privacy/defaults and all layout/glyph/token/motion choices remain.
+[Contract](../04-design/development-creation-recovery-local.md).
+
+828 frontend units pass,13 added; lint/types/build/history/static app lint3 pass.
+Two native phone agent ack/desktop agent read cases prepared/typechecked, not run.
+Property listing generic owner, exact remaining domain fields/actions/contexts and
+old selectors continue. Backend unchanged/not rerun; actual SQL/concurrent stock/
+native/device/AFTER/CI/product acceptance and migrations0036/0037 pending. No actual
+access/workaround, main/push/merge/deploy. Goal active.
+[Creation evidence](design-migration-evidence/development-creation-recovery-2026-10-29.json).

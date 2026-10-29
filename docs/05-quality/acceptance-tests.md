@@ -624,3 +624,18 @@ agent acknowledged result-read outage.
 [Contract](../04-design/development-edit-recovery-local.md). Backend unchanged/
 not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
 product acceptance and broader selectors remain pending. No AT-wide closure.
+
+
+## Selected programme creation source coverage,2026-10-29
+
+828 synthetic frontend units pass,13 added for all roles, strict fields and real
+route actor/key, frozen original body/key/phase/promoter/callback, one synthetic
+create, completion-only read/UI recovery, foreign receipt/current record, explicit
+known correction, legacy metadata, hydration/validation/source outage, account/
+role/password/picker/capability denial, saved generic fact, stale handlers, double
+dispatch and disposal. Two cases in frontend/tests/e2e/development-creation-recovery.spec.ts
+are prepared/typechecked, not run: phone agent lost acknowledgement and desktop
+agent acknowledged result-read outage.
+[Contract](../04-design/development-creation-recovery-local.md). Backend unchanged/
+not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
+product acceptance and broader legacy selectors remain pending. No AT-wide closure.

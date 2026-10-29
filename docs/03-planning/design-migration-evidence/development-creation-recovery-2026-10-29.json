@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "3c2373354fd5881891b9f27c38ef37c78bdbcfb9",
+  "scope": "Selected three-step programme creation: strict original POST/body/key/callback, real route actor/role, protected unknown work, capability/promoter privacy and verified completion-only destination",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 828,
+      "additionalCases": 13,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Actual creation owner/wizard/route in synthetic harnesses; no actual app or SQL"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 346,
+      "buttonSites": 514,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <creation wizard/editor wrapper/route>",
+      "exitCode": 0,
+      "files": 3,
+      "findings": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8964,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1283,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/development-creation-recovery.spec.ts",
+      "cases": 2,
+      "scenarios": [
+        "phone agent new programme lost acknowledgement",
+        "desktop agent new programme acknowledged result-read outage"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedThreeStepsFieldsSummaryLayoutTokensGlyphsMotion": true,
+    "realOriginatingRouteActorRoleAndScopeKeys": true,
+    "currentIdentityBeforePostRetryCompletion": true,
+    "strictCreationBodyAndFixedPost": true,
+    "originalBodyKeyPhasePromoterAndCallbackFrozen": true,
+    "synchronousInputStepperPreviousCancelProtection": true,
+    "developmentNoOfferingInitialCounterReceiptAndMatchingCurrentRecord": true,
+    "acknowledgedCompletionOnlyAndVerifiedDestination": true,
+    "knownCorrectionNewKeyAndNoCompletedRearm": true,
+    "legacyPhaseOmissionAndPromoterNamePrivacy": true,
+    "sourceOutageAllowsOriginalRecoveryAndDenialMasksPrivateInput": true,
+    "disposalAbortsAndPreventsLateNavigation": true,
+    "existingBackendScopedContactAndInitialVersionRulesUnchanged": true,
+    "noPersistentBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Old generic command owner in property-listing-wizard.tsx",
+    "Remaining exact domain field/action/context reconciliation",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged; create promoter scoping and initial version inspected in source only",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/accounts/private configuration/records/services/workers/scanners/simulator/import/export/transfer access",
+    "Migrations0036/0037 or other migration execution",
+    "Actual SQL/concurrent stock/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5084,
+      "sha256": "887b78c1b11a19ee4a22bae1fdf468e6d8045bfb0d0d53c964918d332f7988b6"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/projects/new/page.tsx",
+      "bytes": 836,
+      "sha256": "af46d8a69d9a37267a7c4a2d20dafbe11166155cc9e677a536223bb141350e2f"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-creation-wizard.tsx",
+      "bytes": 15046,
+      "sha256": "4df1277baf7e1bea5e19985067deef4c52bcf7382f14bb82ca4278bf1b0080a1"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-editor.tsx",
+      "bytes": 16910,
+      "sha256": "66b38be68dd049448f8f21990c74e38846a4626de0e7aa043394ffd073bf865d"
+    },
+    {
+      "file": "frontend/src/features/inventory/use-development-creation.ts",
+      "bytes": 6211,
+      "sha256": "179d519618e7dd28e59af59b36e8d007885bd76d9fb325ce21b96e8b8995c68d"
+    },
+    {
+      "file": "frontend/tests/e2e/development-creation-recovery.spec.ts",
+      "bytes": 4679,
+      "sha256": "ec17f4fdf699eac256f7a27865f7e7fd7c15fb7f48ec4dc399f5fdcd30c895de"
+    },
+    {
+      "file": "frontend/tests/unit/development-creation-recovery.test.mjs",
+      "bytes": 16704,
+      "sha256": "6846e8a72de850cce054822c2641d626d904bbf536e75ad810ba83513e90a849"
+    },
+    {
+      "file": "frontend/tests/unit/development-phase.test.mjs",
+      "bytes": 13984,
+      "sha256": "7b15e5dd741ef3f4639acc9e24a555682ca3cb54b797c927d7d19b3ac26bf32a"
+    }
+  ]
+}

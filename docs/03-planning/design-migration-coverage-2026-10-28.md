@@ -373,3 +373,16 @@ domain reconciliation and old selectors continue. Backend unchanged/not rerun;
 actual SQL/native/concurrent stock/device/AFTER/CI/product acceptance and
 migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
 P0/P8/full goal remain open.
+
+
+## Programme creation follow-through,2026-10-29
+
+[Programme creation map](../04-design/development-creation-recovery-local.md)
+retains selected steps/fields/summary and phase/promoter privacy. Original strict
+POST/body/key/callback, real originating account/role, protected unknown work and
+verified completion-only recovery cover creation. 828 frontend units pass,13 added;
+lint/types/build/history/static app lint3 pass. Two native cases prepared/typechecked,
+not run. Property listing generic owner, exact remaining domain reconciliation and
+old selectors continue. Backend unchanged/not rerun; actual SQL/native/concurrent
+stock/device/AFTER/CI/product acceptance and migrations0036/0037 pending. No actual
+access/workaround, main/push/merge/deploy. P0/P8/full goal remain open.

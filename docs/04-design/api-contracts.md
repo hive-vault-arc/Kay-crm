@@ -1243,3 +1243,16 @@ association omission, explicit dissociation null and selected promoter ID remain
 distinct; existing backend scoped-contact/version/marketability rules prevail.
 No new endpoint or grant. [Contract](development-edit-recovery-local.md); actual
 SQL/native acceptance pending.
+
+
+## Programme creation client ownership,2026-10-29
+
+The fixed development POST and strict creation fields retain existing nullable
+phase and promoter contracts. Original parsed body/key/callback are frozen after
+unknown dispatch; current originating identity, development/no-offering/initial
+counter receipt and matching current programme precede navigation. Acknowledged
+reads/UI failures retry completion only; known noncommitted reference/validation
+errors permit explicit correction. Existing scoped promoter and active-contact
+checks prevail. No new endpoint, grant or backend effect.
+[Contract](development-creation-recovery-local.md); actual SQL/native acceptance
+remains pending.
