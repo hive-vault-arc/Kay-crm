@@ -736,3 +736,16 @@ portalled surface with nonempty samples;15 manual capture paths are planned.
 Focused ESLint/typecheck and source/AST review pass. The case and every intended
 frame remain **not run**, not rendered/AT-wide acceptance. No production change;
 prior unit/build evidence retained. [Coverage](finance-native-reconciliation.md).
+
+
+## Property detail preservation and field mapping,2026-10-29
+
+932 frontend units pass, five added for existing room orientation on unrelated
+edit/review, current comparison acceptance, null/new-room isolation, visible
+change/clear and explicit category change. The first regression was observed
+failing null versus north before the fix.573 connection-forbidden backend units
+pass, one strict legal room orientation/zero-fact edit case added. Read-only
+mapping accounts for24 detail keys/29 amenities, not all native behavior.
+Two390/1440 browser edit/review/PATCH/readback/no-overflow cases are prepared/
+typechecked, not run. No AT-wide SQL/legacy/rights/stock/file/native/device/CI/
+AFTER/product closure. [Field contract](../04-design/property-field-reconciliation-local.md).

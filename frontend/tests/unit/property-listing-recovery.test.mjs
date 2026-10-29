@@ -5,6 +5,57 @@ import { loadServer } from "./load-server.mjs";
 import { recordFixture, inventoryHostFixture, find, button, text, runtime, ExternalApiError as ApiError, tick } from "./external-stock-fixtures.mjs";
 import { listingIntents, propertyListingFixture } from "./property-listing-fixtures.mjs";
 
+function savedRoom(orientation = "north") {
+  const source = recordFixture("properties", "rental");
+  return { ...source, category: "room", rooms: null, listing_details: { ...source.listing_details, bathrooms: 0, unit_floor: 0, orientation }, offerings: source.offerings.map(item => ({ ...item, target: { ...item.target, category: "room", rooms: null } })) };
+}
+
+test("An unrelated room edit preserves its valid saved orientation without adding a selected form control", async () => {
+  const s = propertyListingFixture({ edit: true, source: savedRoom() });
+  s.step(2); assert.equal(find(s.render(), "Select").some(node => node.props.id === "property-orientation"), false);
+  s.prepare(); const review = find(s.render(), "Summary")[0].props.facts; await s.save();
+  assert.equal(s.calls.length, 1); assert.equal(s.calls[0][1].listing_details.orientation, "north");
+  assert.equal(s.server().listing_details.orientation, "north"); assert.equal(s.accepted[0].listing_details.orientation, "north");
+  assert.equal(review.find(item => item.label === "Orientation")?.value, "Nord");
+  assert.equal(s.calls[0][1].listing_details.bathrooms, 0); assert.equal(s.calls[0][1].listing_details.unit_floor, 0);
+});
+
+test("Room conflict acceptance preserves the current server orientation rather than the older hidden value", async () => {
+  const source = savedRoom(); let conflict = true;
+  const fresh = { ...source, version: 9, marketing_name: "Synthetic current room title", listing_details: { ...source.listing_details, orientation: "east" }, offerings: source.offerings.map(item => ({ ...item, target: { ...item.target, version: 9, label: "Synthetic current room title" } })) };
+  const s = propertyListingFixture({ edit: true, source, dispatch: args => { if (conflict) throw new ApiError("INVENTORY_VERSION_CONFLICT", 409); return args.commit(); }, read: (_path, schema, _signal, server) => schema.parse(server.version < 9 ? fresh : server) });
+  s.prepare(); await s.save(); assert.equal(s.calls[0][1].listing_details.orientation, "north");
+  await button(s.render(), "Comparer la version actuelle").props.onClick(); await tick();
+  assert.equal(find(s.render(), "Details")[0].props.property.listing_details.orientation, "east");
+  button(s.render(), "Conserver ma saisie sur cette version").props.onClick();
+  assert.equal(find(s.render(), "Summary")[0].props.facts.find(item => item.label === "Orientation")?.value, "Est");
+  conflict = false; await s.save();
+  assert.equal(s.calls[1][1].expected_version, 9); assert.equal(s.calls[1][1].listing_details.orientation, "east");
+  assert.equal(s.calls[1][1].marketing_name, "Synthetic original edited title"); assert.equal(s.server().listing_details.orientation, "east");
+});
+
+test("A room with no saved orientation keeps null and a newly created room cannot inherit a hidden direction", async () => {
+  const edit = propertyListingFixture({ edit: true, source: savedRoom(null) }); edit.prepare(); await edit.save();
+  assert.equal(edit.calls[0][1].listing_details.orientation, null);
+  const create = propertyListingFixture(); create.prepare(); create.step(2); create.field("orientation", "south"); create.step(0); create.field("category", "room"); create.step(4);
+  assert.equal(find(create.render(), "Summary")[0].props.facts.find(item => item.label === "Orientation")?.value, null);
+  await create.save(); assert.equal(create.calls.length, 1); assert.equal(create.calls[0][1].category, "room"); assert.equal(create.calls[0][1].listing_details.orientation, null);
+});
+
+test("Visible orientation controls still support changing and deliberately clearing an existing value", async () => {
+  for (const [chosen, expected] of [["west", "west"], ["", null]]) {
+    const source = recordFixture(); source.listing_details.orientation = "north";
+    const s = propertyListingFixture({ edit: true, source }); s.prepare(); s.step(2); s.field("orientation", chosen); s.step(4); await s.save();
+    assert.equal(s.calls[0][1].listing_details.orientation, expected); assert.equal(s.server().listing_details.orientation, expected);
+  }
+});
+
+test("Explicitly changing a room into a nonresidential category clears its inapplicable orientation", async () => {
+  const source = savedRoom(); source.offerings = [];
+  const s = propertyListingFixture({ edit: true, source }); s.prepare(); s.step(0); s.field("category", "commercial"); s.step(4); await s.save();
+  assert.equal(s.calls.length, 1); assert.equal(s.calls[0][1].category, "commercial"); assert.equal(s.calls[0][1].listing_details.orientation, null);
+});
+
 test("Listing intents bind standalone/unit creation and edits to exact paths, parent, methods and strict fields", () => {
   for (const edit of [false, true]) for (const unit of [false, true]) {
     const s = propertyListingFixture({ edit, unit }), id = edit ? s.source.id : undefined, scope = { id, version: edit ? 7 : undefined, developmentId: unit ? s.developmentId : undefined }, path = edit ? `/api/v1/properties/${id}` : "/api/v1/properties", method = edit ? "PATCH" : "POST";

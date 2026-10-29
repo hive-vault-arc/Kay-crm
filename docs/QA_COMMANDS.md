@@ -3086,3 +3086,25 @@ Required future npm run test:chrome -- review/finance.chrome.spec.ts
 workaround access; all native geometry/focus/touch/zoom/contrast and actual-stack
 acceptance remain pending. [Preparation](05-quality/finance-native-reconciliation.md)
 and [evidence](03-planning/design-migration-evidence/finance-native-preparation-2026-10-29.json).
+
+
+## Property detail field reconciliation,2026-10-29
+
+Initial focused node --test tests/unit/property-listing-recovery.test.mjs exits1:
+the new room edit regression receives null instead of north. After the scoped
+fix, focused25/25 and full npm run test:unit932/932 pass, five cases added. Full
+npm run lint, npm run typecheck, npm run build and npm run history:check exit0;
+additional npx eslint tests/e2e/property-room-orientation.spec.ts --max-warnings=0
+and final typecheck pass. Static Frontend Taste app lint checks one changed UI
+source with0 findings. Read-only AST/source mapping accounts for24 detail fields
+across backend/frontend/payload/formatter and29 selected amenity keys. An initial
+mapping assumption was corrected for the separate selected amenity label map;
+no missing amenity capability or invented widget resulted.
+
+Backend .venv/Scripts/python.exe -m tests.unit_runner exits0:573 passed/723
+deselected, one new strict room edit contract case, connections forbidden.
+Ruff/mypy and actual SQL/native/device/security/CI/AFTER/product acceptance remain
+pending. Two390/1440 cases are prepared/typechecked, not run; no actual app/DB/
+account/private config/service/transfer access or workaround, migrations,
+main/push/merge/deploy. [Contract](04-design/property-field-reconciliation-local.md)
+and [evidence](03-planning/design-migration-evidence/property-fields-2026-10-29.json).

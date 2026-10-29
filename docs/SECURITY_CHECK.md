@@ -2998,3 +2998,21 @@ file, API, financial fact, schema or retention change. Focused lint/type source
 checks pass; no app/browser/HTTP/DB/account/config/service/transfer access or
 workaround, no generated frame, actual security/native/CI acceptance pending.
 [Preparation](05-quality/finance-native-reconciliation.md).
+
+
+## Preserve valid room facts on unrelated edits,2026-10-29
+
+A current authorized room can hold orientation even though the selected form
+hides that control. The old full detail replacement erased it; the component
+regression reproduces null versus north. Payload/review now retain only this
+accepted room fact, and explicit current acceptance uses the fresh baseline.
+Null/new-category/visible-clear behavior remains. No wider legacy exemption,
+permission, schema/API/backend-production/stock/file rule is introduced. Current
+identity/version/body/key/recovery and offer locks remain authoritative.
+
+932 frontend units/five new cases and573 connection-forbidden backend units/one
+strict contract case pass, plus frontend gates. Two synthetic isolated native
+cases are prepared, not run; traces/videos/screenshots off and cleanup detached.
+No actual record/DB/app/account/private config/file/service/transfer access or
+workaround, migration/main/push/merge/deploy. Actual SQL/rights/security/native/CI
+and Ruff/mypy remain pending. [Field contract](04-design/property-field-reconciliation-local.md).

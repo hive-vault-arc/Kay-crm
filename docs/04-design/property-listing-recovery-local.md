@@ -121,3 +121,16 @@ additional generic consumer found in discovery. The older generic writer is now
 removed; source/test search has0 references. The earlier remaining list records
 its original checkpoint boundary. Separate enquiry/deal archive controls and
 broader source/native reconciliation remain open.
+
+
+## Detail field follow-through,2026-10-29
+
+[Field reconciliation](property-field-reconciliation-local.md) maps all24 detail
+keys/29 selected amenity choices and repairs a proven hidden-field loss: unrelated
+room edits now retain their backend-valid saved orientation. Review uses the same
+accepted fact; explicit conflict acceptance takes its current orientation. New
+rooms, null, visible change/clear and explicit nonresidential category changes
+retain their selected behavior. No new control/layout/backend/API/schema rule.
+932 frontend/573 connection-forbidden backend units and frontend gates pass;
+two native cases are prepared, not run. Exact block-only floor/review semantics,
+other domain contexts and actual-stack/device/AFTER/product acceptance remain.

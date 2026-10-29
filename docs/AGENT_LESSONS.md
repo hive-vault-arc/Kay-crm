@@ -2166,3 +2166,13 @@ do not claim a durable financial creation result from green frontend units.
   canonical review frames while replacing old selectors and recovery steps.
 - Scope ready-state headings to their actual drawer and numeric counter; an
   exact uncounted name can race before data arrives or fail after it loads.
+
+
+## 2026-10-29 — Retain accepted facts hidden by selected forms
+
+- A full detail replacement built only from visible-category fields can silently
+  clear a legal saved fact. Reproduce an unrelated edit through the actual owner;
+  preserve the accepted hidden fact and use the fresh baseline after explicit
+  comparison. Keep new/category-change/visible-clear semantics distinct.
+- Compare schema/label/payload maps by meaning: selected amenities use their own
+  vocabulary. A missing key in one label object is not proof of a missing widget.

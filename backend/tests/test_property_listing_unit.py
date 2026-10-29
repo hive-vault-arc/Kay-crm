@@ -73,6 +73,19 @@ def test_all_listing_categories(category: str, kind: str) -> None:
     assert row.listing_details is not None and row.listing_details.city == "Tanger"
 
 
+def test_room_orientation_remains_a_valid_saved_fact_on_unrelated_edit() -> None:
+    body = listing("room", "rental")
+    body.pop("initial_offering")
+    body.update(expected_version=7, marketing_name="Synthetic unrelated room edit")
+    details = body["listing_details"]
+    assert isinstance(details, dict)
+    details.update(orientation="north", bathrooms=0, unit_floor=0)
+    edited = EditProperty.model_validate(body)
+    assert edited.listing_details is not None
+    saved = edited.listing_details.model_dump(exclude_none=True)
+    assert (saved["orientation"], saved["bathrooms"], saved["unit_floor"]) == ("north", 0, 0)
+
+
 @pytest.mark.parametrize("category", ["land", "farm", "commercial", "office"])
 def test_non_residential_rejects_room_count(category: str) -> None:
     body = listing(category)

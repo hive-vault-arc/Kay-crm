@@ -2986,3 +2986,26 @@ ledger/SQL/concurrency/security/CI/AFTER/product gates and migrations0036/0037,
 other legacy selectors and exact domain reconciliation remain pending. Main,
 254 frozen inputs and unrelated work stay preserved. P0/P8/full goal remain open.
 [Evidence](design-migration-evidence/finance-native-preparation-2026-10-29.json).
+
+
+## Property detail field reconciliation,2026-10-29
+
+Read-only selected/schema/payload/formatter comparison accounts for24 detail
+fields and29 amenity choices; amenities have a separate selected label map.
+One meaningful component regression initially proves null replacing a saved room
+orientation during an unrelated edit. Payload/review now preserve the accepted
+room fact, including after explicit fresh comparison, without adding a selected
+control or changing new/null/category-switch/visible-edit behavior. Zero counts
+stay real. Root occupation remains current offering stock, not a fixture-derived
+Libre label. [Field map](../04-design/property-field-reconciliation-local.md).
+
+932 frontend units pass, five added;573 backend connection-forbidden units pass,
+one added to the strict edit contract. Lint/types/build/history/static app lint1
+pass. Two390/1440 native edit/review/PATCH/readback cases are prepared/typechecked,
+not run. No backend production/API/schema/permission/style/token/motion change.
+All254 frozen inputs, main and unrelated work stay preserved. No actual access/
+workaround/migration/push/merge/deploy; actual SQL/native/device/security/CI/AFTER/
+product acceptance and migrations0036/0037 remain pending. Block-only selection
+versus persisted floor/review semantics is concrete follow-through, alongside
+remaining exact domain/context/old-selector work. P0/P8/full goal stay open.
+[Evidence](design-migration-evidence/property-fields-2026-10-29.json).

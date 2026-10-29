@@ -72,7 +72,7 @@ function savedValues(property?: Property): Values {
   return values;
 }
 
-function buildPayload(values: Values, editing = false) {
+function buildPayload(values: Values, editing = false, baseline?: Property) {
   const category = values.category;
   const options = values.amenities.filter(option => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(option));
   const details = {
@@ -86,7 +86,9 @@ function buildPayload(values: Values, editing = false) {
     floor_type: category === "land" || category === "farm" ? null : textOrNull(values.floor_type),
     unit_floor: floorCategories.has(category) ? numberOrNull(values.unit_floor) : null,
     building_floors: buildingCategories.has(category) ? numberOrNull(values.building_floors) : null,
-    orientation: residential.has(category) && category !== "room" ? textOrNull(values.orientation) : null,
+    // The selected room form has no orientation control, but this is a valid
+    // saved fact. Keep the accepted snapshot rather than clearing it on edit.
+    orientation: editing && category === "room" && baseline?.category === "room" ? baseline.listing_details.orientation ?? null : residential.has(category) && category !== "room" ? textOrNull(values.orientation) : null,
     plot_area_sqm: plotCategories.has(category) ? amountOrNull(values.plot_area_sqm) : null,
     land_delivery: category === "land" ? textOrNull(values.land_delivery) : null,
     land_status: category === "land" ? textOrNull(values.land_status) : null,
@@ -152,7 +154,7 @@ export function PropertyListingWizard({ property, developmentId, developmentLabe
   const holidayDetails = holidayCategories.has(values.category) && (editing || values.market === "holiday");
   const wizardSteps = editing ? [{ ...steps[0], label: "Type et identité", mobileLabel: "Type" }, ...steps.slice(1)] : steps;
   function payload() {
-    const { initial_offering, ...fields } = buildPayload(values, editing);
+    const { initial_offering, ...fields } = buildPayload(values, editing, current);
     const placementFields = unitId ? { development_id: unitId, floor_id: placement.floor_id || null, unit_type_id: placement.unit_type_id || null } : {};
     return property ? editPropertySchema.safeParse({ ...fields, ...placementFields, expected_version: version }) : createPropertySchema.safeParse({ ...fields, ...placementFields, initial_offering });
   }
@@ -216,7 +218,7 @@ export function PropertyListingWizard({ property, developmentId, developmentLabe
   const options = Object.entries(amenityLabels).filter(([key]) => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(key));
   const reviewAmount = amountOrNull(values.price_mad);
   const reviewPrice = reviewAmount && /^[0-9]{1,16}(\.[0-9]{1,2})?$/.test(reviewAmount) && /[1-9]/.test(reviewAmount) ? formatMAD(reviewAmount) : null;
-  const reviewDetails = buildPayload(values, editing).listing_details;
+  const reviewDetails = buildPayload(values, editing, current).listing_details;
   const facts = [
     { label: "Référence", value: trim(values.reference) }, { label: "Type", value: categoryLabels[category] }, { label: "Titre", value: trim(values.marketing_name) },
     ...(!editing ? [{ label: "Offre", value: kindLabels[values.market] }, { label: "Prix", value: reviewPrice ? `${reviewPrice}${values.market === "sale" ? "" : ` / ${values.period === "day" ? "jour" : values.period === "week" ? "semaine" : values.period === "year" ? "an" : "mois"}`}` : null }] : []),
