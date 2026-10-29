@@ -793,3 +793,18 @@ Focused46/final951 frontend units and gates pass; one390px synthetic real-merge/
 retained-alias-read/edit/readback browser case is prepared/typechecked only. No
 actual SQL/merge/scope/native/security/CI/AFTER/product acceptance is inferred.
 [Contract](../04-design/contact-alias-projection-local.md).
+
+
+## AT-40 working-hours recovery follow-through,2026-10-29
+
+An actual-form regression first fails on unlocked controls after interrupted PUT.
+The owner now binds original reviewed policy/hash/version/key/administrator and
+completion, invalidates stale/late previews and requires exact fresh comparison
+before a new preview. Known receipt/read failure does not repeat PUT. Ten added
+synthetic cases cover complete proposal/impact receipt, unknown409, identity,
+disposal, stale host/handlers and retained parent-outage drafts. Focused21/full961
+frontend units and gates pass. Two390/1440 receipt/read-loss native cases are
+prepared/typechecked only; the prior AT-40 case now opens the selected drawer and
+uses current labels. No actual scheduling/SQL/permission/concurrency/native/CI/
+AFTER/product acceptance is inferred. Backend unchanged/prior573 units retained.
+[Contract](../04-design/policy-command-recovery-local.md).

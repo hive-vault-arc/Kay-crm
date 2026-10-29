@@ -62,8 +62,10 @@ test("SP14 AT-40/23: policy impact preserved, administrator-only settings and pr
     const {admin,agent,contactId}=await scheduleFixture(page,actors);const vid=await commandVisit(page,agent.id,contactId);
     const outsider=await createActor("agent");actors.push(outsider);const manager=await createActor("manager");actors.push(manager);
     await clearActorContext(page);await signIn(page,admin);await page.goto("/settings/working-hours");
-    await page.getByRole("region",{name:"Lundi",exact:true}).getByRole("button",{name:"Retirer pause déjeuner 1 Lundi",exact:true}).click();
-    await page.getByRole("region",{name:"Lundi",exact:true}).getByRole("button",{name:"Retirer plage de travail 1 Lundi",exact:true}).click();
+    await page.getByRole("button",{name:"Plages et pauses par jour",exact:true}).click();
+    const policyDrawer=page.getByRole("dialog",{name:"Plages de travail et pauses",exact:true});
+    await policyDrawer.getByRole("region",{name:"Lundi",exact:true}).getByRole("button",{name:"Retirer pauses 1 Lundi",exact:true}).click();
+    await policyDrawer.getByRole("region",{name:"Lundi",exact:true}).getByRole("button",{name:"Retirer plages de travail 1 Lundi",exact:true}).click();
     await page.getByRole("button",{name:"Prévisualiser l’impact",exact:true}).click();await expect(page.getByRole("heading",{name:"1 visite(s) future(s) à revoir",exact:true})).toBeVisible();
     await page.getByRole("button",{name:"Enregistrer les horaires",exact:true}).click();await expect(page.getByText("Horaires enregistrés. Les visites existantes sont conservées.",{exact:true})).toBeVisible();
     const record=await(await page.request.get(`/api/v1/visits/${vid}`)).json();expect(record.status).toBe("scheduled");expect(record.version).toBe(1);expect(record.review_code).toBe("VISIT_SCHEDULE_NOT_CONFIGURED");

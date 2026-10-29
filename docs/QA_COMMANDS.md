@@ -3171,3 +3171,21 @@ change/rerun; prior573 units retained. No actual access/workaround/migration/
 main/push/merge/deploy. Actual SQL/native/security/CI/AFTER/product gates remain.
 [Contract](04-design/contact-alias-projection-local.md) and
 [evidence](03-planning/design-migration-evidence/contact-alias-projection-2026-10-29.json).
+
+
+## Working-hours command ownership,2026-10-29
+
+Initial node --test tests/unit/settings-forms.test.mjs exits1: the new actual-form
+case proves controls editable after interrupted PUT. The shared policy owner now
+pins body/hash/counter/key/administrator/callback and separates exact receipt from
+fresh scoped read/completion. Focused policy-command/settings-forms21 pass; full
+frontend npm run test:unit passes961/961,0 failed/skipped, ten added. Focused lint
+initially rejects one unused legacy constant; removed without suppression. Final
+npm run lint/typecheck/build/history:check exit0; static Frontend Taste --app
+--json scans2 UI files,0 findings, static only. Two390/1440 native recovery cases
+are prepared/typechecked, not run. Existing AT-40 source selectors now open the
+selected drawer and match current period/pause labels, also unrun. Backend
+unchanged/prior573 units retained; no actual access/workaround/migration/main/
+push/merge/deploy. Real SQL/native/device/security/CI/AFTER/product gates remain.
+[Contract](04-design/policy-command-recovery-local.md) and
+[evidence](03-planning/design-migration-evidence/policy-command-recovery-2026-10-29.json).

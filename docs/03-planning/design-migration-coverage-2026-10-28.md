@@ -536,3 +536,16 @@ still win.951 frontend units pass; one added native case prepared, not run.
 [evidence](design-migration-evidence/contact-alias-projection-2026-10-29.json).
 This closes the located source projection gap, not all aliases/merge/permissions/
 legacy selectors or P8 actual acceptance.
+
+
+## Working-hours field and operation follow-through,2026-10-29
+
+Capacity, all weekday/time triples, period/break actions and preview/save/compare
+map to the selected drawer. Original administrator/proposal/hash/counter/key/
+callback survive unknown saves; current completion and fresh comparison remain
+separate. Parent outages retain drafts.961 frontend units pass; two new native
+cases and one revised AT-40 source scenario remain prepared/unrun.
+[Contract](../04-design/policy-command-recovery-local.md) and
+[evidence](design-migration-evidence/policy-command-recovery-2026-10-29.json).
+Backend unchanged; actual SQL/native/security/CI/AFTER/product and remaining exact
+job/filter/alias/legacy-selector review are not closed.

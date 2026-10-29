@@ -3073,3 +3073,24 @@ artifacts. Backend unchanged/prior573 units retained, not rerun. No actual app/D
 account/config/service/transfer access or workaround, migration/main/push/merge/
 deploy; real SQL/security/concurrency/native/CI acceptance stays pending.
 [Contract](04-design/contact-alias-projection-local.md).
+
+
+## Working-hours preview and save ownership,2026-10-29
+
+Current same-actor administrator authority precedes preview/save and current
+completion. Exact proposal/next-counter/impact/hash receipts cannot authorize a
+different policy; only the current backend validates windows, visits/hash and
+capacity. Unknown PUT keeps original body/hash/counter/key/callback, even after
+a later409. Acknowledged recovery reads/completes without another PUT. Definite
+conflict needs exact fresh comparison acceptance and another preview. Disposal,
+wrong actor/role, stale response and current denial cannot install private impact
+or completion. Parent outages retain disabled drafts; authority loss masks them.
+No grants, browser storage, backend/API/schema/retention/service changes.
+
+961 frontend units/ten added and gates pass. Two synthetic native cases prepared/
+typechecked, not run; traces/videos/screenshots off and detached cleanup. Existing
+AT-40 selectors updated to actual selected controls, unrun. Backend unchanged;
+prior573 units retained, not rerun. No actual app/DB/account/config/service/private
+transfer access or workaround, migration/main/push/merge/deploy. Actual security/
+SQL/concurrency/native/CI and Ruff/mypy acceptance remain pending.
+[Contract](04-design/policy-command-recovery-local.md).

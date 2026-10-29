@@ -3077,3 +3077,27 @@ migration/push/merge/deploy; remaining exact field/job/legacy-selector work,
 migrations0036/0037 and P8 actual SQL/native/device/security/CI/AFTER/product gates
 stay open. Full goal remains active.
 [Evidence](design-migration-evidence/contact-alias-projection-2026-10-29.json).
+
+
+## Working-hours field and command reconciliation,2026-10-29
+
+Settings follow-through maps capacity, all working/break triples, read-only zone/
+counter, add/remove, affected impact and preview/save/compare actions. A new actual
+form regression proves interrupted PUT unlocked the legacy editor. The new owner
+pins original actor/body/hash/counter/key/callback, verifies contextual receipts,
+separates acknowledgement from fresh current completion and refuses stale preview
+leases/handlers. Definite conflicts keep the draft and require a new preview.
+Parent outages/host counter changes retain forms; denial masks private impact.
+Actual administrator identity is forwarded from SSR. Selected layout/tokens/
+glyphs/motion and backend scheduling/authority/API/schema remain unchanged.
+[Contract](../04-design/policy-command-recovery-local.md).
+
+Focused21/full961 frontend units and lint/types/build/history/static app lint2
+pass, ten cases added. Focused unused-constant warning removed without suppression.
+Two390/1440 recovery native cases are prepared/typechecked, not run. One existing
+AT-40 case now uses the selected drawer/current labels, also unrun. Backend
+unchanged/prior573 units retained. Frozen254 inputs, main and unrelated work
+preserved; no actual access/workaround/migration/push/merge/deploy. Wider exact
+job/filter/alias/legacy-selector work, migrations0036/0037 and P8 actual SQL/native/
+device/security/CI/AFTER/product gates remain. Full goal active.
+[Evidence](design-migration-evidence/policy-command-recovery-2026-10-29.json).

@@ -1,0 +1,215 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "1c2c3a7ffc45ca040819ab85a4427aa7f8e1d841",
+  "scope": "Selected working-hours fields/drawer, immutable administrator policy preview/save and current completion",
+  "fieldMap": {
+    "capacity": "1..1000 agency company-car visits per touched hour",
+    "workingWindows": "All weekday/start/end triples, seven days, max42",
+    "breaks": "Separate weekday/start/end triples, max42",
+    "timeZone": "Africa/Casablanca read-only",
+    "preview": "Exact proposal/expected counter/affected total and first100/hash",
+    "actions": [
+      "add/remove",
+      "preview",
+      "save",
+      "original retry",
+      "fresh compare/exact acceptance/new preview"
+    ]
+  },
+  "checks": [
+    {
+      "command": "node --test tests/unit/settings-forms.test.mjs",
+      "phase": "before fix",
+      "exitCode": 1,
+      "observed": "New actual-form regression proves fieldset remains enabled after interrupted PUT"
+    },
+    {
+      "command": "Focused ESLint",
+      "phase": "intermediate",
+      "exitCode": 1,
+      "observed": "Unused legacy authorityErrors constant after controller extraction; removed without suppression"
+    },
+    {
+      "command": "node --test tests/unit/policy-command.test.mjs tests/unit/settings-forms.test.mjs",
+      "phase": "final",
+      "exitCode": 0,
+      "passed": 21
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 961,
+      "additionalCases": 10,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 524,
+      "buttonFiles": 160,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste lint.mjs --app --json <changed UI sources>",
+      "exitCode": 0,
+      "files": 2,
+      "findings": 0,
+      "boundary": "Static only, no actual rendered inspector"
+    },
+    {
+      "command": "Backend",
+      "executed": false,
+      "productionChanged": false,
+      "retainedPriorConnectionForbiddenUnits": 573
+    },
+    {
+      "command": "Frozen/main/protected state review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9024,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1301,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/policy-recovery.spec.ts",
+    "cases": 2,
+    "widths": [
+      390,
+      1440
+    ],
+    "typechecked": true,
+    "executed": false,
+    "scenarios": [
+      "Actual isolated PUT followed by lost receipt; same body/hash/key retry and one-counter readback",
+      "Acknowledged PUT followed by current-read503; retry completion without another PUT"
+    ],
+    "updatedExisting": {
+      "file": "frontend/tests/e2e/schedule.spec.ts",
+      "scenario": "AT-40 opens selected policy drawer and current period/pause row labels",
+      "executed": false
+    },
+    "artifactPolicy": {
+      "trace": false,
+      "video": false,
+      "screenshot": false
+    }
+  },
+  "behavior": [
+    "Fresh current same-actor administrator proof before preview/save and current completion",
+    "Strict complete proposal/next-counter/reviewed-hash/bounded unique impact receipts",
+    "Synchronous preview invalidation; late preview and stale save handlers cannot authorize save",
+    "Original operation/callback retained through unknown body edits and later409",
+    "Acknowledged read/handoff failure retries completion only; newer authorized current policy allowed",
+    "Exact fresh comparison acceptance retains fields and requires another impact preview",
+    "Authority loss/disposal/stale host cannot install private impact or completion",
+    "Parent outages/new host counter retain mounted disabled draft; actual SSR actor binds lifetime"
+  ],
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Actual SQL/native/device/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Remaining exact job/filter/alias/legacy-selector reconciliation"
+  ],
+  "status": "Source command/field checkpoint and synthetic evidence only; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5489,
+      "sha256": "23603c2a92a7ddcadb653619b0f19e945f0407b5fd64af93d6e70506368b9939"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/settings/working-hours/page.tsx",
+      "bytes": 730,
+      "sha256": "27bc6cf6a213c793a4acba1c14c4cd9179e3549fe0f3cd1e487ab3e1bc66ef7a"
+    },
+    {
+      "file": "frontend/src/features/schedule/working-hours.tsx",
+      "bytes": 12715,
+      "sha256": "6a9df75769ab8a552785d1cc21a5f980dd68454156e752de27dc4038a09f4e1e"
+    },
+    {
+      "file": "frontend/src/features/schedule/policy-command-intent.ts",
+      "bytes": 1326,
+      "sha256": "174018dc3be08762b49a06dc5a5d27514072e95ed0563ecd9fc81e99b59dad94"
+    },
+    {
+      "file": "frontend/src/features/schedule/use-policy-command.ts",
+      "bytes": 10355,
+      "sha256": "948491d9cfa42784dd7894acb19a59a8ecfc431fe8b59610eb35489568e7b1bf"
+    },
+    {
+      "file": "frontend/tests/unit/settings-forms.test.mjs",
+      "bytes": 22790,
+      "sha256": "cbed3a55bbe68cde07a346bc112f03e14b5c6375420c7c859ee85a756173bc58"
+    },
+    {
+      "file": "frontend/tests/unit/policy-command-fixtures.mjs",
+      "bytes": 4335,
+      "sha256": "e2f71721c618251c26a09cd9a76a80c1460015d86425d2673f23b9470c27e36b"
+    },
+    {
+      "file": "frontend/tests/unit/policy-command.test.mjs",
+      "bytes": 7747,
+      "sha256": "a349e2e221958042118b42eafbbad2929515dc14b528d40411c007adf96b7269"
+    },
+    {
+      "file": "frontend/tests/e2e/policy-recovery.spec.ts",
+      "bytes": 3759,
+      "sha256": "07def7273f4a31e135aa9f51ca7b00c0b484c9fb857addcedb36d884d2047914"
+    },
+    {
+      "file": "frontend/tests/e2e/schedule.spec.ts",
+      "bytes": 9066,
+      "sha256": "80c819a97d9a4cc3a90b16b23038fd13f75b42534c8e7e7c365ede04b72d5b61"
+    }
+  ]
+}

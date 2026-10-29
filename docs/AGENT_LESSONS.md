@@ -2207,3 +2207,13 @@ committed local fields against the scoped canonical ID, as Owner already does,
 while refreshing the original route for another survivor. Keep the actual
 currentRecord helper in workspace regressions: an edited-or-remote stub hid the
 stale saved name/archive bug. URL aliases grant no additional authority.
+
+
+## Working-hours preview versus confirmed write,2026-10-29
+
+A valid policy preview does not make a lost save response safe to replace. Pin
+its body/hash/counter/key/actor/callback; keep unknown409 unresolved and complete
+a known receipt with current identity/read instead of PUT again. Derive form
+fixture previews from their actual proposed fields and next counter: old fixed
+responses hid mismatched proposal acknowledgements. Retain drafts across parent
+read outages and require a new impact preview after explicit current acceptance.

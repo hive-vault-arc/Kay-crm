@@ -1,5 +1,11 @@
 # Local visit scheduling contract (SP-14)
 
+Current selected command recovery,2026-10-29: the
+[working-hours owner](policy-command-recovery-local.md) now pins the original
+reviewed operation, verifies contextual receipts and completes from a fresh
+scoped read. Parent outages retain drafts; definite conflict still requires a new
+impact preview. Backend rules/contracts unchanged; actual acceptance pending.
+
 Selected detailed-policy UI,2026-10-27: /settings/working-hours keeps its existing
 administrator gate and exact policy/preview/save contract. Seven summary rows
 preserve every period/pause; a guarded drawer owns the complete editable proposal.
