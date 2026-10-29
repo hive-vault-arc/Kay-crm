@@ -19,6 +19,7 @@ from app.finance.contracts import (
     Recognize,
     Terms,
 )
+from app.finance.creation_keys import require_creation_key
 from app.finance.models import Commission, CommissionRevision, FinanceReceipt, Receipt
 from app.finance.records import authorized, collected, deal_access, evidence, head, require_manager
 from app.identity.models import AGENCY_ID, Agency, AuditEvent, User
@@ -198,6 +199,8 @@ def command(
             if retry.request_hash != digest:
                 raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
             return retry.result
+        if isinstance(body, NewCommission):
+            require_creation_key(key)
         row = apply(session, identity, body, did, cid)
         result: dict[str, object] = {"id": str(row.id), "version": row.version}
         session.add(

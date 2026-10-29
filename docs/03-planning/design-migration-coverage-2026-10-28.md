@@ -457,3 +457,17 @@ therefore identifies a possible duplicate creation on replay after pruning if
 the parent counter is unchanged. Durable or authoritative safe creation replay
 must be reconciled before readiness; the current immediate-retry frontend cases
 are not retention-expiry/ledger proof. No backend retention policy changed.
+
+
+## Financial creation expiry follow-through,2026-10-29
+
+The preceding source risk now has a timestamped first-application guard and
+scoped no-store issuance, preserving24-hour receipts, retained legacy replay,
+ordinary Deal counters/history and all M/A authority. The proposed five-minute
+start window is not a new business retention policy. Unknown original body/key
+cannot be replaced after expiry. [Contract](../04-design/finance-creation-keys-local.md).
+927 frontend/572 connection-forbidden backend units pass; build/history exit0,
+lint/type terminal output retained. Three SQL/one native cases prepared, not run.
+Actual SQL/ledger/concurrency/native/device/security/CI/AFTER/product acceptance,
+Ruff/mypy, exact remaining domain/context and old selectors remain pending.
+No actual access/workaround/migration/main/push/merge/deploy. P0/P8/goal stay open.

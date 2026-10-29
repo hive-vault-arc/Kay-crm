@@ -1,7 +1,7 @@
 """SP-16 exact arithmetic, append-only facts and real PostgreSQL finance boundaries."""
 
 from decimal import Decimal
-from uuid import UUID, uuid4
+from uuid import UUID, uuid4, uuid7
 
 import pytest
 from pydantic import ValidationError
@@ -39,7 +39,7 @@ def execute(settings, database, token, body, *, did=None, cid=None, key=None):
         database,
         token,
         settings.facade_secret.get_secret_value(),
-        key or uuid4(),
+        key or (uuid7() if isinstance(body, NewCommission) else uuid4()),
         body,
         did=did,
         cid=cid,

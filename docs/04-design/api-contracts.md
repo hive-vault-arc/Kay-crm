@@ -1314,3 +1314,17 @@ later historical revisions do not trigger another write. Explicit current
 acceptance cannot rebase unknown work, including409 after24-hour receipt pruning.
 No endpoint/grant/calculation/ledger/history/backend change.
 [Contract](finance-command-recovery-local.md); actual SQL/native acceptance pending.
+
+
+## Redesign commission creation start window,2026-10-29
+
+GET /deals/{id}/commission-creation-key adds a strict no-query/no-store M/A read
+for a writable dossier: exact deal_id/key/expires_at metadata, no stored fact or
+authority token. POST /deals/{id}/commissions checks retained actor/route/body
+receipts first, then requires a v7 key within a proposed five-minute start window
+for uncached creation. Missing legacy keys return FINANCE_CREATION_KEY_REQUIRED;
+expired/far-future keys return FINANCE_CREATION_KEY_EXPIRED, both409. Original
+24-hour replay/pruning, ordinary Deal counters/history and existing financial
+operations remain. Backend/frontend must roll out together; retained legacy
+receipts still replay. [Contract](finance-creation-keys-local.md). Real-stack
+acceptance remains pending.

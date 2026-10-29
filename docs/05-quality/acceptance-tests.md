@@ -706,3 +706,21 @@ receipt completion-read outage, retaining the recovery-departure prompt.
 rerun; actual ledger/SQL/concurrency/native/device/focus/zoom/visual/security/CI/
 AFTER/product acceptance and broader legacy selectors remain pending. No AT-wide
 closure.
+
+
+## Commission creation retry expiry on redesign,2026-10-29
+
+927 frontend units pass,12 added for server-key metadata, pending issuance/body
+ownership, identity loss/disposal, same-key unknown expiry, explicit current
+acceptance, completion-only recovery and actual facade/catchall routing.572
+connection-forbidden backend units pass,14 added for timestamp bounds, M/A scope,
+current authority after waits, retained23-hour replay, simulated25-hour committed
+pruning with unchanged parent, legacy keys and fully stubbed in-process HTTP.
+[Contract](../04-design/finance-creation-keys-local.md).
+
+Three isolated PostgreSQL cases and one native phone case are prepared, not run.
+The phone expiry response is simulated and does not prove actual receipt pruning.
+No AT-wide closure, financial ledger/SQL/concurrency/native/device/security/CI/
+AFTER/product acceptance is inferred. The24-hour receipt contract and selected
+Finance presentation remain; no new schema, ordinary Deal counter/history or
+permission change.

@@ -2138,3 +2138,19 @@ FinanceReceipt pruning after24 hours plus an unchanged parent Deal version can
 allow duplicate creation. Immediate retry tests do not prove expiry safety.
 This source-inferred gap requires authoritative reconciliation before readiness;
 do not claim a durable financial creation result from green frontend units.
+
+
+## 2026-10-29 — Creation expiry and literal source replacement
+
+- A creation that leaves its parent version unchanged cannot rely on that counter
+  after a24-hour receipt is pruned. Preserve confirmed retention and ordinary
+  history; fence first application separately, check retained replay first and
+  keep an unknown original body/key. Timestamped request IDs are not authority
+  capabilities. Record clock/legacy compatibility and real SQL acceptance limits.
+- JavaScript replacement strings interpret dollar/backtick replacement tokens.
+  Literal code/regex edits must use a replacement callback; inspect the complete
+  resulting boundary before running checks. A mistaken facade replacement was
+  restored from the clean checkpoint before applying the scoped edit correctly.
+- Unit collection does not execute prepared database branches: a removed UUID
+  import can survive that gate. Review changed prepared helpers/imports and leave
+  Ruff/mypy/real-stack checks pending when they cannot run.

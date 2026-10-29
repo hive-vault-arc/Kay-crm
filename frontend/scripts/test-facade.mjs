@@ -44,6 +44,7 @@ try {
     "tests/unit/inventory-lifecycle-recovery.test.mjs",
     "tests/unit/record-lifecycle-recovery.test.mjs",
     "tests/unit/finance-command-recovery.test.mjs",
+    "tests/unit/finance-creation-keys.test.mjs",
     "tests/unit/directory-filters.test.mjs",
     "tests/unit/owners.test.mjs",
     "tests/unit/owner-forms.test.mjs",

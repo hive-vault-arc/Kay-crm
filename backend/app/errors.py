@@ -49,6 +49,12 @@ def error_response(
         "TEMPORARY_EXPIRED": "Le mot de passe temporaire a expiré. Réinitialisez-le.",
         "INVALID_STATE": "L’état de ce compte ne permet pas cette action.",
         "IDEMPOTENCY_CONFLICT": "Cette tentative ne correspond pas à la demande initiale.",
+        "FINANCE_CREATION_KEY_REQUIRED": (
+            "Actualisez le suivi financier avant de commencer une nouvelle commission."
+        ),
+        "FINANCE_CREATION_KEY_EXPIRED": (
+            "Cette confirmation a expiré. Consultez le suivi financier avant de recommencer."
+        ),
         "ONE_TIME_RESULT_UNAVAILABLE": (
             "Cette demande a déjà abouti. Le mot de passe ne peut pas être réaffiché."
         ),

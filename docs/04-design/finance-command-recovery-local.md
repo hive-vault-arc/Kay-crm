@@ -130,3 +130,15 @@ an actual ledger reproduction. Current synthetic immediate-retry cases do not
 prove safety after retention expiry. Durable or otherwise authoritative safe
 creation replay must be reconciled before branch readiness. No financial
 retention/API/schema policy is silently changed by this frontend checkpoint.
+
+
+## Creation replay source follow-through,2026-10-29
+
+The required follow-through above now has a scoped server-clock creation key
+and uncached first-application guard, with existing24-hour receipts/current
+authority checked first. The owner obtains one key before first dispatch and
+retains it through unknown expiry; it never mints a replacement on retry.
+[Creation-key contract](finance-creation-keys-local.md) records the proposed
+five-minute window, legacy compatibility,927 frontend/572 connection-forbidden
+backend checks and prepared, unexecuted SQL/native cases. This resolves the
+identified source path, not actual ledger/native acceptance or branch readiness.

@@ -136,6 +136,8 @@ export function frenchApiError(code: string): string {
     OVER_COLLECTION: "Ce versement dépasse le solde reconnu. Aucun encaissement n’a été ajouté.",
     RECEIPT_ALREADY_CORRECTED: "Ce versement a déjà été corrigé. Actualisez puis sélectionnez son remplacement actuel.",
     INVALID_FINANCIAL_EVIDENCE: "Choisissez une pièce propre et actuelle de cette affaire ou de son contact.",
+    FINANCE_CREATION_KEY_REQUIRED: "Actualisez le suivi financier avant de commencer une nouvelle commission.",
+    FINANCE_CREATION_KEY_EXPIRED: "Cette confirmation a expiré. Consultez le suivi financier avant de recommencer.",
   };
   return messages[code] ?? "Une erreur est survenue. Réessayez dans un instant.";
 }

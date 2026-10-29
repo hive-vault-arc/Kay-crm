@@ -18,6 +18,7 @@ MODULES = frozenset(
         "test_generated_appendix_unit.py",
         "test_generated_history_actor_unit.py",
         "test_finance_history_unit.py",
+        "test_finance_creation_keys_unit.py",
         "test_property_listing_unit.py",
         "test_inventory_directory_filters_unit.py",
         "test_development_phase_unit.py",

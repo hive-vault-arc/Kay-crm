@@ -1,0 +1,271 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "5885f1ebe35f7727498f0a57351c68f84493ae3e",
+  "scope": "Commission creation start-window guard preserving 24-hour private receipts and ordinary Deal counters; current scoped issuance, immutable client retry and legacy compatibility",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": null,
+      "passed": 927,
+      "additionalCases": 12,
+      "failed": 0,
+      "skipped": 0,
+      "observation": "Completed retained terminal log; wrapper exit not recovered after context truncation; no remaining matching process"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": null,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 522,
+      "buttonFiles": 159,
+      "violations": 0,
+      "observation": "Completed retained terminal output without errors; original wrapper exit unavailable"
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": null,
+      "observation": "Completed retained route-generation/type output without errors; original wrapper exit unavailable; subsequent build exit0"
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "boundary": "Engine/psycopg connections forbidden; real command/replay ordering with fully stubbed apply/session; not actual SQL ledger",
+      "exitCode": 0,
+      "passed": 572,
+      "additionalCases": 14,
+      "deselected": 723,
+      "failed": 0,
+      "observation": "Final run after prepared-import correction and new-test formatting; retained numeric wrapper exit0"
+    },
+    {
+      "command": "Frozen reference/main/protected-state review",
+      "exitCode": 0,
+      "inputs": 254,
+      "sourceHashes": 22,
+      "protectedUnstagedLessonsAdditions": 35,
+      "motionNoteUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8998,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1289,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check and exact staged allowlist/hash/protected-state review",
+      "exitCode": 0,
+      "stagedFiles": 34,
+      "canonicalSourceHashes": 22
+    },
+    {
+      "command": "Read-only changed Python source line-length review",
+      "exitCode": 0,
+      "maxColumns": 100,
+      "observation": "One overlong prepared-test definition found and wrapped; not a Ruff/mypy substitute"
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "backend/tests/test_finance_creation_keys_postgres.py",
+      "cases": 3,
+      "scenarios": [
+        "retained 23-hour replay",
+        "committed 25-hour pruning then old-key replay with unchanged Deal version",
+        "cached and pruned legacy keys"
+      ]
+    },
+    {
+      "file": "backend/tests/test_finance_http.py",
+      "boundary": "Updated real-stack issuance/strictness/role/no-store case collected only"
+    },
+    {
+      "file": "frontend/tests/e2e/finance-creation-key-expiry.spec.ts",
+      "cases": 1,
+      "scenario": "phone lost acknowledgement then simulated expired-key response; original body/key and explicit departure; one resulting commission",
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "confirmedReceiptHours": 24,
+    "proposedCreationStartMinutes": 5,
+    "proposedFutureToleranceSeconds": 5,
+    "serverUtcAfterWaitAndCurrentScope": true,
+    "retainedReplayBeforeTimestampGuard": true,
+    "legacyCachedReplayAndMissingFailClosed": true,
+    "uuidIsRequestIdentifierNotAuthorityOrSignedProof": true,
+    "unchangedDealCounterAndOrdinaryHistory": true,
+    "noSchemaOrRetentionChange": true,
+    "noDeviceClockAuthority": true,
+    "originalBodyKeyRetainedAfterUnknownExpiry": true,
+    "acknowledgedCompletionOnly": true,
+    "explicitCurrentAcceptanceForKnownConflict": true,
+    "selectedExplicitRecoveryDepartureWarningPreserved": true,
+    "strictPrivateNoStoreFacadeAndCatchallDispatch": true,
+    "identityLossAndDisposalFailClosed": true,
+    "backendFrontendCoordinatedRolloutRequired": true,
+    "noUiCompositionTokensGlyphsThemeTabsMotionChange": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notRun": [
+    "backend Ruff/mypy",
+    "actual PostgreSQL ledger/lock/concurrency/rollback acceptance",
+    "native app/browser/device/touch/keyboard/focus/zoom/visual acceptance",
+    "actual security and aggregate CI",
+    "AFTER and owner product acceptance",
+    "migrations0036/0037"
+  ],
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "status": "Source guard and synthetic checks only; remaining P0 domain/context/legacy selectors and P8 acceptance pending; full goal active",
+  "sourceHashes": [
+    {
+      "file": "backend/app/errors.py",
+      "bytes": 4745,
+      "sha256": "0564182ef9ab2c31ac2838f44acfd0240d2269e300157a37728cd16618fdca03"
+    },
+    {
+      "file": "backend/app/finance/commands.py",
+      "bytes": 8443,
+      "sha256": "5417f1359cbb674553ca82ec6e3bd274b7950c115c2a22bde4497ce46c0b2740"
+    },
+    {
+      "file": "backend/app/finance/creation_keys.py",
+      "bytes": 1685,
+      "sha256": "d29d8071f593e83ca67606b04f6aa189709e26d5f5b2198d0ee91a0492475ee5"
+    },
+    {
+      "file": "backend/app/finance/router.py",
+      "bytes": 3479,
+      "sha256": "898036aa82ed73134e957042be409a57b063119f374255d85e927fba09c34973"
+    },
+    {
+      "file": "backend/tests/test_finance.py",
+      "bytes": 9009,
+      "sha256": "aa27cb40b04008dfcc971432bf9450cd38ee564bd047ed7d6054cbb6236134fa"
+    },
+    {
+      "file": "backend/tests/test_finance_creation_keys_postgres.py",
+      "bytes": 4222,
+      "sha256": "fb4adad43951bc1bdcbea2853efefad2ce2c77f5d02b36fa3e76840fc3bd42f8"
+    },
+    {
+      "file": "backend/tests/test_finance_creation_keys_unit.py",
+      "bytes": 13721,
+      "sha256": "78d3dc38ec63803154c9b54d6524c4a53500dea0b6a751bcfe4c6f1d916ce278"
+    },
+    {
+      "file": "backend/tests/test_finance_edges.py",
+      "bytes": 11113,
+      "sha256": "4f64c9294c992f5b6a9fcbbb3b739b6f7c7baa1668b38e9b67a456588744a615"
+    },
+    {
+      "file": "backend/tests/test_finance_http.py",
+      "bytes": 4805,
+      "sha256": "7238e10c6f7a9f4ba33905902e2446a5f5ab5e3202827b2f59dd2dff9600d5f3"
+    },
+    {
+      "file": "backend/tests/unit_selection.py",
+      "bytes": 1560,
+      "sha256": "51cbdbacbcbf52265531e683d99d35c183d2fa0ef83d60867a5cccf23261dc50"
+    },
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5347,
+      "sha256": "f516a373081079915721ea34502ac80e1869a6035f14c822f57b05d1ec2e2c48"
+    },
+    {
+      "file": "frontend/src/app/api/v1/[...path]/route.ts",
+      "bytes": 7262,
+      "sha256": "89853e9dee547b90b3f38a386c910429ad24a74152460af65a97ab50b6a88d07"
+    },
+    {
+      "file": "frontend/src/features/finance/contracts.ts",
+      "bytes": 6606,
+      "sha256": "b9ed35e987c3d3d148b65a27520b5716efdb70049f6e61af568f69559cf851ca"
+    },
+    {
+      "file": "frontend/src/features/finance/facade.ts",
+      "bytes": 4713,
+      "sha256": "18599890700f45e738986ebf6480ca1a0decf1b347c9ec4275b8719e2096929d"
+    },
+    {
+      "file": "frontend/src/features/finance/use-finance-command.ts",
+      "bytes": 10649,
+      "sha256": "f04c537e9ac1bfc59406e27f8e78610f8f6087df9d6af23a7a1c108103ec9fe2"
+    },
+    {
+      "file": "frontend/src/lib/api/errors.ts",
+      "bytes": 15758,
+      "sha256": "fd459b4cfd18a1c88e84c2c972ad48832eb988bb456cd97ad1671c7b5f7007da"
+    },
+    {
+      "file": "frontend/tests/helpers/leads.ts",
+      "bytes": 2943,
+      "sha256": "c35665eef311545923bf150f159cdc3ef7c97d857170d247761381253b770584"
+    },
+    {
+      "file": "frontend/tests/unit/finance-command-fixtures.mjs",
+      "bytes": 6207,
+      "sha256": "03fcff2a4404f694836c10aa8528d5662e8000d0fd870eda1daa79c21281e755"
+    },
+    {
+      "file": "frontend/tests/unit/finance-workspace.test.mjs",
+      "bytes": 53415,
+      "sha256": "4c130c1d75098d8b6dd0fcd7ac5d68380e494c2b4efdcde652a55291425a1de0"
+    },
+    {
+      "file": "frontend/tests/unit/finance-creation-key-fixtures.mjs",
+      "bytes": 444,
+      "sha256": "4b16a086b5fb7b7809b4bd8ab6065e731ca72be48a5a3194a5e9c30677f60425"
+    },
+    {
+      "file": "frontend/tests/unit/finance-creation-keys.test.mjs",
+      "bytes": 9876,
+      "sha256": "62445ceeb78f140d186e99ceda7c2cd98b7c4d88b28170e4631d4461ea39dd9d"
+    },
+    {
+      "file": "frontend/tests/e2e/finance-creation-key-expiry.spec.ts",
+      "bytes": 3165,
+      "sha256": "ba7625ab2eb0d365247dee4fe1e3f6636406495250a1ec4aa383bb96ee2d5e25"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { randomUUID } from "node:crypto";
 import { loadServer } from "./load-server.mjs";
+import { creationKeyResponse } from "./finance-creation-key-fixtures.mjs";
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" }, plain = value => JSON.parse(JSON.stringify(value));
@@ -38,7 +39,7 @@ function setup({ recognized = false, existing = true, kind = "terms", command, r
   const h = harness(), parent = deal(), value = commission(parent.id, recognized), original = editingReceipt ? receipt(value.id) : undefined, calls = [], reads = [], denies = [], decisions = [], events = []; let completed = 0, closed = 0;
   const props = { dealId: parent.id, dealVersion: parent.version, value: existing ? value : undefined, contactId: parent.contact.id, original, writable, denied: error => denies.push(error), saved: async result => { completed++; if (saved) await saved(result); }, cancel: () => closed++ };
   let server = structuredClone(value); const identity = { user: { id: value.current.actor.id, role: "manager" }, must_change_password: false }; h.react.useLayoutEffect = h.react.useEffect;
-  const apiGet = async (path, schema, signal) => { if (path.endsWith("/auth/me")) return identity; reads.push({ path, signal }); return schema.parse(read ? await read(path, schema, signal) : path.includes("receipts?") ? page(original ? [original] : []) : path.includes("/deals/") ? parent : server); };
+  const apiGet = async (path, schema, signal) => { if (path.endsWith("/auth/me")) return identity; reads.push({ path, signal }); if (path.endsWith("/commission-creation-key")) return schema.parse(creationKeyResponse(parent.id)); return schema.parse(read ? await read(path, schema, signal) : path.includes("receipts?") ? page(original ? [original] : []) : path.includes("/deals/") ? parent : server); };
   const model = loadServer("src/features/finance/model.ts", { modules: { "@/lib/api/client": { apiGet, ApiError }, "@/features/deals/contracts": deals, "./contracts": finance } });
   const intents = loadServer("src/features/finance/command-intent.ts", { modules: { "./contracts": finance } });
   const owner = loadServer("src/features/finance/use-finance-command.ts", { modules: { ...ui, react: h.react, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/lib/api/client": { ApiError, apiGet }, "@/lib/auth/contracts": { meSchema: {} }, "./command-intent": intents, "./model": model, "@/lib/api/command": { apiCommand: async (...args) => {
@@ -158,7 +159,7 @@ test("recognition remains a separate confirmed version-only command and blocks a
 });
 
 test("cancel during an active write is synchronously refused; archive/hydration guards also cover confirmation handlers", async () => {
-  let release; const s = setup({ existing: false, command: () => new Promise(resolve => { release = resolve; }) }); s.change("base", "100"); s.change("amount", "10"); s.submit(); button(s.render(), "Annuler").props.onClick(); assert.equal(s.decisions.length, 0); release({ id: s.value.id, version: 1 }); await new Promise(resolve => setImmediate(resolve));
+  let release; const s = setup({ existing: false, command: () => new Promise(resolve => { release = resolve; }) }); s.change("base", "100"); s.change("amount", "10"); s.submit(); button(s.render(), "Annuler").props.onClick(); assert.equal(s.decisions.length, 0); await tick(); release({ id: s.value.id, version: 1 }); await new Promise(resolve => setImmediate(resolve));
   const archived = setup(); archived.change("reason", "Synthetic correction"); archived.submit(); archived.props.writable = false; const view = archived.render(); assert.equal(find(view, "Confirmation")[0].props.disabled, true); await find(view, "Confirmation")[0].props.confirm(); await tick(); assert.equal(archived.calls.length, 0);
 });
 

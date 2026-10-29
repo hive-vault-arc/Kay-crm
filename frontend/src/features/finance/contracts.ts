@@ -31,6 +31,7 @@ export const correctCommissionSchema = z.object({ ...fields, target: z.literal("
 export const correctReceiptSchema = z.object({ target: z.literal("receipt"), expected_version: version, receipt_id: z.uuid(), replacement: receiptFieldsSchema.nullable(), reason }).strict();
 export const correctionSchema = z.union([correctCommissionSchema, correctReceiptSchema]);
 export const resultSchema = z.object({ id: z.uuid(), version }).strict();
+export const creationKeySchema = z.object({ deal_id: z.uuid(), key: z.uuid().refine(value => value[14] === "7"), expires_at: z.iso.datetime({ offset: true }) }).strict().refine(value => z.uuid().safeParse(value.key).success && value.key[14] === "7" && Date.parse(value.expires_at) === Number(BigInt(`0x${value.key.replaceAll("-", "").slice(0, 12)}`)) + 300_000);
 export function financeResultMatches(commissionId: string | undefined, expectedVersion: number, result: z.infer<typeof resultSchema>) { return commissionId ? result.id === commissionId && result.version === expectedVersion + 1 : result.version === 1; }
 const actor = z.object({ id: z.uuid(), display_name: z.string().min(1).max(160) }).strict();
 export const revisionSchema = z.object({ id: z.uuid(), version, previous_revision_id: z.uuid().nullable(), ...fields, amount_mad: amount,

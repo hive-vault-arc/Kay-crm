@@ -71,3 +71,13 @@ rechecks current active-account/contact access after acquiring the agency lock.
 The concrete recipient choice (task owner; visit organizer/current participants)
 is a technical proposal for product review, not a new confirmed role rule.
 [SP-15 contract](docs/04-design/tasks-reminders-local.md).
+
+
+## Redesign financial creation-key boundary,2026-10-29
+
+Issuing a commission creation request ID uses current M/A and writable
+contact/Deal scope, identical to starting that financial creation. Issuance is a
+no-store read and grants no authority; current identity, role, agency, scope and
+archive checks still govern every POST and retained replay. Agents receive no
+financial key or amounts. No role grant changes.
+[Contract](docs/04-design/finance-creation-keys-local.md).

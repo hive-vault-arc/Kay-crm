@@ -3,6 +3,7 @@ import { entryHarness } from "./entry-fixtures.mjs";
 import { loadServer } from "./load-server.mjs";
 import { dealFixture, dealContracts, ConversionApiError as ApiError } from "./conversion-fixtures.mjs";
 import { enquiryFixture } from "./enquiry-fixtures.mjs";
+import { creationKeyResponse } from "./finance-creation-key-fixtures.mjs";
 
 export { ApiError, dealContracts };
 export const finance = loadServer("src/features/finance/contracts.ts");
@@ -11,7 +12,7 @@ const at = "2026-10-29T12:00:00Z";
 export function financeCommission(dealId, actorId, patch = {}) {
   return finance.commissionSchema.parse({ id: randomUUID(), deal_id: dealId, version: 7, current: { id: randomUUID(), version: 7, previous_revision_id: randomUUID(), kind: "fixed", base_mad: "100000.00000000", rate_percent: null, amount_mad: "10000.00", due_on: "2026-11-12", state: "recognized", review_required: false, action: "recognized", reason: "", actor: { id: actorId, display_name: "Synthetic finance manager" }, receipt_id: null, reopening_id: null, created_at: at, created_local: at, calculation_policy: "MAD_FINAL_ROUND_HALF_UP_2" }, collected_mad: "0.00", balance_mad: "10000.00", created_by_user_id: actorId, created_at: at, ...patch });
 }
-export function financeCommandFixture({ kind = "terms", role = "manager", hydrated = true, dispatch, read, saved, proof } = {}) {
+export function financeCommandFixture({ kind = "terms", role = "manager", hydrated = true, dispatch, read, issue, saved, proof } = {}) {
   const h = entryHarness(); h.react.useLayoutEffect = h.react.useEffect;
   const actorId = randomUUID(), parent = dealFixture(enquiryFixture().contact, actorId), source = financeCommission(parent.id, actorId);
   if (kind === "recognize" || kind === "create") { source.current.state = "expected"; source.current.action = "created"; source.balance_mad = null; }
@@ -19,7 +20,7 @@ export function financeCommandFixture({ kind = "terms", role = "manager", hydrat
   const path = kind === "create" ? `/api/v1/deals/${parent.id}/commissions` : `/api/v1/commissions/${source.id}/${kind === "recognize" ? "recognize" : kind === "receipt" ? "receipts" : "correct"}`;
   const calls = [], reads = [], saves = [], denials = [], receipts = new Map(); let server = structuredClone(source), commits = 0, identity;
   const who = async () => identity ?? (proof ? proof() : { user: { id: actorId, role }, must_change_password: false });
-  const client = { ApiError, apiGet: async (path, schema, signal) => { reads.push(path); if (path.endsWith("/auth/me")) return who(); return schema.parse(read ? await read({ path, signal, server: structuredClone(server), parent }) : path.includes("/deals/") ? parent : server); } };
+  const client = { ApiError, apiGet: async (path, schema, signal) => { reads.push(path); if (path.endsWith("/auth/me")) return who(); if (path.endsWith("/commission-creation-key")) return schema.parse(issue ? await issue({ path, signal, parent }) : creationKeyResponse(parent.id)); return schema.parse(read ? await read({ path, signal, server: structuredClone(server), parent }) : path.includes("/deals/") ? parent : server); } };
   const model = loadServer("src/features/finance/model.ts", { modules: { "@/lib/api/client": client, "@/features/deals/contracts": dealContracts, "./contracts": finance } });
   const owner = loadServer("src/features/finance/use-finance-command.ts", { modules: { react: h.react, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/lib/api/client": client, "@/lib/auth/contracts": { meSchema: {} }, "./contracts": finance, "./command-intent": intentModule, "./model": model, "@/lib/api/command": { apiCommand: async (...args) => {
     args[7].beforeDispatch(await who()); args[6].throwIfAborted(); args[7].dispatched(); calls.push(args);

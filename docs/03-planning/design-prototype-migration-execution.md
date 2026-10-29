@@ -2942,3 +2942,26 @@ therefore identifies a possible duplicate creation on replay after pruning if
 the parent counter is unchanged. Durable or authoritative safe creation replay
 must be reconciled before readiness; the current immediate-retry frontend cases
 are not retention-expiry/ledger proof. No backend retention policy changed.
+
+
+## Financial creation receipt-expiry follow-through,2026-10-29
+
+The preceding source finding now has an uncached-creation guard: current M/A
+obtains a no-store scoped UUIDv7 request ID, and new application requires its
+proposed five-minute start window after locks/current identity and retained
+receipt lookup. Original24-hour replay/pruning, cached legacy results, ordinary
+Deal counter/history, exact values and all financial authority remain. Missing
+legacy or expired keys fail closed; unknown retry retains its original body/key
+and cannot silently mint a fresh confirmation. Issuance stores no financial fact
+or authority capability. Backend/frontend rollout compatibility is explicit.
+[Contract](../04-design/finance-creation-keys-local.md).
+
+927 frontend units pass,12 added; lint/type terminal output is retained, build/
+history exit0.572 backend connection-forbidden units pass,14 added; no actual DB
+or app access. Three SQL cases and one native phone case are prepared, not run.
+Backend Ruff/mypy, actual ledger/SQL/concurrency/native/device/security/CI/AFTER/
+product acceptance, remaining exact domain reconciliation/legacy selectors and
+migrations0036/0037 remain pending. Selected UI/tokens/motion and254 frozen inputs
+are preserved, as are main and unrelated work. No workaround/push/merge/deploy.
+P0/P8 and the full goal remain active.
+[Evidence](design-migration-evidence/finance-creation-keys-2026-10-29.json).

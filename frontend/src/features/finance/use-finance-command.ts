@@ -6,7 +6,7 @@ import { useHydrated } from "@/hooks/use-hydrated";
 import { apiGet, ApiError } from "@/lib/api/client";
 import { apiCommand, type CommandLifecycle } from "@/lib/api/command";
 import { meSchema } from "@/lib/auth/contracts";
-import { financeResultMatches, resultSchema, type Commission } from "./contracts";
+import { creationKeySchema, financeResultMatches, resultSchema, type Commission } from "./contracts";
 import { financeCompletionMatches, financeIntent, type FinanceIntent } from "./command-intent";
 import { financeDenied, readCommission, readFinanceDeal } from "./model";
 
@@ -16,7 +16,7 @@ export type Denied = (error: ApiError, acknowledged?: boolean) => void;
 export type FinanceBinding = { actorId?: string; role?: StaffRole };
 type Comparison = { version: number; commission?: Commission; deal?: Deal; blocked?: string };
 type Verify = (commission: Commission, signal: AbortSignal) => string | undefined | Promise<string | undefined>;
-type Attempt = { intent: FinanceIntent; key: string; result?: Result; dispatched: boolean; uncertain: boolean; saved: Saved };
+type Attempt = { intent: FinanceIntent; key?: string; result?: Result; dispatched: boolean; uncertain: boolean; saved: Saved };
 
 export function useFinanceMutation(dealId: string, commissionId: string | undefined, saved: Saved, denied: Denied, verify?: Verify, writable = true, options: FinanceBinding & { version?: number } = {}) {
   const scopeKey = `${dealId}:${commissionId ?? "new"}:${options.actorId ?? ""}:${options.role ?? ""}`, hydrated = useHydrated();
@@ -47,7 +47,16 @@ export function useFinanceMutation(dealId: string, commissionId: string | undefi
     lock.current = true; setBusy(true); setError(undefined); const abort = new AbortController(); request.current = abort; let owned = value;
     try {
       if (!owned.result) {
-        const result = await apiCommand(owned.intent.path, owned.intent.body, resultSchema, owned.key, "POST", undefined, abort.signal, { beforeDispatch: authorize, dispatched: () => { owned = { ...owned, dispatched: true }; attempt.current = owned; } });
+        if (!owned.key) {
+          if (owned.intent.kind !== "create" || !await prove(abort.signal)) return false;
+          const issued = await apiGet(`/api/v1/deals/${dealId}/commission-creation-key`, creationKeySchema, abort.signal);
+          if (!active() || abort.signal.aborted) return false;
+          if (issued.deal_id !== dealId) throw new ApiError("INVALID_RESPONSE", 503);
+          owned = { ...owned, key: issued.key }; attempt.current = owned;
+        }
+        const requestKey = owned.key;
+        if (!requestKey) throw new ApiError("INVALID_RESPONSE", 503);
+        const result = await apiCommand(owned.intent.path, owned.intent.body, resultSchema, requestKey, "POST", undefined, abort.signal, { beforeDispatch: authorize, dispatched: () => { owned = { ...owned, dispatched: true }; attempt.current = owned; } });
         if (!active() || abort.signal.aborted) return false;
         if (!financeResultMatches(commissionId, owned.intent.expectedVersion, result)) throw new ApiError("INVALID_RESPONSE", 503);
         owned = { ...owned, result }; attempt.current = owned; setAcknowledged(true);
@@ -75,7 +84,7 @@ export function useFinanceMutation(dealId: string, commissionId: string | undefi
     const intent = financeIntent({ dealId, commissionId }, path, body);
     if (!intent || expected.current !== undefined && intent.expectedVersion !== expected.current) { setError(new ApiError("VALIDATION_ERROR", 422)); return Promise.resolve(false); }
     expected.current ??= intent.expectedVersion;
-    const owned: Attempt = { intent: structuredClone(intent), key: crypto.randomUUID(), dispatched: false, uncertain: false, saved };
+    const owned: Attempt = { intent: structuredClone(intent), key: intent.kind === "create" ? undefined : crypto.randomUUID(), dispatched: false, uncertain: false, saved };
     attempt.current = owned; setAcknowledged(false); setComparison(undefined); offered.current = undefined; return run(owned);
   }
   async function compare() {

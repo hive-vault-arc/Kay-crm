@@ -2963,3 +2963,24 @@ therefore identifies a possible duplicate creation on replay after pruning if
 the parent counter is unchanged. Durable or authoritative safe creation replay
 must be reconciled before readiness; the current immediate-retry frontend cases
 are not retention-expiry/ledger proof. No backend retention policy changed.
+
+
+## Commission creation after receipt expiry,2026-10-29
+
+The identified late duplicate-creation path now rejects an uncached expired or
+legacy creation key before apply, after current M/A/agency/contact/Deal checks,
+waits and retained receipt lookup. The proposed five-minute start window/five-
+second future tolerance uses backend UTC. UUIDv7 is a request identifier, not a
+signed issuance proof or permission capability; arbitrary clock rollback is not
+proved. No financial fact at issuance, no schema/retention/grant/ordinary Deal
+version/history change. Retained24-hour HMAC/body-bound results and legacy keys
+still replay under current authority; missing legacy keys fail closed.
+
+The existing owner retains original body/key through an ambiguous expiry409;
+retry cannot mint another key or imply rollback. Exact metadata/current origin,
+no-store facade dispatch, disposal and acknowledged completion-only behavior are
+covered by927 frontend and572 connection-forbidden backend units. Actual SQL/
+ledger/concurrency, Ruff/mypy and native/security/CI acceptance remain pending.
+Three SQL and one phone cases are prepared, not run. No actual account/DB/app/
+private config/transfer/service access or workaround, migrations, main/push/merge/
+deploy. [Contract](04-design/finance-creation-keys-local.md).

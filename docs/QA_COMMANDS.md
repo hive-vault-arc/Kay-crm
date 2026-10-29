@@ -3049,3 +3049,24 @@ cases prepared/typechecked, not run. Backend unchanged/not rerun. Actual SQL/
 ledger/concurrency/native/device/focus/zoom/visual/security/CI/AFTER/product
 acceptance and migrations0036/0037 pending. No actual access/workaround,
 main/push/merge/deploy.
+
+
+## Commission creation expiry follow-through,2026-10-29
+
+Frontend npm run test:unit reports927 passed/0 failed/0 skipped,12 added. Retained
+terminal logs also complete npm run lint and npm run typecheck with no errors;
+the original wrapper exit handles were unavailable after context truncation, so
+no recovered numeric exit is asserted for those three commands. npm run build
+and npm run history:check exit0. Backend .venv/Scripts/python.exe -m
+tests.unit_runner exits0:572 passed/723 deselected,14 added, with all database
+connections forbidden. This rerun follows a caught/fixed missing UUID import in
+a prepared PostgreSQL HTTP case; it does not execute that database test.
+
+Three PostgreSQL expiry/legacy cases and one native phone recovery case are
+prepared, not run; existing finance fixtures use the new creation keys. Backend
+Ruff/mypy, actual ledger/SQL/concurrency/native/device/security/CI/AFTER/product
+acceptance and migrations0036/0037 remain pending. No actual access/workaround,
+main/push/merge/deploy. [Contract](04-design/finance-creation-keys-local.md) and
+[evidence](03-planning/design-migration-evidence/finance-creation-keys-2026-10-29.json).
+The old creation-replay finding above now has a source guard, not actual-stack
+acceptance or full redesign closure.
