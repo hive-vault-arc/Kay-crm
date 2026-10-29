@@ -1,6 +1,6 @@
 # Selected KAY workspace migration: execution
 
-Updated: 2026-10-28
+Updated: 2026-10-29
 Branch: `codex/redesign`
 Base/main: `e0bdc09feed0c3920b63cda635e5cf4cf42e08b1`
 Plan: [selected-design migration](design-prototype-migration-2026-10-25.md)
@@ -2667,3 +2667,35 @@ main/push/merge/deploy. Full goal active.
 
 [Conversion evidence](design-migration-evidence/prospect-conversion-recovery-2026-10-28.json)
 separates source/synthetic evidence from pending actual-stack acceptance.
+
+## Selected affair creation/editor recovery,2026-10-29
+
+The selected full affair sheet retains its contact collections, ordered projects,
+budget/reasons/financing/zero/notes/action, linked search/offering/version and
+creation-only stage. The form command owner pins original POST/PATCH/body/key and
+both atomic versions after unknown outcome. Same originating actor/role proof
+and current affair/contact identity/minimum versions precede normalized reset
+and parent handoff. An atomic edit must advance the original contact version;
+verified canonical identities are not compared to another contact's counter.
+Acknowledged read/parent failure retries completion without another write, and
+unchanged repeated Save cannot write again. Known conflicts explicitly reload
+both versions; canonical/closed/archived states end read-only.
+
+Metadata/contact/prefill/detail hosts retain drafts through transient errors and
+block new saves while preserving original recovery. Prefill IDs must match the
+requested contact/search/offering; changing creation contact removes/announces
+its invalid search link. Validation/disposal/denial and verified parent handoff
+release private work/busy state without a second unowned reload. Backend rules,
+atomicity, receipt retention, grants, merge and true-actor history are unchanged.
+[Contract](../04-design/deal-form-recovery-local.md).
+
+727 frontend units pass,20 added; lint/types/build/history and static app lint4
+pass. Three native create/edit acknowledgement/contact-read cases prepared/
+typechecked, not run. Backend unchanged/not rerun. Other domain commands, exact
+field/action/context reconciliation and old selectors continue; actual native/
+SQL/device/AFTER/CI/product checks and migrations0036/0037 remain pending. No
+actual app/DB/account/config/service/worker/transfer access or workaround,
+main/push/merge/deploy. Full goal remains active.
+
+[Affair form evidence](design-migration-evidence/deal-form-recovery-2026-10-29.json)
+records source/synthetic gates separately from pending actual-stack acceptance.

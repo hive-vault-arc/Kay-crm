@@ -1,5 +1,13 @@
 # HTTP contracts for `/api/v1`
 
+Selected affair forms,2026-10-29: existing manual creation and atomic affair/
+optional-contact PATCH DTOs, separate versions and result remain unchanged.
+Client recovery owns original body/context/key, same originating actor/role,
+acknowledged current affair/contact reads and explicit known-conflict reload.
+Canonical/closed reads are read-only; prefill search/offering IDs must match.
+No endpoint, backend permission, receipt retention, atomicity or history change.
+[Integration](deal-form-recovery-local.md).
+
 Selected prospect conversion,2026-10-28: existing versioned enquiry conversion
 POST and result DTO remain unchanged. Original body/key survive unknown outcome;
 acknowledged completion uses fresh identity plus existing scoped enquiry/affair

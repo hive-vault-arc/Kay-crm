@@ -1,6 +1,6 @@
 # Selected-design migration coverage map
 
-Date: 2026-10-28. Branch: `codex/redesign`.
+Date: 2026-10-29. Branch: `codex/redesign`.
 [Plan](design-prototype-migration-2026-10-25.md) ·
 [Execution](design-prototype-migration-execution.md).
 
@@ -255,5 +255,26 @@ lint/types/build/history and static app lint4 pass. Two native acknowledgement/
 destination-read cases prepared/typechecked, not run. Backend unchanged/not rerun.
 Remaining domain commands/fields/contexts and older browser selectors continue;
 actual native/SQL/device/AFTER/CI/product acceptance and migrations0036/0037 remain
+pending. No actual access or workaround, main/push/merge/deploy. P0/P8 and the
+full redesign goal remain open.
+
+## Affair form follow-through,2026-10-29
+
+[Affair form field/action map](../04-design/deal-form-recovery-local.md) retains
+the selected three-section sheet, full contact/qualification/project/context
+fields, creation-only stage, zero and separate atomic edit versions. Unknown
+POST/PATCH retains original body/key; acknowledged completion proves current
+affair/contact and resets normalized baselines without another write. Atomic
+contact completion requires expected version plus one only for the original ID;
+canonical IDs keep their own counters. Known conflicts explicitly reload both
+versions; canonical/closed/archived reads finish read-only. Exact prefill IDs,
+announced contact-dependent search removal, retained hosts, disposal/denial and
+verified parent handoff/busy release repair confirmed workflow gaps.
+
+727 frontend units pass,20 added; lint/types/build/history and static app lint4
+pass. Three native phone creation/desktop edit lost-acknowledgement and phone
+edit contact-read outage cases prepared/typechecked, not run. Backend unchanged/
+not rerun. Other domain actions/fields/contexts and broader old selectors remain;
+actual native/SQL/device/AFTER/CI/product checks and migrations0036/0037 remain
 pending. No actual access or workaround, main/push/merge/deploy. P0/P8 and the
 full redesign goal remain open.

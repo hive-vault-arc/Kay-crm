@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { loadServer } from "./load-server.mjs";
 import { loadEnquiryCommand } from "./enquiry-fixtures.mjs";
+import { loadDealFormCommand } from "./conversion-fixtures.mjs";
 
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
 const json = value => JSON.parse(JSON.stringify(value));
@@ -46,8 +47,12 @@ function leadModule(h, command, read=async()=>contact(), profile) {
   const local={"@/features/realtime/current-record":loadServer("src/features/realtime/current-record.ts"),"./use-enquiry-command":hook,"./contracts":contacts,"./contact-fields":{ContactFields:"ContactFields",blankContact:clientFields(contact())},"./agent-picker":{AgentPicker:"Agent"},"./contact-selector":{ContactSelector:"ContactSelector"},"./qualification-contracts":vocabulary,"./record-states":{RecordError:"Error",CommandError:"CommandError"},"./use-query":{useQuery:path=>({value:path.includes("metadata")?metadata:profile,refresh(){}})},"./lead-qualification-fields":{LeadQualificationFields:"Qualification",blankQualification:{initial_budget:"",campaign_source:"unknown",rating:"cold",status:"new"}}};
   return {modules:{...h.modules,...local,"@/lib/api/client":{ApiError,apiGet:read},"@/lib/api/command":{apiCommand:command}},globals:{crypto:{randomUUID}}};
 }
-function dealModule(h,command,profile,read=async()=>profile) {
+function dealModule(h,command,profile,{read,initial=deal(profile)}={}) {
+  const actorId=randomUUID();let role="agent",serverDeal=initial,serverContact=profile;
+  const loadedHook=loadDealFormCommand({react:h.modules.react},{ApiError,proof:async()=>({user:{id:actorId,role},must_change_password:false}),command:async(...args)=>{const result=await command(...args);if(result){const fields=args[1].contact_fields;if(fields){serverContact={...profile,...Object.fromEntries(Object.entries(fields).filter(([key])=>key!=="expected_version")),version:fields.expected_version+1};}serverDeal={...initial,...Object.fromEntries(Object.entries(args[1]).filter(([key])=>!["contact_fields","expected_version","contact_id","new_contact","projects","offering_id","expected_offering_version"].includes(key))),id:result.id,version:result.version,contact:summary(serverContact),created_by_user_id:actorId};}return result;},read:async(...args)=>read?read(...args):args[0].includes("/deals/")?serverDeal:serverContact});
+  const formCommand={useDealFormCommand:options=>{role=options.role;return loadedHook.useDealFormCommand(options);}};
   const modules={...h.modules,"./contracts":deals,"./qualification-contracts":qualification,"./context-picker":{OfferingPicker:"Offering",RequirementPicker:"Requirement"},"./project-picker":{ProjectPicker:"Project"},"@/lib/api/client":{ApiError,apiGet:read},"@/lib/api/command":{apiCommand:command}};
+  modules["./use-deal-form-command"]=formCommand;
   for(const [name,exports] of [["contracts",contacts],["qualification-contracts",vocabulary],["contact-fields",{ContactFields:"ContactFields",blankContact:clientFields(contact())}],["contact-selector",{ContactSelector:"ContactSelector"}],["agent-picker",{AgentPicker:"Agent"}],["qualification-inputs",{BudgetInput:"Budget"}],["record-states",{RecordError:"Error",CommandError:"CommandError"}],["use-query",{useQuery:path=>({value:path.includes("metadata")?metadata:profile,refresh(){}})}]])modules["@/features/contacts/"+name]=exports;
   return {modules,globals:{crypto:{randomUUID}}};
 }
@@ -102,12 +107,12 @@ test("Lead edit atomically retains contact collections, reloads both versions an
 });
 
 test("Deal edit keeps exact qualification, zero, linked context and version while rejecting duplicate submits",async()=>{
-  const h=harness(),client=contact(),value=deal(client),calls=[];let finish;const loaded=loadServer("src/features/deals/deal-form.tsx",dealModule(h,async(...args)=>{calls.push(args);return new Promise(resolve=>{finish=resolve;});},client));
+  const h=harness(),client=contact(),value=deal(client),calls=[];let finish;const loaded=loadServer("src/features/deals/deal-form.tsx",dealModule(h,async(...args)=>{calls.push(args);return new Promise(resolve=>{finish=resolve;});},client,{initial:value}));
   const render=()=>h.render(()=>loaded.DealForm({value,contact:value.contact,saved:async()=>{},cancel(){}}));let tree=render();
   assert.deepEqual(find(tree,"Section").map(n=>n.props.title),["Contact","Projet et budget","Qualification de l’affaire"]);
   find(tree,"Textarea").find(n=>n.props.id==="deal-notes").props.onChange({target:{value:"Draft note"}});h.forms[0].setValue("name","Draft contact");tree=render();submit(tree);submit(tree);await delay(0);assert.equal(calls.length,1);
   assert.equal(calls[0][0],"/api/v1/deals/"+value.id);assert.equal(calls[0][4],"PATCH");assert.equal(calls[0][1].number_of_rooms,0);assert.equal(calls[0][1].expected_version,7);assert.equal(calls[0][1].contact_fields.expected_version,17);assert.equal(calls[0][1].notes,"Draft note");assert.equal(calls[0][1].next_action,value.next_action);assert.equal(calls[0][1].stage,undefined);assert.deepEqual(json(calls[0][1].projects),[{external_name:"Synthetic project"}]);
-  finish({id:value.id,version:8});await delay(0);assert.equal(find(render(),"form")[0].props["data-live-dirty"],undefined);
+  finish({id:value.id,version:8,customer_offer_id:null,offer_version:null});await delay(0);assert.equal(find(render(),"form")[0].props["data-live-dirty"],undefined);
 });
 
 test("Manual deal preserves existing-contact reuse, ordinary initial stage and complete same-key retry",async()=>{
@@ -119,9 +124,9 @@ test("Manual deal preserves existing-contact reuse, ordinary initial stage and c
 
 test("Deal conflict retains the draft until an explicit complete version reload",async()=>{
   const h=harness(),client=contact(),value=deal(client),calls=[];const fresh={...value,version:11,notes:"Reloaded note"},freshClient={...client,version:21,name:"Reloaded contact"};let conflict=true;
-  const loaded=loadServer("src/features/deals/deal-form.tsx",dealModule(h,async(...args)=>{calls.push(args);if(conflict)throw new ApiError("DEAL_VERSION_CONFLICT",409);return {id:value.id,version:12};},client,async path=>path.includes("deals")?fresh:freshClient));
+  const loaded=loadServer("src/features/deals/deal-form.tsx",dealModule(h,async(...args)=>{calls.push(args);if(conflict)throw new ApiError("DEAL_VERSION_CONFLICT",409);return {id:value.id,version:12,customer_offer_id:null,offer_version:null};},client,{initial:value,read:async path=>path.includes("deals")?fresh:freshClient}));
   const render=()=>h.render(()=>loaded.DealForm({value,contact:value.contact,saved:async()=>{}}));let tree=render();find(tree,"Textarea").find(n=>n.props.id==="deal-notes").props.onChange({target:{value:"Unsaved note"}});tree=render();submit(tree);await delay(0);tree=render();
-  assert.equal(find(tree,"Textarea").find(n=>n.props.id==="deal-notes").props.value,"Unsaved note");assert.equal(find(tree,"form")[0].props["data-live-dirty"],"true");assert.equal(find(tree,"Button").find(n=>n.props.type==="submit").props.disabled,true);
+  assert.equal(find(tree,"Textarea").find(n=>n.props.id==="deal-notes").props.value,"Unsaved note");assert.equal(find(tree,"form")[0].props["data-live-dirty"],true);assert.equal(find(tree,"Button").find(n=>n.props.type==="submit").props.disabled,true);
   find(tree,"Button").find(n=>n.props.action==="refresh").props.onClick();await delay(0);tree=render();assert.equal(find(tree,"Textarea").find(n=>n.props.id==="deal-notes").props.value,"Reloaded note");assert.equal(h.forms[0].getValues("name"),"Reloaded contact");assert.equal(find(tree,"form")[0].props["data-live-dirty"],undefined);
   conflict=false;find(tree,"Textarea").find(n=>n.props.id==="deal-notes").props.onChange({target:{value:"Reviewed change"}});tree=render();submit(tree);await delay(0);assert.equal(calls[1][1].expected_version,11);assert.equal(calls[1][1].contact_fields,undefined);
 });

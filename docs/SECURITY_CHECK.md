@@ -1,5 +1,22 @@
 # KAY security check for changes
 
+## Selected affair form recovery,2026-10-29
+
+Original create/edit body, atomic versions, context and key stay pinned after
+unknown dispatch. Route/detail-bound originating actor/role and current proof
+govern dispatch and acknowledged affair/contact completion reads. Expected edit
+ID, result kind, current manual creator/enquiry absence and scoped IDs/minimum
+versions precede reset/handoff. Foreign receipts cannot redirect; acknowledged
+completion cannot write again. Known conflicts explicitly reload both versions;
+canonical/closed/archived results end read-only without mutation retargeting.
+Exact prefill IDs/contact prevent different accessible context being substituted;
+contact changes remove/announce an invalid search link. Hosts retain transient
+drafts/recovery; current denial, validation/disposal and parent busy handoff guard
+private/late actions. No backend/grant/receipt/atomicity/merge/history change or
+browser storage.727 frontend units/gates pass; three native cases prepared/not
+run. No backend rerun, actual access, migration, workaround or final acceptance.
+[Contract](04-design/deal-form-recovery-local.md).
+
 ## Selected prospect conversion recovery,2026-10-28
 
 Original source/version/body/key stay pinned after unknown conversion. Fresh

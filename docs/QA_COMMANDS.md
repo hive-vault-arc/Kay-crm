@@ -1,5 +1,17 @@
 # KAY QA command register
 
+Selected affair form recovery,2026-10-29: frontend cwd `npm run test:unit`:
+727 pass/0 failed/skipped,20 added actual form/controller/route/context/record-
+host cases. Existing dossier coverage uses coherent full receipts and the real
+owner. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass.64 glyphs/104 consumers/345 icon sites and504 Button
+sites have0 violations. Static Frontend Taste app lint covers4 changed UI files,
+0 findings. Three native create/edit acknowledgement/contact-read cases prepared/
+typechecked, not run. Backend unchanged/not rerun. No actual app/DB/account/config/
+service/worker/transfer access, migration, workaround, native/SQL/CI/AFTER/product
+or main/push/merge/deploy acceptance.
+[Contract](04-design/deal-form-recovery-local.md).
+
 Selected prospect conversion recovery,2026-10-28: frontend cwd
 `npm run test:unit`:707 pass/0 failed/skipped,16 added actual dialog/controller/
 picker cases plus existing board status/conversion coverage. `npm run lint`,

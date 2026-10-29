@@ -12,6 +12,15 @@ export const dealContracts = loadServer("src/features/deals/contracts.ts", { mod
 export class ConversionApiError extends Error { constructor(code, status, details) { super(code); Object.assign(this, { code, status, details }); } }
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
 
+export function dealFixture(contact, actorId, patch = {}) {
+  return dealContracts.dealSchema.parse({ id: randomUUID(), version: 7, title: "Synthetic affair", stage: "new", contact, origin_contact_id: contact.id, enquiry_id: null, requirement_id: null, offering: null, next_action: "Synthetic action", stock_review_required: false, archived_at: null, primary_agent_at_close_id: null, active_reservation: null, reservation_conflict: null, customer_offer_count: 0, created_by_user_id: actorId, updated_by_user_id: actorId, created_at: "2026-10-28T12:00:00Z", updated_at: "2026-10-28T12:00:00Z", initial_budget: "1400000", campaign_source: "facebook", rating: "cold", purchase_reasons: ["residence"], client_snapshot: {}, notes: "Synthetic note", payment_method: null, number_of_rooms: 0, projects: [{ position: 1, name: "Synthetic project", development_id: null, property_id: null, external_name: "Synthetic project" }], ...patch });
+}
+
+export function loadDealFormCommand(h, { ApiError = ConversionApiError, command, read, proof, hydrated = true }) {
+  const fallback = { user: { id: randomUUID(), role: "agent" }, must_change_password: false }, identity = proof ?? (async () => fallback);
+  return loadServer("src/features/deals/use-deal-form-command.ts", { modules: { react: h.react, "@/hooks/use-hydrated": { useHydrated: () => hydrated }, "@/lib/api/client": { ApiError, apiGet: async (...args) => args[0].endsWith("/auth/me") ? identity() : read(...args) }, "@/lib/api/command": { apiCommand: async (...args) => { args[7].beforeDispatch(await identity()); args[6]?.throwIfAborted(); args[7].dispatched(); return command(...args); } }, "@/lib/auth/contracts": { meSchema: {} }, "@/features/contacts/contracts": contactContracts, "./contracts": dealContracts }, globals: { crypto: { randomUUID }, AbortController, structuredClone } });
+}
+
 export function conversionFixture({ command, read, proof, navigate, hydrated = true, dialogOnly = true, enquiry: supplied, role = "agent", actorId = randomUUID() } = {}) {
   const h = componentHarness(), calls = [], reads = [], navigated = [], denials = [], closed = [], refreshed = [];
   const enquiry = supplied ?? enquiryFixture(), receipt = dealContracts.resultSchema.parse({ id: randomUUID(), version: 1, customer_offer_id: null, offer_version: null });

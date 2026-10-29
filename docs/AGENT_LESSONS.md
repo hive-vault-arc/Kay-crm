@@ -2003,3 +2003,17 @@ availability separately. Guard dismissal synchronously before a busy render.
 Composite workflow test owners must include parent/key identity and enter a
 component through the renderer; directly calling a hook-using component bypasses
 its test owner and gives misleading failures.
+
+
+## Atomic affair completion and parent handoff,2026-10-29
+
+A receipt is not permission to reset a full editor from raw local fields. Retain
+the original POST/PATCH/key through unknown outcome, prove current affair/full
+contact and reset all authoritative baselines before completion. For an atomic
+contact edit require expected version plus one only while that original contact
+ID remains; a verified canonical contact has a different counter. After receipt,
+read/parent failure retries completion without another write. Pass the verified
+affair into its detail owner instead of starting a second unowned reload, release
+parent busy state when closing, and retain verified output beside a transient
+old read error. Exact prefill IDs and removal/announcement of a previous contact
+search prevent silently saving another linked context.

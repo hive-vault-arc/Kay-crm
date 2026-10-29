@@ -1,5 +1,17 @@
 # Acceptance scenarios
 
+Selected affair forms,2026-10-29 (AT-23/24): preserve all contact/qualification/
+project/context fields, zero, creation-only stage and both atomic edit versions.
+Unknown writes retain original body/key; acknowledged current-read/parent failure
+cannot write again. Verify originating identity, receipt kind/ID, current affair/
+contact coherence and normalized baselines before handoff. Test unchanged repeated
+Save, deliberate later edit, explicit conflict reload, canonical/closed read-only
+states, duplicate reuse, exact prefill IDs, contact-dependent search removal,
+metadata/validation/disposal/denial and parent busy release.727 frontend units
+pass,20 added; three native create/edit acknowledgement/read-outage cases prepared/
+typechecked, not run. Backend unchanged; actual role/SQL/device checks pending.
+[Contract](../04-design/deal-form-recovery-local.md).
+
 Selected prospect conversion recovery,2026-10-28 (AT-23/24): preserve the separate
 selected project/budget/purchase-reason dialog and language prerequisite. Unknown
 POST keeps opening source/version/body/key through props/metadata changes;
