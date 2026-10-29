@@ -3,6 +3,7 @@ import test from "node:test";
 import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { loadServer } from "./load-server.mjs";
+import { loadOwnerFormCommand } from "./owner-form-command-fixtures.mjs";
 
 const jsx = (type, props, key) => ({ type, props, key }), runtime = { jsx, jsxs: jsx, Fragment: "Fragment" };
 const plain = value => JSON.parse(JSON.stringify(value));
@@ -30,15 +31,21 @@ function harness() {
   };
   return { react, hookForms, allForms, render(root) { const active = new Set(); let type = root, props = {}, key = ""; for (;;) { if (!frames.has(type)) frames.set(type, new Map()); const owned = frames.get(type); if (!owned.has(key)) owned.set(key, { slots: [], forms: [] }); frame = owned.get(key); active.add(frame); cursor = 0; formCursor = 0; const node = type(props); if (typeof node.type !== "function") { prior.forEach(old => { if (!active.has(old)) old.slots.forEach(slot => slot?.cleanup?.()); }); prior = active; effects.splice(0).forEach(run => run()); return node; } type = node.type; props = node.props; key = node.key ?? ""; } }, unmount() { prior.forEach(old => old.slots.forEach(slot => slot?.cleanup?.())); } };
 }
-function setup({ role = "manager", original, read, command, options = {}, metadataError } = {}) {
-  const h = harness(), calls = [], reads = [], navigations = [], events = []; let refreshes = 0;
+function setup({ role = "manager", original, read, currentRead, command, options = {}, metadataError } = {}) {
+  const h = harness(), calls = [], reads = [], navigations = [], events = [], cache = new Map(), actorId = randomUUID(); let refreshes = 0, server = original, currentSource = original, metadataFailure = metadataError, sourceFailure;
+  function receipt(args) {
+    if (cache.has(args[3])) return cache.get(args[3]); const body = args[1], base = server ?? original ?? client(), creating = args[4] === "POST", { expected_version, primary_agent_id, ...fields } = body;
+    const result = contacts.contactSchema.parse({ ...base, ...plain(fields), id: creating ? randomUUID() : args[0].split("/").at(-1), version: creating ? 1 : expected_version + 1, ...(creating ? { source: "manual", source_submission_id: null, created_by_user_id: actorId, primary_agent: { id: primary_agent_id || actorId, display_name: "Synthetic responsible agent" } } : {}), primary_phone: body.phones.find(value => value.is_primary).number, primary_email: body.emails.find(value => value.is_primary)?.email ?? null }); cache.set(args[3], result); server = result; return result;
+  }
+  const request = async (...args) => { calls.push(args); const result = command ? await command(...args) : receipt(args); if (contacts.contactSchema.safeParse(result).success) server = result; return result; };
+  const ownerCommand = loadOwnerFormCommand(h, { contracts: contacts, ErrorType: ApiError, identity: async () => ({ user: { id: actorId, role }, must_change_password: false }), request, read: async (...args) => { reads.push(args); return args[1].parse(currentRead ? await currentRead(...args) : server); } });
   const draft = loadServer("src/components/shared/dossier-form.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "./record-header": {} }, globals: { window: { dispatchEvent: event => events.push(event.type) }, Event } });
   const loaded = loadServer("src/features/owners/owner-form.tsx", { modules: {
     react: h.react, "react/jsx-runtime": runtime, "react-hook-form": h.hookForms, "@hookform/resolvers/zod": { zodResolver() {} }, "next/link": { default: "Link" }, "next/navigation": { useRouter: () => ({ push: path => navigations.push(path) }) },
-    "@/components/shared/dossier-form": { ...draft, DossierFormHeader: "Header" }, "@/components/shared/record-header": { RecordHeader: "RecordHeader" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/form": { Form: "Form" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/features/contacts/agent-picker": { AgentPicker: "Agent" }, "@/features/contacts/contact-fields": { ContactFields: "ContactFields" }, "@/features/contacts/contact-selector": { ContactSelector: "ContactSelector" }, "@/features/contacts/contracts": contacts, "@/features/contacts/qualification-contracts": vocabulary, "@/features/contacts/record-states": { CommandError: "CommandError", RecordError: "RecordError" }, "@/features/contacts/use-query": { useQuery: path => ({ value: path.endsWith("metadata") ? metadata : original, error: path.endsWith("metadata") ? metadataError : undefined, refresh: () => refreshes++ }) }, "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError, apiGet: async (...args) => { reads.push(args); return read ? read(...args) : original; } }, "@/lib/api/command": { apiCommand: async (...args) => { calls.push(args); return command ? command(...args) : client({ roles: ["owner"] }); } }, "./owner-form-model": model, "./owner-form-parts": { OwnerContactChoice: "Choice", OwnerContactSnapshot: "Snapshot" }, "./owner-loading": { OwnerLoading: "Loading" },
-  }, globals: { crypto: { randomUUID }, AbortController } });
-  const root = () => loaded.OwnerForm({ role, id: original?.id, ...options }), render = () => h.render(root);
-  render(); return { ...h, calls, reads, navigations, events, render, refreshes: () => refreshes, form: () => h.allForms.at(-1), fill(value = client()) { h.allForms.at(-1).reset(model.ownerValues(value)); }, submit() { find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); }, mode(value) { find(render(), "Select")[0].props.onChange({ target: { value } }); }, async select(id) { find(render(), "ContactSelector")[0].props.choose({ id }); await delay(0); } };
+    "@/components/shared/dossier-form": { ...draft, DossierFormHeader: "Header" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: null, request: run => run() }) }, "@/components/shared/record-header": { RecordHeader: "RecordHeader" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/form": { Form: "Form" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/features/contacts/agent-picker": { AgentPicker: "Agent" }, "@/features/contacts/contact-fields": { ContactFields: "ContactFields" }, "@/features/contacts/contact-selector": { ContactSelector: "ContactSelector" }, "@/features/contacts/contracts": contacts, "@/features/contacts/qualification-contracts": vocabulary, "@/features/contacts/record-states": { CommandError: "CommandError", RecordError: "RecordError" }, "@/features/contacts/use-query": { useQuery: path => ({ value: path.endsWith("metadata") ? metadataFailure ? undefined : metadata : sourceFailure ? undefined : currentSource, error: path.endsWith("metadata") ? metadataFailure : sourceFailure, refresh: () => refreshes++ }) }, "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError, apiGet: async (...args) => { reads.push(args); const result = read ? await read(...args) : original; if (contacts.contactSchema.safeParse(result).success) server = result; return result; } }, "./use-owner-form-command": ownerCommand, "./owner-form-model": model, "./owner-form-parts": { OwnerContactChoice: "Choice", OwnerContactSnapshot: "Snapshot" }, "./owner-loading": { OwnerLoading: "Loading" },
+  }, globals: { crypto: { randomUUID }, AbortController, structuredClone } });
+  const root = () => loaded.OwnerForm({ role, actorId, id: original?.id, ...options }), render = () => h.render(root);
+  render(); return { ...h, actorId, calls, reads, navigations, events, render, receipt, current: () => server, refreshes: () => refreshes, metadataFailure: value => { metadataFailure = value; }, source: value => { currentSource = value; }, sourceFailure: value => { sourceFailure = value; }, options: value => { options = { ...options, ...value }; }, form: () => h.allForms.at(-1), fill(value = client()) { h.allForms.at(-1).reset(model.ownerValues(value)); }, submit() { find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); }, mode(value) { find(render(), "Select")[0].props.onChange({ target: { value } }); }, async select(id) { find(render(), "ContactSelector")[0].props.choose({ id }); await delay(0); } };
 }
 
 test("Owner role payload preserves complete canonical fields and other roles without provenance, attribution or owner-link writes", () => {
@@ -46,6 +53,31 @@ test("Owner role payload preserves complete canonical fields and other roles wit
   for (const field of ["name", "type", "phones", "emails", "country", "nationality", "languages"]) assert.deepEqual(plain(body[field]), plain(original[field]));
   assert.deepEqual(plain(body.roles), [...original.roles, "owner"]); for (const field of ["primary_agent_id", "source", "source_submission_id", "created_by_user_id", "owners"]) assert.equal(Object.hasOwn(body, field), false);
   body.phones[0].label = "Changed draft"; body.emails[0].label = "Changed draft"; body.languages.push("english"); assert.equal(original.phones[0].label, "Principal conservé"); assert.equal(original.emails[0].label, "Bureau conservé"); assert.equal(original.languages.includes("english"), false);
+});
+
+test("An interrupted full owner edit retains one operation and disables replacement input",async()=>{
+ const original=client({roles:["owner"]}),s=setup({original,command:async()=>{throw new ApiError("DEPENDENCY_UNAVAILABLE",503);}});s.form().setValue("name","Synthetic confirmed owner edit");s.submit();await delay(0);const tree=s.render();assert.equal(find(tree,"form")[0].props["data-write-recovery"],true);assert.equal(find(tree,"fieldset")[0].props.disabled,true);
+});
+
+test("Acknowledged owner creation keeps its original handoff through metadata, current-read and parent-completion failures", async () => {
+  let readFails = true, completionFails = true, replacement = 0; const completed = [], assignment = randomUUID();
+  const s = setup({ currentRead: async () => { if (readFails) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return s.current(); }, options: { presentation: "drawer", onSaved: async (_id, value) => { completed.push(value); if (completionFails) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } } });
+  s.fill(client({ name: "Synthetic submitted owner" })); find(s.render(), "Agent")[0].props.change(assignment, "Submitted synthetic agent"); const originalForm = s.form(); s.submit(); await delay(0);
+  assert.equal(s.calls.length, 1); assert.equal(text(find(s.render(), "Button").find(node => node.props.type === "submit")), "Actualiser le résultat");
+  s.metadataFailure(new ApiError("DEPENDENCY_UNAVAILABLE", 503)); s.options({ onSaved: () => replacement++ }); s.form().setValue("name", "Unused replacement draft");
+  const interrupted = s.render(); assert.equal(s.form(), originalForm); assert.equal(find(interrupted, "ContactFields").length, 1); assert.equal(find(interrupted, "fieldset")[0].props.disabled, true);
+  find(interrupted, "Agent")[0].props.change(randomUUID(), "Unused replacement agent"); readFails = false; s.submit(); await delay(0);
+  assert.equal(s.calls.length, 1); assert.equal(completed.length, 1); assert.equal(completed[0].name, "Synthetic submitted owner"); assert.equal(completed[0].primary_agent.id, assignment); assert.equal(replacement, 0); assert.equal(find(s.render(), "form")[0].props["data-write-recovery"], true);
+  completionFails = false; s.submit(); await delay(0); assert.equal(s.calls.length, 1); assert.equal(completed.length, 2); assert.equal(replacement, 0); assert.equal(find(s.render(), "form")[0].props["data-write-recovery"], undefined);
+});
+
+test("Temporary metadata/contact failures and a newer host version retain the owner draft; current denial removes it", async () => {
+  const original = client({ roles: ["owner"] }), s = setup({ original }); const originalForm = s.form(); s.form().setValue("name", "Synthetic retained owner draft");
+  s.metadataFailure(new ApiError("DEPENDENCY_UNAVAILABLE", 503)); s.sourceFailure(new ApiError("DEPENDENCY_UNAVAILABLE", 503)); const interrupted = s.render();
+  assert.equal(s.form(), originalForm); assert.equal(s.form().getValues("name"), "Synthetic retained owner draft"); assert.equal(find(interrupted, "ContactFields").length, 1); assert.equal(find(interrupted, "fieldset")[0].props.disabled, true); s.submit(); await delay(0); assert.equal(s.calls.length, 0);
+  s.metadataFailure(undefined); s.sourceFailure(undefined); s.source({ ...original, version: 8, name: "Synthetic newer server name" }); s.render(); assert.equal(s.form(), originalForm); assert.equal(s.form().getValues("name"), "Synthetic retained owner draft");
+  s.submit(); await delay(0); assert.equal(s.calls[0][1].expected_version, 7); assert.equal(s.calls[0][1].name, "Synthetic retained owner draft");
+  s.sourceFailure(new ApiError("FORBIDDEN", 403)); const denied = s.render(); assert.equal(find(denied, "ContactFields").length, 0); assert.equal(find(denied, "RecordError")[0].props.error.status, 403);
 });
 
 test("Owner creation requires explicit M/A assignment, forces the owner role and retains every contact collection", async () => {
@@ -56,7 +88,7 @@ test("Owner creation requires explicit M/A assignment, forces the owner role and
 });
 
 test("Agent creation never submits an assignment override; same-body interruption retains the retry key and draft", async () => {
-  let fail = true; const s = setup({ role: "agent", command: async () => { if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return client({ roles: ["owner"] }); } }); s.fill(); assert.equal(find(s.render(), "Agent").length, 0); s.submit(); await delay(0);
+  let fail = true; const s = setup({ role: "agent", command: async (...args) => { if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return s.receipt(args); } }); s.fill(); assert.equal(find(s.render(), "Agent").length, 0); s.submit(); await delay(0);
   assert.equal(s.navigations.length, 0); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], true); fail = false; s.submit(); await delay(0);
   assert.equal(s.calls[0][3], s.calls[1][3]); assert.deepEqual(plain(s.calls[0][1]), plain(s.calls[1][1])); assert.equal(Object.hasOwn(s.calls[0][1], "primary_agent_id"), false); assert.equal(s.navigations.length, 1);
 });
@@ -92,15 +124,16 @@ test("A superseded contact lookup is aborted and cannot replace the latest choic
 
 test("Owner-role conflict reload preserves the latest identity/roles and never offers to replace them with the new-contact draft", async () => {
   const original = client(), newer = { ...original, version: 8, name: "Updated synthetic identity", roles: ["buyer", "tenant"] }; let fail = true;
-  const s = setup({ read: async () => original, command: async () => { if (fail) throw new ApiError("VERSION_CONFLICT", 409, { current: newer }); return { ...newer, roles: [...newer.roles, "owner"] }; } }); s.mode("existing"); await s.select(original.id); s.submit(); await delay(0);
+  const s = setup({ read: async () => original, currentRead: async () => fail ? newer : s.current(), command: async (...args) => { if (fail) throw new ApiError("VERSION_CONFLICT", 409, { current: newer }); return s.receipt(args); } }); s.mode("existing"); await s.select(original.id); s.submit(); await delay(0);
+  assert.equal(find(s.render(), "Snapshot").length, 0); find(s.render(), "Button").find(node => text(node) === "Comparer la version actuelle").props.onClick(); await delay(0);
   const view = s.render(); assert.equal(find(view, "Snapshot")[0].props.contact.name, newer.name); assert.equal(find(view, "Button").some(node => text(node) === "Conserver ma saisie sur cette version"), false);
-  find(view, "Button").find(node => text(node) === "Charger la version actuelle").props.onClick(); fail = false; s.submit(); await delay(0); assert.equal(s.calls[1][1].expected_version, 8); assert.equal(s.calls[1][1].name, newer.name); assert.deepEqual(plain(s.calls[1][1].roles), [...newer.roles, "owner"]); assert.notEqual(s.calls[0][3], s.calls[1][3]);
+  find(view, "Button").find(node => text(node) === "Charger la version actuelle").props.onClick(); fail = false; s.submit(); await delay(0); assert.equal(s.calls[1][1].expected_version, 8); assert.equal(s.calls[1][1].name, newer.name); assert.deepEqual(plain(s.calls[1][1].roles), [...newer.roles, "owner"]); assert.notEqual(s.calls[0][3], s.calls[1][3]); assert.equal(s.navigations.length, 1);
 });
 
 test("Full owner edit keeps all fields/version and requires an explicit conflict choice; a foreign current snapshot is not adopted", async () => {
   const original = client({ roles: ["owner", "buyer"] }), newer = { ...original, name: "New server name", version: 8 }; let fail = true;
-  const s = setup({ original, command: async () => { if (fail) throw new ApiError("VERSION_CONFLICT", 409, { current: newer }); return original; } }); s.form().setValue("name", "Retained owner draft"); s.submit(); await delay(0);
-  assert.equal(s.form().getValues("name"), "Retained owner draft"); find(s.render(), "Button").find(node => text(node) === "Conserver ma saisie sur cette version").props.onClick(); fail = false; s.submit(); await delay(0); assert.equal(s.calls[1][1].expected_version, 8); assert.equal(s.calls[1][1].name, "Retained owner draft"); assert.deepEqual(plain(s.calls[1][1].phones), original.phones); assert.equal(find(s.render(), "Agent").length, 0);
+  const s = setup({ original, currentRead: async () => fail ? newer : s.current(), command: async (...args) => { if (fail) throw new ApiError("VERSION_CONFLICT", 409, { current: newer }); return s.receipt(args); } }); s.form().setValue("name", "Retained owner draft"); s.submit(); await delay(0);
+  assert.equal(s.form().getValues("name"), "Retained owner draft"); assert.equal(find(s.render(), "Snapshot").length, 0); find(s.render(), "Button").find(node => text(node) === "Comparer la version actuelle").props.onClick(); await delay(0); find(s.render(), "Button").find(node => text(node) === "Conserver ma saisie sur cette version").props.onClick(); fail = false; s.submit(); await delay(0); assert.equal(s.calls[1][1].expected_version, 8); assert.equal(s.calls[1][1].name, "Retained owner draft"); assert.deepEqual(plain(s.calls[1][1].phones), original.phones); assert.equal(find(s.render(), "Agent").length, 0);
   const wrong = setup({ original, command: async () => { throw new ApiError("VERSION_CONFLICT", 409, { current: client({ name: "Foreign snapshot" }) }); } }); wrong.submit(); await delay(0); assert.equal(find(wrong.render(), "Snapshot").length, 0);
 });
 
@@ -139,16 +172,16 @@ test("A contact choice lookup denial hides its previous private options and reac
 });
 
 test("The owner drawer reuses the complete form with one footer and reports canonical success without its own route change", async () => {
-  const saved = [], canonical = client({ roles: ["owner"] }); let cancelled = 0;
-  const s = setup({ role: "agent", command: async () => canonical, options: { presentation: "drawer", cancel: () => cancelled++, onSaved: (...args) => saved.push(args) } });
+  const saved = []; let canonical, cancelled = 0;
+  const s = setup({ role: "agent", command: async (...args) => canonical = s.receipt(args), options: { presentation: "drawer", cancel: () => cancelled++, onSaved: (...args) => saved.push(args) } });
   assert.equal(find(s.render(), "Header").length, 0); assert.equal(find(s.render(), "form").length, 1); assert.equal(find(s.render(), "form")[0].props.className, "kay-drawer-form");
   find(s.render(), "Button").find(node => text(node) === "Annuler").props.onClick(); assert.equal(cancelled, 1); s.fill(); s.submit(); await delay(0);
-  assert.equal(saved.length, 1); assert.equal(saved[0][0], canonical.id); assert.equal(saved[0][1], canonical); assert.equal(s.navigations.length, 0); assert.equal(find(s.render(), "Button").filter(node => node.props.type === "submit").length, 1);
+  assert.equal(saved.length, 1); assert.equal(saved[0][0], canonical.id); assert.deepEqual(plain(saved[0][1]), plain(canonical)); assert.equal(s.navigations.length, 0); assert.equal(find(s.render(), "Button").filter(node => node.props.type === "submit").length, 1);
 });
 
 test("An existing owner opened from the drawer reports the canonical contact without adding a role or legal link", async () => {
   const canonical = client({ roles: ["owner"] }), saved = [], s = setup({ read: async () => canonical, options: { presentation: "drawer", onSaved: (...args) => saved.push(args) } });
-  s.mode("existing"); await s.select(canonical.id); s.submit(); await delay(0); assert.equal(s.calls.length, 0); assert.equal(saved[0][0], canonical.id); assert.equal(saved[0][1], canonical); assert.equal(s.navigations.length, 0);
+  s.mode("existing"); await s.select(canonical.id); s.submit(); await delay(0); assert.equal(s.calls.length, 0); assert.equal(saved[0][0], canonical.id); assert.deepEqual(plain(saved[0][1]), plain(canonical)); assert.equal(s.navigations.length, 0);
 });
 
 test("Drawer metadata denial reaches its directory boundary without rendering a page header or private form", () => {

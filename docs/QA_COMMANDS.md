@@ -3229,3 +3229,25 @@ push/merge/deploy. Real SQL/native/device/worker/private transfer/security/CI/AF
 product gates, migrations0036/0037 and remaining exact domain work stay pending.
 [Contract](04-design/export-delivery-local.md) and
 [evidence](03-planning/design-migration-evidence/export-delivery-2026-10-29.json).
+
+
+## Owner full-form recovery,2026-10-29
+
+Initial node --test tests/unit/owner-forms.test.mjs exits1 on missing recovery
+marker/enabled replacement fields. The first focused integration run exposes5
+old fixtures expecting invalid version/provenance receipts, exception snapshots
+or reference identity. They now model strict receipts, independent current reads
+and value equality without removing their business assertions. First lint finds
+2 exhaustive-deps cleanup warnings; effect cleanup now captures its own maps.
+Final focused29/full977 frontend units pass,11 added; npm run lint, npm run
+typecheck, npm run build and npm run history:check exit0. Frontend Taste lint.mjs
+--app --json scans4 changed UI files with0 findings, static only. Backend unchanged;
+prior573 connection-forbidden units retained, not rerun.
+
+Three new owner create/edit/add-role recovery cases at390/1440 and updated older
+owner/legal-owner drawer paths are prepared/typechecked only. No Playwright
+listing/import/execution, actual app/browser/HTTP/DB/accounts/private config/
+services/worker/transfer or workaround, migration/main/push/merge/deploy. Actual
+SQL/native/device/security/CI/AFTER/product checks and wider consumers remain
+pending. [Contract](04-design/owner-form-recovery-local.md) and
+[evidence](03-planning/design-migration-evidence/owner-form-recovery-2026-10-29.json).

@@ -10,14 +10,16 @@ import { Button } from "@/components/ui/button";
 import { RecordError } from "@/features/contacts/record-states";
 import { queryPath, useQuery } from "@/features/contacts/use-query";
 import type { ApiError } from "@/lib/api/client";
+import type { StaffRole } from "@/features/contacts/contracts";
 import { ownerPortfolioPreviewSchema } from "./contracts";
 import { OwnerDetails } from "./owner-details";
 import { ownerAssetHref } from "./owner-directory-model";
 import { OwnerLoading } from "./owner-loading";
 import { useOwnerContact } from "./use-owner-contact";
 
-export function OwnerPreviewDrawer({ id, onClosed, onChanged, onDenied, returnFocus, fallbackFocus }: {
+export function OwnerPreviewDrawer({ id, actorId, role, onClosed, onChanged, onDenied, returnFocus, fallbackFocus }: {
   id: string; onClosed: () => void; onChanged: () => void; onDenied: () => void; returnFocus: RefObject<HTMLElement | null>; fallbackFocus: RefObject<HTMLElement | null>;
+  actorId?: string; role?: StaffRole;
 }) {
   const owner = useOwnerContact(id, onChanged, onDenied), contact = owner.contact;
   return <RecordDrawer label="Aperçu du propriétaire" title={contact?.name ?? "Fiche propriétaire"} description="Coordonnées du contact et biens actuels accessibles." initialOpen hideTrigger onClosed={onClosed} returnFocus={returnFocus} fallbackFocus={fallbackFocus}>
@@ -26,7 +28,7 @@ export function OwnerPreviewDrawer({ id, onClosed, onChanged, onDenied, returnFo
         <div className="flex flex-wrap items-center gap-2"><CrmStatusBadge state={contact.archived_at ? "archived" : "active"}>{contact.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge><Button action="contact" asChild variant="outline"><Link prefetch={false} href={`/contacts/${contact.id}`}>Fiche du contact</Link></Button></div>
         {contact.id !== id ? <p className="text-sm text-muted-foreground">Cette fiche a été fusionnée. Les coordonnées de la fiche conservée sont affichées.</p> : null}
         {owner.notice ? <p role="status" className="text-sm text-success">{owner.notice}</p> : null}
-        <div><OwnerDetails contact={contact} compact saved={owner.saved} denied={owner.denied} /><OwnerPortfolioPreview id={contact.id} denied={owner.denied} /></div>
+        <div><OwnerDetails actorId={actorId} role={role} contact={contact} compact saved={owner.saved} denied={owner.denied} /><OwnerPortfolioPreview id={contact.id} denied={owner.denied} /></div>
         <div className="kay-form-footer"><Button action="show" asChild variant="outline"><Link prefetch={false} href={`/owners/${contact.id}`}>Ouvrir la fiche complète</Link></Button></div>
       </div>
     </InlineEditScope>}

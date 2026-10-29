@@ -2236,3 +2236,14 @@ handlers with current hydrated/read/ready state, bind fresh identity to the SSR
 owner, and check a live handoff guard before making a blob URL. Absence from an
 unrelated result page is not permission loss. A simulated list/permit browser
 case prepares UI cancellation evidence, not real worker or transfer acceptance.
+
+
+## Owner purpose-specific full forms and current completion,2026-10-29
+
+A shared canonical inline editor does not protect a separate full owner form.
+Inspect every full routed/drawer consumer for mutable retry fingerprints, version
+keys and metadata remounts. Freeze original actor/target/body/key/counter/callback,
+require fresh protected completion and separate acknowledged recovery from writes.
+Conflict tests must use an independent current read, strict next-version receipts
+and value equality; exception snapshots and convenient invalid success fixtures
+can hide the missing boundary. Record native preparation separately from runs.

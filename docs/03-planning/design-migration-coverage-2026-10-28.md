@@ -573,3 +573,17 @@ not run. [Contract](../04-design/export-delivery-local.md) and
 [evidence](design-migration-evidence/export-delivery-2026-10-29.json).
 Backend unchanged; no real worker/private transfer/role-revocation/SQL/native/CI/
 AFTER/product acceptance or wider job/filter/alias/legacy-selector closure.
+
+
+## Owner form field/operation follow-through,2026-10-29
+
+Eight canonical field groups, explicit M/A responsibility, new/existing choice,
+owner-role addition/no-write opening, full edit and fresh compare choices map to
+the selected form. Original operation and parent handoff remain owned through
+interruption; host/metadata outages retain drafts without automatic rebasing.
+977 frontend units and source gates pass. Three new native recovery cases plus
+updated older owner/legal-owner paths are prepared, not run; broader shared
+inventory consumers remain unaccepted. [Contract](../04-design/owner-form-recovery-local.md)
+and [evidence](design-migration-evidence/owner-form-recovery-2026-10-29.json).
+Actual SQL/native/device/security/CI/AFTER/product and remaining exact field/job/
+alias/legacy-selector review remain open; P0/P8/full goal are not closed.

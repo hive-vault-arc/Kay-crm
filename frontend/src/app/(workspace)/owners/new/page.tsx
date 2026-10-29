@@ -6,5 +6,5 @@ export const metadata = { title: "Ajouter un propriétaire" };
 export default async function Page() {
   const identity = await requireIdentity("/owners/new");
   if (identity.state !== "authenticated") return <AuthUnavailable path="/owners/new" />;
-  return <OwnerForm role={identity.profile.user.role} />;
+  return <OwnerForm key={`${identity.profile.user.id}:${identity.profile.user.role}`} actorId={identity.profile.user.id} role={identity.profile.user.role} />;
 }

@@ -24,7 +24,7 @@ import { ownerDirectoryDefaults, ownerDirectoryPath, ownerDrawerIntent } from ".
 import { OwnerLoading } from "./owner-loading";
 import { OwnerPreviewDrawer } from "./owner-preview";
 
-export function OwnerDirectory({ role }: { role: StaffRole }) {
+export function OwnerDirectory({ role, actorId }: { role: StaffRole; actorId?: string }) {
   const hydrated = useHydrated(), router = useRouter();
   const { draft, setDraft, filters, page, setPage, apply, reset } = useDirectoryFilters(ownerDirectoryDefaults);
   const query = useQuery(ownerDirectoryPath(filters, page, role), contactsSchema);
@@ -59,6 +59,6 @@ export function OwnerDirectory({ role }: { role: StaffRole }) {
         <NumberedPages compact page={page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages des propriétaires" />
       </>}
     </FilterResultsLayout>
-    {!denied && panel ? panel.id ? <OwnerPreviewDrawer key={panel.id} id={panel.id} onClosed={() => setPanel(undefined)} onChanged={query.refreshQuietly} onDenied={query.refresh} returnFocus={returnFocus} fallbackFocus={createLink} /> : <RecordDrawer label="Ajouter un propriétaire" title="Ajouter un propriétaire" description="Identité et coordonnées du contact propriétaire." initialOpen hideTrigger returnFocus={returnFocus} fallbackFocus={createLink} onClosed={() => setPanel(undefined)}>{(close, done) => <OwnerForm role={role} presentation="drawer" cancel={close} onDenied={query.refresh} onSaved={id => { done(); router.push(`/owners/${id}`); }} />}</RecordDrawer> : null}
+    {!denied && panel ? panel.id ? <OwnerPreviewDrawer key={`${panel.id}:${actorId ?? ""}:${role}`} id={panel.id} actorId={actorId} role={role} onClosed={() => setPanel(undefined)} onChanged={query.refreshQuietly} onDenied={query.refresh} returnFocus={returnFocus} fallbackFocus={createLink} /> : <RecordDrawer label="Ajouter un propriétaire" title="Ajouter un propriétaire" description="Identité et coordonnées du contact propriétaire." initialOpen hideTrigger returnFocus={returnFocus} fallbackFocus={createLink} onClosed={() => setPanel(undefined)}>{(close, done) => <OwnerForm actorId={actorId} role={role} presentation="drawer" cancel={close} onDenied={query.refresh} onSaved={id => { done(); router.push(`/owners/${id}`); }} />}</RecordDrawer> : null}
   </div>;
 }

@@ -4,6 +4,11 @@ Status: source integration proposal,2026-10-27. C02/C04/C13/C14; native and owne
 review pending. This slice implements the routed identity form, not every owner
 directory/drawer/legal-link/hierarchy/photo surface.
 
+Current2026-10-29 operation, fresh conflict read and retained draft behavior is
+recorded in [owner form recovery](owner-form-recovery-local.md). Its owned retry
+and current-read handoff supersede the earlier implementation description below;
+the identity/ownership separation and selected layout remain.
+
 ## Identity and ownership remain separate
 
 `/owners/new` and `/owners/{id}/edit` use the existing canonical Contacts commands.

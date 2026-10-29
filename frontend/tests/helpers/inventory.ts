@@ -43,18 +43,21 @@ export async function openProperty(page: Page, id: string, tab = "Aperçu") {
   await expect(page.getByRole("tab", { name: tab, exact: true })).toBeEnabled();
   await page.getByRole("tab", { name: tab, exact: true }).click();
 }
-export async function addOwners(page: Page, names: string[], offersTab = "Offres") {
-  await page.getByRole("tab", { name: "Propriétaires", exact: true }).click();
-  await page.getByRole("button", { name: "Modifier les propriétaires", exact: true }).click();
+export async function addOwners(page: Page, names: string[]) {
+  const owners = page.getByRole("heading", { name: "Propriétaires", exact: true }).locator("..");
+  await owners.getByRole("button", { name: "Modifier", exact: true }).click();
+  const drawer = page.getByRole("dialog", { name: "Propriétaires légaux", exact: true });
   for (const [index, name] of names.entries()) {
-    await page.getByLabel("Rechercher un contact accessible", { exact: true }).fill(name);
-    await page.getByRole("button", { name: "Rechercher le contact", exact: true }).click();
-    await page.getByRole("button", { name: `Choisir ${name}`, exact: true }).click();
-    await page.getByLabel(`Libellé commercial partagé ${index + 1} (facultatif)`, { exact: true }).fill(`SP07 vendeur autorisé ${index + 1}`);
+    await drawer.getByLabel("Rechercher un contact accessible", { exact: true }).fill(name);
+    await drawer.getByRole("button", { name: "Rechercher", exact: true }).click();
+    await drawer.getByRole("button", { name: `Choisir ${name}`, exact: true }).click();
+    const entry = drawer.getByRole("article").filter({ has: page.getByRole("heading", { name, exact: true }) });
+    await entry.getByLabel("Libellé commercial partagé (facultatif)", { exact: true }).fill(`SP07 vendeur autorisé ${index + 1}`);
   }
-  await page.getByRole("button", { name: "Enregistrer les propriétaires", exact: true }).click();
+  await drawer.getByRole("button", { name: "Enregistrer", exact: true }).click();
+  await expect(drawer).not.toBeVisible();
   await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
-  await expect(page.getByRole("tab", { name: offersTab, exact: true })).toBeEnabled();
+  await expect(owners.getByRole("button", { name: "Modifier", exact: true })).toBeEnabled();
 }
 export async function createCampaign(page: Page, kind: "sale" | "rental", price = "1234,56", period = "month") {
   await page.getByRole("tab", { name: "Offres", exact: true }).click();

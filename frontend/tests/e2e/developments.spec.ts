@@ -84,7 +84,7 @@ test("SP08 AT-31/32/35/36/41: actual mixed units, template edit, filters, whole 
     await page.getByLabel("Présentation partagée (facultative)", { exact: true }).fill("<script>window.sp08Unsafe = true</script>\nPrésentation synthétique partagée");
     await page.getByRole("button", { name: "Enregistrer le programme", exact: true }).click();
     await expect(page.getByRole("heading", { name: development.reference, exact: true })).toBeVisible();
-    await addOwners(page, ["SP08 propriétaire privé synthétique"], "Offres du programme");
+    await addOwners(page, ["SP08 propriétaire privé synthétique"]);
     await page.getByRole("tab", { name: "Offres du programme", exact: true }).click();
     await page.getByRole("button", { name: "Créer une campagne vente", exact: true }).click();
     await page.getByLabel("Prix de vente en MAD (facultatif)", { exact: true }).fill("25000000,01");

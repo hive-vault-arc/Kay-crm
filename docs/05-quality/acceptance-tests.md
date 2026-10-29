@@ -834,3 +834,17 @@ while a permit is held; no real export job, worker or CSV success is substituted
 Prepared/typechecked only, not run. Backend unchanged/prior573 units retained.
 Actual SQL/native/private-transfer/role-revocation/security/CI/AFTER/product
 acceptance remains pending. [Contract](../04-design/export-delivery-local.md).
+
+
+## Owner full-form recovery follow-through,2026-10-29
+
+Eleven added source cases and the existing owner form assertions cover original
+create/role-add/edit intent and handoff, strict receipts/current reads, fresh
+conflict acceptance, current authority/alias/old-counter refusal, disposal,
+unknown-operation locking and draft retention through host/metadata outages.
+Focused29/full977 frontend units and source gates pass. Three390/1440 native
+recovery journeys and updated older owner/right-portfolio/legal-owner paths are
+prepared/typechecked, not run. Other inventory helper consumers retain unreviewed
+paths. Backend unchanged/prior573 units retained. No AT-wide SQL/native/security/
+CI/AFTER/product or full-goal acceptance inferred.
+[Contract](../04-design/owner-form-recovery-local.md).

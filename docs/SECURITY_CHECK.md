@@ -3129,3 +3129,22 @@ Backend unchanged/prior573 units retained. No actual app/DB/account/config/servi
 worker/transfer access or workaround, migration/main/push/merge/deploy. Real
 SQL/security/worker/private transfer/native/CI and Ruff/mypy acceptance pending.
 [Contract](04-design/export-delivery-local.md).
+
+
+## Owner full-form operation binding,2026-10-29
+
+Original current actor/role, canonical target, validated complete body, counter,
+key and callback are retained across unknown create/edit/role-add results.
+Fresh identity/password context precedes dispatch and scoped current completion.
+Acknowledged recovery cannot write again. Wrong receipts/alias retargeting,
+current denial, disposal and stale comparisons refuse private handoff. Explicit
+fresh comparison replaces exception-detail trust; new-contact fields/assignment
+cannot overwrite the selected existing identity. Server authorization, private
+phone handling, provenance, exact counters and idempotent Contact receipts remain
+authoritative. No legal ownership, assignment, permission or backend change.
+
+977 frontend units/source gates pass; prepared native faults remain unrun with
+captures off. Backend unchanged/prior573 units retained; actual SQL/session/
+role-loss/native/security/CI and Ruff/mypy acceptance stay pending. No real app,
+DB, credentials, accounts, files, services or transfer access/workaround, migration,
+main/push/merge/deploy. [Contract](04-design/owner-form-recovery-local.md).
