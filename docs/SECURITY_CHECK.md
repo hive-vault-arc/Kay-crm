@@ -3016,3 +3016,22 @@ cases are prepared, not run; traces/videos/screenshots off and cleanup detached.
 No actual record/DB/app/account/private config/file/service/transfer access or
 workaround, migration/main/push/merge/deploy. Actual SQL/rights/security/native/CI
 and Ruff/mypy remain pending. [Field contract](04-design/property-field-reconciliation-local.md).
+
+
+## Hierarchy picker response context,2026-10-29
+
+A strict shape alone did not bind shared picker rows to their requested parent.
+The actual-component regression proves enabled foreign-parent choices; this is
+synthetic response-fault evidence, not actual backend disclosure. Each row now
+matches its programme/block. Whole-page refusal hides choices/retained labels/
+paging without mutating caller state or inventing permission loss.503/retry is
+reused, current403 still propagates denial, and backend hierarchy/authority checks
+remain authoritative. The existing selected-block/floor save guard is confirmed
+through the actual owner, not replaced by a new hierarchy rule.
+
+938 frontend units/six added and frontend gates pass. Two synthetic native cases
+are prepared, not run, with trace/video/screenshots off and detached cleanup.
+No backend production/API/schema/permission/stock/file change or new grant. No
+actual account/app/DB/config/service/transfer access or workaround, migration,
+main/push/merge/deploy. Actual security/SQL/native/CI acceptance remains pending.
+[Contract](04-design/hierarchy-picker-context-local.md).

@@ -109,3 +109,17 @@ open under the existing app-access restriction. Source/compiled CSS inspection
 does not prove visual/native fidelity. Owner directory/drawer entry, photos and
 the remaining branch-wide migration work are separate outstanding scope.
 [Evidence](../03-planning/design-migration-evidence/inventory-forms-2026-10-27.json).
+
+
+## Current hierarchy context and block-intent follow-through,2026-10-29
+
+The shared selected picker now verifies programme/block parent IDs on every
+returned row. Wrong/mixed-parent pages show the existing dependency-error/retry
+state, with no choices or partial counts; healthy retry retains caller selection.
+Current mixed-category counts, paging and compatible/off-page choices remain.
+The existing wizard already blocks saving a chosen block without its floor;
+actual-owner cases now verify both guarded correction and direct-programme units.
+No new block field or floor requirement. [Contract](hierarchy-picker-context-local.md).
+938 frontend units and lint/types/build/history/static app lint1 pass. Two native
+cases are prepared, not run. Backend unchanged/not rerun; actual SQL/native/device/
+rights/stock/CI/AFTER/product acceptance remains pending.

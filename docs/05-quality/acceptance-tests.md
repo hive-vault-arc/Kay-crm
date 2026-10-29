@@ -749,3 +749,17 @@ mapping accounts for24 detail keys/29 amenities, not all native behavior.
 Two390/1440 browser edit/review/PATCH/readback/no-overflow cases are prepared/
 typechecked, not run. No AT-wide SQL/legacy/rights/stock/file/native/device/CI/
 AFTER/product closure. [Field contract](../04-design/property-field-reconciliation-local.md).
+
+
+## Hierarchy parent context and existing block guard,2026-10-29
+
+938 frontend units pass, six added. Four actual picker cases cover all kinds,
+wrong/mixed-parent refusal, healthy retry, parent changes and retained type/count/
+paging/category/denial semantics. The first new case was observed failing before
+the fix. Two actual wizard-owner cases confirm0 writes for block-without-floor,
+corrected floor-derived block and deliberate direct-programme attachment. Focused
+40 cases and frontend gates pass. [Contract](../04-design/hierarchy-picker-context-local.md).
+Two390/1440 cases simulate foreign read then healthy retry and guard0 POSTs;
+they are prepared/typechecked, not run, and do not prove backend leakage or
+native geometry. No AT-wide SQL/rights/stock/native/device/CI/AFTER/product closure.
+Backend unchanged;573 prior connection-forbidden units retained, not rerun.

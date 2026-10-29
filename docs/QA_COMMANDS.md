@@ -3108,3 +3108,24 @@ pending. Two390/1440 cases are prepared/typechecked, not run; no actual app/DB/
 account/private config/service/transfer access or workaround, migrations,
 main/push/merge/deploy. [Contract](04-design/property-field-reconciliation-local.md)
 and [evidence](03-planning/design-migration-evidence/property-fields-2026-10-29.json).
+
+
+## Hierarchy picker parent context,2026-10-29
+
+Initial node --test tests/unit/hierarchy-picker-context.test.mjs exits1: a valid
+foreign-parent block page remains enabled. After the scoped guard/fixture update,
+focused node --test tests/unit/hierarchy-picker-context.test.mjs
+tests/unit/unit-listing-wizard.test.mjs tests/unit/property-listing-recovery.test.mjs
+exits0,40 passed. Full npm run test:unit exits0,938 passed/0 failed/0 skipped,
+six added. An intermediate fixture edit used the wrong relative path; its failed
+update and old-fixture failure are not hidden. Corrected fixture metadata and
+explicit edit-failure stopping precede final passing gates.
+
+npm run lint, npm run typecheck, npm run build and npm run history:check exit0;
+static Frontend Taste app lint checks one changed UI file with0 findings. Two
+390/1440 cases in tests/e2e/hierarchy-picker-context.spec.ts are typechecked,
+not run. Backend unchanged/not rerun; prior573 units retained. No actual app/DB/
+account/config/service access or workaround, migration/main/push/merge/deploy.
+Actual SQL/native/device/security/CI/AFTER/product gates and migrations0036/0037
+remain pending. [Contract](04-design/hierarchy-picker-context-local.md) and
+[evidence](03-planning/design-migration-evidence/hierarchy-picker-context-2026-10-29.json).

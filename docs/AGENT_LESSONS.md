@@ -2176,3 +2176,15 @@ do not claim a durable financial creation result from green frontend units.
   comparison. Keep new/category-change/visible-clear semantics distinct.
 - Compare schema/label/payload maps by meaning: selected amenities use their own
   vocabulary. A missing key in one label object is not proof of a missing widget.
+
+
+## 2026-10-29 — Hierarchy shape is not parent context
+
+- Strict row shapes still need their requested programme/block binding. Refuse a
+  mixed-parent page as a whole rather than filtering its rows and misreporting
+  counts; retain caller state for a deliberate healthy retry.
+- Recheck existing guards before changing workflow: block-without-floor saving
+  was already refused. Verify that actual owner path rather than adding a new
+  block field or making every unit require a floor.
+- Anchor scripted edits to their explicit cwd and stop dependent checks if an
+  edit fails. Update fixtures to real parent metadata instead of weakening guards.

@@ -10,12 +10,12 @@ import { blocksSchema, floorsSchema, unitTypesSchema } from "./development-contr
 import { ApiError } from "@/lib/api/client";
 import { categoryLabels, type Property } from "./contracts";
 
-type LevelPage = { items: { id: string; code: string; label: string; category?: Property["category"] }[]; total: number; page: number; page_size: number; has_next: boolean; has_previous: boolean };
+type LevelPage = { items: { id: string; code: string; label: string; category?: Property["category"]; development_id?: string; block_id?: string }[]; total: number; page: number; page_size: number; has_next: boolean; has_previous: boolean };
 export function LevelPicker({ parent, kind, label, value, change, selectedLabel, disabled = false, pageSize = 25, denied, category }: { parent: string; kind: "blocks" | "floors" | "unit-types"; label: string; value: string; change: (id: string, label?: string) => void; selectedLabel?: string; disabled?: boolean; pageSize?: 20 | 25; denied?: (error: ApiError) => void; category?: Property["category"] }) {
   const [page, setPage] = useState(1);
   const schema: z.ZodType<LevelPage> = kind === "blocks" ? blocksSchema : kind === "floors" ? floorsSchema : unitTypesSchema;
   const result = useQuery(queryPath(`${kind === "floors" ? "blocks" : "developments"}/${parent}/${kind}`, { page, page_size: pageSize }), schema);
-  const invalid = result.value && (result.value.page !== page || result.value.page_size !== pageSize || result.value.items.length > pageSize || new Set(result.value.items.map(row => row.id)).size !== result.value.items.length);
+  const invalid = result.value && (result.value.page !== page || result.value.page_size !== pageSize || result.value.items.length > pageSize || new Set(result.value.items.map(row => row.id)).size !== result.value.items.length || result.value.items.some(row => (kind === "floors" ? row.block_id : row.development_id) !== parent));
   const rows = result.error || invalid ? [] : result.value?.items ?? [];
   useEffect(() => { if (result.error && [401, 403, 404].includes(result.error.status)) denied?.(result.error); }, [result.error, denied]);
   const id = `picker-${label.replaceAll(" ", "-")}`;

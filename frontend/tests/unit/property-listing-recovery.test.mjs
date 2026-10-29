@@ -56,6 +56,24 @@ test("Explicitly changing a room into a nonresidential category clears its inapp
   assert.equal(s.calls.length, 1); assert.equal(s.calls[0][1].category, "commercial"); assert.equal(s.calls[0][1].listing_details.orientation, null);
 });
 
+test("The actual unit owner refuses to drop a selected block and saves its floor-derived block after correction", async () => {
+  const s = propertyListingFixture({ unit: true }); s.prepare(); s.step(0); s.pick("blocks", s.positions.block, "Synthetic selected block"); s.step(4); await s.save();
+  assert.equal(s.calls.length, 0); assert.equal(find(s.render(), "Steps")[0].props.current, 0); assert.ok(text(s.render()).includes("retirez le bloc"));
+  s.pick("floors", s.positions.floor, "Synthetic selected floor"); s.step(4);
+  const facts = find(s.render(), "Summary")[0].props.facts;
+  assert.equal(facts.find(item => item.label === "Bloc").value, "Synthetic selected block"); assert.equal(facts.find(item => item.label === "Étage du programme").value, "Synthetic selected floor");
+  await s.save(); assert.equal(s.calls.length, 1); assert.equal(s.calls[0][1].floor_id, s.positions.floor); assert.equal(Object.hasOwn(s.calls[0][1], "block_id"), false);
+  assert.equal(s.server().hierarchy.block.id, s.positions.block);
+});
+
+test("An intentional direct-programme unit has no phantom block or floor in review and saved facts", async () => {
+  const s = propertyListingFixture({ unit: true }); s.prepare();
+  const facts = find(s.render(), "Summary")[0].props.facts;
+  assert.equal(facts.find(item => item.label === "Bloc").value, null); assert.equal(facts.find(item => item.label === "Étage du programme").value, null);
+  await s.save(); assert.equal(s.calls.length, 1); assert.equal(s.calls[0][1].development_id, s.developmentId); assert.equal(s.calls[0][1].floor_id, null);
+  assert.equal(s.server().hierarchy.block, null); assert.equal(s.server().hierarchy.floor, null);
+});
+
 test("Listing intents bind standalone/unit creation and edits to exact paths, parent, methods and strict fields", () => {
   for (const edit of [false, true]) for (const unit of [false, true]) {
     const s = propertyListingFixture({ edit, unit }), id = edit ? s.source.id : undefined, scope = { id, version: edit ? 7 : undefined, developmentId: unit ? s.developmentId : undefined }, path = edit ? `/api/v1/properties/${id}` : "/api/v1/properties", method = edit ? "PATCH" : "POST";

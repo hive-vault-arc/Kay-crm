@@ -3009,3 +3009,27 @@ product acceptance and migrations0036/0037 remain pending. Block-only selection
 versus persisted floor/review semantics is concrete follow-through, alongside
 remaining exact domain/context/old-selector work. P0/P8/full goal stay open.
 [Evidence](design-migration-evidence/property-fields-2026-10-29.json).
+
+
+## Hierarchy picker parent context,2026-10-29
+
+The preceding block-only follow-through confirms an existing correct save guard:
+selected blocks cannot silently lose their floor-derived attachment. Two tests
+through the actual command owner cover refusal/correction and explicit direct
+programme attachment. A separate actual picker regression proves shape-valid
+foreign-parent rows were enabled. Blocks/types now match the requested programme,
+floors their block; mixed pages fail as a whole, retain caller state and use the
+existing503/retry presentation. Counts, mixed categories, paging and off-page
+choices remain. [Contract](../04-design/hierarchy-picker-context-local.md).
+
+Focused40 and full938 frontend units pass, six added; lint/types/build/history/
+static app lint1 pass. A relative-path mistake initially left one old fixture
+unupdated; it now has genuine parent metadata/stable context and final gates pass.
+Two390/1440 simulated-foreign-read/healthy-retry/block-guard native cases are
+prepared/typechecked, not run. Backend production unchanged/not rerun; prior573
+units retained. No schema/API/permission/style/token/motion change, actual app/
+DB/account/config/service access or workaround, migration/main/push/merge/deploy.
+All254 frozen inputs and unrelated work remain. Other exact field/context/alias/
+legacy-selector work and P8 actual SQL/native/device/security/CI/AFTER/product
+acceptance, plus migrations0036/0037, remain. Full goal active.
+[Evidence](design-migration-evidence/hierarchy-picker-context-2026-10-29.json).

@@ -74,8 +74,9 @@ videos and screenshots are off; fixtures are synthetic and cleanup detached.
 
 Actual SQL/legacy/concurrency/rights/stock/file/native/device/focus/zoom/contrast/
 security/CI/AFTER/product acceptance remains pending, as do migrations0036/0037.
-Exact block-only selection versus persisted floor/review semantics still needs
-follow-through; no new physical block field is assumed here. Other P0 fields,
+Subsequent [hierarchy context review](hierarchy-picker-context-local.md) confirms
+the existing block-without-floor save guard and checks it through the actual
+owner; native acceptance remains pending. No physical block field is added. Other P0 fields,
 contexts and old selectors remain open. No actual app/browser/HTTP/DB/account/
 private configuration/service/worker/scanner/simulator/transfer access or
 workaround, migration, main/push/merge/deployment. Main and254 frozen inputs stay
