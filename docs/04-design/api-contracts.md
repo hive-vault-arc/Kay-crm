@@ -1201,3 +1201,18 @@ requires returning to the current fiche. No new stock or outcome rule, endpoint,
 grant, receipt retention or financial effect is introduced. See the
 [stock recovery contract](deal-stock-recovery-local.md). Actual SQL/concurrent
 stock/native acceptance remains pending.
+
+
+## External-stock client ownership and projection,2026-10-29
+
+The existing property/development external-result endpoints retain their reviewed
+versions/fingerprint, selected offering, date and shared explanation. The selected
+controller now pins original body/key/account/role; current M/A proof, exact
+target-kind/ID/offering receipt and newer target version precede current record/
+awaited UI handoff. Acknowledged failures retry completion without POST. Review
+facts are bracketed by coherent parent/offering reads; replaced/retired targets
+end read-only. Facade parent, stock-review and external-result identities must
+match the requested route/query/body. No new endpoint, backend permission, stock
+effect, receipt retention or financial effect. See the
+[external-result contract](external-stock-recovery-local.md); actual SQL/native
+acceptance remains pending.

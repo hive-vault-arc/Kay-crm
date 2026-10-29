@@ -52,6 +52,7 @@ try {
     "tests/unit/deal-action-recovery.test.mjs",
     "tests/unit/deal-action-ui.test.mjs",
     "tests/unit/deal-stock-recovery.test.mjs",
+    "tests/unit/external-stock-recovery.test.mjs",
     "tests/unit/inventory-forms.test.mjs",
     "tests/unit/offering-forms.test.mjs",
     "tests/unit/customer-proposals.test.mjs",

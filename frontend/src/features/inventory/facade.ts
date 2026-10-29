@@ -54,6 +54,15 @@ export async function relayInventory(key: string, request: Request, requestId: s
       return Response.json({ error: { code, message: frenchApiError(code), field_errors: {}, request_id: requestId } }, { status: code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
     }
     const schema = mutation ? resultSchema : suffix === "stock-review" ? stockReviewSchema : suffix === "history" ? historySchema : suffix === "owners" ? ownerReadSchema : suffix === "inventory" ? inventoryPageSchema : suffix === "blocks" ? blocksSchema : suffix === "floors" ? floorsSchema : suffix === "unit-types" ? unitTypesSchema : key === "developments" ? developmentsSchema : key.startsWith("developments/") ? developmentSchema : key === "properties" ? propertiesSchema : key === "offerings" ? offeringsSchema : propertySchema;
-    return Response.json(schema.parse(upstream.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
+    const result = schema.parse(upstream.body);
+    const [root, targetId] = key.split("/");
+    if (!mutation && !suffix && targetId && ["properties", "developments"].includes(root) && (result as { id?: string }).id !== targetId) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    if (suffix === "stock-review" && (result as { offering_id?: string }).offering_id !== url.searchParams.get("offering_id")) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    if (mutation && suffix === "external-outcome") {
+      const input = externalSchema.parse(JSON.parse(body!)), receipt = resultSchema.parse(result);
+      const rightTarget = root === "properties" ? "property_id" in receipt && receipt.property_id === targetId : "development_id" in receipt && receipt.development_id === targetId;
+      if (!rightTarget || receipt.offering_id !== input.offering_id || receipt.version <= input.expected_version) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    }
+    return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

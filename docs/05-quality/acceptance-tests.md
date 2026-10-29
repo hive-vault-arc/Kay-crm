@@ -580,3 +580,17 @@ run: phone reserve lost acknowledgement and desktop close result-read outage.
 [Contract](../04-design/deal-stock-recovery-local.md). Actual stock concurrency/
 SQL/native/device/focus/zoom/visual/CI/AFTER/product acceptance and broader legacy
 selectors remain pending; no AT-wide closure or backend verification is inferred.
+
+
+## Selected external-stock source coverage,2026-10-29
+
+782 synthetic frontend units pass,20 added for property/unit/programme and M/A
+review/command scope, frozen retry, exact versions/fingerprint, coherent and
+foreign facts/receipts, completion-only recovery/async handoff, known conflicts,
+changed offers, retained hosts/monotonic acceptance, role denial and disposal.
+Actual record/route/facade sources participate. Two cases in
+`frontend/tests/e2e/external-stock-recovery.spec.ts` are prepared/typechecked,
+not run: phone property acknowledged-read outage and desktop programme lost
+acknowledgement. [Contract](../04-design/external-stock-recovery-local.md). No
+actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/product
+acceptance or full AT closure; backend unchanged/not rerun.

@@ -74,3 +74,8 @@ simulator/import/export/transfer access or workaround. Migrations0036/0037 remai
 unapplied; main and all254 frozen inputs remain unchanged. No push/merge/deploy.
 The full migration goal remains active for remaining exact fields/actions/context,
 legacy browser migration and the later required acceptance stage.
+
+
+Subsequent source integration,2026-10-29: manager external inventory results now
+have their own [request/record recovery contract](external-stock-recovery-local.md).
+This extends source coverage without claiming actual concurrent stock acceptance.

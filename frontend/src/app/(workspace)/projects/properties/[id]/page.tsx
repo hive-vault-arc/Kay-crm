@@ -11,5 +11,5 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const route = `/projects/properties/${id}`;
   const identity = await requireIdentity(route);
   if (identity.state !== "authenticated") return <AuthUnavailable path={route} />;
-  return <PropertyRecord id={id} role={identity.profile.user.role} initialTab={tab} />;
+  return <PropertyRecord key={`${id}:${identity.profile.user.id}:${identity.profile.user.role}`} actorId={identity.profile.user.id} id={id} role={identity.profile.user.role} initialTab={tab} />;
 }

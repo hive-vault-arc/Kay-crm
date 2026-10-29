@@ -2802,3 +2802,22 @@ acceptance. Backend source confirms both review/record endpoints use the same
 offering projection; no backend mutation or runtime validation is claimed. No
 actual app/DB/account/private config/service/worker/transfer access, workaround,
 migration, main/push/merge/deploy. This is not release approval.
+
+
+## Manager external-stock request/host review,2026-10-29
+
+The dedicated external-result owner binds original target/offering/account/role,
+strict reviewed body/key and current M/A proof before review/dispatch/retry/
+completion. Coherent bracketing/versions precede confirmation; foreign receipts
+and record/review facade responses cannot project private data. Acknowledged
+reads/async handoff retry completion only. Unknown input/dismissal and background
+record replacement are protected; source/command denial masks private content,
+while disposal/scope replacement aborts late work and releases owned busy.
+
+782 synthetic frontend units pass,20 added, with lint/types/build/history/static
+UI checks. [Contract](04-design/external-stock-recovery-local.md) states coverage
+and prepared-not-run native cases. No backend authority, stock/finance/history
+rule, retention, persistent browser storage or grant change. No actual app/DB/
+account/private config/service/worker/transfer access, workaround, migration or
+main/push/merge/deploy. Actual SQL/native/security/product acceptance is pending;
+other generic inventory form controllers remain separate source work.

@@ -16,28 +16,36 @@ import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
 import { LifecyclePanel } from "@/features/discovery/lifecycle-panel";
 import { FilePanel } from "@/features/files/file-panel";
-import { categoryLabels, propertySchema } from "./contracts";
+import { categoryLabels, propertySchema, type Property } from "./contracts";
 import { PropertyEditor } from "./property-editor";
 import { OwnerEditor } from "./owner-editor";
 import { InventoryHistory } from "./inventory-history";
 import { InventoryBusyContext } from "./use-command";
+import { InventoryRecordContext } from "./record-scope";
+import type { ApiError } from "@/lib/api/client";
 import { InventoryPhotoRail, InventoryParty } from "./inventory-support";
 import { InventoryOfferSection } from "./inventory-offer-section";
 import { PropertyListingDetails } from "./property-listing-details";
 
-export function PropertyRecord({ id, role, edit = false, initialTab }: { id: string; role: StaffRole; edit?: boolean; initialTab?: string }) {
+export function PropertyRecord({ id, role, actorId, edit = false, initialTab }: { id: string; role: StaffRole; actorId?: string; edit?: boolean; initialTab?: string }) {
   const query = useQuery(`/api/v1/properties/${id}`, propertySchema);
   const [notice, setNotice] = useState(""), [busy, setBusy] = useState(false), [photoRevision, setPhotoRevision] = useState(0);
+  const [cached, setCached] = useState<Property>(), [accessError, setAccessError] = useState<ApiError>();
+  const remote = query.value?.id === id ? query.value : undefined, available = Boolean(remote && !query.error);
+  const deniedRead = query.error && [401, 403, 404].includes(query.error.status) ? query.error : undefined;
+  const retained = busy && cached ? cached : remote && (!cached || remote.version >= cached.version) ? remote : cached;
+  if (deniedRead || accessError) { if (cached) setCached(undefined); } else if (retained && retained !== cached) setCached(retained);
   const photoChanged = useCallback(() => setPhotoRevision(value => value + 1), []);
   const heading = <PageHeader title="Fiche du bien" description="Informations, offres et propriétaires accessibles." route={`/projects/properties/${id}`} />;
-  if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
-  if (!query.value) return <>{heading}<p role="status">Chargement du bien…</p></>;
-  const property = query.value, archived = Boolean(property.archived_at), managedWritable = role !== "agent" && !archived;
+  if (accessError) return <>{heading}{notice ? <p role="status">{notice}</p> : null}<RecordError error={accessError} /></>;
+  if (query.error && (deniedRead || !retained)) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
+  if (!retained) return <>{heading}<p role="status">Chargement du bien…</p></>;
+  const property = retained, archived = Boolean(property.archived_at), managedWritable = role !== "agent" && !archived;
   if (edit) return !archived ? <PropertyEditor property={property} /> : <>{heading}<p role="alert">Restaurez ce dossier avant de le modifier.</p></>;
   function saved() { setNotice("Inventaire enregistré."); query.refreshQuietly(); }
   const kinds = property.development_id || !["apartment", "house", "villa", "riad", "room"].includes(property.category) ? (["sale", "rental"] as const) : property.category === "room" ? (["rental", "holiday"] as const) : (["sale", "rental", "holiday"] as const);
   const back = property.development_id ? `/projects/${property.development_id}?tab=units` : "/projects?kind=biens";
-  return <InventoryBusyContext.Provider value={pending => { setBusy(pending); if (pending) setNotice(""); }}><fieldset disabled={busy} aria-busy={busy} className="kay-record-page"><legend className="sr-only">Bien et commandes d’inventaire</legend>
+  return <InventoryRecordContext.Provider value={{ root: "properties", id, actorId, role, available, accept: value => { const parsed = propertySchema.safeParse(value); if (parsed.success && parsed.data.id === id) setCached(previous => !previous || parsed.data.version >= previous.version ? parsed.data : previous); }, denied: (failure, acknowledged) => { setNotice(acknowledged ? "Le résultat externe est enregistré. Les droits d’accès ont changé." : ""); setAccessError(failure); setBusy(false); } }}><InventoryBusyContext.Provider value={pending => { setBusy(pending); if (pending) setNotice(""); }}>{query.error ? <RecordError error={query.error} retry={query.refresh} /> : !available ? <p role="status">Actualisation du bien…</p> : null}<fieldset disabled={busy || !available} aria-busy={busy} className="kay-record-page"><legend className="sr-only">Bien et commandes d’inventaire</legend>
     <RecordHeader title={property.marketing_name || property.reference} route={`/projects/properties/${id}`} kind="inventory" backHref={back} reference={`${property.reference} · ${property.development_id ? "Unité physique" : "Bien indépendant"}`} badges={archived ? <CrmStatusBadge state="archived">Archivé</CrmStatusBadge> : undefined} actions={<><RecordDrawer label="Documents" action="file" busy={busy} description="Pièces jointes partagées de ce bien.">{!archived ? <FilePanel parentKind="property" parentId={id} writable={managedWritable} /> : <p className="text-sm text-muted-foreground">Restaurez le dossier pour accéder aux documents.</p>}</RecordDrawer>{!archived ? <Button action="edit" variant="outline" asChild><Link href={`/projects/properties/${id}/edit`}>Modifier</Link></Button> : null}<RecordActions initialOpen={initialTab === "history"}><RecordDrawer label="Historique" action="read" busy={busy} initialOpen={initialTab === "history"} description="Historique des faits, offres et états de ce bien."><InventoryHistory id={id} /></RecordDrawer>{role !== "agent" ? <RecordDrawer label="Gérer le dossier" action="settings" busy={busy} description="Archivage et restauration du bien."><LifecyclePanel kind="properties" id={id} version={property.version} reference={property.reference} archived={archived} saved={query.refreshQuietly} /></RecordDrawer> : null}</RecordActions></>} />
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{archived ? <p role="status" className="mb-3 text-sm text-muted-foreground">Bien archivé : les informations restent consultables.</p> : null}
     <RecordWorkspace hideSingleTab label="Informations du bien" tabs={[{ id: "overview", label: "Aperçu", content: <>
@@ -60,5 +68,5 @@ export function PropertyRecord({ id, role, edit = false, initialTab }: { id: str
       <InventoryPhotoRail id={id} kind="property" writable={managedWritable} archived={archived} revision={photoRevision} changed={photoChanged} />
       <RecordSection title="Propriétaires" action={managedWritable ? <RecordDrawer label="Modifier" title="Propriétaires légaux" action="edit" busy={busy} initialOpen={initialTab === "owners"} description="Propriétaires légaux de ce bien.">{(close, done) => <OwnerEditor property={property} saved={() => { saved(); done(); }} cancel={close} />}</RecordDrawer> : undefined}>{property.owners.length ? property.owners.map((owner, index) => <InventoryParty key={index} link={owner} />) : <p className="text-sm text-muted-foreground">Aucun propriétaire renseigné. Les offres ne peuvent pas devenir disponibles.</p>}</RecordSection>
     </>} />
-  </fieldset></InventoryBusyContext.Provider>;
+  </fieldset></InventoryBusyContext.Provider></InventoryRecordContext.Provider>;
 }

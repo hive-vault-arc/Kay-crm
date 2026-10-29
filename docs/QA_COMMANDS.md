@@ -2956,3 +2956,17 @@ typechecked, not run. [Contract](04-design/deal-stock-recovery-local.md). Backen
 unchanged/not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/
 CI/AFTER/product checks and migrations0036/0037 remain pending. No actual access/
 workaround, main/push/merge/deploy.
+
+
+## Selected external-stock result recovery,2026-10-29
+
+782 frontend units pass,20 added actual reader/command/dialog/facade/host/route
+cases. Lint/types/build/history and static Frontend Taste app lint3 pass,0
+findings. Property/unit/programme and both elevated roles, original request/key,
+coherent review, completion-only retry, explicit conflict, changed offering,
+source retention, monotonic handoff, denial/scope/disposal are covered.
+[Contract](04-design/external-stock-recovery-local.md). Two isolated browser
+property-read/programme-ack cases prepared/typechecked, not run. Backend unchanged/
+not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
+product acceptance and migrations0036/0037 remain pending. No actual app/DB/
+account/config/service/worker/transfer access or workaround, main/push/merge/deploy.

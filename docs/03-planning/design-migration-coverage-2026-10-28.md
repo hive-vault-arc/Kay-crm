@@ -321,3 +321,24 @@ rerun. Manager external stock outcomes and remaining exact field/action/context
 reconciliation/old selectors continue; actual SQL/concurrent stock/native/device/
 AFTER/CI/product checks and migrations0036/0037 remain pending. No actual access/
 workaround, main/push/merge/deploy. P0/P8/full goal open.
+
+
+## External inventory-result follow-through,2026-10-29
+
+[External-result map](../04-design/external-stock-recovery-local.md) retains the
+selected per-offer icon/confirmation, safe stock effects, date/shared reason and
+M/A boundary. A dedicated owner pins original target/offering/account/role and
+strict body/key; current proof and coherent reviewed facts precede dispatch.
+Validated receipt/current target and awaited UI handoff precede host acceptance;
+acknowledged failures retry completion only. Replaced/retired offerings end
+read-only. Protected property/programme hosts retain the opening record through
+background/source changes, accept verified results monotonically and still mask
+current denial. View routes key and forward the real actor/role.
+
+782 frontend units pass,20 added; lint/types/build/history/static app lint3 pass.
+Two native property-read/programme-ack cases prepared/typechecked, not run.
+Backend unchanged/not rerun. Generic inventory command users (development
+creation/edit, hierarchy, offering/availability, owners, property listing wizard),
+remaining exact field/context reconciliation and old selectors continue. Actual
+SQL/concurrent stock/native/device/AFTER/CI/product checks and migrations0036/0037
+remain pending. No actual access/workaround, main/push/merge/deploy. Goal active.

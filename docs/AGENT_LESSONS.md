@@ -2040,3 +2040,15 @@ action direction must not silently retarget an opening confirmation. Await the
 original UI completion callback, pass its verified current record into any
 prerequisite queue, and retry acknowledged completion without another write.
 Synthetic replay fixtures must not apply stock effects again for a cached key.
+
+
+## External stock results and retained offering hosts,2026-10-29
+
+An action-level retry owner is insufficient if a background target refresh can
+remove its offering component. Keep the last authorized record/offer stable
+while an operation owns record busy, including unknown outcomes; install only
+the verified current result monotonically, with current denial still masking
+private work. Bind view and dialog lifetimes to the originating actor/role and
+target/offering. Bracket stock facts with coherent parent/offering reads, and
+await UI handoff before accepting the verified target. Another generic form
+using an older command hook is not covered merely by sharing the record host.

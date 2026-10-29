@@ -110,7 +110,7 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
     "@/features/discovery/lifecycle-panel": { LifecyclePanel: "Lifecycle" }, "@/features/files/file-panel": { FilePanel: "Files" },
     "./development-contracts": {}, "./development-phase": { DevelopmentPhaseBadge: "Phase" }, "./development-editor": { DevelopmentEditor: "Editor" }, "./hierarchy-panel": { HierarchyPanel: "Hierarchy" },
     "./unit-directory": { UnitDirectory: "Units" }, "./owner-editor": { OwnerEditor: "OwnerEditor" }, "./inventory-history": { InventoryHistory: "History" },
-    "./use-command": { InventoryBusyContext: { Provider: "Provider" } }, "./contracts": { categoryLabels: {} },
+    "./use-command": { InventoryBusyContext: { Provider: "Provider" } }, "./record-scope": { InventoryRecordContext: { Provider: "RecordScope" } }, "./contracts": { categoryLabels: {} },
     "./inventory-support": { InventoryPhotoRail: "Photos", InventoryParty: "Party" }, "./inventory-offer-section": { InventoryOfferSection: "Offers" },
   } });
   const render = (role, edit = false) => harness.render(() => DevelopmentRecord({ id: development.id, role, edit }));

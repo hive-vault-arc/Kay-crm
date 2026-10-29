@@ -2758,3 +2758,33 @@ workaround, main/push/merge/deploy. Goal active.
 
 [Stock evidence](design-migration-evidence/deal-stock-recovery-2026-10-29.json)
 records source/synthetic boundaries separately from pending actual acceptance.
+
+
+## Selected external stock result/record retention,2026-10-29
+
+The selected per-offer external action now uses dedicated original request/key
+ownership and current originating M/A identity proof. Strict target/offering
+receipts and current minimum versions precede awaited UI completion and direct
+verified host acceptance. Unknown fields/dismissal/refresh cannot replace the
+request; acknowledged result-read or parent failure retries completion only.
+Coherent bracketed target/offering/stock review and explicit conflict refresh
+preserve versions/fingerprint/date/shared reason. Replaced/retired/archived/
+completed current offerings finish read-only.
+
+Property/programme hosts retain authorized records through transient failure
+and freeze their opening offering while record busy is owned, including unknown
+results. Current denials mask private work; verified normalized records install
+monotonically, with scoped route account/role keys and disposal cleanup. Existing
+project layout/cards/tabs/header controls, backend stock/finance/history and
+permissions remain. [Contract](../04-design/external-stock-recovery-local.md).
+
+782 frontend units pass,20 added; lint/types/build/history/static app lint3 pass.
+Two isolated phone property-read/desktop programme-ack cases prepared/typechecked,
+not run. Backend unchanged/not rerun. Generic inventory command users and exact
+remaining field/action/context/old-selector audit continue; actual SQL/native/
+concurrent stock/device/focus/zoom/visual/performance/CI/AFTER/product checks and
+migrations0036/0037 remain pending. No actual app/DB/account/private config/
+service/worker/transfer access or workaround, main/push/merge/deploy. Goal active.
+
+[External-result evidence](design-migration-evidence/external-stock-recovery-2026-10-29.json)
+separates source/synthetic results from pending actual acceptance.
