@@ -611,3 +611,19 @@ AST preserves titles/direct commands/timeouts/service calls. Focused ESLint/type
 pass; native and wider8 consumers unrun. Production unchanged; prior977 frontend/
 573 backend gates retained. P0/P8/full goal and remaining exact field/job/alias/
 selector work stay open. [Path map](../05-quality/development-native-paths-local.md).
+
+
+## Inventory agent actions and next file boundary,2026-10-29
+
+Two prepared permission cases now assert actual selected offer/owner action
+absence, canonical unit editor labels and all3 locked placement choices. Direct
+commands/titles/timeouts remain unchanged; lint/types pass. No actual permission
+acceptance inferred. [Path map](../05-quality/inventory-native-paths-local.md#agent-permission-follow-through2026-10-29).
+
+Source review locates FilePanel's upload metadata/transfer lifecycle as the next
+concrete recovery boundary: pending metadata dispatch/abort, file replacement
+following unknown results and current receipt/transfer completion need actual-module
+fault checks. This is a source audit lead, not demonstrated runtime failure or
+private leakage. File native helpers still expect old inline picker/Contact tabs
+and must be reconciled with the selected nested uploader after that boundary is
+reviewed. Other field/job/alias/selectors and P0/P8/full-goal checks stay open.

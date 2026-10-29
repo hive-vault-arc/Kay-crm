@@ -59,3 +59,18 @@ inventory file and helper functions only. Other consumers' old selectors,
 development helpers, actual device/zoom/focus/SQL/CI/security/AFTER/product checks
 and full field/job/alias reconciliation remain pending; none is certified by
 compilation. [Evidence](../03-planning/design-migration-evidence/inventory-native-paths-2026-10-29.json).
+
+
+## Agent permission follow-through,2026-10-29
+
+Two project-permission source cases now use current Modifier links and actual
+Offres/Propriétaires action names. Absence checks scope the real create-offer and
+owner-edit controls, avoiding a pass against obsolete labels. Unit editing uses
+the distinct Modifier l’unité form/save label through the shared helper. Locked
+placement is checked at its first-step home, including exactly3 disabled selectors,
+before navigating to editable surface. Existing stock/hierarchy equality and
+private developer/404 assertions remain. Two titles,2 direct business commands
+and2 timeouts are AST-identical to base094fa5f. Focused ESLint/full types pass;
+actual native/SQL/permission verification remains unrun. Production and prior
+977 frontend/573 backend evidence unchanged. Other helper consumers remain open.
+[Evidence](../03-planning/design-migration-evidence/inventory-permission-paths-2026-10-29.json).

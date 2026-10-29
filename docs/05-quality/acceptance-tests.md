@@ -873,3 +873,14 @@ comparison replace removed tabs. Focused ESLint/types and AST preservation check
 pass. Prepared only; actual SQL/native/device/security/CI/AFTER/product and wider
 8 helper consumers remain unaccepted. Production/prior977 frontend/573 backend
 evidence retained. [Path map](development-native-paths-local.md).
+
+
+## Inventory agent action source checks,2026-10-29
+
+Two project permission native source cases now check real selected offer/owner
+actions, unit editor identity and all3 locked placement controls at their current
+step. Area, development/floor/type/offering preservation and private developer/
+404/403 assertions remain. AST retains titles/direct commands/timeouts; ESLint/
+types pass. Native/SQL/actual permission and wider helper acceptance unrun.
+Production/prior977 frontend/573 backend evidence retained.
+[Path map](inventory-native-paths-local.md#agent-permission-follow-through2026-10-29).

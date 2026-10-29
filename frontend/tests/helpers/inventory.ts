@@ -3,7 +3,7 @@ import type { Page } from "@playwright/test";
 import { expect } from "./auth";
 
 export async function propertyEditStep(page: Page, target: number) {
-  const form = page.getByRole("form", { name: "Modifier le bien", exact: true });
+  const form = page.getByRole("form", { name: /^(Modifier le bien|Modifier l’unité)$/ });
   const progress = form.getByRole("navigation", { name: "Progression de la modification", exact: true });
   const step = progress.getByRole("button", { name: new RegExp(`^Étape ${target + 1} sur 5 : `) });
   if (await step.getAttribute("aria-current") !== "step") await step.click();
@@ -11,12 +11,12 @@ export async function propertyEditStep(page: Page, target: number) {
 }
 
 export async function savePropertyEdit(page: Page) {
-  const form = page.getByRole("form", { name: "Modifier le bien", exact: true });
+  const form = page.getByRole("form", { name: /^(Modifier le bien|Modifier l’unité)$/ });
   if (await form.getAttribute("data-write-recovery") === "true") {
     await form.getByRole("button", { name: /^(Réessayer la même opération|Actualiser le résultat)$/ }).click(); return;
   }
   await propertyEditStep(page, 4);
-  await form.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+  await form.getByRole("button", { name: /^(Enregistrer le bien|Enregistrer l’unité)$/ }).click();
 }
 
 export async function createProperty(page: Page, category = "apartment", reference = `SP07-${randomUUID()}`) {

@@ -3201,3 +3201,18 @@ migration/push/merge/deploy. Actual SQL/native/security/CI/AFTER/product and
 remaining field/job/alias/selectors stay open. Full goal active.
 [Path map](../05-quality/development-native-paths-local.md) and
 [evidence](design-migration-evidence/development-native-paths-2026-10-29.json).
+
+
+## Inventory agent permission native paths,2026-10-29
+
+Two existing permission scenarios target actual selected header/section actions;
+obsolete absence labels no longer stand in for current create-offer/owner-edit
+checks. Shared property editing also accepts its real unit form/save identity.
+All3 locked placement selectors are checked at their first-step home before
+surface editing. Source AST retains2 titles/2 direct commands/2 timeouts; focused
+ESLint/types pass. No production, mock success or native/SQL execution. Prior977
+frontend/573 backend units/build/history retained. Frozen/main/protected work
+preserved; no actual access/workaround/migration/push/merge/deploy. Full goal and
+actual native/device/security/CI/AFTER/product checks remain open.
+[Path map](../05-quality/inventory-native-paths-local.md#agent-permission-follow-through2026-10-29)
+and [evidence](design-migration-evidence/inventory-permission-paths-2026-10-29.json).

@@ -3176,3 +3176,18 @@ types pass; actual identity/SQL/native/service/security/CI acceptance and wider
 units retained. No actual app/DB/account/config/service/outage/files/worker
 access/workaround, migration/main/push/merge/deploy.
 [Path map](05-quality/development-native-paths-local.md).
+
+
+## Inventory agent action native selectors,2026-10-29
+
+Old create-campaign/owner-edit absence labels are replaced by actual selected
+controls scoped to their proper sections. The unit placement check covers all3
+disabled selectors at the current first step; editable surface preserves exact
+stock/hierarchy. Private developer/404 and Agent archive403 checks remain. Two
+business commands/titles/timeouts unchanged; focused ESLint/types pass. Source
+checks only, not actual permission/native/SQL/security acceptance. Production
+unchanged/prior977 frontend/573 backend evidence retained. No actual app/DB/
+account/config/service/file/worker access or workaround, migration/main/push/merge/
+deploy. Upload lifecycle audit is pending fault-test evidence, not a demonstrated
+runtime/private-leak claim.
+[Evidence](03-planning/design-migration-evidence/inventory-permission-paths-2026-10-29.json).

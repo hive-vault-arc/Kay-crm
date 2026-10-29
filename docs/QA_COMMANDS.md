@@ -3292,3 +3292,18 @@ helper consumers and shared inventory consumers still require their own path
 review and actual SQL/native/device/security/CI/AFTER/product verification.
 [Path map](05-quality/development-native-paths-local.md) and
 [evidence](03-planning/design-migration-evidence/development-native-paths-2026-10-29.json).
+
+
+## Inventory permission selected native actions,2026-10-29
+
+npx eslint tests/helpers/inventory.ts tests/e2e/project-permissions.spec.ts
+--max-warnings=0 and npm run typecheck exit0. Source AST confirms2 unchanged titles,
+2 exact staffCommand argument sets and2 timeouts. Current absence checks use real
+create-offer/owner-edit labels; unit form identity and exactly3 disabled placement
+selectors are checked at the first step before surface editing. No production
+edit, mock success, new timeout or mirrored unit test. Native cases prepared,
+not listed/imported/executed. Prior977 frontend/573 backend units/build/history
+retained, not rerun; actual SQL/native/permission/security/CI/AFTER/product pending.
+No actual app/DB/accounts/config/service/worker/file/transfer or workaround,
+migration/main/push/merge/deploy. Broader file upload paths remain pending.
+[Evidence](03-planning/design-migration-evidence/inventory-permission-paths-2026-10-29.json).
