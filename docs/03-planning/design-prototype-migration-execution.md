@@ -2850,3 +2850,25 @@ old selectors continue. Backend unchanged/not rerun; actual SQL/concurrent stock
 native/device/AFTER/CI/product acceptance and migrations0036/0037 pending. No actual
 access/workaround, main/push/merge/deploy. Goal active.
 [Creation evidence](design-migration-evidence/development-creation-recovery-2026-10-29.json).
+
+
+## Selected property listing follow-through,2026-10-29
+
+The selected shared five-step listing wizard retains its complete field/review map
+for independent/unit creation and edits. A scoped owner freezes original strict
+request/key/placement intent/callback, protects unknown controls and
+verifies current identity/receipt/property before navigation. Acknowledged failure
+retries completion only. Creation's initial offer bumps the property to2; edits
+never overwrite offers. Explicit current review/guarded reload, newer-host counter
+checks and declared locked-category/placement reconciliation retain drafts without
+retargeting changed units. Property edit host and creation routes carry real scope/
+actor/busy ownership. [Contract](../04-design/property-listing-recovery-local.md).
+
+848 frontend units pass,20 added; lint/types/build/history/static app lint5 pass.
+Three native phone independent/unit ack and desktop edit read cases prepared/
+typechecked, not run. Repository-wide search found the additional generic archive/
+restore consumer in discovery/lifecycle-panel.tsx; it remains source work, alongside
+exact remaining domain fields/actions/contexts and old selectors. Backend unchanged/
+not rerun; actual SQL/native/concurrent stock/device/AFTER/CI/product acceptance and
+migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
+Goal active. [Listing evidence](design-migration-evidence/property-listing-recovery-2026-10-29.json).

@@ -2,6 +2,12 @@
 
 import { CompletedIcon, LocationIcon, PropertyIcon, SettingsIcon, FinanceIcon } from "@/components/icons";
 import { SectionHeading } from "@/components/shared/section-heading";
+import { useDossierDraft } from "@/components/shared/dossier-form";
+import { RecordEntry } from "@/components/shared/record-entry";
+import { RecordSection } from "@/components/shared/record-workspace";
+import { useUnsavedGuard } from "@/components/shared/unsaved-guard";
+import type { StaffRole } from "@/features/contacts/contracts";
+import { RecordError } from "@/features/contacts/record-states";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -13,14 +19,16 @@ import { useHydrated } from "@/hooks/use-hydrated";
 import { formatMAD } from "@/lib/format";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ApiError } from "@/lib/api/client";
 import { amenityLabels, categoryLabels, createPropertySchema, editPropertySchema, kindLabels, unitCategoryValues, type Property } from "./contracts";
 import { InventoryDraftSummary } from "./inventory-draft-summary";
 import { InventoryWizardSteps } from "./inventory-wizard-steps";
-import { InventoryError, Price } from "./states";
+import { InventoryError, InventoryStatus, Price } from "./states";
 import { LevelPicker } from "./level-picker";
 import { formatListingValue, listingFieldLabels } from "./listing-field-format";
-import { useInventoryCommand } from "./use-command";
+import { usePropertyListingCommand } from "./use-property-listing-command";
+import { PropertyConflictDetails } from "./property-conflict-details";
 
 type Category = Property["category"];
 type Market = keyof typeof kindLabels;
@@ -95,19 +103,51 @@ function buildPayload(values: Values, editing = false) {
   };
 }
 
-export function PropertyListingWizard({ property, developmentId, developmentLabel, cancel }: { property?: Property; developmentId?: string; developmentLabel?: string; cancel?: () => void }) {
+function savedPlacement(property?: Property) {
+  return { block_id: property?.hierarchy?.block?.id ?? "", floor_id: property?.floor_id ?? "", unit_type_id: property?.unit_type_id ?? "", block_label: property?.hierarchy?.block?.label ?? "", floor_label: property?.hierarchy?.floor?.label ?? "", unit_type_label: property?.hierarchy?.unit_type?.label ?? "" };
+}
+function draftSnapshot(values: Values, placement: ReturnType<typeof savedPlacement>, editing: boolean) {
+  const { initial_offering, ...facts } = buildPayload(values, editing);
+  return JSON.parse(JSON.stringify({ ...(editing ? facts : { ...facts, initial_offering }), block_id: placement.block_id, floor_id: placement.floor_id, unit_type_id: placement.unit_type_id }, (_key, value) => typeof value === "number" && !Number.isFinite(value) ? `invalid:${value}` : value)) as unknown;
+}
+function categoryValues(previous: Values, category: Category): Values {
+  const market = previous.market === "holiday" && !holidayCategories.has(category) ? "sale" : category === "room" && previous.market === "sale" ? "rental" : previous.market;
+  return { ...previous, category, market, period: market === previous.market ? previous.period : market === "rental" ? "month" : "", amenities: previous.amenities.filter(option => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(option)) };
+}
+export function PropertyListingWizard({ property, developmentId, developmentLabel, cancel, actorId, role }: { property?: Property; developmentId?: string; developmentLabel?: string; cancel?: () => void; actorId?: string; role?: StaffRole }) {
   const router = useRouter();
   const hydrated = useHydrated();
-  const command = useInventoryCommand();
+  const unitId = property ? property.development_id : developmentId;
+  const command = usePropertyListingCommand({ id: property?.id, version: property?.version, developmentId: unitId ?? undefined, actorId, role });
+  const guard = useUnsavedGuard(), scope = useRef<HTMLFormElement>(null), alive = useRef(true), lock = useRef(false), reading = useRef<AbortController | null>(null), reported = useRef(false);
+  const [current, setCurrent] = useState(property), [comparison, setComparison] = useState<Property>(), [readBusy, setReadBusy] = useState(false), [readError, setReadError] = useState<ApiError>();
   const [values, setValues] = useState<Values>(() => savedValues(property));
   const [version, setVersion] = useState(property?.version ?? 1);
-  const [placement, setPlacement] = useState({ block_id: property?.hierarchy?.block?.id ?? "", floor_id: property?.floor_id ?? "", unit_type_id: property?.unit_type_id ?? "", block_label: property?.hierarchy?.block?.label ?? "", floor_label: property?.hierarchy?.floor?.label ?? "", unit_type_label: property?.hierarchy?.unit_type?.label ?? "" });
+  const [placement, setPlacement] = useState(() => savedPlacement(property));
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
   const editing = Boolean(property);
-  const unitId = property ? property.development_id : developmentId;
-  const lockedIdentity = Boolean(property?.offerings.length);
+  const lockedIdentity = Boolean(current?.offerings.length);
+  const busy = command.pending || readBusy, blocked = Boolean(current?.archived_at || comparison?.archived_at || comparison && (comparison.development_id ?? null) !== (unitId ?? null));
+  const changes = useDossierDraft(draftSnapshot(values, placement, editing), command.protected || readBusy);
+  const keepCurrentIdentity = Boolean(comparison?.offerings.length && values.category !== comparison.category);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; reading.current?.abort(); }; }, []);
+  function editable() { return !lock.current && command.canEdit() && !comparison && !blocked; }
+  async function compare() {
+    if (!property || !hydrated || lock.current || command.locked()) return;
+    lock.current = true; setReadBusy(true); setReadError(undefined); reading.current?.abort(); const abort = new AbortController(); reading.current = abort;
+    try { const record = await command.inspect(abort.signal); if (alive.current && !abort.signal.aborted) setComparison(record); }
+    catch (reason) { if (alive.current && !abort.signal.aborted) setReadError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
+    finally { if (alive.current) { lock.current = false; setReadBusy(false); } }
+  }
+  function adopt(keep: boolean) {
+    if (!comparison || !command.accept(comparison)) return;
+    const next = savedValues(comparison), position = savedPlacement(comparison); setCurrent(comparison); setVersion(comparison.version);
+    if (!keep) { setValues(next); setPlacement(position); setError(""); }
+    else if (keepCurrentIdentity) { setValues(previous => categoryValues(previous, comparison.category)); setPlacement(position); }
+    changes.accept(draftSnapshot(next, position, true)); setComparison(undefined); setReadError(undefined);
+  }
   const requiredDetails = !editing && !unitId;
   const holidayDetails = holidayCategories.has(values.category) && (editing || values.market === "holiday");
   const wizardSteps = editing ? [{ ...steps[0], label: "Type et identité", mobileLabel: "Type" }, ...steps.slice(1)] : steps;
@@ -116,22 +156,19 @@ export function PropertyListingWizard({ property, developmentId, developmentLabe
     const placementFields = unitId ? { development_id: unitId, floor_id: placement.floor_id || null, unit_type_id: placement.unit_type_id || null } : {};
     return property ? editPropertySchema.safeParse({ ...fields, ...placementFields, expected_version: version }) : createPropertySchema.safeParse({ ...fields, ...placementFields, initial_offering });
   }
-  const set = (field: Field, value: string) => setValues(previous => ({ ...previous, [field]: value }));
+  const set = (field: Field, value: string) => { if (editable()) setValues(previous => ({ ...previous, [field]: value })); };
   const field = (name: Field, label: string, options?: { required?: boolean; type?: "number" | "url"; hint?: string; maxLength?: number }) => <div className="grid min-w-0 gap-2"><Label htmlFor={`property-${name}`}>{label}{options?.required ? " *" : ""}</Label><Input id={`property-${name}`} value={values[name]} onChange={event => set(name, event.target.value)} required={options?.required} type={options?.type ?? "text"} inputMode={options?.type === "number" ? "decimal" : undefined} min={options?.type === "number" ? 0 : undefined} step={options?.type === "number" ? "any" : undefined} maxLength={options?.maxLength} aria-describedby={options?.hint ? `hint-${name}` : undefined} />{options?.hint ? <p id={`hint-${name}`} className="text-xs text-muted-foreground">{options.hint}</p> : null}</div>;
   const select = (name: Field, label: string, options: Record<string, string>) => <div className="grid min-w-0 gap-2"><Label htmlFor={`property-${name}`}>{label}</Label><NativeSelect id={`property-${name}`} value={values[name]} onChange={event => set(name, event.target.value)}><option value="">Non renseigné</option>{Object.entries(options).map(([value, text]) => <option key={value} value={value}>{text}</option>)}</NativeSelect></div>;
   function chooseCategory(category: Category) {
-    if (lockedIdentity || unitId && !(unitCategoryValues as readonly string[]).includes(category)) return;
+    if (!editable() || lockedIdentity || unitId && !(unitCategoryValues as readonly string[]).includes(category)) return;
     if (unitId && category !== values.category) setPlacement(previous => ({ ...previous, unit_type_id: "", unit_type_label: "" }));
-    setValues(previous => {
-      const market = previous.market === "holiday" && !holidayCategories.has(category) ? "sale" : category === "room" && previous.market === "sale" ? "rental" : previous.market;
-      return { ...previous, category, market, period: market === previous.market ? previous.period : market === "rental" ? "month" : "", amenities: previous.amenities.filter(option => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(option)) };
-    });
+    setValues(previous => categoryValues(previous, category));
   }
   function chooseMarket(market: Market) {
-    if (unitId && market === "holiday") return;
+    if (!editable() || editing || unitId && market === "holiday") return;
     setValues(previous => ({ ...previous, market, period: market === "sale" ? "" : market === "holiday" ? "day" : "month" }));
   }
-  function focus(next: number) { setStep(next); setError(""); requestAnimationFrame(() => heading.current?.focus()); }
+  function focus(next: number) { if (!hydrated || lock.current || command.locked()) return; setStep(next); setError(""); requestAnimationFrame(() => heading.current?.focus()); }
   function validate(current: number): boolean {
     const required: [boolean, string][] = current === 3 ? [
       [!values.amenities.includes("garden") || Boolean(values.garden_area_sqm), "Indiquez la surface du jardin."],
@@ -165,10 +202,15 @@ export function PropertyListingWizard({ property, developmentId, developmentLabe
     setError(""); return true;
   }
   async function save() {
+    if (!hydrated || lock.current || command.pending) return;
+    if (command.uncertain) { lock.current = true; try { await command.retry(); } finally { lock.current = false; } return; }
+    if (!editable()) return;
     for (let index = 0; index < 4; index++) if (!validate(index)) { setStep(index); requestAnimationFrame(() => heading.current?.focus()); return; }
     const parsed = payload();
     if (!parsed.success) { setError("Vérifiez les informations saisies avant d’enregistrer le bien."); return; }
-    await command.submit(property ? `/api/v1/properties/${property.id}` : "/api/v1/properties", parsed.data, property ? "PATCH" : "POST", id => router.push(`/projects/properties/${id}`));
+    lock.current = true; reported.current = false;
+    try { await command.submit(property ? `/api/v1/properties/${property.id}` : "/api/v1/properties", parsed.data, property ? "PATCH" : "POST", (record, signal) => { if (!alive.current || signal.aborted || reported.current) return; router.push(`/projects/properties/${record.id}`); if (alive.current && !signal.aborted) { reported.current = true; changes.accept(); } }); }
+    finally { lock.current = false; }
   }
   const category = values.category;
   const options = Object.entries(amenityLabels).filter(([key]) => (amenityAllowed[category] ?? Object.keys(amenityLabels)).includes(key));
@@ -180,21 +222,24 @@ export function PropertyListingWizard({ property, developmentId, developmentLabe
     ...(!editing ? [{ label: "Offre", value: kindLabels[values.market] }, { label: "Prix", value: reviewPrice ? `${reviewPrice}${values.market === "sale" ? "" : ` / ${values.period === "day" ? "jour" : values.period === "week" ? "semaine" : values.period === "year" ? "an" : "mois"}`}` : null }] : []),
     { label: "Localisation courte", value: trim(values.location) }, { label: "Surface", value: values.area_sqm ? `${values.area_sqm} m²` : null },
     { label: "Pièces", value: hasRooms(values.category) ? trim(values.rooms) : null },
-    ...(unitId ? [{ label: "Programme", value: property?.hierarchy?.development.name ?? developmentLabel ?? "Programme sélectionné" }, { label: "Bloc", value: placement.block_label || null }, { label: "Étage du programme", value: placement.floor_label || null }, { label: "Type réutilisable", value: placement.unit_type_label || null }] : []),
+    ...(unitId ? [{ label: "Programme", value: current?.hierarchy?.development.name ?? developmentLabel ?? "Programme sélectionné" }, { label: "Bloc", value: placement.block_label || null }, { label: "Étage du programme", value: placement.floor_label || null }, { label: "Type réutilisable", value: placement.unit_type_label || null }] : []),
     ...(Object.keys(reviewDetails) as (keyof typeof reviewDetails)[]).map(key => ({ label: listingFieldLabels[key], value: formatListingValue(key, reviewDetails[key]), fullWidth: key === "description" || key === "google_maps_url" || key === "amenities" })),
   ];
-  return <form noValidate className="form-surface kay-inventory-wizard grid min-w-0 items-start gap-5" aria-label={editing ? unitId ? "Modifier l’unité" : "Modifier le bien" : unitId ? "Créer une unité" : "Créer un bien indépendant"} aria-busy={command.pending} onSubmit={event => { event.preventDefault(); if (step === 4) void save(); else if (validate(step)) focus(step + 1); }}>
-    <InventoryWizardSteps steps={wizardSteps} current={step} change={focus} disabled={!hydrated || command.pending} label={editing ? "Progression de la modification" : undefined} />
+  if (command.denied) return <>{command.acknowledged ? <p role="status">Le bien est enregistré. Les droits d’accès ont changé.</p> : null}<RecordError error={command.denied} /></>;
+  return <>{guard.dialog}<form ref={scope} data-managed-draft="true" data-live-dirty={changes.dirty ? "true" : undefined} data-write-recovery={command.uncertain ? "true" : undefined} noValidate className="form-surface kay-inventory-wizard grid min-w-0 items-start gap-5" aria-label={editing ? unitId ? "Modifier l’unité" : "Modifier le bien" : unitId ? "Créer une unité" : "Créer un bien indépendant"} aria-busy={busy || command.uncertain} onSubmit={event => { event.preventDefault(); if (lock.current || command.locked() && !command.uncertain) return; if (command.uncertain || step === 4) void save(); else if (validate(step)) focus(step + 1); }}>
+    <InventoryWizardSteps steps={wizardSteps} current={step} change={focus} disabled={!hydrated || busy || command.uncertain} label={editing ? "Progression de la modification" : undefined} />
     <div className="grid min-w-0 gap-5">
       <div><h2 ref={heading} tabIndex={-1} className="sr-only">{wizardSteps[step].label}</h2><SectionHeading icon={wizardSteps[step].icon} tone="teal">{wizardSteps[step].label}</SectionHeading><p className="mt-2 text-sm text-muted-foreground">{step === 0 ? editing ? "Modifiez les informations du bien. Les prix et les offres existantes restent inchangés." : "Commencez par le type de bien et le prix de l’offre brouillon." : step === 1 ? "Situez le bien. Le lien Google Maps restera accessible sur sa fiche." : step === 2 ? "Seuls les champs utiles à ce type de bien sont affichés." : step === 3 ? "Ajoutez les équipements connus et une description courte." : editing ? "Relisez les modifications avant de les enregistrer." : "Relisez la fiche. Vous pourrez ajouter les photos après sa création."}</p>{editing ? <p className="mt-2 text-xs text-muted-foreground">Les informations inconnues peuvent rester vides. Photos, propriétaires et documents sont conservés.</p> : unitId ? <p className="mt-2 text-xs text-muted-foreground">Renseignez les informations connues. Les détails inconnus peuvent rester vides dans ce brouillon d’unité.</p> : null}{lockedIdentity ? <p className="mt-2 text-xs text-muted-foreground">Des offres existent : le type et le rattachement sont conservés.</p> : null}</div>
-      <fieldset disabled={!hydrated || command.pending} className="grid min-w-0 gap-5">
+      {command.needsReview || readError ? <div className="grid gap-3">{readError ? <RecordError error={readError} /> : <p role="status">La fiche a changé. Comparez la version actuelle avant de conserver votre saisie.</p>}<Button action="compare" type="button" variant="outline" className="justify-self-start" disabled={busy || command.uncertain} onClick={() => void compare()}>Comparer la version actuelle</Button></div> : null}
+      {comparison ? <RecordSection title={`Version actuelle ${comparison.version}`} description="Votre saisie est conservée. Comparez les informations avant de réessayer."><RecordEntry title={comparison.marketing_name || comparison.reference} icon={PropertyIcon} meta={[{ label: "Référence", value: comparison.reference }, { label: "Type de bien", value: categoryLabels[comparison.category] }, { label: "Titre de l’annonce", value: comparison.marketing_name ?? "Non renseigné" }, { label: "Surface", value: comparison.area_sqm ? `${comparison.area_sqm} m²` : "Non renseignée" }, { label: "Localisation", value: comparison.location ?? "Non renseignée" }, ...(comparison.development_id ? [{ label: "Programme", value: comparison.hierarchy?.development.name ?? "Programme renseigné" }, { label: "Étage du programme", value: comparison.hierarchy?.floor?.label ?? "Non renseigné" }, { label: "Type réutilisable", value: comparison.hierarchy?.unit_type?.label ?? "Non renseigné" }] : [])]} /><PropertyConflictDetails property={comparison} />{comparison.offerings.length ? <div className="flex min-w-0 flex-wrap gap-3 [&>*]:min-w-0 [&>*]:flex-[1_1_14rem]">{comparison.offerings.map(offering => <RecordEntry key={offering.id} title={kindLabels[offering.kind]} icon={FinanceIcon} status={<InventoryStatus state={offering.state} compact />}><Price offering={offering} compact /></RecordEntry>)}</div> : null}{comparison.offerings.length ? <p className="text-sm text-muted-foreground">Des offres sont enregistrées : le type de bien est verrouillé. Les prix se modifient séparément dans la fiche.</p> : null}{blocked ? <p role="status">Le bien est archivé ou son programme a changé. Revenez à sa fiche pour consulter son état actuel.</p> : <>{keepCurrentIdentity ? <p role="status">Une offre verrouille désormais le type de bien. En conservant les autres champs, le type et le rattachement actuels seront repris.</p> : null}<div className="flex flex-wrap gap-2"><Button action="retry" type="button" variant="outline" disabled={busy} onClick={() => guard.request(() => adopt(false), scope.current ?? undefined)}>Recharger la fiche</Button><Button action="compare" type="button" variant="outline" disabled={busy} onClick={() => adopt(true)}>{keepCurrentIdentity ? "Garder les autres champs et le type de bien actuel" : "Conserver ma saisie sur cette version"}</Button></div></>}</RecordSection> : null}
+      <fieldset disabled={!hydrated || busy || blocked || Boolean(comparison) || !command.canEdit()} className="grid min-w-0 gap-5">
         {step === 0 ? <>
           <div className="grid gap-4 sm:grid-cols-2">{field("reference", "Référence", { required: true, maxLength: 80 })}<div className="grid gap-2"><Label htmlFor="property-category">Type de bien *</Label><NativeSelect id="property-category" value={category} disabled={lockedIdentity} onChange={event => chooseCategory(event.target.value as Category)}>{Object.entries(categoryLabels).filter(([key]) => !unitId || (unitCategoryValues as readonly string[]).includes(key)).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</NativeSelect></div><div className="sm:col-span-2">{field("marketing_name", "Titre de l’annonce (facultatif)", { maxLength: editing ? 160 : 50 })}</div></div>
-          {unitId ? <fieldset disabled={lockedIdentity} className="grid min-w-0 gap-4 sm:col-span-2"><legend className="mb-3 font-medium">Rattachement de l’unité</legend><LevelPicker parent={unitId} kind="blocks" label="Bloc de l’unité" value={placement.block_id} selectedLabel={placement.block_label} change={(value, label) => setPlacement(previous => ({ ...previous, block_id: value, floor_id: "", block_label: label ?? "", floor_label: "" }))} />{placement.block_id ? <LevelPicker key={placement.block_id} parent={placement.block_id} kind="floors" label="Étage de l’unité" value={placement.floor_id} selectedLabel={placement.floor_label} change={(value, label) => setPlacement(previous => ({ ...previous, floor_id: value, floor_label: label ?? "" }))} /> : null}<LevelPicker parent={unitId} kind="unit-types" category={category} label="Type réutilisable de l’unité" value={placement.unit_type_id} selectedLabel={placement.unit_type_label} change={(value, label) => setPlacement(previous => ({ ...previous, unit_type_id: value, unit_type_label: label ?? "" }))} /><p className="text-sm text-muted-foreground">Un appartement nécessite un étage et un type réutilisable. Pour les autres biens, le rattachement peut rester direct au programme. Les surfaces et pièces restent propres à cette unité.</p></fieldset> : null}
+          {unitId ? <fieldset disabled={lockedIdentity} className="grid min-w-0 gap-4 sm:col-span-2"><legend className="mb-3 font-medium">Rattachement de l’unité</legend><LevelPicker denied={command.deny} disabled={busy || command.uncertain || Boolean(comparison) || !command.canEdit()} parent={unitId} kind="blocks" label="Bloc de l’unité" value={placement.block_id} selectedLabel={placement.block_label} change={(value, label) => { if (editable()) setPlacement(previous => ({ ...previous, block_id: value, floor_id: "", block_label: label ?? "", floor_label: "" })); }} />{placement.block_id ? <LevelPicker denied={command.deny} disabled={busy || command.uncertain || Boolean(comparison) || !command.canEdit()} key={placement.block_id} parent={placement.block_id} kind="floors" label="Étage de l’unité" value={placement.floor_id} selectedLabel={placement.floor_label} change={(value, label) => { if (editable()) setPlacement(previous => ({ ...previous, floor_id: value, floor_label: label ?? "" })); }} /> : null}<LevelPicker denied={command.deny} disabled={busy || command.uncertain || Boolean(comparison) || !command.canEdit()} parent={unitId} kind="unit-types" category={category} label="Type réutilisable de l’unité" value={placement.unit_type_id} selectedLabel={placement.unit_type_label} change={(value, label) => { if (editable()) setPlacement(previous => ({ ...previous, unit_type_id: value, unit_type_label: label ?? "" })); }} /><p className="text-sm text-muted-foreground">Un appartement nécessite un étage et un type réutilisable. Pour les autres biens, le rattachement peut rester direct au programme. Les surfaces et pièces restent propres à cette unité.</p></fieldset> : null}
           {!editing ? <>
           <div><Label id="property-market-label">Type d’offre *</Label><RadioGroup aria-labelledby="property-market-label" value={values.market} onValueChange={value => chooseMarket(value as Market)} className="mt-3 grid gap-2 sm:grid-cols-3">{(Object.entries(kindLabels) as [Market, string][]).filter(([key]) => key !== "holiday" || !unitId && holidayCategories.has(category)).filter(([key]) => key !== "sale" || category !== "room").map(([key, label]) => <label key={key} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border bg-card px-3 py-2 text-sm"><RadioGroupItem value={key} />{label}</label>)}</RadioGroup></div>
           <div className="grid gap-4 sm:grid-cols-2">{field("price_mad", "Prix en MAD", { required: true, type: "number", hint: "Le prix crée une offre brouillon, sans publication automatique." })}{values.market !== "sale" ? <div className="grid gap-2"><Label htmlFor="property-period">Période *</Label><NativeSelect id="property-period" value={values.period} onChange={event => setValues(previous => ({ ...previous, period: event.target.value as Values["period"] }))}>{(values.market === "holiday" ? [["day", "Par jour"], ["week", "Par semaine"], ["month", "Par mois"]] : [["month", "Par mois"], ["year", "Par an"]]).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</NativeSelect></div> : null}</div>
-          </> : <section className="grid min-w-0 gap-3 rounded-md border p-4" aria-label="Offres conservées"><SectionHeading icon={FinanceIcon} tone="teal">Prix et offres</SectionHeading>{property?.offerings.length ? <dl className="grid min-w-0 gap-4 sm:grid-cols-3">{property.offerings.map(offer => <div key={offer.id} className="min-w-0"><dt className="text-sm text-muted-foreground">{kindLabels[offer.kind]}</dt><dd><Price offering={offer} /></dd></div>)}</dl> : <p className="text-sm text-muted-foreground">Aucune offre enregistrée.</p>}<p className="text-xs text-muted-foreground">Les prix se modifient dans l’onglet Offres, selon vos droits. Enregistrez ou annulez votre saisie avant de quitter ce formulaire.</p></section>}
+          </> : <section className="grid min-w-0 gap-3 rounded-md border p-4" aria-label="Offres conservées"><SectionHeading icon={FinanceIcon} tone="teal">Prix et offres</SectionHeading>{current?.offerings.length ? <dl className="grid min-w-0 gap-4 sm:grid-cols-3">{current.offerings.map(offer => <div key={offer.id} className="min-w-0"><dt className="text-sm text-muted-foreground">{kindLabels[offer.kind]}</dt><dd><Price offering={offer} /></dd></div>)}</dl> : <p className="text-sm text-muted-foreground">Aucune offre enregistrée.</p>}<p className="text-xs text-muted-foreground">Les prix se modifient dans la section Offres de la fiche, selon vos droits. Enregistrez ou annulez votre saisie avant de quitter ce formulaire.</p></section>}
         </> : null}
         {step === 1 ? <div className="grid gap-4 sm:grid-cols-2">{field("region", "Région", { required: requiredDetails, maxLength: 120 })}{field("city", "Ville", { required: requiredDetails, maxLength: 120 })}{field("district", "Arrondissement", { maxLength: 120 })}{field("neighborhood", "Quartier", { maxLength: 120 })}<div className="sm:col-span-2">{field("address", "Adresse précise (facultative)", { maxLength: 500 })}</div><div className="sm:col-span-2">{field("location", "Repère ou localisation courte (facultatif)", { maxLength: 500 })}</div><div className="sm:col-span-2">{field("google_maps_url", "Lien Google Maps (facultatif)", { type: "url", maxLength: 2048, hint: "Collez un lien https://maps.google.com, https://www.google.com/maps ou https://maps.app.goo.gl." })}</div></div> : null}
         {step === 2 ? <div className="grid gap-4 sm:grid-cols-2">
@@ -211,11 +256,12 @@ export function PropertyListingWizard({ property, developmentId, developmentLabe
           {category === "land" ? <>{select("land_delivery", "Livraison du terrain", { planned: "Prévue", titled: "Titré" })}{select("land_status", "Statut du terrain", { subdivided: "Lotissement", not_subdivided: "Non loti" })}</> : null}
 
         </div> : null}
-        {step === 3 ? <><div><p className="text-sm font-medium">Équipements et atouts</p>{options.length ? <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">{options.map(([key, label]) => <label key={key} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border bg-card px-3 py-2 text-sm"><Checkbox checked={values.amenities.includes(key as keyof typeof amenityLabels)} onCheckedChange={checked => setValues(previous => ({ ...previous, amenities: checked ? [...previous.amenities, key as keyof typeof amenityLabels] : previous.amenities.filter(option => option !== key) }))} />{label}</label>)}</div> : <p className="mt-2 text-sm text-muted-foreground">Aucun équipement applicable à ce type de terrain.</p>}</div><div className="grid gap-4 sm:grid-cols-3">{values.amenities.includes("garden") ? field("garden_area_sqm", "Surface du jardin en m²", { required: true, type: "number" }) : null}{values.amenities.includes("terrace") ? field("terrace_area_sqm", "Surface de la terrasse en m²", { required: true, type: "number" }) : null}{values.amenities.includes("garage") ? field("garage_spaces", "Places de garage", { required: true, type: "number" }) : null}</div><div className="grid gap-2"><Label htmlFor="property-description">Description (facultative)</Label><Textarea id="property-description" value={values.description} onChange={event => set("description", event.target.value)} maxLength={5000} rows={5} /><p className="text-xs text-muted-foreground">{values.description.length} / 5 000 caractères. N’ajoutez pas de coordonnées privées.</p></div></> : null}
+        {step === 3 ? <><div><p className="text-sm font-medium">Équipements et atouts</p>{options.length ? <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">{options.map(([key, label]) => <label key={key} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border bg-card px-3 py-2 text-sm"><Checkbox checked={values.amenities.includes(key as keyof typeof amenityLabels)} onCheckedChange={checked => { if (editable()) setValues(previous => ({ ...previous, amenities: checked === true ? [...new Set([...previous.amenities, key as keyof typeof amenityLabels])] : previous.amenities.filter(option => option !== key) })); }} />{label}</label>)}</div> : <p className="mt-2 text-sm text-muted-foreground">Aucun équipement applicable à ce type de terrain.</p>}</div><div className="grid gap-4 sm:grid-cols-3">{values.amenities.includes("garden") ? field("garden_area_sqm", "Surface du jardin en m²", { required: true, type: "number" }) : null}{values.amenities.includes("terrace") ? field("terrace_area_sqm", "Surface de la terrasse en m²", { required: true, type: "number" }) : null}{values.amenities.includes("garage") ? field("garage_spaces", "Places de garage", { required: true, type: "number" }) : null}</div><div className="grid gap-2"><Label htmlFor="property-description">Description (facultative)</Label><Textarea id="property-description" value={values.description} onChange={event => set("description", event.target.value)} maxLength={5000} rows={5} /><p className="text-xs text-muted-foreground">{values.description.length} / 5 000 caractères. N’ajoutez pas de coordonnées privées.</p></div></> : null}
         {step === 4 ? <InventoryDraftSummary icon={PropertyIcon} title={editing ? unitId ? "Modifications de l’unité" : "Modifications du bien" : unitId ? "Unité et offre à créer" : "Bien et offre à créer"} facts={facts} onlyFilled wide next={editing ? "Seules les informations du bien sont modifiées. Les offres, leurs prix, les photos, les propriétaires et les documents sont conservés." : "L’offre restera en brouillon. Les photos (jusqu’à 10, converties en WebP), les propriétaires et les documents se gèrent ensuite depuis la fiche."} /> : null}
       </fieldset>
-      {error ? <p role="alert" className="text-danger">{error}</p> : null}<InventoryError error={command.error} id={property?.id} choose={current => { setVersion(current.version); command.clear(); }} />
-      <div role="group" aria-label="Navigation du formulaire" className="flex flex-wrap gap-2 border-t pt-4">{step > 0 ? <Button action="back" type="button" variant="outline" disabled={command.pending} onClick={() => focus(step - 1)}>Précédent</Button> : null}{step < 4 ? <Button key="next" action="forward" type="button" variant="creation" disabled={!hydrated || command.pending} onClick={event => { event.preventDefault(); if (validate(step)) focus(step + 1); }}>Suivant</Button> : <Button key="save" action={editing ? "save" : "create"} type="submit" disabled={!hydrated || command.pending}>{command.pending ? "Enregistrement…" : editing ? unitId ? "Enregistrer l’unité" : "Enregistrer le bien" : unitId ? "Créer l’unité" : "Créer le bien"}</Button>}{cancel ? <Button action="cancel" type="button" variant="outline" disabled={command.pending} onClick={cancel}>Annuler</Button> : <Button action="cancel" variant="outline" asChild><Link href={property ? `/projects/properties/${property.id}` : unitId ? `/projects/${unitId}?tab=units` : "/projects"}>Annuler</Link></Button>}</div>
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}<InventoryError error={command.error} />
+      {command.uncertain ? <p role="status">{command.acknowledged ? "Le bien est enregistré. Actualisez son résultat sans l’enregistrer à nouveau." : "La réponse est interrompue. Réessayez la même opération pour retrouver son résultat."}</p> : null}
+      <div role="group" aria-label="Navigation du formulaire" className="flex flex-wrap gap-2 border-t pt-4">{step > 0 ? <Button action="back" type="button" variant="outline" disabled={!hydrated || busy || command.uncertain} onClick={() => focus(step - 1)}>Précédent</Button> : null}{step < 4 ? <Button key="next" action="forward" type="button" variant="creation" disabled={!hydrated || busy || command.uncertain} onClick={event => { event.preventDefault(); if (lock.current || command.locked()) return; if (validate(step)) focus(step + 1); }}>Suivant</Button> : <Button key="save" action={editing ? "save" : "create"} type="submit" disabled={!hydrated || busy || !command.uncertain && (blocked || Boolean(comparison) || !command.canEdit())}>{readBusy ? "Comparaison…" : command.pending ? "Enregistrement…" : command.uncertain ? command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération" : editing ? unitId ? "Enregistrer l’unité" : "Enregistrer le bien" : unitId ? "Créer l’unité" : "Créer le bien"}</Button>}{cancel ? <Button action="cancel" type="button" variant="outline" disabled={busy || command.uncertain} onClick={() => { if (!lock.current && !command.locked()) cancel(); }}>Annuler</Button> : <Button action="cancel" variant="outline" disabled={busy || command.uncertain} asChild><Link aria-disabled={busy || command.uncertain} tabIndex={busy || command.uncertain ? -1 : undefined} onClick={event => { if (lock.current || command.locked()) event.preventDefault(); }} href={property ? `/projects/properties/${property.id}` : unitId ? `/projects/${unitId}?tab=units` : "/projects"}>Annuler</Link></Button>}</div>
     </div>
-  </form>;
+  </form></>;
 }

@@ -639,3 +639,19 @@ agent acknowledged result-read outage.
 [Contract](../04-design/development-creation-recovery-local.md). Backend unchanged/
 not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
 product acceptance and broader legacy selectors remain pending. No AT-wide closure.
+
+
+## Selected property listing source coverage,2026-10-29
+
+848 synthetic frontend units pass,20 added across independent/unit create/edit,
+roles, strict scope/fields, frozen original request/key/placement, atomic receipt
+counters, completion-only recovery, foreign/stale identities/records/hierarchy/
+offers, historical completion, explicit comparison/reload/locked identity choice,
+newer-host race, normalization/zero/invalid numeric dirty state, known correction,
+source/hydration/authority/picker guards, disposal and real host/route ownership.
+Three cases in frontend/tests/e2e/property-listing-recovery.spec.ts are prepared/
+typechecked, not run: phone independent creation lost acknowledgement, phone unit
+drawer creation lost acknowledgement and desktop edit result-read outage.
+[Contract](../04-design/property-listing-recovery-local.md). Backend unchanged/not
+rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/product
+acceptance and broader legacy selectors remain pending. No AT-wide closure.

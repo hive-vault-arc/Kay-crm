@@ -386,3 +386,19 @@ not run. Property listing generic owner, exact remaining domain reconciliation a
 old selectors continue. Backend unchanged/not rerun; actual SQL/native/concurrent
 stock/device/AFTER/CI/product acceptance and migrations0036/0037 pending. No actual
 access/workaround, main/push/merge/deploy. P0/P8/full goal remain open.
+
+
+## Property listing follow-through,2026-10-29
+
+[Listing recovery map](../04-design/property-listing-recovery-local.md) retains
+selected independent/unit create/edit fields, stepper and complete review. Exact
+original operation/key/callback, current actor/host, protected unknown work,
+verified completion-only recovery and explicit current reconciliation cover all
+four flows. Property+first-offer counters stay2/1; existing scope/hierarchy/stock
+rules remain backend authoritative. 848 frontend units pass,20 added; lint/types/
+build/history/static app lint5 pass. Three native cases prepared/typechecked, not
+run. The other generic consumer found in discovery/lifecycle-panel.tsx, remaining
+exact domain reconciliation and old selectors continue. Backend unchanged/not
+rerun; actual SQL/native/concurrent stock/device/AFTER/CI/product acceptance and
+migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
+P0/P8/full goal remain open.

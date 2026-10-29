@@ -3003,3 +3003,14 @@ phone agent lost-ack/desktop agent result-read cases prepared/typechecked, not
 run. Backend unchanged/not rerun; actual SQL/concurrent stock/native/device/
 focus/zoom/visual/CI/AFTER/product acceptance and migrations0036/0037 pending.
 No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected property listing recovery,2026-10-29
+
+848 frontend units pass,20 added actual intent/controller/wizard/host/route cases.
+Lint/types/build/history and static Frontend Taste app lint5 pass,0 findings.
+[Contract](04-design/property-listing-recovery-local.md). Three isolated native
+phone independent/unit create lost-ack and desktop edit result-read cases are
+prepared/typechecked, not run. Backend unchanged/not rerun. Actual SQL/concurrent
+stock/native/device/focus/zoom/visual/CI/AFTER/product acceptance and migrations
+0036/0037 pending. No actual access/workaround, main/push/merge/deploy.

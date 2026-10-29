@@ -2086,3 +2086,16 @@ After acknowledgement retry only completion. Capability/source refresh must not
 replace unknown phase/promoter intent; current denial masks private input and
 retains only a generic saved fact. Carry the real route actor/role through wrapper
 keys, and protect stale stepper/Previous/Cancel handlers as well as inputs.
+
+
+## Listing recovery uses actual atomic counters and repository-wide ownership search,2026-10-29
+
+Inspect the service before guessing creation counters: a property plus its first
+draft offering is one command with property counter2 and offer counter1; it is
+not programme counter1 or the parent development counter. Pin the original
+listing parent/body/key/callback, verify current identities before navigation and
+require explicit current review after conflicts. A newly locked category needs a
+declared reconciliation that preserves other input and restores current placement.
+Search every frontend feature for shared handler consumers, not only inventory;
+archive/restore in discovery was an additional consumer. Validate retained draft
+and final verified completion in tests, rather than only asserting a sent body.

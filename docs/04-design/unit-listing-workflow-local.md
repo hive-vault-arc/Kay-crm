@@ -102,3 +102,12 @@ open. This does not complete the entire redesign or P0 coverage audit.
 
 [Checkpoint commands and source hashes](../03-planning/design-migration-evidence/unit-listing-workflow-2026-10-28.json)
 retain source results independently of prepared actual SQL/native acceptance.
+
+
+## Subsequent original-command recovery,2026-10-29
+
+[Property listing recovery](property-listing-recovery-local.md) now covers the
+shared wizard's independent/unit create/edit flows, original request ownership,
+explicit current comparison and verified result navigation. The field/control map
+above remains. Its contract separately records the explicit locked-category/
+placement reconciliation proposal and source/native acceptance boundaries.

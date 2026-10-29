@@ -77,3 +77,12 @@ acceptance is pending. No actual app/browser/HTTP/DB/account/private configurati
 service/worker/scanner/simulator/import/export/transfer access or workaround.
 Migrations0036/0037 remain unapplied; main and254 frozen inputs are unchanged.
 No push/merge/deploy. Full redesign goal remains active.
+
+
+## Subsequent property listing checkpoint,2026-10-29
+
+[Property listing recovery](property-listing-recovery-local.md) replaces the
+listing wizard's generic handler while retaining the selected shared form. The
+earlier remaining list records its original checkpoint boundary. Repository-wide
+search identified the separate still-generic archive/restore consumer in
+discovery/lifecycle-panel.tsx; broader source/native reconciliation remains open.

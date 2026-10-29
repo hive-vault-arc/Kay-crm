@@ -2873,3 +2873,22 @@ units pass,13 added; lint/types/build/history/static checks pass.
 prepared/typechecked, not run. Backend unchanged/not rerun; actual SQL/native/
 security/product acceptance pending. No actual access/workaround, migration,
 main/push/merge/deploy.
+
+
+## Property listing command and current projection review,2026-10-29
+
+The shared listing owner binds exact create/edit scope, original actor/role, strict
+path/body/method/parent/counter/key/callback. Current identity and matching receipt/
+record precede navigation; acknowledged failures retry only completion. Existing
+property+initial-offer counter2 is distinct from offer1/parent counters. Current
+hierarchy/offering identities must cohere. Unknown inputs/choices/stepper/dismissal
+are protected; explicit comparison cannot lower a newer host version. Archived or
+reparented current units end read-only. Current denial masks private data, and
+disposal aborts late work/releases busy. Existing scope/identity/hierarchy/stock
+backend rules prevail; no new grants, retention, storage or financial effects.
+848 synthetic frontend units pass,20 added; lint/types/build/history/static checks
+pass. [Contract](04-design/property-listing-recovery-local.md). Three native cases
+prepared/typechecked, not run. Backend unchanged/not rerun. No actual access/
+workaround, migration, main/push/merge/deploy; actual SQL/native/security/product
+acceptance pending. Repository-wide search also identified the still-generic
+archive/restore consumer in discovery/lifecycle-panel.tsx for separate source work.

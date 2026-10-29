@@ -1256,3 +1256,17 @@ errors permit explicit correction. Existing scoped promoter and active-contact
 checks prevail. No new endpoint, grant or backend effect.
 [Contract](development-creation-recovery-local.md); actual SQL/native acceptance
 remains pending.
+
+
+## Property listing client recovery,2026-10-29
+
+Existing property POST/PATCH and unit placement contracts remain strict. The
+selected owner retains original body/key/callback across unknown outcomes, binds
+opening parent/edit ID and current originating identity, then verifies receipt/
+current record before navigation. Creation with an initial draft offer returns
+property counter2/offer counter1; without an offer the existing API returns1. Edit
+receipts have no offering and advance the selected property. Acknowledged failures
+retry completion only. Hierarchy/offering references must cohere; explicit current
+comparison/reload cannot lower a newer host counter or retarget a moved unit.
+No new endpoint/grant/backend effect. [Contract](property-listing-recovery-local.md);
+actual SQL/native acceptance pending.
