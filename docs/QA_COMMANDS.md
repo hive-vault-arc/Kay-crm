@@ -3070,3 +3070,19 @@ main/push/merge/deploy. [Contract](04-design/finance-creation-keys-local.md) and
 [evidence](03-planning/design-migration-evidence/finance-creation-keys-2026-10-29.json).
 The old creation-replay finding above now has a source guard, not actual-stack
 acceptance or full redesign closure.
+
+
+## Selected Finance visible-review preparation,2026-10-29
+
+Executed from frontend, both exit0: npx eslint tests/review/finance.chrome.spec.ts
+tests/helpers/finance.ts --max-warnings=0; npm run typecheck. Read-only AST/source review confirms one
+prepared case,15 distinct intended manual frames, no retired selection/refresh/
+close selectors and zero production changes. Full units/build/history/backend
+are not rerun for this test-only edit; preceding927/572/build/history evidence
+remains scoped to unchanged production.
+
+Required future npm run test:chrome -- review/finance.chrome.spec.ts
+--max-failures=1 is **not run**. No browser/app/HTTP/DB/account/config/service or
+workaround access; all native geometry/focus/touch/zoom/contrast and actual-stack
+acceptance remain pending. [Preparation](05-quality/finance-native-reconciliation.md)
+and [evidence](03-planning/design-migration-evidence/finance-native-preparation-2026-10-29.json).

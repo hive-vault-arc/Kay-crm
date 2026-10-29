@@ -2965,3 +2965,24 @@ migrations0036/0037 remain pending. Selected UI/tokens/motion and254 frozen inpu
 are preserved, as are main and unrelated work. No workaround/push/merge/deploy.
 P0/P8 and the full goal remain active.
 [Evidence](design-migration-evidence/finance-creation-keys-2026-10-29.json).
+
+
+## Selected Finance native-review source follow-through,2026-10-29
+
+The previously identified finance.chrome.spec.ts selector gap is reconciled in
+source. The prepared review follows the existing drawer, inline full-width cards,
+original receipts and dossier history; current conflict/recovery/departure,
+recognition return focus and re-entry for loading/denial replace retired controls.
+Actual geometry now targets the portalled surface, with retained44px/4.5 thresholds,
+nonempty samples, six widths and actual200% zoom.15 intended manual frames use
+new names, preserving prior SP-16/canonical artifacts. No application/backend/
+style/token/motion change. [Coverage](../05-quality/finance-native-reconciliation.md).
+
+Focused ESLint/typecheck and AST/source review pass. The case/frames remain
+prepared, not run; no actual app/browser/HTTP/DB/account/config/service access or
+workaround. Prior927 frontend/572 backend units/build/history are retained for
+unchanged production code, not rerun or claimed fresh. Actual native/device/
+ledger/SQL/concurrency/security/CI/AFTER/product gates and migrations0036/0037,
+other legacy selectors and exact domain reconciliation remain pending. Main,
+254 frozen inputs and unrelated work stay preserved. P0/P8/full goal remain open.
+[Evidence](design-migration-evidence/finance-native-preparation-2026-10-29.json).

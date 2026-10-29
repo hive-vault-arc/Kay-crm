@@ -152,3 +152,15 @@ version1, true-actor/terms checks and sticky unknown409 after receipt pruning
 are explicit. The selected composition and deliberate recovery-departure warning
 above remain. Historical evidence is not expanded into actual ledger/native
 acceptance.
+
+
+## Native review reconciliation,2026-10-29
+
+The older visible-Chrome Finance review now targets the selected supporting
+drawer/inline cards/history, actual confirmation return focus, explicit conflict
+comparison, guarded unknown departure and drawer re-entry for loading/denial.
+Geometry measures the visible portalled drawer or nested confirmation, with
+nonempty contrast/control samples. Its15 manual capture names use a new prefix
+that preserves incumbent/canonical evidence. Focused ESLint and typecheck exit0;
+this one case and all frames remain prepared, not run. No production/UI/backend
+change. [Preparation and retained coverage](../05-quality/finance-native-reconciliation.md).

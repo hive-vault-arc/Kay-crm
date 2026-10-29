@@ -2154,3 +2154,15 @@ do not claim a durable financial creation result from green frontend units.
 - Unit collection does not execute prepared database branches: a removed UUID
   import can survive that gate. Review changed prepared helpers/imports and leave
   Ruff/mypy/real-stack checks pending when they cannot run.
+
+
+## 2026-10-29 — Native checks must follow portalled selected surfaces
+
+- A drawer rendered outside main can leave old geometry checks measuring the
+  inert page. Prefer the active nested confirmation, then the visible drawer;
+  assert its expected role and nonempty samples. Keep actual native evidence
+  pending until execution and inspection, rather than equating source with UX.
+- Prepared migration captures need fresh names. Do not overwrite incumbent or
+  canonical review frames while replacing old selectors and recovery steps.
+- Scope ready-state headings to their actual drawer and numeric counter; an
+  exact uncounted name can race before data arrives or fail after it loads.

@@ -724,3 +724,15 @@ No AT-wide closure, financial ledger/SQL/concurrency/native/device/security/CI/
 AFTER/product acceptance is inferred. The24-hour receipt contract and selected
 Finance presentation remain; no new schema, ordinary Deal counter/history or
 permission change.
+
+
+## Selected Finance visible-review source,2026-10-29
+
+One existing prepared Chrome case now targets the selected drawer/cards/history,
+actual recognition return focus, explicit current comparison/unknown departure,
+held/denied re-entry and four ordinary Agent tabs. It preserves six widths,
+touch/keyboard/44px/overflow/4.5 contrast and actual200% zoom, measuring the
+portalled surface with nonempty samples;15 manual capture paths are planned.
+Focused ESLint/typecheck and source/AST review pass. The case and every intended
+frame remain **not run**, not rendered/AT-wide acceptance. No production change;
+prior unit/build evidence retained. [Coverage](finance-native-reconciliation.md).

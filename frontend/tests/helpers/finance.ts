@@ -19,9 +19,10 @@ export async function financeFixture(page: Page, actors: TestActor[]) {
 }
 export async function openFinance(page: Page, did: string) {
   await page.goto(`/deals/${did}?tab=finance`);
-  await expect(page.getByRole("dialog", { name: "Commissions et encaissements", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Commissions", exact: true })).toBeVisible();
-  await expect(page.getByText("Chargement des commissions…", { exact: true })).toHaveCount(0);
+  const drawer = page.getByRole("dialog", { name: "Commissions et encaissements", exact: true });
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByText("Chargement des commissions…", { exact: true })).toHaveCount(0);
+  await expect(drawer.getByRole("heading", { name: /^Commissions(?:\s*\d+)?$/ })).toBeVisible();
 }
 export async function fillCommission(page: Page, percentage = false) {
   await page.getByRole("button", { name: "Prévoir une commission", exact: true }).click();

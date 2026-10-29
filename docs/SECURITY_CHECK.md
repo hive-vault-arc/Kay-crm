@@ -2984,3 +2984,17 @@ ledger/concurrency, Ruff/mypy and native/security/CI acceptance remain pending.
 Three SQL and one phone cases are prepared, not run. No actual account/DB/app/
 private config/transfer/service access or workaround, migrations, main/push/merge/
 deploy. [Contract](04-design/finance-creation-keys-local.md).
+
+
+## Selected Finance native-review preparation,2026-10-29
+
+Test source retains isolated synthetic actors/dossier, current403 checks and
+detached cleanup. Trace/video/automatic screenshots are explicitly off. Manual
+capture guards reject password/private-credential fields and use new selected
+paths, preserving original/canonical review evidence. Safe console codes exclude
+raw credentials/session/API bodies. Zoom cleanup checks the bounded profile's
+resolved parent/prefix; held reads release on cleanup. No production permission,
+file, API, financial fact, schema or retention change. Focused lint/type source
+checks pass; no app/browser/HTTP/DB/account/config/service/transfer access or
+workaround, no generated frame, actual security/native/CI acceptance pending.
+[Preparation](05-quality/finance-native-reconciliation.md).
