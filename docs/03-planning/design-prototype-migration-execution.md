@@ -2729,3 +2729,32 @@ service/worker/transfer access or workaround, main/push/merge/deploy. Goal activ
 
 [Action evidence](design-migration-evidence/deal-action-recovery-2026-10-29.json)
 separates source/synthetic checks from pending actual acceptance.
+
+
+## Selected reservation/outcome action recovery,2026-10-29
+
+The dedicated reserve/release/close/reopen panels now share strict original
+stock-intent/key ownership, originating account/role proof, verified current
+result and awaited once-only UI completion. Acknowledged read/async handoff
+failure retries completion without POST. Current stock effects are bracketed
+by same-parent/version/offering reads; exact target/offering/development
+versions agree before confirmation. Changed target/reservation/contact/direction
+ends the opening action read-only. Explicit conflicts retain input and require
+current availability/effects review. Unknown work protects input/Return/Escape/
+refresh, while original retry survives newer parent props. Verified results
+feed the existing separate ordinary-stage prerequisite queue directly.
+
+762 frontend units pass,11 added; lint/types/build/history and static app lint3
+pass. Reservation/outcome helpers now use the selected status menu. Two native
+phone reserve-ack/desktop close-result-read cases prepared/typechecked, not run.
+Backend unchanged/not rerun; current stock/finance/history rules remain.
+[Contract](../04-design/deal-stock-recovery-local.md).
+
+Manager external stock outcomes, exact remaining domain fields/actions/contexts
+and old selectors continue. Actual SQL/concurrent stock/native/device/focus/zoom/
+visual/performance/CI/AFTER/product checks and migrations0036/0037 remain pending.
+No actual app/DB/account/private config/service/worker/transfer access or
+workaround, main/push/merge/deploy. Goal active.
+
+[Stock evidence](design-migration-evidence/deal-stock-recovery-2026-10-29.json)
+records source/synthetic boundaries separately from pending actual acceptance.

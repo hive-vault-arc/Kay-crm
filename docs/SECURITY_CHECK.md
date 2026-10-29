@@ -2783,3 +2783,22 @@ prepared-not-run native cases. Backend unchanged/not rerun; reservation/outcome
 controllers and actual SQL/native security acceptance remain separate pending
 work. No actual app/DB/account/private config/service/worker/transfer access,
 workaround, migration, main/push/merge/deploy; this is not a release approval.
+
+
+## Selected affair stock review,2026-10-29
+
+Dedicated reserve/release/close/reopen panels now use the existing shared
+originating-account/role and immutable request owner. Stock effects are bracketed
+by same-parent/version/offering reads, with exact offering/physical-target/
+development version checks before confirmation. Unknown input cannot replace
+body/key; acknowledged current-read/async UI failure retries completion only.
+Changed target/reservation/contact/direction ends read-only, with current backend
+authority, concurrent stock guards, history and bounded receipts unchanged.
+
+762 synthetic frontend units pass,11 added; lint/types/build/history/static UI
+checks pass. [Contract](04-design/deal-stock-recovery-local.md) separates these
+from prepared-not-run browser cases and pending actual SQL/native/security
+acceptance. Backend source confirms both review/record endpoints use the same
+offering projection; no backend mutation or runtime validation is claimed. No
+actual app/DB/account/private config/service/worker/transfer access, workaround,
+migration, main/push/merge/deploy. This is not release approval.

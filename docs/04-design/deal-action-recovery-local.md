@@ -90,3 +90,8 @@ service/worker/scanner/simulator/import/export/transfer access or workaround.
 Migrations0036/0037 remain unapplied. Main and all254 frozen inputs are unchanged;
 no push/merge/deploy. Dedicated stock/outcome commands, remaining field/context
 reconciliation and broader legacy browser selectors continue. Full goal active.
+
+
+Subsequent source integration,2026-10-29: the dedicated stock confirmations now
+extend the same request owner; see the [stock follow-through](deal-stock-recovery-local.md).
+Their later source evidence does not imply actual SQL/native stock acceptance.

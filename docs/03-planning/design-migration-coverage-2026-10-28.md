@@ -299,3 +299,25 @@ typechecked, not run. Backend unchanged/not rerun. Dedicated reservation/outcome
 commands, exact remaining field/context reconciliation and old selectors remain;
 actual SQL/native/device/AFTER/CI/product checks and migrations0036/0037 remain
 pending. No actual access/workaround, main/push/merge/deploy. P0/P8/full goal open.
+
+
+## Affair stock-action follow-through,2026-10-29
+
+[Stock action map](../04-design/deal-stock-recovery-local.md) retains separate
+selected reserve/release/close/reopen confirmations and reviewed effects. The
+shared owner now freezes these strict stock intents, proves original account/
+role and current results, and retries acknowledged completion/async handoff
+without POST. Outcome review brackets matching parent/version/offering reads;
+exact target/offering/development versions must agree. Changed contact/target/
+reservation/direction ends read-only. Unknown fields/dismissal/refresh stay
+protected; a verified result feeds the existing separate-stage prerequisite
+queue without another read. Exact amounts/date/reasons and backend stock/finance/
+history rules remain.
+
+762 frontend units pass,11 added; lint/types/build/history and static app lint3
+pass. Reservation/outcome helpers use the selected menu; two native reserve-ack/
+close-result-read cases prepared/typechecked, not run. Backend unchanged/not
+rerun. Manager external stock outcomes and remaining exact field/action/context
+reconciliation/old selectors continue; actual SQL/concurrent stock/native/device/
+AFTER/CI/product checks and migrations0036/0037 remain pending. No actual access/
+workaround, main/push/merge/deploy. P0/P8/full goal open.

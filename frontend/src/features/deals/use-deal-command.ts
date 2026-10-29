@@ -14,8 +14,7 @@ import { dealCommandIntent, type DealCommandIntent, type DealMutationContext } f
 type Attempt = { intent: DealCommandIntent; key: string; fingerprint: string; dispatched: boolean; uncertain: boolean; receipt?: z.infer<typeof resultSchema>; completed?: DealMutationContext["completed"] };
 type Options = { actorId?: string; role?: StaffRole; denied?: EnquiryDenied; completed?: (deal: Deal, signal: AbortSignal) => void | Promise<void> };
 
-// Shared ordinary transitions, qualification fields and scoped client proposals.
-// Stock/outcome operations keep their dedicated guarded review workflows.
+// Shared request/result ownership; stock commands retain dedicated review UI.
 export function useDealCommand(id: string, starting?: () => void, options: Options = {}) {
   const hydrated = useHydrated(), alive = useRef(true), lock = useRef(false), refused = useRef(false), reviewValid = useRef(true);
   const scopeKey = `${id}:${options.actorId ?? ""}:${options.role ?? ""}`, scope = useRef(scopeKey), latestScope = useRef(scopeKey);
@@ -68,7 +67,7 @@ export function useDealCommand(id: string, starting?: () => void, options: Optio
       if (!current() || controller.signal.aborted) return false;
       await options.completed?.(value, controller.signal);
       if (!current() || controller.signal.aborted) return false;
-      setFresh(value); owned.completed?.(value, controller.signal);
+      setFresh(value); await owned.completed?.(value, controller.signal);
       if (!current() || controller.signal.aborted) return true;
       attempt.current = undefined; finished.current = owned.fingerprint; setUncertain(false); setComplete(true); setNotice("Modification enregistrée. L’historique conserve son auteur."); return true;
     } catch (reason) {

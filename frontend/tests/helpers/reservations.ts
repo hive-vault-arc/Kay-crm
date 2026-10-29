@@ -32,8 +32,10 @@ export async function reservationBody(page: Page, did: string) {
 
 export async function reservationDialog(page: Page, release = false) {
   const name = release ? "Libérer la réservation" : "Réserver l’offre";
-  await page.getByRole("button", { name, exact: true }).click();
+  await page.getByRole("button", { name: /^Étape actuelle/ }).click();
+  await page.getByRole("menuitem", { name: release ? name : "Réserver une offre", exact: true }).click();
   const dialog = page.getByRole("alertdialog", { name, exact: true });
   await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name, exact: true })).toBeEnabled();
   return dialog;
 }

@@ -566,3 +566,17 @@ not run: phone stage lost acknowledgement and desktop inline result-read outage.
 See the [contract](../04-design/deal-action-recovery-local.md). This is not actual
 SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance or
 completion of reservation/outcome controllers.
+
+
+## Selected affair stock recovery source coverage,2026-10-29
+
+762 synthetic frontend units pass,11 added for reserve/release/close/reopen
+original retry and completion-only recovery, coherent parent/offering/target/
+version/fingerprint review, exact money, changed direction/target/contact/
+reservation, explicit conflicts, null inventory, role denial and disposal.
+Reservation/outcome browser helpers use the selected stage menu. Two cases in
+`frontend/tests/e2e/deal-stock-recovery.spec.ts` are prepared/typechecked, not
+run: phone reserve lost acknowledgement and desktop close result-read outage.
+[Contract](../04-design/deal-stock-recovery-local.md). Actual stock concurrency/
+SQL/native/device/focus/zoom/visual/CI/AFTER/product acceptance and broader legacy
+selectors remain pending; no AT-wide closure or backend verification is inferred.

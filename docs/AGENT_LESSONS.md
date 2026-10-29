@@ -2029,3 +2029,14 @@ an exact offered current snapshot before conflict rebase, preserving unrelated
 current fields. Guard stale field/open/cancel handlers with the synchronous
 owner lock, not only a previous render’s busy flag. Synthetic fixtures must
 model real dispatch identity, receipts and newer follow-up records.
+
+
+## Dedicated stock review and completion,2026-10-29
+
+Keep reservation/outcome review UI separate while sharing strict original
+request ownership. Bracket effect facts with the same parent/version/offering
+and match stock target/version fields; a changed target/contact/reservation or
+action direction must not silently retarget an opening confirmation. Await the
+original UI completion callback, pass its verified current record into any
+prerequisite queue, and retry acknowledged completion without another write.
+Synthetic replay fixtures must not apply stock effects again for a cached key.

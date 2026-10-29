@@ -1187,3 +1187,17 @@ requested record, parent mutation or edited proposal. Endpoints, backend grants,
 atomicity, history and bounded receipt retention are unchanged. See the
 [action contract](deal-action-recovery-local.md); stock/outcome reconciliation
 and actual SQL/native acceptance remain pending.
+
+
+## Dedicated stock action client recovery,2026-10-29
+
+Reserve/release/close/reopen retain their strict existing endpoints, reviewed
+versions, target/fingerprint and exact outcome fields. Their selected panels now
+share immutable original request/key and originating-account/role result recovery.
+Acknowledged completion passes the verified current affair into the prerequisite
+queue without another mutation or unowned reload. Outcome effects are bracketed
+by same-parent/version/offering reads; an incompatible current target or direction
+requires returning to the current fiche. No new stock or outcome rule, endpoint,
+grant, receipt retention or financial effect is introduced. See the
+[stock recovery contract](deal-stock-recovery-local.md). Actual SQL/concurrent
+stock/native acceptance remains pending.

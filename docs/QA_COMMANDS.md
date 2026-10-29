@@ -2943,3 +2943,16 @@ Two isolated native stage-lost-ack/inline-result-read cases are prepared and
 typechecked, not run. Backend unchanged/not rerun; actual SQL/native/device/
 visual/focus/zoom/CI/AFTER/product acceptance and migrations0036/0037 remain
 pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected affair stock recovery,2026-10-29
+
+762 frontend units pass,11 added for all four reservation/outcome commands,
+coherent scoped stock review, exact values/versions/fingerprint, frozen unknown
+retry, completion-only reads/async handoff, changed target/read-only, denial and
+disposal. Lint/types/build/history and static Frontend Taste app lint3 pass.
+Two isolated phone-reserve-ack/desktop-close-result-read cases are prepared/
+typechecked, not run. [Contract](04-design/deal-stock-recovery-local.md). Backend
+unchanged/not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/
+CI/AFTER/product checks and migrations0036/0037 remain pending. No actual access/
+workaround, main/push/merge/deploy.
