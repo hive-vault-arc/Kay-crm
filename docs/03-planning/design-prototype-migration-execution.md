@@ -3302,3 +3302,16 @@ DB/worker/AV/transfer access; production/prior994 frontend/573 backend unchanged
 Frozen254/main/protected work preserved. Actual gates and broader legacy paths
 remain pending; full goal active. [Path map](../05-quality/document-native-paths-local.md#propertyprogramme-photo-scenarios2026-10-30)
 and [evidence](design-migration-evidence/photo-native-paths-2026-10-30.json).
+
+
+## Inventory outcome/wizard consumers,2026-10-30
+
+Three outcome/four listing-wizard sources now target selected Offers, detail
+location/Maps and clickable stepper state. Seven titles/22 protected calls remain
+AST-identical. Missing ordinary-rental campaign checks its real create action,
+while holiday summary remains the only priced offer. Scoped lint/full types
+pass; no production or actual native/SQL/capture/service change. Prior994 frontend/
+573 backend gates retained; frozen254/main/protected work preserved. Broader
+legacy sources and actual gates remain open; full goal active.
+[Path map](../05-quality/inventory-native-paths-local.md#outcomewizard-consumer-follow-through2026-10-30)
+and [evidence](design-migration-evidence/inventory-consumer-paths-2026-10-30.json).

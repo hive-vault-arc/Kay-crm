@@ -2,6 +2,7 @@ import { test, expect, createActor, removeActor, signIn, clearActorContext, type
 import { staffCommand } from "../helpers/leads";
 import { reservationBody, reservationFixture } from "../helpers/reservations";
 import { fillOutcome, outcomeBody, outcomeDialog, salePair } from "../helpers/outcomes";
+import { inventorySection } from "../helpers/inventory";
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(25_000); page.setDefaultNavigationTimeout(30_000); });
 
@@ -66,8 +67,8 @@ test("SP13 AT-11/13: manager external sale creates no KAY win and intervening st
     expect((await page.request.get(`/api/v1/properties/${pair.pid}/stock-review?offering_id=${pair.saleOffer}`)).status()).toBe(403);
     await page.goto(`/projects/properties/${pair.pid}`); await expect(page.getByRole("button", { name: "Marquer vendue ailleurs", exact: true })).toHaveCount(0);
     await clearActorContext(page); await signIn(page, data.manager);
-    await page.goto(`/projects/properties/${pair.pid}`); await page.getByRole("tab", { name: "Offres", exact: true }).click();
-    await page.getByRole("button", { name: "Marquer vendue ailleurs", exact: true }).click(); const external = page.getByRole("alertdialog", { name: "Marquer vendue ailleurs", exact: true });
+    await page.goto(`/projects/properties/${pair.pid}`); const offers = inventorySection(page, "Offres"); await expect(offers).toBeVisible();
+    await offers.getByRole("button", { name: "Marquer vendue ailleurs", exact: true }).click(); const external = page.getByRole("alertdialog", { name: "Marquer vendue ailleurs", exact: true });
     await expect(external.getByRole("button", { name: "Marquer vendue ailleurs", exact: true })).toBeEnabled();
     await external.getByLabel("Date du résultat externe (obligatoire)", { exact: true }).fill("2026-10-15");
     await external.getByLabel("Motif partagé, sans donnée privée (obligatoire)", { exact: true }).fill("SP13 vente externe synthétique confirmée");

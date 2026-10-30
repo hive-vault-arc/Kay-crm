@@ -683,3 +683,11 @@ submit/retry/viewer/cover and actual agent readonly document controls. All25
 protected business/service/fault/read/capture calls retained. Scoped lint/types
 pass; native execution and full-stack photo acceptance remain pending.
 [Path map](../05-quality/document-native-paths-local.md#propertyprogramme-photo-scenarios2026-10-30).
+
+
+## Inventory outcome/wizard consumer paths,2026-10-30
+
+Three outcome/four property-listing cases use current section actions, actual
+Maps/detail homes and current-step state. All7 titles/22 protected calls retained;
+focused lint/full types pass. Production unchanged; native and wider source
+acceptance remain pending. [Follow-through](../05-quality/inventory-native-paths-local.md#outcomewizard-consumer-follow-through2026-10-30).

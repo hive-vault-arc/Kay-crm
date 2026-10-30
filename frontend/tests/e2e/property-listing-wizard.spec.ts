@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import { test, expect, createActor, removeActor, signIn } from "../helpers/auth";
 import { geometry } from "../helpers/report-review";
+import { inventorySection } from "../helpers/inventory";
 
 test("choosing a room supplies a valid monthly rental without touching the period", async ({ page }) => {
   test.setTimeout(120_000);
@@ -92,15 +93,17 @@ test("a manager creates a holiday riad with a priced draft and an exact Maps lin
     await next.click();
     await form.getByText("Internet", { exact: true }).click();
     await next.click();
-    await expect(form.getByText("Étape 5 sur 5")).toBeVisible();
+    await expect(form.getByRole("navigation", { name: "Progression de la création", exact: true }).getByRole("button", { name: /^Étape 5 sur 5 :/ })).toHaveAttribute("aria-current", "step");
     await form.getByRole("button", { name: "Créer le bien", exact: true }).click();
     await expect.poll(() => new URL(page.url()).pathname).toMatch(/^\/projects\/properties\/[a-f0-9-]{36}$/);
     await expect(page.getByRole("heading", { name: reference, exact: true })).toBeVisible();
-    await expect(page.locator("header.surface")).toContainText("Tanger");
-    await expect(page.getByRole("link", { name: "Ouvrir dans Google Maps" })).toHaveAttribute("href", "https://maps.app.goo.gl/example123");
-    await page.getByRole("tab", { name: "Offres", exact: true }).click();
-    await expect(page.getByRole("region", { name: "Location vacances", exact: true })).toContainText("950");
-    await expect(page.getByRole("region", { name: "Location", exact: true })).toContainText("Aucune campagne actuelle");
+    await expect(inventorySection(page, "Informations du bien")).toContainText("Tanger");
+    await expect(inventorySection(page, "Localisation").getByRole("link", { name: "Ouvrir Google Maps", exact: true })).toHaveAttribute("href", "https://maps.app.goo.gl/example123");
+    const offers = inventorySection(page, "Offres");
+    await expect(offers.locator(".kay-inventory-offer-summary")).toHaveCount(1);
+    await expect(offers.getByText("Location vacances", { exact: true })).toBeVisible(); await expect(offers).toContainText("950");
+    await expect(offers.getByText("Location", { exact: true })).toHaveCount(0);
+    await expect(offers.getByRole("button", { name: "Créer une offre de location", exact: true })).toBeEnabled();
   } finally {
     await removeActor(manager);
   }
@@ -118,7 +121,7 @@ test("the narrow land form stays within the viewport and excludes residential fi
     await form.locator("#property-price_mad").fill("850000");
     await form.getByRole("button", { name: "Suivant", exact: true }).focus();
     await page.keyboard.press("Enter");
-    await expect(form.getByText("Étape 2 sur 5")).toBeVisible();
+    await expect(form.getByRole("navigation", { name: "Progression de la création", exact: true }).getByRole("button", { name: /^Étape 2 sur 5 :/ })).toHaveAttribute("aria-current", "step");
     await form.locator("#property-region").fill("Tanger-Tétouan-Al Hoceïma");
     await form.locator("#property-city").fill("Tanger");
     await form.getByRole("button", { name: "Suivant", exact: true }).click();

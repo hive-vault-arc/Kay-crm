@@ -3385,3 +3385,14 @@ commands/2 route faults/2 unroutes/2 reads/7 screenshots; one purpose title drop
 historical automatic wording. No Playwright listing/import/execution or actual
 capture/service/AV/private transfer. Prior994 frontend/573 backend evidence and
 production gates retained, not rerun. [Evidence](03-planning/design-migration-evidence/photo-native-paths-2026-10-30.json).
+
+
+## Inventory outcome/wizard consumers,2026-10-30
+
+`npx eslint tests/e2e/outcomes.spec.ts tests/e2e/property-listing-wizard.spec.ts
+--max-warnings=0` and `npm run typecheck`, cwd `frontend`, exit0. Source AST:7
+titles and22 protected calls unchanged, including4 timeouts/13 reads/2 business
+commands/one route fault-removal pair/one screenshot. `git diff --check` exit0.
+No native/listing/import/capture/account/DB/service execution. Prior994 frontend/
+573 backend and production evidence retained, not rerun.
+[Evidence](03-planning/design-migration-evidence/inventory-consumer-paths-2026-10-30.json).

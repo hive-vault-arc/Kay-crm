@@ -74,3 +74,26 @@ and2 timeouts are AST-identical to base094fa5f. Focused ESLint/full types pass;
 actual native/SQL/permission verification remains unrun. Production and prior
 977 frontend/573 backend evidence unchanged. Other helper consumers remain open.
 [Evidence](../03-planning/design-migration-evidence/inventory-permission-paths-2026-10-29.json).
+
+
+## Outcome/wizard consumer follow-through,2026-10-30
+
+Three existing outcome and four standalone listing-wizard cases retain their
+purpose and business assertions. The external-sale action is scoped to the
+selected Offres section instead of the removed standalone tab. Holiday creation
+checks Informations du bien/Localisation, exact Ouvrir Google Maps href and one
+actual Location vacances summary/price; missing ordinary Location is represented
+by its enabled create action instead of an invented empty campaign region.
+Stepper verification uses the actual current-step button, including320px land
+keyboard flow. No production/form values/field IDs/API/business change.
+
+All7 titles and22 protected calls are AST-identical:4 timeouts,13 protected reads,
+2 direct business commands, one route fault/removal and one screenshot request.
+Original close/reopen/concurrency/stock/privacy/outcome assertions, room rental
+exact monthly value and category/period normalization, holiday details/Maps and
+land non-residential fields remain. Scoped ESLint/full frontend types pass.
+No Playwright listing/import/execution or actual account/DB/worker/private data/
+capture occurred. Prior994 frontend/573 backend and production gates retained,
+not rerun. Wider review/deep-link/legacy selector and actual SQL/native/security/
+CI/AFTER/product gates remain pending; goal active.
+[Consumer evidence](../03-planning/design-migration-evidence/inventory-consumer-paths-2026-10-30.json).
