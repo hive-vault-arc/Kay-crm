@@ -3396,3 +3396,15 @@ commands/one route fault-removal pair/one screenshot. `git diff --check` exit0.
 No native/listing/import/capture/account/DB/service execution. Prior994 frontend/
 573 backend and production evidence retained, not rerun.
 [Evidence](03-planning/design-migration-evidence/inventory-consumer-paths-2026-10-30.json).
+
+
+## Visible inventory/programme review paths,2026-10-30
+
+`npx eslint tests/review/inventory.chrome.spec.ts
+tests/review/developments.chrome.spec.ts --max-warnings=0` and `npm run typecheck`,
+cwd `frontend`, exit0. Source AST retains2 titles/all30 original protected calls;
+one explicit sale fixture creation is added for the empty property helper.
+`git diff --check` exit0. No Playwright listing/import/execution, actual capture/
+zoom/account/DB/service control. Prior994 frontend/573 backend units and production
+gates retained, not rerun for these source paths.
+[Evidence](03-planning/design-migration-evidence/inventory-review-paths-2026-10-30.json).

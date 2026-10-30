@@ -62,3 +62,23 @@ worker/transfer or alternate access, migration/main/push/merge/deploy occurred.
 Actual SQL/native/device/focus/zoom/security/CI/AFTER/product gates,
 migrations0036/0037 and remaining exact field/job/alias/selector reconciliation
 stay open. [Evidence](../03-planning/design-migration-evidence/development-native-paths-2026-10-29.json).
+
+
+## Visible programme caller,2026-10-30
+
+The existing SP08 visible review now follows the selected Structure du programme
+drawer, its Blocs et étages/Types tabs, Étages de/Unités de links, scoped type
+form and current labels/save/Retour. Floor linkage remains in the actual route.
+Unit count tabs accept their count, filters use the real drawer/Disponibilité/
+Appliquer and current result status. The row capture targets its original unit
+link on desktop and the mobile card on phones. Programme editing verifies the
+actual saved name and retained reference; filter/structure panels close before
+subsequent actions. Keyboard, real200% zoom, overflow, author/agent briefing and
+loading/error/retry requests remain. Capture preflight admits the hydrated
+notification control behind its active modal.
+
+All original17 protected fixture/route-fault/timeout/CDP calls and its title are
+AST-identical. Focused ESLint/full types pass; production unchanged, no native
+listing/import/execution/capture/zoom/account/DB/service control. Actual device/
+SQL/security/CI/AFTER/product acceptance and wider historical paths remain open.
+[Review evidence](../03-planning/design-migration-evidence/inventory-review-paths-2026-10-30.json).

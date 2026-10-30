@@ -2,10 +2,10 @@ import { chromium, type Page, type Route } from "@playwright/test";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { clearActorContext, test, expect, createActor, removeActor, signIn } from "../helpers/auth";
-import { createDevelopment, createBlock, createFloor, createType, createUnit, openDevelopment } from "../helpers/developments";
+import { createDevelopment, createBlock, createFloor, createType, createUnit, openDevelopment, openProgrammeStructure, closeProgrammeStructure } from "../helpers/developments";
 
 async function capture(page: Page, name: string) {
-  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true, includeHidden: true })).toBeEnabled();
   const before = await page.evaluate(() => document.documentElement.clientWidth);
   const cdp = await page.context().newCDPSession(page);
   try { const result = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true }); await writeFile(path.resolve(`output/playwright/sp08-${name}.png`), Buffer.from(result.data, "base64")); }
@@ -26,25 +26,26 @@ test("SP08 visible Chrome: development explorer, reusable types, responsive stat
   try {
     await signIn(page, manager); await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/projects"); await page.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click();
-    await expect(page.getByText("0 programme(s) correspondant(s).", { exact: true })).toBeVisible();
+    await expect(page.getByText("0 programme", { exact: true })).toBeVisible();
     await capture(page, "programmes-empty-desktop");
     const development = await createDevelopment(page);
     await createBlock(page); await createFloor(page); await createFloor(page, "B1", "F3"); await createType(page);
-    await createUnit(page, development.id); await createUnit(page, development.id, "F3", "apartment", "81,50"); await createUnit(page, development.id, "", "land", "250,00");
-    await openDevelopment(page, development.id, "Blocs et étages"); await page.getByRole("button", { name: "Explorer B1", exact: true }).click();
-    await expect(page.getByRole("link", { name: "Voir les unités de F2", exact: true })).toBeVisible(); await capture(page, "hierarchy-desktop");
-    await page.getByRole("region", { name: "Étages du bloc B1", exact: true }).scrollIntoViewIfNeeded(); await capture(page, "floors-desktop");
-    await page.getByRole("link", { name: "Voir les unités de F2", exact: true }).click();
-    await expect(page.getByRole("tab", { name: "Unités", exact: true })).toHaveAttribute("aria-selected", "true");
-    await page.getByLabel("Disponibilité des unités", { exact: true }).selectOption("all"); await page.getByRole("button", { name: "Filtrer les unités", exact: true }).click();
-    await expect(page.getByText("1 unité(s) correspondante(s).", { exact: true })).toBeVisible(); await capture(page, "floor-units-desktop");
-    await page.getByRole("region", { name: "Tableau des unités, défilement horizontal", exact: true }).scrollIntoViewIfNeeded(); await capture(page, "unit-rows-desktop");
-    await page.getByRole("tab", { name: "Types réutilisables", exact: true }).click(); await page.getByRole("button", { name: "Modifier T2", exact: true }).click();
-    await page.getByLabel("Surface par défaut en m² (facultative)", { exact: true }).fill("95,00"); await capture(page, "type-editor-desktop");
-    await page.getByRole("button", { name: "Enregistrer le type réutilisable", exact: true }).click(); await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
-    await page.goto("/projects"); await page.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click(); await expect(page.getByText("1 programme(s) correspondant(s).", { exact: true })).toBeVisible(); await capture(page, "programmes-desktop");
+    const firstUnit = await createUnit(page, development.id); await createUnit(page, development.id, "F3", "apartment", "81,50"); await createUnit(page, development.id, "", "land", "250,00");
+    await openDevelopment(page, development.id, "Blocs et étages"); const structure = page.getByRole("dialog", { name: "Structure du programme", exact: true }); await structure.getByRole("button", { name: "Étages de B1", exact: true }).click();
+    await expect(structure.getByRole("link", { name: "Unités de F2", exact: true })).toBeVisible(); await capture(page, "hierarchy-desktop");
+    await structure.getByRole("heading", { name: "Étages · B1", exact: true }).scrollIntoViewIfNeeded(); await capture(page, "floors-desktop");
+    await structure.getByRole("link", { name: "Unités de F2", exact: true }).click();
+    await expect(page.getByRole("tab", { name: /^Unités(?:\s*\d+)?$/ })).toHaveAttribute("aria-selected", "true");
+    await page.getByRole("button", { name: /^Afficher les filtres/ }).click(); const filters = page.getByRole("dialog", { name: "Filtres des unités", exact: true });
+    await filters.getByLabel("Disponibilité", { exact: true }).selectOption("all"); await filters.getByRole("button", { name: "Appliquer", exact: true }).click();
+    await expect(page.getByText("1 unité(s)", { exact: true })).toBeVisible(); await capture(page, "floor-units-desktop");
+    await page.getByRole("link", { name: firstUnit.reference, exact: true }).scrollIntoViewIfNeeded(); await capture(page, "unit-rows-desktop");
+    await openProgrammeStructure(page, true); await structure.getByRole("button", { name: "Modifier T2", exact: true }).click();
+    const typeForm = structure.getByRole("form"); await typeForm.getByLabel("Surface par défaut (m²)", { exact: true }).fill("95,00"); await capture(page, "type-editor-desktop");
+    await typeForm.getByRole("button", { name: "Enregistrer", exact: true }).click(); await expect(typeForm).not.toBeVisible(); await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible(); await closeProgrammeStructure(page);
+    await page.goto("/projects"); await page.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click(); await expect(page.getByText("1 programme", { exact: true })).toBeVisible(); await capture(page, "programmes-desktop");
     await signIn(mobile, manager); await mobile.goto(`${development.path}/edit`);
-    await mobile.getByLabel("Nom du programme", { exact: true }).fill(`SP08 ${"Programme immobilier".repeat(7)}`);
+    const longName = `SP08 ${"Programme immobilier".repeat(7)}`; await mobile.getByLabel("Nom du programme", { exact: true }).fill(longName);
     for (const width of [320, 360, 768, 1024, 1440]) {
       await mobile.setViewportSize({ width, height: 900 });
       expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -54,20 +55,22 @@ test("SP08 visible Chrome: development explorer, reusable types, responsive stat
     }
     await mobile.setViewportSize({ width: 360, height: 800 }); await mobile.getByLabel("Nom du programme", { exact: true }).scrollIntoViewIfNeeded(); await capture(mobile, "programme-editor-mobile");
     await mobile.getByLabel("Présentation partagée (facultative)", { exact: true }).fill("Présentation synthétique sûre.\nUnités et programme sont distincts.");
-    await mobile.getByRole("button", { name: "Enregistrer le programme", exact: true }).tap(); await expect(mobile.getByRole("heading", { name: development.reference, exact: true })).toBeVisible();
-    await mobile.getByRole("tab", { name: "Unités", exact: true }).tap();
-    await mobile.getByLabel("Disponibilité des unités", { exact: true }).selectOption("all"); await mobile.getByRole("button", { name: "Filtrer les unités", exact: true }).tap();
-    await expect(mobile.getByText("3 unité(s) correspondante(s).", { exact: true })).toBeVisible();
+    await mobile.getByRole("button", { name: "Enregistrer le programme", exact: true }).tap(); await expect(mobile.getByRole("heading", { name: longName, exact: true, level: 1 })).toBeVisible(); await expect(mobile.getByRole("main")).toContainText(development.reference);
+    await mobile.getByRole("tab", { name: /^Unités(?:\s*\d+)?$/ }).tap();
+    await mobile.getByRole("button", { name: /^Afficher les filtres/ }).tap(); const mobileFilters = mobile.getByRole("dialog", { name: "Filtres des unités", exact: true });
+    await mobileFilters.getByLabel("Disponibilité", { exact: true }).selectOption("all"); await mobileFilters.getByRole("button", { name: "Appliquer", exact: true }).tap();
+    await expect(mobile.getByText("3 unité(s)", { exact: true })).toBeVisible();
     for (const width of [320, 360, 768, 1024, 1440]) { await mobile.setViewportSize({ width, height: 900 }); expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true); }
-    await mobile.setViewportSize({ width: 360, height: 800 }); await capture(mobile, "unit-filters-mobile");
-    await mobile.getByRole("region", { name: "Tableau des unités, défilement horizontal", exact: true }).scrollIntoViewIfNeeded(); await capture(mobile, "units-mobile");
-    await mobile.getByRole("tab", { name: "Types réutilisables", exact: true }).tap(); await mobile.getByRole("button", { name: "Modifier T2", exact: true }).tap(); await mobile.getByLabel("Surface par défaut en m² (facultative)", { exact: true }).scrollIntoViewIfNeeded(); await capture(mobile, "type-editor-mobile");
-    await mobile.getByRole("button", { name: "Annuler", exact: true }).tap();
+    await mobile.setViewportSize({ width: 360, height: 800 }); await mobile.getByRole("button", { name: /^Afficher les filtres/ }).tap(); await capture(mobile, "unit-filters-mobile");
+    await mobileFilters.getByRole("button", { name: "Fermer les filtres", exact: true }).tap(); await expect(mobileFilters).not.toBeVisible();
+    await mobile.getByRole("link", { name: firstUnit.reference, exact: true }).scrollIntoViewIfNeeded(); await capture(mobile, "units-mobile");
+    const mobileStructure = await openProgrammeStructure(mobile, true); await mobileStructure.getByRole("button", { name: "Modifier T2", exact: true }).tap(); const mobileTypeForm = mobileStructure.getByRole("form"); await mobileTypeForm.getByLabel("Surface par défaut (m²)", { exact: true }).scrollIntoViewIfNeeded(); await capture(mobile, "type-editor-mobile");
+    await mobileTypeForm.getByRole("button", { name: "Retour", exact: true }).tap(); await expect(mobileTypeForm).not.toBeVisible(); await closeProgrammeStructure(mobile);
     await clearActorContext(mobile); await signIn(mobile, agent); await openDevelopment(mobile, development.id, "Présentation");
     await expect(mobile.getByText("Présentation synthétique sûre.\nUnités et programme sont distincts.", { exact: true })).toBeVisible(); await mobile.getByText("Présentation synthétique sûre.\nUnités et programme sont distincts.", { exact: true }).scrollIntoViewIfNeeded(); await capture(mobile, "agent-briefing-mobile");
     await mobile.goto(`${development.path}/edit`); await expect(mobile.getByRole("form", { name: "Modifier le programme", exact: true })).toBeVisible(); await capture(mobile, "agent-edit-mobile");
     await openDevelopment(page, development.id);
-    await page.getByRole("tab", { name: "Aperçu", exact: true }).focus(); await page.keyboard.press("ArrowRight"); await expect(page.getByRole("tab", { name: "Unités", exact: true })).toBeFocused();
+    await page.getByRole("tab", { name: "Aperçu", exact: true }).focus(); await page.keyboard.press("ArrowRight"); await expect(page.getByRole("tab", { name: /^Unités(?:\s*\d+)?$/ })).toBeFocused();
     let release = () => {}; const gate = new Promise<void>(resolve => { release = resolve; });
     const loading = async (route: Route) => { await gate; await route.continue(); };
     await page.route(`**/api/v1/developments/${development.id}`, loading);

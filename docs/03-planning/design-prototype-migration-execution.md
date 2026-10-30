@@ -3315,3 +3315,18 @@ pass; no production or actual native/SQL/capture/service change. Prior994 fronte
 legacy sources and actual gates remain open; full goal active.
 [Path map](../05-quality/inventory-native-paths-local.md#outcomewizard-consumer-follow-through2026-10-30)
 and [evidence](design-migration-evidence/inventory-consumer-paths-2026-10-30.json).
+
+
+## Visible inventory/programme review paths,2026-10-30
+
+Two existing visible native sources now use selected owner/offer/structure/filter
+drawers, actual hierarchy/type labels, unit-count tabs, mobile card links and
+current saved detail names. Property zoom editing reaches the final save step.
+AST keeps2 titles/all30 original protected fixture/fault/timeout/CDP calls. One
+explicit sale creation repairs this caller of the intentionally empty property
+fixture. Scoped lint/full types pass; no actual browser/capture/zoom/DB/service
+access. Production/prior994 frontend/573 backend retained; frozen254/main/
+protected work preserved. Broader legacy paths and actual gates stay open; goal
+active. [Inventory map](../05-quality/inventory-native-paths-local.md#visible-inventory-caller2026-10-30),
+[programme map](../05-quality/development-native-paths-local.md#visible-programme-caller2026-10-30)
+and [evidence](design-migration-evidence/inventory-review-paths-2026-10-30.json).

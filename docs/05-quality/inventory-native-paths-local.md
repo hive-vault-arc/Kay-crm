@@ -97,3 +97,23 @@ capture occurred. Prior994 frontend/573 backend and production gates retained,
 not rerun. Wider review/deep-link/legacy selector and actual SQL/native/security/
 CI/AFTER/product gates remain pending; goal active.
 [Consumer evidence](../03-planning/design-migration-evidence/inventory-consumer-paths-2026-10-30.json).
+
+
+## Visible inventory caller,2026-10-30
+
+The existing SP07 visible review now uses selected Offers, legal-owner and offer
+drawers, current labels, Actions/History and the single detail region. Owner
+control geometry is measured within its actual dialog rather than the inert
+background main. The zoom edit uses header Modifier, current advertisement-title
+label and the shared final-step save helper. Mobile cards, private owner denial,
+44px controls, current annual comparison and loading/error/retry remain. Capture
+preflight can find the hydrated notification control behind the active modal.
+
+The shared property fixture intentionally creates no offering; this caller now
+explicitly creates its positive sale before the original sale confirmation. This
+is one additional fixture command through the existing UI, not a production
+seed/default or fabricated result. All original13 protected fixture/fault/timeout/
+CDP calls and its title are AST-identical. Focused lint/full types pass; no native
+listing/import/execution, actual account/service/DB/capture/zoom or main change.
+Actual visual/security/SQL/full-journey acceptance remains pending.
+[Review evidence](../03-planning/design-migration-evidence/inventory-review-paths-2026-10-30.json).

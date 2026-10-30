@@ -691,3 +691,13 @@ Three outcome/four property-listing cases use current section actions, actual
 Maps/detail homes and current-step state. All7 titles/22 protected calls retained;
 focused lint/full types pass. Production unchanged; native and wider source
 acceptance remain pending. [Follow-through](../05-quality/inventory-native-paths-local.md#outcomewizard-consumer-follow-through2026-10-30).
+
+
+## Visible inventory/programme review paths,2026-10-30
+
+Specific SP07/SP08 visible sources now follow current selected section/drawer/
+filter/structure/type/card/edit homes. All30 original protected calls/2 titles
+retained, one required sale fixture created explicitly. Scoped lint/full types
+pass; no native/capture/zoom execution or full-journey acceptance.
+[Inventory](../05-quality/inventory-native-paths-local.md#visible-inventory-caller2026-10-30)
+and [programme](../05-quality/development-native-paths-local.md#visible-programme-caller2026-10-30).

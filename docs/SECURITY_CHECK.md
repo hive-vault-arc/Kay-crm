@@ -3275,3 +3275,15 @@ Seven titles/22 protected calls retained; lint/types pass. No actual app/browser
 account/DB/service/capture or runtime security check. Production unchanged;
 actual acceptance and wider legacy sources pending.
 [Path map](05-quality/inventory-native-paths-local.md#outcomewizard-consumer-follow-through2026-10-30).
+
+
+## Visible inventory/programme native sources,2026-10-30
+
+Test paths only. Selected drawers/current owner fields and mobile unit cards
+replace old inline/tab targets. Original private-owner/agent/availability/
+annual-money/fault/zoom/geometry checks retained; AST preserves30 protected
+fixture/fault/timeout/CDP calls. The empty property caller explicitly creates its
+sale through the existing UI. Lint/types pass; no actual browser/account/DB/
+service/capture/zoom/runtime security verification. Production unchanged and
+actual full-journey acceptance pending.
+[Evidence](03-planning/design-migration-evidence/inventory-review-paths-2026-10-30.json).
