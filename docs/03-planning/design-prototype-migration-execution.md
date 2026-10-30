@@ -3330,3 +3330,17 @@ protected work preserved. Broader legacy paths and actual gates stay open; goal
 active. [Inventory map](../05-quality/inventory-native-paths-local.md#visible-inventory-caller2026-10-30),
 [programme map](../05-quality/development-native-paths-local.md#visible-programme-caller2026-10-30)
 and [evidence](design-migration-evidence/inventory-review-paths-2026-10-30.json).
+
+
+## Selected inventory design-review paths,2026-10-30
+
+Four existing review cases now check current header glyphs/section homes, actual
+saved names/references, five current stepper buttons, promoter selector and dirty
+cancel. Original4 titles/21 protected calls retained. Exact price/draft/period,
+validation, hidden fields, private-summary and create-once assertions remain.
+Scoped lint/full types pass; no production/native/capture/DB/browser/service
+change. Prior994 frontend/573 backend units and production gates retained;
+frozen254/main/protected work preserved. Wider legacy and actual acceptance
+gates remain pending; full goal active.
+[Map](../05-quality/inventory-native-paths-local.md#selected-inventory-design-review-source2026-10-30)
+and [evidence](design-migration-evidence/inventory-design-paths-2026-10-30.json).

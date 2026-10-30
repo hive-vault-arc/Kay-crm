@@ -3408,3 +3408,13 @@ one explicit sale fixture creation is added for the empty property helper.
 zoom/account/DB/service control. Prior994 frontend/573 backend units and production
 gates retained, not rerun for these source paths.
 [Evidence](03-planning/design-migration-evidence/inventory-review-paths-2026-10-30.json).
+
+
+## Selected inventory design-review paths,2026-10-30
+
+`npx eslint tests/review/inventory-design.chrome.spec.ts --max-warnings=0` and
+`npm run typecheck`, cwd `frontend`, exit0. TypeScript AST retains4 titles and21
+protected event/fixture/read/screenshot/timeout calls. `git diff --check` exit0.
+No native listing/import/execution/capture/account/DB/browser/service control.
+Prior994 frontend/573 backend and production gates retained, not rerun for these
+test paths. [Evidence](03-planning/design-migration-evidence/inventory-design-paths-2026-10-30.json).

@@ -3287,3 +3287,14 @@ sale through the existing UI. Lint/types pass; no actual browser/account/DB/
 service/capture/zoom/runtime security verification. Production unchanged and
 actual full-journey acceptance pending.
 [Evidence](03-planning/design-migration-evidence/inventory-review-paths-2026-10-30.json).
+
+
+## Selected inventory design-review native source,2026-10-30
+
+Test paths only. Current actions replace impossible obsolete-tab controls; agent
+absence targets actual create-offer action. Private promoter summary exclusion,
+exact amounts/draft/period, pre-submit/create-once and required decimal validation
+remain. Four titles/21 protected calls retained; lint/types pass. No actual
+browser/capture/account/DB/service or runtime security verification. Production
+unchanged; actual acceptance remains pending.
+[Evidence](03-planning/design-migration-evidence/inventory-design-paths-2026-10-30.json).

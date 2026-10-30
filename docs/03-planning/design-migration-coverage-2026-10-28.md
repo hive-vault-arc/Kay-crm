@@ -701,3 +701,11 @@ retained, one required sale fixture created explicitly. Scoped lint/full types
 pass; no native/capture/zoom execution or full-journey acceptance.
 [Inventory](../05-quality/inventory-native-paths-local.md#visible-inventory-caller2026-10-30)
 and [programme](../05-quality/development-native-paths-local.md#visible-programme-caller2026-10-30).
+
+
+## Selected inventory design-review paths,2026-10-30
+
+Four existing sources now check selected header glyphs/sections, actual saved
+identity, current stepper and promoter/dirty-leave controls. Original4 titles/
+21 protected calls retained; lint/types pass. Native/rendered/security/full-
+journey acceptance is unrun. [Map](../05-quality/inventory-native-paths-local.md#selected-inventory-design-review-source2026-10-30).

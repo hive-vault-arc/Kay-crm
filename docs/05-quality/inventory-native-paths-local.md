@@ -117,3 +117,26 @@ CDP calls and its title are AST-identical. Focused lint/full types pass; no nati
 listing/import/execution, actual account/service/DB/capture/zoom or main change.
 Actual visual/security/SQL/full-journey acceptance remains pending.
 [Review evidence](../03-planning/design-migration-evidence/inventory-review-paths-2026-10-30.json).
+
+
+## Selected inventory design-review source,2026-10-30
+
+Four original inventory design-review cases now target current section/record
+names, header Documents/Modifier/Actions semantic icons, Surface icon and absence
+of removed standalone tabs. Offers and programme offers stay in their selected
+sections; agent absence checks the real create-offer action. Property title is
+the entered advertisement name, with reference still checked separately; the
+programme behaves similarly. Creation stage checks use aria-current; the320px
+stepper checks all5 real buttons and their nonoverlapping viewport bounds rather
+than obsolete short labels. Promoter selection uses current Rechercher, preserves
+private-name exclusion from its summary, and explicitly confirms dirty leave.
+
+Original4 titles and21 protected event/fixture/read/screenshot/timeout calls are
+AST-identical. Original pre-submit zero/create-once count, exact sale/annual
+rental amounts, backend draft/period values, positive/two-decimal validation,
+category-dependent fields, retained land surface, optional promoter unlinking,
+private summary, keyboard and desktop/mobile capture requests remain. Scoped
+ESLint/full types pass. Production unchanged; no native listing/import/execution,
+actual capture/account/DB/browser/worker access. Source checking does not establish
+rendered fidelity, actual security or full-journey acceptance.
+[Design-review evidence](../03-planning/design-migration-evidence/inventory-design-paths-2026-10-30.json).
