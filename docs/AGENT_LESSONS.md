@@ -2269,3 +2269,16 @@ requires explicit guarded discard. When the exact issued version is already
 published, recover its current state without another byte send; do not turn that
 client check into a claim of exactly-once concurrent publication or a clean AV
 verdict. Generic row commands and download handoff are separate audit boundaries.
+
+
+## File rows need command identity separate from list versions,2026-10-30
+
+Version-keyed rows can discard an unknown operation when polling changes a
+document. Keep identity keys stable and retain pending original rows until their
+receipt/current handoff or explicit guarded leave. FileReceipt returns the
+current scoped view, so validate a minimum counter and exact metadata rather
+than pretending it is a frozen next-version receipt. Separate disposable blob
+lifetimes from writes; check current actor/document/clean version and live owner
+before browser handoff. AV state can change without a document counter increment,
+so retire an obsolete in-progress message from fresh state without inventing
+worker success. Synthetic client checks do not prove actual transfer/revocation.

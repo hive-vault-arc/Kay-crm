@@ -643,3 +643,16 @@ Next concrete file boundaries are FileRow archive/retry-scan operation ownership
 and late download/preview handoff, plus older file helpers/Contact tab selectors.
 Actual worker/private transfer/device/security/CI/AFTER/product, migrations0036/
 0037 and remaining exact field/job/alias reconciliation stay open. Full goal active.
+
+
+## File-row ownership and handoff follow-through,2026-10-30
+
+Archive/retry-scan and download/preview now have owned lifetimes within selected
+rows. Original commands survive list updates/removal and unknown409; acknowledged
+completion does not write again. Current actor/read/clean-version/MIME/size and
+handoff guards refuse late blobs; preview cleanup and read-only downloads remain.
+994 frontend units/source gates pass; two native archive cases unrun. No actual
+SQL/AV/transfer/security acceptance inferred. [Contract](../04-design/file-row-recovery-local.md).
+Older file helpers/Contact tab selectors and wider native consumers are next;
+actual SQL/native/device/worker/transfer/CI/AFTER/product, migrations0036/0037 and
+remaining exact field/job/alias work keep P0/P8/full goal open.

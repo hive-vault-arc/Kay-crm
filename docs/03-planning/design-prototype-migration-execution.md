@@ -3238,3 +3238,25 @@ ownership, older file helpers and actual SQL/native/worker/transfer/security/CI/
 AFTER/product, migrations0036/0037 and other exact field/job/alias/selectors remain.
 Full goal active. [Contract](../04-design/document-upload-recovery-local.md) and
 [evidence](design-migration-evidence/document-upload-recovery-2026-10-30.json).
+
+
+## File row command/private delivery follow-through,2026-10-30
+
+Actual-component faults prove late blob handoff after disposal and unknown
+archive state lost by version-keyed rows. Original row command/body/key/counter/
+actor/completion now survive newer or missing current rows, transient same-page
+reads and later409; known acknowledgement retries only current completion. Row
+paging uses the existing dirty/recovery guard. Downloads/previews pin a clean
+version and validate live identity/current metadata/MIME/size before handoff;
+read-only delivery remains. A worker result retires an old in-progress message
+without inventing a document counter or clean verdict. Selected list/classes/
+controls preserved; backend unchanged.
+
+Focused29/final994 frontend units, lint/types/build/history/static app scan3 pass,
+10 cases added. Two390/1440 actual-stack archive scenarios prepared/typechecked,
+not run; prior573 backend units retained. Frozen254/main/protected work preserved;
+no actual access/workaround/migration/push/merge/deploy. Older file helpers and
+actual SQL/native/device/AV/private transfer/security/CI/AFTER/product, migrations
+0036/0037 and other exact field/job/alias/selectors remain. Full goal active.
+[Contract](../04-design/file-row-recovery-local.md) and
+[evidence](design-migration-evidence/file-row-recovery-2026-10-30.json).

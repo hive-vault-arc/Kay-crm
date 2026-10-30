@@ -898,3 +898,17 @@ verdict or real transfer completion is inferred. Backend/prior573 units unchange
 Generic file-row/archive/retry/delivery, older native selectors and actual SQL/
 worker/AV/transfer/device/security/CI/AFTER/product acceptance remain pending.
 [Contract](../04-design/document-upload-recovery-local.md).
+
+
+## File row command/delivery source evidence,2026-10-30
+
+Two initial actual-component faults and a later worker-result regression fail
+before correction. Ten added source cases cover original archive/analysis replay,
+newer/missing list rows and later409, acknowledged current read/parent completion,
+read/denial/actor/hydration changes, malformed permit/bytes/current document,
+read-only delivery, disposal and preview cleanup. Final994 frontend units and
+source gates pass. Two390/1440 actual-stack archive scenarios prepared/typechecked,
+not run; no real AV/private-transfer acceptance inferred. Backend unchanged/
+prior573 units retained. Older file helpers and actual SQL/native/device/security/
+CI/AFTER/product acceptance remain pending.
+[Contract](../04-design/file-row-recovery-local.md).

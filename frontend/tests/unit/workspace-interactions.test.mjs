@@ -213,10 +213,10 @@ function filePanelHarness() {
     "@/components/shared/file-picker": { FilePicker: "Picker", fileSizeLabel: value => String(value) }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request: callback => cancellations.push(callback), dialog: null }) },
     "@/components/ui/alert-dialog": { AlertDialog: "Dialog", AlertDialogCancel: "Cancel", AlertDialogContent: "Content", AlertDialogDescription: "Description", AlertDialogTitle: "Title" },
     "@/components/shared/protected-file-state": { ProtectedFileState: "FileState" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/numbered-pages": { NumberedPages: "Pages" },
-    "@/features/contacts/use-query": { useQuery: () => ({ value: { items: [document], total: 1, page_size: 20 }, refreshQuietly() {} }) }, "@/hooks/use-hydrated": { useHydrated: () => true },
+    "@/features/contacts/use-query": { useQuery: () => ({ value: { items: [document], total: 1, page: 1, page_size: 20, has_previous: false, has_next: false }, refreshQuietly() {} }) }, "@/hooks/use-hydrated": { useHydrated: () => true },
     "@/lib/auth/contracts": { meSchema: {} }, "@/lib/api/client": { ApiError, apiGet: async (...args) => { if (args[0].endsWith("/auth/me")) return identity; calls.push({ type: "read", args }); return { ...document, version: 9 }; } },
     "@/lib/api/command": { apiCommand: async (...args) => { calls.push({ type: "create", args }); if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return document; } },
-    "./contracts": contracts, "./transfers": { requestFilePermit: async (body, _signal, authorize) => { authorize?.(identity); calls.push({ type: "permit", body }); return { document_version: body.expected_version + 1, version_id: randomUUID() }; }, uploadBytes: async (...args) => calls.push({ type: "bytes", args }), downloadBytes() {} },
+    "./file-row": { FileRow: "FileRow" }, "./contracts": contracts, "./transfers": { requestFilePermit: async (body, _signal, authorize) => { authorize?.(identity); calls.push({ type: "permit", body }); return { document_version: body.expected_version + 1, version_id: randomUUID() }; }, uploadBytes: async (...args) => calls.push({ type: "bytes", args }), downloadBytes() {} },
   } });
   function render() { const body = FilePanel({ parentKind: "deal", parentId, writable }); return harness.render(() => body.type(body.props)); }
   return { render, calls, cancellations, document, setFail(value) { fail = value; }, setWritable(value) { writable = value; } };

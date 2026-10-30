@@ -3211,3 +3211,23 @@ not actual disclosure, race, SQL/AV/session/transfer/security/CI acceptance. Gen
 file-row actions/delivery remain pending. No real app/DB/account/config/service/
 worker/scanner/private transfer access or workaround, migration/main/push/merge/
 deploy. [Contract](04-design/document-upload-recovery-local.md).
+
+
+## File row owned operations and browser handoff,2026-10-30
+
+Original document/body/key/counter and actual actor/role bind archive/retry-scan.
+Current scoped receipt/read validates matching metadata and minimum counter;
+unknown replay cannot rebase, and acknowledged completion cannot write again.
+Row cache/pinning preserves recovery while current denial masks private context.
+Separate grant/byte/read cancellation, exact clean version, current identity/
+document and MIME/size/live handoff checks prevent late preview/download. Preview
+URLs are revoked on lost readability/disposal; read-only delivery is preserved.
+Backend FileReceipt current-view replay, authorization, permit proof/Origin/
+consumption, integrity and AV remain decisive. No new grant/API/schema/worker rule.
+
+994 frontend units/source gates pass; two native cases prepared/unrun with
+captures off. This is synthetic client evidence, not actual leakage, SQL/worker/
+AV/transfer/session/race/security/CI acceptance. Prior573 backend units retained;
+Ruff/mypy/actual gates pending. No real app/DB/account/config/service/scanner/
+worker/private transfer or alternate access, migration/main/push/merge/deploy.
+[Contract](04-design/file-row-recovery-local.md).

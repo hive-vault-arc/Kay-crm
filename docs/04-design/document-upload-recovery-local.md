@@ -4,6 +4,10 @@ Source checkpoint,2026-10-30; started2026-10-29. C02/C04/C11/C14. Technical
 integration within the selected picker and nested document drawer; actual native,
 SQL, private transfer/security and product acceptance pending.
 
+The subsequent [file-row checkpoint](file-row-recovery-local.md) now covers the
+generic row command/delivery source boundary identified below. Older native
+paths and actual-stack acceptance remain open; the earlier evidence stays intact.
+
 ## Preserved homes and contracts
 
 Contact documents remain in their selected overview drawer; Prospect/Deal keep

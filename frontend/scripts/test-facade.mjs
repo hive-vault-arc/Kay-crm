@@ -103,6 +103,7 @@ try {
     "tests/unit/help.test.mjs",
     "tests/unit/files.test.mjs",
     "tests/unit/document-upload.test.mjs",
+    "tests/unit/file-row.test.mjs",
     "tests/unit/test-ports.test.mjs",
   ], {
     cwd: frontend, stdio: "inherit", windowsHide: true,

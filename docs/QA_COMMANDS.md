@@ -3329,3 +3329,27 @@ services/worker/scanner/transfer or workaround, migration/main/push/merge/deploy
 Native/SQL/AV/private transfer/device/security/CI/AFTER/product checks and generic
 file-row/older native paths remain pending. [Contract](04-design/document-upload-recovery-local.md)
 and [evidence](03-planning/design-migration-evidence/document-upload-recovery-2026-10-30.json).
+
+
+## File row recovery and private handoff,2026-10-30
+
+Initial node --test tests/unit/file-row.test.mjs exits1 on both actual-component
+faults: disposed bytes can reach a browser URL, and a version-keyed list remount
+loses unknown archive state. A later scan-result case fails before old in-progress
+error retirement. The stale hydration case was corrected to render the changed
+hook state and guards now read the live binding. Initial scoped lint finds a
+state-in-effect/cache reset and missing callback dependency; render-state reset
+and stable ref-based delivery predicate correct them. A root-cwd ESLint invocation
+had no config and was not an application check; actual frontend-scoped lint ran.
+
+Focused29 before the final worker-state case and final full994 frontend units
+pass,10 added/registered. npm run lint/typecheck/build/history:check exit0; source
+icon/button checks have0 violations. Static Frontend Taste --app --json scans3
+files with0 findings, static only. Two390/1440 real-stack archive source scenarios
+are prepared/typechecked, not listed/imported/executed. No fake write/AV success.
+Backend unchanged/prior573 units retained, not rerun. No actual app/browser/HTTP/
+DB/accounts/config/services/worker/scanner/transfer or workaround, migration/main/
+push/merge/deploy. Native/SQL/device/AV/private-transfer/security/CI/AFTER/product
+and older file helper paths remain pending.
+[Contract](04-design/file-row-recovery-local.md) and
+[evidence](03-planning/design-migration-evidence/file-row-recovery-2026-10-30.json).
