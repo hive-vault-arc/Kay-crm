@@ -2282,3 +2282,13 @@ lifetimes from writes; check current actor/document/clean version and live owner
 before browser handoff. AV state can change without a document counter increment,
 so retire an obsolete in-progress message from fresh state without inventing
 worker success. Synthetic client checks do not prove actual transfer/revocation.
+
+
+## Inspect nonzero tool results before dependent mutations,2026-10-30
+
+An exec_command result with exit_code1 does not reject its surrounding JavaScript
+promise. Do not place a dependent mutation after a validation call without first
+checking its returned exit code. During CLI removal, prune ran before the model
+reviewed a conservative graph assertion failure. Its5 devOptional removals were
+then inspected and all retained versions/required runtime/source invariants
+proved unchanged. Prefer separate tool boundaries or throw on nonzero status.

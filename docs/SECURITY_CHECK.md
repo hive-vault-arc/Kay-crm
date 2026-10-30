@@ -3322,3 +3322,18 @@ downgrade/update or new exception applied. Frontend994/backend573 connection-
 forbidden units and lint/types/build/history pass;723 backend cases deselected.
 Actual runtime security/native/SQL/AV/transfer/CI acceptance remains pending.
 [Report](03-planning/redesign-verification-2026-10-30.md).
+
+
+## Remove unused vulnerable generation CLI,2026-10-30
+
+The direct development-only shadcn CLI was unused by source/build/test scripts.
+Current upstream CLI still declares unpatched deepmerge. Removing its orphan
+tree fixes the refused advisory with no policy exception, version downgrade,
+override, new library or install scripts. Runtime/full audit0/0, exceptions0;
+994 frontend units/lint/types/build/history pass. All548 UI/source asset files,
+180 required runtime entries and575 retained package versions/integrities remain
+unchanged. Five removed devOptional validators explain the initial conservative
+graph check failure; evidence retains it and the corrected proof. Actual full
+security/SQL/native/AV/private transfer/CI gates remain pending; no merge-ready
+claim or formal Security plugin scan.
+[Remediation](03-planning/redesign-dependency-cleanup-2026-10-30.md).

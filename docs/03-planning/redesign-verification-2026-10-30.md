@@ -1,5 +1,9 @@
 # Redesign verification — 2026-10-30
 
+Follow-up: the development dependency failure recorded below has since been
+[remediated](redesign-dependency-cleanup-2026-10-30.md). The original candidate
+results remain historical; full native/SQL/product acceptance is still pending.
+
 The branch is **not complete or ready to approve/merge**. This fresh check targets
 application candidate `befcaf6b46f7e13eb2e4d03a75d241f0a2eec1bc` on `codex/redesign`. The migration
 goal was observed paused; this request ran verification, with no implementation

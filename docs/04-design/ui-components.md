@@ -1,5 +1,16 @@
 # KAY interface components: shadcn/ui working guide
 
+Current authoring-tool boundary, 2026-10-30: the unused shadcn generation CLI has
+been removed from the application development dependency tree because its current
+deepmerge chain has an unpatched advisory. This changes no reviewed component
+source, Radix/Tailwind/Bklit dependency, registry configuration or selected design.
+The installed component source remains the application standard. Earlier pinned
+CLI/generation commands below are historical or upstream reference, not permission
+to execute an unpatched or unpinned tool. Compare pinned upstream component source
+with the local adaptation during maintenance; review the actual diff and its
+dependencies. Reintroduce a CLI only when its exact tree passes the unchanged
+security policy. [Verification](../03-planning/redesign-dependency-cleanup-2026-10-30.md).
+
 Selected search composition,2026-10-27: SearchTrigger switches at the existing
 phone boundary between DesktopSearch and the shared Sheet. PopoverAnchor is now
 exported from the installed shadcn/Radix primitive; existing Popover behavior is

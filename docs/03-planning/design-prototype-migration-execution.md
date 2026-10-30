@@ -3359,3 +3359,18 @@ retained; frozen254/main/protected work preserved. Broader intake/historical pat
 and actual gates remain pending; goal active.
 [Map](../05-quality/contact-native-paths-local.md#visible-ownership-and-intake-history-entrances2026-10-30)
 and [evidence](design-migration-evidence/contact-review-paths-2026-10-30.json).
+
+
+## Merge-readiness request: dependency fix and source design audit,2026-10-30
+
+Unused vulnerable CLI removed; no runtime/UI source change or weakened exception.
+All994 frontend units, lint/types/build/history and full/runtime security audit
+now pass with0 vulnerabilities/0 exceptions. All548 source/public files,180
+required runtime entries and575 retained package versions unchanged. Stale active
+frontend font/icon instructions corrected.514-file static design scan returned76
+contextual matches; source conformance traced without rendered/AFTER acceptance
+or cosmetic edits. origin/main freshly matches local main and is already an
+ancestor; no remote redesign head or push/merge/deploy. Actual app/SQL/native/
+CI/product gates and exact remaining coverage stay pending, so branch readiness
+is unproven. [Dependency evidence](design-migration-evidence/unused-cli-removal-2026-10-30.json),
+[source review](../05-quality/redesign-source-review-2026-10-30.md).

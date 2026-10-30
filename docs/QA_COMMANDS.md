@@ -3442,3 +3442,19 @@ complete/merge-ready; remaining native/SQL/CI/AFTER/product and field/selector w
 remains. Goal observed paused; only requested verification performed.
 [Report](03-planning/redesign-verification-2026-10-30.md) and
 [evidence](03-planning/design-migration-evidence/checkpoint-verification-2026-10-30.json).
+
+
+## Unused vulnerable CLI cleanup and requested source review,2026-10-30
+
+After removing only the unused generation CLI, frontend unit994/lint/types/build/
+history pass. security:check reports runtime0/full0/exceptions0. App source/public
+files548 and required runtime entries180 remain unchanged; all575 retained package
+versions/integrities remain. Initial conservative graph assertion failed on5
+removed devOptional validators; corrected required/full retained graph checks
+pass. Prior backend573/723 deselected retained, not rerun. Static Taste source
+scan:514 files/76 raw matches, exit1; context triaged, no cosmetic fix or rendered
+acceptance claimed. Five literal public image paths exist. origin/main fetched,
+unchanged/ancestor; no remote redesign head, no push/merge/deploy.
+[Remediation](03-planning/redesign-dependency-cleanup-2026-10-30.md),
+[source review](05-quality/redesign-source-review-2026-10-30.md) and
+[evidence](03-planning/design-migration-evidence/unused-cli-removal-2026-10-30.json).
