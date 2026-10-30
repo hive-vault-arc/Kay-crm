@@ -3374,3 +3374,14 @@ and45 protected calls unchanged; one photo metadata response wait intentionally
 narrowed. No Playwright listing/import/execution, capture/zoom or service control.
 Prior994 frontend/573 backend and production gates retained, not rerun. Broader
 journeys remain unaccepted. [Evidence](03-planning/design-migration-evidence/document-review-paths-2026-10-30.json).
+
+
+## Selected photo native paths,2026-10-30
+
+`npx eslint tests/helpers/photos.ts tests/e2e/property-photos.spec.ts
+--max-warnings=0` and `npm run typecheck`, cwd `frontend`, exit0. TypeScript AST:
+all25 protected calls unchanged, including2 timeouts/4 worker controls/6 business
+commands/2 route faults/2 unroutes/2 reads/7 screenshots; one purpose title drops
+historical automatic wording. No Playwright listing/import/execution or actual
+capture/service/AV/private transfer. Prior994 frontend/573 backend evidence and
+production gates retained, not rerun. [Evidence](03-planning/design-migration-evidence/photo-native-paths-2026-10-30.json).

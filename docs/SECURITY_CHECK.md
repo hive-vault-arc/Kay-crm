@@ -3253,3 +3253,14 @@ retain service/business calls and timeouts; photo metadata wait is more specific
 No actual account/DB/service/scanner/transfer/capture/browser access. Production
 unchanged; actual security/native/full-journey acceptance remains pending.
 [Follow-through](05-quality/document-native-paths-local.md#visiblerecovery-caller-follow-through2026-10-30).
+
+
+## Selected photo native sources,2026-10-30
+
+Test paths only. Gallery/explicit submit, frozen failed selection, actual nested
+viewer and scoped readonly attachment controls now match selected source.
+Original ten-slot409/unsupported415/private403, WebP/MIME/bytes, AV and fault
+assertions are retained. All25 protected source calls unchanged. Scoped lint/
+types pass; no actual browser/capture/account/DB/service/AV/private transfer or
+runtime security verification. Production unchanged; actual acceptance pending.
+[Path map](05-quality/document-native-paths-local.md#propertyprogramme-photo-scenarios2026-10-30).

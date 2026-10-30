@@ -74,3 +74,33 @@ The broader deals/V3/recovery journeys and the separate property-photo scenarios
 still contain older selected-layout assumptions and remain unaccepted. The
 original checkpoint above is historical; these specific entry corrections do not
 certify every caller. [Caller evidence](../03-planning/design-migration-evidence/document-review-paths-2026-10-30.json).
+
+
+## Property/programme photo scenarios,2026-10-30
+
+Two original photo cases now use Galerie → Photos du dossier, its distinct
+Galerie du dossier and Ajouter une photo forms, Photo à ajouter and explicit
+Ajouter la photo/retained Réessayer controls. A focused shared helper opens,
+selects, submits and closes those real homes. Preview uses the distinct Fermer
+la photo control to identify the nested viewer sharing the drawer title; Escape
+must close the viewer and restore the original photo trigger. Current image alt
+text and right-rail cover replace obsolete Photos du bien/header-image targets.
+Reload reopens the gallery; it closes before programme structure/unit creation.
+
+The second title drops historical automatically wording to describe the selected
+explicit submission; production behavior is unchanged. Agent document absence
+now checks actual Ajouter un document inside the readonly Documents drawer,
+then returns to Photos. Current programme name locates the header for geometry.
+Original2 timeouts,4 worker controls,6 direct business commands,2 route faults,
+2 route removals,2 protected reads and7 screenshot calls are AST-identical.
+Original WebP/MIME/byte/ten-slot409/unsupported415/private403, real AV, archive,
+interruption/frozen selection, actual viewer failure/retry/navigation and
+320/390px geometry assertions remain. No clean success is substituted.
+
+Scoped ESLint/full types pass. These sources and screenshot requests were not
+executed, listed or imported via Playwright; no capture or actual account/DB/
+service/AV/private transfer occurred. Prior994 frontend/573 backend units and
+production gates retained, not rerun. Actual device/zoom/focus/security/CI/AFTER/
+product and broader historical journeys remain pending.
+[Photo evidence](../03-planning/design-migration-evidence/photo-native-paths-2026-10-30.json)
+and [photo contract](../04-design/photo-workspace-local.md).

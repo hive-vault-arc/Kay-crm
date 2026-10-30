@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "base": "ea6626f21462017e6e8737e89aaecb39a3896247",
+  "scope": "Two original property/programme/unit photo native paths and selected-gallery helper",
+  "checks": [
+    {
+      "command": "npx eslint tests/helpers/photos.ts tests/e2e/property-photos.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript source AST invariants",
+      "exitCode": 0,
+      "protectedCalls": 25,
+      "unchangedCalls": 25,
+      "timeouts": 2,
+      "workerControls": 4,
+      "businessCommands": 6,
+      "routeFaults": 2,
+      "routeRemovals": 2,
+      "protectedReads": 2,
+      "screenshotCalls": 7,
+      "unchangedTitles": 1,
+      "intentionalTitleChange": "Drop automatically from agent-upload title to describe existing selected explicit submission"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9056,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1319,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "retainedPriorEvidence": {
+    "frontendUnits": 994,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "preparedNative": {
+    "cases": 2,
+    "typechecked": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "screenshotRequestsExecuted": false,
+    "fullStackAccepted": false
+  },
+  "frozen": {
+    "inputs": 254,
+    "drift": 0,
+    "mainUnchanged": true
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Actual native/device/zoom/focus/SQL/AV/private transfer/security/CI/AFTER/product gates",
+    "Broader historical review/recovery journeys",
+    "Migrations0036/0037 and remaining field/job/alias/selectors"
+  ],
+  "status": "Prepared native source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/helpers/photos.ts",
+      "bytes": 1711,
+      "sha256": "1e006582fadfc0134a27afebd9e0a94827deb1679aea126710150307bc26837f"
+    },
+    {
+      "file": "frontend/tests/e2e/property-photos.spec.ts",
+      "bytes": 14520,
+      "sha256": "ae890245b7a8f00f3cd4e475d975c179f10ca14d922c0a58bf25e896108ba0c7"
+    }
+  ]
+}

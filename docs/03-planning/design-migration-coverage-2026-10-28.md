@@ -674,3 +674,12 @@ and the recovery helper now match selected drawers/tabs/gallery. Lint/types and
 protected-call invariants pass; actual native execution remains pending. Broader
 journeys and property-photo native cases are not accepted by these entry changes.
 [Follow-through](../05-quality/document-native-paths-local.md#visiblerecovery-caller-follow-through2026-10-30).
+
+
+## Photo native-path follow-through,2026-10-30
+
+Two property/programme/unit photo sources now target selected gallery/explicit
+submit/retry/viewer/cover and actual agent readonly document controls. All25
+protected business/service/fault/read/capture calls retained. Scoped lint/types
+pass; native execution and full-stack photo acceptance remain pending.
+[Path map](../05-quality/document-native-paths-local.md#propertyprogramme-photo-scenarios2026-10-30).

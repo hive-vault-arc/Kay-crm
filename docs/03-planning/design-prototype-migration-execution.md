@@ -3289,3 +3289,16 @@ browser/capture/service/scanner/transfer execution. Production/prior994 frontend
 review paths/property-photo cases and actual gates remain pending; goal active.
 [Path map](../05-quality/document-native-paths-local.md#visiblerecovery-caller-follow-through2026-10-30)
 and [evidence](design-migration-evidence/document-review-paths-2026-10-30.json).
+
+
+## Selected photo native paths,2026-10-30
+
+Two original property/programme/unit photo cases and a focused helper now follow
+selected gallery/forms, explicit submission/retained retry, actual nested viewer,
+right photo cover, readonly document entry and hierarchy transitions. AST keeps
+all25 protected calls including7 screenshot requests; one title drops obsolete
+automatic wording. Scoped lint/full types pass. No Playwright or capture, actual
+DB/worker/AV/transfer access; production/prior994 frontend/573 backend unchanged.
+Frozen254/main/protected work preserved. Actual gates and broader legacy paths
+remain pending; full goal active. [Path map](../05-quality/document-native-paths-local.md#propertyprogramme-photo-scenarios2026-10-30)
+and [evidence](design-migration-evidence/photo-native-paths-2026-10-30.json).
