@@ -3310,3 +3310,15 @@ All63 original protected calls/2 titles unchanged; lint/types pass. No actual
 app/browser/account/DB/service/capture or runtime security check. Production
 unchanged; native/full-journey acceptance and wider intake paths pending.
 [Evidence](03-planning/design-migration-evidence/contact-review-paths-2026-10-30.json).
+
+
+## Fresh redesign dependency gate,2026-10-30
+
+Candidate befcaf6: production audit0, full audit3 low development-package entries
+for one deepmerge GHSA-gcqx-w48m-w2h4 advisory, through shadcn/@shadcn/registry.
+Installed/lock versions agree. security:check correctly fails
+NEW_VULNERABILITY_REFUSED; prior braces exception does not cover it. No automatic
+downgrade/update or new exception applied. Frontend994/backend573 connection-
+forbidden units and lint/types/build/history pass;723 backend cases deselected.
+Actual runtime security/native/SQL/AV/transfer/CI acceptance remains pending.
+[Report](03-planning/redesign-verification-2026-10-30.md).
