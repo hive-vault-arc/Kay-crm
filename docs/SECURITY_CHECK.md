@@ -3242,3 +3242,14 @@ AV/worker and interrupted-transfer assertions remain. AST invariants/lint/types
 pass; no runtime security, account, DB, service, worker, scanner, private transfer,
 app/browser access or capture was executed. Wider review/helper paths and actual
 acceptance remain pending. [Path map](05-quality/document-native-paths-local.md).
+
+
+## Document review/recovery entry sources,2026-10-30
+
+Test paths only. Private Contact PNG/preview/digests remain; shared inventory
+uses synthetic DOCX attachments, while card images use actual photo conversion
+and AV. Readonly/private404 and scanner/fault assertions remain. Source invariants
+retain service/business calls and timeouts; photo metadata wait is more specific.
+No actual account/DB/service/scanner/transfer/capture/browser access. Production
+unchanged; actual security/native/full-journey acceptance remains pending.
+[Follow-through](05-quality/document-native-paths-local.md#visiblerecovery-caller-follow-through2026-10-30).

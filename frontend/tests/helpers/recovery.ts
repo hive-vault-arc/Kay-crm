@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { testControl } from "./api-process";
 import { expect, signIn, clearActorContext, type TestActor } from "./auth";
 import { geometry } from "./report-review";
+import { openDocuments } from "./files";
 
 type RestoredFixture = {
   admin: TestActor; agent: TestActor; other: TestActor; active_token: string;
@@ -53,7 +54,7 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
       for (const width of [320, 360, 390, 768, 1024, 1440]) { await page.setViewportSize({ width, height: 1000 }); measurements.push(await geometry(page)); }
     }
     await capture("contact-desktop");
-    await page.getByRole("tab", { name: "Documents", exact: true }).click();
+    await openDocuments(page, "contact");
     await expect(page.getByText("Analyse réussie", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Télécharger SP21 preuve synthétique.png", exact: true })).toBeEnabled();
     const downloadEvent = page.waitForEvent("download");

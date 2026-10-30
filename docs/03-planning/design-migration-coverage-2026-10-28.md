@@ -665,3 +665,12 @@ controls. Shared fixture/digest helpers and security/service-control assertions
 are preserved; focused lint/full types pass. Native execution remains pending,
 as do three other direct upload/download consumers and recovery Contact paths.
 [Path map](../05-quality/document-native-paths-local.md).
+
+
+## File review/recovery entrances,2026-10-30
+
+Specific file entrances in visible files/deals, historical V3 card-image review
+and the recovery helper now match selected drawers/tabs/gallery. Lint/types and
+protected-call invariants pass; actual native execution remains pending. Broader
+journeys and property-photo native cases are not accepted by these entry changes.
+[Follow-through](../05-quality/document-native-paths-local.md#visiblerecovery-caller-follow-through2026-10-30).

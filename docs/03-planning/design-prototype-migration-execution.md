@@ -3275,3 +3275,17 @@ work preserved. Three wider direct helper consumers plus recovery Contact paths,
 actual native/SQL/security/CI/AFTER/product and other reconciliation remain open;
 full goal active. [Path map](../05-quality/document-native-paths-local.md) and
 [evidence](design-migration-evidence/document-native-paths-2026-10-30.json).
+
+
+## Document review/recovery entry follow-through,2026-10-30
+
+Visible file review now uses real selected document drawers/nested uploader,
+long-name inventory DOCX and private-contact image preview. Deal/recovery file
+entrances use their actual tab/drawer. Historical inventory-card image checking
+uses Galerie, WebP/AV and purpose=photo. AST retains4 titles/45 of46 protected
+calls; one response predicate is narrowed to photo. Lint/types pass. No actual
+browser/capture/service/scanner/transfer execution. Production/prior994 frontend/
+573 backend evidence retained; frozen254/main/protected work preserved. Broader
+review paths/property-photo cases and actual gates remain pending; goal active.
+[Path map](../05-quality/document-native-paths-local.md#visiblerecovery-caller-follow-through2026-10-30)
+and [evidence](design-migration-evidence/document-review-paths-2026-10-30.json).

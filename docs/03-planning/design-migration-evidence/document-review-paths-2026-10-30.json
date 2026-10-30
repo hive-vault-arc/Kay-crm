@@ -1,0 +1,137 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "base": "b063ba9b113bb59be66c1eb80b2e8cee1fec0148",
+  "scope": "Selected document and gallery entrances in four existing native-source callers",
+  "checks": [
+    {
+      "command": "Scoped ESLint on four changed callers --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "final": true
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "final": true
+    },
+    {
+      "command": "TypeScript source AST invariants",
+      "exitCode": 0,
+      "scenarioTitlesUnchanged": 4,
+      "protectedCalls": 46,
+      "unchangedCalls": 45,
+      "intentionalChange": "V3 inventory-card metadata wait additionally requires purpose=photo",
+      "files": [
+        {
+          "file": "frontend/tests/review/files.chrome.spec.ts",
+          "protectedCalls": 15,
+          "titles": 1,
+          "intentionalChanges": 0
+        },
+        {
+          "file": "frontend/tests/review/deals.chrome.spec.ts",
+          "protectedCalls": 14,
+          "titles": 1,
+          "intentionalChanges": 0
+        },
+        {
+          "file": "frontend/tests/review/v3.chrome.spec.ts",
+          "protectedCalls": 7,
+          "titles": 2,
+          "intentionalChanges": 1
+        },
+        {
+          "file": "frontend/tests/helpers/recovery.ts",
+          "protectedCalls": 10,
+          "titles": 0,
+          "intentionalChanges": 0
+        }
+      ]
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9054,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1318,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "fixtureReconciliation": {
+    "privateContact": "Original synthetic PNG retains actual preview/focus/digest",
+    "sharedInventory": "Separate long-name synthetic DOCX; actual upload/AV/digest",
+    "inventoryCard": "Original synthetic PNG through actual Photos conversion to WebP/AV, purpose=photo, no canned clean success"
+  },
+  "retainedPriorEvidence": {
+    "frontendUnits": 994,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "preparedNative": {
+    "targetScenarios": 3,
+    "recoveryHelper": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "fullJourneysAccepted": false
+  },
+  "frozen": {
+    "inputs": 254,
+    "drift": 0,
+    "mainUnchanged": true
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "capturesOrZoomExecuted": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Broader visible Deal/V3/recovery selectors",
+    "Separate property-photo native scenarios",
+    "Actual native/device/zoom/focus/SQL/AV/private transfer/security/CI/AFTER/product gates",
+    "Migrations0036/0037 and remaining field/job/alias/selectors"
+  ],
+  "status": "Prepared source follow-through; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/review/files.chrome.spec.ts",
+      "bytes": 16759,
+      "sha256": "2a30fc0a9db41faa3eb153ce5c72c73974a8c0217281f935f0ee159c2ead6aa4"
+    },
+    {
+      "file": "frontend/tests/review/deals.chrome.spec.ts",
+      "bytes": 16457,
+      "sha256": "53154e20de4b5aad4f5d4a36cf6a4c9e58cfcd8665e013ac4e32d67a6901fae8"
+    },
+    {
+      "file": "frontend/tests/review/v3.chrome.spec.ts",
+      "bytes": 14595,
+      "sha256": "b755adf06c6fc5841d4cc2f6692683059ce85cf705c6733de92328815ae1de3e"
+    },
+    {
+      "file": "frontend/tests/helpers/recovery.ts",
+      "bytes": 8569,
+      "sha256": "379f8a148ce9c70cc802bc167515850c6be5c80aaef4dcfbece78936fd99a698"
+    }
+  ]
+}

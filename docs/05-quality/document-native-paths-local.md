@@ -45,3 +45,32 @@ not attachment upload. The recovery helper also has an older Contact Documents
 tab path. These sources and actual native/device/zoom/focus/permission/security/
 CI/AFTER/product checks remain open. See the
 [evidence](../03-planning/design-migration-evidence/document-native-paths-2026-10-30.json).
+
+
+## Visible/recovery caller follow-through,2026-10-30
+
+The file entrances of those three direct consumers and the recovery helper are
+now reconciled. Visible files Chrome opens Contact/inventory documents explicitly,
+including fresh pages for loading/error/zoom/capture; uses nested upload, retained
+retry, picker keyboard return and scoped readonly controls. Private contact PNG
+keeps real image preview/focus/digest checks. Inventory attachment uses a separate
+synthetic DOCX of the same long-name purpose; its real digest, quarantine, scanner,
+archive, touch and 200% assertions remain. Interrupted uploader focus must stay
+inside its open drawer rather than target the inert parent heading.
+
+The Deal caller opens Documents for attachment upload and returns to Activités/
+its existing history disclosure. Recovery opens Documents du contact. Historical
+V3 inventory-image checking now uses Galerie → Ajouter une photo, actual WebP
+conversion/AV, purpose=photo metadata, current property-card link identity and
+photo viewer. It requires no image while quarantined and an actual decoded image
+after clean scanning; the metadata wait is narrowed to photo and its lazy card
+scrolled into view. No successful response or clean state is mocked.
+
+Scoped lint/full types pass. Source AST retains4 scenario titles, all timeouts
+and45 of46 protected business/service/request/fault calls exactly; the single
+intentional change narrows the V3 metadata response predicate to purpose=photo.
+No native, capture, zoom, outage, service or private-transfer execution occurred.
+The broader deals/V3/recovery journeys and the separate property-photo scenarios
+still contain older selected-layout assumptions and remain unaccepted. The
+original checkpoint above is historical; these specific entry corrections do not
+certify every caller. [Caller evidence](../03-planning/design-migration-evidence/document-review-paths-2026-10-30.json).

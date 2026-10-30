@@ -3363,3 +3363,14 @@ and older file helper paths remain pending.
 fixture/digest functions. No Playwright listing/import/execution. Prior994
 frontend/573 backend unit and production-gate evidence retained, not rerun.
 [Evidence](03-planning/design-migration-evidence/document-native-paths-2026-10-30.json).
+
+
+## Document review/recovery entrances,2026-10-30
+
+`npx eslint tests/review/files.chrome.spec.ts tests/review/deals.chrome.spec.ts
+tests/review/v3.chrome.spec.ts tests/helpers/recovery.ts --max-warnings=0` and
+`npm run typecheck`, cwd `frontend`, final exit0. Source AST:4 scenario titles
+and45 protected calls unchanged; one photo metadata response wait intentionally
+narrowed. No Playwright listing/import/execution, capture/zoom or service control.
+Prior994 frontend/573 backend and production gates retained, not rerun. Broader
+journeys remain unaccepted. [Evidence](03-planning/design-migration-evidence/document-review-paths-2026-10-30.json).

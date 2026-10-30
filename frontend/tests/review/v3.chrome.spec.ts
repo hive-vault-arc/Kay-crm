@@ -3,7 +3,7 @@ import { test, expect, signIn, clearActorContext, removeActor, type TestActor } 
 import { reportFixture } from "../helpers/reports";
 import { configureSchedule, commandVisit } from "../helpers/schedule";
 import { geometry } from "../helpers/report-review";
-import { uploadFile, syntheticFile } from "../helpers/files";
+import { syntheticFile } from "../helpers/files";
 import { testControl } from "../helpers/api-process";
 import { inspectIcons } from "../helpers/icons";
 
@@ -118,13 +118,22 @@ test("Approved V3: inventory card uses only an authorized antivirus-clean real i
   try {
     const data = await reportFixture(page, actors);
     await clearActorContext(page); await signIn(page, actor); await page.goto(`/projects/properties/${data.stock.sid}`);
-    await testControl("worker-stop"); await uploadFile(page, await syntheticFile("clean", "V3 photographie synthétique.png"));
-    const metadata = page.waitForResponse(response => new URL(response.url()).pathname === "/api/v1/documents" && new URL(response.url()).searchParams.get("parent_id") === data.stock.sid);
-    await page.goto("/projects"); expect((await metadata).status()).toBe(200);
-    const pendingCard = page.getByRole("article").filter({ has: page.getByRole("link", { name: `${data.stock.reference}-VILLA`, exact: true }) }); await expect(pendingCard.locator("img")).toHaveCount(0);
-    await page.goto(`/projects/properties/${data.stock.sid}`); await testControl("worker-start"); await expect(page.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 20000 });
-    await page.goto("/projects"); const card = page.getByRole("article").filter({ has: page.getByRole("link", { name: `${data.stock.reference}-VILLA`, exact: true }) });
+    await testControl("worker-stop");
+    await page.getByRole("button", { name: "Galerie", exact: true }).click();
+    const gallery = page.getByRole("dialog", { name: "Photos du dossier", exact: true });
+    await gallery.getByRole("button", { name: "Ajouter une photo", exact: true }).click();
+    const form = gallery.getByRole("form", { name: "Ajouter une photo", exact: true });
+    await form.getByLabel("Photo à ajouter", { exact: true }).setInputFiles(await syntheticFile("clean", "V3 photographie synthétique.png"));
+    await form.getByRole("button", { name: "Ajouter la photo", exact: true }).click();
+    await expect(gallery.getByText("Photo envoyée. Elle sera visible après l’analyse antivirus.", { exact: true })).toBeVisible();
+    await expect(gallery.getByText("En quarantaine, analyse en attente", { exact: true })).toBeVisible();
+    const metadata = page.waitForResponse(response => new URL(response.url()).pathname === "/api/v1/documents" && new URL(response.url()).searchParams.get("parent_id") === data.stock.sid && new URL(response.url()).searchParams.get("purpose") === "photo");
+    await page.goto("/projects?kind=properties");
+    const pendingCard = page.getByRole("article").filter({ has: page.locator(`a[href="/projects/properties/${data.stock.sid}"]`) }); await pendingCard.scrollIntoViewIfNeeded(); expect((await metadata).status()).toBe(200); await expect(pendingCard.locator("img")).toHaveCount(0);
+    await page.goto(`/projects/properties/${data.stock.sid}`); await page.getByRole("button", { name: "Galerie", exact: true }).click(); await testControl("worker-start"); await expect(gallery.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 20000 });
+    await page.goto("/projects?kind=properties"); const card = page.getByRole("article").filter({ has: page.locator(`a[href="/projects/properties/${data.stock.sid}"]`) });
     const image = card.locator('img[src^="blob:"]'); await expect(image).toBeVisible(); expect(await image.evaluate(el => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-    await page.goto(`/projects/properties/${data.stock.sid}`); await expect(page.getByRole("button", { name: "Afficher V3 photographie synthétique.png", exact: true })).toBeEnabled();
+    await page.goto(`/projects/properties/${data.stock.sid}`); await page.getByRole("button", { name: "Galerie", exact: true }).click(); await gallery.getByRole("button", { name: "Ouvrir la photo V3 photographie synthétique.webp", exact: true }).click();
+    await expect(page.getByRole("img", { name: "Photo du dossier : V3 photographie synthétique.webp", exact: true })).toBeVisible();
   } finally { await testControl("worker-start"); await clearActorContext(page); for (const value of actors) await removeActor(value); }
 });
