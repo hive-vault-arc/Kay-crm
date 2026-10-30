@@ -3418,3 +3418,14 @@ protected event/fixture/read/screenshot/timeout calls. `git diff --check` exit0.
 No native listing/import/execution/capture/account/DB/browser/service control.
 Prior994 frontend/573 backend and production gates retained, not rerun for these
 test paths. [Evidence](03-planning/design-migration-evidence/inventory-design-paths-2026-10-30.json).
+
+
+## Contact ownership/history native sources,2026-10-30
+
+`npx eslint tests/review/ownership.chrome.spec.ts tests/review/intake.chrome.spec.ts
+--max-warnings=0` and `npm run typecheck`, cwd `frontend`, exit0. Source AST:2 titles/
+all63 original protected calls retained; one explicit merge-drawer intent added.
+`git diff --check` exit0. No Playwright listing/import/execution/capture/zoom/
+account/DB/service access. Prior994 frontend/573 backend and production evidence
+retained, not rerun. Broader intake review remains unaccepted.
+[Evidence](03-planning/design-migration-evidence/contact-review-paths-2026-10-30.json).

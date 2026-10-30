@@ -3344,3 +3344,18 @@ frozen254/main/protected work preserved. Wider legacy and actual acceptance
 gates remain pending; full goal active.
 [Map](../05-quality/inventory-native-paths-local.md#selected-inventory-design-review-source2026-10-30)
 and [evidence](design-migration-evidence/inventory-design-paths-2026-10-30.json).
+
+
+## Contact ownership/history review paths,2026-10-30
+
+Visible ownership now uses two actual tabs, attribution disclosure, activity/
+management drawers and explicit merge survivor search. Input/tab geometry checks
+are separated, and original-note author is checked in its row after transfer/
+archive. Intake changes only Contact history entrance/current actor display.
+AST retains2 titles/all63 original protected calls; one current merge-drawer
+intent replaces its removed shortcut. Lint/types pass; no production or actual
+native/browser/capture/DB/service access. Prior994 frontend/573 backend gates
+retained; frozen254/main/protected work preserved. Broader intake/historical paths
+and actual gates remain pending; goal active.
+[Map](../05-quality/contact-native-paths-local.md#visible-ownership-and-intake-history-entrances2026-10-30)
+and [evidence](design-migration-evidence/contact-review-paths-2026-10-30.json).

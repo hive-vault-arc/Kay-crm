@@ -5,6 +5,7 @@ import { test, expect, clearActorContext } from "../helpers/auth";
 import { testControl } from "../helpers/api-process";
 import { geometry } from "../helpers/report-review";
 import { clearIntake, fillWebsite, intakeFixture, simulatorOrigin, staffLogin } from "../helpers/intake";
+import { contactActivity } from "../helpers/ownership";
 
 test("SP20 visible Chrome: real signed form, scoped Lead, native states, touch, keyboard and zoom", async ({ page, browser, baseURL }) => {
   test.setTimeout(180000);
@@ -51,7 +52,7 @@ test("SP20 visible Chrome: real signed form, scoped Lead, native states, touch, 
     await mobile.setViewportSize({ width: 390, height: 844 }); await staffLogin(mobile, data.agent, baseURL!); await mobile.goto("/leads"); await mobile.getByText("Filtres avancés", { exact: true }).tap(); await mobile.getByLabel("Provenance", { exact: true }).selectOption("website"); await mobile.getByRole("button", { name: "Appliquer", exact: true }).tap(); await expect(mobile.getByText("2 demande(s) accessible(s).", { exact: true })).toBeVisible(); measurements.push(await geometry(mobile)); await capture(mobile, "received-mobile");
     const rows = (await (await page.request.get("/api/v1/enquiries?source=website")).json()).items;
     await page.goto(`/leads/${rows[0].id}`); await expect(page.getByText("SP20 nouvelle demande web synthétique", { exact: true })).toBeVisible(); await capture(page, "lead-desktop");
-    await page.goto(`/contacts/${rows[0].contact.id}`); await page.getByRole("tab", { name: "Historique", exact: true }).click(); await expect(page.getByText("Auteur : Source web : Simulateur local", { exact: true }).first()).toBeVisible(); await capture(page, "history-desktop");
+    await page.goto(`/contacts/${rows[0].contact.id}`); const history = await contactActivity(page); await expect(history.getByText("Source web : Simulateur local", { exact: true }).first()).toBeVisible(); await capture(page, "history-desktop");
     await staffLogin(mobile, data.other, baseURL!); injecting = true; await mobile.goto(`/leads/${rows[0].id}`); await expect(mobile.getByRole("alert").filter({ hasText: /introuvable|accessible/ })).toBeVisible(); await capture(mobile, "denied-mobile"); injecting = false;
     profile = await mkdtemp(path.resolve("test-results/sp20-zoom-")); const launch = { ignoreHTTPSErrors: true, channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, args: ["--window-size=1440,1000"] } as const;
     zoomContext = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] }); let zoom = zoomContext.pages()[0]; await zoom.goto(simulatorOrigin); await expect(zoom.getByRole("heading", { name: "Demande web", exact: true })).toBeVisible(); const baseline = await zoom.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth })); await zoomContext.close(); zoomContext = undefined;

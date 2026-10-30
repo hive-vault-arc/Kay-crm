@@ -709,3 +709,12 @@ Four existing sources now check selected header glyphs/sections, actual saved
 identity, current stepper and promoter/dirty-leave controls. Original4 titles/
 21 protected calls retained; lint/types pass. Native/rendered/security/full-
 journey acceptance is unrun. [Map](../05-quality/inventory-native-paths-local.md#selected-inventory-design-review-source2026-10-30).
+
+
+## Contact ownership/history review paths,2026-10-30
+
+Visible ownership targets current two tabs/disclosure/drawers/merge; explicit note
+author checks retain actor separation. Intake changes its Contact history entry
+only. All63 original protected calls/2 titles preserved; lint/types pass. Actual
+native and broader intake/historical journeys remain unaccepted.
+[Map](../05-quality/contact-native-paths-local.md#visible-ownership-and-intake-history-entrances2026-10-30).

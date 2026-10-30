@@ -3298,3 +3298,15 @@ remain. Four titles/21 protected calls retained; lint/types pass. No actual
 browser/capture/account/DB/service or runtime security verification. Production
 unchanged; actual acceptance remains pending.
 [Evidence](03-planning/design-migration-evidence/inventory-design-paths-2026-10-30.json).
+
+
+## Contact ownership/history native sources,2026-10-30
+
+Test paths only. Current two-tab/disclosure/drawer paths replace removed tabs/
+shortcut; merge still explicitly searches/reviews/confirms the original survivor.
+Original note author is additionally checked separately from assignment actor.
+Private former-agent/archive denial, restore and alias assertions retained.
+All63 original protected calls/2 titles unchanged; lint/types pass. No actual
+app/browser/account/DB/service/capture or runtime security check. Production
+unchanged; native/full-journey acceptance and wider intake paths pending.
+[Evidence](03-planning/design-migration-evidence/contact-review-paths-2026-10-30.json).
