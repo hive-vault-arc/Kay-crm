@@ -3191,3 +3191,23 @@ account/config/service/file/worker access or workaround, migration/main/push/mer
 deploy. Upload lifecycle audit is pending fault-test evidence, not a demonstrated
 runtime/private-leak claim.
 [Evidence](03-planning/design-migration-evidence/inventory-permission-paths-2026-10-29.json).
+
+
+## Document uploader owned metadata/transfer boundary,2026-10-30
+
+Original file/body/key/parent/document/counter and actual SSR actor/role bind
+preparation. Fresh actor/role/password context runs before metadata/current reads
+and inside grant issuance. Abort reaches metadata/read/permit/bytes; disposal or
+current writability/list denial refuses late transfer/progress/private completion.
+Foreign metadata/document or wrong opening/later actor cannot retarget upload.
+Known published version recovery does not re-send bytes; explicit discard does
+not erase server history. Backend current parent/permission, private Origin/
+proof/grant consumption, MIME/size/hash/storage/publication and AV/outbox remain
+authoritative. No new role grant, endpoint, public file URL or retention change.
+
+984 frontend units/source gates pass;2 native cases prepared/unrun with captures
+off. Backend unchanged/prior573 units retained. This is synthetic client evidence,
+not actual disclosure, race, SQL/AV/session/transfer/security/CI acceptance. Generic
+file-row actions/delivery remain pending. No real app/DB/account/config/service/
+worker/scanner/private transfer access or workaround, migration/main/push/merge/
+deploy. [Contract](04-design/document-upload-recovery-local.md).

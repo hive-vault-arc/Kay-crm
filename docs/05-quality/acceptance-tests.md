@@ -884,3 +884,17 @@ step. Area, development/floor/type/offering preservation and private developer/
 types pass. Native/SQL/actual permission and wider helper acceptance unrun.
 Production/prior977 frontend/573 backend evidence retained.
 [Path map](inventory-native-paths-local.md#agent-permission-follow-through2026-10-29).
+
+
+## Document uploader recovery follow-through,2026-10-30
+
+Two initial actual-component failures establish unknown-file replacement and
+metadata lifetime gaps. Seven added source cases cover original metadata/key/File,
+disposal, observed exact published-version recovery, wrong metadata/ID/opening or
+later actor, writability loss, explicit discard and real pre-permit guard/proof/
+cancellation behavior. Focused23/full984 frontend units and source gates pass.
+Two390/1440 isolated native scenarios prepared/typechecked, not run; no clean
+verdict or real transfer completion is inferred. Backend/prior573 units unchanged.
+Generic file-row/archive/retry/delivery, older native selectors and actual SQL/
+worker/AV/transfer/device/security/CI/AFTER/product acceptance remain pending.
+[Contract](../04-design/document-upload-recovery-local.md).

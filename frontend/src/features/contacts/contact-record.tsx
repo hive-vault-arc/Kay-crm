@@ -75,7 +75,7 @@ export function ContactRecord({ id, role, actorId, initialTask }: { id: string; 
     ]} aside={<>
       <ContactVisits contactId={contact.id} writable={writable} />
       <RecordSection title="Tâches" action={<RecordDrawer label="Voir les tâches" title="Tâches du contact" action="task" description="Tâches, échéances et responsables de ce contact." initialOpen={Boolean(initialTask)}><TaskPanel contactId={contact.id} writable={writable} initialTask={initialTask} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Retrouvez les tâches et leurs échéances.</p></RecordSection>
-      <RecordSection title="Documents" action={<RecordDrawer label="Voir les documents" title="Documents du contact" action="file" description="Documents privés accessibles sur ce contact."><FilePanel parentKind="contact" parentId={contact.id} writable={writable} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Pièces jointes partagées avec les personnes autorisées.</p></RecordSection>
+      <RecordSection title="Documents" action={<RecordDrawer label="Voir les documents" title="Documents du contact" action="file" description="Documents privés accessibles sur ce contact."><FilePanel actorId={actorId} role={role} parentKind="contact" parentId={contact.id} writable={writable} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Pièces jointes partagées avec les personnes autorisées.</p></RecordSection>
     </>} />
   </div></InlineEditScope>;
 }

@@ -3307,3 +3307,25 @@ retained, not rerun; actual SQL/native/permission/security/CI/AFTER/product pend
 No actual app/DB/accounts/config/service/worker/file/transfer or workaround,
 migration/main/push/merge/deploy. Broader file upload paths remain pending.
 [Evidence](03-planning/design-migration-evidence/inventory-permission-paths-2026-10-29.json).
+
+
+## Document uploader ownership,2026-10-30
+
+Initial node --test tests/unit/document-upload.test.mjs exits1 on both new actual
+component faults: unknown metadata leaves replacement enabled, and disposal has
+no metadata abort signal. Intermediate strict comparison exposed raw-versus-
+validated metadata object realms; dispatch now uses the owned validated body.
+Existing selected-picker fixtures model coherent next-counter grants and fresh
+identity. First lint has2 reset-helper dependency warnings; stable module helper
+corrects them. Final focused23/full984 frontend units pass,7 added/registered;
+npm run lint, npm run typecheck, npm run build and npm run history:check exit0,
+including final actual actor/role propagation through all5 call sites. Static
+Frontend Taste --app --json scans6 changed UI files with0 findings, static only.
+
+Two new390/1440 native metadata-response cases are prepared/typechecked only;
+no Playwright listing/import/execution. Backend unchanged/prior573 connection-
+forbidden units retained, not rerun. No actual app/browser/HTTP/DB/accounts/config/
+services/worker/scanner/transfer or workaround, migration/main/push/merge/deploy.
+Native/SQL/AV/private transfer/device/security/CI/AFTER/product checks and generic
+file-row/older native paths remain pending. [Contract](04-design/document-upload-recovery-local.md)
+and [evidence](03-planning/design-migration-evidence/document-upload-recovery-2026-10-30.json).

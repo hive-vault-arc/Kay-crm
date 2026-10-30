@@ -3216,3 +3216,25 @@ preserved; no actual access/workaround/migration/push/merge/deploy. Full goal an
 actual native/device/security/CI/AFTER/product checks remain open.
 [Path map](../05-quality/inventory-native-paths-local.md#agent-permission-follow-through2026-10-29)
 and [evidence](design-migration-evidence/inventory-permission-paths-2026-10-29.json).
+
+
+## Document upload metadata/lifetime follow-through,2026-10-30
+
+Two new actual-component faults reproduce enabled file replacement after unknown
+metadata and absent metadata cancellation on disposal. Original validated file/
+body/key/document/counter and actual page actor/role now remain bound. Signals
+and live ownership checks span metadata/read/grant/bytes; an exact already
+published version completes from current data without re-sending bytes. Guarded
+discard returns to the existing list. Current denial/writability loss masks or
+clears private selection. Actual identity guard also runs inside permit issuance.
+No selected picker/list/drawer/layout/theme/icon/motion/backend/AV change.
+
+Focused23/full984 frontend units, lint/types/build/history and static app scan6
+pass,7 cases added. Two390/1440 native scenarios prepared/typechecked, not run;
+no clean verdict or successful actual transfer is substituted. Backend unchanged/
+prior573 units retained. Frozen254/main/protected work preserved; no actual
+access/workaround/migration/push/merge/deploy. Generic file-row command/delivery
+ownership, older file helpers and actual SQL/native/worker/transfer/security/CI/
+AFTER/product, migrations0036/0037 and other exact field/job/alias/selectors remain.
+Full goal active. [Contract](../04-design/document-upload-recovery-local.md) and
+[evidence](design-migration-evidence/document-upload-recovery-2026-10-30.json).

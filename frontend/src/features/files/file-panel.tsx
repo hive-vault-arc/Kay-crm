@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { FileIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, useInSheet } from "@/components/ui/sheet";
@@ -14,14 +14,19 @@ import { useQuery } from "@/features/contacts/use-query";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { apiGet, ApiError } from "@/lib/api/client";
 import { apiCommand } from "@/lib/api/command";
+import { meSchema } from "@/lib/auth/contracts";
 import { documentSchema, documentsSchema, maxFileBytes, mimeTypes, newDocumentSchema, type ParentKind, type ProtectedDocument } from "./contracts";
 import { downloadBytes, requestFilePermit, uploadBytes } from "./transfers";
 
-export function FilePanel({ parentKind, parentId, writable }: { parentKind: ParentKind; parentId: string; writable: boolean }) {
-  return <FilePanelBody key={`${parentKind}:${parentId}`} parentKind={parentKind} parentId={parentId} writable={writable} />;
+type UploadAttempt = { key: string; documentId: string; file?: File; metadata?: ReturnType<typeof newDocumentSchema.parse>; minimum: number; permitVersion?: string; actor?: { id: string; role: string } };
+const emptyUploadAttempt = (): UploadAttempt => ({ key: "", documentId: "", minimum: 0 });
+type UploadBinding = { actorId?: string; role?: ReturnType<typeof meSchema.parse>["user"]["role"] };
+
+export function FilePanel({ parentKind, parentId, writable, actorId, role }: { parentKind: ParentKind; parentId: string; writable: boolean } & UploadBinding) {
+  return <FilePanelBody key={`${parentKind}:${parentId}:${actorId ?? ""}:${role ?? ""}`} parentKind={parentKind} parentId={parentId} writable={writable} actorId={actorId} role={role} />;
 }
 
-function FilePanelBody({ parentKind, parentId, writable }: { parentKind: ParentKind; parentId: string; writable: boolean }) {
+function FilePanelBody({ parentKind, parentId, writable, actorId, role }: { parentKind: ParentKind; parentId: string; writable: boolean } & UploadBinding) {
   const inSheet = useInSheet();
   const inventoryParent = parentKind === "property" || parentKind === "development";
   const hydrated = useHydrated();
@@ -30,8 +35,10 @@ function FilePanelBody({ parentKind, parentId, writable }: { parentKind: ParentK
   const [file, setFile] = useState<File>();
   const [resume, setResume] = useState<ProtectedDocument>();
   const [busy, setBusy] = useState(false);
+  const [recovering, setRecovering] = useState(false);
   const [progress, setProgress] = useState<number>();
   const [error, setError] = useState<ApiError>();
+  const [scopeDenial, setScopeDenial] = useState<ApiError>();
   const [notice, setNotice] = useState("");
   const [uploadOpen, setUploadOpen] = useState(false);
   const inputId = useId();
@@ -43,63 +50,80 @@ function FilePanelBody({ parentKind, parentId, writable }: { parentKind: ParentK
   const guard = useUnsavedGuard();
   const heading = useRef<HTMLHeadingElement>(null);
   const abort = useRef<AbortController | null>(null);
-  const attempt = useRef({ key: "", documentId: "" });
+  const attempt = useRef<UploadAttempt>(emptyUploadAttempt()), alive = useRef(true), available = useRef(writable);
   const locked = useRef(false);
   const pending = Boolean(query.value?.items.some(item => item.versions.some(version => version.state === "pending_scan")));
   const refresh = query.refreshQuietly;
   useEffect(() => { if (!pending) return; const timer = setInterval(refresh, 2000); return () => clearInterval(timer); }, [pending, refresh]);
-  useEffect(() => () => abort.current?.abort(), []);
+  const deniedRead = Boolean(query.error && [401, 403, 404].includes(query.error.status));
+  useLayoutEffect(() => { available.current = writable && !deniedRead; if (!available.current) { abort.current?.abort(); attempt.current = emptyUploadAttempt(); setFile(undefined); setResume(undefined); setUploadOpen(false); setBusy(false); setRecovering(false); setProgress(undefined); } }, [writable, deniedRead]);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; abort.current?.abort(); attempt.current = emptyUploadAttempt(); }; }, []);
   async function upload() {
-    if (locked.current || !file || !writable) return;
-    const extension = file.name.split(".").at(-1)?.toLowerCase() ?? "";
-    const metadata = { parent_kind: parentKind, parent_id: parentId, filename: file.name, mime_type: file.type, size_bytes: file.size };
-    if (!newDocumentSchema.safeParse(metadata).success || mimeTypes[extension] !== file.type || (inventoryParent && file.type.startsWith("image/"))) { setError(new ApiError(file.size > maxFileBytes ? "FILE_TOO_LARGE" : inventoryParent ? "PROPERTY_PHOTO_WEBP_REQUIRED" : "UNSUPPORTED_MEDIA_TYPE", 422)); return; }
-    if (resume && (resume.filename !== file.name || resume.mime_type !== file.type || resume.size_bytes !== file.size)) { setError(new ApiError("FILE_SIZE_MISMATCH", 422)); return; }
+    const selected = attempt.current.file ?? file;
+    if (!hydrated || !alive.current || locked.current || !selected || !available.current) return;
+    const extension = selected.name.split(".").at(-1)?.toLowerCase() ?? "";
+    const metadata = attempt.current.metadata ?? { parent_kind: parentKind, parent_id: parentId, filename: selected.name, mime_type: selected.type, size_bytes: selected.size };
+    if (!newDocumentSchema.safeParse(metadata).success || mimeTypes[extension] !== selected.type || (inventoryParent && selected.type.startsWith("image/"))) { setError(new ApiError(selected.size > maxFileBytes ? "FILE_TOO_LARGE" : inventoryParent ? "PROPERTY_PHOTO_WEBP_REQUIRED" : "UNSUPPORTED_MEDIA_TYPE", 422)); return; }
+    if (resume && (resume.filename !== selected.name || resume.mime_type !== selected.type || resume.size_bytes !== selected.size)) { setError(new ApiError("FILE_SIZE_MISMATCH", 422)); return; }
     locked.current = true; setBusy(true); setError(undefined); setNotice(""); setProgress(0);
     const controller = new AbortController(); abort.current = controller;
-    if (!attempt.current.key) attempt.current.key = crypto.randomUUID();
+    if (!attempt.current.file) attempt.current = { key: crypto.randomUUID(), documentId: resume?.id ?? "", minimum: resume?.version ?? 0, file: selected, metadata: newDocumentSchema.parse(metadata) };
+    const owned = attempt.current;
+    const current = () => alive.current && available.current && attempt.current === owned;
+    const check = () => { if (!current()) return false; if (controller.signal.aborted) throw new ApiError("FILE_TRANSFER_INTERRUPTED", 503); return true; };
+    function authorize(identity: ReturnType<typeof meSchema.parse>) { if (!current() || identity.must_change_password || actorId && identity.user.id !== actorId || role && identity.user.role !== role || inventoryParent && identity.user.role === "agent" || owned.actor && (identity.user.id !== owned.actor.id || identity.user.role !== owned.actor.role)) throw new ApiError("FORBIDDEN", 403); owned.actor ??= { id: identity.user.id, role: identity.user.role }; }
+    function validate(value: ProtectedDocument, id?: string) { if (id && value.id !== id) throw new ApiError("NOT_FOUND", 404); if (value.archived || value.can_upload === false) throw new ApiError("FORBIDDEN", 403); if (value.filename !== metadata.filename || value.mime_type !== metadata.mime_type || value.size_bytes !== metadata.size_bytes || value.purpose !== "attachment" || value.version < owned.minimum) throw new ApiError("INVALID_RESPONSE", 503); owned.minimum = value.version; return value; }
     try {
       let document: ProtectedDocument;
-      const existingId = resume?.id ?? attempt.current.documentId;
-      if (existingId) document = await apiGet(`/api/v1/documents/${existingId}`, documentSchema, controller.signal);
+      const existingId = owned.documentId;
+      if (existingId) { authorize(await apiGet("/api/v1/auth/me", meSchema, controller.signal)); if (!check()) return; document = validate(await apiGet(`/api/v1/documents/${existingId}`, documentSchema, controller.signal), existingId); }
       else {
-        document = await apiCommand("/api/v1/documents", metadata, documentSchema, attempt.current.key);
-        attempt.current.documentId = document.id;
+        document = await apiCommand("/api/v1/documents", owned.metadata!, documentSchema, owned.key, "POST", undefined, controller.signal, { beforeDispatch: authorize });
+        if (!check()) return; validate(document); owned.documentId = document.id;
       }
-      if (controller.signal.aborted) throw new ApiError("FILE_TRANSFER_INTERRUPTED", 503);
-      const permit = await requestFilePermit({ action: "upload", document_id: document.id, expected_version: document.version });
-      await uploadBytes(permit, file, setProgress, controller.signal);
-      setNotice("Transfert terminé. Le fichier reste en quarantaine jusqu’au résultat de l’analyse.");
-      setFile(undefined); setResume(undefined); attempt.current = { key: "", documentId: "" };
+      if (!check()) return;
+      const previous = owned.permitVersion ? document.versions.find(value => value.id === owned.permitVersion) : undefined;
+      if (owned.permitVersion && !previous) throw new ApiError("INVALID_RESPONSE", 503);
+      if (!previous || previous.state === "awaiting_upload") {
+        const permit = await requestFilePermit({ action: "upload", document_id: document.id, expected_version: document.version }, controller.signal, authorize);
+        if (!check()) return;
+        if (permit.document_version !== document.version + 1 || !documentSchema.shape.id.safeParse(permit.version_id).success) throw new ApiError("INVALID_RESPONSE", 503);
+        owned.permitVersion = permit.version_id; owned.minimum = permit.document_version;
+        await uploadBytes(permit, selected, value => { if (current() && !controller.signal.aborted) setProgress(value); }, controller.signal);
+      }
+      if (!check()) return;
+      setNotice(previous && previous.state !== "awaiting_upload" ? "Le transfert est enregistré. Consultez le résultat de l’analyse dans la liste." : "Transfert terminé. Le fichier reste en quarantaine jusqu’au résultat de l’analyse.");
+      setFile(undefined); setResume(undefined); attempt.current = emptyUploadAttempt(); setRecovering(false);
       if (fileInput.current) fileInput.current.value = "";
       setUploadOpen(false);
-    } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("FILE_TRANSFER_INTERRUPTED", 503)); }
-    finally { locked.current = false; setBusy(false); setProgress(undefined); abort.current = null; if (controller.signal.aborted) heading.current?.focus(); refresh(); }
+    } catch (reason) { if (current()) { const failure = reason instanceof ApiError ? reason : new ApiError("FILE_TRANSFER_INTERRUPTED", 503); setError(failure); if ([401, 403, 404].includes(failure.status)) { available.current = false; setScopeDenial(failure); setFile(undefined); setResume(undefined); setUploadOpen(false); attempt.current = emptyUploadAttempt(); setRecovering(false); } else { const uncertain = Boolean(owned.documentId) || failure.status >= 500; setRecovering(uncertain); if (!uncertain) attempt.current = emptyUploadAttempt(); } } }
+    finally { locked.current = false; if (alive.current) { setBusy(false); setProgress(undefined); if (abort.current === controller) abort.current = null; if (available.current && controller.signal.aborted) heading.current?.focus(); if (available.current) refresh(); } }
   }
   function closeUpload() {
     if (busy) return;
-    guard.request(() => { setUploadOpen(false); setFile(undefined); setResume(undefined); setError(undefined); attempt.current = { key: "", documentId: "" }; if (fileInput.current) fileInput.current.value = ""; }, window.document.getElementById(uploadId) ?? window.document);
+    guard.request(() => { if (!alive.current || locked.current) return; setUploadOpen(false); setFile(undefined); setResume(undefined); setError(undefined); setRecovering(false); attempt.current = emptyUploadAttempt(); if (fileInput.current) fileInput.current.value = ""; }, window.document.getElementById(uploadId) ?? window.document);
   }
   function showUpload(document?: ProtectedDocument) {
-    if (busy || !writable) return;
+    if (!alive.current || locked.current || busy || recovering || attempt.current.file || !available.current) return;
     uploadTrigger.current = window.document.activeElement instanceof HTMLElement ? window.document.activeElement : null;
-    setResume(document); setFile(undefined); setError(undefined); setNotice(""); attempt.current = { key: "", documentId: "" }; setUploadOpen(true);
+    setResume(document); setFile(undefined); setError(undefined); setNotice(""); attempt.current = emptyUploadAttempt(); setUploadOpen(true);
   }
+  if (scopeDenial) return <RecordError error={scopeDenial} />;
   return <section aria-label="Pièces jointes" className="kay-record-section kay-file-panel" data-in-sheet={inSheet}>
-    <header className="kay-section-head"><h2 ref={heading} tabIndex={-1}>Pièces jointes</h2>{writable ? <Button action="upload" ref={chooser} variant="outline" disabled={!hydrated || busy} onClick={() => showUpload()}>Ajouter un document</Button> : null}</header>
+    <header className="kay-section-head"><h2 ref={heading} tabIndex={-1}>Pièces jointes</h2>{writable && !deniedRead ? <Button action="upload" ref={chooser} variant="outline" disabled={!hydrated || busy || recovering} onClick={() => showUpload()}>Ajouter un document</Button> : null}</header>
     <p className="kay-section-description">{parentKind === "contact" || parentKind === "deal" ? "Documents privés liés au contact, accessibles selon vos droits." : "Documents partagés avec l’équipe. Les justificatifs privés restent sur la fiche du contact."}</p>
     {query.error ? <RecordError error={query.error} retry={refresh} /> : <>
       {!writable ? <p className="text-sm text-muted-foreground">{parentKind === "deal" || parentKind === "contact" ? "Documents en lecture seule dans l’état actuel du dossier." : "Les pièces jointes sont gérées par les responsables."}</p> : null}
       {notice ? <p role="status" className="text-info">{notice}</p> : null}
-      {!query.value ? <p role="status">Chargement des pièces jointes…</p> : query.value.items.length ? <div className="kay-file-collection"><div className="kay-file-columns" aria-hidden="true"><span>Document</span><span title="Historique récent renvoyé par le serveur">Versions récentes</span><span>Taille</span><span>Actions</span></div><ul className="kay-file-list">{query.value.items.map(document => <FileRow key={document.id + ":" + document.version} document={document} writable={writable && !busy} refresh={refresh} returnFocus={() => heading.current?.focus()} resume={() => showUpload(document)} />)}</ul></div> : <p className="text-sm text-muted-foreground">Aucune pièce jointe sur cette page.{writable ? " Ajoutez un document pour commencer." : ""}</p>}
+      {!query.value ? <p role="status">Chargement des pièces jointes…</p> : query.value.items.length ? <div className="kay-file-collection"><div className="kay-file-columns" aria-hidden="true"><span>Document</span><span title="Historique récent renvoyé par le serveur">Versions récentes</span><span>Taille</span><span>Actions</span></div><ul className="kay-file-list">{query.value.items.map(document => <FileRow key={document.id + ":" + document.version} document={document} writable={writable && !busy && !recovering} refresh={refresh} returnFocus={() => heading.current?.focus()} resume={() => showUpload(document)} />)}</ul></div> : <p className="text-sm text-muted-foreground">Aucune pièce jointe sur cette page.{writable ? " Ajoutez un document pour commencer." : ""}</p>}
       {query.value && (query.value.has_previous || query.value.has_next) ? <NumberedPages label="Pages des pièces jointes" page={page} total={query.value.total} size={query.value.page_size} change={setPage} /> : null}
     </>}
     <Sheet open={uploadOpen} onOpenChange={open => { if (!open) closeUpload(); }}><SheetContent id={uploadId} className="kay-record-drawer kay-document-uploader" closeLabel="Fermer l’ajout de document" onOpenAutoFocus={event => { event.preventDefault(); browse.current?.focus(); }} onCloseAutoFocus={event => { event.preventDefault(); const target = uploadTrigger.current; if (target?.isConnected) target.focus(); else chooser.current?.focus(); }}>
       <SheetHeader className="kay-drawer-head"><SheetTitle>{resume ? resume.versions[0]?.state === "clean" ? "Ajouter une version" : "Reprendre le transfert" : "Ajouter un document"}</SheetTitle><SheetDescription>Le fichier sera disponible après son analyse antivirus.</SheetDescription></SheetHeader>
-      <form className="kay-document-upload" data-live-dirty={file ? "true" : undefined} aria-busy={busy} onSubmit={event => { event.preventDefault(); void upload(); }}>
+      <form className="kay-document-upload" data-draft-managed data-write-recovery={recovering || undefined} data-live-dirty={file || recovering ? "true" : undefined} aria-busy={busy} onSubmit={event => { event.preventDefault(); void upload(); }}>
         <div className="kay-drawer-body">
           {resume ? <div className="kay-upload-context"><FileIcon size={20} aria-hidden="true" /><div><span>Document concerné</span><strong>{resume.filename}</strong><small>Conservez le même nom, format et nombre d’octets ({new Intl.NumberFormat("fr-MA").format(resume.size_bytes)}).</small></div></div> : null}
-          <FilePicker id={inputId} label={resume ? "Fichier à envoyer à nouveau" : "Fichier"} accept={inventoryParent ? ".pdf,.docx,.xlsx" : ".jpg,.jpeg,.png,.webp,.pdf,.docx,.xlsx"} inputRef={fileInput} browseRef={browse} selected={file} disabled={!hydrated || busy || !writable} description={inventoryParent ? "PDF, DOCX ou XLSX sans macro · 20 Mo maximum. Les images s’ajoutent dans Photos." : "JPEG, PNG, WebP, PDF, DOCX ou XLSX sans macro · 20 Mo maximum (20 971 520 octets)."} choose={selected => { setFile(selected); setError(undefined); setNotice(""); attempt.current = { key: "", documentId: "" }; }} />
+          <FilePicker id={inputId} label={resume ? "Fichier à envoyer à nouveau" : "Fichier"} accept={inventoryParent ? ".pdf,.docx,.xlsx" : ".jpg,.jpeg,.png,.webp,.pdf,.docx,.xlsx"} inputRef={fileInput} browseRef={browse} selected={file} disabled={!hydrated || busy || recovering || !writable} description={inventoryParent ? "PDF, DOCX ou XLSX sans macro · 20 Mo maximum. Les images s’ajoutent dans Photos." : "JPEG, PNG, WebP, PDF, DOCX ou XLSX sans macro · 20 Mo maximum (20 971 520 octets)."} choose={selected => { if (!alive.current || !available.current || locked.current || attempt.current.file) return; setFile(selected); setError(undefined); setNotice(""); attempt.current = emptyUploadAttempt(); }} />
           {progress !== undefined ? <div className="kay-upload-progress" role="status"><progress max={100} value={progress} aria-label="Progression du transfert" /><p>Transfert : {progress} %. Analyse antivirus à suivre.</p></div> : null}
           {error ? <p role="alert" className="text-sm text-danger">{error.message}</p> : null}
         </div>

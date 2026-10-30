@@ -1,6 +1,6 @@
 # Selected-design migration coverage map
 
-Date: 2026-10-29. Branch: `codex/redesign`.
+Date: 2026-10-30. Branch: `codex/redesign`.
 [Plan](design-prototype-migration-2026-10-25.md) ·
 [Execution](design-prototype-migration-execution.md).
 
@@ -627,3 +627,19 @@ fault checks. This is a source audit lead, not demonstrated runtime failure or
 private leakage. File native helpers still expect old inline picker/Contact tabs
 and must be reconciled with the selected nested uploader after that boundary is
 reviewed. Other field/job/alias/selectors and P0/P8/full-goal checks stay open.
+
+
+## Document uploader boundary follow-through,2026-10-30
+
+The located metadata/disposal concern is reproduced by actual-component fault
+tests and corrected within the selected uploader. Original file/body/key/current
+actor and known document/version survive unknown preparation/transfer; signals
+and fresh guarded grants refuse late or changed-owner work. Known published
+version recovery avoids another byte send; explicit guarded discard remains.
+984 frontend units/source gates pass; two native cases unrun. No real AV/transfer/
+SQL acceptance inferred. [Contract](../04-design/document-upload-recovery-local.md).
+
+Next concrete file boundaries are FileRow archive/retry-scan operation ownership
+and late download/preview handoff, plus older file helpers/Contact tab selectors.
+Actual worker/private transfer/device/security/CI/AFTER/product, migrations0036/
+0037 and remaining exact field/job/alias reconciliation stay open. Full goal active.

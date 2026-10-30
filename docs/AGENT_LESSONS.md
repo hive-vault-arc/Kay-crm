@@ -2257,3 +2257,15 @@ sequence after selector edits. Pin command arguments, test titles/timeouts and
 service-control calls with source AST comparison, but do not mistake that check
 for native execution. Scope current drawer forms and preserve explicit dirty
 leave choices instead of restoring removed global tabs.
+
+
+## Metadata acknowledgement is not file completion,2026-10-30
+
+A managed document uploader must retain original metadata/key/File and dirty
+state through metadata, grant and byte publication. Pass its signal to metadata
+as well as bytes, check lifetime between awaits, and bind the actual page actor
+inside the fresh permit proof. Unknown replacement is a different operation and
+requires explicit guarded discard. When the exact issued version is already
+published, recover its current state without another byte send; do not turn that
+client check into a claim of exactly-once concurrent publication or a clean AV
+verdict. Generic row commands and download handoff are separate audit boundaries.

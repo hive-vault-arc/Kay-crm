@@ -5,8 +5,9 @@ import { permitSchema, type TransferPermit } from "./contracts";
 import { boundedRequestSignal } from "@/lib/api/request-signal";
 
 type BoundPermit = TransferPermit & { binding: string };
-export async function requestFilePermit(body: { action: "upload" | "download"; document_id: string; expected_version: number; version_id?: string }, signal?: AbortSignal): Promise<BoundPermit> {
+export async function requestFilePermit(body: { action: "upload" | "download"; document_id: string; expected_version: number; version_id?: string }, signal?: AbortSignal, authorize?: (identity: z.infer<typeof meSchema>) => void): Promise<BoundPermit> {
   const identity = await apiGet("/api/v1/auth/me", meSchema, signal);
+  signal?.throwIfAborted(); authorize?.(identity);
   const permit = await apiGet("/api/v1/files/permits", permitSchema, signal, { body, csrf: identity.csrf_token });
   return { ...permit, binding: identity.csrf_token };
 }
