@@ -656,3 +656,12 @@ SQL/AV/transfer/security acceptance inferred. [Contract](../04-design/file-row-r
 Older file helpers/Contact tab selectors and wider native consumers are next;
 actual SQL/native/device/worker/transfer/CI/AFTER/product, migrations0036/0037 and
 remaining exact field/job/alias work keep P0/P8/full goal open.
+
+
+## Document native paths,2026-10-30
+
+The two original E2E file cases now use current document-home/upload/retry/archive
+controls. Shared fixture/digest helpers and security/service-control assertions
+are preserved; focused lint/full types pass. Native execution remains pending,
+as do three other direct upload/download consumers and recovery Contact paths.
+[Path map](../05-quality/document-native-paths-local.md).

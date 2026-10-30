@@ -3231,3 +3231,14 @@ AV/transfer/session/race/security/CI acceptance. Prior573 backend units retained
 Ruff/mypy/actual gates pending. No real app/DB/account/config/service/scanner/
 worker/private transfer or alternate access, migration/main/push/merge/deploy.
 [Contract](04-design/file-row-recovery-local.md).
+
+
+## Document native-path follow-through,2026-10-30
+
+Test-source changes only. Actual Contact/inventory drawers and nested upload/retry
+replace obsolete controls; readonly absence checks target actual upload entry.
+Original copied-permit403, private scope404, agent upload403, byte digests, actual
+AV/worker and interrupted-transfer assertions remain. AST invariants/lint/types
+pass; no runtime security, account, DB, service, worker, scanner, private transfer,
+app/browser access or capture was executed. Wider review/helper paths and actual
+acceptance remain pending. [Path map](05-quality/document-native-paths-local.md).

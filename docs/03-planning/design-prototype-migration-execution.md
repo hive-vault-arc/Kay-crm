@@ -3260,3 +3260,18 @@ actual SQL/native/device/AV/private transfer/security/CI/AFTER/product, migratio
 0036/0037 and other exact field/job/alias/selectors remain. Full goal active.
 [Contract](../04-design/file-row-recovery-local.md) and
 [evidence](design-migration-evidence/file-row-recovery-2026-10-30.json).
+
+
+## Document native-path follow-through,2026-10-30
+
+Two original file scenarios and shared helpers now use selected Contact/inventory
+document drawers, nested upload/retained retry, actual read-only controls and
+filename-qualified scan retry. AST retains2 titles,2 timeouts,2 business commands,
+7 worker-control calls,6 protected reads,2 response waits,4 fixtures,4 digest
+downloads and route faults; original byte/digest helpers unchanged. Scoped ESLint/
+full types pass; actual browser/worker/private transfer remains unrun. Prior994
+frontend/573 backend units and production gates retained. Frozen254/main/protected
+work preserved. Three wider direct helper consumers plus recovery Contact paths,
+actual native/SQL/security/CI/AFTER/product and other reconciliation remain open;
+full goal active. [Path map](../05-quality/document-native-paths-local.md) and
+[evidence](design-migration-evidence/document-native-paths-2026-10-30.json).

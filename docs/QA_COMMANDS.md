@@ -3353,3 +3353,13 @@ push/merge/deploy. Native/SQL/device/AV/private-transfer/security/CI/AFTER/produ
 and older file helper paths remain pending.
 [Contract](04-design/file-row-recovery-local.md) and
 [evidence](03-planning/design-migration-evidence/file-row-recovery-2026-10-30.json).
+
+
+## Selected document native paths,2026-10-30
+
+`npx eslint tests/helpers/files.ts tests/e2e/files.spec.ts --max-warnings=0` and
+`npm run typecheck`, cwd `frontend`, exit0. TypeScript source AST invariants retain
+32 protected calls across both files, including2 scenario titles and2 unchanged
+fixture/digest functions. No Playwright listing/import/execution. Prior994
+frontend/573 backend unit and production-gate evidence retained, not rerun.
+[Evidence](03-planning/design-migration-evidence/document-native-paths-2026-10-30.json).
