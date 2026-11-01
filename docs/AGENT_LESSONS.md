@@ -12,6 +12,21 @@
   Request forwarding of browser Blob bodies differs across engines. Inject
   the client failure after a real successful XHR response, then assert one
   version and no second PUT; do not accept a failed forward as lost acceptance.
+- Exercise viewing immediately after a full batch, not only the upload itself.
+  Re-downloading already-rendered clean bytes can exhaust the session's permit
+  budget. Reuse them only within that mounted gallery; retain fresh retry checks
+  and explicit cache/object-URL cleanup rather than raising the security limit.
+- Faster cached rendering can expose focus timing bugs: a focused navigation
+  button becoming disabled must leave focus inside the dialog so arrow keys
+  still work. Test focus directly rather than adding a delay.
+
+## Reporting fixture periods must match their facts (2026-11-01)
+
+Current-time notes/enquiries move into November while deliberately historical
+receipt and completion dates stay in October. Choose periods per case; changing
+every shared period to the current month loses the historical assertions.
+Preserve exact counts, attribution and revoked-scope checks, and never widen a
+production report rule merely to keep a time-dependent test passing.
 
 ## Recovery controls must match the backend capability (2026-10-24)
 

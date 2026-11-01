@@ -170,6 +170,8 @@ test("iPhone photos: private contact attachments accept HEIC batches and preserv
 test("iPhone photos: a full ten-photo agent batch fits the existing permit budget", async ({ page }) => {
   test.setTimeout(180_000);
   const actor = await createActor("agent");
+  let permits = 0;
+  page.on("request", request => { if (new URL(request.url()).pathname === "/api/v1/files/permits") permits++; });
   try {
     await signIn(page, actor); await testControl("worker-start");
     const project = await createDevelopment(page);
@@ -181,6 +183,19 @@ test("iPhone photos: a full ten-photo agent batch fits the existing permit budge
     await expect(gallery.getByText("Analyse réussie", { exact: true })).toHaveCount(10, { timeout: 60_000 });
     await expect(gallery.getByRole("button", { name: /^Ouvrir la photo/ })).toHaveCount(10);
     await expect(gallery.getByRole("alert")).toHaveCount(0);
+    // Let the separate cover-thumbnail refresh finish before measuring navigation.
+    await page.waitForLoadState("networkidle");
+    const beforeViewing = permits;
+    const buttons = gallery.getByRole("button", { name: /^Ouvrir la photo/ });
+    const names = await buttons.evaluateAll(items => items.map(item => item.getAttribute("aria-label")!.replace("Ouvrir la photo ", "")));
+    await buttons.first().tap();
+    const viewer = page.getByRole("dialog", { name: "Photos du bien" });
+    for (let index = 0; index < names.length; index++) {
+      if (index) await viewer.getByRole("button", { name: "Suivante", exact: true }).tap();
+      await expect(viewer.getByRole("img", { name: `Photo du bien : ${names[index]}`, exact: true })).toBeVisible();
+    }
+    expect(permits).toBe(beforeViewing);
+    await viewer.getByRole("button", { name: "Fermer la photo", exact: true }).tap();
     const documents = await (await page.request.get(`/api/v1/documents?parent_kind=development&parent_id=${project.id}&purpose=photo`)).json();
     expect(documents.total).toBe(10);
     expect(documents.items.every((item: { versions: unknown[] }) => item.versions.length === 1)).toBe(true);

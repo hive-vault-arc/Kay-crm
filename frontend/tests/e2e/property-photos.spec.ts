@@ -68,6 +68,7 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     await page.setViewportSize({ width: 1440, height: 900 });
     await viewer.getByRole("button", { name: "Suivante" }).click();
     await expect(viewer.getByRole("img", { name: "Photo du bien : patio.webp" })).toBeVisible();
+    await expect(viewer).toBeFocused();
     await page.keyboard.press("ArrowLeft");
     await expect(viewer.getByRole("img", { name: "Photo du bien : sable.webp" })).toBeVisible();
     await page.keyboard.press("ArrowRight");
@@ -76,6 +77,12 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
       ? route.fulfill({ status: 503, contentType: "application/json", body: '{"error":{"code":"FILE_STORAGE_UNAVAILABLE"}}' })
       : route.continue());
     await viewer.getByRole("button", { name: "Précédente" }).click();
+    await expect(viewer.getByRole("img", { name: "Photo du bien : sable.webp" })).toBeVisible();
+    // Cached, already-authorized bytes stay viewable during an outage. A decode
+    // error still offers a fresh private transfer and an honest failed retry.
+    await viewer.getByRole("img", { name: "Photo du bien : sable.webp" }).dispatchEvent("error");
+    await expect(viewer.getByRole("alert")).toHaveText("Impossible d’ouvrir cette photo.");
+    await viewer.getByRole("button", { name: "Réessayer" }).click();
     await expect(viewer.getByRole("alert")).toHaveText("Impossible d’ouvrir cette photo.");
     await page.unroute("**/transfers/**");
     await viewer.getByRole("button", { name: "Réessayer" }).click();

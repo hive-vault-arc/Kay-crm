@@ -894,6 +894,13 @@ record navigation terminate fallback decoding; no original HEIF bytes reach the
 API. Private contact/Deal attachments accept bounded multi-file selection and
 convert HEIC/HEIF only; existing image and PDF/DOCX/XLSX bytes remain unchanged.
 The REST schema, permissions, scanner and one-use transfer contracts do not change.
+Within one mounted inventory gallery, thumbnails and the viewer share the bytes
+already downloaded for an immutable clean version. This avoids spending a new
+permit merely to enlarge or revisit the same image after a ten-photo batch.
+The cache is memory-only, pruned with the current gallery and cleared on leaving
+it; each object URL retains its component cleanup. An explicit failed-preview
+retry requests current authority and a fresh private transfer. No global cache,
+persistent browser storage, public file URL or replayed permit is introduced.
 
 Permit output: `permit_id`, transient `token`, `expires_at`, `version_id`,
 `document_version`, and exact configured FastAPI `transfer_url`. Two-minute,

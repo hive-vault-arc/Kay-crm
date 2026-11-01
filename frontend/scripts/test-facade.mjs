@@ -40,6 +40,7 @@ try {
     "tests/unit/help.test.mjs",
     "tests/unit/files.test.mjs",
     "tests/unit/photo-conversion.test.mjs",
+    "tests/unit/photo-previews.test.mjs",
     "tests/unit/test-ports.test.mjs",
   ], {
     cwd: frontend, stdio: "inherit", windowsHide: true,

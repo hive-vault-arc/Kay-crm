@@ -1,6 +1,47 @@
 # KAY QA command register
 
-## iPhone photo uploads, 2026-11-01 (publication candidate)
+## iPhone gallery/report follow-up, 2026-11-01
+
+PR34 candidate16349e5 passes three hosted prerequisite jobs and Vercel Preview;
+the required aggregate correctly fails at the unchanged npm development-tool
+gate. Hosted manual integration41348606275 exposes an expired October period
+in a current-time enquiry snapshot test (1 failed,767 passed). Its remaining
+browser run is cancelled as superseded, never counted as a passing release.
+
+A further isolated ten-upload/instant-view probe exposes31 permit requests and
+one429: the viewer re-downloads bytes already rendered in the gallery. Add a
+per-gallery clean-version Blob-promise cache, concurrency deduplication, failed-
+request eviction, current-list pruning and unmount cleanup. All component-owned
+object URLs still revoke; explicit retry obtains a fresh authorized transfer.
+No global/persistent cache, server permission or30-per-minute limit change.
+Fast cached rendering also exposes focus loss when an end arrow disables;
+keep focus inside the dialog and assert it directly, without a timing sleep.
+
+Two report tests now use the current civil month for wall-clock-created notes
+and enquiries. Explicit October receipt/outcome periods stay unchanged; preserve
+all original counts, attribution and revoked-scope assertions. Production report
+queries are unchanged. The real-DB report modules pass17/17 in21.85s.
+
+Final follow-up verification uses the same guarded local targets/ports below:
+
+- Frontend lint/typecheck/production build and110 units pass. Cache tests cover
+  concurrent reads, immutable-version keys, separate gallery lifetimes, explicit
+  fresh authorization and failed-request eviction. Python Ruff/format/mypy pass.
+- Compiled headed Chrome `iphone-photos.spec.ts property-photos.spec.ts --grep
+  'property photos:|agent automatically|full ten-photo|real HEIC'`:
+  4 passed in1.6m. Includes full-ten immediate viewing of all images without a
+  further permit, first/last-control focus, keyboard arrows, cached viewing
+  during a network outage and real fresh-transfer failure/recovery after a
+  synthetic decode error. No failure is hidden by dropping an error-path check.
+- Compiled headed WebKit `iphone-photos.spec.ts`:5 passed in1.8m, including all
+  ten images viewed immediately after upload and both genuine codec fallbacks.
+
+The original scanner/file regressions and initial evidence below remain scoped,
+overlapping results. A fresh exact-head hosted automatic/manual run is required
+for promotion. The tooling-security exception decision is still pending; no
+new exception or main-branch bypass is applied.
+
+## iPhone photo uploads, 2026-11-01 (superseded candidate16349e5)
 
 Work is isolated on `codex/iphone-photo-uploads` in the managed integration
 checkout, based on main e0bdc09. The original dirty checkout is preserved.

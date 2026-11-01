@@ -30,6 +30,21 @@ venv; fresh runtime and dev Python audits pass. The separate npm dev-tool
 minimatch/deepmerge findings are not silently suppressed or downgraded away.
 The existing gate refuses them; a pending owner decision is not approval.
 
+The ten-upload/navigation probe reaches the unchanged30-per-minute permit limit
+when the viewer downloads the same already-rendered full image again. Share only
+those previously authorized clean-version Blob promises within that one mounted
+inventory gallery. Concurrent thumbnail/viewer reads deduplicate; failed requests
+are evicted. Prune removed/replaced clean-version keys and clear on gallery exit;
+component-owned object URLs are still revoked. No private-contact/global/browser-
+persistent cache or token cache is added, and no limit is raised. New bytes and
+explicit retries still require current server permission and a fresh permit.
+
+Hosted reporting tests expose an expired October window for current-time notes
+and enquiries after November1. Use the default current civil month only for
+those two cases; retain explicit October periods for intentionally historical
+outcome/receipt fixtures. Counts, actor attribution and revoked-scope assertions
+remain intact. No production reporting rule is changed to make tests pass.
+
 Real synthetic HEIC/HEIF fixtures contain coloured geometry only, including a
 multi-image HEIF whose primary image is not first. QA distinguishes actual
 Chrome/WebKit execution from unavailable physical iPhone acceptance. Legacy

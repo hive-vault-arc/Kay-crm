@@ -72,3 +72,12 @@ Release auditing also requires the compatible pypdf6.21.4 security patch; only
 that Python version/hashes change. Development-tool advisories for minimatch and
 deepmerge remain a failed gate until fixed or explicitly excepted by the owner.
 No new exception is inferred from the feature publication request.
+
+The full-ten batch test is extended to open every image immediately afterward.
+It exposed duplicate viewer downloads exhausting the existing permit budget.
+Thumbnail/viewer bytes now deduplicate by immutable clean version inside one
+gallery lifetime; retries remain fresh authorized reads. Removed/version-changed
+entries are pruned and navigation/logout unmount clears the map. No global or
+persistent image cache is introduced. Hosted report regressions also need their
+current-time fixtures separated from deliberately historical October periods;
+the backend reporting rules and original assertions are preserved.

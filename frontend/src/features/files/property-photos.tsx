@@ -17,7 +17,8 @@ import { apiGet, ApiError } from "@/lib/api/client";
 import { apiCommand } from "@/lib/api/command";
 import { documentSchema, documentsSchema, type ProtectedDocument } from "./contracts";
 import { convertPropertyPhoto, photoAccept } from "./photo-conversion";
-import { downloadBytes, requestFilePermit, uploadBytes } from "./transfers";
+import { photoPreview, photoPreviewKey, type PhotoPreviewCache } from "./photo-previews";
+import { requestFilePermit, uploadBytes } from "./transfers";
 
 const photoLimit = 10;
 
@@ -48,6 +49,7 @@ function PropertyPhotosBody({ propertyId, parentKind = "property", writable, upl
   const queued = useRef<File[]>([]);
   const attempt = useRef<{ key: string; documentId: string; converted?: File; versionId?: string }>({ key: "", documentId: "" });
   const thumbnailPending = useRef(new Set<string>());
+  const previews = useRef<PhotoPreviewCache>(new Map());
   const observed = useRef<Record<string, string>>({});
   const pending = Boolean(query.value?.items.some(item => item.versions[0]?.state === "pending_scan"));
   const cleanPhotos = query.value?.items.filter(item => item.versions.some(version => version.state === "clean")) ?? [];
@@ -55,8 +57,11 @@ function PropertyPhotosBody({ propertyId, parentKind = "property", writable, upl
   const refresh = query.refreshQuietly;
   useEffect(() => { if (!pending) return; const timer = setInterval(refresh, 2000); return () => clearInterval(timer); }, [pending, refresh]);
   useEffect(() => () => abort.current?.abort(), []);
+  useEffect(() => { const cache = previews.current; return () => cache.clear(); }, []);
   useEffect(() => {
     if (!query.value) return;
+    const cleanKeys = new Set(query.value.items.flatMap(item => { const clean = item.versions.find(version => version.state === "clean"); return clean ? [photoPreviewKey(item.id, clean.id)] : []; }));
+    for (const key of previews.current.keys()) if (!cleanKeys.has(key)) previews.current.delete(key);
     const next = Object.fromEntries(query.value.items.map(item => [item.id, item.versions[0]?.state ?? "awaiting_upload"]));
     const newlyClean = query.value.items.filter(item => item.versions[0]?.state === "clean" && (observed.current[item.id] === "pending_scan" || thumbnailPending.current.has(item.id)));
     if (newlyClean.length) { for (const item of newlyClean) thumbnailPending.current.delete(item.id); onChanged(); }
@@ -128,21 +133,22 @@ function PropertyPhotosBody({ propertyId, parentKind = "property", writable, upl
       {selection.total > 0 ? <div className="grid min-w-0 gap-2 text-sm" aria-label="Sélection de photos"><p role="status" className="wrap-anywhere">{selection.sent.length} / {selection.total} photos envoyées{selection.remaining[0] ? ` · ${busy ? "Préparation et envoi" : "En attente de reprise"} : ${selection.remaining[0].name}` : " · Analyse antivirus à suivre."}</p>{progress !== undefined ? <p role="status">Transfert WebP : {progress} %. Analyse antivirus à suivre.</p> : null}</div> : null}
       <div className="flex flex-wrap gap-2">{busy ? <Button action="cancel" type="button" variant="outline" onClick={() => abort.current?.abort()}>Interrompre</Button> : selection.remaining.length ? <><Button action="retry" type="button" variant="outline" onClick={() => void upload()}>Réessayer l’envoi</Button><Button action="cancel" type="button" variant="outline" onClick={clearSelection}>Annuler la sélection</Button></> : resume ? <Button action="cancel" type="button" variant="outline" onClick={clearSelection}>Annuler la reprise</Button> : null}</div>
       {error ? <p role="alert" className="text-danger">{error.message}</p> : null}{notice ? <p role="status" className="text-info">{notice}</p> : null}
-      {!query.value ? !query.error ? <p role="status">Chargement des photos…</p> : null : query.value.items.length ? <ul className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">{query.value.items.map(photo => <PhotoCard key={`${photo.id}:${photo.version}`} photo={photo} writable={writable && !busy} resumable={uploadable && !busy && selection.remaining.length === 0 && (writable || photo.can_upload === true)} refresh={() => { setPage(1); refresh(); }} onChanged={onChanged} openPreview={trigger => { previewTrigger.current = trigger; setSelectedPhotoId(photo.id); }} resume={() => { clearSelection(); setResume(photo); requestAnimationFrame(() => chooser.current?.focus()); }} />)}</ul> : <p className="text-sm text-muted-foreground">Aucune photo sur ce bien.</p>}
+      {!query.value ? !query.error ? <p role="status">Chargement des photos…</p> : null : query.value.items.length ? <ul className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">{query.value.items.map(photo => <PhotoCard key={`${photo.id}:${photo.version}`} photo={photo} cache={previews} writable={writable && !busy} resumable={uploadable && !busy && selection.remaining.length === 0 && (writable || photo.can_upload === true)} refresh={() => { setPage(1); refresh(); }} onChanged={onChanged} openPreview={trigger => { previewTrigger.current = trigger; setSelectedPhotoId(photo.id); }} resume={() => { clearSelection(); setResume(photo); requestAnimationFrame(() => chooser.current?.focus()); }} />)}</ul> : <p className="text-sm text-muted-foreground">Aucune photo sur ce bien.</p>}
       {query.value && query.value.total >= photoLimit ? <p className="text-sm text-muted-foreground">Limite de 10 photos atteinte. Archivez une photo pour libérer une place.</p> : null}
       {query.value ? <NumberedPages label="Pages des photos du bien" page={page} total={query.value.total} size={10} change={setPage} /> : null}
-      {selectedIndex >= 0 ? <PhotoViewer photos={cleanPhotos} index={selectedIndex} change={index => setSelectedPhotoId(cleanPhotos[index]?.id)} close={() => setSelectedPhotoId(undefined)} returnFocus={previewTrigger} /> : null}
+      {selectedIndex >= 0 ? <PhotoViewer photos={cleanPhotos} cache={previews} index={selectedIndex} change={index => setSelectedPhotoId(cleanPhotos[index]?.id)} close={() => setSelectedPhotoId(undefined)} returnFocus={previewTrigger} /> : null}
     </>
   </section>;
 }
 
-function PhotoCard({ photo, writable, resumable, refresh, resume, onChanged, openPreview }: { photo: ProtectedDocument; writable: boolean; resumable: boolean; refresh: () => void; resume: () => void; onChanged: () => void; openPreview: (trigger: HTMLButtonElement) => void }) {
+function PhotoCard({ photo, cache, writable, resumable, refresh, resume, onChanged, openPreview }: { photo: ProtectedDocument; cache: React.RefObject<PhotoPreviewCache>; writable: boolean; resumable: boolean; refresh: () => void; resume: () => void; onChanged: () => void; openPreview: (trigger: HTMLButtonElement) => void }) {
   const latest = photo.versions[0];
   const cleanId = photo.versions.find(version => version.state === "clean")?.id;
   const [url, setUrl] = useState<string>();
   const [error, setError] = useState<ApiError>();
   const [previewFailed, setPreviewFailed] = useState(false);
   const [previewRetry, setPreviewRetry] = useState(0);
+  const retryAttempt = useRef(0);
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const attempt = useRef({ fingerprint: "", key: "" });
@@ -150,17 +156,17 @@ function PhotoCard({ photo, writable, resumable, refresh, resume, onChanged, ope
   useEffect(() => {
     if (!cleanId) return;
     let active = true, objectUrl: string | undefined;
+    const fresh = previewRetry !== retryAttempt.current; retryAttempt.current = previewRetry;
     async function load() {
       try {
-        const permit = await requestFilePermit({ action: "download", document_id: photo.id, expected_version: photo.version, version_id: cleanId });
-        const blob = await downloadBytes(permit);
+        const blob = await photoPreview(cache.current, { id: photo.id, version: photo.version }, cleanId!, fresh);
         if (!active) return;
         objectUrl = URL.createObjectURL(blob); setUrl(objectUrl);
       } catch { if (active) { setPreviewFailed(true); setError(new ApiError("FILE_TRANSFER_INTERRUPTED", 503)); } }
     }
     void load();
     return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [photo.id, photo.version, cleanId, previewRetry]);
+  }, [photo.id, photo.version, cleanId, previewRetry, cache]);
   async function command(action: "archive" | "retry-scan") {
     if (busy) return;
     setBusy(true); setError(undefined);
@@ -179,23 +185,30 @@ function PhotoCard({ photo, writable, resumable, refresh, resume, onChanged, ope
   </li>;
 }
 
-function PhotoViewer({ photos, index, change, close, returnFocus }: { photos: ProtectedDocument[]; index: number; change: (index: number) => void; close: () => void; returnFocus: React.RefObject<HTMLButtonElement | null> }) {
+function PhotoViewer({ photos, cache, index, change, close, returnFocus }: { photos: ProtectedDocument[]; cache: React.RefObject<PhotoPreviewCache>; index: number; change: (index: number) => void; close: () => void; returnFocus: React.RefObject<HTMLButtonElement | null> }) {
+  const dialog = useRef<HTMLDivElement>(null);
+  const previousButton = useRef<HTMLButtonElement>(null), nextButton = useRef<HTMLButtonElement>(null);
   const photo = photos[index];
   const cleanId = photo.versions.find(version => version.state === "clean")?.id;
   const [preview, setPreview] = useState<{ key: string; url: string }>();
   const [failedKey, setFailedKey] = useState<string>();
   const [navigation, setNavigation] = useState(0);
   const [retry, setRetry] = useState(0);
+  const retryAttempt = useRef(0);
   const mediaKey = `${photo.id}:${photo.version}:${navigation}:${retry}`;
-  function navigate(next: number) { setNavigation(value => value + 1); change(next); }
+  function navigate(next: number) {
+    // Keep arrow keys inside the dialog when the focused end control disables.
+    if ((next === 0 && document.activeElement === previousButton.current) || (next === photos.length - 1 && document.activeElement === nextButton.current)) dialog.current?.focus({ preventScroll: true });
+    setNavigation(value => value + 1); change(next);
+  }
   useEffect(() => {
     if (!cleanId) return;
     let active = true;
     let objectUrl: string | undefined;
+    const fresh = retry !== retryAttempt.current; retryAttempt.current = retry;
     async function load() {
       try {
-        const permit = await requestFilePermit({ action: "download", document_id: photo.id, expected_version: photo.version, version_id: cleanId! });
-        const blob = await downloadBytes(permit);
+        const blob = await photoPreview(cache.current, { id: photo.id, version: photo.version }, cleanId!, fresh);
         if (!active) return;
         objectUrl = URL.createObjectURL(blob);
         setPreview({ key: mediaKey, url: objectUrl });
@@ -204,16 +217,16 @@ function PhotoViewer({ photos, index, change, close, returnFocus }: { photos: Pr
     }
     void load();
     return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [photo.id, photo.version, cleanId, mediaKey]);
+  }, [photo.id, photo.version, cleanId, mediaKey, cache, retry]);
   const url = preview?.key === mediaKey ? preview.url : undefined;
   return <Dialog open onOpenChange={open => { if (!open) close(); }}>
-    <DialogContent className="inset-3 top-3 flex h-[calc(100dvh-1.5rem)] max-h-none max-w-none translate-y-0 flex-col overflow-hidden p-3 sm:inset-6 sm:top-6 sm:h-[calc(100dvh-3rem)] sm:p-5" onCloseAutoFocus={event => { event.preventDefault(); returnFocus.current?.focus(); }} onKeyDown={event => {
+    <DialogContent ref={dialog} tabIndex={-1} className="inset-3 top-3 flex h-[calc(100dvh-1.5rem)] max-h-none max-w-none translate-y-0 flex-col overflow-hidden p-3 sm:inset-6 sm:top-6 sm:h-[calc(100dvh-3rem)] sm:p-5" onCloseAutoFocus={event => { event.preventDefault(); returnFocus.current?.focus(); }} onKeyDown={event => {
       if (event.key === "ArrowLeft" && index > 0) { event.preventDefault(); navigate(index - 1); }
       if (event.key === "ArrowRight" && index < photos.length - 1) { event.preventDefault(); navigate(index + 1); }
     }}>
       <div className="flex min-w-0 items-start justify-between gap-3"><div className="min-w-0"><DialogTitle>Photos du bien</DialogTitle><DialogDescription className="wrap-anywhere">{photo.filename} · {index + 1} sur {photos.length} photos analysées</DialogDescription></div><Button action="close" type="button" variant="outline" size="icon" aria-label="Fermer la photo" onClick={close}><span className="sr-only">Fermer</span></Button></div>
       <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-sm bg-foreground" aria-live="polite">{url ? <Image src={url} alt={`Photo du bien : ${photo.filename}`} fill unoptimized sizes="(min-width: 1024px) 90vw, 100vw" className="object-contain" onError={() => { setPreview(undefined); setFailedKey(mediaKey); }} /> : failedKey === mediaKey ? <div className="grid justify-items-center gap-3 p-4 text-center text-background"><p role="alert">Impossible d’ouvrir cette photo.</p><Button action="retry" type="button" variant="outline" onClick={() => setRetry(value => value + 1)}>Réessayer</Button></div> : <p role="status" className="text-background">Ouverture de la photo…</p>}</div>
-      <div className="flex items-center justify-between gap-3"><Button action="back" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Précédente" disabled={index === 0} onClick={() => navigate(index - 1)}><span className="sr-only sm:not-sr-only">Précédente</span></Button><span className="text-sm text-muted-foreground" aria-live="polite">{index + 1} / {photos.length}</span><Button action="forward" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Suivante" disabled={index === photos.length - 1} onClick={() => navigate(index + 1)}><span className="sr-only sm:not-sr-only">Suivante</span></Button></div>
+      <div className="flex items-center justify-between gap-3"><Button ref={previousButton} action="back" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Précédente" disabled={index === 0} onClick={() => navigate(index - 1)}><span className="sr-only sm:not-sr-only">Précédente</span></Button><span className="text-sm text-muted-foreground" aria-live="polite">{index + 1} / {photos.length}</span><Button ref={nextButton} action="forward" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Suivante" disabled={index === photos.length - 1} onClick={() => navigate(index + 1)}><span className="sr-only sm:not-sr-only">Suivante</span></Button></div>
     </DialogContent>
   </Dialog>;
 }
