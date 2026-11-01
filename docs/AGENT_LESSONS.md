@@ -1,5 +1,45 @@
 # KAY agent lessons
 
+## iPhone images need separate decode and encode checks (2026-11-01)
+
+- A clean npm audit does not cover native libraries embedded inside generated
+  JavaScript/WASM. Inspect actual version exports and upstream native advisories.
+  heic-to1.6.7 embeds vulnerable libde2651.0.16, and jsquash's encoder reports
+  libwebp1.1.0. Source-build patched libraries with complete source, pinned tools,
+  hashes and licences; do not infer a runtime exception from browser sandboxing.
+- Compiled browser mode starts the existing build; it does not rebuild changed
+  Next.js headers. Run the production build explicitly before acceptance after
+  changing runtime configuration, and do not count a stale-build test as a pass.
+- Reporting fixtures for the default month must put their outcomes in the
+  backend's current civil date. Keep historical dates only in explicitly dated
+  tests. Always delete synthetic actors even if a failed browser-context cleanup
+  throws; leaked fixed-phone fixtures can cause unrelated following cases to fail.
+- Safari displaying WebP does not prove canvas can export it. Feature-detect
+  the actual output MIME and exercise the genuine local encoder fallback with
+  native export deliberately unavailable. Never rename fallback PNG bytes WebP.
+- Test workers in WebKit as well as Chromium: WebKit checks module imports
+  against worker-src too. Allow reviewed same-origin dependencies there, retain
+  external-host denial and keep JavaScript unsafe-eval disabled.
+- A lost acknowledgement test must first confirm real server acceptance.
+  Request forwarding of browser Blob bodies differs across engines. Inject
+  the client failure after a real successful XHR response, then assert one
+  version and no second PUT; do not accept a failed forward as lost acceptance.
+- Exercise viewing immediately after a full batch, not only the upload itself.
+  Re-downloading already-rendered clean bytes can exhaust the session's permit
+  budget. Reuse them only within that mounted gallery; retain fresh retry checks
+  and explicit cache/object-URL cleanup rather than raising the security limit.
+- Faster cached rendering can expose focus timing bugs: a focused navigation
+  button becoming disabled must leave focus inside the dialog so arrow keys
+  still work. Test focus directly rather than adding a delay.
+
+## Reporting fixture periods must match their facts (2026-11-01)
+
+Current-time notes/enquiries move into November while deliberately historical
+receipt and completion dates stay in October. Choose periods per case; changing
+every shared period to the current month loses the historical assertions.
+Preserve exact counts, attribution and revoked-scope checks, and never widen a
+production report rule merely to keep a time-dependent test passing.
+
 ## Recovery controls must match the backend capability (2026-10-24)
 
 - Do not reuse an archive/manager flag for resuming an agent-owned upload.

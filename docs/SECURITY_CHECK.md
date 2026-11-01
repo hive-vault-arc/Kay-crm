@@ -1,5 +1,67 @@
 # KAY security check for changes
 
+## iPhone photo uploads (2026-11-01)
+
+HEIC/HEIF conversion stays inside the authenticated browser, with no conversion
+provider/CDN, original upload or persistent browser cache. The separately served
+source-built CSP codec is hash-verified during build/dev. Its disposable
+worker has a dedicated CSP without eval or external connections; abort/timeout/
+completion terminate it. Existing20MiB/25MP/2560px conversion bounds remain.
+Multiple uploads are sequential and use existing CSRF/current-authority checks,
+private one-use permits, server byte validation, quarantine and real ClamAV.
+Retry tracks the exact issued version to recognize a lost acknowledgement without
+replaying bytes or treating another actor's version as a successful upload.
+Source headers are checked before image decode; filename hints never grant API
+authority. Private ordinary images and documents are preserved byte-for-byte;
+only HEIC/HEIF need conversion there. No schema, ownership or storage change.
+
+Safari native WebP export is feature-detected with a tiny cached probe. Its
+fallback uses only source-built libwebp1.6.0 encoder/memory exports, never a
+WebP decoder interface. Only already-decoded bounded RGBA pixels are supplied,
+not untrusted container bytes. A dedicated
+same-origin worker permits WASM compilation but not JavaScript eval or external
+hosts, and terminates on cancellation, timeout or completion. WebKit's module
+import behavior requires self in worker-src as well as script-src. No global
+CSP is relaxed. Upstream licence/version/source notices accompany both codecs.
+
+Native-code review found that the newest heic-to1.6.7 binary still exports
+libde2651.0.16. It falls in published affected ranges despite a clean npm runtime
+audit. Replace it with source-built libheif1.23.7/libde2651.1.3, using an exact
+Emscripten4.0.23 image digest, unchanged official source archives and reproducible
+build settings. Remove the npm decoder/encoder and superseded public copies.
+HEIF worker validates actual version exports, checks primary dimensions before
+pixel decode, disables nested workers/JavaScript eval and bounds heap512MiB.
+The encoder validates libwebp1.6.0 and bounds heap256MiB. Complete LGPL source
+archives ship with the decoder; retained source hashes/notices/build instructions
+are reviewable. No runtime advisory waiver is inferred from browser sandboxing.
+
+Current audits identify seven pypdf6.21.2 advisories fixed by6.21.4. Pin the
+maintainer's compatible patch and regenerate both hash locks using the project
+venv; fresh runtime and dev Python audits pass. The separate npm dev-tool
+minimatch/deepmerge findings are not silently suppressed or downgraded away.
+The existing gate refuses them; a pending owner decision is not approval.
+
+The ten-upload/navigation probe reaches the unchanged30-per-minute permit limit
+when the viewer downloads the same already-rendered full image again. Share only
+those previously authorized clean-version Blob promises within that one mounted
+inventory gallery. Concurrent thumbnail/viewer reads deduplicate; failed requests
+are evicted. Prune removed/replaced clean-version keys and clear on gallery exit;
+component-owned object URLs are still revoked. No private-contact/global/browser-
+persistent cache or token cache is added, and no limit is raised. New bytes and
+explicit retries still require current server permission and a fresh permit.
+
+Hosted reporting tests expose an expired October window for current-time notes
+and enquiries after November1. Use the default current civil month only for
+those two cases; retain explicit October periods for intentionally historical
+outcome/receipt fixtures. Counts, actor attribution and revoked-scope assertions
+remain intact. No production reporting rule is changed to make tests pass.
+
+Real synthetic HEIC/HEIF fixtures contain coloured geometry only, including a
+multi-image HEIF whose primary image is not first. QA distinguishes actual
+Chrome/WebKit execution from unavailable physical iPhone acceptance. Legacy
+scanner startup was repaired by normal Docker quit/relaunch, without resetting
+data, bypassing analysis or changing security settings.
+
 ## Publication audit follow-up (2026-10-25)
 
 The exact-candidate hosted audit for PR31 rejects pypdf6.21.1 for three newly

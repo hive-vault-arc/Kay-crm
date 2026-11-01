@@ -6,6 +6,7 @@ test("SP17 AT-18/36/39: real Bklit/API/table parity, scoped drill-downs, dates a
   try {
     const fixture = await reportFixture(page, actors); await openReports(page); const manager = await comparePoints(page);
     expect(manager.scope).toBe("agency"); expect(manager.metrics.find((m: { key: string }) => m.key === "contacts").total).toBe(2);
+    expect(manager.metrics.find((m: { key: string }) => m.key === "won").total).toBe(1);
     const won = page.getByRole("region", { name: "Affaires gagnées non rouvertes", exact: true }); await won.getByRole("button", { name: "Voir les dossiers : 1", exact: true }).click();
     const drill = page.getByRole("region", { name: "Dossiers de l’indicateur", exact: true }); await expect(drill.getByRole("link", { name: "SP17 contact attribué synthétique · SP17 affaire gagnée synthétique", exact: true })).toHaveAttribute("href", `/deals/${fixture.deal}`); await drill.getByRole("button", { name: "Fermer les dossiers", exact: true }).click();
     await page.getByLabel("Du (inclus)", { exact: true }).fill("2020-01-01"); await page.getByLabel("Au (inclus)", { exact: true }).fill("2020-01-31"); await page.getByRole("button", { name: "Appliquer la période", exact: true }).click();
@@ -16,7 +17,7 @@ test("SP17 AT-18/36/39: real Bklit/API/table parity, scoped drill-downs, dates a
     await expect(page.getByText("SP17 contact privé synthétique", { exact: true })).toHaveCount(0);
     await clearActorContext(page); await signIn(page, fixture.other); await openReports(page);
     const copied = await (await page.request.get(`/api/v1/reports/drill-down?metric=contacts&attribution_id=${fixture.agent.id}`)).json(); expect(copied.total).toBe(0);
-  } finally { await clearActorContext(page); for (const actor of actors) await removeActor(actor); }
+  } finally { try { await clearActorContext(page); } finally { for (const actor of actors) await removeActor(actor); } }
 });
 
 test("SP17 AT-23: retained dates, loading, denied and interrupted read retry", async ({ page, actor }) => {

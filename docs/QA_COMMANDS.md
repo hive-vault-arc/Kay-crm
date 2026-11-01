@@ -1,5 +1,164 @@
 # KAY QA command register
 
+## Native photo codec hardening, 2026-11-01
+
+Superseded PR34 candidate6dbb215 manual run41351777866: full backend974 passed
+in837.49s. Browser111 passed/5 failed before the configured stop, with31 cases
+not run. The first failure is a default-month reporting fixture closing its
+deal on October15; after November1 it waits for a nonexistent one-sale drilldown.
+Its interrupted context cleanup skips actor deletion, causing later fixed-phone
+fixtures to collide. Use the backend's current civil date only for this reporting
+fixture, assert the expected sale count before clicking, and always attempt actor
+cleanup. Explicitly dated outcome cases and production reporting logic stay intact.
+
+Native-library inspection of the newest npm HEIF build exports libheif1.23.7
+but vulnerable libde2651.0.16. The separate npm WebP encoder exports libwebp1.1.0.
+Replace both with source builds: libheif1.23.7/libde2651.1.3 and libwebp1.6.0,
+complete retained/hashed upstream source archives and existing full licences.
+The pinned Emscripten4.0.23 Linux/amd64 container runs
+`frontend/scripts/build-photo-codecs.sh`; a second fresh container reproduces
+all three artifact hashes exactly. Build/dev verifies those hashes, distributes
+complete LGPL sources and removes superseded generated copies. The HEIF worker
+needs no nested worker/blob-script allowance, checks actual codec versions and
+primary dimensions before decoding, and bounds heap512MiB. Encoder heap256MiB.
+
+Visible isolated WebKit smoke checks decode both real synthetic fixtures and
+an additional4032x3024 synthetic HEIC; the new WebP encoder returns valid bytes.
+Lint, typecheck, production build and110 frontend units pass; runtime npm audit0.
+Bundle scan:4 roots/175 browser JS/0 configured secrets or signing-key matches.
+Staged Gitleaks:3.49MB/no leaks. Initial compiled Chrome rerun used stale headers,
+so its failure is not counted as acceptance; rebuild explicitly before rerunning.
+After explicitly rebuilding, final scoped verification on the guarded targets
+and portable Node below:
+
+- `npm.cmd run test:chrome -- tests/e2e/iphone-photos.spec.ts
+  tests/e2e/files.spec.ts tests/e2e/property-photos.spec.ts
+  tests/e2e/photo-resume.spec.ts tests/e2e/projects-reference.spec.ts
+  --max-failures=1 --reporter=list`:12 passed in6.8m.
+- `npm.cmd run test:e2e -- tests/e2e/iphone-photos.spec.ts --project=webkit
+  --headed --max-failures=1 --reporter=list`:5 passed in1.9m. Both real codec
+  fallbacks, actual native multi-selection, three widths, cancellation, lost
+  acknowledgement, private DOCX preservation/denial and all-ten viewing pass.
+  The safe synthetic WebKit mobile viewer capture is visually inspected.
+- `npm.cmd run test:chrome -- tests/e2e/reports.spec.ts
+  tests/e2e/requirements.spec.ts tests/e2e/reservations.spec.ts
+  --max-failures=1 --reporter=list`:7 passed in3.2m, including the exact hosted
+  failure and subsequent cases. Original data/permission/stock assertions stay.
+- Policy/aggregate negative tests:16 passed. The unchanged full npm gate still
+  refuses the additional development advisories; runtime npm audit remains0.
+
+Fresh exact-head hosted release results remain separate from these local passes.
+
+The minimatch/deepmerge development-tool policy decision remains pending.
+No new security exception, main merge, migration or production deployment occurs.
+
+## iPhone gallery/report follow-up, 2026-11-01
+
+PR34 candidate16349e5 passes three hosted prerequisite jobs and Vercel Preview;
+the required aggregate correctly fails at the unchanged npm development-tool
+gate. Hosted manual integration41348606275 exposes an expired October period
+in a current-time enquiry snapshot test (1 failed,767 passed). Its remaining
+browser run is cancelled as superseded, never counted as a passing release.
+
+A further isolated ten-upload/instant-view probe exposes31 permit requests and
+one429: the viewer re-downloads bytes already rendered in the gallery. Add a
+per-gallery clean-version Blob-promise cache, concurrency deduplication, failed-
+request eviction, current-list pruning and unmount cleanup. All component-owned
+object URLs still revoke; explicit retry obtains a fresh authorized transfer.
+No global/persistent cache, server permission or30-per-minute limit change.
+Fast cached rendering also exposes focus loss when an end arrow disables;
+keep focus inside the dialog and assert it directly, without a timing sleep.
+
+Two report tests now use the current civil month for wall-clock-created notes
+and enquiries. Explicit October receipt/outcome periods stay unchanged; preserve
+all original counts, attribution and revoked-scope assertions. Production report
+queries are unchanged. The real-DB report modules pass17/17 in21.85s.
+
+Final follow-up verification uses the same guarded local targets/ports below:
+
+- Frontend lint/typecheck/production build and110 units pass. Cache tests cover
+  concurrent reads, immutable-version keys, separate gallery lifetimes, explicit
+  fresh authorization and failed-request eviction. Python Ruff/format/mypy pass.
+- Compiled headed Chrome `iphone-photos.spec.ts property-photos.spec.ts --grep
+  'property photos:|agent automatically|full ten-photo|real HEIC'`:
+  4 passed in1.6m. Includes full-ten immediate viewing of all images without a
+  further permit, first/last-control focus, keyboard arrows, cached viewing
+  during a network outage and real fresh-transfer failure/recovery after a
+  synthetic decode error. No failure is hidden by dropping an error-path check.
+- Compiled headed WebKit `iphone-photos.spec.ts`:5 passed in1.8m, including all
+  ten images viewed immediately after upload and both genuine codec fallbacks.
+
+The original scanner/file regressions and initial evidence below remain scoped,
+overlapping results. A fresh exact-head hosted automatic/manual run is required
+for promotion. The tooling-security exception decision is still pending; no
+new exception or main-branch bypass is applied.
+
+## iPhone photo uploads, 2026-11-01 (superseded candidate16349e5)
+
+Work is isolated on `codex/iphone-photo-uploads` in the managed integration
+checkout, based on main e0bdc09. The original dirty checkout is preserved.
+Scope/evidence boundary: [iPhone photo uploads](03-planning/iphone-photo-uploads.md).
+No database migration or production data/configuration write is introduced.
+
+Portable Node24.22.1: frontend lint (380 buttons,0 violations), typecheck,
+production build and107 unit tests pass. Codec build copies are checked against
+reviewed SHA256s. Browser bundle scan:4 roots,175 JS files,0 configured facade
+secrets/signing-key occurrences. Repository-only validator:1216 local links,
+22 sprints,42 acceptance mappings,13 Mermaid pairs and12 JSON examples pass.
+
+Real local ClamAV is healthy on loopback3310 after normal Docker restart;
+no factory reset/data deletion or scanner fallback. The owned PostgreSQL cluster
+uses `127.0.0.1:5544/kayrealestate_test`. DB writers and browser supervisors stay
+serial under the existing lease. All Python commands use backend/.venv.
+
+With APP_ENVIRONMENT=test, the guarded TEST_DATABASE_URL above, ANTIVIRUS_HOST/
+PORT=127.0.0.1/3310, KAY_E2E_PRODUCTION=1 and isolated API/frontend/control/
+simulator ports8110/3110/8111/8112:
+
+- `npm.cmd run test:e2e -- tests/e2e/iphone-photos.spec.ts --project=webkit
+  --headed --max-failures=1 --reporter=list`:4 passed in1.5m. Real HEIC/HEIF
+  compressed bytes, non-first primary image, forced native-decoder/WebP-export
+  unavailability, strict worker CSPs, mixed selection, cancel/retry, lost success
+  acknowledgement at ten slots, original DOCX download hash and private denial.
+- `npm.cmd run test:chrome -- tests/e2e/iphone-photos.spec.ts
+  tests/e2e/files.spec.ts tests/e2e/property-photos.spec.ts
+  tests/e2e/photo-resume.spec.ts tests/e2e/projects-reference.spec.ts
+  --max-failures=1 --reporter=list`:11 passed in6.7m. Includes the four new cases,
+  six-format private/shared upload behavior, actual rejected/quarantined bytes,
+  network/scanner recovery, reserved-slot resume, card filters, viewer arrows,
+  programme/apartment agent uploads and desktop/320/390px geometry. Synthetic
+  desktop/mobile gallery and HEIF viewer captures inspected; no physical iPhone
+  picker/OS codec verification is claimed.
+
+The added full-ten-photo/permit-budget case and corrected plural-label cap
+assertion pass in a separate visible Chrome selection (2 passed in1.0m).
+The full-ten-photo case also passes WebKit (1 passed in37.1s). Ten actual clean
+previews load without a permit-rate error and each document has one version.
+The full-batch mobile capture is inspected. These runs overlap earlier cases;
+they are not additional unique full-product coverage.
+
+The initial real-DB file/PDF selection passes51 in113.77s. Release auditing then
+identifies seven pypdf6.21.2 advisories. Pin6.21.4 and recompile runtime/dev hashes
+with explicit-venv piptools; review confirms only pypdf versions/hashes change.
+Hash-locked installation, editable metadata refresh without dependencies/build
+isolation, pip check, Ruff (374 formatted files), mypy210 modules and both
+`pip_audit -r requirements.txt` / `requirements-dev.lock --require-hashes
+--disable-pip --cache-dir .local-data/iphone-audit-cache` pass. Post-patch,
+`./backend/.venv/Scripts/python.exe -m pytest backend/tests/test_files.py
+backend/tests/test_file_edges.py backend/tests/test_property_photos.py
+backend/tests/test_generated_documents.py -q --tb=short --maxfail=1` passes
+51/51 in115.13s with real PostgreSQL/ClamAV, no skips/deselections.
+
+Frontend runtime audit reports0 advisories. The full audit reports21 inherited
+development-tool findings rooted in minimatch/deepmerge; npm's graph also cycles
+through ESLint peers, so the unchanged required policy fails closed with
+DEPENDENCY_AUDIT_CYCLE. No downgrade, new exception, gate bypass or claimed full
+audit pass. Owner decision is pending; a request to publish is not approval to
+ignore the gate. Index guard passes8568 files/0 forbidden; actionlint passes,
+full-history Gitleaks scans95 commits/136.80MB without leaks. Codec licences keep
+their upstream bytes/whitespace under narrow attributes. Fresh hosted automatic/
+manual integration remains required; local passes do not imply a release pass.
+
 ## Bug-sweep publication audit, 2026-10-25
 
 PR31 initial candidatef96490d passes hosted repository/frontend/managed runtime,
