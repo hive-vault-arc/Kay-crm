@@ -49,23 +49,25 @@ boundary and avoid unrelated aesthetic changes. Current evidence goes in QA.
 [WebKit HEIC support](https://webkit.org/blog/14445/webkit-features-in-safari-17-0/)
 documents native Safari17 support; [WebKit file transcoding](https://bugs.webkit.org/show_bug.cgi?id=292350)
 explains MIME-based selection. [MDN file inputs](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/file)
-defines multiple selection. Review pinned `heic-to`1.6.7 CSP implementation and
-its [primary-image/libheif1.23.7 release](https://github.com/hoppergee/heic-to/releases/tag/v1.6.7),
-retain upstream licences/source/replacement instructions and run dependency audits.
+defines multiple selection. Inspection of the newest `heic-to`1.6.7 binary
+reports libde2651.0.16 despite its recent libheif1.23.7 update. The native
+[libde265 advisory](https://github.com/strukturag/libde265/security/advisories/GHSA-ccfw-29x7-rrx3)
+requires a patched decoder. Do not rely only on npm advisory metadata.
 
-The verified unmodified CSP HEIF codec is served as a separate replaceable asset;
-the application imports its interface through a disposable module worker.
-`prepare-heic.mjs` verifies the exact published artifact before build/dev copies.
-Full upstream licence notices, source links and replacement instructions are
-served alongside it. Its worker response restricts scripts to same-origin/blob,
-permits its nested blob worker and denies external connections/JavaScript eval.
-WebKit also applies worker-src to same-origin module imports, so self remains
-allowed there. Safari's canvas WebP encoding limitation needs a second lazy,
-disposable encoder worker: exact `@jsquash/webp`1.5.0 encoder artifacts, no decoder.
-It receives only bounded RGBA pixels; a tiny cached capability probe selects it
-when native WebP export is unavailable. Only this worker permits WASM compilation
-through wasm-unsafe-eval; neither permits JavaScript unsafe-eval. Its same-origin
-WASM fetch is allowed, not arbitrary hosts. See distributed codec notices.
+Source-build libheif1.23.7/libde2651.1.3 with pinned Emscripten4.0.23, retaining
+complete upstream source archives, licences and rebuild/replacement instructions.
+The separately served asm.js library needs no JavaScript eval or nested worker.
+Its disposable worker checks the actual codec version exports and the primary
+image's25MP limit before pixel decoding; maximum library heap512MiB. Build/dev
+checks reviewed artifact/source hashes and removes superseded generated copies.
+Safari's canvas WebP limitation needs a second lazy disposable encoder worker.
+The earlier npm WebP encoder reports libwebp1.1.0, so source-build libwebp1.6.0
+with only encoder/memory exports, a256MiB heap ceiling and bounded2560px RGBA
+input. A tiny cached capability probe selects it when native WebP export is
+unavailable. Only the encoder worker permits WASM compilation through
+wasm-unsafe-eval; neither permits JavaScript unsafe-eval or external hosts.
+WebKit applies worker-src to module imports, so self remains permitted there.
+See [source/build provenance](../../frontend/vendor/photo-codecs/README.md).
 No CDN, image-conversion provider, VAPID or server codec dependency is introduced.
 
 Release auditing also requires the compatible pypdf6.21.4 security patch; only

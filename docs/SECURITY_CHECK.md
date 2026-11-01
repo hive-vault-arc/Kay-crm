@@ -4,7 +4,7 @@
 
 HEIC/HEIF conversion stays inside the authenticated browser, with no conversion
 provider/CDN, original upload or persistent browser cache. The separately served
-unmodified pinned CSP codec is hash-verified during build/dev. Its disposable
+source-built CSP codec is hash-verified during build/dev. Its disposable
 worker has a dedicated CSP without eval or external connections; abort/timeout/
 completion terminate it. Existing20MiB/25MP/2560px conversion bounds remain.
 Multiple uploads are sequential and use existing CSRF/current-authority checks,
@@ -16,13 +16,24 @@ authority. Private ordinary images and documents are preserved byte-for-byte;
 only HEIC/HEIF need conversion there. No schema, ownership or storage change.
 
 Safari native WebP export is feature-detected with a tiny cached probe. Its
-fallback uses only the hash-verified @jsquash/webp1.5.0 encoder wrapper/defaults/
-WASM, never its decoder. The actual encoder version is1.1.0; only already-decoded
-bounded RGBA pixels are supplied, not untrusted container bytes. A dedicated
+fallback uses only source-built libwebp1.6.0 encoder/memory exports, never a
+WebP decoder interface. Only already-decoded bounded RGBA pixels are supplied,
+not untrusted container bytes. A dedicated
 same-origin worker permits WASM compilation but not JavaScript eval or external
 hosts, and terminates on cancellation, timeout or completion. WebKit's module
 import behavior requires self in worker-src as well as script-src. No global
 CSP is relaxed. Upstream licence/version/source notices accompany both codecs.
+
+Native-code review found that the newest heic-to1.6.7 binary still exports
+libde2651.0.16. It falls in published affected ranges despite a clean npm runtime
+audit. Replace it with source-built libheif1.23.7/libde2651.1.3, using an exact
+Emscripten4.0.23 image digest, unchanged official source archives and reproducible
+build settings. Remove the npm decoder/encoder and superseded public copies.
+HEIF worker validates actual version exports, checks primary dimensions before
+pixel decode, disables nested workers/JavaScript eval and bounds heap512MiB.
+The encoder validates libwebp1.6.0 and bounds heap256MiB. Complete LGPL source
+archives ship with the decoder; retained source hashes/notices/build instructions
+are reviewable. No runtime advisory waiver is inferred from browser sandboxing.
 
 Current audits identify seven pypdf6.21.2 advisories fixed by6.21.4. Pin the
 maintainer's compatible patch and regenerate both hash locks using the project

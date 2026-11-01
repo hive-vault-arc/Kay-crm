@@ -1,5 +1,57 @@
 # KAY QA command register
 
+## Native photo codec hardening, 2026-11-01
+
+Superseded PR34 candidate6dbb215 manual run41351777866: full backend974 passed
+in837.49s. Browser111 passed/5 failed before the configured stop, with31 cases
+not run. The first failure is a default-month reporting fixture closing its
+deal on October15; after November1 it waits for a nonexistent one-sale drilldown.
+Its interrupted context cleanup skips actor deletion, causing later fixed-phone
+fixtures to collide. Use the backend's current civil date only for this reporting
+fixture, assert the expected sale count before clicking, and always attempt actor
+cleanup. Explicitly dated outcome cases and production reporting logic stay intact.
+
+Native-library inspection of the newest npm HEIF build exports libheif1.23.7
+but vulnerable libde2651.0.16. The separate npm WebP encoder exports libwebp1.1.0.
+Replace both with source builds: libheif1.23.7/libde2651.1.3 and libwebp1.6.0,
+complete retained/hashed upstream source archives and existing full licences.
+The pinned Emscripten4.0.23 Linux/amd64 container runs
+`frontend/scripts/build-photo-codecs.sh`; a second fresh container reproduces
+all three artifact hashes exactly. Build/dev verifies those hashes, distributes
+complete LGPL sources and removes superseded generated copies. The HEIF worker
+needs no nested worker/blob-script allowance, checks actual codec versions and
+primary dimensions before decoding, and bounds heap512MiB. Encoder heap256MiB.
+
+Visible isolated WebKit smoke checks decode both real synthetic fixtures and
+an additional4032x3024 synthetic HEIC; the new WebP encoder returns valid bytes.
+Lint, typecheck, production build and110 frontend units pass; runtime npm audit0.
+Bundle scan:4 roots/175 browser JS/0 configured secrets or signing-key matches.
+Staged Gitleaks:3.49MB/no leaks. Initial compiled Chrome rerun used stale headers,
+so its failure is not counted as acceptance; rebuild explicitly before rerunning.
+After explicitly rebuilding, final scoped verification on the guarded targets
+and portable Node below:
+
+- `npm.cmd run test:chrome -- tests/e2e/iphone-photos.spec.ts
+  tests/e2e/files.spec.ts tests/e2e/property-photos.spec.ts
+  tests/e2e/photo-resume.spec.ts tests/e2e/projects-reference.spec.ts
+  --max-failures=1 --reporter=list`:12 passed in6.8m.
+- `npm.cmd run test:e2e -- tests/e2e/iphone-photos.spec.ts --project=webkit
+  --headed --max-failures=1 --reporter=list`:5 passed in1.9m. Both real codec
+  fallbacks, actual native multi-selection, three widths, cancellation, lost
+  acknowledgement, private DOCX preservation/denial and all-ten viewing pass.
+  The safe synthetic WebKit mobile viewer capture is visually inspected.
+- `npm.cmd run test:chrome -- tests/e2e/reports.spec.ts
+  tests/e2e/requirements.spec.ts tests/e2e/reservations.spec.ts
+  --max-failures=1 --reporter=list`:7 passed in3.2m, including the exact hosted
+  failure and subsequent cases. Original data/permission/stock assertions stay.
+- Policy/aggregate negative tests:16 passed. The unchanged full npm gate still
+  refuses the additional development advisories; runtime npm audit remains0.
+
+Fresh exact-head hosted release results remain separate from these local passes.
+
+The minimatch/deepmerge development-tool policy decision remains pending.
+No new security exception, main merge, migration or production deployment occurs.
+
 ## iPhone gallery/report follow-up, 2026-11-01
 
 PR34 candidate16349e5 passes three hosted prerequisite jobs and Vercel Preview;

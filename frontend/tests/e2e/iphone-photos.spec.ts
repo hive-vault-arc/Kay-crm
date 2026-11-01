@@ -32,7 +32,7 @@ test("iPhone photos: real HEIC/HEIF batch converts privately under a CSP without
     await signIn(page, actor); await testControl("worker-start");
     await createDevelopment(page);
     const decoder = await page.request.get("/heic/decoder-worker.js");
-    expect(decoder.headers()["content-security-policy"]).toBe("default-src 'none'; script-src 'self' blob:; worker-src 'self' blob:; connect-src 'self'");
+    expect(decoder.headers()["content-security-policy"]).toBe("default-src 'none'; script-src 'self'; worker-src 'self'; connect-src 'self'");
     const encoder = await page.request.get("/webp/encoder-worker.js");
     expect(encoder.headers()["content-security-policy"]).toBe("default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; worker-src 'self'");
     const gallery = page.getByRole("region", { name: "Photos du bien" });

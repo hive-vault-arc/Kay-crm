@@ -19,6 +19,8 @@ frontend/public/licenses/webp/libwebp-PATENTS.txt -text -whitespace
 *.webp binary
 *.heic binary
 *.heif binary
+*.wasm binary
+frontend/vendor/photo-codecs/*.js -text -whitespace
 *.gif binary
 *.ico binary
 *.woff binary

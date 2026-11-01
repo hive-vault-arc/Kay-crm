@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     return [{
       source: "/heic/decoder-worker.js",
       headers: [
-        { key: "Content-Security-Policy", value: "default-src 'none'; script-src 'self' blob:; worker-src 'self' blob:; connect-src 'self'" },
+        { key: "Content-Security-Policy", value: "default-src 'none'; script-src 'self'; worker-src 'self'; connect-src 'self'" },
         { key: "X-Content-Type-Options", value: "nosniff" },
       ],
     }, {

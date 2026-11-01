@@ -2,6 +2,18 @@
 
 ## iPhone images need separate decode and encode checks (2026-11-01)
 
+- A clean npm audit does not cover native libraries embedded inside generated
+  JavaScript/WASM. Inspect actual version exports and upstream native advisories.
+  heic-to1.6.7 embeds vulnerable libde2651.0.16, and jsquash's encoder reports
+  libwebp1.1.0. Source-build patched libraries with complete source, pinned tools,
+  hashes and licences; do not infer a runtime exception from browser sandboxing.
+- Compiled browser mode starts the existing build; it does not rebuild changed
+  Next.js headers. Run the production build explicitly before acceptance after
+  changing runtime configuration, and do not count a stale-build test as a pass.
+- Reporting fixtures for the default month must put their outcomes in the
+  backend's current civil date. Keep historical dates only in explicitly dated
+  tests. Always delete synthetic actors even if a failed browser-context cleanup
+  throws; leaked fixed-phone fixtures can cause unrelated following cases to fail.
 - Safari displaying WebP does not prove canvas can export it. Feature-detect
   the actual output MIME and exercise the genuine local encoder fallback with
   native export deliberately unavailable. Never rename fallback PNG bytes WebP.
