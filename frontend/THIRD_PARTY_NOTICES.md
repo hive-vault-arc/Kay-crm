@@ -1,5 +1,23 @@
 # Third-party notices
 
+## HEIC/HEIF decoder
+
+`heic-to`1.6.7 (Hopper Gee, LGPL-3.0-or-later) provides the unmodified CSP build
+of libheif1.23.7/libde2651.0.16. It is loaded on demand in a disposable module
+worker only when native image decoding cannot open a HEIC/HEIF. The separate
+library retains its published interface and can be replaced without rebuilding
+application code. The build verifies its exact SHA256 before copying from the
+hash-locked npm package; no runtime CDN or conversion provider is contacted.
+See distributed [notice/source/replacement instructions](public/licenses/heic/NOTICE.txt)
+and full LGPL/GPL texts in that directory. No application-code licence is invented.
+
+Safari canvas export uses the separate, hash-verified `@jsquash/webp`1.5.0
+encoder fallback (Apache-2.0), loaded only when native WebP encoding is absent.
+Only its encoder WASM/wrapper/defaults are copied; no WebP decoder is shipped.
+The actual encoder reports libwebp1.1.0 and receives bounded canvas RGBA only.
+See [upstream notices and source](public/licenses/webp/NOTICE.txt), including
+libwebp's BSD licence/patent grant and the Emscripten runtime notices.
+
 ## Riviera variable fonts: SIL Open Font License 1.1
 
 Fraunces 1.000, Manrope 4.505 and DM Sans 4.004 use the SIL Open Font License 1.1

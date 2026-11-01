@@ -1,0 +1,20 @@
+Safari WebP encoding fallback
+
+@jsquash/webp 1.5.0, Jamie Sinclair / Google contributors, Apache-2.0.
+Source: https://github.com/jamsinclair/jSquash/tree/8bcd212da8c2be7c9c223e8f222eb3d9574a713b
+Package: https://registry.npmjs.org/@jsquash/webp/-/webp-1.5.0.tgz
+Upstream full licence: jsquash.txt.
+
+Only the encoder wrapper, its defaults and encoder WASM are served unchanged.
+The published encoder reports libwebp 1.1.0 (0x010100); the package README's
+older 1.0.2 label is not used as evidence. No WebP decoder is copied or imported.
+Its input is bounded, already-decoded canvas RGBA pixels, not original files.
+libwebp copyright/licence and patent grant: libwebp-COPYING.txt,
+libwebp-PATENTS.txt. Source: https://github.com/webmproject/libwebp/tree/v1.1.0
+Emscripten runtime notices: EMSCRIPTEN-LICENSE.txt.
+
+The fallback runs in a disposable same-origin worker only when native canvas
+WebP export is unavailable. Build/dev verifies exact source artifact hashes;
+no runtime CDN or conversion provider is contacted. Native browser encoding
+is preferred. The separate versioned files can be replaced after the build
+with compatible implementations; the application code is not relicensed.

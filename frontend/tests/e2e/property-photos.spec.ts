@@ -20,7 +20,7 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     await page.goto(`/projects/properties/${id}`);
     const gallery = page.getByRole("region", { name: "Photos du bien" });
     await expect(gallery.getByText("0 / 10 photos")).toBeVisible();
-    await expect(gallery.getByRole("button", { name: "Choisir une image" })).toBeInViewport();
+    await expect(gallery.getByRole("button", { name: "Choisir des photos" })).toBeInViewport();
     let interrupted = false;
     await page.route("**/transfers/**", route => {
       if (route.request().method() === "PUT" && !interrupted) {
@@ -97,14 +97,14 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     }
     await page.reload();
     await expect(gallery.getByText("10 / 10 photos")).toBeVisible();
-    await expect(gallery.getByRole("button", { name: "Choisir une image" })).toHaveCount(0);
+    await expect(gallery.getByRole("button", { name: "Choisir des photos" })).toHaveCount(0);
     const overflow = await staffCommand(page, "documents", { parent_kind: "property", parent_id: id, purpose: "photo", filename: "onze.webp", mime_type: "image/webp", size_bytes: 100 });
     expect(overflow.status()).toBe(409);
     await gallery.getByRole("button", { name: "Archiver" }).first().click();
     await page.getByRole("button", { name: "Confirmer l’archivage" }).click();
     await expect(gallery.getByText("9 / 10 photos")).toBeVisible();
     await page.setViewportSize({ width: 390, height: 844 });
-    await expect(gallery.getByRole("button", { name: "Choisir une image" })).toBeVisible();
+    await expect(gallery.getByRole("button", { name: "Choisir des photos" })).toBeVisible();
     const geometry = await page.evaluate(() => ({
       width: window.innerWidth,
       documentWidth: document.documentElement.scrollWidth,
@@ -117,7 +117,7 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     await page.getByRole("region", { name: "Photos du bien" }).getByRole("button", { name: "Ouvrir la photo sable.webp" }).click();
     await expect(page.getByRole("dialog", { name: "Photos du bien" }).getByRole("img", { name: "Photo du bien : sable.webp" })).toBeVisible();
     await page.keyboard.press("Escape");
-    await expect(gallery.getByRole("button", { name: "Choisir une image" })).toBeVisible();
+    await expect(gallery.getByRole("button", { name: "Choisir des photos" })).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Archiver", exact: true })).toHaveCount(0);
     await gallery.locator('input[type="file"]').setInputFiles(path.resolve("tests/fixtures/projects-reference/patio.png"));
     await expect(gallery.getByText("10 / 10 photos")).toBeVisible();

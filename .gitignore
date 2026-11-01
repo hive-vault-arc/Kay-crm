@@ -67,3 +67,11 @@ pgpass.conf
 
 # The reference snapshot excludes Studio already; do not accidentally redistribute it.
 /docs/reference/bklit-ui/*/packages/studio/
+
+# Exact, replaceable HEIC runtime copied from the hash-locked package at build/dev.
+/frontend/public/heic/heic-to-1.6.7.js
+/frontend/public/licenses/heic/heic-to.txt
+/frontend/public/webp/webp_enc-1.5.0.js
+/frontend/public/webp/webp-1.5.0.wasm
+/frontend/public/webp/meta-1.5.0.js
+/frontend/public/licenses/webp/jsquash.txt

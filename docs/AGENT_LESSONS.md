@@ -1,5 +1,18 @@
 # KAY agent lessons
 
+## iPhone images need separate decode and encode checks (2026-11-01)
+
+- Safari displaying WebP does not prove canvas can export it. Feature-detect
+  the actual output MIME and exercise the genuine local encoder fallback with
+  native export deliberately unavailable. Never rename fallback PNG bytes WebP.
+- Test workers in WebKit as well as Chromium: WebKit checks module imports
+  against worker-src too. Allow reviewed same-origin dependencies there, retain
+  external-host denial and keep JavaScript unsafe-eval disabled.
+- A lost acknowledgement test must first confirm real server acceptance.
+  Request forwarding of browser Blob bodies differs across engines. Inject
+  the client failure after a real successful XHR response, then assert one
+  version and no second PUT; do not accept a failed forward as lost acceptance.
+
 ## Recovery controls must match the backend capability (2026-10-24)
 
 - Do not reuse an archive/manager flag for resuming an agent-owned upload.
