@@ -11,6 +11,7 @@ MODULES = frozenset(
         "test_antivirus_settings.py",
         "test_benchmark_totals.py",
         "test_first_admin.py",
+        "test_local_admin_recovery.py",
         "test_isolation_unit.py",
         "test_qualification_unit.py",
         "test_unit_selection.py",

@@ -52,6 +52,30 @@ The intended first administrator runs the script themselves from a trusted inter
 3. On success, print only a non-secret confirmation and user ID. A repeat run after commit exits `ALREADY_INITIALIZED` without changing credentials. If users already exist but no active administrator exists, exit `MANUAL_RECOVERY_REQUIRED`; never treat absence of an administrator as permission to create another. If interrupted before commit, no partial account remains; if the success message is lost after commit, the repeat run still makes no change.
 4. Disable the bootstrap path in ordinary application deployment/HTTP access. Do not use this script to reset an existing administrator, bypass role checks, or recover a lost password. Any later emergency recovery needs a separately reviewed, audited procedure.
 
+### Local development administrator recovery
+
+The reviewed recovery procedure is limited to a local development database. If
+the sole administrator can no longer sign in, run this command from `backend/`
+with its Python 3.14.3 virtual environment:
+
+```powershell
+.\.venv\Scripts\python.exe -m app.cli.recover_local_admin
+```
+
+It refuses non-development environments, non-loopback PostgreSQL hosts,
+databases other than `kayrealestate`, incomplete bootstrap, and anything other
+than exactly one active administrator. In a TTY, the operator must type
+`RECOVER` and choose/confirm a replacement password through hidden input. One
+transaction hashes the password, versions the credential/user, revokes that
+user's active sessions, clears that identity's failed-login counter and records
+`identity.local_admin_password_recovered` with the recovered administrator as
+both actor and target. It does not create a user, reset the CRM data or accept passwords from
+files, command arguments, environment or chat. Use the existing administrator
+email and the newly chosen password at
+local sign-in. Once signed in, create a second administrator through **Paramètres
+→ Tous les utilisateurs**. This procedure is disabled for production and
+isolated test databases.
+
 The bootstrap operator and first administrator are the same person, so **no initial secret is delivered** to someone else. The first administrator verifies sign-in with their chosen password through the normal Vercel facade before creating staff accounts. A restore exercise must verify that the completed account and audit event persist and that replay does not create a second administrator.
 
 ## Later staff accounts: D37 setup policy

@@ -1,5 +1,19 @@
 # KAY security check for changes
 
+## Local first-admin recovery, 2026-11-02
+
+The separate local operator command accepts hidden TTY password input only. It
+requires the development environment, a configured and connected loopback
+PostgreSQL target named `kayrealestate`, completed bootstrap and exactly one
+active administrator. A typed confirmation precedes input. Credential/user
+versions change, all current sessions are revoked, and the identity's failed-
+login counter is cleared in one transaction with a targeted
+`identity.local_admin_password_recovered` audit event attributed to the recovered
+administrator as both actor and target, matching the self-recovery operation and
+the database's true-actor constraint. No user is inserted,
+business data is changed, and production/test targets are refused. Focused
+unit evidence and the local operator flow are recorded in the current task.
+
 ## Selected affair form recovery,2026-10-29
 
 Original create/edit body, atomic versions, context and key stay pinned after

@@ -3458,3 +3458,13 @@ unchanged/ancestor; no remote redesign head, no push/merge/deploy.
 [Remediation](03-planning/redesign-dependency-cleanup-2026-10-30.md),
 [source review](05-quality/redesign-source-review-2026-10-30.md) and
 [evidence](03-planning/design-migration-evidence/unused-cli-removal-2026-10-30.json).
+
+## Local first-admin recovery (2026-11-02)
+
+Focused coverage: `backend/.venv/Scripts/python.exe -m tests.unit_runner`, which
+includes `backend/tests/test_local_admin_recovery.py`: local environment/URL/
+connected-address guard, valid loopback, bootstrap-state refusal, ambiguous
+administrator refusal, credential/version update, session revocation, failed-
+login counter clearing and self-attributed target audit. The one-time local operation additionally verifies the
+live PostgreSQL database identity before transaction. No production, isolated
+test database, SQL shell or direct row insertion is used.
