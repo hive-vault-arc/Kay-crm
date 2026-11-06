@@ -17,7 +17,7 @@
     "test:realtime": "playwright test --config=playwright.realtime.config.ts --headed --workers=1"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.9.1",
+    "@hookform/resolvers": "5.9.2",
     "@number-flow/react": "0.6.2",
     "@tanstack/react-table": "8.21.3",
     "@visx/event": "4.0.0",
@@ -28,9 +28,9 @@
     "@visx/shape": "4.0.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
-    "d3-array": "3.2.4",
+    "d3-array": "3.2.5",
     "motion": "14.3.0",
-    "next": "16.4.2",
+    "next": "16.4.5",
     "radix-ui": "1.8.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
@@ -40,15 +40,15 @@
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
-    "@tailwindcss/postcss": "4.3.3",
+    "@tailwindcss/postcss": "4.3.4",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.4.2",
-    "postcss": "8.5.30",
+    "eslint-config-next": "16.4.5",
+    "postcss": "8.5.32",
     "shadcn": "4.22.1",
-    "tailwindcss": "4.3.3",
+    "tailwindcss": "4.3.4",
     "typescript": "5.9.3"
   }
 }
