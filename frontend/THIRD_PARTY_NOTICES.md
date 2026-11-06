@@ -32,6 +32,23 @@ these glyphs. All45 prior semantic exports retain their names and behavior via
 this selected visual family; additional Help/Owner/theme aliases share the same
 source. Existing Iconsax source notices/manifests remain as historical provenance.
 
+## HEIC/HEIF decoder
+
+libheif1.23.7/libde2651.1.3 (Dirk Farin and contributors, LGPL-3.0) are built
+from their complete, retained upstream source using pinned Emscripten4.0.23.
+The separately replaceable CSP-compatible library loads in a disposable module
+worker only when native decoding cannot open HEIC/HEIF. Build/dev verifies its
+exact SHA256; no runtime CDN or conversion provider is contacted. Corresponding
+source archives ship with the decoder. See [rebuild/replacement instructions](vendor/photo-codecs/README.md).
+See distributed [notice/source/replacement instructions](public/licenses/heic/NOTICE.txt)
+and full LGPL/GPL texts in that directory. No application-code licence is invented.
+
+Safari canvas export uses the separate, source-built libwebp1.6.0 encoder
+fallback, loaded only when native WebP encoding is absent. Only encoder/memory
+functions are exported; it receives bounded canvas RGBA, never original files.
+See [upstream notices and source](public/licenses/webp/NOTICE.txt), including
+libwebp's BSD licence/patent grant and the Emscripten runtime notices.
+
 ## Riviera variable fonts: SIL Open Font License 1.1
 
 Fraunces 1.000, Manrope 4.505 and DM Sans 4.004 use the SIL Open Font License 1.1

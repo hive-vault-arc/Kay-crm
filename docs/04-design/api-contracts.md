@@ -1041,12 +1041,29 @@ Property photos are limited to 10 active image documents per physical property,
 whether standalone or a programme unit. The server counts legacy image
 attachments too, under the existing serialized create transaction, so concurrent
 requests cannot exceed the limit. A pending upload or rejected scan still uses
-one slot until archived. The UI accepts JPEG/PNG/WebP source images up to 20 MiB,
+one slot until archived. The UI accepts JPEG/PNG/WebP/HEIC/HEIF source images up to 20 MiB,
 re-encodes to WebP at quality0.82 with a 2560-pixel maximum side before sending
 any bytes, and publishes only WebP through the existing private transfer. The
 server validates actual WebP structure; scanning still gates all reads. Source
 metadata/EXIF are not copied by canvas re-encoding. Existing stored JPEG/PNG
 files are preserved and remain readable, not silently recompressed.
+
+The browser can select several photos without camera-only capture. Uploads are
+sequential, with selection progress and retry of only the failed/remainder queue.
+Selection cannot exceed remaining active slots; the server remains authoritative
+under concurrency. Native image decoding is preferred; a locally served HEIF
+decoder runs in a disposable worker only when needed. Cancellation, timeout and
+record navigation terminate fallback decoding; no original HEIF bytes reach the
+API. Private contact/Deal attachments accept bounded multi-file selection and
+convert HEIC/HEIF only; existing image and PDF/DOCX/XLSX bytes remain unchanged.
+The REST schema, permissions, scanner and one-use transfer contracts do not change.
+Within one mounted inventory gallery, thumbnails and the viewer share the bytes
+already downloaded for an immutable clean version. This avoids spending a new
+permit merely to enlarge or revisit the same image after a ten-photo batch.
+The cache is memory-only, pruned with the current gallery and cleared on leaving
+it; each object URL retains its component cleanup. An explicit failed-preview
+retry requests current authority and a fresh private transfer. No global cache,
+persistent browser storage, public file URL or replayed permit is introduced.
 
 Permit output: `permit_id`, transient `token`, `expires_at`, `version_id`,
 `document_version`, and exact configured FastAPI `transfer_url`. Two-minute,

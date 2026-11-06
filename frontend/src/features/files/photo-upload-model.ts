@@ -1,32 +1,13 @@
 import { apiGet, ApiError } from "@/lib/api/client";
 import { apiCommand } from "@/lib/api/command";
-import { documentSchema, maxFileBytes, type ProtectedDocument } from "./contracts";
+import { documentSchema, type ProtectedDocument } from "./contracts";
 import { requestFilePermit, uploadBytes } from "./transfers";
 
-export const photoLimit = 10;
-const sourceTypes = new Map([["jpg", "image/jpeg"], ["jpeg", "image/jpeg"], ["png", "image/png"], ["webp", "image/webp"]]);
-export const photoDenied = (error: ApiError) => [401, 403, 404].includes(error.status);
-export function photoSelectionError(file: File) {
-  if (file.size <= 0 || file.size > maxFileBytes) return new ApiError("FILE_TOO_LARGE", 413);
-  if (sourceTypes.get(file.name.split(".").at(-1)?.toLowerCase() ?? "") !== file.type) return new ApiError("UNSUPPORTED_MEDIA_TYPE", 415);
-}
+import { convertPropertyPhoto, photoSelectionError } from "./photo-conversion";
+export { photoSelectionError } from "./photo-conversion";
 
-export async function convertPropertyPhoto(file: File): Promise<File> {
-  const invalid = photoSelectionError(file); if (invalid) throw invalid;
-  let bitmap: ImageBitmap;
-  try { bitmap = await createImageBitmap(file); } catch { throw new ApiError("PHOTO_CONVERSION_FAILED", 415); }
-  try {
-    if (!bitmap.width || !bitmap.height || bitmap.width * bitmap.height > 25_000_000) throw new ApiError("PHOTO_CONVERSION_FAILED", 415);
-    const scale = Math.min(1, 2560 / Math.max(bitmap.width, bitmap.height)), canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(bitmap.width * scale)); canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-    const context = canvas.getContext("2d"); if (!context) throw new ApiError("PHOTO_CONVERSION_FAILED", 415);
-    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new ApiError("PHOTO_CONVERSION_FAILED", 415)), "image/webp", 0.82));
-    if (blob.type !== "image/webp" || !blob.size || blob.size > maxFileBytes) throw new ApiError("PHOTO_CONVERSION_FAILED", 415);
-    const stem = file.name.replace(/\.[^.]+$/, "").replace(/[\\/:"<>|?*\p{C}]/gu, "-").trim().slice(0, 175) || "photo";
-    return new File([blob], `${stem}.webp`, { type: "image/webp" });
-  } finally { bitmap.close(); }
-}
+export const photoLimit = 10;
+export const photoDenied = (error: ApiError) => [401, 403, 404].includes(error.status);
 
 export type PhotoAttempt = { key: string; documentId: string; started: boolean; context?: string; source?: File; converted?: File };
 export const newPhotoAttempt = (): PhotoAttempt => ({ key: "", documentId: "", started: false });
@@ -49,7 +30,7 @@ export async function sendPhoto({ attempt, file, parentKind, parentId, resume, w
   // Historical JPEG/PNG metadata must be resumed with its original exact file,
   // never silently replaced by a WebP with a different name/type/size.
   const legacy = resume && resume.mime_type !== "image/webp";
-  const converted = attempt.converted ?? (legacy ? file : await convertPropertyPhoto(file));
+  const converted = attempt.converted ?? (legacy ? file : await convertPropertyPhoto(file, signal));
   attempt.converted = converted; signal.throwIfAborted();
   const matches = (photo: ProtectedDocument) => photo.filename === converted.name && photo.mime_type === converted.type && photo.size_bytes === converted.size && photo.purpose === (resume?.purpose ?? "photo");
   if (resume && !matches(resume)) throw new ApiError("FILE_SIZE_MISMATCH", 422);

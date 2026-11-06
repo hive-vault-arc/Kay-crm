@@ -28,7 +28,7 @@ test("photo recovery: own agent uploads resume after reload even at ten slots", 
     }
     await page.reload();
     await expect(gallery.getByText("10 / 10 photos")).toBeVisible();
-    await expect(gallery.getByRole("button", { name: "Choisir une image", exact: true })).toHaveCount(0);
+    await expect(gallery.getByRole("button", { name: "Choisir des photos", exact: true })).toHaveCount(0);
     const own = gallery.getByRole("listitem").filter({ has: page.getByRole("heading", { name: "patio.webp", exact: true }) });
     await own.getByRole("button", { name: "Reprendre", exact: true }).focus();
     await page.keyboard.press("Enter");

@@ -9,9 +9,9 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.identity.local_admin_recovery import (
+    recover_only_local_administrator,
     require_local_database_identity,
     require_local_development_configuration,
-    recover_only_local_administrator,
 )
 from app.identity.security import IdentityError
 from app.runtime import require_venv

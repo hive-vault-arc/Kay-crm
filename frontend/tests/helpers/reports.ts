@@ -13,7 +13,9 @@ export async function reportFixture(page: Page, actors: TestActor[]) {
   await clearActorContext(page); await signIn(page, manager); const stock = await inventoryFixture(page, contact);
   await clearActorContext(page); await signIn(page, agent);
   const created = await staffCommand(page, "deals", { ...dealBody(contact, "SP17 affaire gagnée synthétique"), offering_id: stock.unitOffer, expected_offering_version: 2 }); expect(created.status()).toBe(200); const deal = (await created.json()).id as string;
-  expect((await staffCommand(page, `deals/${deal}/close`, await outcomeBody(page, deal))).status()).toBe(200);
+  const clockResponse = await page.request.get("/api/v1/work/context"); expect(clockResponse.status()).toBe(200);
+  const { today } = await clockResponse.json();
+  expect((await staffCommand(page, `deals/${deal}/close`, { ...await outcomeBody(page, deal), completed_on: today })).status()).toBe(200);
   await clearActorContext(page); await signIn(page, other); await createLead(page, "SP17 contact privé synthétique", "+212600000002");
   await clearActorContext(page); await signIn(page, manager);
   expect((await staffCommand(page, `contacts/${contact}/notes`, { kind: "call", body: "SP17 action synthétique du responsable réel" })).status()).toBe(200);

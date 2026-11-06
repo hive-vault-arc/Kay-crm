@@ -3468,3 +3468,14 @@ administrator refusal, credential/version update, session revocation, failed-
 login counter clearing and self-attributed target audit. The one-time local operation additionally verifies the
 live PostgreSQL database identity before transaction. No production, isolated
 test database, SQL shell or direct row insertion is used.
+
+
+## Redesign and iPhone upload integration (2026-11-06)
+
+The combined checkout passed `npm run test:unit` (1002 tests), the frontend
+production build, and backend `scripts/kay.ps1 -Task check` and
+`python -m tests.unit_runner` in the project venv (581 tests).
+A disposable loopback PostgreSQL 18 target upgraded first to
+`0035_project_photos`, then to `0037_development_phase`; `alembic current`
+reported one head and `alembic check` found no pending schema operations.
+These checks precede the exact candidate's hosted integration and release gate.

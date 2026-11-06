@@ -13,20 +13,22 @@ function button(tree, label) { const node = find(tree, "Button").find(item => te
 class ApiError extends Error { constructor(code, status) { super(code); Object.assign(this, { code, status }); } }
 const contracts = loadServer("src/features/files/contracts.ts");
 const requestSignals = loadServer("src/lib/api/request-signal.ts", { globals: { AbortController } });
-const source = (name = "source.png", type = "image/png") => new File([new Uint8Array([1, 2, 3, 4])], name, { type, lastModified: 1 });
+const previewKey = (id, version) => `${id}:${version}`;
+const source = (name = "source.png", type = "image/png") => new File([new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])], name, { type, lastModified: 1 });
 const photo = (changes = {}) => contracts.documentSchema.parse({ id: randomUUID(), filename: "source.webp", mime_type: "image/webp", purpose: "photo", size_bytes: 4, version: 3, archived: false, can_upload: true, versions: [], ...changes });
 const version = state => ({ id: randomUUID(), state, scan_error: null, created_at: "2026-10-20T12:00:00Z" });
 
 function model({ read, command, permit, upload, dimensions = [4000, 2000], canvas = true } = {}) {
   const calls = { reads: [], commands: [], permits: [], uploads: [], drawn: [], encodes: [], conversions: 0, closed: 0 }, stored = new Map();
   const apiGet = async (...args) => { calls.reads.push(args); return read ? read(...args) : stored.get(args[0].split("/").at(-1)); };
+  const conversion = loadServer("src/features/files/photo-conversion.ts", { modules: { "@/lib/api/client": { ApiError }, "./contracts": contracts }, globals: { AbortController, File, Blob, createImageBitmap: async () => { calls.conversions++; return { width: dimensions[0], height: dimensions[1], close: () => calls.closed++ }; }, document: { createElement: () => ({ width: 0, height: 0, getContext() { return canvas ? { drawImage: (...args) => calls.drawn.push(args) } : null; }, toBlob(run, type, quality) { if (quality !== undefined) calls.encodes.push({ type, quality, width: this.width, height: this.height }); run(new Blob([new Uint8Array([1, 2, 3, 4])], { type })); } }) } } });
   const loaded = loadServer("src/features/files/photo-upload-model.ts", { modules: {
-    "@/lib/api/client": { ApiError, apiGet }, "@/lib/api/command": { apiCommand: async (...args) => { calls.commands.push(args); if (command) return command(...args); const result = photo({ filename: args[1].filename, mime_type: args[1].mime_type, size_bytes: args[1].size_bytes }); stored.set(result.id, result); return result; } }, "./contracts": contracts,
+    "@/lib/api/client": { ApiError, apiGet }, "@/lib/api/command": { apiCommand: async (...args) => { calls.commands.push(args); if (command) return command(...args); const result = photo({ filename: args[1].filename, mime_type: args[1].mime_type, size_bytes: args[1].size_bytes }); stored.set(result.id, result); return result; } }, "./contracts": contracts, "./photo-conversion": conversion,
     "./transfers": { requestFilePermit: async (...args) => { calls.permits.push(args); return permit ? permit(...args) : { version_id: randomUUID() }; }, uploadBytes: async (...args) => { calls.uploads.push(args); if (upload) return upload(...args); } },
-  }, globals: { crypto: { randomUUID }, File, Blob, createImageBitmap: async () => { calls.conversions++; return { width: dimensions[0], height: dimensions[1], close: () => calls.closed++ }; }, document: { createElement: () => ({ width: 0, height: 0, getContext() { return canvas ? { drawImage: (...args) => calls.drawn.push(args) } : null; }, toBlob(run, type, quality) { calls.encodes.push({ type, quality, width: this.width, height: this.height }); run(new Blob([new Uint8Array([1, 2, 3, 4])], { type })); } }) } } });
+  }, globals: { crypto: { randomUUID } } });
   const parentId = randomUUID();
   const run = (attempt = loaded.newPhotoAttempt(), extra = {}) => loaded.sendPhoto({ attempt, file: source(), parentId, parentKind: "property", writable: true, signal: new AbortController().signal, progress() {}, phase() {}, reserved() {}, ...extra });
-  return { ...loaded, calls, stored, run };
+  return { ...loaded, ...conversion, calls, stored, run };
 }
 
 test("Selected photo conversion scales and sanitizes names while always releasing the decoded bitmap", async () => {
@@ -74,7 +76,7 @@ test("Current metadata binding, archive and upload capability prevail over stale
 });
 
 test("Legacy photo resume preserves the original JPEG bytes and requires exact original metadata", async () => {
-  const file = source("legacy.jpg", "image/jpeg"), resume = photo({ filename: file.name, mime_type: file.type, can_upload: undefined }), m = model({ read: async () => resume });
+  const file = source("legacy.jpg", "image/jpeg"), resume = photo({ filename: file.name, mime_type: file.type, size_bytes: file.size, can_upload: undefined }), m = model({ read: async () => resume });
   await m.run(undefined, { file, resume }); assert.equal(m.calls.conversions, 0); assert.equal(m.calls.commands.length, 0); assert.equal(m.calls.uploads[0][1], file);
   const mismatch = model(); await assert.rejects(mismatch.run(undefined, { file: source("other.jpg", "image/jpeg"), resume }), error => error.code === "FILE_SIZE_MISMATCH"); assert.equal(mismatch.calls.reads.length, 0);
 });
@@ -108,7 +110,7 @@ const shared = { "react/jsx-runtime": runtime, "@/components/icons": { RefreshIc
 function formSetup({ total = 0, resume, send, uploadable = true } = {}) {
   const h = harness(), decisions = [], sent = [], saved = [], denied = [], m = model(), props = { parentId: randomUUID(), parentKind: "property", writable: true, uploadable, total, resume, saved: result => saved.push(result), cancel() {}, denied: error => denied.push(error) };
   const draft = loadServer("src/components/shared/dossier-form.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "./record-header": {} }, globals: { window: { dispatchEvent() {} }, Event } });
-  const loaded = loadServer("src/features/files/photo-upload-form.tsx", { modules: { ...shared, react: h.react, "@/components/shared/dossier-form": draft, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request: run => decisions.push(run) }) }, "./photo-upload-model": { ...m, sendPhoto: async args => { sent.push(args); return send ? send(args) : m.sendPhoto(args); } } }, globals: { AbortController } });
+  const loaded = loadServer("src/features/files/photo-upload-form.tsx", { modules: { ...shared, react: h.react, "@/components/shared/dossier-form": draft, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request: run => decisions.push(run) }) }, "./photo-conversion": m, "./photo-upload-model": { ...m, sendPhoto: async args => { sent.push(args); return send ? send(args) : m.sendPhoto(args); } } }, globals: { AbortController } });
   const render = () => h.render(() => loaded.PhotoUploadForm(props)); render();
   return { ...h, render, props, sent, saved, denied, decisions, pick(file) { find(render(), "Picker")[0].props.choose(file); }, submit() { find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); } };
 }
@@ -135,7 +137,7 @@ test("Photo upload denial clears the file, interrupted work retains it and unmou
 test("Gallery keeps upload entry separate, permits authorized resume at capacity and clears composer/preview on denial", () => {
   const h = harness(), m = model(), selected = photo(), uploadable = true, props = { propertyId: randomUUID(), writable: false, uploadable, onChanged() {} }, requests = [];
   let result = { value: { items: [selected], total: 10, page: 1, page_size: 10, has_next: false, has_previous: false }, refresh() {}, refreshQuietly() {} };
-  const loaded = loadServer("src/features/files/property-photos.tsx", { modules: { ...shared, react: h.react, "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/contacts/use-query": { useQuery: path => { requests.push(path); return result; } }, "./photo-gallery-media": { PhotoCard: "Card", PhotoViewer: "Viewer" }, "./photo-upload-form": { PhotoUploadForm: "Uploader" }, "./photo-upload-model": m }, globals: { setInterval: () => 1, clearInterval() {}, requestAnimationFrame: run => run() } });
+  const loaded = loadServer("src/features/files/property-photos.tsx", { modules: { ...shared, react: h.react, "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/contacts/use-query": { useQuery: path => { requests.push(path); return result; } }, "./photo-previews": { photoPreviewKey: previewKey }, "./photo-gallery-media": { PhotoCard: "Card", PhotoViewer: "Viewer" }, "./photo-upload-form": { PhotoUploadForm: "Uploader" }, "./photo-upload-model": m }, globals: { AbortController, setInterval: () => 1, clearInterval() {}, requestAnimationFrame: run => run() } });
   const render = () => h.render(() => { const root = loaded.PropertyPhotos(props); return root.type(root.props); });
   let view = render(); assert.equal(find(view, "Uploader").length, 0); assert.equal(find(view, "Pages").length, 0); assert.equal(find(view, "Button").length, 0); assert.equal(typeof find(view, "Card")[0].props.resume, "function");
   const actions = find(view, "Card")[0].props; assert.equal(actions.begin(), true); assert.equal(actions.begin(), false); assert.equal(find(render(), "form")[0].props["aria-busy"], true); actions.end();
@@ -145,15 +147,15 @@ test("Gallery keeps upload entry separate, permits authorized resume at capacity
 
 function mediaSetup({ viewer = false, read, command, value = photo({ versions: [version("clean")] }) } = {}) {
   const h = harness(), reads = [], commands = [], urls = [], revoked = [], denied = [], changes = [], completed = []; let held = false, endings = 0;
-  const props = { photo: value, writable: true, disabled: false, begin: () => { if (held) return false; held = true; return true; }, end: () => { held = false; endings++; }, denied: error => denied.push(error), refresh: () => completed.push("refresh"), resume() {}, onChanged: () => completed.push("changed"), restoreFocus: () => completed.push("focus"), openPreview() {}, photos: [value], index: 0, change: index => changes.push(index), close() {}, returnFocus: { current: { isConnected: false } }, fallbackFocus: { current: { focus: () => completed.push("focus") } } };
-  const loaded = loadServer("src/features/files/photo-gallery-media.tsx", { modules: { ...shared, react: h.react, "next/image": { default: "Image" }, "@/components/shared/protected-file-state": { ProtectedFileState: "State" }, "@/components/ui/alert-dialog": { AlertDialog: "Alert", AlertDialogContent: "AlertContent", AlertDialogTitle: "AlertTitle", AlertDialogDescription: "AlertDescription", AlertDialogCancel: "AlertCancel" }, "@/components/ui/dialog": { Dialog: "Dialog", DialogContent: "DialogContent", DialogDescription: "Description", DialogTitle: "Title" }, "@/lib/api/command": { apiCommand: async (...args) => { commands.push(args); return command ? command(...args) : value; } }, "./transfers": { requestFilePermit: async (...args) => { reads.push(args); return { document_id: args[0].document_id }; }, downloadBytes: async (...args) => read ? read(...args) : new Blob(["synthetic image"]) }, "./photo-upload-model": model() }, globals: { crypto: { randomUUID }, AbortController, URL: { createObjectURL: () => { const url = `blob:synthetic-${urls.length}`; urls.push(url); return url; }, revokeObjectURL: url => revoked.push(url) } } });
+  const props = { cache: { current: new Map() }, previewAbort: { current: new AbortController() }, photo: value, writable: true, disabled: false, begin: () => { if (held) return false; held = true; return true; }, end: () => { held = false; endings++; }, denied: error => denied.push(error), refresh: () => completed.push("refresh"), resume() {}, onChanged: () => completed.push("changed"), restoreFocus: () => completed.push("focus"), openPreview() {}, photos: [value], index: 0, change: index => changes.push(index), close() {}, returnFocus: { current: { isConnected: false } }, fallbackFocus: { current: { focus: () => completed.push("focus") } } };
+  const loaded = loadServer("src/features/files/photo-gallery-media.tsx", { modules: { ...shared, react: h.react, "next/image": { default: "Image" }, "@/components/shared/protected-file-state": { ProtectedFileState: "State" }, "@/components/ui/alert-dialog": { AlertDialog: "Alert", AlertDialogContent: "AlertContent", AlertDialogTitle: "AlertTitle", AlertDialogDescription: "AlertDescription", AlertDialogCancel: "AlertCancel" }, "@/components/ui/dialog": { Dialog: "Dialog", DialogContent: "DialogContent", DialogDescription: "Description", DialogTitle: "Title" }, "@/lib/api/command": { apiCommand: async (...args) => { commands.push(args); return command ? command(...args) : value; } }, "./photo-previews": loadServer("src/features/files/photo-previews.ts", { modules: { "./transfers": { requestFilePermit: async (...args) => { reads.push(args); return { document_id: args[0].document_id }; }, downloadBytes: async (...args) => read ? read(...args) : new Blob(["synthetic image"]) } } }), "./photo-upload-model": model() }, globals: { crypto: { randomUUID }, AbortController, URL: { createObjectURL: () => { const url = `blob:synthetic-${urls.length}`; urls.push(url); return url; }, revokeObjectURL: url => revoked.push(url) } } });
   const render = () => h.render(() => viewer ? loaded.PhotoViewer(props) : loaded.PhotoCard(props)); render();
   return { ...h, render, props, reads, commands, urls, revoked, denied, changes, completed, endings: () => endings };
 }
 
-test("Photo cards read only clean versions, abort departed reads and revoke every created private URL", async () => {
+test("Photo cards read only clean versions, discard departed reads and revoke every created private URL", async () => {
   const pending = mediaSetup({ value: photo({ versions: [version("pending_scan")] }) }); await delay(0); assert.equal(pending.reads.length, 0); assert.equal(find(pending.render(), "Image").length, 0);
-  const clean = mediaSetup(); await delay(0); assert.equal(clean.reads[0][0].action, "download"); assert.equal(find(clean.render(), "Image").length, 1); clean.unmount(); assert.equal(clean.reads[0][1].aborted, true); assert.deepEqual(clean.revoked, clean.urls);
+  const clean = mediaSetup(); await delay(0); assert.equal(clean.reads[0][0].action, "download"); assert.equal(find(clean.render(), "Image").length, 1); clean.unmount(); assert.deepEqual(clean.revoked, clean.urls);
   let finish; const late = mediaSetup({ read: () => new Promise(resolve => { finish = resolve; }) }); await delay(0); late.unmount(); finish(new Blob(["synthetic late image"])); await delay(0); assert.equal(late.urls.length, 0);
 });
 
@@ -168,9 +170,9 @@ test("Photo archive locks rapid confirmation, keeps its retry identity and relea
   finish({ ...s.props.photo, archived: true }); await delay(0); assert.equal(s.endings(), 2); assert.deepEqual(s.completed, ["refresh", "changed"]); find(s.render(), "AlertContent")[0].props.onCloseAutoFocus({ preventDefault() {} }); assert.equal(s.completed.at(-1), "focus");
 });
 
-test("Photo viewer navigation aborts the previous request and restores fallback focus after its card disappears", async () => {
+test("Photo viewer navigation releases the previous preview and restores fallback focus after its card disappears", async () => {
   const s = mediaSetup({ viewer: true }); await delay(0); s.props.photos.push(photo({ versions: [version("clean")] })); button(s.render(), "Suivante").props.onClick(); s.props.index = 1; s.render(); await delay(0);
-  assert.equal(s.reads[0][1].aborted, true); assert.equal(s.reads[1][0].document_id, s.props.photos[1].id); assert.equal(s.revoked.length, 1);
+  assert.equal(s.reads[1][0].document_id, s.props.photos[1].id); assert.equal(s.revoked.length, 1);
   find(s.render(), "DialogContent")[0].props.onCloseAutoFocus({ preventDefault() {} }); assert.ok(s.completed.includes("focus")); s.unmount(); assert.equal(s.revoked.length, 2);
 });
 

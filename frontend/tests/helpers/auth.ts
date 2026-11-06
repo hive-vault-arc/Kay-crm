@@ -38,7 +38,8 @@ export async function signIn(page: Page, actor: TestActor, returnTo?: string) {
   if (pathname === "/change-password") {
     await expect(page.getByRole("button", { name: "Se déconnecter", exact: true })).toBeEnabled();
   } else if (pathname === "/dashboard") {
-    await expect(page.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Tableau de bord", exact: true, level: 1 })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   } else {
     await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   }

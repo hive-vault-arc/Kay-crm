@@ -3351,3 +3351,18 @@ graph check failure; evidence retains it and the corrected proof. Actual full
 security/SQL/native/AV/private transfer/CI gates remain pending; no merge-ready
 claim or formal Security plugin scan.
 [Remediation](03-planning/redesign-dependency-cleanup-2026-10-30.md).
+
+
+## Redesign and iPhone upload integration (2026-11-06)
+
+Browser preparation stays within the authorized drawer. A protected transfer
+still requires current server authority, a private permit and antivirus
+quarantine. Batches serialize writes and keep the active transfer identity on
+retry. Gallery previews share only in-memory clean-version bytes scoped to the
+current gallery and clear on access failure or exit.
+
+The scoped tooling override resolves GHSA-g3hv-75wg-m249; the npm audit reports
+zero runtime and full-tree advisories. Both hash-locked Python audits pass with
+pypdf 6.21.4. The two exact Gitleaks exceptions identify a fixture UUID and
+design-note prose; the full-history scan still runs. The synthetic Alembic test
+does not establish the production schema or backup state.

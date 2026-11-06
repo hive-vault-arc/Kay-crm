@@ -10,10 +10,12 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { apiCommand } from "@/lib/api/command";
 import { ApiError } from "@/lib/api/client";
 import { documentSchema, type ProtectedDocument } from "./contracts";
-import { downloadBytes, requestFilePermit } from "./transfers";
+import { photoPreview, photoPreviewKey, type PhotoPreviewCache } from "./photo-previews";
 import { photoCanResume, photoDenied } from "./photo-upload-model";
 
-export function PhotoCard({ photo, writable, disabled, begin, end, denied, refresh, resume, onChanged, openPreview, restoreFocus }: { photo: ProtectedDocument; writable: boolean; disabled: boolean; begin: () => boolean; end: () => void; denied: (error: ApiError) => void; refresh: () => void; resume?: (trigger: HTMLButtonElement) => void; onChanged: () => void; openPreview: (trigger: HTMLButtonElement) => void; restoreFocus?: () => void }) {
+type PreviewScope = { cache: RefObject<PhotoPreviewCache>; previewAbort: RefObject<AbortController | null> };
+
+export function PhotoCard({ photo, writable, disabled, begin, end, denied, refresh, resume, onChanged, openPreview, restoreFocus, cache, previewAbort }: { photo: ProtectedDocument; writable: boolean; disabled: boolean; begin: () => boolean; end: () => void; denied: (error: ApiError) => void; refresh: () => void; resume?: (trigger: HTMLButtonElement) => void; onChanged: () => void; openPreview: (trigger: HTMLButtonElement) => void; restoreFocus?: () => void } & PreviewScope) {
   const latest = photo.versions[0];
   const cleanId = photo.versions.find(version => version.state === "clean")?.id;
   const [url, setUrl] = useState<string>();
@@ -28,18 +30,17 @@ export function PhotoCard({ photo, writable, disabled, begin, end, denied, refre
   const archiveButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!cleanId) return;
-    let active = true, objectUrl: string | undefined; const abort = new AbortController();
+    let active = true, objectUrl: string | undefined;
     async function load() {
       try {
-        const permit = await requestFilePermit({ action: "download", document_id: photo.id, expected_version: photo.version, version_id: cleanId }, abort.signal);
-        const blob = await downloadBytes(permit, abort.signal);
+        const blob = await photoPreview(cache.current, { id: photo.id, version: photo.version }, cleanId!, false, previewAbort.current?.signal);
         if (!active) return;
         objectUrl = URL.createObjectURL(blob); setUrl(objectUrl);
-      } catch (reason) { if (active && !abort.signal.aborted) { const failure = reason instanceof ApiError ? reason : new ApiError("FILE_TRANSFER_INTERRUPTED", 503); if (photoDenied(failure)) denied(failure); else { setPreviewFailed(true); setError(failure); } } }
+      } catch (reason) { if (active) { const failure = reason instanceof ApiError ? reason : new ApiError("FILE_TRANSFER_INTERRUPTED", 503); if (photoDenied(failure)) denied(failure); else { setPreviewFailed(true); setError(failure); } } }
     }
     void load();
-    return () => { active = false; abort.abort(); if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [photo.id, photo.version, cleanId, previewRetry, denied]);
+    return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [photo.id, photo.version, cleanId, previewRetry, denied, cache, previewAbort]);
   async function command(action: "archive" | "retry-scan") {
     if (locked.current || disabled || !writable || !begin()) return;
     locked.current = true; const abort = new AbortController(); commandAbort.current = abort;
@@ -54,12 +55,12 @@ export function PhotoCard({ photo, writable, disabled, begin, end, denied, refre
     {url ? <Button type="button" variant="ghost" className="kay-photo-image" disabled={disabled || busy} aria-label={`Ouvrir la photo ${photo.filename}`} onClick={event => openPreview(event.currentTarget)}><Image src={url} alt="" fill unoptimized sizes="(min-width: 560px) 320px, 100vw" className="object-cover" onError={() => { setUrl(undefined); setPreviewFailed(true); }} /><span className="kay-photo-enlarge"><ShowPasswordIcon aria-hidden="true" size={16} />Agrandir</span></Button> : <div className="kay-photo-image kay-photo-placeholder"><CameraIcon aria-hidden="true" size={32} /><span>{previewFailed ? "Aperçu indisponible" : cleanId ? "Chargement de la photo…" : "Aperçu après analyse"}</span></div>}
     <div className="kay-photo-content"><h3>{photo.filename}</h3><p className="text-xs text-muted-foreground">{fileSizeLabel(photo.size_bytes)}</p><ProtectedFileState version={latest} />
     {error && !confirm ? <p role="alert" className="text-sm text-danger">{error.message}</p> : null}
-    <div className="kay-photo-actions">{previewFailed && cleanId ? <Button action="retry" type="button" variant="outline" disabled={busy || disabled} onClick={() => { setError(undefined); setPreviewFailed(false); setPreviewRetry(value => value + 1); }}>Réessayer l’aperçu</Button> : null}{resume && photoCanResume(photo, writable) ? <Button action="upload" type="button" variant="outline" disabled={busy || disabled} onClick={event => resume(event.currentTarget)}>Reprendre</Button> : null}{writable && latest?.state === "pending_scan" && latest.scan_error ? <Button action="retry" type="button" variant="outline" disabled={busy || disabled} onClick={() => void command("retry-scan")}>Réessayer l’analyse</Button> : null}{writable ? <Button ref={archiveButton} action="archive" type="button" variant="outline" disabled={busy || disabled} onClick={() => setConfirm(true)}>Archiver</Button> : null}</div></div>
+    <div className="kay-photo-actions">{previewFailed && cleanId ? <Button action="retry" type="button" variant="outline" disabled={busy || disabled} onClick={() => { cache.current.delete(photoPreviewKey(photo.id, cleanId)); setError(undefined); setPreviewFailed(false); setPreviewRetry(value => value + 1); }}>Réessayer l’aperçu</Button> : null}{resume && photoCanResume(photo, writable) ? <Button action="upload" type="button" variant="outline" disabled={busy || disabled} onClick={event => resume(event.currentTarget)}>Reprendre</Button> : null}{writable && latest?.state === "pending_scan" && latest.scan_error ? <Button action="retry" type="button" variant="outline" disabled={busy || disabled} onClick={() => void command("retry-scan")}>Réessayer l’analyse</Button> : null}{writable ? <Button ref={archiveButton} action="archive" type="button" variant="outline" disabled={busy || disabled} onClick={() => setConfirm(true)}>Archiver</Button> : null}</div></div>
     <AlertDialog open={confirm} onOpenChange={open => { if (!busy) setConfirm(open); }}><AlertDialogContent onCloseAutoFocus={event => { event.preventDefault(); if (archived.current || !archiveButton.current?.isConnected) restoreFocus?.(); else archiveButton.current.focus(); }}><AlertDialogTitle>Archiver cette photo ?</AlertDialogTitle><AlertDialogDescription>Elle ne sera plus visible sur le dossier. L’historique du fichier est conservé.</AlertDialogDescription><div className="flex flex-wrap gap-2"><AlertDialogCancel asChild><Button action="cancel" variant="outline" disabled={busy}>Annuler</Button></AlertDialogCancel><Button action="archive" variant="destructive" disabled={busy} onClick={() => void command("archive")}>Confirmer l’archivage</Button></div>{error ? <p role="alert" className="text-danger">{error.message}</p> : null}</AlertDialogContent></AlertDialog>
   </li>;
 }
 
-export function PhotoViewer({ photos, index, change, close, returnFocus, fallbackFocus, denied }: { photos: ProtectedDocument[]; index: number; change: (index: number) => void; close: () => void; returnFocus: RefObject<HTMLButtonElement | null>; fallbackFocus: RefObject<HTMLHeadingElement | null>; denied: (error: ApiError) => void }) {
+export function PhotoViewer({ photos, index, change, close, returnFocus, fallbackFocus, denied, cache, previewAbort }: { photos: ProtectedDocument[]; index: number; change: (index: number) => void; close: () => void; returnFocus: RefObject<HTMLButtonElement | null>; fallbackFocus: RefObject<HTMLHeadingElement | null>; denied: (error: ApiError) => void } & PreviewScope) {
   const photo = photos[index];
   const cleanId = photo.versions.find(version => version.state === "clean")?.id;
   const [preview, setPreview] = useState<{ key: string; url: string }>();
@@ -70,21 +71,20 @@ export function PhotoViewer({ photos, index, change, close, returnFocus, fallbac
   function navigate(next: number) { setNavigation(value => value + 1); change(next); }
   useEffect(() => {
     if (!cleanId) return;
-    let active = true; const abort = new AbortController();
+    let active = true;
     let objectUrl: string | undefined;
     async function load() {
       try {
-        const permit = await requestFilePermit({ action: "download", document_id: photo.id, expected_version: photo.version, version_id: cleanId! }, abort.signal);
-        const blob = await downloadBytes(permit, abort.signal);
+        const blob = await photoPreview(cache.current, { id: photo.id, version: photo.version }, cleanId!, false, previewAbort.current?.signal);
         if (!active) return;
         objectUrl = URL.createObjectURL(blob);
         setPreview({ key: mediaKey, url: objectUrl });
         setFailedKey(undefined);
-      } catch (reason) { if (active && !abort.signal.aborted) { if (reason instanceof ApiError && photoDenied(reason)) denied(reason); else setFailedKey(mediaKey); } }
+      } catch (reason) { if (active) { if (reason instanceof ApiError && photoDenied(reason)) denied(reason); else setFailedKey(mediaKey); } }
     }
     void load();
-    return () => { active = false; abort.abort(); if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [photo.id, photo.version, cleanId, mediaKey, denied]);
+    return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [photo.id, photo.version, cleanId, mediaKey, denied, cache, previewAbort]);
   const url = preview?.key === mediaKey ? preview.url : undefined;
   return <Dialog open onOpenChange={open => { if (!open) close(); }}>
     <DialogContent className="inset-3 top-3 flex h-[calc(100dvh-1.5rem)] max-h-none max-w-none translate-y-0 flex-col overflow-hidden p-3 sm:inset-6 sm:top-6 sm:h-[calc(100dvh-3rem)] sm:p-5" onCloseAutoFocus={event => { event.preventDefault(); if (returnFocus.current?.isConnected) returnFocus.current.focus(); else fallbackFocus.current?.focus(); }} onKeyDown={event => {
@@ -92,7 +92,7 @@ export function PhotoViewer({ photos, index, change, close, returnFocus, fallbac
       if (event.key === "ArrowRight" && index < photos.length - 1) { event.preventDefault(); navigate(index + 1); }
     }}>
       <div className="flex min-w-0 items-start justify-between gap-3"><div className="min-w-0"><DialogTitle>Photos du dossier</DialogTitle><DialogDescription className="wrap-anywhere">{photo.filename} · {index + 1} sur {photos.length} photos analysées</DialogDescription></div><Button action="close" type="button" variant="outline" size="icon" aria-label="Fermer la photo" onClick={close}><span className="sr-only">Fermer</span></Button></div>
-      <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-sm bg-foreground" aria-live="polite">{url ? <Image src={url} alt={`Photo du dossier : ${photo.filename}`} fill unoptimized sizes="(min-width: 1024px) 90vw, 100vw" className="object-contain" onError={() => { setPreview(undefined); setFailedKey(mediaKey); }} /> : failedKey === mediaKey ? <div className="grid justify-items-center gap-3 p-4 text-center text-background"><p role="alert">Impossible d’ouvrir cette photo.</p><Button action="retry" type="button" variant="outline" onClick={() => setRetry(value => value + 1)}>Réessayer</Button></div> : <p role="status" className="text-background">Ouverture de la photo…</p>}</div>
+      <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-sm bg-foreground" aria-live="polite">{url ? <Image src={url} alt={`Photo du dossier : ${photo.filename}`} fill unoptimized sizes="(min-width: 1024px) 90vw, 100vw" className="object-contain" onError={() => { setPreview(undefined); setFailedKey(mediaKey); }} /> : failedKey === mediaKey ? <div className="grid justify-items-center gap-3 p-4 text-center text-background"><p role="alert">Impossible d’ouvrir cette photo.</p><Button action="retry" type="button" variant="outline" onClick={() => { if (cleanId) cache.current.delete(photoPreviewKey(photo.id, cleanId)); setRetry(value => value + 1); }}>Réessayer</Button></div> : <p role="status" className="text-background">Ouverture de la photo…</p>}</div>
       <div className="flex items-center justify-between gap-3"><Button action="back" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Précédente" disabled={index === 0} onClick={() => navigate(index - 1)}><span className="sr-only sm:not-sr-only">Précédente</span></Button><span className="text-sm text-muted-foreground" aria-live="polite">{index + 1} / {photos.length}</span><Button action="forward" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Suivante" disabled={index === photos.length - 1} onClick={() => navigate(index + 1)}><span className="sr-only sm:not-sr-only">Suivante</span></Button></div>
     </DialogContent>
   </Dialog>;

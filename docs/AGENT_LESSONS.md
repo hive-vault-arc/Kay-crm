@@ -2292,3 +2292,12 @@ checking its returned exit code. During CLI removal, prune ran before the model
 reviewed a conservative graph assertion failure. Its5 devOptional removals were
 then inspected and all retained versions/required runtime/source invariants
 proved unchanged. Prefer separate tool boundaries or throw on nonzero status.
+
+
+## Redesign branch integration (2026-11-06)
+
+Authenticate browser fixtures against the workspace heading and live shell.
+Report-specific readiness belongs in report tests. This keeps a dashboard
+section redesign from blocking unrelated protected-route checks. When merging
+parallel upload work, preserve the current drawer's permit ownership and
+recovery contract while integrating the new picker and decoder.

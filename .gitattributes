@@ -6,12 +6,23 @@ backend/app/generated/assets/appendix-content.json -text -whitespace
 # Retain upstream font-license bytes, including their published whitespace.
 frontend/src/fonts/*-OFL.txt -text -whitespace
 frontend/public/licenses/fonts/*-OFL.txt -text -whitespace
+# Retain unmodified upstream codec licence text, including its whitespace.
+frontend/public/licenses/heic/EMSCRIPTEN-LICENSE.txt -text -whitespace
+frontend/public/licenses/heic/*GPL-3.0.txt -text -whitespace
+frontend/public/licenses/heic/lib*-COPYING.txt -text -whitespace
+frontend/public/licenses/webp/EMSCRIPTEN-LICENSE.txt -text -whitespace
+frontend/public/licenses/webp/libwebp-COPYING.txt -text -whitespace
+frontend/public/licenses/webp/libwebp-PATENTS.txt -text -whitespace
 *.cmd text eol=crlf
 *.bat text eol=crlf
 *.png binary
 *.jpg binary
 *.jpeg binary
 *.webp binary
+*.heic binary
+*.heif binary
+*.wasm binary
+frontend/vendor/photo-codecs/*.js -text -whitespace
 *.gif binary
 *.ico binary
 *.woff binary

@@ -16,7 +16,7 @@ test("SP17 AT-18/36/39: real Bklit/API/table parity, scoped drill-downs, dates a
     await expect(page.getByText("SP17 contact privé synthétique", { exact: true })).toHaveCount(0);
     await clearActorContext(page); await signIn(page, fixture.other); await openReports(page);
     const copied = await (await page.request.get(`/api/v1/reports/drill-down?metric=contacts&attribution_id=${fixture.agent.id}`)).json(); expect(copied.total).toBe(0);
-  } finally { await clearActorContext(page); for (const actor of actors) await removeActor(actor); }
+  } finally { try { await clearActorContext(page); } finally { for (const actor of actors) await removeActor(actor); } }
 });
 
 test("SP17 AT-23: retained dates, loading, denied and interrupted read retry", async ({ page, actor }) => {
