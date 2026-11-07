@@ -9,7 +9,9 @@ from sqlalchemy import func, select
 from app.activities.contracts import ActivityQuery
 from app.activities.service import read_activities
 from app.identity.security import IdentityError
+from app.identity.sessions import current_identity
 from app.inventory.hierarchy_models import Development
+from app.inventory.models import InventoryEvent
 from app.project_links.contracts import LinkQuery, NewLink
 from app.project_links.models import ProjectLink
 from app.project_links.service import mutate_link, read_links
@@ -153,6 +155,19 @@ def test_more_than_one_thousand_links_are_numbered_not_truncated(settings, datab
         ]
         session.add_all(projects)
         session.flush()
+        identity = current_identity(session, token)
+        session.add_all(
+            [
+                InventoryEvent(
+                    development_id=project.id,
+                    actor_user_id=uid,
+                    actor_display_name=identity.user.display_name,
+                    action="developments.created",
+                    property_version=project.version,
+                )
+                for project in projects
+            ]
+        )
         session.add_all(
             [
                 ProjectLink(

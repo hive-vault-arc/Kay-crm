@@ -16,6 +16,7 @@ from tests.deal_support import new as new_deal
 from tests.deal_support import run as save_deal
 from tests.test_developments import development
 from tests.test_inventory import property_draft
+from tests.test_outcomes import body as close_body
 from tests.test_outcomes import sale_fixture
 from tests.test_ownership import change, cid, intent
 from tests.test_project_links import change as link
@@ -155,8 +156,10 @@ def test_catalogue_links_and_qualified_uuid_interests_are_deduplicated(settings,
 def test_team_filter_preserves_closing_attribution_after_current_portfolio_transfer(
     settings, database
 ):
-    _, contact, manager, _, _, _, _, _ = sale_fixture(settings, database)
-    period = PeriodQuery(start_on="2026-10-01", end_on="2026-10-31")
+    token, contact, manager, _, _, _, _, deal = sale_fixture(settings, database)
+    outcome = close_body(database, token, deal)
+    save_deal(settings, database, token, outcome, deal)
+    period = PeriodQuery(start_on=outcome.completed_on, end_on=outcome.completed_on)
     original = next(
         metric
         for metric in dashboard(database, manager, period)["metrics"]

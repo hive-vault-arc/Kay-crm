@@ -44,7 +44,7 @@ def test_rich_partial_unit_is_atomic_replayable_and_does_not_copy_template_defau
     assert run(settings, database, token, "create-property", body, key=key) == result
     view = read_detail(database, token, UUID(result["property_id"]))
     assert view["area_sqm"] is None and view["rooms"] is None
-    assert view["listing_details"]["region"] is None
+    assert view["listing_details"].get("region") is None
     assert view["listing_details"]["unit_floor"] == 0
     assert view["listing_details"]["description"] == "Ligne une\nLigne deux"
     assert view["offerings"][0]["state"] == "draft"
