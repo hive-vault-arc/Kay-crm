@@ -81,7 +81,10 @@ test("authenticated consultation routes retain live delivery on desktop and mobi
       await page.setViewportSize(index % 2 ? { width: 390, height: 844 } : { width: 1440, height: 900 });
       await page.goto(route);
       await expect(page.locator('[data-realtime-status="connected"]'), `Live route ${route}`).toHaveCount(1);
-      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      const content = route.endsWith("?tab=finance")
+        ? page.getByRole("dialog", { name: "Commissions et encaissements", exact: true })
+        : page.getByRole("heading", { level: 1 });
+      await expect(content, `Visible workspace content for ${route}`).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
     await page.setViewportSize({ width: 1440, height: 900 }); await page.goto("/notifications");

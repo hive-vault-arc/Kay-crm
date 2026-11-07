@@ -67,8 +67,14 @@ export function PhotoViewer({ photos, index, change, close, returnFocus, fallbac
   const [failedKey, setFailedKey] = useState<string>();
   const [navigation, setNavigation] = useState(0);
   const [retry, setRetry] = useState(0);
+  const content = useRef<HTMLDivElement>(null);
   const mediaKey = `${photo.id}:${photo.version}:${navigation}:${retry}`;
-  function navigate(next: number) { setNavigation(value => value + 1); change(next); }
+  function navigate(next: number) {
+    // Keep keyboard events inside the dialog when the active arrow becomes disabled.
+    if (next === 0 || next === photos.length - 1) content.current?.focus();
+    setNavigation(value => value + 1);
+    change(next);
+  }
   useEffect(() => {
     if (!cleanId) return;
     let active = true;
@@ -87,7 +93,7 @@ export function PhotoViewer({ photos, index, change, close, returnFocus, fallbac
   }, [photo.id, photo.version, cleanId, mediaKey, denied, cache, previewAbort]);
   const url = preview?.key === mediaKey ? preview.url : undefined;
   return <Dialog open onOpenChange={open => { if (!open) close(); }}>
-    <DialogContent className="inset-3 top-3 flex h-[calc(100dvh-1.5rem)] max-h-none max-w-none translate-y-0 flex-col overflow-hidden p-3 sm:inset-6 sm:top-6 sm:h-[calc(100dvh-3rem)] sm:p-5" onCloseAutoFocus={event => { event.preventDefault(); if (returnFocus.current?.isConnected) returnFocus.current.focus(); else fallbackFocus.current?.focus(); }} onKeyDown={event => {
+    <DialogContent ref={content} tabIndex={-1} className="inset-3 top-3 flex h-[calc(100dvh-1.5rem)] max-h-none max-w-none translate-y-0 flex-col overflow-hidden p-3 sm:inset-6 sm:top-6 sm:h-[calc(100dvh-3rem)] sm:p-5" onCloseAutoFocus={event => { event.preventDefault(); if (returnFocus.current?.isConnected) returnFocus.current.focus(); else fallbackFocus.current?.focus(); }} onKeyDown={event => {
       if (event.key === "ArrowLeft" && index > 0) { event.preventDefault(); navigate(index - 1); }
       if (event.key === "ArrowRight" && index < photos.length - 1) { event.preventDefault(); navigate(index + 1); }
     }}>

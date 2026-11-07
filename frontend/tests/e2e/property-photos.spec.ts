@@ -79,12 +79,15 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
       ? route.fulfill({ status: 503, contentType: "application/json", body: '{"error":{"code":"FILE_STORAGE_UNAVAILABLE"}}' })
       : route.continue());
     await viewer.getByRole("button", { name: "Précédente" }).click();
-    await expect(viewer.getByRole("alert")).toHaveText("Impossible d’ouvrir cette photo.");
-    await page.unroute("**/transfers/**");
-    await viewer.getByRole("button", { name: "Réessayer" }).click();
     await expect(viewer.getByRole("img", { name: "Photo du dossier : sable.webp" })).toBeVisible();
     await viewer.getByRole("button", { name: "Fermer la photo" }).click();
     await expect(viewer).toHaveCount(0);
+    await closePhotos(page);
+    await openPhotos(page);
+    await expect(gallery.getByRole("button", { name: "Réessayer l’aperçu", exact: true })).toHaveCount(2);
+    await page.unroute("**/transfers/**");
+    await gallery.getByRole("button", { name: "Réessayer l’aperçu", exact: true }).first().click();
+    await expect(gallery.getByRole("button", { name: "Ouvrir la photo sable.webp", exact: true })).toBeVisible();
     await closePhotos(page);
     await expect(page.locator('.kay-inventory-photo-cover img[src^="blob:"]').first()).toBeVisible();
     await page.screenshot({ path: "output/playwright/property-photos/desktop.png", fullPage: true });

@@ -122,7 +122,6 @@ def test_created_and_modified_days_intersect_before_authorized_total_and_paging(
     def create_on(day: int) -> UUID:
         def set_times(mapper, connection, deal):
             deal.created_at = datetime(2026, 1, day, 23, 30, tzinfo=UTC)
-            deal.updated_at = datetime(2026, 1, 3, 23, 30, tzinfo=UTC)
 
         event.listen(Deal, "before_insert", set_times)
         try:
@@ -131,6 +130,12 @@ def test_created_and_modified_days_intersect_before_authorized_total_and_paging(
             event.remove(Deal, "before_insert", set_times)
 
     first, second = create_on(1), create_on(2)
+    with database.session() as session, session.begin():
+        session.execute(
+            update(Deal)
+            .where(Deal.id.in_((first, second)))
+            .values(updated_at=datetime(2026, 1, 3, 23, 30, tzinfo=UTC))
+        )
     token = owner if role == "agent" else manager
     for day, target in (("2026-01-02", first), ("2026-01-03", second)):
         filters = DealQuery(
