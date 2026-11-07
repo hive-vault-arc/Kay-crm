@@ -18,6 +18,13 @@ export async function clearActorContext(page: Page) {
   await page.context().clearCookies();
 }
 
+export async function openWorkspaceAccount(page: Page) {
+  await page.getByRole("banner").getByRole("button", { name: /^Compte de / }).click();
+  const menu = page.getByRole("dialog", { name: "Compte utilisateur", exact: true });
+  await expect(menu).toBeVisible();
+  return menu;
+}
+
 export async function signIn(page: Page, actor: TestActor, returnTo?: string) {
   const path = returnTo ? `/login?return_to=${encodeURIComponent(returnTo)}` : "/login";
   const origin = page.url().startsWith("https:") ? new URL(page.url()).origin : undefined;

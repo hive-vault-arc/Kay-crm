@@ -2,8 +2,9 @@ import type { Page } from "@playwright/test";
 import { clearActorContext, createActor, expect, signIn, type TestActor } from "./auth";
 import { testControl } from "./api-process";
 import { createLead } from "./leads";
+import { testPorts } from "../../scripts/test-ports.mjs";
 
-export const simulatorOrigin = "https://127.0.0.1:8102";
+export const simulatorOrigin = `https://127.0.0.1:${testPorts().simulator}`;
 export async function intakeFixture(page: Page) {
   const agent = await createActor("agent", false, "SP06 agent réception synthétique");
   const other = await createActor("agent", false, "SP06 autre agent synthétique");

@@ -1,10 +1,11 @@
 """Prepared real-PostgreSQL scope/legacy cases; never part of the pure unit selection."""
 
-from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import pytest
 
+from app.archive.records import RecordLifecycle
+from app.archive.records import command as archive_record
 from app.contacts.models import Enquiry
 from app.contacts.queries import read_detail
 from app.discovery.contracts import SearchQuery
@@ -127,7 +128,16 @@ def test_unassigned_and_archived_enquiry_scope_precedes_prepared_counts(settings
     query = SearchQuery(q="KAY-", kind="generated_document")
     assert search(database, agent, query, prepared=True)["total"] == 0
     assert search(database, manager, query, prepared=True)["total"] == 2
-    with database.session() as session, session.begin():
-        session.get(Enquiry, enquiry).archived_at = datetime.now(UTC)
+    current = read_detail(database, manager, "enquiries", enquiry)
+    archive_record(
+        database,
+        manager,
+        settings.facade_secret.get_secret_value(),
+        uuid4(),
+        "enquiries",
+        enquiry,
+        "archive",
+        RecordLifecycle(expected_version=current["version"], reason="Archivage synthétique"),
+    )
     assert search(database, manager, query, prepared=True)["total"] == 0
     assert history(database, manager, "enquiry", enquiry, 1)["total"] == 2

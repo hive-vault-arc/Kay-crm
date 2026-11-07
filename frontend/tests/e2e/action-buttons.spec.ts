@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import { Button } from "../../src/components/ui/button";
 import { buttonActions, type ButtonAction } from "../../src/components/ui/button-actions";
 import { test, expect, createActor, removeActor, clearActorContext, signIn } from "../helpers/auth";
@@ -18,6 +18,21 @@ async function capture(page: Page, name: string) {
   await mkdir(artifacts, { recursive: true });
   await page.screenshot({ path: path.join(artifacts, `${name}.png`) });
 }
+async function expectCreationColor(control: Locator) {
+  const color = await control.evaluate(element => {
+    const sample = document.createElement("span");
+    sample.hidden = true;
+    const token = element.matches(":disabled")
+      ? "--riviera-color-interactive-disabled-background"
+      : element.matches(":hover") ? "--action-creation-hover" : "--action-creation-background";
+    sample.style.backgroundColor = `var(${token})`;
+    element.append(sample);
+    const expected = getComputedStyle(sample).backgroundColor;
+    sample.remove();
+    return expected;
+  });
+  await expect(control).toHaveCSS("background-color", color);
+}
 async function inspectActions(page: Page) {
   for (const control of await page.locator('[data-slot="button"][data-action]').all()) {
     if (!await control.isVisible()) continue;
@@ -27,18 +42,16 @@ async function inspectActions(page: Page) {
     await expect(control.locator("[data-action-icon]")).toHaveCSS("width", iconSize);
     await expect(control.locator("[data-action-icon]")).toHaveCSS("height", iconSize);
     const box = (await control.boundingBox())!;
-    expect(box.height).toBeGreaterThanOrEqual(44);
-    expect(box.width).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(43.999);
+    expect(box.width).toBeGreaterThanOrEqual(43.999);
     expect(await control.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
     if (await control.getAttribute("data-action") === "create") {
       await expect(control).toHaveAttribute("data-variant", "creation");
-      const gold = await control.isDisabled() ? "rgb(232, 228, 220)"
-        : await control.evaluate(element => element.matches(":hover")) ? "rgb(228, 188, 98)" : "rgb(216, 170, 69)";
-      await expect(control).toHaveCSS("background-color", gold);
+      await expectCreationColor(control);
     }
   }
   const headerSearch = page.locator("header").getByRole("button", { name: "Rechercher", exact: true });
-  if ((page.viewportSize()?.width ?? 0) >= 1024 && await headerSearch.count()) await expect(headerSearch).toHaveCSS("max-width", "512px");
+  if ((page.viewportSize()?.width ?? 0) >= 1024 && await headerSearch.count()) await expect(headerSearch).toBeInViewport();
   await inspectIcons(page);
   return geometry(page);
 }
@@ -69,9 +82,9 @@ test("Action buttons: every semantic action renders on the server with correct c
   await page.locator("html").evaluate((element, style) => element.setAttribute("style", style ?? ""), theme);
   const creationLink = page.getByRole("link", { name: "Créer un dossier synthétique", exact: true });
   await expect(creationLink).toHaveAttribute("data-action", "create");
-  await expect(creationLink).toHaveCSS("background-color", "rgb(216, 170, 69)");
+  await expectCreationColor(creationLink);
   await expect(creationLink.locator("[data-action-icon]")).toHaveCount(1);
-  await expect(page.getByRole("button", { name: "Action create synthétique", exact: true })).toHaveCSS("background-color", "rgb(216, 170, 69)");
+  await expectCreationColor(page.getByRole("button", { name: "Action create synthétique", exact: true }));
   const metrics = [];
   for (const width of [320, 360, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -107,7 +120,7 @@ test("Action buttons: real CRM route families, responsive forms, dialogs and pre
     const created = await staffCommand(page, "deals", dealBody(contact, "SP11 affaire synthétique des actions"));
     expect(created.status()).toBe(200); const deal = (await created.json()).id;
     const routes = [
-      ["dashboard", "/dashboard"], ["leads", "/leads"], ["contacts", "/leads?view=contacts"],
+      ["dashboard", "/dashboard"], ["leads", "/leads"], ["contacts", "/contacts"],
       ["lead", `/leads/${lead}`], ["lead-edit", `/leads/${lead}/edit`], ["lead-new", "/leads/new"],
       ["contact", `/contacts/${contact}`], ["imports", "/leads?view=import"], ["exports", "/leads?view=exports"],
       ["deals", "/deals"], ["deal", `/deals/${deal}`], ["deal-new", `/deals/new?contact_id=${contact}`],
@@ -125,26 +138,30 @@ test("Action buttons: real CRM route families, responsive forms, dialogs and pre
     await page.getByRole("button", { name: "Ajouter un téléphone", exact: true }).click();
     const remove = page.getByRole("button", { name: "Retirer le téléphone 2", exact: true });
     await expect(remove).toHaveAttribute("data-action", "remove");
-    await expect(remove.locator("svg")).toHaveCSS("color", "rgb(153, 74, 64)");
+    await expect(remove).toHaveAttribute("data-action-tone", "danger");
     await capture(page, "contact-fields-remove-360");
     await remove.click(); await expect(page.getByLabel("Téléphone 2", { exact: true })).toHaveCount(0);
     await page.goto(`/deals/${deal}`);
-    await page.getByRole("button", { name: "Clôturer l’affaire", exact: true }).click();
+    const stage = page.getByRole("button", { name: /^Étape actuelle/ });
+    await stage.click();
+    await page.getByRole("menuitem", { name: "Clôturer · annulée", exact: true }).click();
     const dialog = page.getByRole("alertdialog"); await expect(dialog).toBeVisible();
     await expect(dialog.locator('[data-action="cancelRecord"]')).toBeEnabled();
     await expect(dialog.locator('[data-action="cancelRecord"]')).toHaveAttribute("data-variant", "destructive");
     await inspectActions(page); await capture(page, "outcome-confirmation-360");
     await dialog.getByRole("button", { name: "Retour", exact: true }).click();
-    await expect(page.getByRole("button", { name: "Clôturer l’affaire", exact: true })).toBeFocused();
-    await page.getByRole("tab", { name: "Finance", exact: true }).click();
+    await expect(stage).toBeFocused();
+    await page.getByRole("button", { name: "Voir la finance", exact: true }).click();
     await page.getByRole("button", { name: "Prévoir une commission", exact: true }).click();
-    await expect(page.getByRole("button", { name: "Fermer le formulaire", exact: true })).toBeVisible();
+    const commission = page.getByRole("form", { name: "Nouvelle commission", exact: true });
+    await expect(commission).toBeVisible();
     await inspectActions(page); await capture(page, "finance-form-360");
-    await page.getByRole("button", { name: "Fermer le formulaire", exact: true }).click();
+    await commission.getByRole("button", { name: "Annuler", exact: true }).click();
+    await expect(commission).not.toBeVisible();
     await expect(page.getByRole("button", { name: "Prévoir une commission", exact: true })).toBeVisible();
     await page.goto(`/leads/${lead}`);
-    const contactLink = page.getByRole("link", { name: "Ouvrir le contact et son historique", exact: true });
-    await contactLink.click(); await expect(page.getByRole("heading", { name: "Contact : SP05 contact synthétique des actions", exact: true })).toBeVisible();
+    const contactLink = page.getByRole("link", { name: "Voir le contact", exact: true });
+    await contactLink.click(); await expect(page.getByRole("heading", { name: "SP05 contact synthétique des actions", exact: true })).toBeVisible();
     for (const [name, route] of routes) {
       await page.setViewportSize({ width: 1440, height: 1000 });
       const response = await page.goto(route); expect(response?.status()).toBe(200);

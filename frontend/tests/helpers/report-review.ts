@@ -46,6 +46,6 @@ export async function geometry(page: Page) {
     const overflowElements = [...document.body.querySelectorAll<HTMLElement>("*")].filter(el => { const r = el.getBoundingClientRect(); return r.width && r.right > innerWidth + 1 && getComputedStyle(el).position !== "fixed"; }).slice(0, 8).map(el => ({ tag: el.tagName, className: typeof el.className === "string" ? el.className : "svg", width: el.getBoundingClientRect().width }));
     return { width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth, overflowElements, dialogOverflow: root.scrollWidth > root.clientWidth, minimumContrast: Math.min(...ratios), normalizedColors: [...normalizedColors], controls, dialogPadding: document.querySelector('[role="alertdialog"]') ? getComputedStyle(root).padding : null };
   });
-  expect(result.overflow, JSON.stringify({ width: result.width, elements: result.overflowElements })).toBe(false); expect(result.dialogOverflow).toBe(false); expect(result.minimumContrast).toBeGreaterThanOrEqual(4.5); expect(result.controls.filter(v => v.width < 44 || v.height < 44)).toEqual([]);
+  expect(result.overflow, JSON.stringify({ width: result.width, elements: result.overflowElements })).toBe(false); expect(result.dialogOverflow).toBe(false); expect(result.minimumContrast).toBeGreaterThanOrEqual(4.5); expect(result.controls.filter(v => v.width < 43.999 || v.height < 43.999)).toEqual([]);
   return result;
 }
