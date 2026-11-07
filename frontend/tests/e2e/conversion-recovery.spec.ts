@@ -60,7 +60,7 @@ for (const failure of ["acknowledgement", "destination-read"] as const) {
       const source = enquirySchema.parse(await leadResponse.json()), result = dealSchema.parse(await dealResponse.json());
       expect(source.version === enquiry.version + 1 && source.status === "converted" && source.converted_deal_id === result.id).toBe(true);
       expect(result.enquiry_id === enquiry.id && result.contact.id === enquiry.contact.id && result.created_by_user_id === agent.id && result.version === 1 && result.stage === "new").toBe(true);
-      expect(result.projects.length === 1 && result.projects[0].external_name === project && result.initial_budget === "1400000" && result.purchase_reasons.length === 1 && result.purchase_reasons[0] === "residence").toBe(true);
+      expect(result.projects.length === 1 && result.projects[0].external_name === project && result.initial_budget === "1400000.00 MAD" && result.purchase_reasons.length === 1 && result.purchase_reasons[0] === "residence").toBe(true);
       expect(result.campaign_source === enquiry.campaign_source && result.rating === enquiry.rating && result.notes === enquiry.message && result.offering === null && result.active_reservation === null).toBe(true);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
     } finally { await clearActorContext(page); await removeActor(agent); }

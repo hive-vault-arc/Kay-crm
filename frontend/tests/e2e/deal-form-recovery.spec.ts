@@ -73,7 +73,7 @@ for (const scenario of cases) {
       if (dealResponse.status() !== 200 || clientResponse.status() !== 200) throw new Error("SYNTHETIC_AFFAIR_RESULT_FAILED");
       const result = dealSchema.parse(await dealResponse.json()), client = contactSchema.parse(await clientResponse.json());
       expect(result.version === (original ? original.version + 1 : 1) && result.contact.id === contact.id && result.enquiry_id === null).toBe(true);
-      expect(result.projects.length === 1 && result.projects[0].external_name === project && result.initial_budget === "1500000" && result.number_of_rooms === 0 && result.payment_method === "mortgage").toBe(true);
+      expect(result.projects.length === 1 && result.projects[0].external_name === project && result.initial_budget === "1500000.00 MAD" && result.number_of_rooms === 0 && result.payment_method === "mortgage").toBe(true);
       expect(result.notes === "Synthetic reviewed affair notes" && result.next_action === "Synthetic reviewed next action" && result.offering === null && result.active_reservation === null).toBe(true);
       expect(client.version === contact.version + (scenario.mode === "edit" ? 1 : 0) && client.name === (scenario.mode === "edit" ? name : contact.name)).toBe(true);
       expect(JSON.stringify(client.phones) === JSON.stringify(contact.phones) && JSON.stringify(client.emails) === JSON.stringify(contact.emails)).toBe(true);

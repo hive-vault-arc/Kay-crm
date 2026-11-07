@@ -25,8 +25,9 @@ for (const mode of ["new", "existing"] as const) {
       try {
         if (existing) {
           await page.getByLabel("Contact de la demande", { exact: true }).selectOption("existing");
-          await page.getByLabel("Rechercher un contact accessible", { exact: true }).fill(name);
-          await page.getByRole("button", { name: "Rechercher", exact: true }).click();
+          const search = page.getByLabel("Rechercher un contact accessible", { exact: true });
+          await search.fill(name);
+          await search.press("Enter");
           await page.getByRole("button", { name: `Choisir ${name}`, exact: true }).click();
         } else {
           await page.getByLabel("Nom du contact", { exact: true }).fill(name);
