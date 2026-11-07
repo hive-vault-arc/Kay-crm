@@ -97,6 +97,7 @@ function DealEditorForm({ contact, role = "agent", actorId, context = {}, offeri
   const acceptedOnce = useRef(false);
   const submitButton = useRef<HTMLButtonElement>(null);
   const validationSummary = useRef<HTMLDivElement>(null);
+  const focusLanguages = useRef(false);
   const hydrated = useHydrated();
   const router = useRouter();
   const lock = useRef(false);
@@ -117,6 +118,11 @@ function DealEditorForm({ contact, role = "agent", actorId, context = {}, offeri
   const error = validationError ?? command.error, current = command.comparison;
   const guard = useUnsavedGuard();
   useEffect(() => { if (validation.length) validationSummary.current?.focus(); }, [validation]);
+  useEffect(() => {
+    if (validating || !focusLanguages.current) return;
+    focusLanguages.current = false;
+    client.setFocus("languages");
+  }, [client, validating]);
   function renew() {
     if (lock.current || !available.current || (command.complete ? !command.begin() : !command.canEdit())) return false;
     setValidationError(undefined); command.clearError(); setValidation([]); setSuccess(false); return true;
@@ -160,7 +166,11 @@ function DealEditorForm({ contact, role = "agent", actorId, context = {}, offeri
     try {
     setValidationError(undefined); setValidation([]); setSuccess(false);
     if ((value || mode === "new") && (!(await client.trigger(undefined, { shouldFocus: true })) || !command.canEdit() || !available.current)) return;
-    if ((value || mode === "new") && !client.getValues("languages")?.length) { client.setError("languages", { message: "Choisissez au moins une langue." }, { shouldFocus: true }); return; }
+    if ((value || mode === "new") && !client.getValues("languages")?.length) {
+      client.setError("languages", { message: "Choisissez au moins une langue." });
+      focusLanguages.current = true;
+      return;
+    }
     if (!value && mode === "existing" && !selectedContact) { setValidation(["Choisissez le contact de l’affaire."]); return; }
     if (!value && mode === "existing" && !selectedContact?.languages.length) { setValidationError(new ApiError("LANGUAGES_REQUIRED", 422)); return; }
     if (!value && mode === "new" && role !== "agent" && !agent) { setValidationError(new ApiError("INVALID_ASSIGNEE", 422)); return; }
