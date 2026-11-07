@@ -3523,3 +3523,15 @@ Production recovery preflight (read-only): DigitalOcean shows managed PostgreSQL
 recovery to the latest transaction or a point within7days and App Platform
 maintenance mode. No restore was executed and no restore drill is claimed.
 Production remains at main e0bdc09 and migration0035 until the final gates pass.
+
+The subsequent intrinsic dossier correction passed the unmodified mixed-unit
+programme workflow and full directory geometry case locally, plus a headed
+Chrome programme run with desktop/390px captures and phone availability
+confirmation. A new focus assertion also passed on the compiled build. The
+1003 frontend units, full lint, typecheck, compiled history check and dependency
+audit pass (zero runtime/full advisories and no exceptions). The first hosted
+follow-up on0dd6aacf still failed ordinary browser regression; backend and five
+real-time cases passed. Its stale help/import/dashboard/filter selectors are
+being updated to the selected UI, preserving scope, atomic CSV content, denied
+access, keyboard recovery and phone behavior. This evidence does not mark the
+full release gate or production verification complete.

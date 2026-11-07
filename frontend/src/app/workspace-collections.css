@@ -60,7 +60,7 @@
 :root .crm-status-badge { gap:5px; padding:3px 7px; border-radius:999px; font-size:12px; line-height:1.4; }
 :root .crm-status-dot { width:6px; height:6px; }
 .kay-shell .crm-selection-toolbar { gap:8px; padding:8px 12px; border-radius:14px; background:var(--workspace-selected); }
-:root .record-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 40px; margin:0; }
+:root .record-facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,max(var(--workspace-geometry-fact-column-min-width),calc((100% - var(--workspace-geometry-fact-column-gap))/2))),1fr)); gap:12px var(--workspace-geometry-fact-column-gap); margin:0; }
 :root .record-facts[data-columns="1"] { grid-template-columns:minmax(0,1fr); }
 :root .record-facts > .kay-record-fact { display:grid; grid-template-columns:148px minmax(0,1fr); align-content:start; align-items:start; gap:8px 20px; min-width:0; padding:6px 0; }
 .kay-record-fact dt { display:flex; align-items:start; gap:8px; color:var(--workspace-muted); font-size:13px; line-height:1.5; }
@@ -76,7 +76,7 @@
 .kay-record-page { display:flex; flex-direction:column; gap:0; min-height:0; min-width:0; }
 .kay-record-workspace { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; flex:1; min-height:0; min-width:0; align-items:start; }
 .kay-record-workspace[data-has-aside=true] { grid-template-columns:minmax(0,1fr) clamp(290px,25vw,380px); }
-.kay-record-dossier { display:flex; flex-direction:column; gap:0; height:100%; min-height:0; overflow:hidden; container:kay-dossier / inline-size; }
+.kay-record-dossier { display:flex; flex-direction:column; gap:0; height:100%; min-height:0; overflow:hidden; }
 .kay-record-dossier .kay-record-tabs { display:flex; flex:none; flex-wrap:nowrap; justify-content:flex-start; gap:4px; padding:12px 16px; border:0; border-bottom:1px solid var(--workspace-line); border-radius:0; background:transparent; }
 .kay-record-tabs [data-slot=tabs-trigger] { flex:none; font-size:13px; padding:8px 14px; font-weight:550; }
 .kay-tab-count { font-size:11px; font-variant-numeric:tabular-nums; }
@@ -193,9 +193,6 @@
   .kay-record-workspace[data-has-aside=true] { grid-template-columns:minmax(0,1fr) 290px; gap:12px; }
   .kay-record-panel { padding:24px; }
   .kay-record-tabs [data-slot=tabs-trigger] { padding-inline:9px; }
-}
-@container kay-dossier (max-width:800px) {
-  :root .record-facts { grid-template-columns:minmax(0,1fr); }
 }
 @media(max-width:830px) {
   .kay-directory-header .kay-page-actions { flex:none; }

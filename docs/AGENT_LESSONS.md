@@ -1,5 +1,16 @@
 # KAY agent lessons
 
+## Avoid size containment on interactive dossiers (2026-11-07)
+
+Inline-size containment on the dossier gave Chromium zero-sized tab/offer
+descendants despite nonzero outer geometry. Moving containment to a nested
+pane only moved the symptom. Use intrinsic fact-grid sizing for this layout;
+verify the original complete workflow after removing diagnostic style changes.
+Retain the successful creation drawer through close and return focus to a
+connected heading when its trigger becomes hidden. A style-mutated diagnostic
+pass, workstation-suspended run or build replaced under a running server is
+not release evidence.
+
 ## Recheck domain permissions before reusing a presentation flag (2026-10-26)
 
 D34 permits active agents to edit shared programme facts and create units. Keep

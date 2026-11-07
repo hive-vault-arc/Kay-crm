@@ -12,7 +12,7 @@ for (const width of [1440, 390]) test(`Selected inventory drawers: structure, le
     const digits = String(Math.floor(Math.random() * 1_000_000)).padStart(6, "0");
     const contactResponse = await staffCommand(page, "contacts", { name, type: "person", phones: [{ number: `+212612${digits}`, label: "Principal", is_primary: true }], emails: [], roles: ["owner"], country: "MA", nationality: "", languages: [] });
     expect(contactResponse.status()).toBe(200); const contact = await contactResponse.json();
-    await signIn(page, manager);
+    await clearActorContext(page); await signIn(page, manager);
     const response = await staffCommand(page, "developments", { reference, name: "Programme synthétique de formulaire", category: "mixed", location: null, briefing_text: null, developer_contact_id: null, developer_marketing_display: null });
     expect(response.status()).toBe(200); const { development_id: id } = await response.json();
     await page.goto(`/projects/${id}?tab=hierarchy`);

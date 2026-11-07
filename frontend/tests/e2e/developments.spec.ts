@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { mkdir } from "node:fs/promises";
 import { test, expect, createActor, removeActor, signIn, clearActorContext } from "../helpers/auth";
 import { createDevelopment, createBlock, createFloor, createType, createUnit, openDevelopment, openProgrammeStructure, closeProgrammeStructure } from "../helpers/developments";
 import { createLead, staffCommand } from "../helpers/leads";
@@ -95,10 +96,18 @@ test("SP08 AT-31/32/35/36/41: actual mixed units, template edit, filters, whole 
     await offering.getByLabel("Prix (MAD, facultatif)", { exact: true }).fill("25000000,01");
     await offering.getByRole("button", { name: "Créer la campagne", exact: true }).click();
     await expect(offering).not.toBeVisible();
+    await expect(page.getByRole("heading", { name: "Offres du programme", exact: true })).toBeFocused();
+    await expect(page.getByRole("heading", { name: "Informations du programme", exact: true })).toBeVisible();
+    await mkdir("output/playwright/redesign-release", { recursive: true });
+    await page.screenshot({ path: "output/playwright/redesign-release/programme-desktop.png" });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: "output/playwright/redesign-release/programme-phone.png" });
     const availability = await openAvailability(page, "sale");
     await availability.getByLabel("Motif de confirmation", { exact: true }).fill("SP08 disponibilité confirmée synthétiquement");
     await availability.getByRole("button", { name: "Confirmer la disponibilité", exact: true }).click(); await expect(availability).not.toBeVisible();
     await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
+    await page.setViewportSize({ width: 1280, height: 720 });
     await clearActorContext(page); await signIn(page, unrelated); await openDevelopment(page, development.id, "Présentation");
     await expect(page.getByText("<script>window.sp08Unsafe = true</script>\nPrésentation synthétique partagée", { exact: true })).toBeVisible();
     expect(await page.evaluate(() => "sp08Unsafe" in window)).toBe(false);

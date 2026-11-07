@@ -26,7 +26,7 @@ test("SP18 AT-20/23: mixed CSV, corrected file, row/fallback agents, atomic resu
     await clearActorContext(page); await signIn(page, data.agent); await page.goto("/leads"); await expect(page.getByRole("link", { name: "Importer des contacts", exact: true })).toHaveCount(0);
     expect((await page.request.get(`/api/v1/imports/${bid}`)).status()).toBe(403);
     await page.goto(`/leads?view=import&batch=${bid}`); await expect(page.getByRole("alert").filter({ hasText: "opération n’est pas autorisée" })).toContainText("opération n’est pas autorisée"); await expect(page.getByText("SP18 second contact", { exact: false })).toHaveCount(0);
-  } finally { await clearActorContext(page); for (const actor of actors) await removeActor(actor); }
+  } finally { try { await clearActorContext(page); } finally { for (const actor of actors) await removeActor(actor); } }
 });
 
 test("SP18 AT-21: committed-response loss replays same key and a concurrent phone claim requires repreview", async ({ page }) => {
@@ -46,5 +46,5 @@ test("SP18 AT-21: committed-response loss replays same key and a concurrent phon
     const before = await (await page.request.get(`/api/v1/imports/${raceBatch}`)).json(); expect(before.items.every((row: { contact_id: string | null }) => row.contact_id === null)).toBe(true);
     await page.getByRole("button", { name: "Générer un nouvel aperçu", exact: true }).click(); await expectImportCounts(page, 0, 1, 0, 0);
     await confirmImport(page); await expect(page.getByText("Import approuvé : 0 contact(s) créé(s), 1 ligne(s) ignorée(s).", { exact: true })).toBeVisible();
-  } finally { await clearActorContext(page); for (const actor of actors) await removeActor(actor); }
+  } finally { try { await clearActorContext(page); } finally { for (const actor of actors) await removeActor(actor); } }
 });

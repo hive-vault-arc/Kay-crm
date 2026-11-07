@@ -28,6 +28,6 @@
     "shadow": "inset 0 0 0 1px rgb(184 196 214 / 20%),0 4px 18px rgb(0 0 0 / 4%)",
     "menuShadow": "0 16px 44px #0005,0 2px 8px #0003"
   },
-  "geometry": { "panelRadius": "24px", "insetRadius": "18px", "pillRadius": "999px", "touch": "44px", "railWidth": "96px", "header": "80px", "pageInset": "20px", "phoneBreakpoint": "830px" },
+  "geometry": { "panelRadius": "24px", "insetRadius": "18px", "pillRadius": "999px", "touch": "44px", "railWidth": "96px", "header": "80px", "pageInset": "20px", "phoneBreakpoint": "830px", "factColumnMinWidth": "380px", "factColumnGap": "40px" },
   "motion": { "press": "120ms", "fast": "260ms", "base": "280ms", "local": "320ms", "panel": "420ms", "page": "460ms", "exit": "200ms", "panelExit": "300ms", "ease": "cubic-bezier(.22,1,.36,1)" }
 }

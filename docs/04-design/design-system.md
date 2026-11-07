@@ -1,5 +1,16 @@
 # KAY interface design system
 
+Release correction,2026-11-07: dossier facts use intrinsic auto-fit columns,
+with geometry values380px minimum and40px gap derived from the previous800px
+two-column threshold. The dossier itself no longer applies inline-size
+containment: Chromium could give its interactive tabs and offer panels zero
+layout size. Single-column facts retain their explicit override. Successful
+offer creation returns keyboard focus to the offers heading when its creation
+trigger has become hidden. The synthetic mixed-unit/programme workflow and
+390px availability confirmation pass without runtime style mutations; desktop
+and phone captures were inspected. This is a rendering/accessibility correction
+within the selected design, not a new visual direction or product approval.
+
 ## Current selected prototype migration: 2026-10-26
 
 The owner's current visual/UX authority is the frozen selected KAY prototype,
