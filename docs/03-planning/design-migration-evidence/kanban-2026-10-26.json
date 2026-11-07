@@ -1,0 +1,157 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "previous": "4add5a7",
+  "scope": "Selected desktop-only Lead/Deal Kanban, independently scoped numbered lanes, review-only dragging and original command controllers; full migration remains in progress",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "result": "passed; 62 semantic glyphs / 401 Button sites / zero violations"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:unit",
+      "result": "138 passed; 10 new Kanban preference/query/drag/retry/confirmation/controller/SSR cases"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed; pinned Next16.4.2 including fresh TypeScript"
+    },
+    {
+      "command": "npm run security:check",
+      "result": "runtime0/full0 vulnerabilities; zero exceptions"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "result": "8605 indexed; zero forbidden/oversized; 14 ignore probes"
+    },
+    {
+      "command": "& ./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "result": "passed; 1226 links / 22 sprints / 42 acceptance mappings / 12 API JSON examples"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "branding/prototype/kay-glyphs.json",
+      "sha256": "b9089990a30dddd6eebcabfc4ba9f065077ed4241aeeb4302c9b55a692119660"
+    },
+    {
+      "path": "frontend/scripts/test-facade.mjs",
+      "sha256": "8c5a976182334800866e561c501af7756c4d0793d29c3a8667d8ecd49db4da38"
+    },
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "dc56235d547e181b3707ffcbefeb4705b8672e0f0105a6459fb4845626b8b29a"
+    },
+    {
+      "path": "frontend/src/app/workspace-kanban.css",
+      "sha256": "ac3fc6ec148126e90bbf625602297d1cacda21699e50c8d28b66e695fbb32f3d"
+    },
+    {
+      "path": "frontend/src/components/icons/index.tsx",
+      "sha256": "dfbcface3228f967eaf34f940bd2bfd9331987dd368da4ef68dfe016028acdef"
+    },
+    {
+      "path": "frontend/src/components/shared/directory-view-switch.tsx",
+      "sha256": "dafd0244f87d77451f46e9fa829518a969df9a5fcdee7acf74b8e7e208fbcbe1"
+    },
+    {
+      "path": "frontend/src/components/shared/filter-results-layout.tsx",
+      "sha256": "33685111d84d0dc0cc0f6e0e5eeff937e6fc782830e713c8ff16924ffb0b3519"
+    },
+    {
+      "path": "frontend/src/components/shared/kanban-record-card.tsx",
+      "sha256": "4af9de557bc119a67aa09d09e029cccef8b090669fd2c778990c74d0b25e3483"
+    },
+    {
+      "path": "frontend/src/components/shared/paged-kanban.tsx",
+      "sha256": "7e7cba9d33765c6b6ca33ae6ea1057fbbbb2898538aa7247f5e012e9b90f21d2"
+    },
+    {
+      "path": "frontend/src/components/shared/record-drawer.tsx",
+      "sha256": "555d54ee1fa12c918c5e713a79c36f3155e2cc9b3b57c5aa05c63e01f49ba965"
+    },
+    {
+      "path": "frontend/src/components/shared/record-status-menu.tsx",
+      "sha256": "9bbeb9464a9015c8efc32b1814ca7bb3bb17b6efb1420c2c2be22e4a1f6e1f50"
+    },
+    {
+      "path": "frontend/src/components/ui/button-actions.ts",
+      "sha256": "1da26f6e52410cdb6c6d8588b12a83561fa83664120fb04b2db76786c30fda98"
+    },
+    {
+      "path": "frontend/src/features/activities/activity-form.tsx",
+      "sha256": "c666d049653f60d66c82e55f603a1c2cecf56b1c7d5d9de5892329fa4107f169"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-kanban.tsx",
+      "sha256": "b1b6872baebdd4f60f0d7c9bb9527a82f5f0e49bb5e126bd14c5ddcfe2845945"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-list.tsx",
+      "sha256": "cacb3740bbc9535245c5ac411554b27dd709407c24f46e7ed2efe1fa00814139"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-status-menu.tsx",
+      "sha256": "632a06ac1ab5d8c8870ac862964880ee47fc0223a79583bb58083f437c77261f"
+    },
+    {
+      "path": "frontend/src/features/deals/convert-lead.tsx",
+      "sha256": "255231859e66a1c33e3d2b71b3dda8c3fe17b4c3288efaf24e5a673db4def1c7"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-kanban.tsx",
+      "sha256": "acfb41f0a555c447ea5244a9b4d7551cb33d9b17e07e7fddd7245c3d15b292ad"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-list.tsx",
+      "sha256": "f7331613a9ec82204cddd7ffa99ff2739dc54f45558e439e74291b5f57e2f385"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-record.tsx",
+      "sha256": "ff0e0eb3fc584a37da87ba5bbbcfae28db1bfd82f24f6bd6fcc2e00c5c3eb39a"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-stage-menu.tsx",
+      "sha256": "0b226624297487850dd69a8f2b76fa46ecbc57a2995438b0ad07309153a15d88"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-stage-policy.ts",
+      "sha256": "aab2c37400e53c4d17d9d63ed8bb55c2e5e3a93af13d5e04dbfcf6157c085874"
+    },
+    {
+      "path": "frontend/src/features/deals/outcome-panel.tsx",
+      "sha256": "3d53c312fa2e23ce125cbcc18a5979cacf5db3a0f3f9715f90c0c0b99e01f7d8"
+    },
+    {
+      "path": "frontend/src/features/deals/reservation-panel.tsx",
+      "sha256": "fe211185d480b561bea9b9e8b7e383bfaa32cd66ac366471b550f5cd2f2fa2a2"
+    },
+    {
+      "path": "frontend/src/features/deals/use-deal-command.ts",
+      "sha256": "f949e3e6ed49b2170cf7de355143fc023ccecaf04ee1fdf08811584d5b1182ce"
+    },
+    {
+      "path": "frontend/src/lib/directory-view.ts",
+      "sha256": "e186e3d3314d6c679555b3b7baeb75a8e5fcc292c5e0aba36d9b20e6b8aaa40b"
+    },
+    {
+      "path": "frontend/tests/unit/kanban.test.mjs",
+      "sha256": "35361832aa52fe2d37c71ed58cb6c8719f3ee07876d586dc90293d12df221f58"
+    },
+    {
+      "path": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "sha256": "111ffb96b5c1fc82293bb210fd98fe356f96cec780ab26cac683bc9a626ef21b"
+    }
+  ],
+  "security": "Unchanged scoped APIs and original session/CSRF/version/idempotency/reason/stock checks; internal-only drag requests review; no optimistic/chained writes; current-denial removal; non-sensitive finite display cookie",
+  "limitations": [
+    "No app HTTP/native browser access",
+    "No real database/stock/session race or native drag/focus/visual acceptance",
+    "Remaining forms/calendar/report/PDF and other migration work incomplete",
+    "No push/main change/merge"
+  ]
+}

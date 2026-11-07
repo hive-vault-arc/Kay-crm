@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "46f67bc",
+  "scope": "Selected routed owner identity fields/actions and explicit current-contact role reuse",
+  "checks": [
+    { "command": "npm run test:unit", "cwd": "frontend", "exitCode": 0, "passed": 320, "failed": 0, "newCases": 15 },
+    { "command": "npm run lint", "cwd": "frontend", "exitCode": 0, "semanticGlyphs": 62, "iconConsumers": 88, "iconSites": 316, "buttonSites": 455, "violations": 0 },
+    { "command": "npm run typecheck", "cwd": "frontend", "exitCode": 0 },
+    { "command": "npm run build", "cwd": "frontend", "exitCode": 0, "next": "16.4.2" },
+    { "command": "node .github/scripts/repository-check.mjs", "exitCode": 0, "indexedFiles": 8724, "forbiddenOrOversized": 0, "ignoreProbes": 14 },
+    { "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly", "exitCode": 0, "sprints": 22, "links": 1244, "acceptanceMappings": 42, "mermaidSources": 13, "apiJsonExamples": 12 },
+    { "command": "git diff --cached --check", "exitCode": 0 }
+  ],
+  "source": { "reference": "Frozen owners.js ownerFields/form composition and existing/new contact choice", "prototypeInputs": 254, "drift": 0, "compiledHiddenImportant": true, "newCssDependenciesChartsApiOrIdentity": false, "proposal": "Shared selected page form/section layout; optional languages follow the real contract; scoped chooser adds an explicit literal role without inferring legal ownership" },
+  "invariants": ["Existing canonical Contacts scope/phone/merge/provenance and owner-directory role-or-link predicate", "Reuse reads current full contact and adds owner with expected version; new draft/agent never replace identity", "Literal owner-role-present opens without a write; no legal links created", "M/A explicit new-contact agent; Agent sends no override; edit/reuse responsibility preserved", "One pair of collection controllers retains methods/labels/primary flags/profile/other roles", "Async validation/command lock and same path/body/method retry key", "Explicit conflict choices and target-ID check", "Archived choices not restored; stale lookup abort/current-denial context removal/unmount suppression", "Mode/search clean while real fields/choice remain managed draft state"],
+  "correctedAttempts": ["Initial typecheck found required RecordFact icon props absent; semantic icons added and verification rerun"],
+  "preparedBrowser": ["frontend/tests/e2e/owner-reuse.spec.ts, not executed", "Two existing owner-form name selectors updated; broader old directory/detail assertions remain open"],
+  "remaining": ["Owner directory/drawer entry and legal-owner/hierarchy/photo form parity", "Legacy same-document history fallback and other P0-P8 reconciliation", "Browser/CUA/CDP/app HTTP under the existing automatic rejection", "Native desktop/phone/focus/touch/zoom/accessibility/AFTER and real permissions/merge/races/full-stack/owner/CI"],
+  "preserved": ["Frozen design", "Backend/API routes, database, services and data", "Unrelated35-line lesson change and motion plan", "main, push, merge and production"],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

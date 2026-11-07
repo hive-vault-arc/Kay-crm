@@ -1,0 +1,143 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "50b4b263cc5bf5eeb5d59ea490adeff86df95c93",
+  "scope": "Prepared Finance visible-Chrome review reconciled with selected supporting drawer, inline full-width cards, current recovery and actual portalled geometry; no production edit; shared drawer-scoped counted-heading readiness",
+  "checks": [
+    {
+      "command": "npx eslint tests/review/finance.chrome.spec.ts tests/helpers/finance.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Read-only TypeScript AST/source review",
+      "exitCode": 0,
+      "preparedVisibleChromeCases": 1,
+      "intendedManualCaptures": 15,
+      "retiredSelectors": 0,
+      "productionChanges": 0,
+      "boundary": "Source/capture plan only, not Playwright listing/import/execution"
+    },
+    {
+      "command": "Frozen reference/main/protected-state review",
+      "exitCode": 0,
+      "inputs": 254,
+      "protectedUnstagedLessonsAdditions": 35,
+      "motionNoteUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9000,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1291,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check and exact staged allowlist/hash/protected-state review",
+      "exitCode": 0,
+      "stagedFiles": 11,
+      "canonicalSourceHashes": 2
+    }
+  ],
+  "preparedNotRun": {
+    "command": "npm run test:chrome -- review/finance.chrome.spec.ts --max-failures=1",
+    "case": "frontend/tests/review/finance.chrome.spec.ts",
+    "visibleChromeCases": 1,
+    "intendedCapturePrefix": "frontend/output/playwright/redesign-finance-",
+    "intendedCaptures": [
+      "empty-desktop",
+      "invalid-desktop",
+      "confirm-desktop",
+      "finance-desktop",
+      "finance-mobile",
+      "narrow-320",
+      "form-mobile",
+      "excess-mobile",
+      "comparison-mobile",
+      "error-mobile",
+      "correction-desktop",
+      "loading-desktop",
+      "zoom-200",
+      "denied-desktop",
+      "agent-mobile"
+    ],
+    "trace": false,
+    "video": false,
+    "automaticScreenshots": false,
+    "actualManualCapturesCreated": 0
+  },
+  "retainedCoverage": [
+    "optional empty and invalid focus",
+    "keyboard entry and nested confirmation Escape/return focus",
+    "exact amounts/three revisions/original receipt correction",
+    "inline full-width cards/no tables",
+    "touch reason validation and six widths",
+    "explicit current comparison before conflict edit",
+    "unknown draft retained/locked and explicit recovery departure",
+    "held read loading and denied re-entry",
+    "four Agent tabs/no Finance/private read403",
+    "44px controls/4.5 CSS-derived contrast with nonempty samples",
+    "actual200% Chrome zoom ratio and width proof",
+    "safe console codes and no unexpected errors",
+    "fresh screenshot names and bounded detached cleanup",
+    "shared readiness is drawer-scoped and accepts actual numeric heading count"
+  ],
+  "limitations": [
+    "CSS-derived contrast is not full pixel/compositing/accessibility evidence",
+    "new case and all fifteen frames not executed or inspected",
+    "other domain/context/legacy selectors remain P0 work",
+    "actual SQL/ledger/clock/concurrency/native/device/security/CI/AFTER/product acceptance pending",
+    "migrations0036/0037 remain unapplied"
+  ],
+  "retainedNotRerun": {
+    "checkpoint": "50b4b263cc5bf5eeb5d59ea490adeff86df95c93",
+    "frontendUnits": 927,
+    "backendConnectionForbiddenUnits": 572,
+    "frontendBuild": true,
+    "compiledHistory": true,
+    "boundary": "Unchanged production code; not fresh results from this slice"
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionUnstaged": true
+  },
+  "access": {
+    "actualAppBrowserCdpHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "status": "Prepared review source only; P0/P8 and full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/review/finance.chrome.spec.ts",
+      "bytes": 20460,
+      "sha256": "9104d9b6302bc8bf8ee7b5adb27a453cc0d2bfac53226de55aa8cd7ca7d06e65",
+      "previousSha256": "8a648f4a9c67977c396c5c256b18e3d84e64fabe78d1be3884926e200b589513"
+    },
+    {
+      "file": "frontend/tests/helpers/finance.ts",
+      "bytes": 4259,
+      "sha256": "419db1a9dff59abf134fc0438bb2121499ae45a5f27d6fd00dba82f0fb968acb",
+      "previousSha256": "e389eb7d80cd5cfb4b27476473a6cd7324a47c73bdf5625934d7430f53994194"
+    }
+  ]
+}

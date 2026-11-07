@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/dev.mjs",
-    "build": "next build",
+    "dev": "node scripts/prepare-heic.mjs && node scripts/dev.mjs",
+    "build": "node scripts/prepare-heic.mjs && next build",
     "start": "node scripts/start.mjs",
     "lint": "node scripts/icon-inventory.mjs --check && node scripts/button-inventory.mjs && eslint src tests scripts next.config.ts playwright*.ts *.mjs --max-warnings=0",
     "buttons:check": "node scripts/button-inventory.mjs",
@@ -12,6 +12,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "security:check": "node ../.github/scripts/dependency-audit.mjs",
     "test:unit": "node scripts/test-facade.mjs",
+    "history:check": "node scripts/check-history-bootstrap.mjs",
     "test:e2e": "playwright test",
     "test:chrome": "playwright test --config=playwright.chrome.config.ts --headed --workers=1",
     "test:realtime": "playwright test --config=playwright.realtime.config.ts --headed --workers=1"
@@ -23,12 +24,14 @@
     "@visx/event": "4.0.0",
     "@visx/gradient": "4.0.0",
     "@visx/grid": "4.0.0",
+    "@visx/group": "4.0.0",
     "@visx/responsive": "4.0.0",
     "@visx/scale": "4.0.0",
     "@visx/shape": "4.0.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "d3-array": "3.2.4",
+    "d3-shape": "3.2.0",
     "motion": "14.3.0",
     "next": "16.4.2",
     "radix-ui": "1.8.1",
@@ -37,6 +40,11 @@
     "react-hook-form": "7.90.0",
     "tailwind-merge": "3.7.0",
     "zod": "4.6.7"
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "11.0.3"
+    }
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
@@ -47,7 +55,6 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.2",
     "postcss": "8.5.30",
-    "shadcn": "4.22.1",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3"
   }

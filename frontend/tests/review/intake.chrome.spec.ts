@@ -5,6 +5,7 @@ import { test, expect, clearActorContext } from "../helpers/auth";
 import { testControl } from "../helpers/api-process";
 import { geometry } from "../helpers/report-review";
 import { clearIntake, fillWebsite, intakeFixture, simulatorOrigin, staffLogin } from "../helpers/intake";
+import { contactActivity } from "../helpers/ownership";
 
 test("SP20 visible Chrome: real signed form, scoped Lead, native states, touch, keyboard and zoom", async ({ page, browser, baseURL }) => {
   test.setTimeout(180000);
@@ -24,7 +25,7 @@ test("SP20 visible Chrome: real signed form, scoped Lead, native states, touch, 
     const data = await intakeFixture(page); monitor(page); monitor(mobile);
     await fillWebsite(page); measurements.push(await geometry(page)); await capture(page, "form-desktop", "desktop");
     await page.getByLabel("Nom complet", { exact: true }).focus(); await page.keyboard.press("Tab"); await expect(page.getByLabel("Téléphone international", { exact: true })).toBeFocused();
-    await mobile.goto(simulatorOrigin); await expect(mobile.getByRole("heading", { name: "Formulaire web local", exact: true })).toBeVisible();
+    await mobile.goto(simulatorOrigin); await expect(mobile.getByRole("heading", { name: "Demande web", exact: true })).toBeVisible();
     for (const width of [320, 360, 390, 768, 1024, 1440]) { await mobile.setViewportSize({ width, height: 900 }); measurements.push(await geometry(mobile)); }
     await mobile.setViewportSize({ width: 390, height: 844 }); await capture(mobile, "form-mobile", "mobile");
     await mobile.getByRole("button", { name: "Envoyer la demande", exact: true }).tap(); expect(await mobile.getByLabel("Nom complet", { exact: true }).evaluate(el => (el as HTMLInputElement).validity.valueMissing)).toBe(true);
@@ -51,12 +52,12 @@ test("SP20 visible Chrome: real signed form, scoped Lead, native states, touch, 
     await mobile.setViewportSize({ width: 390, height: 844 }); await staffLogin(mobile, data.agent, baseURL!); await mobile.goto("/leads"); await mobile.getByText("Filtres avancés", { exact: true }).tap(); await mobile.getByLabel("Provenance", { exact: true }).selectOption("website"); await mobile.getByRole("button", { name: "Appliquer", exact: true }).tap(); await expect(mobile.getByText("2 demande(s) accessible(s).", { exact: true })).toBeVisible(); measurements.push(await geometry(mobile)); await capture(mobile, "received-mobile");
     const rows = (await (await page.request.get("/api/v1/enquiries?source=website")).json()).items;
     await page.goto(`/leads/${rows[0].id}`); await expect(page.getByText("SP20 nouvelle demande web synthétique", { exact: true })).toBeVisible(); await capture(page, "lead-desktop");
-    await page.goto(`/contacts/${rows[0].contact.id}`); await page.getByRole("tab", { name: "Historique", exact: true }).click(); await expect(page.getByText("Auteur : Source web : Simulateur local", { exact: true }).first()).toBeVisible(); await capture(page, "history-desktop");
+    await page.goto(`/contacts/${rows[0].contact.id}`); const history = await contactActivity(page); await expect(history.getByText("Source web : Simulateur local", { exact: true }).first()).toBeVisible(); await capture(page, "history-desktop");
     await staffLogin(mobile, data.other, baseURL!); injecting = true; await mobile.goto(`/leads/${rows[0].id}`); await expect(mobile.getByRole("alert").filter({ hasText: /introuvable|accessible/ })).toBeVisible(); await capture(mobile, "denied-mobile"); injecting = false;
     profile = await mkdtemp(path.resolve("test-results/sp20-zoom-")); const launch = { ignoreHTTPSErrors: true, channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, args: ["--window-size=1440,1000"] } as const;
-    zoomContext = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] }); let zoom = zoomContext.pages()[0]; await zoom.goto(simulatorOrigin); await expect(zoom.getByRole("heading", { name: "Formulaire web local", exact: true })).toBeVisible(); const baseline = await zoom.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth })); await zoomContext.close(); zoomContext = undefined;
+    zoomContext = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] }); let zoom = zoomContext.pages()[0]; await zoom.goto(simulatorOrigin); await expect(zoom.getByRole("heading", { name: "Demande web", exact: true })).toBeVisible(); const baseline = await zoom.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth })); await zoomContext.close(); zoomContext = undefined;
     const prefsPath = path.join(profile, "Default", "Preferences"), prefs = JSON.parse(await readFile(prefsPath, "utf8")); prefs.partition = { ...prefs.partition, default_zoom_level: { x: Math.log(2) / Math.log(1.2) } }; await writeFile(prefsPath, JSON.stringify(prefs));
-    zoomContext = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] }); zoom = zoomContext.pages()[0]; monitor(zoom); await zoom.goto(simulatorOrigin); await expect(zoom.getByRole("heading", { name: "Formulaire web local", exact: true })).toBeVisible(); const zoomed = await zoom.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth })); expect(zoomed.ratio / baseline.ratio).toBeCloseTo(2, 1); measurements.push(await geometry(zoom)); await capture(zoom, "zoom-200", undefined, baseline.ratio);
+    zoomContext = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] }); zoom = zoomContext.pages()[0]; monitor(zoom); await zoom.goto(simulatorOrigin); await expect(zoom.getByRole("heading", { name: "Demande web", exact: true })).toBeVisible(); const zoomed = await zoom.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth })); expect(zoomed.ratio / baseline.ratio).toBeCloseTo(2, 1); measurements.push(await geometry(zoom)); await capture(zoom, "zoom-200", undefined, baseline.ratio);
     expect(errors).toEqual([]); console.info("SP20 native observations", JSON.stringify({ browserVersion: browser.version(), baseline, zoomed, measurements, unexpectedErrors: errors }));
   } finally { await zoomContext?.close(); if (profile) { expect(path.dirname(path.resolve(profile))).toBe(path.resolve("test-results")); expect(path.basename(profile)).toMatch(/^sp20-zoom-/); await rm(profile, { recursive: true, force: true }); } await mobileContext.close(); await clearActorContext(page); await clearIntake(); }
 });

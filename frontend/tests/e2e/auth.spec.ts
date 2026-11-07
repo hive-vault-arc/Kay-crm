@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { test, expect, signIn, createActor, removeActor, changeActor } from "../helpers/auth";
+import { test, expect, signIn, openWorkspaceAccount, createActor, removeActor, changeActor } from "../helpers/auth";
 import { apiProcess } from "../helpers/api-process";
 
 test("AT-26/39: protected redirect, safe return, cookie, refresh, logout and replay", async ({ page, actor, browserName }, info) => {
@@ -36,12 +36,8 @@ test("AT-26/39: protected redirect, safe return, cookie, refresh, logout and rep
   expect((await profile.json()).session_token === undefined).toBe(true);
   const denied = await page.request.post("/api/v1/auth/logout", { headers: { Origin: new URL(page.url()).origin }, data: {} });
   expect(denied.status()).toBe(403);
-  const navigation = page.getByRole("button", { name: "Ouvrir la navigation", exact: true });
-  if (await navigation.isVisible()) {
-    await navigation.click();
-    await expect(page.getByRole("dialog", { name: "Navigation KAY", exact: true })).toBeVisible();
-  }
-  await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
+  const account = await openWorkspaceAccount(page);
+  await account.getByRole("button", { name: "Se déconnecter", exact: true }).click();
   await expect(page).toHaveURL(/\/login\?signed_out=1$/);
   expect((await page.context().cookies()).some((cookie) => cookie.name === "__Host-kay_session")).toBe(false);
   const replay = await page.request.get("/api/v1/auth/me", { headers: { Cookie: `__Host-kay_session=${session.value}` } });
@@ -100,14 +96,15 @@ test("AT-39: agent/manager Settings denial, scoped empty dashboard, shared Proje
     const actor = await createActor(role);
     try {
       await signIn(page, actor);
-      await expect(page.getByText("Votre activité, en un regard.", { exact: true })).toBeVisible();
-      await expect(page.getByText(role === "agent" ? "Mes dossiers accessibles" : "Toute l’agence", { exact: true })).toBeVisible();
+      await expect(page.getByText("Vos priorités et rendez-vous, en un regard.", { exact: true })).toBeVisible();
+      await expect(page.getByText(role === "agent" ? /^Dossiers attribués ou partagés\./ : /^Périmètre de l’agence\./)).toBeAttached();
       await expect(page.getByText("Paramètres", { exact: true })).toHaveCount(0);
       await page.goto("/settings");
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("Accès non autorisé");
       await page.goto("/projects");
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("Projets");
-      await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
+      const account = await openWorkspaceAccount(page);
+      await account.getByRole("button", { name: "Se déconnecter", exact: true }).click();
       await expect.poll(() => page.url().includes("/login?signed_out=1")).toBe(true);
     } finally { await removeActor(actor); }
   }
@@ -164,7 +161,8 @@ test("AT-23/26: real auth outage preserves cookie, denies private UI and recover
   await expect.poll(async () => (await page.request.get("/api/v1/health/ready")).status()).toBe(200);
   await page.getByRole("link", { name: "Réessayer", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Tableau de bord");
-  await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
+  const account = await openWorkspaceAccount(page);
+  await account.getByRole("button", { name: "Se déconnecter", exact: true }).click();
   await expect.poll(() => page.url().includes("/login?signed_out=1")).toBe(true);
   try {
     await apiProcess("stop");

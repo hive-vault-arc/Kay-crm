@@ -36,11 +36,11 @@ test("Staff: admin-chosen password, immediate restricted login, own password and
     await expect(page.getByRole("button", { name: "Créer le compte", exact: true })).toBeEnabled();
     await page.getByRole("button", { name: "Créer le compte", exact: true }).click();
     await expect(page.getByText("Saisissez le nom complet.", { exact: true })).toBeVisible();
-    await page.getByLabel("Nom complet", { exact: true }).fill("Personnel synthétique de contrôle");
+    await page.getByLabel("Nom complet *", { exact: true }).fill("Personnel synthétique de contrôle");
     const email = `sp03-${randomUUID().replaceAll("-", "")}@example.com`;
     const temporary = randomBytes(24).toString("base64url");
-    await privateFill(page, "Adresse e-mail", email);
-    await privateFill(page, "Mot de passe initial", temporary);
+    await privateFill(page, "Adresse e-mail *", email);
+    await privateFill(page, "Mot de passe initial *", temporary);
     await page.getByRole("button", { name: "Afficher le mot de passe", exact: true }).click();
     expect(await page.locator("[data-private-credential]").getAttribute("type") === "text").toBe(true);
     await page.getByRole("button", { name: "Masquer le mot de passe", exact: true }).click();
@@ -88,8 +88,8 @@ test("Staff: existing password unchanged, reset requires admin password, expiry 
   try {
     await signIn(page, actor); await signIn(staff, target);
     await page.goto(`/settings/users/${target.id}/edit`);
-    await expect(page.getByLabel("Nom complet", { exact: true })).toBeEnabled();
-    expect(await page.getByLabel("Mot de passe initial", { exact: true }).count()).toBe(0);
+    await expect(page.getByLabel("Nom complet *", { exact: true })).toBeEnabled();
+    expect(await page.getByLabel("Mot de passe initial *", { exact: true }).count()).toBe(0);
     expect((await staff.request.get("/api/v1/auth/me")).status()).toBe(200);
     await clearActorContext(staff); await signIn(staff, target);
     let temporary = randomBytes(24).toString("base64url");

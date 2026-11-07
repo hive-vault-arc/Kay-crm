@@ -31,6 +31,8 @@ export const correctCommissionSchema = z.object({ ...fields, target: z.literal("
 export const correctReceiptSchema = z.object({ target: z.literal("receipt"), expected_version: version, receipt_id: z.uuid(), replacement: receiptFieldsSchema.nullable(), reason }).strict();
 export const correctionSchema = z.union([correctCommissionSchema, correctReceiptSchema]);
 export const resultSchema = z.object({ id: z.uuid(), version }).strict();
+export const creationKeySchema = z.object({ deal_id: z.uuid(), key: z.uuid().refine(value => value[14] === "7"), expires_at: z.iso.datetime({ offset: true }) }).strict().refine(value => z.uuid().safeParse(value.key).success && value.key[14] === "7" && Date.parse(value.expires_at) === Number(BigInt(`0x${value.key.replaceAll("-", "").slice(0, 12)}`)) + 300_000);
+export function financeResultMatches(commissionId: string | undefined, expectedVersion: number, result: z.infer<typeof resultSchema>) { return commissionId ? result.id === commissionId && result.version === expectedVersion + 1 : result.version === 1; }
 const actor = z.object({ id: z.uuid(), display_name: z.string().min(1).max(160) }).strict();
 export const revisionSchema = z.object({ id: z.uuid(), version, previous_revision_id: z.uuid().nullable(), ...fields, amount_mad: amount,
   state: z.enum(["expected", "recognized"]), review_required: z.boolean(), action: z.enum(["created", "recognized", "commission_corrected", "receipt", "receipt_corrected", "reopen_review"]), reason: z.string().max(1000), actor, receipt_id: z.uuid().nullable(), reopening_id: z.uuid().nullable(), created_at: z.iso.datetime({ offset: true }), created_local: z.iso.datetime({ offset: true }), calculation_policy: z.literal("MAD_FINAL_ROUND_HALF_UP_2") }).strict();
@@ -40,6 +42,7 @@ export const receiptSchema = z.object({ id: z.uuid(), commission_id: z.uuid(), s
 const pages = { page: version, page_size: z.number().int().min(1).max(100), total: z.number().int().nonnegative(), has_next: z.boolean(), has_previous: z.boolean() };
 export const commissionsSchema = z.object({ items: z.array(commissionSchema).max(100), ...pages }).strict();
 export const revisionsSchema = z.object({ items: z.array(revisionSchema).max(100), ...pages }).strict();
+export const financeHistorySchema = z.object({ items: z.array(revisionSchema.extend({ commission_id: z.uuid(), deal_id: z.uuid() })).max(100), ...pages }).strict();
 export const receiptsSchema = z.object({ items: z.array(receiptSchema).max(100), ...pages }).strict();
 export const financeQuerySchema = z.object({ page: z.string().regex(/^[1-9][0-9]{0,6}$/).refine(value => Number(value) <= 1000000).optional(), page_size: z.string().regex(/^[1-9][0-9]{0,2}$/).refine(value => Number(value) <= 100).optional() }).strict();
 export type Commission = z.infer<typeof commissionSchema>;

@@ -45,7 +45,7 @@ export async function GET(
   if (/^generated-documents(\/|$)/.test(key)) return relayGenerated(key, request, requestId);
   if (/^imports(\/|$)/.test(key)) return relayImports(key, request, requestId);
   if (/^reports(\/|$)/.test(key)) return relayReports(key, request, requestId);
-  if (/^commissions(\/|$)/.test(key) || /^deals\/[^/]+\/commissions$/.test(key)) return relayFinance(key, request, requestId);
+  if (/^commissions(\/|$)/.test(key) || /^deals\/[^/]+\/(commissions|finance-history|commission-creation-key)$/.test(key)) return relayFinance(key, request, requestId);
   if (/^(tasks|notifications|work)(\/|$)/.test(key) || key === "visits/follow-up") return relayWork(key, request, requestId);
   if (/^(visits|visit-schedule|calendar)(\/|$)/.test(key)) return relaySchedule(key, request, requestId);
   if (/^(deals|customer-offers)(\/|$)/.test(key)) return relayDeals(key, request, requestId);
@@ -70,7 +70,7 @@ export async function POST(request: Request, context: { params: Promise<{ path: 
   if (/^(search|exports|audit)(\/|$)/.test(key)) return relayDiscovery(key, request, requestId);
   if (/^generated-documents(\/|$)/.test(key)) return relayGenerated(key, request, requestId);
   if (/^imports(\/|$)/.test(key)) return relayImports(key, request, requestId);
-  if (/^commissions(\/|$)/.test(key) || /^deals\/[^/]+\/commissions$/.test(key)) return relayFinance(key, request, requestId);
+  if (/^commissions(\/|$)/.test(key) || /^deals\/[^/]+\/(commissions|finance-history|commission-creation-key)$/.test(key)) return relayFinance(key, request, requestId);
   if (/^(tasks|notifications|work)(\/|$)/.test(key)) return relayWork(key, request, requestId);
   if (/^(visits|visit-schedule|calendar)(\/|$)/.test(key)) return relaySchedule(key, request, requestId);
   if (/^(deals|customer-offers)(\/|$)/.test(key)) return relayDeals(key, request, requestId);

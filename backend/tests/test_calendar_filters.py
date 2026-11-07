@@ -72,3 +72,21 @@ def test_free_busy_does_not_expose_private_type_or_status_facets(settings, datab
     _, token = actor(settings, database)
     with pytest.raises(IdentityError, match="VALIDATION_ERROR"):
         read_visits(database, token, period(**fields), busy=True)
+
+
+def test_contact_month_preserves_period_bounds_and_visit_scope(settings, database):
+    uid, token, cid, _ = prepared(settings, database)
+    visit = run(settings, database, token, booking(uid, cid, type="office"))
+    bounds = {"start_at": "2030-01-01T00:00Z", "end_at": "2030-02-01T00:00Z"}
+    month = CalendarQuery(**bounds, contact_id=cid, page_size=5)
+    assert read_visits(database, token, month)["items"][0]["id"] == visit["id"]
+
+    _, outsider = actor(settings, database)
+    with pytest.raises(IdentityError, match="NOT_FOUND"):
+        read_visits(database, outsider, month)
+    with pytest.raises(IdentityError, match="VALIDATION_ERROR"):
+        read_visits(database, token, month, busy=True)
+    with pytest.raises(ValidationError):
+        CalendarQuery(**bounds)
+    with pytest.raises(ValidationError):
+        CalendarQuery(start_at=bounds["start_at"], end_at="2030-03-01T00:00Z", contact_id=cid)

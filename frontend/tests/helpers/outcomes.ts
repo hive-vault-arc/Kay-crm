@@ -6,7 +6,12 @@ import { reservationFixture } from "./reservations";
 
 export async function outcomeDialog(page: Page, reopen = false) {
   const name = reopen ? "Rouvrir l’affaire" : "Clôturer l’affaire";
-  await page.getByRole("button", { name, exact: true }).click();
+  await page.getByRole("button", { name: /^Étape actuelle/ }).click();
+  if (reopen) await page.getByRole("menuitem", { name, exact: true }).click();
+  else {
+    const won = page.getByRole("menuitem", { name: "Clôturer · gagnée", exact: true });
+    await (await won.isEnabled() ? won : page.getByRole("menuitem", { name: "Clôturer · perdue", exact: true })).click();
+  }
   const dialog = page.getByRole("alertdialog", { name, exact: true });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole("button", { name, exact: true })).toBeEnabled();

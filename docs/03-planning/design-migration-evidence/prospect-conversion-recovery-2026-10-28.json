@@ -1,0 +1,169 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "f7f891184755ae4a71f9a283003903fa7b0ab4aa",
+  "scope": "Selected prospect conversion original request recovery, scoped cross-domain receipt/completion proof, explicit conflict reload, retained dialog/metadata/board ownership and synchronous protected dismissal",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 707,
+      "additionalCases": 16,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic actual dialog/controller/picker/board tests and synthetic TLS; conversion suite registered"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 502,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <conversion/picker/detail/board>",
+      "exitCode": 0,
+      "files": 4,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1276,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8920,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "validationCorrection": "A picker test now enters its functional component owner rather than directly calling hooks. Composite harness owns parent/key cleanup; existing board test covers status and conversion availability. No suppression.",
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/conversion-recovery.spec.ts",
+    "browserCases": 2,
+    "typechecked": true,
+    "scenarios": [
+      "Lost conversion acknowledgement at desktop width with same body/key",
+      "Acknowledged conversion destination-read outage at phone width without another POST"
+    ],
+    "syntheticIsolatedFixturesOnly": true,
+    "tracesVideosScreenshots": false
+  },
+  "preserved": {
+    "selectedSeparateDialogProjectBudgetReasons": true,
+    "languageRuleAndProjectModes": true,
+    "noReservationFinanceOrExternalMessage": true,
+    "originalSourceVersionBodyKey": true,
+    "currentActorRoleAndDetailOrigin": true,
+    "acknowledgedCompletionWithoutAnotherPOST": true,
+    "currentCanonicalSourceDestinationProof": true,
+    "knownConflictExplicitReloadAndReadOnlyStates": true,
+    "metadataBoardOwnerAndSynchronousDismissalProtection": true,
+    "backendAuthorityAtomicityReceiptsMergeHistory": true,
+    "noBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Affair creation/editor and other domain commands",
+    "Exact remaining field/action/context audit",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: no backend change this checkpoint",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/simulator/account/customer records/private configuration/import/export/transfer access",
+    "Executed migrations0036/0037 or another migration",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4689,
+      "sha256": "b5a4db7d5b2f0155ba20fbcd7551329076fedf69ec83ea0a322327d91c06ee2a"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-kanban.tsx",
+      "bytes": 5797,
+      "sha256": "4e5d75592c473d17a3be5cf7fbbe8fd3b7339cc017f6b366251a78aac906ddbe"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-record.tsx",
+      "bytes": 10009,
+      "sha256": "03a6e93a6996de6c1699fa6ec4230f1899e4d7fe5d776274a28ed952a2668de4"
+    },
+    {
+      "file": "frontend/src/features/deals/convert-lead.tsx",
+      "bytes": 12094,
+      "sha256": "fe143b5a601f4b8d4bbea0a57e2d1d7322b3450877494d58f71086d379a8457a"
+    },
+    {
+      "file": "frontend/src/features/deals/project-picker.tsx",
+      "bytes": 6049,
+      "sha256": "345b6a6cc21400e0d3ec1fb808ca36a106aa28eccc5b0c922c6e0d357de11d25"
+    },
+    {
+      "file": "frontend/src/features/deals/use-conversion-command.ts",
+      "bytes": 8715,
+      "sha256": "3710ac580ee963f029a8a9e278fdee389182a5949cc66fe35fd8afa2e807db0d"
+    },
+    {
+      "file": "frontend/tests/unit/enquiry-recovery.test.mjs",
+      "bytes": 22410,
+      "sha256": "65e564fb0686abac92e82fe45ac919520ae2742b6d9714e3164f9d65a3468bea"
+    },
+    {
+      "file": "frontend/tests/unit/entry-fixtures.mjs",
+      "bytes": 4452,
+      "sha256": "efce08807f42e4fef56e7fdbcda9de11aae9a2dda2617497372672b82de25acf"
+    },
+    {
+      "file": "frontend/tests/unit/conversion-fixtures.mjs",
+      "bytes": 6230,
+      "sha256": "5b4b87e557326e9d50c1642fdf91ea1627af26acb9dadc7ea291340f4392d3fb"
+    },
+    {
+      "file": "frontend/tests/unit/conversion-recovery.test.mjs",
+      "bytes": 13908,
+      "sha256": "fc8f9e756a418d122d01a877cf8c7bd8f06abfb5968d7709a8cfcd809e4da733"
+    },
+    {
+      "file": "frontend/tests/e2e/conversion-recovery.spec.ts",
+      "bytes": 5850,
+      "sha256": "0bd845dea07857cc246d03075b1f2e69901aa3247d576ca83b6f26b3276ec842"
+    }
+  ]
+}

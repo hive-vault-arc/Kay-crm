@@ -1,5 +1,18 @@
 # KAY interface design system
 
+## Current selected prototype migration: 2026-10-26
+
+The owner's current visual/UX authority is the frozen selected KAY prototype,
+including its deliberate differences from older repository layouts. The
+[current DESIGN override](../../DESIGN.md),
+[migration plan](../03-planning/design-prototype-migration-2026-10-25.md) and
+[execution](../03-planning/design-prototype-migration-execution.md) govern the
+feature branch. Pearl/graphite/Inter, compact rails, consistent record tabs,
+table-free drawers and the selected mobile density supersede conflicting
+Riviera appearance notes below. Reuse shadcn/Tailwind/Bklit and real API rules;
+do not treat this as permission to change data/authority. Glyph exceptions are
+explicitly source-pinned in the shared typed registry. Native review is pending.
+
 ## Help centre and footer entry: owner request, 2026-10-23
 
 Aide sits immediately above the signed-in identity in AccountFooter. Existing

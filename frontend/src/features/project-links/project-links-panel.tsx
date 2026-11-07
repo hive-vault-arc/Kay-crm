@@ -20,10 +20,10 @@ type Kind = "discussed" | "visited";
 type CatalogueChoice = { development_id?: string; property_id?: string; name: string };
 
 export function ProjectLinksPanel({ scope, id, writable, onChanged }: { scope: Scope; id: string; writable: boolean; onChanged: () => void }) {
-  return <section className="crm-panel grid min-w-0 gap-4" aria-label="Projets liés au dossier">
+  return <section className="kay-linked-projects grid min-w-0 gap-4" aria-label="Projets liés au dossier">
     <SectionHeading compact icon={PropertyIcon}>Projets liés</SectionHeading>
     <p className="text-sm text-muted-foreground">Reliez les programmes et les biens du catalogue discutés ou visités. Ces deux listes restent indépendantes des offres et réservations.</p>
-    <div className="grid min-w-0 gap-6 lg:grid-cols-2">
+    <div className="kay-linked-project-columns">
       <LinkList scope={scope} id={id} kind="discussed" writable={writable} onChanged={onChanged} />
       <LinkList scope={scope} id={id} kind="visited" writable={writable} onChanged={onChanged} />
     </div>
@@ -64,8 +64,8 @@ function LinkList({ scope, id, kind, writable, onChanged }: { scope: Scope; id: 
   }
   return <section className="grid min-w-0 content-start gap-3 border-t pt-4" aria-label={title}>
     <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-base font-semibold">{title}</h3>{list.value ? <span className="text-xs tabular-nums text-muted-foreground">{list.value.total}</span> : null}</div>
-    {list.error ? <RecordError error={list.error} retry={list.refresh} /> : !list.value ? <p role="status">Chargement des projets…</p> : list.value.items.length ? <ul className="grid min-w-0 gap-2">{list.value.items.map(row => <li key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b pb-2">
-      <Link className="min-h-control min-w-0 content-center wrap-anywhere text-link underline" href={row.development_id ? `/projects/${row.development_id}` : `/projects/properties/${row.property_id}`}>{row.name}</Link>
+    {list.error ? <RecordError error={list.error} retry={list.refresh} /> : !list.value ? <p role="status">Chargement des projets…</p> : list.value.items.length ? <ul className="kay-linked-project-list">{list.value.items.map(row => <li key={row.id}>
+      <Link className="kay-linked-project-open" href={row.development_id ? `/projects/${row.development_id}` : `/projects/properties/${row.property_id}`}><PropertyIcon size={16} aria-hidden="true" /><span>{row.name}<small>{row.development_id ? "Programme" : "Bien du catalogue"}</small></span></Link>
       {writable ? confirm === row.id ? <span className="flex flex-wrap gap-1"><Button action="remove" size="compact" variant="destructive" disabled={busy} onClick={() => void mutate(row)}>Confirmer le retrait</Button><Button action="cancel" size="compact" variant="outline" disabled={busy} onClick={() => setConfirm(undefined)}>Annuler</Button></span> : <Button action="remove" variant="quiet" size="compact" disabled={busy} onClick={() => setConfirm(row.id)}>Retirer</Button> : null}
     </li>)}</ul> : <p className="text-sm text-muted-foreground">Aucun projet {kind === "discussed" ? "discuté" : "visité"} enregistré.</p>}
     {list.value && list.value.total > 25 ? <NumberedPages page={page} total={list.value.total} size={25} change={setPage} label={`Pages des projets ${kind === "discussed" ? "discutés" : "visités"}`} /> : null}

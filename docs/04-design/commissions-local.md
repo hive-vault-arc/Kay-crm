@@ -1,5 +1,12 @@
 # Local optional commissions and collections (SP-16)
 
+Current selected-design implementation,2026-10-27: the old Dossier/Finance tab
+description below is historical. The Deal retains four main tabs and a supporting
+Finance drawer, tonal cards and focused managed forms. Existing business/security
+contracts remain. See [current Finance workspace](finance-workspace-local.md)
+for recovery/authority behavior, evidence and remaining collection-layout/native/
+full-stack work. Source progress is not product approval.
+
 Status: technically accepted at the local SP-16 boundary; product review pending
 Date: 2026-10-15
 Evidence: [SP-16 execution](../03-planning/sprints/sp-16-execution.md).
@@ -44,7 +51,9 @@ unbounded queries are rejected. Expected versions are strict positive integers.
 
 | Route | Contract |
 |---|---|
+| GET /deals/{id}/commission-creation-key | Current M/A/writable dossier, no query, no-store; timestamped creation request ID and expiry; no financial fact |
 | GET/POST /deals/{id}/commissions | Scoped list; create Terms + expected_deal_version |
+| GET /deals/{id}/finance-history | M/A-only numbered revisions across this Deal's commissions; existing revision fields plus deal_id/commission_id |
 | GET /commissions/{id} | Current immutable revision, collected_mad and balance_mad |
 | GET /commissions/{id}/revisions | Numbered true-actor/reason/previous-revision history |
 | GET /commissions/{id}/receipts | Numbered retained originals/replacements/valid flags |
@@ -58,6 +67,15 @@ original result only after current authorization; changed-body reuse returns409.
 VERSION_CONFLICT requires deliberate comparison/acceptance, not silent overwrite.
 OVER_COLLECTION/COMMISSION_BELOW_COLLECTIONS reject without partial financial facts.
 The UI retains drafts and retry identity after response loss or service failure.
+
+Redesign candidate follow-through,2026-10-29: uncached NewCommission requests use
+a backend-issued UUIDv7 with a proposed five-minute first-application window.
+Retained receipts, including legacy keys, are checked before that window and
+keep the confirmed24-hour replay contract. Missing expired/non-v7 creation keys
+fail closed before apply; ordinary Deal counters/history are unchanged. This is
+not permanent receipt storage or an authority capability. Compatibility, exact
+ordering and pending real-stack checks are in the
+[creation-key contract](finance-creation-keys-local.md).
 
 ## Immutable facts, balance and reopening
 

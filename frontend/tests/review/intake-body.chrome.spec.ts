@@ -11,13 +11,13 @@ test("SP20 413 correction: real UTF-8 byte cap preserves editable draft and shor
   page.on("console", message => { if (message.type() === "error" && !message.text().includes("status of 413")) errors.push("CONSOLE_ERROR"); });
   try {
     await intakeFixture(page); await fillWebsite(page);
-    await page.getByLabel("Message (facultatif)", { exact: true }).fill("界".repeat(3000));
+    await page.getByLabel("Votre demande (facultative)", { exact: true }).fill("界".repeat(3000));
     const rejected = page.waitForResponse(response => response.url() === simulatorOrigin + "/submit" && response.status() === 413);
     await page.getByRole("button", { name: "Envoyer la demande", exact: true }).click(); await rejected;
     const alert = page.getByRole("alert").filter({ hasText: "Raccourcissez le message" });
     await expect(alert).toBeVisible();
     await expect(page.getByLabel("Nom complet", { exact: true })).toBeEnabled();
-    await expect(page.getByLabel("Message (facultatif)", { exact: true })).toHaveValue("界".repeat(3000));
+    await expect(page.getByLabel("Votre demande (facultative)", { exact: true })).toHaveValue("界".repeat(3000));
     await expect(page.locator("dd")).toHaveCount(0);
     await mkdir("output/playwright", { recursive: true });
     for (const [name, width, height] of [["mobile", 390, 844], ["desktop", 1440, 1000]] as const) {
@@ -32,7 +32,7 @@ test("SP20 413 correction: real UTF-8 byte cap preserves editable draft and shor
         await (await import("node:fs/promises")).writeFile(`output/playwright/sp20-body-error-${name}.png`, Buffer.from(shot.data, "base64"));
       } finally { await cdp.detach(); }
     }
-    await page.getByLabel("Message (facultatif)", { exact: true }).fill("SP20 message synthétique raccourci");
+    await page.getByLabel("Votre demande (facultative)", { exact: true }).fill("SP20 message synthétique raccourci");
     await page.getByRole("button", { name: "Envoyer la demande", exact: true }).click();
     await expect(page.getByRole("status")).toHaveText("En attente de traitement");
     await page.setViewportSize({ width: 390, height: 844 });

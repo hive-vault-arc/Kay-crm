@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "base": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+  "scope": "Selected workspace foundation only; feature layout migration remains in progress",
+  "checks": [
+    {
+      "result": "passed; 50 semantic icons / 380 Button sites / zero inventory violations",
+      "command": "npm run lint"
+    },
+    {
+      "result": "passed",
+      "command": "npm run typecheck"
+    },
+    {
+      "result": "107 passed",
+      "command": "npm run test:unit"
+    },
+    {
+      "result": "passed; runtime 0 / full 0 vulnerabilities / 0 exceptions",
+      "command": "npm run security:check"
+    },
+    {
+      "result": "existing lockfile installed; Next 16.4.2; no manifest/lock changes",
+      "command": "npm ci"
+    },
+    {
+      "result": "passed; pinned Next 16.4.2; fresh final build captured after all foundation source changes",
+      "command": "npm run build"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "branding/prototype/kay-workspace.tokens.json",
+      "sha256": "114538754383383ed1f32a4759c953faf33b403a5cc85992784a1cb24f1648f6"
+    },
+    {
+      "path": "branding/prototype/kay-glyphs.json",
+      "sha256": "c5e542494e7fb851bbb1575833d08732a80335cf8257ac6f7e7306ea167838f9"
+    },
+    {
+      "path": "frontend/src/app/workspace.css",
+      "sha256": "b0b6f50f544dac031db29f99fe9760ce1e32d04e8a4a7a2df296a051d1dbb961"
+    },
+    {
+      "path": "frontend/src/components/icons/index.tsx",
+      "sha256": "0d8c0f591471a6136a65ebefbf8ba05e85810fa08a28224d3294c70a0817a2b3"
+    },
+    {
+      "path": "frontend/src/features/shell/workspace-shell.tsx",
+      "sha256": "44d64077910f672cad35bcd3b3f62996ef50f21fda56e904d12b3653c1338c9a"
+    },
+    {
+      "path": "frontend/src/fonts/InterVariable.woff2",
+      "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3"
+    },
+    {
+      "path": "frontend/public/images/workspace/kay-logo.svg",
+      "sha256": "53f3d214c0246d9c127b6225d35ba385e1b60ed6f7f284a1db36605fd5282327"
+    },
+    {
+      "path": "frontend/public/images/workspace/kay-pearl-atmosphere.png",
+      "sha256": "7c443fad9a68adb73d4b740e49b634f014ab2c72f9fb85da82b90a7eeb482c88"
+    }
+  ],
+  "limitations": [
+    "No app HTTP or native browser access; prior automatic approval restriction remains binding",
+    "No backend/database/worker/private transfer or final real-stack/security acceptance",
+    "Native fidelity, keyboard/touch/zoom, AFTER audit and owner product approval pending after implementation",
+    "No push, main change or merge"
+  ],
+  "excludedLocalWork": [
+    "docs/AGENT_LESSONS.md: pre-existing 35 added lines",
+    "docs/03-planning/prototype-motion-plan-2026-10-23.md: pre-existing untracked note"
+  ]
+}

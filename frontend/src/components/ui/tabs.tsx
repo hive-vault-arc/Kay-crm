@@ -9,10 +9,10 @@ export function Tabs({ className, ...props }: React.ComponentProps<typeof Primit
   return <Primitive.Root data-slot="tabs" className={cn("grid min-w-0 gap-5", className)} {...props} />;
 }
 export function TabsList({ className, ...props }: React.ComponentProps<typeof Primitive.List>) {
-  return <Primitive.List className={cn("flex flex-wrap gap-x-2 border-b bg-card px-2", className)} {...props} />;
+  return <Primitive.List data-slot="tabs-list" className={cn("flex min-w-0 flex-wrap gap-1 border-b bg-transparent p-3", className)} {...props} />;
 }
 export function TabsTrigger({ className, ...props }: React.ComponentProps<typeof Primitive.Trigger>) {
-  return <Primitive.Trigger className={cn("inline-flex min-h-control items-center justify-center border-b-2 border-transparent px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-50 data-[state=active]:border-ring data-[state=active]:text-foreground", className)} {...props} />;
+  return <Primitive.Trigger data-slot="tabs-trigger" className={cn("inline-flex min-h-control items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground", className)} {...props} />;
 }
 export function TabsContent({ className, ...props }: React.ComponentProps<typeof Primitive.Content>) {
   return <Primitive.Content data-slot="tabs-content" className={cn("min-w-0 outline-offset-4 focus-visible:outline-2 focus-visible:outline-ring", className)} {...props} />;

@@ -101,18 +101,19 @@ def read_list(database: Database, token: str, query: DealQuery) -> dict[str, obj
                 projects = projects.where(DealProject.property_id == query.property_id)
             base = base.where(Deal.id.in_(projects))
         zone = ZoneInfo("Africa/Casablanca")
-        if query.updated_from:
-            base = base.where(
-                Deal.updated_at
-                >= datetime.combine(query.updated_from, time.min, zone).astimezone(UTC)
-            )
-        if query.updated_to and query.updated_to < date.max:
-            base = base.where(
-                Deal.updated_at
-                < datetime.combine(query.updated_to + timedelta(days=1), time.min, zone).astimezone(
-                    UTC
+        for time_column, start, end in (
+            (Deal.created_at, query.created_from, query.created_to),
+            (Deal.updated_at, query.updated_from, query.updated_to),
+        ):
+            if start:
+                base = base.where(
+                    time_column >= datetime.combine(start, time.min, zone).astimezone(UTC)
                 )
-            )
+            if end and end < date.max:
+                base = base.where(
+                    time_column
+                    < datetime.combine(end + timedelta(days=1), time.min, zone).astimezone(UTC)
+                )
         filtered = base.subquery()
         total = session.scalar(select(func.count()).select_from(filtered)) or 0
         counts: dict[str, int] = dict(

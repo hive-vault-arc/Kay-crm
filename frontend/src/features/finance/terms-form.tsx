@@ -1,38 +1,62 @@
 "use client";
-import { FinanceIcon } from "@/components/icons";
-import { SectionHeading } from "@/components/shared/section-heading";
 import { useEffect, useId, useRef, useState } from "react";
+import { FinanceIcon } from "@/components/icons";
+import { useDossierDraft } from "@/components/shared/dossier-form";
+import { RecordEntry } from "@/components/shared/record-entry";
+import { RecordSection } from "@/components/shared/record-workspace";
+import { useUnsavedGuard } from "@/components/shared/unsaved-guard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
+import { RecordError } from "@/features/contacts/record-states";
+import { useHydrated } from "@/hooks/use-hydrated";
 import { calculatedAmount, correctCommissionSchema, mad, newCommissionSchema, type Commission } from "./contracts";
 import { FinanceConfirmation } from "./confirmation";
-import { FinanceFailure, useFinanceMutation, type Denied, type Saved } from "./mutation";
+import { FinanceFailure, useFinanceMutation, type Denied, type Saved, type FinanceBinding } from "./mutation";
 
-export function TermsForm({ dealId, dealVersion, value, saved, denied, cancel }: { dealId: string; dealVersion: number; value?: Commission; saved: Saved; denied: Denied; cancel: () => void }) {
-  const form = useRef<HTMLFormElement>(null), id = useId(), first = useRef<HTMLSelectElement>(null), submit = useRef<HTMLButtonElement>(null);
-  const [kind, setKind] = useState<"fixed" | "percentage">(value?.current.kind ?? "fixed"), [base, setBase] = useState(value?.current.base_mad ?? ""), [rate, setRate] = useState(value?.current.rate_percent ?? ""), [amount, setAmount] = useState(value?.current.amount_mad ?? ""), [due, setDue] = useState(value?.current.due_on ?? ""), [reason, setReason] = useState("");
-  const [expected, setExpected] = useState(value?.version ?? dealVersion), [invalid, setInvalid] = useState<Record<string, string>>({}), [pending, setPending] = useState<unknown>();
-  const mutation = useFinanceMutation(dealId, value?.id, saved, denied);
-  useEffect(() => { first.current?.focus(); }, []);
-  const terms = { kind, base_mad: base.trim().replace(",", "."), rate_percent: kind === "percentage" ? rate.trim().replace(",", ".") : null, amount_mad: kind === "fixed" ? amount.trim().replace(",", ".") : null, due_on: due || null };
-  const preview = calculatedAmount(terms), label = value ? "Confirmer la correction de commission" : "Enregistrer la commission prévue";
-  async function save(body: unknown) { await mutation.save(value ? `/api/v1/commissions/${value.id}/correct` : `/api/v1/deals/${dealId}/commissions`, body); setPending(undefined); }
-  return <form ref={form} className="grid min-w-0 gap-6 border-t pt-5" aria-label={value ? "Correction de commission" : "Nouvelle commission"} noValidate onSubmit={event => { event.preventDefault(); const parsed = value ? correctCommissionSchema.safeParse({ ...terms, target: "commission", expected_version: expected, reason }) : newCommissionSchema.safeParse({ ...terms, expected_deal_version: expected }); if (!parsed.success) { setInvalid(Object.fromEntries(parsed.error.issues.map(issue => [String(issue.path[0]), issue.message]))); requestAnimationFrame(() => form.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus()); return; } setInvalid({}); if (value) setPending(parsed.data); else void save(parsed.data); }}>
-    <SectionHeading as="h3" icon={FinanceIcon} tone="teal">{value ? "Corriger la commission" : "Prévoir une commission facultative"}</SectionHeading><p>Une commission prévue n’est ni reconnue ni encaissée. Le calcul conserve la base et le taux exacts ; seul le montant MAD final est arrondi à deux décimales.</p>
-    <div className="grid gap-4"><div className="grid gap-2"><Label htmlFor={`${id}-kind`}>Mode de commission</Label><NativeSelect ref={first} id={`${id}-kind`} value={kind} disabled={mutation.busy} onChange={event => setKind(event.target.value as "fixed" | "percentage")}><option value="fixed">Montant fixe</option><option value="percentage">Pourcentage</option></NativeSelect></div>
-      <FinanceField id={`${id}-base`} label="Base explicite (MAD)" value={base} changed={setBase} disabled={mutation.busy} error={invalid.base_mad} />
-      {kind === "fixed" ? <FinanceField id={`${id}-amount`} label="Montant de commission (MAD)" value={amount} changed={setAmount} disabled={mutation.busy} error={invalid.amount_mad} /> : <FinanceField id={`${id}-rate`} label="Taux de commission (%)" value={rate} changed={setRate} disabled={mutation.busy} error={invalid.rate_percent} />}
-      <div className="grid gap-2"><Label htmlFor={`${id}-due`}>Échéance (facultative)</Label><Input id={`${id}-due`} type="date" value={due} disabled={mutation.busy} onChange={event => setDue(event.target.value)} aria-invalid={Boolean(invalid.due_on)} /></div>
-      {value ? <div className="grid gap-2"><Label htmlFor={`${id}-reason`}>Motif de correction</Label><Textarea id={`${id}-reason`} value={reason} maxLength={1000} aria-required aria-invalid={Boolean(invalid.reason)} aria-describedby={invalid.reason ? `${id}-reason-error` : undefined} disabled={mutation.busy} onChange={event => setReason(event.target.value)} />{invalid.reason ? <p id={`${id}-reason-error`} className="text-danger">Expliquez la correction (1 à 1 000 caractères).</p> : null}</div> : null}
-    </div>{Object.keys(invalid).length ? <p role="alert" className="text-danger">Vérifiez les champs indiqués. Base/taux : au plus huit décimales ; montant : deux décimales, strictement positif.</p> : null}<p role="status">Montant calculé : {preview ? mad(preview) : "renseignez une base et un montant ou taux valides"}.</p>
-    <FinanceFailure mutation={mutation} acceptVersion={setExpected} /><div className="flex flex-wrap gap-2"><Button action={value ? "preview" : "save"} ref={submit} type="submit" disabled={mutation.busy}>{mutation.busy ? "Enregistrement…" : value ? "Vérifier la correction" : label}</Button><Button action="close" type="button" variant="outline" disabled={mutation.busy} onClick={cancel}>Fermer le formulaire</Button></div>
-    {pending ? <FinanceConfirmation title={label} busy={mutation.busy} cancel={() => setPending(undefined)} returnFocus={submit} confirm={() => void save(pending)}><p>Montant précédent : {mad(mutation.latest?.current.amount_mad ?? value!.current.amount_mad)}</p><p>Nouveau montant : {mad(preview!)}</p><p>Base : {mad(terms.base_mad)}{kind === "percentage" ? ` ; taux : ${terms.rate_percent} %` : ""}</p><p className="whitespace-pre-wrap wrap-anywhere">Motif : {reason}</p><p>L’original et les encaissements restent conservés. Cette confirmation enregistre aussi votre revue après une réouverture.</p></FinanceConfirmation> : null}
+type Pending = { body: unknown; preview: string; before?: string; base: string; rate: string | null; reason: string };
+const initial = (value?: Commission) => ({ kind: value?.current.kind ?? "fixed", base: value?.current.base_mad ?? "", rate: value?.current.rate_percent ?? "", amount: value?.current.kind === "fixed" ? value.current.amount_mad : "", due: value?.current.due_on ?? "", reason: "" });
+export function TermsForm({ dealId, dealVersion, value, saved, denied, cancel, writable = true, binding }: { dealId: string; dealVersion: number; value?: Commission; saved: Saved; denied: Denied; cancel: () => void; writable?: boolean; binding?: FinanceBinding }) {
+  const form = useRef<HTMLFormElement>(null), id = useId(), first = useRef<HTMLSelectElement>(null), submit = useRef<HTMLButtonElement>(null), alive = useRef(true);
+  const [source, setSource] = useState(value), [fields, setFields] = useState(() => initial(value)), [expected, setExpected] = useState(value?.version ?? dealVersion);
+  const [invalid, setInvalid] = useState<Record<string, string>>({}), [pending, setPending] = useState<Pending>();
+  const hydrated = useHydrated(), guard = useUnsavedGuard();
+  const mutation = useFinanceMutation(dealId, value?.id, onSaved, denied, undefined, writable, { ...binding, version: value?.version ?? dealVersion });
+  const draft = useDossierDraft({ ...fields, recovery: mutation.uncertain }, mutation.busy);
+  async function onSaved(result: { id: string; version: number }) { await saved(result); if (alive.current) draft.accept({ ...fields, recovery: false }); }
+  useEffect(() => { alive.current = true; first.current?.focus(); return () => { alive.current = false; }; }, []);
+  useEffect(() => { if (Object.keys(invalid).length) form.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(); }, [invalid]);
+  const terms = { kind: fields.kind, base_mad: fields.base.trim().replace(",", "."), rate_percent: fields.kind === "percentage" ? fields.rate.trim().replace(",", ".") : null, amount_mad: fields.kind === "fixed" ? fields.amount.trim().replace(",", ".") : null, due_on: fields.due || null };
+  const preview = calculatedAmount(terms), disabled = !hydrated || mutation.busy || mutation.uncertain || !writable || Boolean(pending) || !mutation.canEdit();
+  const label = value ? "Confirmer la correction de commission" : "Enregistrer la commission prévue";
+  function change(key: keyof typeof fields, next: string) { if (disabled || !mutation.canEdit()) return; setFields(current => ({ ...current, [key]: next })); setInvalid({}); }
+  async function save(body: unknown) { if (!hydrated || !writable) return; await mutation.save(value ? `/api/v1/commissions/${value.id}/correct` : `/api/v1/deals/${dealId}/commissions`, body); if (alive.current) setPending(undefined); }
+  function close() { if (!mutation.isBusy()) guard.request(cancel, form.current ?? undefined); }
+  if (mutation.accessError) return <>{mutation.acknowledged ? <p role="status">L’opération est enregistrée. Les droits d’accès ont changé.</p> : null}<RecordError error={mutation.accessError} /></>;
+  return <form ref={form} className="kay-drawer-form" data-draft-managed data-live-dirty={draft.dirty} data-write-recovery={mutation.uncertain} aria-busy={mutation.busy} aria-label={value ? "Correction de commission" : "Nouvelle commission"} noValidate onSubmit={event => {
+    event.preventDefault(); if (disabled || !mutation.canEdit()) return;
+    const parsed = value ? correctCommissionSchema.safeParse({ ...terms, target: "commission", expected_version: expected, reason: fields.reason }) : newCommissionSchema.safeParse({ ...terms, expected_deal_version: expected });
+    if (!parsed.success) { setInvalid(Object.fromEntries(parsed.error.issues.map(issue => [String(issue.path[0]), issue.message]))); return; }
+    setInvalid({}); if (value) setPending({ body: parsed.data, preview: preview!, before: source?.current.amount_mad, base: terms.base_mad, rate: terms.rate_percent, reason: fields.reason }); else void save(parsed.data);
+  }}>
+    <fieldset disabled={disabled} className="grid min-w-0 gap-5 border-0 p-0"><legend className="sr-only">Calcul de commission</legend><RecordSection title={value ? "Corriger la commission" : "Prévoir une commission"} description="Une commission prévue n’est ni reconnue ni encaissée.">
+      <div className="kay-form-pair"><div className="grid min-w-0 gap-2"><Label htmlFor={`${id}-kind`}>Mode de commission</Label><NativeSelect ref={first} id={`${id}-kind`} name="kind" value={fields.kind} onChange={event => change("kind", event.target.value)}><option value="fixed">Montant fixe</option><option value="percentage">Pourcentage</option></NativeSelect></div><FinanceField id={`${id}-base`} name="base" label="Base explicite (MAD)" value={fields.base} changed={next => change("base", next)} error={invalid.base_mad} />
+      {fields.kind === "fixed" ? <FinanceField id={`${id}-amount`} name="amount" label="Montant de commission (MAD)" value={fields.amount} changed={next => change("amount", next)} error={invalid.amount_mad} /> : <FinanceField id={`${id}-rate`} name="rate" label="Taux de commission (%)" value={fields.rate} changed={next => change("rate", next)} error={invalid.rate_percent} />}
+      <div className="grid min-w-0 gap-2"><Label htmlFor={`${id}-due`}>Échéance (facultative)</Label><Input id={`${id}-due`} name="due" type="date" value={fields.due} onChange={event => change("due", event.target.value)} aria-invalid={Boolean(invalid.due_on)} /></div></div>
+      {value ? <div className="grid min-w-0 gap-2"><Label htmlFor={`${id}-reason`}>Motif de correction</Label><Textarea id={`${id}-reason`} name="reason" value={fields.reason} maxLength={1000} aria-required aria-invalid={Boolean(invalid.reason)} aria-describedby={invalid.reason ? `${id}-reason-error` : undefined} onChange={event => change("reason", event.target.value)} />{invalid.reason ? <p id={`${id}-reason-error`} className="text-sm text-danger">Expliquez la correction (1 à 1 000 caractères).</p> : null}</div> : null}
+    </RecordSection></fieldset>
+    <RecordEntry title={preview ? mad(preview) : "Montant à calculer"} icon={FinanceIcon}><p className="text-sm text-muted-foreground">Base et taux exacts ; seul le montant MAD final est arrondi à deux décimales.</p></RecordEntry>
+    {!writable ? <p role="status" className="text-sm text-muted-foreground">Dossier ou contact archivé : la finance est en lecture seule.</p> : null}
+    {Object.keys(invalid).length ? <p role="alert" className="text-sm text-danger">Vérifiez les champs indiqués. Base/taux : huit décimales au plus ; montant : deux décimales, strictement positif.</p> : null}
+    <FinanceFailure mutation={mutation} acceptVersion={(version, current) => { setExpected(version); if (current) { setSource(current); draft.accept({ ...initial(current), recovery: false }); } }} />
+    <footer className="kay-form-footer"><Button action="cancel" type="button" variant="outline" disabled={mutation.busy} onClick={close}>Annuler</Button><Button action={value ? "preview" : "save"} ref={submit} type="submit" disabled={disabled}>{mutation.busy ? "Enregistrement…" : value ? "Vérifier la correction" : label}</Button></footer>
+    {pending ? <FinanceConfirmation title={label} busy={mutation.busy} disabled={!hydrated || !writable} cancel={() => setPending(undefined)} returnFocus={submit} confirm={() => void save(pending.body)}><p>Montant précédent : {mad(pending.before ?? "0.00")}</p><p>Nouveau montant : {mad(pending.preview)}</p><p>Base : {mad(pending.base)}{pending.rate !== null ? ` ; taux : ${pending.rate} %` : ""}</p><p className="whitespace-pre-wrap wrap-anywhere">Motif : {pending.reason}</p><p>L’original et les encaissements restent conservés. Cette confirmation consigne aussi votre revue après réouverture.</p></FinanceConfirmation> : null}
+    {guard.dialog}
   </form>;
 }
 
-export function FinanceField({ id, label, value, changed, disabled, error }: { id: string; label: string; value: string; changed: (value: string) => void; disabled: boolean; error?: string }) {
-  return <div className="grid gap-2"><Label htmlFor={id}>{label}</Label><Input id={id} inputMode="decimal" value={value} disabled={disabled} aria-required aria-invalid={Boolean(error)} aria-describedby={error ? `${id}-error` : undefined} onChange={event => changed(event.target.value)} />{error ? <p id={`${id}-error`} className="text-danger">Indiquez une valeur décimale strictement positive, sans notation scientifique.</p> : null}</div>;
+export function FinanceField({ id, name, label, value, changed, disabled = false, error }: { id: string; name?: string; label: string; value: string; changed: (value: string) => void; disabled?: boolean; error?: string }) {
+  return <div className="grid min-w-0 gap-2"><Label htmlFor={id}>{label}</Label><Input id={id} name={name} inputMode="decimal" maxLength={40} value={value} disabled={disabled} aria-required aria-invalid={Boolean(error)} aria-describedby={error ? `${id}-error` : undefined} onChange={event => changed(event.target.value)} />{error ? <p id={`${id}-error`} className="text-sm text-danger">Indiquez une valeur décimale strictement positive, sans notation scientifique.</p> : null}</div>;
 }

@@ -1,0 +1,55 @@
+/* Frozen work-reports/app.css plus drawer-cards.css; one existing Sheet scroller. */
+.kay-reports,.kay-report-overview,.kay-report-records { display:grid; min-width:0; gap:24px; }
+.kay-reports [hidden] { display:none; }
+.kay-report-controls { display:grid; min-width:0; gap:12px; padding:16px; border-radius:18px; background:var(--workspace-field); }
+.kay-report-period { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.kay-report-period > div,.kay-report-alert-filter > div { display:grid; min-width:0; gap:6px; }
+.kay-report-period input { min-width:0; width:100%; }
+.kay-report-period-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.kay-report-period-actions > p { flex:1 1 220px; }
+.kay-report-caption,.kay-report-scope { min-width:0; font-size:12px; line-height:1.6; color:var(--workspace-muted); overflow-wrap:anywhere; }
+.kay-report-scope { margin:16px 0; }
+.kay-report-section { display:grid; gap:14px; min-width:0; }
+.kay-report-section > h2 { font-size:15px; }
+.kay-report-grid { display:flex; flex-wrap:wrap; gap:12px; min-width:0; }
+.kay-report-grid > article { flex:1 1 calc((100% - 12px)/2); min-width:min(100%,220px); }
+.kay-report-metric { position:relative; display:grid; align-content:start; gap:8px; padding:14px; border-radius:18px; background:var(--workspace-field); transition:background-color var(--motion-local); }
+.kay-report-metric h3 { min-height:40px; font-size:14px; line-height:20px; font-weight:600; overflow-wrap:anywhere; }
+.kay-report-metric > strong { font-size:26px; line-height:1.25; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.kay-report-metric > small { font-size:11px; line-height:1.5; color:var(--workspace-muted); }
+.kay-report-metric [data-slot=button] { justify-content:flex-start; padding:0; min-height:44px; font-size:12px; font-weight:550; background:transparent; }
+.kay-report-metric [data-slot=button]::after { content:""; position:absolute; inset:0; border-radius:18px; }
+.kay-report-metric [data-slot=button]:focus-visible { outline:0; box-shadow:none; }
+.kay-report-metric [data-slot=button]:focus-visible::after { outline:2px solid var(--workspace-focus); outline-offset:2px; }
+.kay-report-tool[data-slot=button],.kay-report-record[data-slot=button],.kay-report-alert-tool[data-slot=button] { display:flex; width:100%; min-height:44px; height:auto; min-width:0; gap:12px; padding:16px; text-align:left; border:1px solid var(--workspace-line); border-radius:var(--workspace-geometry-inset-radius); background:var(--workspace-field); }
+.kay-report-tool > span,.kay-report-record > span { flex:1; min-width:0; overflow-wrap:anywhere; }
+.kay-report-tool [data-kay-icon] { flex:none; color:var(--workspace-muted); }
+.kay-report-record [data-action-icon] { order:2; margin-left:auto; color:var(--workspace-muted); }
+.kay-report-record-copy { display:grid; min-width:0; gap:4px; }
+.kay-report-record-copy strong { font-size:14px; line-height:1.5; font-weight:550; overflow-wrap:anywhere; }
+.kay-report-record-copy small { font-size:12px; line-height:1.6; color:var(--workspace-muted); overflow-wrap:anywhere; }
+.kay-report-record-value { display:block; margin-top:6px; font-size:13px; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.kay-report-record > .kay-report-record-value { flex:none; }
+.kay-report-view-title { display:flex; align-items:center; gap:8px; margin:16px 0; font-size:15px; line-height:1.5; font-weight:600; overflow-wrap:anywhere; }
+.kay-report-view-title svg { flex:none; color:var(--workspace-muted); }
+.kay-report-attribution { display:grid; min-width:0; gap:12px; }
+.kay-report-attribution > .surface { padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.kay-report-alert-filter { display:flex; align-items:flex-end; gap:8px; min-width:0; }
+.kay-report-alert-filter > div { flex:1; }
+.kay-report-empty { display:grid; justify-items:center; gap:8px; min-width:0; padding:22px 16px; border-radius:18px; background:var(--workspace-field); text-align:center; }
+.kay-report-empty > svg { color:var(--workspace-muted); }
+.kay-report-empty > strong { font-size:14px; }
+.kay-report-empty > p { max-width:36ch; font-size:13px; line-height:1.6; color:var(--workspace-muted); }
+@media(hover:hover) and (pointer:fine) {
+  .kay-report-metric:hover,.kay-report-tool[data-slot=button]:hover,.kay-report-record[data-slot=button]:hover,.kay-report-alert-tool[data-slot=button]:hover { background:var(--workspace-selected); }
+}
+@media(max-width:560px) {
+  .kay-report-metric { grid-template-columns:minmax(0,1fr) auto; align-items:center; }
+  .kay-report-metric h3 { min-height:0; }
+  .kay-report-metric > strong { font-size:24px; }
+  .kay-report-metric > small,.kay-report-metric > [data-slot=button] { grid-column:1/-1; }
+  .kay-report-metric[data-metric=collections] { grid-template-columns:minmax(0,1fr); }
+}
+@media(max-width:360px) { .kay-report-period { grid-template-columns:minmax(0,1fr); } }
+@media(prefers-reduced-motion:reduce) { .kay-report-metric { transition:none; } }
+@media(forced-colors:active) { .kay-report-metric,.kay-report-controls,.kay-report-record[data-slot=button],.kay-report-tool[data-slot=button],.kay-report-alert-tool[data-slot=button],.kay-report-empty { border:1px solid CanvasText; background:Canvas; } }

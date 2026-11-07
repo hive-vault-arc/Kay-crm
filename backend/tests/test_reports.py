@@ -45,6 +45,8 @@ def test_empty_zero_role_projection_and_all_metric_drill_parity(settings, databa
 
 
 def test_transfer_collaborator_true_actor_current_owner_and_private_counts(settings, database):
+    # Notes are created now, unlike the explicitly dated financial/outcome facts.
+    period = PeriodQuery()
     uid, agent, contact, _ = setup(settings, database)
     other_id, other = actor(settings, database)
     _, private = actor(settings, database)
@@ -54,14 +56,14 @@ def test_transfer_collaborator_true_actor_current_owner_and_private_counts(setti
         settings, database, manager, contact, intent("collaborators", collaborator_ids=[other_id])
     )
     note(settings, database, other, contact)
-    before = metrics(database, manager)
+    before = metrics(database, manager, period)
     assert before["contacts"]["series"] == [
         {"id": str(uid), "label": before["contacts"]["series"][0]["label"], "value": 1}
     ]
-    assert metrics(database, other)["contacts"]["total"] == 1
+    assert metrics(database, other, period)["contacts"]["total"] == 1
     actions = {p["id"]: p["value"] for p in before["activities"]["series"]}
     assert actions[str(other_id)] == 1
-    assert all(m["total"] == 0 for m in metrics(database, private).values())
+    assert all(m["total"] == 0 for m in metrics(database, private, period).values())
     change(
         settings,
         database,
@@ -69,9 +71,9 @@ def test_transfer_collaborator_true_actor_current_owner_and_private_counts(setti
         contact,
         intent("assign", version=2, primary_agent_id=other_id),
     )
-    after = metrics(database, manager)
+    after = metrics(database, manager, period)
     assert after["contacts"]["series"][0]["id"] == str(other_id)
-    assert all(m["total"] == 0 for m in metrics(database, agent).values())
+    assert all(m["total"] == 0 for m in metrics(database, agent, period).values())
     detail = drill_down(database, other, DrillQuery(metric="active_deals"))
     assert detail["items"][0]["href"] == f"/deals/{did}"
     copied = drill_down(database, private, DrillQuery(metric="contacts", attribution_id=other_id))

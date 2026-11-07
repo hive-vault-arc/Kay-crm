@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "ff2372f",
+  "scope": "Selected audit filters, typed history attribution lookup, safe object links and desktop/phone/drawer composition",
+  "checks": [
+    { "command": "./.venv/Scripts/python.exe -m ruff check app/discovery tests/test_audit_options_unit.py tests/test_audit_options.py tests/unit_selection.py", "cwd": "backend", "exitCode": 0 },
+    { "command": "./.venv/Scripts/python.exe -m mypy app/discovery", "cwd": "backend", "exitCode": 0, "appModules": 9 },
+    { "command": "./.venv/Scripts/python.exe -m tests.unit_runner", "cwd": "backend", "exitCode": 0, "passed": 363, "deselectedIntegration": 696, "newCases": 33 },
+    { "command": "npm run typecheck", "cwd": "frontend", "exitCode": 0 },
+    { "command": "npm run test:unit", "cwd": "frontend", "exitCode": 0, "passed": 268, "failed": 0, "newCases": 9 },
+    { "command": "npm run lint", "cwd": "frontend", "exitCode": 0, "semanticGlyphs": 62, "iconConsumers": 87, "iconSites": 308, "buttonSites": 450, "violations": 0 },
+    { "command": "npm run build", "cwd": "frontend", "exitCode": 0, "next": "16.4.2" },
+    { "command": "node .github/scripts/repository-check.mjs", "exitCode": 0, "indexedFiles": 8703, "forbiddenOrOversized": 0, "ignoreProbes": 14 },
+    { "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly", "exitCode": 0, "sprints": 22, "links": 1240, "acceptanceMappings": 42, "mermaidSources": 13, "apiJsonExamples": 12 },
+    { "command": "git diff --cached --check", "exitCode": 0 }
+  ],
+  "source": {
+    "prototypeInputs": 254,
+    "drift": 0,
+    "reference": "Frozen data-operations.js/audit-model.js family/author/date controls and four-column results",
+    "inventorySharedLabels": 21,
+    "inventoryInitializerIdentical": true,
+    "inventoryInitializerSha256": "30b7336d6bf2610d80599618447615fd375dfebfc0af46d5a618e999fbd884bc",
+    "popoverAvailableHeightDeclaredAndCompiled": true,
+    "newCssOrDependencies": false,
+    "indexNormalization": "Repository Git attributes normalize affected working CRLF files to LF; logical source/label initializer unchanged"
+  },
+  "wire": {
+    "newRead": "GET /api/v1/audit/actors",
+    "query": "q up to160, numbered page1..1m/page_size1..100",
+    "projection": "kind/id/display_name only, from complete existing permitted history",
+    "kinds": ["user", "website", "unattributed"],
+    "newEventSelectors": ["website_source_id=UUID", "unattributed_actor=true"],
+    "compatibility": "Legacy actor_id/event response fields retained; selectors are exclusive and only narrow current M/A authority",
+    "rollout": "Backend before typed-lookup/filter UI"
+  },
+  "scopeEvidence": [
+    "Actual current identity/role before names/count/page, read-only repeatable read",
+    "Disjoint correlated EXISTS/UNION prevents event fanout and omits unused identities",
+    "Retained users and web sources stay distinct, including same UUID across namespaces",
+    "Unknown attribution has no invented user ID or claimed system actor",
+    "Literal wildcard escaping, stable lower-name/kind/ID order and complete counts",
+    "No source keys/digests/config, emails/roles, private CRM values, event bodies or finance",
+    "Current denial clears parent names/counts/options and cached selection before retry",
+    "Read-only controls do not create business drafts; links use typed parents, no prefetch, admin-only account destinations"
+  ],
+  "preparedIntegration": {
+    "file": "backend/tests/test_audit_options.py",
+    "cases": 4,
+    "executed": false,
+    "coverage": ["M/A complete distinct pagination, retained/unused identities and literal matching", "Current role/session loss", "Inactive web source and missing-attribution rows, exact filters and unchanged wire fields"]
+  },
+  "correctedAttempts": [
+    "Initial user-only choices extended to actual web/missing-attribution authors",
+    "Null user/source references initially called system; corrected to unknown attribution before commit",
+    "Patch validation and curly-apostrophe shell parser failures made no source change and are not pass evidence"
+  ],
+  "notRun": [
+    "Actual PostgreSQL scope, concurrency, snapshot and query performance",
+    "Browser/CUA/app-HTTP and full running stack",
+    "Rendered desktop/phone/drawer keyboard/touch/zoom/layout/accessibility",
+    "Owner/AFTER/product approval and aggregate CI/merge"
+  ],
+  "skills": {
+    "react": "Existing installed guidance applied to state ownership, hooks, cleanup and accessible primitives",
+    "mandatoryOriginalMachinePaths": "Unavailable; not claimed executed",
+    "designTaste": "Dense CRM/admin scope excluded from marketing workflow",
+    "antislop": "AFTER retained; no unselected audit-only fixes"
+  },
+  "unchanged": ["Immutable event data, retention CLI/policy and business commands", "Database/migrations/services/real data", "Frozen prototype, approved stack and dependencies", "main, push, merge and production"],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

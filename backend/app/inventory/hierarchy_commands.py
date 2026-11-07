@@ -82,9 +82,10 @@ def execute_hierarchy(
                         scoped_contact(session, identity, body.developer_contact_id)
                 active_contact(session, body.developer_contact_id)
             item.developer_contact_id = body.developer_contact_id
-        for key, value in body.model_dump(
-            exclude={"expected_version", "developer_contact_id"}
-        ).items():
+        excluded = {"expected_version", "developer_contact_id"}
+        if "phase" not in body.model_fields_set:
+            excluded.add("phase")
+        for key, value in body.model_dump(exclude=excluded).items():
             setattr(item, key, value)
         if session.scalar(
             select(Offering.id)

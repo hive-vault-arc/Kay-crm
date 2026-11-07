@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "previous": "bbd9f09",
+  "scope": "Inventory and owner layouts, compact phone project cards, clickable steppers and development-only mixed-category read correction; migration still in progress",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "result": "passed; 59 icons / 391 Button sites / zero violations"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:unit",
+      "result": "118 passed"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed; pinned Next 16.4.2 including TypeScript"
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m tests.unit_runner",
+      "result": "292 passed, 683 deselected; database connections denied"
+    },
+    {
+      "command": "backend venv Ruff check/format and mypy app/inventory",
+      "result": "passed; 24 typed source modules"
+    },
+    {
+      "command": "backend venv pip check",
+      "result": "No broken requirements found; restored existing hash locks and editable metadata"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "result": "8588 indexed / zero forbidden or oversized files"
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly (current PowerShell)",
+      "result": "passed; 22 sprints / 1224 links / 42 acceptance mappings / 12 API JSON examples"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "backend/app/inventory/contracts.py",
+      "sha256": "6873e693e36595c7fa94757ced586ede3421158627df003d0b9a7e6d79273f63"
+    },
+    {
+      "path": "backend/app/inventory/hierarchy_queries.py",
+      "sha256": "e35b718cec74764c690a2500ab4bcf37a893f03b683a7d7d20c4f39dc0b72692"
+    },
+    {
+      "path": "backend/app/inventory/hierarchy_router.py",
+      "sha256": "4a2c19da26a80379d8bb1abc8a5577d2d1cfda9f83ec6335dc41426084d42f1b"
+    },
+    {
+      "path": "backend/app/inventory/queries.py",
+      "sha256": "69dbc87ec5c06604571a45521dc74a04083c80b08fd6082006a03736b4b69e08"
+    },
+    {
+      "path": "backend/tests/test_property_listing_unit.py",
+      "sha256": "29a87188cfa6af4592dd9658dbb089c6d16183b1419e88514df3f08679bd6fb2"
+    },
+    {
+      "path": "branding/prototype/kay-status.tokens.json",
+      "sha256": "909e7301c78850e9d5e42b131baebd38cf70fd85bab743cecfa3201daff05669"
+    },
+    {
+      "path": "frontend/scripts/button-inventory.mjs",
+      "sha256": "0905563987519b0b61d3de5146edf2a9c7a8801b293a12fea7bcfe5e549c911b"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/projects/page.tsx",
+      "sha256": "a618756fb903da4886a176f13fca436ed623292f2644e3e0c1bd653d37f225a5"
+    },
+    {
+      "path": "frontend/src/app/workspace-collections.css",
+      "sha256": "87e53194b1088da08010761d2aac00942dda1f18d0ce571ea2236513329a2379"
+    },
+    {
+      "path": "frontend/src/app/workspace-status.css",
+      "sha256": "499c5eeebe78fad083a06f8801f9a427d3d36bb6b450090c1c0f5fcb44602429"
+    },
+    {
+      "path": "frontend/src/components/shared/crm-presentation.tsx",
+      "sha256": "cdee5aef723027960a15fd0cd543ae5966f0ca9a95d06e23a8640a49d2d2090f"
+    },
+    {
+      "path": "frontend/src/components/shared/filter-results-layout.tsx",
+      "sha256": "128bb50592710bc8d12bfa43480339765d26d388bb9eb5ad9839bd57c6324e6b"
+    },
+    {
+      "path": "frontend/src/components/shared/page-header.tsx",
+      "sha256": "c8b3e79480ec2d8227591410f4c6f9130c735893100f151ce88e6b14e591386a"
+    },
+    {
+      "path": "frontend/src/components/shared/record-actions.tsx",
+      "sha256": "579c0569d4831d39d6ae5825d54364db8b718dd2c7bafbbd1187da1acd3a039a"
+    },
+    {
+      "path": "frontend/src/components/shared/record-drawer.tsx",
+      "sha256": "8926d1cff0a4cab5686c1d8fc9d23dca2a6c753feaea09c1250382be029e8ae9"
+    },
+    {
+      "path": "frontend/src/components/shared/record-header.tsx",
+      "sha256": "4da930f41db5e59f72e6cb7145d2f38b0f976fa9fdb210540bc965e05672d69c"
+    },
+    {
+      "path": "frontend/src/components/shared/record-workspace.tsx",
+      "sha256": "c415c409cb882063f19287aeefe6d8cf65939c049dd3ef8fd961cae91d127418"
+    },
+    {
+      "path": "frontend/src/features/contacts/use-directory-filters.ts",
+      "sha256": "555c0922292fe7b17b7088a4ab1fdc3e5a19459cbdc2b88c6a0f7650bbc5f1ff"
+    },
+    {
+      "path": "frontend/src/features/files/inventory-thumbnail.tsx",
+      "sha256": "3da53a910ad9a8052952a7b08738991665a9925a36f0e03c67734928125ab2b1"
+    },
+    {
+      "path": "frontend/src/features/inventory/development-contracts.ts",
+      "sha256": "cc7e69c6b13732920ab3e35d8dc5ab3309d26327d6f474eda461b8f49ff03cc1"
+    },
+    {
+      "path": "frontend/src/features/inventory/development-creation-wizard.tsx",
+      "sha256": "7e35231bb77efef8dda732cd6936a2f232c6d3ed787b6e360508d499697184a8"
+    },
+    {
+      "path": "frontend/src/features/inventory/development-directory.tsx",
+      "sha256": "2334dc28982d1b2c50222fd537be6b9c530ff367f4c7c7bcdc851b25fe0c834a"
+    },
+    {
+      "path": "frontend/src/features/inventory/development-record.tsx",
+      "sha256": "adcb58b1665b11134fbfe0ce1df84f1643d6c81ef11a6609744bdcc5449939e3"
+    },
+    {
+      "path": "frontend/src/features/inventory/facade.ts",
+      "sha256": "341960c78adb077333979c089afc2a23f0a9987ec4c9750d0d05d4628b712c21"
+    },
+    {
+      "path": "frontend/src/features/inventory/inventory-card.tsx",
+      "sha256": "6fc549926abbaae94c81f9de52a040ed6b400a3e8284c7bfa97f5da2fb6de95d"
+    },
+    {
+      "path": "frontend/src/features/inventory/inventory-offer-section.tsx",
+      "sha256": "4c38614476f83dfdbd9c61296498933e9a9f73bb47cf193954acfd7f40fd431d"
+    },
+    {
+      "path": "frontend/src/features/inventory/inventory-support.tsx",
+      "sha256": "3b9558ea15d5a2f91846e567e956f12bd70dd81665861b8a408ad4d512ea6b6d"
+    },
+    {
+      "path": "frontend/src/features/inventory/inventory-wizard-steps.tsx",
+      "sha256": "05c000c7b31f6c0956be0df1c22c92a9e95f35ad0e8af5425f4d8ada99b4c4ac"
+    },
+    {
+      "path": "frontend/src/features/inventory/listing-field-format.ts",
+      "sha256": "d065326de41f383f6d8a2879dc1285abbfccb04f4c0c294f0276512ba87d3547"
+    },
+    {
+      "path": "frontend/src/features/inventory/property-card.tsx",
+      "sha256": "19885fce107e54571afeaab12d7cf1bff1648aa01c26d3f09ba86b24646e212c"
+    },
+    {
+      "path": "frontend/src/features/inventory/property-conflict-details.tsx",
+      "sha256": "01230f9248bb95b638411f38610d865531da2b783d89be2db727b7b4b9389c4b"
+    },
+    {
+      "path": "frontend/src/features/inventory/property-creation-wizard.tsx",
+      "sha256": "af0a88dee1412c70ae437a64452bf1581c974f629137de398a250d977a9c5727"
+    },
+    {
+      "path": "frontend/src/features/inventory/property-directory-model.ts",
+      "sha256": "f819426e17edef27d686e5fbb3d1032b7a8c88fe3d141aa9054f077b1986ef4a"
+    },
+    {
+      "path": "frontend/src/features/inventory/property-directory.tsx",
+      "sha256": "5fb6a9426e11735c4d59a9654850bae6330acaf584e46dbf8dc6bb213e8d40e6"
+    },
+    {
+      "path": "frontend/src/features/inventory/property-listing-details.tsx",
+      "sha256": "bf682dce37c3a117cfcfec5d993a583f4db49d74570d6f01f750b505e1b8381d"
+    },
+    {
+      "path": "frontend/src/features/inventory/property-listing-wizard.tsx",
+      "sha256": "27fc76ad1fe3888a694f16d9c3270aeca197b51098f2618cb65f2d4305c83583"
+    },
+    {
+      "path": "frontend/src/features/inventory/property-record.tsx",
+      "sha256": "4f65a48399933ddc6b35e47c22fc896f37be1cd62f6b7c5289250c468c5518e3"
+    },
+    {
+      "path": "frontend/src/features/inventory/states.tsx",
+      "sha256": "af476aaf9e4fb67a8588fc239b02d1febd82c32337e746f99d2d78e391459f18"
+    },
+    {
+      "path": "frontend/src/features/inventory/unit-directory.tsx",
+      "sha256": "415913f3099bc3bb942af450051b7dc85f5b0bfc9a660b201efad3a8486b14de"
+    },
+    {
+      "path": "frontend/src/features/owners/owner-portfolio.tsx",
+      "sha256": "bfbd0a57bbb510bc51dab3db09fd6f4d62deafcacd12d4743bb58c3afd26752a"
+    },
+    {
+      "path": "frontend/src/features/owners/owner-record.tsx",
+      "sha256": "1ee670ed5b41a58ab66e0aa71e818a158daf3a444a038693a725064fddf50944"
+    },
+    {
+      "path": "frontend/tests/unit/projects.test.mjs",
+      "sha256": "fa2e18ecc47c10fa2dfbde2689f8ef11678a88024dde3114e267cd2811c52c7e"
+    },
+    {
+      "path": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "sha256": "a5044a7cb2c27e3094e0e081dff2b61d04c5e80f406a63c124b13c5a5f197e07"
+    }
+  ],
+  "security": "Scoped role/input/privacy/read-contract review in docs/SECURITY_CHECK.md; no database/mutation/permission change",
+  "limitations": [
+    "No app HTTP or native browser access",
+    "No database/worker/scanner/private-byte/stock-race/release gate",
+    "Exact remaining forms/photo/PDF/panels and other modules incomplete",
+    "Native keyboard/touch/focus/zoom and product review pending",
+    "No push/main change/merge"
+  ]
+}

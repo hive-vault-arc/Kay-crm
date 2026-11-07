@@ -1,56 +1,77 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { CalendarIcon, ColumnsIcon, TaskIcon } from "@/components/icons";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { FilterResultsLayout } from "@/components/shared/filter-results-layout";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { RecordError } from "@/features/contacts/record-states";
 import { queryPath, useQuery } from "@/features/contacts/use-query";
+import { usePhoneLayout } from "@/hooks/use-phone-layout";
 import { ApiError } from "@/lib/api/client";
-import { busySchema, calendarContextSchema, colleaguesSchema, policySchema, typeLabels, visitsSchema, visitStatusOrder, visitTypeOrder, type Policy, type Visit } from "./contracts";
+import { busySchema, calendarContextSchema, colleaguesSchema, policySchema, typeLabels, visitsSchema, visitStatusOrder, visitTypeOrder, type Policy, type Visit, type VisitPage } from "./contracts";
 import { dayLabel, localLabel, resolveLocal } from "./time";
-import { calendarDay, visitListPath, occursOn, weekLabel, weekStart } from "./calendar-model";
-import { VisitWeekGrid } from "./week-grid";
+import { calendarDay, visitListPath, weekLabel, weekStart } from "./calendar-model";
+import { VisitWeekGrid, BusyWeekGrid } from "./week-grid";
 import { CalendarSidebar } from "./calendar-sidebar";
 import { CalendarVisit } from "./calendar-visit";
+import { CalendarFrame } from "./calendar-frame";
+import { VisitAction } from "./visit-record";
 
 type Period = { start_at: string; end_at: string };
+type View = "week" | "agenda" | "types";
 export function VisitCalendar({ actorId, administrator = false }: { actorId: string; administrator?: boolean }) {
   const query = useQuery("/api/v1/calendar/context", calendarContextSchema);
   if (query.error) return <RecordError error={query.error} retry={query.refresh} />;
   return query.value ? <Calendar initial={query.value.today} actorId={actorId} administrator={administrator} /> : <p role="status">Chargement du calendrier…</p>;
 }
-function Calendar({ initial, actorId, administrator }: { initial: string; actorId: string; administrator: boolean }) {
+export function Calendar({ initial, actorId, administrator }: { initial: string; actorId: string; administrator: boolean }) {
   const [date, setDate] = useState(initial), [mode, setMode] = useState("details"), [user, setUser] = useState(actorId);
-  const [view, setView] = useState("week"), [rulesOpen, setRulesOpen] = useState(false);
-  const rulesTrigger = useRef<HTMLButtonElement | null>(null);
+  const [view, setView] = useState<View>("week"), [types, setTypes] = useState<Visit["type"][]>([...visitTypeOrder]);
+  const [statuses, setStatuses] = useState<Visit["status"][]>(visitStatusOrder.filter(status => status !== "cancelled"));
+  const [filtersOpen, setFiltersOpen] = useState(false), [revision, setRevision] = useState(0), [cancelVisit, setCancelVisit] = useState<Visit>();
+  const [scopeFailure, setScopeFailure] = useState<ApiError>();
+  const [counts, setCounts] = useState<{ key: string; value: VisitPage }>();
+  const focusTarget = useRef<HTMLButtonElement>(null), phone = usePhoneLayout();
   const startDay = weekStart(date), days = Array.from({ length: 7 }, (_, index) => calendarDay(startDay, index));
-  const policy = useQuery("/api/v1/visit-schedule/policy", policySchema);
-  const colleagues = useQuery("/api/v1/calendar/colleagues", colleaguesSchema);
-  function rules(event: MouseEvent<HTMLButtonElement>) { rulesTrigger.current = event.currentTarget; setRulesOpen(true); }
-  function choose(value: string) { if (/^\d{4}-\d{2}-\d{2}$/.test(value) && value >= "2000-01-03" && value <= "2100-12-24") setDate(value); }
-  return <Tabs value={view} onValueChange={setView} className="calendar-page gap-3">
-    <div className="calendar-toolbar filter-toolbar flex min-w-0 flex-wrap items-center gap-3">
-      <div className="calendar-period flex min-w-0 items-center rounded-md border bg-card"><Button action="back" variant="ghost" size="icon" aria-label="Semaine précédente" disabled={startDay <= "2000-01-03"} onClick={() => choose(calendarDay(startDay, -7))} /><label className="calendar-date-picker relative flex min-h-control min-w-0 items-center justify-center gap-3 px-3"><CalendarIcon aria-hidden="true" className="size-5 shrink-0" /><span aria-hidden="true" className="text-sm font-semibold">{weekLabel(days)}</span><Input aria-label="Semaine contenant le" type="date" min="2000-01-03" max="2100-12-24" value={date} onChange={event => choose(event.target.value)} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" /></label><Button action="forward" variant="ghost" size="icon" aria-label="Semaine suivante" disabled={startDay >= "2100-12-20"} onClick={() => choose(calendarDay(startDay, 7))} /></div>
-      <Button action="visit" variant="outline" onClick={() => choose(initial)}>Aujourd’hui</Button>
-      <div className="calendar-mode-control"><NativeSelect aria-label="Afficher" value={mode} onChange={event => setMode(event.target.value)}><option value="details">Visites accessibles</option><option value="busy">Disponibilités d’un collègue</option></NativeSelect></div>
-      {mode === "busy" ? <div className="calendar-mode-control"><NativeSelect aria-label="Collègue" value={user} onChange={event => setUser(event.target.value)}>{colleagues.value?.items.map(colleague => <option key={colleague.id} value={colleague.id}>{colleague.display_name}</option>)}</NativeSelect></div> : null}
-      <Button action="settings" variant="ghost" className="calendar-rules-trigger text-link" onClick={rules}>Règles et disponibilités</Button>
-      <TabsList className="calendar-view-tabs ml-auto" aria-label="Présentation du calendrier"><TabsTrigger value="week" disabled={mode === "busy"}><CalendarIcon aria-hidden="true" className="mr-2 size-4" />Semaine</TabsTrigger><TabsTrigger value="agenda" disabled={mode === "busy"}><TaskIcon aria-hidden="true" className="mr-2 size-4" />Agenda</TabsTrigger><TabsTrigger value="types" disabled={mode === "busy"}><ColumnsIcon aria-hidden="true" className="mr-2 size-4" />Par type</TabsTrigger></TabsList>
+  const policy = useQuery("/api/v1/visit-schedule/policy", policySchema), colleagues = useQuery("/api/v1/calendar/colleagues", colleaguesSchema);
+  const busy = mode === "busy", displayed = busy ? phone ? "agenda" : "week" : phone && view === "week" ? "agenda" : view;
+  const countKey = `${startDay}/${types.join(",")}/${statuses.join(",")}/${mode}`;
+  const reportCounts = useCallback((value?: VisitPage) => setCounts(value ? { key: countKey, value } : undefined), [countKey]);
+  const currentCounts = counts?.key === countKey ? counts.value : undefined;
+  const active = types.length !== visitTypeOrder.length || statuses.length !== visitStatusOrder.length - 1 || statuses.includes("cancelled");
+  function choose(value: string) { if (/^\d{4}-\d{2}-\d{2}$/.test(value) && value >= "2000-01-03" && value <= "2100-12-24" && calendarDay(value) === value) setDate(value); }
+  function toggleType(type: Visit["type"]) { setTypes(values => values.includes(type) ? values.filter(value => value !== type) : [...values, type]); }
+  function toggleStatus(status: Visit["status"]) { setStatuses(values => values.includes(status) ? values.filter(value => value !== status) : [...values, status]); }
+  if (scopeFailure) return <RecordError error={scopeFailure} retry={() => { setScopeFailure(undefined); setCounts(undefined); setRevision(value => value + 1); }} />;
+  return <Tabs value={displayed} onValueChange={value => { if (["week", "agenda", "types"].includes(value)) setView(value as View); }} className="kay-calendar">
+    <div className="kay-calendar-controls">
+      <div className="kay-calendar-toolbar">
+        <TabsList aria-label="Présentation du calendrier" className="kay-calendar-views">{!phone ? <TabsTrigger data-calendar-view="week" value="week">Semaine</TabsTrigger> : null}<TabsTrigger value="agenda" disabled={busy && !phone}>Agenda</TabsTrigger>{!busy ? <TabsTrigger value="types">Par type</TabsTrigger> : null}</TabsList>
+        <div className="kay-calendar-tools">
+          <NativeSelect aria-label="Données du calendrier" value={mode} onChange={event => setMode(event.target.value)}><option value="details">Visites accessibles</option><option value="busy">Disponibilités d’un collègue</option></NativeSelect>
+          {busy ? <NativeSelect aria-label="Collègue" value={user} onChange={event => setUser(event.target.value)}>{!colleagues.value?.items.length ? <option value={actorId}>Moi</option> : colleagues.value.items.map(colleague => <option key={colleague.id} value={colleague.id}>{colleague.display_name}</option>)}</NativeSelect> : null}
+          {!busy ? <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}><SheetTrigger asChild><Button action="filter" variant="outline" aria-label={active ? "Filtres du calendrier, sélection active" : "Filtres du calendrier"}><span className="kay-calendar-tool-label">Filtres</span></Button></SheetTrigger><SheetContent data-filter-panel="calendar" className="kay-record-drawer" closeLabel="Fermer les filtres du calendrier"><SheetHeader className="kay-drawer-head"><SheetTitle>Filtres du calendrier</SheetTitle><SheetDescription>La sélection porte sur toute la semaine accessible, avant pagination.</SheetDescription></SheetHeader><div className="kay-drawer-body"><CalendarSidebar compact date={date} today={initial} choose={choose} value={currentCounts} types={types} statuses={statuses} toggleType={toggleType} toggleStatus={toggleStatus} /><Button action="close" variant="outline" onClick={() => setFiltersOpen(false)}>Voir les visites</Button></div></SheetContent></Sheet> : null}
+          <CalendarRules policy={policy.value} error={policy.error} retry={policy.refresh} administrator={administrator} />
+        </div>
+      </div>
+      <div className="kay-calendar-navigation"><div className="kay-calendar-range"><Button ref={focusTarget} action="back" variant="quiet" size="icon" aria-label="Semaine précédente" disabled={startDay <= "2000-01-03"} onClick={() => choose(calendarDay(startDay, -7))} /><span role="status">{weekLabel(days)}</span><Button action="forward" variant="quiet" size="icon" aria-label="Semaine suivante" disabled={startDay >= "2100-12-20"} onClick={() => choose(calendarDay(startDay, 7))} /></div><Button action="visit" variant="outline" onClick={() => choose(initial)}>Aujourd’hui</Button><label className="kay-calendar-jump"><span className="sr-only">Aller à une date</span><Input type="date" min="2000-01-03" max="2100-12-24" aria-label="Aller à une date" value={date} onChange={event => choose(event.target.value)} /></label></div>
     </div>
-    {policy.error ? <RecordError error={policy.error} retry={policy.refresh} /> : null}
-    {mode === "busy" && colleagues.error ? <RecordError error={colleagues.error} retry={colleagues.refresh} /> : null}
-    <Week key={`${startDay}/${mode}/${user}`} days={days} date={date} today={initial} choose={choose} busy={mode === "busy"} user={user} policy={policy.value} rules={rules} />
-    <Sheet open={rulesOpen} onOpenChange={setRulesOpen}><SheetContent closeLabel="Fermer les règles" className="w-full overflow-y-auto p-5 sm:max-w-reading" onCloseAutoFocus={event => { event.preventDefault(); rulesTrigger.current?.focus(); }}><SheetHeader className="mb-5 p-0 pr-8 text-left"><SheetTitle>Règles et disponibilités</SheetTitle><SheetDescription>Heures de l’agence : Africa/Casablanca.</SheetDescription></SheetHeader><div className="grid gap-4"><p>Un créneau vide indique seulement qu’aucun rendez-vous CRM n’est enregistré, pas une disponibilité personnelle garantie.</p>{policy.value ? <><p>Politique version {policy.value.version}. Capacité avec véhicule : {policy.value.company_car_capacity_per_hour} visite(s) par heure pour toute l’agence.</p><p>{policy.value.working_windows.length ? "Les visites hors bureau suivent les plages de travail et les pauses. Les visites au bureau restent indépendantes de ces restrictions." : "Horaires non configurés : seules les nouvelles visites au bureau peuvent être planifiées."}</p></> : <p>Règles de l’agence indisponibles.</p>}{administrator ? <Button action="settings" variant="outline" asChild><Link href="/settings/working-hours">Gérer les horaires de travail</Link></Button> : null}</div></SheetContent></Sheet>
+    {busy && colleagues.error ? <RecordError error={colleagues.error} retry={colleagues.refresh} /> : null}
+    <Week key={startDay} days={days} busy={busy} user={user} today={initial} types={types} statuses={statuses} revision={revision} pageKey={countKey} counts={reportCounts} cancel={setCancelVisit} />
+    {cancelVisit ? <VisitAction key={cancelVisit.id} dialogOnly denied={error => { setCancelVisit(undefined); setCounts(undefined); setScopeFailure(error); }} value={cancelVisit} action="cancel" saved={() => setRevision(value => value + 1)} closed={() => setCancelVisit(undefined)} returnFocus={focusTarget} /> : null}
   </Tabs>;
 }
-function Week({ days, busy, user, ...props }: { days: string[]; busy: boolean; user: string; date: string; today: string; choose: (date: string) => void; policy?: Policy; rules: (event: MouseEvent<HTMLButtonElement>) => void }) {
+function CalendarRules({ policy, error, retry, administrator }: { policy?: Policy; error?: ApiError; retry: () => void; administrator: boolean }) {
+  return <Sheet><SheetTrigger asChild><Button action="help" variant="outline" aria-label="Règles et disponibilités"><span className="kay-calendar-tool-label">Règles</span></Button></SheetTrigger><SheetContent className="kay-record-drawer" closeLabel="Fermer les règles"><SheetHeader className="kay-drawer-head"><SheetTitle>Règles et disponibilités</SheetTitle><SheetDescription>Heure de l’agence : Africa/Casablanca.</SheetDescription></SheetHeader><div className="kay-drawer-body"><p>Un créneau vide indique seulement qu’aucun rendez-vous CRM n’est enregistré, pas une disponibilité personnelle garantie.</p>{error ? <RecordError error={error} retry={retry} /> : !policy ? <p role="status">Chargement des règles…</p> : <><p>Politique version {policy.version}. Capacité avec véhicule : {policy.company_car_capacity_per_hour} visite(s) par heure pour toute l’agence.</p><p>{policy.working_windows.length ? "Les visites hors bureau suivent les plages de travail et évitent les pauses. Les visites au bureau restent indépendantes de ces restrictions." : "Horaires non configurés : seules les nouvelles visites au bureau peuvent être planifiées."}</p><PolicyWindows title="Plages de travail" rows={policy.working_windows} /><PolicyWindows title="Pauses" rows={policy.lunch_breaks} /></>}{administrator ? <Button action="settings" variant="outline" asChild><Link href="/settings/working-hours">Gérer les horaires de travail</Link></Button> : null}</div></SheetContent></Sheet>;
+}
+function PolicyWindows({ title, rows }: { title: string; rows: Policy["working_windows"] }) {
+  return <section className="kay-calendar-policy"><h3>{title}</h3>{rows.length ? <ul>{rows.map((row, index) => <li key={index}><span>{["Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam.", "Dim."][row.weekday - 1]}</span><strong>{row.start_local}–{row.end_local}</strong></li>)}</ul> : <p>Aucune plage configurée.</p>}</section>;
+}
+function Week({ days, busy, user, ...props }: { days: string[]; busy: boolean; user: string; today: string; types: Visit["type"][]; statuses: Visit["status"][]; revision: number; pageKey: string; counts: (value?: VisitPage) => void; cancel: (value: Visit) => void }) {
   const [period, setPeriod] = useState<Period>(), [error, setError] = useState<ApiError>(), [retry, setRetry] = useState(0);
   const first = days[0];
   useEffect(() => {
@@ -63,33 +84,26 @@ function Week({ days, busy, user, ...props }: { days: string[]; busy: boolean; u
   }, [first, retry]);
   if (error) return <RecordError error={error} retry={() => { setError(undefined); setRetry(value => value + 1); }} />;
   if (!period) return <p role="status">Résolution de la semaine…</p>;
-  return busy ? <BusyWeek days={days} period={period} user={user} /> : <DetailsWeek days={days} period={period} {...props} />;
+  return busy ? <BusyWeek key={user} days={days} period={period} user={user} today={props.today} /> : <DetailsWeek key={props.pageKey} days={days} period={period} {...props} />;
 }
-function DetailsWeek({ days, period, date, today, choose, policy, rules }: { days: string[]; period: Period; date: string; today: string; choose: (date: string) => void; policy?: Policy; rules: (event: MouseEvent<HTMLButtonElement>) => void }) {
-  const [page, setPage] = useState(1);
-  const [types, setTypes] = useState<Visit["type"][]>([...visitTypeOrder]);
-  const [statuses, setStatuses] = useState<Visit["status"][]>(visitStatusOrder.filter(status => status !== "cancelled"));
-  const query = useQuery(visitListPath(period, page, types, statuses), visitsSchema);
-  function toggleType(type: Visit["type"]) { setTypes(values => values.includes(type) ? values.filter(value => value !== type) : [...values, type]); setPage(1); }
-  function toggleStatus(status: Visit["status"]) { setStatuses(values => values.includes(status) ? values.filter(value => value !== status) : [...values, status]); setPage(1); }
-  return <FilterResultsLayout className="calendar-workbench" title="Filtres du calendrier" panelHeading={null} active={types.length !== visitTypeOrder.length || statuses.length !== visitStatusOrder.length - 1 || statuses.includes("cancelled")} filters={() => <CalendarSidebar date={date} today={today} choose={choose} policy={policy} value={query.value} types={types} statuses={statuses} toggleType={toggleType} toggleStatus={toggleStatus} rules={rules} />}>
-    {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <div role="status" className="surface min-h-chart">Chargement des visites…</div> : <>
-      <TabsContent value="week"><div className="calendar-desktop-grid"><VisitWeekGrid days={days} visits={query.value.items} policy={policy} today={today} /></div><p className="calendar-desktop-grid text-xs text-muted-foreground">Ouvrez une visite pour l’annuler ; l’onglet Agenda permet aussi de l’annuler directement.</p><div className="calendar-default-agenda"><Agenda days={days} visits={query.value.items} onChanged={query.refresh} /></div></TabsContent>
-      <TabsContent value="agenda"><Agenda days={days} visits={query.value.items} onChanged={query.refresh} /></TabsContent>
-      <TabsContent value="types"><div className="grid gap-5" aria-label="Visites par type">{visitTypeOrder.map(type => <section key={type} className="grid min-w-0 gap-3"><h2 className="text-section">{typeLabels[type]}</h2>{query.value!.items.filter(visit => visit.type === type).map(visit => <CalendarVisit key={visit.id} visit={visit} onChanged={query.refresh} />)}{!query.value!.items.some(visit => visit.type === type) ? <p className="text-sm text-muted-foreground">Aucune visite de ce type sur cette page.</p> : null}</section>)}</div></TabsContent>
-      <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-xs text-muted-foreground">{query.value.total} visite(s) accessible(s) cette semaine.</p><Button liveRefresh action="refresh" variant="ghost" size="compact" onClick={query.refresh}>Actualiser les visites</Button></div>
-      {!query.value.total ? <p role="status">{query.value.unfiltered_total ? "Aucune visite ne correspond aux filtres sélectionnés." : "Aucune visite accessible pour cette semaine. Planifiez une visite depuis un contact accessible."}</p> : null}
-      {query.value.total > 50 || page > 1 ? <NumberedPages page={page} total={query.value.total} size={50} change={setPage} label="Pages des visites de la semaine" /> : null}
-    </>}
-  </FilterResultsLayout>;
+function DetailsWeek({ days, period, today, types, statuses, revision, counts, cancel }: { days: string[]; period: Period; today: string; types: Visit["type"][]; statuses: Visit["status"][]; revision: number; counts: (value?: VisitPage) => void; cancel: (value: Visit) => void }) {
+  const [page, setPage] = useState(1), query = useQuery(visitListPath(period, page, types, statuses), visitsSchema, revision);
+  const value = query.value;
+  useEffect(() => { counts(query.error ? undefined : value); }, [value, query.error, counts]);
+  if (query.error) return <RecordError error={query.error} retry={query.refresh} />;
+  if (!value) return <p role="status">Chargement des visites…</p>;
+  return <CalendarFrame><div className="kay-calendar-collection"><TabsContent value="week"><VisitWeekGrid days={days} visits={value.items} today={today} /><div className="kay-calendar-phone-fallback"><Agenda visits={value.items} cancel={cancel} /></div></TabsContent><TabsContent value="agenda"><Agenda visits={value.items} cancel={cancel} /></TabsContent><TabsContent value="types"><div className="kay-calendar-by-type" role="region" tabIndex={0} aria-label="Visites par type">{visitTypeOrder.filter(type => types.includes(type)).map(type => <section key={type}><header><h2>{typeLabels[type]}</h2><span>{value.type_counts[type]} sur la semaine</span></header><Agenda visits={value.items.filter(visit => visit.type === type)} cancel={cancel} grouped /></section>)}</div></TabsContent></div><footer className="kay-calendar-footer"><p role="status">{value.total} visite(s) accessible(s) cette semaine{value.total > value.items.length ? ` · ${value.items.length} sur cette page` : ""}.</p><Button liveRefresh action="refresh" variant="quiet" size="compact" onClick={query.refresh}>Actualiser les visites</Button></footer>{!value.total ? <p role="status" className="kay-calendar-empty">{value.unfiltered_total ? "Aucune visite ne correspond aux filtres sélectionnés." : "Aucune visite accessible pour cette semaine. Planifiez une visite depuis un contact accessible."}</p> : null}<NumberedPages compact page={page} total={value.total} size={value.page_size} change={setPage} label="Pages des visites de la semaine" /></CalendarFrame>;
 }
-function Agenda({ days, visits, onChanged }: { days: string[]; visits: Visit[]; onChanged: () => void }) {
-  return <div role="region" className="grid min-w-0 gap-4" aria-label="Calendrier de la semaine">{days.map(day => <section key={day} aria-label={dayLabel(day)} className="surface grid min-w-0 content-start gap-3"><h2 className="font-medium capitalize">{dayLabel(day)}</h2>{visits.filter(visit => occursOn(visit, day)).map(visit => <CalendarVisit key={visit.id} visit={visit} onChanged={onChanged} />)}{!visits.some(visit => occursOn(visit, day)) ? <p className="text-xs text-muted-foreground">Aucune visite sur cette page.</p> : null}</section>)}</div>;
+export function Agenda({ visits, cancel, grouped = false }: { visits: Visit[]; cancel: (value: Visit) => void; grouped?: boolean }) {
+  return <div role={grouped ? undefined : "region"} tabIndex={grouped ? undefined : 0} className="kay-calendar-agenda" aria-label={grouped ? undefined : "Agenda des visites"}>{visits.length ? visits.map(visit => <CalendarVisit key={visit.id} visit={visit} onCancel={cancel} />) : <p className="kay-calendar-empty">Aucune visite sur cette page.</p>}</div>;
 }
-function BusyWeek({ days, period, user }: { days: string[]; period: Period; user: string }) {
-  const [page, setPage] = useState(1);
-  const query = useQuery(queryPath("calendar/free-busy", { ...period, user_id: user, page, page_size: 50 }), busySchema);
+function BusyWeek({ days, period, user, today }: { days: string[]; period: Period; user: string; today: string }) {
+  const [page, setPage] = useState(1), query = useQuery(queryPath("calendar/free-busy", { ...period, user_id: user, page, page_size: 50 }), busySchema);
   if (query.error) return <RecordError error={query.error} retry={query.refresh} />;
   if (!query.value) return <p role="status">Chargement des disponibilités CRM…</p>;
-  return <section className="grid min-w-0 gap-4" aria-label="Disponibilités CRM du collègue"><div className="flex flex-wrap gap-4"><h2 className="text-section font-medium">Occupé dans le CRM</h2><Button liveRefresh action="refresh" variant="outline" onClick={query.refresh}>Actualiser les disponibilités</Button></div><p>Aucun titre, contact, lieu ou détail privé n’est transmis dans cette vue.</p><ul className="grid gap-4">{query.value.items.map((visit, index) => <li key={`${visit.start_at}/${visit.end_at}/${index}`} className="border-b pb-4">Occupé : {localLabel(visit.start_at)} à {localLabel(visit.end_at)}</li>)}</ul>{!query.value.total ? <p role="status">Aucun rendez-vous CRM enregistré pour ce collègue du {dayLabel(days[0])} au {dayLabel(days[6])}.</p> : null}<NumberedPages page={page} total={query.value.total} size={50} change={setPage} label="Pages des disponibilités CRM" /></section>;
+  return <CalendarFrame><div className="kay-calendar-collection"><TabsContent value="week"><BusyWeekGrid days={days} intervals={query.value.items} today={today} /><div className="kay-calendar-phone-fallback"><BusyAgenda intervals={query.value.items} /></div></TabsContent><TabsContent value="agenda"><BusyAgenda intervals={query.value.items} /></TabsContent></div><footer className="kay-calendar-footer"><p>Aucun titre, contact, lieu ou détail privé n’est transmis dans cette vue.</p><Button liveRefresh action="refresh" variant="quiet" size="compact" onClick={query.refresh}>Actualiser</Button></footer>{!query.value.total ? <p role="status">Aucun rendez-vous CRM enregistré pour ce collègue du {dayLabel(days[0])} au {dayLabel(days[6])}.</p> : null}<NumberedPages compact page={page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages des disponibilités CRM" /></CalendarFrame>;
+}
+
+function BusyAgenda({ intervals }: { intervals: { start_at: string; end_at: string }[] }) {
+  return <ul role="region" tabIndex={0} aria-label="Occupation CRM" className="kay-calendar-agenda">{intervals.map((value, index) => <li key={`${value.start_at}/${value.end_at}/${index}`} className="kay-calendar-busy-entry"><strong>Occupé</strong><span>{localLabel(value.start_at)} à {localLabel(value.end_at)}</span></li>)}</ul>;
 }

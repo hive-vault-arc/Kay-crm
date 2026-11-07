@@ -1,0 +1,146 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "9a088349ecac7c200a3ce2d01788c1a61b44ae71",
+  "scope": "Selected full prospect editor atomic request recovery, authoritative contact completion/baselines, validation/disposal, retained read hosts and verified canonical/converted read-only return states",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 677,
+      "additionalCases": 11,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic actual full editor/controller/host tests and synthetic TLS; editor suite registered. Existing dossier atomic edit coverage uses separate component hook state and actual command ownership."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 501,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <full editor>",
+      "exitCode": 0,
+      "files": 1,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1274,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8910,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "validationCorrection": "Existing dossier fixture renderer now owns independent component hook state and traverses real nested form owners; its dirty assertion accepts the React boolean with unchanged DOM meaning. Canonical contact reads are confirmed through current enquiry relationship before a read-only return; unrelated identity versions are not compared.",
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/editor-recovery.spec.ts",
+    "browserCases": 2,
+    "typechecked": true,
+    "scenarios": [
+      "Atomic contact and qualification lost PATCH acknowledgement with original request retry",
+      "Acknowledged atomic save followed by contact read outage without a second PATCH"
+    ],
+    "syntheticIsolatedFixturesOnly": true,
+    "tracesVideosScreenshots": false
+  },
+  "preserved": {
+    "selectedFullSheetHeaderAndSections": true,
+    "allContactCollectionsAndQualificationFields": true,
+    "existingLanguageBudgetOptionalMessageRules": true,
+    "atomicBothVersionPayload": true,
+    "exactOriginalBodyKey": true,
+    "backendAuthorityReceiptAtomicEditMergeHistory": true,
+    "canonicalReadsWithRelationshipProofWithoutMutationRetargeting": true,
+    "noBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Prospect creation/conversion recovery",
+    "Other domain command and exact field/context audit",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: no backend change this checkpoint",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/simulator/account/customer records/private configuration/import/export/transfer access",
+    "Executed migrations0036/0037 or another migration",
+    "Actual SQL/merge races/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4597,
+      "sha256": "23f4dff5a832d98a3044f1c24db94d474be57ed9b9781f77346067ad4d9102ce"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-editor.tsx",
+      "bytes": 15150,
+      "sha256": "88c87928d8fbb9722c261b6849a9698a981d8303ca38cf5a7a40eb10193130d2"
+    },
+    {
+      "file": "frontend/src/features/contacts/use-enquiry-command.ts",
+      "bytes": 6553,
+      "sha256": "e753076d1f73b831d86d0769e8ecfd7e69d546464de7bcf123b6476331de7005"
+    },
+    {
+      "file": "frontend/tests/e2e/editor-recovery.spec.ts",
+      "bytes": 4901,
+      "sha256": "74a58362f96c8ead8c4889f34023d7d786d1d40b42a83a406750127ff3ee9fbf"
+    },
+    {
+      "file": "frontend/tests/unit/dossier-forms.test.mjs",
+      "bytes": 23200,
+      "sha256": "2ff09a66125d166545721510a8c412d36ea87b53c4c9771eabc4806068e9a748"
+    },
+    {
+      "file": "frontend/tests/unit/editor-fixtures.mjs",
+      "bytes": 6844,
+      "sha256": "1ae066c8dd444499d4aae41703bf41e8ce3d292ffb5833f07b8c9ff94b8ed4d8"
+    },
+    {
+      "file": "frontend/tests/unit/editor-recovery.test.mjs",
+      "bytes": 12354,
+      "sha256": "58aecf78fc950474d6d3a5cea3a6854548e1d2742ed25da2714aa71a1e7031d4"
+    }
+  ]
+}

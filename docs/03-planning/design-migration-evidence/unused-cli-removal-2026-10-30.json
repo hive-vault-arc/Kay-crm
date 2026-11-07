@@ -1,0 +1,178 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "base": "2c45cf6c708a206e923052253edf7ccc97bdc339",
+  "scope": "Remove unused vulnerable generation CLI; preserve current app and dependency policy",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "log": ".git/cli-removal-unit.log",
+      "bytes": 116792,
+      "sha256": "bfd7312f0dd8981522e70261250383fabcfbaa9d0858e0c9ddab39481fd75aa0"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "log": ".git/cli-removal-lint.log",
+      "bytes": 456,
+      "sha256": "a036f8d8dfc3b482994c38f63d6996a18a292ecdca56bcca98e2858224d66a66"
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "log": ".git/cli-removal-types.log",
+      "bytes": 129,
+      "sha256": "46afc4c3782e6f6dd5ba5262fc65135ab7f9a06047d554f32c4a8b103eabc601"
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "log": ".git/cli-removal-build.log",
+      "bytes": 1766,
+      "sha256": "8e88995e3108a868ed7c2481220bf1d63a97b7e4758936dd68bb5877895b57a0"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "log": ".git/cli-removal-history.log",
+      "bytes": 535,
+      "sha256": "58b42bc6130005eb14b6d4b5d8d0d8e26f3cdf341840e39c92420bde87d54c77"
+    },
+    {
+      "command": "npm run security:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "log": ".git/cli-removal-security.log",
+      "bytes": 165,
+      "sha256": "6de55b400eee5708d3c796bd2e1bed9711a0767766b8013056617d1b2cf80f6b"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9066,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1328,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "Frozen source/input comparison",
+      "exitCode": 0,
+      "frozenInputs": 254,
+      "drift": 0,
+      "applicationFilesUnchanged": 548
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "frontendUnits": {
+    "passed": 994,
+    "failed": 0,
+    "skipped": 0
+  },
+  "retainedBackend": {
+    "passed": 573,
+    "deselected": 723,
+    "rerun": false,
+    "sourceUnchanged": true,
+    "connectionForbidden": true
+  },
+  "initialInvariant": {
+    "exitCode": 1,
+    "reason": "Conservative runtime predicate included devOptional validators;5 optional validators disappeared with unused CLI",
+    "correction": "Check required runtime graph excluding devOptional, plus exact versions/URLs/integrities for every retained package",
+    "pruneRanBeforeModelReviewedInitialCheckOutput": true
+  },
+  "invariants": {
+    "applicationSourceAndAssetsUnchanged": 548,
+    "requiredRuntimePackageEntriesUnchanged": 180,
+    "retainedPackageVersionsUrlsIntegritiesUnchanged": 575,
+    "removedDevelopmentOrOptionalToolEntries": 220,
+    "applicationDependenciesObjectUnchanged": true,
+    "cliRegistryDeepmergeAbsent": true,
+    "exceptionPolicyUnchanged": true,
+    "registrationComponentsConfigUnchanged": true
+  },
+  "supplyChain": {
+    "latestCli": "4.23.0",
+    "latestRegistry": "0.2.1",
+    "latestDeepmerge": "4.3.1",
+    "latestCliStillDeclaresVulnerableDependency": true,
+    "advisory": "GHSA-gcqx-w48m-w2h4",
+    "url": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4",
+    "patchedVersion": "None at this check",
+    "runtimeVulnerabilities": 0,
+    "fullVulnerabilities": 0,
+    "exceptionsUsed": 0,
+    "dependenciesUpgradedDowngradedOrOverridden": false,
+    "installScriptsExecuted": false
+  },
+  "mergeBase": {
+    "originMain": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "localMain": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "originMainIsAncestor": true,
+    "fetched": true,
+    "remoteRedesignHeadReturned": false,
+    "pushMergeDeploy": false
+  },
+  "boundaries": {
+    "actualAppBrowserHttpDatabaseAccountsServicesWorkerScannerSimulatorPrivateTransfer": false,
+    "formalSecurityScanStarted": false,
+    "manualPrivateConfigurationRead": false,
+    "buildUsesExistingIgnoredEnvironment": true,
+    "backendSourceChanged": false,
+    "uiSourceOrSelectedStyleChanged": false
+  },
+  "pending": [
+    "Remaining exact field/legacy path coverage",
+    "723 deselected backend tests and actual SQL/native/device/private-transfer/AV/PDF/security/CI/AFTER/product gates",
+    "Owner verification/approval before final merge"
+  ],
+  "status": "Dependency blocker fixed; full merge readiness still unproven",
+  "sourceHashes": [
+    {
+      "file": "frontend/package.json",
+      "bytes": 1933,
+      "sha256": "cb935a7500971c07f110d1f72ae8714c7de42769e39ce8c343e5a00caccc4196"
+    },
+    {
+      "file": "frontend/package-lock.json",
+      "bytes": 331415,
+      "sha256": "3435253ec3af084b5bd9f0ef820c12fc0901fbbe6aded1863a11f8624190f4a9"
+    },
+    {
+      "file": "frontend/components.json",
+      "bytes": 472,
+      "sha256": "56fd22ca4094c98ac75a22e38fc2ac26742b0b62dec15be8518dbb737550ab8b"
+    },
+    {
+      "file": "frontend/AGENTS.md",
+      "bytes": 2372,
+      "sha256": "c6fb7a0e18ca0adf1e81ab7dc87f14c8e345d10a93a64f9a3ac0dacaa4360cfd"
+    },
+    {
+      "file": "frontend/README.md",
+      "bytes": 19903,
+      "sha256": "16a6d69a29eb33207ea055c0514846d3b0dba4ed23e81bb20d0a2e6da12c7bb8"
+    }
+  ],
+  "frozen": {
+    "inputs": 254,
+    "drift": 0
+  }
+}

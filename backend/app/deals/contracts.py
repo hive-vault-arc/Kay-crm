@@ -220,6 +220,8 @@ class DealQuery(StrictBody):
     property_id: UUID | None = None
     updated_from: date | None = None
     updated_to: date | None = None
+    created_from: date | None = None
+    created_to: date | None = None
     archive: Literal["active", "archived", "all"] = "active"
     record_archive: Literal["active", "archived", "all"] = "active"
     sort: Literal["-updated_at", "-created_at", "title", "contact_name"] = "-updated_at"
@@ -229,6 +231,8 @@ class DealQuery(StrictBody):
     @model_validator(mode="after")
     def date_range(self) -> Self:
         if self.updated_from and self.updated_to and self.updated_from > self.updated_to:
+            raise ValueError("INVALID_DATE_RANGE")
+        if self.created_from and self.created_to and self.created_from > self.created_to:
             raise ValueError("INVALID_DATE_RANGE")
         return self
 

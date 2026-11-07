@@ -6,7 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, Request
 
 from app.identity.router import facade_authority
-from app.inventory.contracts import ConfirmAvailability, InventoryQuery, Owners
+from app.inventory.contracts import ConfirmAvailability, DevelopmentQuery, InventoryQuery, Owners
 from app.inventory.hierarchy_contracts import (
     ArchiveDevelopment,
     DevelopmentFields,
@@ -24,10 +24,40 @@ PageQuery = Annotated[InventoryQuery, Query()]
 PAGE = {"page", "page_size"}
 
 
+def phase_read(
+    request: Request,
+    token: str,
+    operation: str,
+    target: UUID | None,
+    query: InventoryQuery | DevelopmentQuery,
+) -> dict[str, object]:
+    if request.headers.get("X-Kay-Development-Phase") == "1":
+        return read_hierarchy(
+            database(request), token, operation, target, query, phase_enabled=True
+        )
+    return read_hierarchy(database(request), token, operation, target, query)
+
+
 @router.get("/developments")
-def developments(request: Request, token: Proof, query: PageQuery) -> dict[str, object]:
-    validate_query(request, PAGE | {"q", "category", "offering_kind", "state", "sort", "archive"})
-    return read_hierarchy(database(request), token, "developments", None, query)
+def developments(
+    request: Request, token: Proof, query: Annotated[DevelopmentQuery, Query()]
+) -> dict[str, object]:
+    validate_query(
+        request,
+        PAGE
+        | {
+            "q",
+            "category",
+            "offering_kind",
+            "state",
+            "sort",
+            "archive",
+            "min_comparison_mad",
+            "max_comparison_mad",
+            "phase",
+        },
+    )
+    return phase_read(request, token, "developments", None, query)
 
 
 @router.post("/developments")
@@ -40,7 +70,7 @@ def create_development(
 @router.get("/developments/{did}")
 def detail(request: Request, token: Proof, did: UUID) -> dict[str, object]:
     validate_query(request, set())
-    return read_hierarchy(database(request), token, "detail", did, InventoryQuery())
+    return phase_read(request, token, "detail", did, InventoryQuery())
 
 
 @router.patch("/developments/{did}")
@@ -64,11 +94,15 @@ def inventory(request: Request, token: Proof, did: UUID, query: PageQuery) -> di
             "offering_kind",
             "state",
             "archive",
+            "min_comparison_mad",
+            "max_comparison_mad",
+            "min_area_sqm",
+            "min_rooms",
         },
     )
     if "state" not in request.query_params:
         query.state = "available"
-    return read_hierarchy(database(request), token, "inventory", did, query)
+    return phase_read(request, token, "inventory", did, query)
 
 
 @router.get("/developments/{did}/stock-review")
@@ -169,7 +203,7 @@ def confirm(
 @router.get("/developments/{did}/history")
 def history(request: Request, token: Proof, did: UUID, query: PageQuery) -> dict[str, object]:
     validate_query(request, PAGE)
-    return read_hierarchy(database(request), token, "history", did, query)
+    return phase_read(request, token, "history", did, query)
 
 
 @router.post("/developments/{did}/archive")

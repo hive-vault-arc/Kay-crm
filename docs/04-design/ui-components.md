@@ -1,5 +1,81 @@
 # KAY interface components: shadcn/ui working guide
 
+Current authoring-tool boundary, 2026-10-30: the unused shadcn generation CLI has
+been removed from the application development dependency tree because its current
+deepmerge chain has an unpatched advisory. This changes no reviewed component
+source, Radix/Tailwind/Bklit dependency, registry configuration or selected design.
+The installed component source remains the application standard. Earlier pinned
+CLI/generation commands below are historical or upstream reference, not permission
+to execute an unpatched or unpinned tool. Compare pinned upstream component source
+with the local adaptation during maintenance; review the actual diff and its
+dependencies. Reintroduce a CLI only when its exact tree passes the unchanged
+security policy. [Verification](../03-planning/redesign-dependency-cleanup-2026-10-30.md).
+
+Selected search composition,2026-10-27: SearchTrigger switches at the existing
+phone boundary between DesktopSearch and the shared Sheet. PopoverAnchor is now
+exported from the installed shadcn/Radix primitive; existing Popover behavior is
+unchanged. Typed search-model/presentation/workspace modules compose Input, Label,
+NativeSelect, Tabs, Button, numbered pages, safe errors and semantic result icons.
+Desktop uses a labelled nonmodal result dialog and ordinary linked rows; phone/
+full-page views reuse the same parent-only rows. The selected popup geometry/menu
+material is the scoped CSS exception; no new dependency, kit or arbitrary icon.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
+Selected dashboard composition,2026-10-27: WorkspaceDashboard owns the four-KPI
+workspace projection and shared RecordDrawer report/work/record tools. Separate
+KPI, pipeline, preview, responsible-picker and rowset modules reuse Button/Popover/
+Input/Label/Badge, exact formatting and private InventoryThumbnail. Bklit pie source
+implements the selected semicircle; exact keyboard-operated legend values remain
+outside its decorative SVG. Detailed report values use compact soft rows in the
+drawer. Shared PageHeader suppresses an empty description instead of leaving a
+blank text row. No new kit/chart library/route or business command.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
+Selected settings form composition,2026-10-27: UserForm owns one SettingsWorkspace
+header/action row, identity/role card and right-hand security slot. Security tools
+use existing confirmed dialogs/status colors; dirty/busy identity edits block
+competing commands. Password presence alone enters managed draft signatures.
+WorkingHours shows complete weekday summaries and a support card; RecordDrawer
+owns all detailed periods, pauses, preview/comparison and save. Existing controls,
+DTOs, versions/retry and permission guards remain. Layouts stack below999/640px;
+no new kit/token/chart/dependency. [Execution](../03-planning/design-prototype-migration-execution.md).
+
+Selected settings composition,2026-10-26: SettingsWorkspace provides one page
+heading plus current-section administration navigation for overview, staff list/
+create/edit and hours routes. The source288px rail becomes local pills below1280px;
+active reveal changes only that strip. SettingsOverview composes shared surfaces,
+typed icons and Buttons with existing strict users/policy reads, actual total/
+distinct-weekday data, independent loading/error and whole-summary authority denial.
+It adds no generic chart or settings write. Detailed forms and native review
+remain pending. [Execution](../03-planning/design-prototype-migration-execution.md).
+
+2026-10-26 routed visit drawers use the shared RecordDrawer, persistent calendar
+layout, compact facts and bounded history cards. useDossierDraft now owns busy
+as well as dirty lifetime and releases deferred reads through the existing
+field-free event. Both generic input listeners respect managed ownership;
+current authorization errors still clear views. [Execution](../03-planning/design-prototype-migration-execution.md).
+
+2026-10-26 selected full dossier forms reuse RecordHeader/RecordSection, one
+continuous panel and a single header action row. Shared workspace field geometry
+uses wide label/value rows, top labels in narrow panels and one phone column.
+useDossierDraft owns actual editable values and successful/reloaded baselines;
+picker search is excluded. Existing arrays, scoped pickers, versions, retry keys
+and guarded cancellation remain. [Execution](../03-planning/design-prototype-migration-execution.md).
+
+## Current selected dossier fields (2026-10-26)
+
+The owner-selected migration uses InlineEditScope/InlineRecordField/InlineFieldForm
+for quiet values and one active local editor. Existing shadcn controls, complete
+wire schemas, reviewed versions, stable retry keys and canonical commands remain.
+ContactFields can render one requested group while preserving the whole validated
+contact draft. Phone/email collections retain primary selection and labels.
+Contact conflict recovery rebases only that field; other current values survive.
+Header Modifier remains the full editor. Current authority denial hides old data.
+
+The current calendar migration also supersedes the historical D38 geometry below:
+day columns/drawer filters/phone agenda retain real safe queries and server time.
+[Current execution and limits](../03-planning/design-prototype-migration-execution.md).
+
 ## Projects directory composition: D39
 
 `PropertyDirectory` retains shadcn Tabs and the shared FilterResultsLayout/Sheet.

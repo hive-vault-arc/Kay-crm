@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "a7f85f6",
+  "scope": "Selected inventory photo gallery, focused explicit upload/resume and private cancellation/draft lifetime",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 352,
+      "failed": 0,
+      "newRegisteredCases": 18
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 91,
+      "iconSites": 321,
+      "buttonSites": 466,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .git/codex-photo-workspace-source-check.cjs",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0,
+      "cameraSourceEqual": true,
+      "cameraSha256": "8069c65ef1b1bc0bc0bc11003cca8e988b095f9ca9432428405690496f303cc0",
+      "compiledPhotoAspect": true,
+      "compiledPhotoPhoneColumn": true,
+      "compiledHiddenImportant": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8737,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1246,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "reference": "Frozen photo-gallery.js, photo-recovery.css, photo-upload.js and ui.js Camera mapping",
+    "proposal": "Selected gallery/count header, tonal3:2 cards, single-column phone gallery and focused form replacing the body; explicit submit supersedes old automatic-on-selection UX",
+    "runtimeKitDependencyChartThemeOrBackendChange": false
+  },
+  "invariants": [
+    "Existing WebP/20MiB/25MP/2560px/quality0.82, antivirus/quarantine/private transfer and serialized ten-slot rules",
+    "Attempt owns exact parent/resume/source/converted bytes/key and document ID; uncertain metadata freezes replacement",
+    "Fresh matching current metadata and capability precede a fresh current-version permit",
+    "Lost transfer acknowledgement resolves current pending/clean/rejected state without another version",
+    "Explicit false capability denies; Agent existing-row resume requires true; own accepted creation preserves optional-flag legacy fallback to authoritative permit",
+    "Legacy JPEG/PNG resume uses exact original metadata/bytes rather than silent recompression",
+    "Managed dirty markers persist across metadata-only writes; actual workflow success accepts draft",
+    "Cancellation covers CSRF/metadata/permit/bytes/preview and request bodies with existing bounds and listener/timer release, without AbortSignal.any",
+    "Current denial removes private projection; departed reads abort, blob URLs revoke and late success is suppressed",
+    "Archive/scan commands retain duplicate locks/retry identity/shared busy boundary; focus has a surviving-gallery fallback",
+    "No private bytes/proofs/File/filename storage or diagnostic export"
+  ],
+  "correctedAttempts": [
+    "Initial lint found a missing query hook dependency; stable reset callback dependency supplied",
+    "A retry fixture changed its parent per invocation; fixture corrected and actual attempt context binding strengthened",
+    "A media test loader lacked crypto; synthetic global supplied and archive retry/focus case rerun"
+  ],
+  "preparedBrowser": [
+    "frontend/tests/e2e/photo-workspace.spec.ts:1440px property and390px development, explicit send, interrupted transfer, preserved draft/retry, own Agent upload, clean preview; not executed"
+  ],
+  "remaining": [
+    "Owner directory/drawer entry",
+    "Older photo/inventory/browser helper migration and all remaining P0-P8 reconciliation",
+    "Legacy same-document history fallback",
+    "Existing automatic app-access rejection: browser/CUA/CDP/app HTTP not attempted",
+    "Native desktop/phone/focus/touch/zoom/accessibility/AFTER, actual current-role/private-byte delivery/slot concurrency/scanner/worker/races, real SQL/full-stack/CI and owner review"
+  ],
+  "preserved": [
+    "All254 frozen prototype inputs",
+    "Backend/API/schema/services/data/migrations/configuration",
+    "Unrelated35-line lesson change and motion plan",
+    "main, push, merge and production"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

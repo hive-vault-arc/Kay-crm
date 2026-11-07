@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "094fa5fbb9cb9d8b2abeed618f59b4fe1c930864",
+  "scope": "Actual selected Agent inventory action absence and locked unit placement native paths",
+  "productionChanged": false,
+  "checks": [
+    {
+      "command": "npx eslint tests/helpers/inventory.ts tests/e2e/project-permissions.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript AST comparison against base permission source",
+      "exitCode": 0,
+      "testsAndTitlesUnchanged": 2,
+      "exactBusinessCommandsUnchanged": 2,
+      "timeoutsUnchanged": 2
+    },
+    {
+      "command": "Frozen/main/protected review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9041,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1312,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "retainedPriorEvidence": {
+    "frontendUnits": 977,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "behavior": [
+    "Absence checks target actual selected create-offer and owner-edit actions in exact sections",
+    "Current Modifier header links and unit form/save labels",
+    "Exactly three disabled placement selectors checked at first step before area editing",
+    "Hierarchy/stock equality/private developer/404/403 assertions retained"
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/project-permissions.spec.ts",
+    "cases": 2,
+    "typechecked": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "broaderHelpersAndConsumersAccepted": false
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "nextSourceBoundary": {
+    "file": "frontend/src/features/files/file-panel.tsx",
+    "scope": "Pending metadata dispatch/abort, unknown-result file replacement and current receipt/transfer completion",
+    "status": "Located source audit lead; actual-module fault evidence pending, no runtime/private leak claim",
+    "nativePaths": "Old file helpers/Contact tabs require selected nested uploader reconciliation"
+  },
+  "pending": [
+    "Actual SQL/native/device/identity/permission/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Other helper consumers and remaining exact field/job/alias/selectors"
+  ],
+  "status": "Prepared native source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/helpers/inventory.ts",
+      "bytes": 6454,
+      "sha256": "407e94027ce8d05ac6bd6b7cb3926a70d550d9d87e207d15896848eb4a794569"
+    },
+    {
+      "file": "frontend/tests/e2e/project-permissions.spec.ts",
+      "bytes": 7103,
+      "sha256": "ed52c74a84760e3bb231ab547ccbcc34c855a0e9926de089a1af675a34c275bd"
+    }
+  ]
+}

@@ -1,0 +1,374 @@
+/* Exact selected prototype status surfaces; wire identifiers remain authoritative. */
+:root {
+  --kay-status-neutral-text:#52657d;
+  --kay-status-neutral-bg:#f2f5f8;
+  --kay-status-neutral-dot:#52657d;
+  --kay-status-neutral-border:#e8ecf2;
+  --kay-status-neutral-solid:#52657d;
+  --kay-status-not-contacted-text:#c24150;
+  --kay-status-not-contacted-bg:#fff2f4;
+  --kay-status-not-contacted-dot:#c24150;
+  --kay-status-not-contacted-border:#ffe7ea;
+  --kay-status-not-contacted-solid:#c24150;
+  --kay-status-contacted-text:#1389b2;
+  --kay-status-contacted-bg:#eff9fd;
+  --kay-status-contacted-dot:#1389b2;
+  --kay-status-contacted-border:#e0f4fb;
+  --kay-status-contacted-solid:#0e7490;
+  --kay-status-follow-up-text:#4338ca;
+  --kay-status-follow-up-bg:#f2f3ff;
+  --kay-status-follow-up-dot:#4338ca;
+  --kay-status-follow-up-border:#e6e8ff;
+  --kay-status-follow-up-solid:#4338ca;
+  --kay-status-analysis-text:#1d4ed8;
+  --kay-status-analysis-bg:#f6faff;
+  --kay-status-analysis-dot:#1d4ed8;
+  --kay-status-analysis-border:#e1edfb;
+  --kay-status-analysis-solid:#1d4ed8;
+  --kay-status-qualified-text:#8b5cc7;
+  --kay-status-qualified-bg:#f8f2ff;
+  --kay-status-qualified-dot:#8b5cc7;
+  --kay-status-qualified-border:#f4eafd;
+  --kay-status-qualified-solid:#7c4db5;
+  --kay-status-not-qualified-text:#52657d;
+  --kay-status-not-qualified-bg:#f2f5f8;
+  --kay-status-not-qualified-dot:#52657d;
+  --kay-status-not-qualified-border:#e8ecf2;
+  --kay-status-not-qualified-solid:#52657d;
+  --kay-status-converted-text:#0f9f8a;
+  --kay-status-converted-bg:#edfbf8;
+  --kay-status-converted-dot:#0f9f8a;
+  --kay-status-converted-border:#dff7f3;
+  --kay-status-converted-solid:#0f766e;
+  --kay-status-lost-text:#c24150;
+  --kay-status-lost-bg:#fff2f4;
+  --kay-status-lost-dot:#c24150;
+  --kay-status-lost-border:#ffe7ea;
+  --kay-status-lost-solid:#c24150;
+  --kay-status-junk-text:#52657d;
+  --kay-status-junk-bg:#f2f5f8;
+  --kay-status-junk-dot:#52657d;
+  --kay-status-junk-border:#e8ecf2;
+  --kay-status-junk-solid:#52657d;
+  --kay-status-proposition-text:#1d4ed8;
+  --kay-status-proposition-bg:#f6faff;
+  --kay-status-proposition-dot:#1d4ed8;
+  --kay-status-proposition-border:#e1edfb;
+  --kay-status-proposition-solid:#1d4ed8;
+  --kay-status-visite-text:#1389b2;
+  --kay-status-visite-bg:#eff9fd;
+  --kay-status-visite-dot:#1389b2;
+  --kay-status-visite-border:#e0f4fb;
+  --kay-status-visite-solid:#0e7490;
+  --kay-status-negotiation-text:#4338ca;
+  --kay-status-negotiation-bg:#f2f3ff;
+  --kay-status-negotiation-dot:#4338ca;
+  --kay-status-negotiation-border:#e6e8ff;
+  --kay-status-negotiation-solid:#4338ca;
+  --kay-status-pending-text:#8b5cc7;
+  --kay-status-pending-bg:#f8f2ff;
+  --kay-status-pending-dot:#8b5cc7;
+  --kay-status-pending-border:#f4eafd;
+  --kay-status-pending-solid:#7c4db5;
+  --kay-status-closed-won-text:#0f8f80;
+  --kay-status-closed-won-bg:#edfbf7;
+  --kay-status-closed-won-dot:#0f8f80;
+  --kay-status-closed-won-border:#e0f6f1;
+  --kay-status-closed-won-solid:#0f7f72;
+  --kay-status-closed-lost-text:#c24150;
+  --kay-status-closed-lost-bg:#fff2f4;
+  --kay-status-closed-lost-dot:#c24150;
+  --kay-status-closed-lost-border:#ffe7ea;
+  --kay-status-closed-lost-solid:#c24150;
+  --kay-status-rating-cold-text:#1d4ed8;
+  --kay-status-rating-cold-bg:#f6faff;
+  --kay-status-rating-cold-dot:#1d4ed8;
+  --kay-status-rating-cold-border:#e1edfb;
+  --kay-status-rating-cold-solid:#1d4ed8;
+  --kay-status-rating-normal-text:#52657d;
+  --kay-status-rating-normal-bg:#f2f5f8;
+  --kay-status-rating-normal-dot:#52657d;
+  --kay-status-rating-normal-border:#e8ecf2;
+  --kay-status-rating-normal-solid:#52657d;
+  --kay-status-rating-hot-text:#c24150;
+  --kay-status-rating-hot-bg:#fff2f4;
+  --kay-status-rating-hot-dot:#c24150;
+  --kay-status-rating-hot-border:#ffe7ea;
+  --kay-status-rating-hot-solid:#c24150;
+  --kay-status-available-text:#0f8f80;
+  --kay-status-available-bg:#edfbf7;
+  --kay-status-available-dot:#0f8f80;
+  --kay-status-available-border:#e0f6f1;
+  --kay-status-available-solid:#0f7f72;
+  --kay-status-confirmed-text:#0f8f80;
+  --kay-status-confirmed-bg:#edfbf7;
+  --kay-status-confirmed-dot:#0f8f80;
+  --kay-status-confirmed-border:#e0f6f1;
+  --kay-status-confirmed-solid:#0f7f72;
+  --kay-status-active-text:#1389b2;
+  --kay-status-active-bg:#eff9fd;
+  --kay-status-active-dot:#1389b2;
+  --kay-status-active-border:#e0f4fb;
+  --kay-status-active-solid:#0e7490;
+}
+:root[data-theme=dark] {
+  --kay-status-neutral-text:#cbd5e1;
+  --kay-status-neutral-bg:rgb(100 116 139 / 12%);
+  --kay-status-neutral-dot:#cbd5e1;
+  --kay-status-neutral-border:rgb(148 163 184 / 14%);
+  --kay-status-neutral-solid:#475569;
+  --kay-status-not-contacted-text:#fda4af;
+  --kay-status-not-contacted-bg:rgb(194 65 80 / 12%);
+  --kay-status-not-contacted-dot:#fda4af;
+  --kay-status-not-contacted-border:rgb(253 164 175 / 14%);
+  --kay-status-not-contacted-solid:#9f3443;
+  --kay-status-contacted-text:#7dd3fc;
+  --kay-status-contacted-bg:rgb(19 137 178 / 12%);
+  --kay-status-contacted-dot:#7dd3fc;
+  --kay-status-contacted-border:rgb(125 211 252 / 14%);
+  --kay-status-contacted-solid:#0e7490;
+  --kay-status-follow-up-text:#a7a1ff;
+  --kay-status-follow-up-bg:rgb(81 71 199 / 12%);
+  --kay-status-follow-up-dot:#a7a1ff;
+  --kay-status-follow-up-border:rgb(167 161 255 / 14%);
+  --kay-status-follow-up-solid:#4338ca;
+  --kay-status-analysis-text:#60a5fa;
+  --kay-status-analysis-bg:rgb(29 78 216 / 12%);
+  --kay-status-analysis-dot:#60a5fa;
+  --kay-status-analysis-border:rgb(147 197 253 / 14%);
+  --kay-status-analysis-solid:#1d4ed8;
+  --kay-status-qualified-text:#c4b5fd;
+  --kay-status-qualified-bg:rgb(139 92 199 / 12%);
+  --kay-status-qualified-dot:#c4b5fd;
+  --kay-status-qualified-border:rgb(196 181 253 / 14%);
+  --kay-status-qualified-solid:#6d46a3;
+  --kay-status-not-qualified-text:#cbd5e1;
+  --kay-status-not-qualified-bg:rgb(100 116 139 / 12%);
+  --kay-status-not-qualified-dot:#cbd5e1;
+  --kay-status-not-qualified-border:rgb(148 163 184 / 14%);
+  --kay-status-not-qualified-solid:#475569;
+  --kay-status-converted-text:#5eead4;
+  --kay-status-converted-bg:rgb(15 159 138 / 12%);
+  --kay-status-converted-dot:#5eead4;
+  --kay-status-converted-border:rgb(94 234 212 / 14%);
+  --kay-status-converted-solid:#0f766e;
+  --kay-status-lost-text:#fda4af;
+  --kay-status-lost-bg:rgb(194 65 80 / 12%);
+  --kay-status-lost-dot:#fda4af;
+  --kay-status-lost-border:rgb(253 164 175 / 14%);
+  --kay-status-lost-solid:#9f3443;
+  --kay-status-junk-text:#cbd5e1;
+  --kay-status-junk-bg:rgb(100 116 139 / 12%);
+  --kay-status-junk-dot:#cbd5e1;
+  --kay-status-junk-border:rgb(148 163 184 / 14%);
+  --kay-status-junk-solid:#475569;
+  --kay-status-proposition-text:#60a5fa;
+  --kay-status-proposition-bg:rgb(29 78 216 / 12%);
+  --kay-status-proposition-dot:#60a5fa;
+  --kay-status-proposition-border:rgb(147 197 253 / 14%);
+  --kay-status-proposition-solid:#1d4ed8;
+  --kay-status-visite-text:#7dd3fc;
+  --kay-status-visite-bg:rgb(19 137 178 / 12%);
+  --kay-status-visite-dot:#7dd3fc;
+  --kay-status-visite-border:rgb(125 211 252 / 14%);
+  --kay-status-visite-solid:#0e7490;
+  --kay-status-negotiation-text:#a7a1ff;
+  --kay-status-negotiation-bg:rgb(81 71 199 / 12%);
+  --kay-status-negotiation-dot:#a7a1ff;
+  --kay-status-negotiation-border:rgb(167 161 255 / 14%);
+  --kay-status-negotiation-solid:#4338ca;
+  --kay-status-pending-text:#c4b5fd;
+  --kay-status-pending-bg:rgb(139 92 199 / 12%);
+  --kay-status-pending-dot:#c4b5fd;
+  --kay-status-pending-border:rgb(196 181 253 / 14%);
+  --kay-status-pending-solid:#6d46a3;
+  --kay-status-closed-won-text:#5eead4;
+  --kay-status-closed-won-bg:rgb(15 143 128 / 12%);
+  --kay-status-closed-won-dot:#5eead4;
+  --kay-status-closed-won-border:rgb(94 234 212 / 14%);
+  --kay-status-closed-won-solid:#0f766e;
+  --kay-status-closed-lost-text:#fda4af;
+  --kay-status-closed-lost-bg:rgb(194 65 80 / 12%);
+  --kay-status-closed-lost-dot:#fda4af;
+  --kay-status-closed-lost-border:rgb(253 164 175 / 14%);
+  --kay-status-closed-lost-solid:#9f3443;
+  --kay-status-rating-cold-text:#60a5fa;
+  --kay-status-rating-cold-bg:rgb(29 78 216 / 12%);
+  --kay-status-rating-cold-dot:#60a5fa;
+  --kay-status-rating-cold-border:rgb(147 197 253 / 14%);
+  --kay-status-rating-cold-solid:#1d4ed8;
+  --kay-status-rating-normal-text:#cbd5e1;
+  --kay-status-rating-normal-bg:rgb(100 116 139 / 12%);
+  --kay-status-rating-normal-dot:#cbd5e1;
+  --kay-status-rating-normal-border:rgb(148 163 184 / 14%);
+  --kay-status-rating-normal-solid:#475569;
+  --kay-status-rating-hot-text:#fda4af;
+  --kay-status-rating-hot-bg:rgb(194 65 80 / 12%);
+  --kay-status-rating-hot-dot:#fda4af;
+  --kay-status-rating-hot-border:rgb(253 164 175 / 14%);
+  --kay-status-rating-hot-solid:#9f3443;
+  --kay-status-available-text:#5eead4;
+  --kay-status-available-bg:rgb(15 143 128 / 12%);
+  --kay-status-available-dot:#5eead4;
+  --kay-status-available-border:rgb(94 234 212 / 14%);
+  --kay-status-available-solid:#0f766e;
+  --kay-status-confirmed-text:#5eead4;
+  --kay-status-confirmed-bg:rgb(15 143 128 / 12%);
+  --kay-status-confirmed-dot:#5eead4;
+  --kay-status-confirmed-border:rgb(94 234 212 / 14%);
+  --kay-status-confirmed-solid:#0f766e;
+  --kay-status-active-text:#7dd3fc;
+  --kay-status-active-bg:rgb(19 137 178 / 12%);
+  --kay-status-active-dot:#7dd3fc;
+  --kay-status-active-border:rgb(125 211 252 / 14%);
+  --kay-status-active-solid:#0e7490;
+}
+@media(prefers-color-scheme:dark) {
+:root[data-theme=system] {
+  --kay-status-neutral-text:#cbd5e1;
+  --kay-status-neutral-bg:rgb(100 116 139 / 12%);
+  --kay-status-neutral-dot:#cbd5e1;
+  --kay-status-neutral-border:rgb(148 163 184 / 14%);
+  --kay-status-neutral-solid:#475569;
+  --kay-status-not-contacted-text:#fda4af;
+  --kay-status-not-contacted-bg:rgb(194 65 80 / 12%);
+  --kay-status-not-contacted-dot:#fda4af;
+  --kay-status-not-contacted-border:rgb(253 164 175 / 14%);
+  --kay-status-not-contacted-solid:#9f3443;
+  --kay-status-contacted-text:#7dd3fc;
+  --kay-status-contacted-bg:rgb(19 137 178 / 12%);
+  --kay-status-contacted-dot:#7dd3fc;
+  --kay-status-contacted-border:rgb(125 211 252 / 14%);
+  --kay-status-contacted-solid:#0e7490;
+  --kay-status-follow-up-text:#a7a1ff;
+  --kay-status-follow-up-bg:rgb(81 71 199 / 12%);
+  --kay-status-follow-up-dot:#a7a1ff;
+  --kay-status-follow-up-border:rgb(167 161 255 / 14%);
+  --kay-status-follow-up-solid:#4338ca;
+  --kay-status-analysis-text:#60a5fa;
+  --kay-status-analysis-bg:rgb(29 78 216 / 12%);
+  --kay-status-analysis-dot:#60a5fa;
+  --kay-status-analysis-border:rgb(147 197 253 / 14%);
+  --kay-status-analysis-solid:#1d4ed8;
+  --kay-status-qualified-text:#c4b5fd;
+  --kay-status-qualified-bg:rgb(139 92 199 / 12%);
+  --kay-status-qualified-dot:#c4b5fd;
+  --kay-status-qualified-border:rgb(196 181 253 / 14%);
+  --kay-status-qualified-solid:#6d46a3;
+  --kay-status-not-qualified-text:#cbd5e1;
+  --kay-status-not-qualified-bg:rgb(100 116 139 / 12%);
+  --kay-status-not-qualified-dot:#cbd5e1;
+  --kay-status-not-qualified-border:rgb(148 163 184 / 14%);
+  --kay-status-not-qualified-solid:#475569;
+  --kay-status-converted-text:#5eead4;
+  --kay-status-converted-bg:rgb(15 159 138 / 12%);
+  --kay-status-converted-dot:#5eead4;
+  --kay-status-converted-border:rgb(94 234 212 / 14%);
+  --kay-status-converted-solid:#0f766e;
+  --kay-status-lost-text:#fda4af;
+  --kay-status-lost-bg:rgb(194 65 80 / 12%);
+  --kay-status-lost-dot:#fda4af;
+  --kay-status-lost-border:rgb(253 164 175 / 14%);
+  --kay-status-lost-solid:#9f3443;
+  --kay-status-junk-text:#cbd5e1;
+  --kay-status-junk-bg:rgb(100 116 139 / 12%);
+  --kay-status-junk-dot:#cbd5e1;
+  --kay-status-junk-border:rgb(148 163 184 / 14%);
+  --kay-status-junk-solid:#475569;
+  --kay-status-proposition-text:#60a5fa;
+  --kay-status-proposition-bg:rgb(29 78 216 / 12%);
+  --kay-status-proposition-dot:#60a5fa;
+  --kay-status-proposition-border:rgb(147 197 253 / 14%);
+  --kay-status-proposition-solid:#1d4ed8;
+  --kay-status-visite-text:#7dd3fc;
+  --kay-status-visite-bg:rgb(19 137 178 / 12%);
+  --kay-status-visite-dot:#7dd3fc;
+  --kay-status-visite-border:rgb(125 211 252 / 14%);
+  --kay-status-visite-solid:#0e7490;
+  --kay-status-negotiation-text:#a7a1ff;
+  --kay-status-negotiation-bg:rgb(81 71 199 / 12%);
+  --kay-status-negotiation-dot:#a7a1ff;
+  --kay-status-negotiation-border:rgb(167 161 255 / 14%);
+  --kay-status-negotiation-solid:#4338ca;
+  --kay-status-pending-text:#c4b5fd;
+  --kay-status-pending-bg:rgb(139 92 199 / 12%);
+  --kay-status-pending-dot:#c4b5fd;
+  --kay-status-pending-border:rgb(196 181 253 / 14%);
+  --kay-status-pending-solid:#6d46a3;
+  --kay-status-closed-won-text:#5eead4;
+  --kay-status-closed-won-bg:rgb(15 143 128 / 12%);
+  --kay-status-closed-won-dot:#5eead4;
+  --kay-status-closed-won-border:rgb(94 234 212 / 14%);
+  --kay-status-closed-won-solid:#0f766e;
+  --kay-status-closed-lost-text:#fda4af;
+  --kay-status-closed-lost-bg:rgb(194 65 80 / 12%);
+  --kay-status-closed-lost-dot:#fda4af;
+  --kay-status-closed-lost-border:rgb(253 164 175 / 14%);
+  --kay-status-closed-lost-solid:#9f3443;
+  --kay-status-rating-cold-text:#60a5fa;
+  --kay-status-rating-cold-bg:rgb(29 78 216 / 12%);
+  --kay-status-rating-cold-dot:#60a5fa;
+  --kay-status-rating-cold-border:rgb(147 197 253 / 14%);
+  --kay-status-rating-cold-solid:#1d4ed8;
+  --kay-status-rating-normal-text:#cbd5e1;
+  --kay-status-rating-normal-bg:rgb(100 116 139 / 12%);
+  --kay-status-rating-normal-dot:#cbd5e1;
+  --kay-status-rating-normal-border:rgb(148 163 184 / 14%);
+  --kay-status-rating-normal-solid:#475569;
+  --kay-status-rating-hot-text:#fda4af;
+  --kay-status-rating-hot-bg:rgb(194 65 80 / 12%);
+  --kay-status-rating-hot-dot:#fda4af;
+  --kay-status-rating-hot-border:rgb(253 164 175 / 14%);
+  --kay-status-rating-hot-solid:#9f3443;
+  --kay-status-available-text:#5eead4;
+  --kay-status-available-bg:rgb(15 143 128 / 12%);
+  --kay-status-available-dot:#5eead4;
+  --kay-status-available-border:rgb(94 234 212 / 14%);
+  --kay-status-available-solid:#0f766e;
+  --kay-status-confirmed-text:#5eead4;
+  --kay-status-confirmed-bg:rgb(15 143 128 / 12%);
+  --kay-status-confirmed-dot:#5eead4;
+  --kay-status-confirmed-border:rgb(94 234 212 / 14%);
+  --kay-status-confirmed-solid:#0f766e;
+  --kay-status-active-text:#7dd3fc;
+  --kay-status-active-bg:rgb(19 137 178 / 12%);
+  --kay-status-active-dot:#7dd3fc;
+  --kay-status-active-border:rgb(125 211 252 / 14%);
+  --kay-status-active-solid:#0e7490;
+}
+}
+:root [data-crm-state="new"] { --crm-state-color:var(--kay-status-not-contacted-dot); --crm-state-ink:var(--kay-status-not-contacted-text); --crm-state-background:var(--kay-status-not-contacted-bg); --crm-state-border:var(--kay-status-not-contacted-border); }
+:root [data-crm-state="in_progress"] { --crm-state-color:var(--kay-status-contacted-dot); --crm-state-ink:var(--kay-status-contacted-text); --crm-state-background:var(--kay-status-contacted-bg); --crm-state-border:var(--kay-status-contacted-border); }
+:root [data-crm-state="follow_up"] { --crm-state-color:var(--kay-status-follow-up-dot); --crm-state-ink:var(--kay-status-follow-up-text); --crm-state-background:var(--kay-status-follow-up-bg); --crm-state-border:var(--kay-status-follow-up-border); }
+:root [data-crm-state="analysis"] { --crm-state-color:var(--kay-status-analysis-dot); --crm-state-ink:var(--kay-status-analysis-text); --crm-state-background:var(--kay-status-analysis-bg); --crm-state-border:var(--kay-status-analysis-border); }
+:root [data-crm-state="qualified"] { --crm-state-color:var(--kay-status-qualified-dot); --crm-state-ink:var(--kay-status-qualified-text); --crm-state-background:var(--kay-status-qualified-bg); --crm-state-border:var(--kay-status-qualified-border); }
+:root [data-crm-state="not_qualified"] { --crm-state-color:var(--kay-status-not-qualified-dot); --crm-state-ink:var(--kay-status-not-qualified-text); --crm-state-background:var(--kay-status-not-qualified-bg); --crm-state-border:var(--kay-status-not-qualified-border); }
+:root [data-crm-state="converted"] { --crm-state-color:var(--kay-status-converted-dot); --crm-state-ink:var(--kay-status-converted-text); --crm-state-background:var(--kay-status-converted-bg); --crm-state-border:var(--kay-status-converted-border); }
+:root [data-crm-state="lost"] { --crm-state-color:var(--kay-status-lost-dot); --crm-state-ink:var(--kay-status-lost-text); --crm-state-background:var(--kay-status-lost-bg); --crm-state-border:var(--kay-status-lost-border); }
+:root [data-crm-state="junk_lead"] { --crm-state-color:var(--kay-status-junk-dot); --crm-state-ink:var(--kay-status-junk-text); --crm-state-background:var(--kay-status-junk-bg); --crm-state-border:var(--kay-status-junk-border); }
+:root [data-crm-state="closed"] { --crm-state-color:var(--kay-status-neutral-dot); --crm-state-ink:var(--kay-status-neutral-text); --crm-state-background:var(--kay-status-neutral-bg); --crm-state-border:var(--kay-status-neutral-border); }
+:root [data-crm-state="warm"] { --crm-state-color:var(--kay-status-rating-normal-dot); --crm-state-ink:var(--kay-status-rating-normal-text); --crm-state-background:var(--kay-status-rating-normal-bg); --crm-state-border:var(--kay-status-rating-normal-border); }
+:root [data-crm-state="cold"] { --crm-state-color:var(--kay-status-rating-cold-dot); --crm-state-ink:var(--kay-status-rating-cold-text); --crm-state-background:var(--kay-status-rating-cold-bg); --crm-state-border:var(--kay-status-rating-cold-border); }
+:root [data-crm-state="hot"] { --crm-state-color:var(--kay-status-rating-hot-dot); --crm-state-ink:var(--kay-status-rating-hot-text); --crm-state-background:var(--kay-status-rating-hot-bg); --crm-state-border:var(--kay-status-rating-hot-border); }
+:root [data-crm-state="normal"] { --crm-state-color:var(--kay-status-rating-normal-dot); --crm-state-ink:var(--kay-status-rating-normal-text); --crm-state-background:var(--kay-status-rating-normal-bg); --crm-state-border:var(--kay-status-rating-normal-border); }
+:root [data-crm-state="visit"] { --crm-state-color:var(--kay-status-visite-dot); --crm-state-ink:var(--kay-status-visite-text); --crm-state-background:var(--kay-status-visite-bg); --crm-state-border:var(--kay-status-visite-border); }
+:root [data-crm-state="negotiation"] { --crm-state-color:var(--kay-status-negotiation-dot); --crm-state-ink:var(--kay-status-negotiation-text); --crm-state-background:var(--kay-status-negotiation-bg); --crm-state-border:var(--kay-status-negotiation-border); }
+:root [data-crm-state="documents"] { --crm-state-color:var(--kay-status-converted-dot); --crm-state-ink:var(--kay-status-converted-text); --crm-state-background:var(--kay-status-converted-bg); --crm-state-border:var(--kay-status-converted-border); }
+:root [data-crm-state="reserved"] { --crm-state-color:var(--kay-status-pending-dot); --crm-state-ink:var(--kay-status-pending-text); --crm-state-background:var(--kay-status-pending-bg); --crm-state-border:var(--kay-status-pending-border); }
+:root [data-crm-state="won"] { --crm-state-color:var(--kay-status-closed-won-dot); --crm-state-ink:var(--kay-status-closed-won-text); --crm-state-background:var(--kay-status-closed-won-bg); --crm-state-border:var(--kay-status-closed-won-border); }
+:root [data-crm-state="cancelled"] { --crm-state-color:var(--kay-status-neutral-dot); --crm-state-ink:var(--kay-status-neutral-text); --crm-state-background:var(--kay-status-neutral-bg); --crm-state-border:var(--kay-status-neutral-border); }
+:root [data-crm-state="active"] { --crm-state-color:var(--kay-status-active-dot); --crm-state-ink:var(--kay-status-active-text); --crm-state-background:var(--kay-status-active-bg); --crm-state-border:var(--kay-status-active-border); }
+:root [data-crm-state="archived"] { --crm-state-color:var(--kay-status-neutral-dot); --crm-state-ink:var(--kay-status-neutral-text); --crm-state-background:var(--kay-status-neutral-bg); --crm-state-border:var(--kay-status-neutral-border); }
+:root [data-crm-state="scheduled"] { --crm-state-color:var(--kay-status-neutral-dot); --crm-state-ink:var(--kay-status-neutral-text); --crm-state-background:var(--kay-status-neutral-bg); --crm-state-border:var(--kay-status-neutral-border); }
+:root [data-crm-state="confirmed"] { --crm-state-color:var(--kay-status-confirmed-dot); --crm-state-ink:var(--kay-status-confirmed-text); --crm-state-background:var(--kay-status-confirmed-bg); --crm-state-border:var(--kay-status-confirmed-border); }
+:root [data-crm-state="completed"] { --crm-state-color:var(--kay-status-closed-won-dot); --crm-state-ink:var(--kay-status-closed-won-text); --crm-state-background:var(--kay-status-closed-won-bg); --crm-state-border:var(--kay-status-closed-won-border); }
+:root [data-crm-state="not_completed"] { --crm-state-color:var(--kay-status-follow-up-dot); --crm-state-ink:var(--kay-status-follow-up-text); --crm-state-background:var(--kay-status-follow-up-bg); --crm-state-border:var(--kay-status-follow-up-border); }
+:root [data-crm-state="draft"] { --crm-state-color:var(--kay-status-neutral-dot); --crm-state-ink:var(--kay-status-neutral-text); --crm-state-background:var(--kay-status-neutral-bg); --crm-state-border:var(--kay-status-neutral-border); }
+:root [data-crm-state="open"] { --crm-state-color:var(--kay-status-follow-up-dot); --crm-state-ink:var(--kay-status-follow-up-text); --crm-state-background:var(--kay-status-follow-up-bg); --crm-state-border:var(--kay-status-follow-up-border); }
+:root [data-crm-state="available"] { --crm-state-color:var(--kay-status-available-dot); --crm-state-ink:var(--kay-status-available-text); --crm-state-background:var(--kay-status-available-bg); --crm-state-border:var(--kay-status-available-border); }
+:root .crm-status-badge { border:1px solid var(--crm-state-border,transparent); }
+:root [data-crm-kind=deal] [data-crm-state=new],:root [data-crm-kind=deal][data-crm-state=new] { --crm-state-color:var(--kay-status-proposition-dot); --crm-state-ink:var(--kay-status-proposition-text); --crm-state-background:var(--kay-status-proposition-bg); --crm-state-border:var(--kay-status-proposition-border); }
+:root [data-crm-state="sold"] { --crm-state-color:var(--kay-status-closed-won-dot); --crm-state-ink:var(--kay-status-closed-won-text); --crm-state-background:var(--kay-status-closed-won-bg); --crm-state-border:var(--kay-status-closed-won-border); }
+:root [data-crm-state="rented"] { --crm-state-color:var(--kay-status-converted-dot); --crm-state-ink:var(--kay-status-converted-text); --crm-state-background:var(--kay-status-converted-bg); --crm-state-border:var(--kay-status-converted-border); }
+:root [data-crm-state="withdrawn"] { --crm-state-color:var(--kay-status-neutral-dot); --crm-state-ink:var(--kay-status-neutral-text); --crm-state-background:var(--kay-status-neutral-bg); --crm-state-border:var(--kay-status-neutral-border); }
+:root [data-crm-state="review"] { --crm-state-color:var(--kay-status-follow-up-dot); --crm-state-ink:var(--kay-status-follow-up-text); --crm-state-background:var(--kay-status-follow-up-bg); --crm-state-border:var(--kay-status-follow-up-border); }

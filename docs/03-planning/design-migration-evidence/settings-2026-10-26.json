@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "base": "71e661b",
+  "scope": "Selected administration navigation and real settings overview; concrete routes and commands preserved",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 420,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 202,
+      "failed": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8651,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1233,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    }
+  ],
+  "sourceAnalysis": {
+    "settingsCssRules": 51,
+    "existingRoles": 4,
+    "missingRoles": 0,
+    "prototypeInputs": 254,
+    "prototypeHashDrift": 0
+  },
+  "sources": [
+    {
+      "path": "frontend/scripts/test-facade.mjs",
+      "sha256": "464d5be1ebd7ccf0d7c52ec0ce8ae73c1e5918136e00f238bad5ffbaafd86661"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/settings/page.tsx",
+      "sha256": "98c477ea71d88ff2f350c1d1856ce7b935a103a647c5c60ea2bb28eec377deca"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/settings/users/[id]/edit/page.tsx",
+      "sha256": "9106ffccba264f460a6311663897cceac7f5607879e5a693d74245a833b6a860"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/settings/users/new/page.tsx",
+      "sha256": "faf3e8466b81e4e47d838e71ce8b2f7ebe2617e8bf99895a846fc56f102e0595"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/settings/working-hours/page.tsx",
+      "sha256": "db4d2f85d890e57ac028810c194fd02bc394cbdb52b9439db52a10b1d38e45ff"
+    },
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "f198c558c39b9ffcec238e329aa4aca6ca6af86c9a457b8353d1edd578418582"
+    },
+    {
+      "path": "frontend/src/app/workspace-settings.css",
+      "sha256": "379d138def6cf82921d3631e632c070cc2475ea62f00e14e0e972fa65835dd67"
+    },
+    {
+      "path": "frontend/src/features/users/settings-overview.tsx",
+      "sha256": "86a7b9c85e9113635712d4f1914387dd583453b35e414858dbfad9c332ad6e12"
+    },
+    {
+      "path": "frontend/src/features/users/settings-workspace.tsx",
+      "sha256": "a6f317665356a209b75b1062f5880d1e07cb8bf9da24082b4c86886ce68277a1"
+    },
+    {
+      "path": "frontend/src/features/users/user-list.tsx",
+      "sha256": "90ec788466fc1f4ee758e5ccd2d00d5b57b44f077d0e33607013e2877af8fe42"
+    },
+    {
+      "path": "frontend/tests/unit/settings-workspace.test.mjs",
+      "sha256": "f9a376454ebe58197eb547674d20775681546b684bc254fc2648fa35aa6c8b09"
+    }
+  ],
+  "adaptations": [
+    "Existing Next URLs/admin guards retained",
+    "Real users total labelled accounts, not an invented active-only aggregate",
+    "Icon props use existing allowed20/16 grid",
+    "Local responsive navigation follows selected288/1280/640 geometry"
+  ],
+  "correctedFailures": [
+    "Unsupported source19/15/17 icon props corrected to allowed grid",
+    "Explicit runtime fixtures added without weakening scoped loader",
+    "Test children-prop lint corrected"
+  ],
+  "limits": [
+    "Detailed staff and policy forms remain unfinished",
+    "No native/browser/CUA/CDP/app-HTTP inspection",
+    "No backend/auth/session/API or real credential/account changes",
+    "No dependency/prototype/main/push/merge/deploy changes",
+    "Final real-stack/accessibility/AFTER/product review remains pending"
+  ]
+}

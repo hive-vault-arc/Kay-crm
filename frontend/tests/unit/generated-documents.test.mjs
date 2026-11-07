@@ -57,3 +57,28 @@ test("generated facade rejects foreign writes, ambiguous reads and malformed ups
   const malformed = facade({ status: 200, body: { ...item, unexpected: true } });
   assert.equal((await malformed.relay("generated-documents", post(), "synthetic-request")).status, 503);
 });
+
+test("history creator is an explicit strict read projection; legacy reads and POST receipts retain their shapes", async () => {
+  const history = { items: [item], page: 1, page_size: 20, total: 1, has_next: false, has_previous: false };
+  const base = `${origin}/api/v1/generated-documents?parent_kind=deal&parent_id=${id}`;
+  const legacy = facade({ status: 200, body: history });
+  assert.deepEqual(await (await legacy.relay("generated-documents", new Request(base), "synthetic")).json(), history);
+  const actors = { ...history, items: [{ ...item, actor: { id, display_name: "Synthetic original creator" } }] };
+  const current = facade({ status: 200, body: actors });
+  const result = await current.relay("generated-documents", new Request(`${base}&include_actor=true`), "synthetic");
+  assert.equal(result.status, 200); assert.deepEqual(await result.json(), actors); assert.equal(result.headers.get("Cache-Control"), "no-store");
+  assert.equal(current.calls[0][0], `/api/v1/generated-documents?parent_kind=deal&parent_id=${id}&include_actor=true`);
+  assert.equal((await legacy.relay("generated-documents", new Request(`${base}&include_actor=true`), "synthetic")).status, 503);
+  assert.equal((await current.relay("generated-documents", new Request(base), "synthetic")).status, 503);
+  const extra = facade({ status: 200, body: { ...actors, items: [{ ...actors.items[0], actor: { ...actors.items[0].actor, email: "never-forward.synthetic.invalid" } }] } });
+  assert.equal((await extra.relay("generated-documents", new Request(`${base}&include_actor=true`), "synthetic")).status, 503);
+});
+
+test("creator flag admits only one literal true on history, never context or commands", async () => {
+  const f = facade(), base = `${origin}/api/v1/generated-documents`, parent = `parent_kind=deal&parent_id=${id}`;
+  for (const suffix of ["include_actor=false", "include_actor=1", "include_actor=true&include_actor=true"])
+    assert.equal((await f.relay("generated-documents", new Request(`${base}?${parent}&${suffix}`), "synthetic")).status, 422);
+  assert.equal((await f.relay("generated-documents/context", new Request(`${base}/context?${parent}&include_actor=true`), "synthetic")).status, 422);
+  assert.equal((await f.relay("generated-documents", post({}, body, "?include_actor=true"), "synthetic")).status, 422);
+  assert.equal(f.calls.length, 0);
+});

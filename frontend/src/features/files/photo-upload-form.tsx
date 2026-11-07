@@ -1,0 +1,69 @@
+"use client";
+import { useEffect, useId, useRef, useState } from "react";
+import { RefreshIcon } from "@/components/icons";
+import { useDossierDraft } from "@/components/shared/dossier-form";
+import { FilePicker } from "@/components/shared/file-picker";
+import { RecordSection } from "@/components/shared/record-workspace";
+import { useUnsavedGuard } from "@/components/shared/unsaved-guard";
+import { Button } from "@/components/ui/button";
+import { RecordError } from "@/features/contacts/record-states";
+import { useHydrated } from "@/hooks/use-hydrated";
+import { ApiError } from "@/lib/api/client";
+import type { ProtectedDocument } from "./contracts";
+import { photoAccept } from "./photo-conversion";
+import { newPhotoAttempt, photoCanResume, photoDenied, photoLimit, photoSelectionError, sendPhoto, type PhotoPhase } from "./photo-upload-model";
+
+export function PhotoUploadForm({ parentId, parentKind, resume, writable, uploadable, total, saved, cancel, denied }: {
+  parentId: string; parentKind: "property" | "development"; resume?: ProtectedDocument; writable: boolean; uploadable: boolean; total: number;
+  saved: (result: Awaited<ReturnType<typeof sendPhoto>>, remaining?: number, count?: number) => void; cancel: () => void; denied: (error: ApiError) => void;
+}) {
+  const id = useId(), hydrated = useHydrated(), scope = useRef<HTMLFormElement>(null), input = useRef<HTMLInputElement>(null), browse = useRef<HTMLButtonElement>(null);
+  const alive = useRef(true), lock = useRef(false), completed = useRef(false), controller = useRef<AbortController | null>(null), attempt = useRef(newPhotoAttempt());
+  const [files, setFiles] = useState<File[]>([]), [sent, setSent] = useState(0);
+  const [busy, setBusy] = useState(false), [frozen, setFrozen] = useState(false), [error, setError] = useState<ApiError>();
+  const [phase, setPhase] = useState<PhotoPhase>("preparing"), [progress, setProgress] = useState<number>();
+  const guard = useUnsavedGuard();
+  const draft = useDossierDraft(files.length ? files.map(file => ({ name: file.name, type: file.type, size: file.size, modified: file.lastModified, resume: resume?.id })) : null, busy);
+  useEffect(() => { alive.current = true; browse.current?.focus(); return () => { alive.current = false; controller.current?.abort(); }; }, []);
+  function chooseFiles(selected: File[]) {
+    if (lock.current || attempt.current.started || completed.current) return;
+    if (!resume && selected.length > photoLimit - total) {
+      setFiles([]); setSent(0); setError(new ApiError("PROPERTY_PHOTO_SELECTION_LIMIT", 409)); return;
+    }
+    setFiles(selected); setSent(0); setError(selected.map(photoSelectionError).find(Boolean)); attempt.current = newPhotoAttempt();
+  }
+  async function submit() {
+    if (!hydrated || lock.current || completed.current || !files.length || !uploadable || files.some(photoSelectionError)) return;
+    if (resume && !photoCanResume(resume, writable)) { denied(new ApiError("FORBIDDEN", 403)); return; }
+    if (!resume && !attempt.current.started && files.length > photoLimit - total) { setError(new ApiError("PROPERTY_PHOTO_SELECTION_LIMIT", 409)); return; }
+    lock.current = true; setBusy(true); setError(undefined); setProgress(undefined);
+    const abort = new AbortController(); controller.current = abort;
+    try {
+      for (const [index, file] of files.entries()) {
+        setProgress(undefined);
+        const result = await sendPhoto({ attempt: attempt.current, file, parentKind, parentId, resume, writable, signal: abort.signal, progress: value => { if (alive.current) setProgress(value); }, phase: value => { if (alive.current) setPhase(value); }, reserved: () => { if (alive.current) setFrozen(true); } });
+        if (!alive.current || abort.signal.aborted) return;
+        const remaining = files.slice(index + 1);
+        setFiles(remaining); setSent(sent + index + 1);
+        attempt.current = newPhotoAttempt(); setFrozen(false);
+        if (!remaining.length) { completed.current = true; draft.accept(null); }
+        saved(result, remaining.length, sent + files.length);
+      }
+    } catch (reason) {
+      if (!alive.current) return;
+      const failure = abort.signal.aborted ? new ApiError("FILE_TRANSFER_INTERRUPTED", 503) : reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503);
+      if (photoDenied(failure)) { setFiles([]); draft.accept(null); denied(failure); } else setError(failure);
+    } finally { lock.current = false; if (alive.current) { setBusy(false); setProgress(undefined); controller.current = null; } }
+  }
+  return <>{guard.dialog}<form ref={scope} className="kay-drawer-form" aria-label={resume ? "Reprendre la photo" : "Ajouter une photo"} aria-busy={busy} data-draft-managed data-live-dirty={draft.dirty ? "true" : undefined} noValidate onSubmit={event => { event.preventDefault(); void submit(); }}>
+    {error ? <RecordError error={error} /> : null}
+    {resume ? <div className="kay-upload-context"><RefreshIcon aria-hidden="true" size={20} /><div><span>Photo à reprendre</span><strong>{resume.filename}</strong><small>Sa place est déjà conservée dans la galerie. Choisissez la même image source.</small></div></div> : null}
+    <RecordSection title={resume ? "Reprendre la photo" : "Ajouter une photo"} description="Les photos seront partagées avec l’équipe après leur analyse antivirus."><fieldset disabled={!hydrated || busy || frozen || !uploadable} className="min-w-0"><legend className="sr-only">Images à envoyer</legend><FilePicker id={id} label={resume ? "Image à reprendre" : "Photo à ajouter"} accept={photoAccept} description="JPG, PNG, WebP, HEIC ou HEIF · 20 Mo par photo." inputRef={input} browseRef={browse} selected={files[0]} selection={files} choose={file => chooseFiles(file ? [file] : [])} chooseFiles={resume ? undefined : chooseFiles} disabled={!hydrated || busy || frozen || !uploadable} /></fieldset>
+      <p className="text-sm text-muted-foreground">{resume && resume.mime_type !== "image/webp" ? "Cette photo ancienne se reprend dans son format d’origine, sans conversion de ses octets." : "Conversion WebP automatique à l’envoi, sans copie des métadonnées de la source."}</p>
+    </RecordSection>
+    {frozen ? <p className="text-sm text-muted-foreground">Cette tentative conserve la même image. Réessayez son envoi ou revenez à la galerie pour vérifier l’état de la photo.</p> : null}
+    {busy ? <div className="kay-photo-feedback"><div className="kay-upload-progress" role="status"><span>{phase === "preparing" ? "Préparation de l’image…" : phase === "authorizing" ? "Vérification du transfert privé…" : `Transfert : ${progress ?? 0} % · analyse antivirus à suivre.`}</span><progress aria-label="Envoi de la photo" max={100} value={phase === "uploading" ? progress : undefined} /></div><Button action="cancel" type="button" variant="outline" onClick={() => controller.current?.abort()}>Interrompre</Button></div> : null}
+    {sent > 0 && files.length > 0 ? <p role="status" className="text-sm text-muted-foreground">{sent} / {sent + files.length} photos envoyées</p> : null}
+    <div className="kay-form-footer"><Button action="back" type="button" variant="outline" disabled={busy} onClick={() => guard.request(cancel, scope.current ?? undefined)}>Retour à la galerie</Button><Button action={error ? "retry" : "upload"} type="submit" disabled={!hydrated || busy || !files.length || !uploadable || files.some(photoSelectionError)}>{busy ? "Envoi en cours…" : error ? "Réessayer" : resume ? "Reprendre" : files.length > 1 ? "Ajouter les photos" : "Ajouter la photo"}</Button></div>
+  </form></>;
+}

@@ -66,17 +66,17 @@ test("projects reference: eight real synthetic photos, cards and filters", async
     const boxes = await page.locator("article").evaluateAll(cards => cards.map(card => card.getBoundingClientRect().toJSON()));
     expect(boxes.slice(0, 4).every(box => Math.abs(box.y - boxes[0].y) < 1)).toBe(true);
     expect(boxes[4].y).toBeGreaterThan(boxes[0].y + 100);
-    await page.getByRole("checkbox", { name: "Villa", exact: true }).uncheck();
-    await expect(page.locator("article")).toHaveCount(5);
+    await page.getByRole("radio", { name: "Villa", exact: true }).click();
+    await expect(page.locator("article")).toHaveCount(3);
     await page.getByRole("button", { name: "Réinitialiser", exact: true }).click();
     await expect(page.locator("article")).toHaveCount(8);
-    const noCategories = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === "/api/v1/properties" && url.searchParams.get("categories") === ""; }, { timeout: 15_000 });
+    const emptyCategory = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === "/api/v1/properties" && url.searchParams.get("categories") === "farm"; }, { timeout: 15_000 });
     const categoryGroup = page.getByRole("group", { name: "Catégorie", exact: true });
-    const categories = categoryGroup.getByRole("checkbox");
-    await expect(categories).toHaveCount(Object.keys(categoryLabels).length - 1); // Empty house category is intentionally hidden.
-    for (const name of Object.values(categoryLabels).filter(name => name !== "Maison")) await categoryGroup.getByRole("checkbox", { name, exact: true }).uncheck();
-    expect((await noCategories).status()).toBe(200); await expect(page.getByRole("heading", { name: "Aucun bien correspondant", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Réinitialiser", exact: true }).click(); await expect(page.locator("article")).toHaveCount(8);
+    await expect(categoryGroup.getByRole("radio")).toHaveCount(Object.keys(categoryLabels).length); // All plus eight current categories; empty legacy house stays hidden.
+    await expect(categoryGroup.getByRole("radio", { name: "Toutes", exact: true })).toBeChecked();
+    await categoryGroup.getByRole("radio", { name: categoryLabels.farm, exact: true }).click();
+    expect((await emptyCategory).status()).toBe(200); await expect(page.getByRole("heading", { name: "Aucun bien correspondant", exact: true })).toBeVisible();
+    await categoryGroup.getByRole("radio", { name: "Toutes", exact: true }).click(); await expect(page.locator("article")).toHaveCount(8);
     await page.getByRole("tab", { name: "Liste", exact: true }).click();
     await expect(page.getByRole("table", { name: "Biens indépendants", exact: true })).toBeVisible();
     await page.getByRole("tab", { name: "Cartes", exact: true }).click();
@@ -101,11 +101,12 @@ test("projects reference: eight real synthetic photos, cards and filters", async
     try {
       const phone = await touch.newPage(); await signIn(phone, manager); await phone.goto("/projects");
       await expect(phone.locator("article")).toHaveCount(8); await phone.getByRole("button", { name: "Afficher les filtres", exact: true }).tap();
-      await phone.getByRole("checkbox", { name: "Villa", exact: true }).tap();
-      await phone.getByRole("button", { name: "Fermer les filtres", exact: true }).tap(); await expect(phone.locator("article")).toHaveCount(5);
+      await phone.getByRole("radio", { name: "Villa", exact: true }).tap();
+      await phone.getByRole("button", { name: "Fermer les filtres", exact: true }).tap(); await expect(phone.locator("article")).toHaveCount(3);
       await phone.getByRole("button", { name: "Afficher les filtres", exact: true }).tap(); await phone.getByRole("button", { name: "Réinitialiser", exact: true }).tap();
       await phone.getByRole("button", { name: "Fermer les filtres", exact: true }).tap(); await expect(phone.locator("article")).toHaveCount(8);
-      await phone.getByRole("link", { name: /^Ouvrir la fiche/ }).first().tap(); await expect(phone.getByRole("tab", { name: "Aperçu", exact: true })).toBeVisible();
+      const firstCard = phone.locator("article.kay-project-card").first(), openedName = (await firstCard.getByRole("heading").textContent())!.trim();
+      await firstCard.getByRole("link").tap(); await expect(phone.getByRole("heading", { name: openedName, exact: true })).toBeVisible();
     } finally { await touch.close(); }
     const profile = info.outputPath("projects-zoom-profile");
     const launch = { baseURL, ignoreHTTPSErrors: true, channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, args: ["--window-size=1440,1000"] } as const;
@@ -118,9 +119,9 @@ test("projects reference: eight real synthetic photos, cards and filters", async
       await expect(zoomPage.locator("article")).toHaveCount(8); expect(await zoomPage.evaluate(() => devicePixelRatio) / baseline).toBeCloseTo(2, 1);
       const measured = await geometry(zoomPage);
       await zoomPage.getByRole("button", { name: "Afficher les filtres", exact: true }).focus(); await zoomPage.keyboard.press("Enter");
-      const villa = zoomPage.getByRole("checkbox", { name: "Villa", exact: true }); await villa.focus(); await zoomPage.keyboard.press("Space"); await expect(villa).not.toBeChecked();
+      const villa = zoomPage.getByRole("radio", { name: "Villa", exact: true }); await villa.focus(); await zoomPage.keyboard.press("Space"); await expect(villa).toBeChecked();
       await zoomPage.keyboard.press("Escape"); await expect(zoomPage.getByRole("button", { name: "Afficher les filtres", exact: true })).toBeFocused();
-      await expect(zoomPage.locator("article")).toHaveCount(5);
+      await expect(zoomPage.locator("article")).toHaveCount(3);
       await zoomPage.locator("article").first().scrollIntoViewIfNeeded();
       await expect(zoomPage.locator('article img[src^="blob:"]').first()).toBeVisible({ timeout: 20_000 });
       await expect(zoomPage.locator('input[type="password"], [data-private-credential]')).toHaveCount(0); await zoomPage.bringToFront();
@@ -149,19 +150,21 @@ test("projects campaigns, house category, numbered pages and real outage/retry",
     await page.goto("/projects"); await expect(page.locator("article")).toHaveCount(12);
     await page.getByLabel("Trier par", { exact: true }).selectOption("reference");
     await expect(page.locator("article").first().getByRole("heading", { name: "Maison synthétique", exact: true })).toBeVisible();
-    await expect(page.getByRole("checkbox", { name: "Maison", exact: true })).toBeChecked();
+    await expect(page.getByRole("radio", { name: "Maison", exact: true })).toBeVisible(); await expect(page.getByRole("radio", { name: "Toutes", exact: true })).toBeChecked();
     await page.getByLabel("Type d’offre", { exact: true }).selectOption("rental"); await expect(page.locator("article")).toHaveCount(1);
-    await expect(page.locator("article")).toContainText("Brouillon"); await expect(page.locator("article")).toContainText("Comparaison annuelle");
-    await expect(page.locator("article")).toContainText(/9.000,50/); await expect(page.locator("article")).toContainText(/108.006,00/);
+    await expect(page.locator("article")).toContainText("Brouillon");
+    await expect(page.locator("article")).toContainText(/9.000,50/);
+    await page.getByLabel("Prix ou loyer annuel minimum (MAD)", { exact: true }).fill("108006.00"); await expect(page.locator("article")).toHaveCount(1);
+    await page.getByLabel("Prix ou loyer annuel minimum (MAD)", { exact: true }).fill("108006.01"); await expect(page.getByRole("heading", { name: "Aucun bien correspondant", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Réinitialiser", exact: true }).click(); await expect(page.locator("article")).toHaveCount(12);
     await page.getByText("Filtres avancés des biens", { exact: true }).click(); await page.getByLabel("Biens par page", { exact: true }).selectOption("10");
     await expect(page.locator("article")).toHaveCount(10); await page.getByRole("navigation", { name: "Pages des biens", exact: true }).getByRole("button", { name: "Suivant", exact: true }).click(); await expect(page.locator("article")).toHaveCount(2);
-    await page.getByRole("checkbox", { name: "Terrain", exact: true }).uncheck(); await expect(page.locator("article")).toHaveCount(1);
+    await page.getByRole("radio", { name: "Maison", exact: true }).click(); await expect(page.locator("article")).toHaveCount(1);
     await page.getByRole("button", { name: "Réinitialiser", exact: true }).click(); await expect(page.locator("article")).toHaveCount(12);
     const held = new Promise<void>(resolve => { release = resolve; }); await page.route("**/api/v1/properties?**", async route => { await held; await route.continue(); });
     await page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true }).fill("introuvable synthétique");
     await expect(page.getByRole("status", { name: "Chargement des cartes de biens", exact: true })).toBeVisible();
-    await expect(page.getByRole("checkbox", { name: "Terrain", exact: true })).toBeDisabled(); release();
+    await expect(page.getByRole("radio", { name: "Terrain", exact: true })).toBeDisabled(); release();
     await expect(page.getByRole("heading", { name: "Aucun bien correspondant", exact: true })).toBeVisible(); await page.unroute("**/api/v1/properties?**");
     await apiProcess("stop"); await page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true }).fill("indisponible");
     await expect(page.getByRole("alert").filter({ hasText: "service local est indisponible" })).toBeVisible(); await apiProcess("start"); await page.getByRole("button", { name: "Réessayer", exact: true }).click();
@@ -169,6 +172,6 @@ test("projects campaigns, house category, numbered pages and real outage/retry",
     await clearActorContext(page); await signIn(page, agent); await page.goto("/projects"); await expect(page.locator("article")).toHaveCount(12);
     await page.getByLabel("Type d’offre", { exact: true }).selectOption("rental"); await expect(page.locator("article")).toHaveCount(1);
     const denial = await staffCommand(page, "offerings", { property_id: house, expected_property_version: 1, kind: "sale", price_mad: "1000", currency: "MAD", price_period: null, conditions: "Tentative synthétique interdite" }); expect(denial.status()).toBe(403);
-    await page.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click(); await expect(page.getByText("0 programme(s) correspondant(s).", { exact: true })).toBeVisible(); await expect(page.getByRole("link", { name: "Créer un programme immobilier", exact: true })).toBeVisible();
+    await page.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click(); await expect(page.getByText("0 programme", { exact: true })).toBeVisible(); await expect(page.getByRole("link", { name: "Nouveau programme", exact: true })).toBeVisible();
   } finally { release(); await apiProcess("start"); await clearActorContext(page); await removeActor(agent); await removeActor(manager); }
 });

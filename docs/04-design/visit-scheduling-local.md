@@ -1,9 +1,72 @@
 # Local visit scheduling contract (SP-14)
 
+Current selected command recovery,2026-10-29: the
+[working-hours owner](policy-command-recovery-local.md) now pins the original
+reviewed operation, verifies contextual receipts and completes from a fresh
+scoped read. Parent outages retain drafts; definite conflict still requires a new
+impact preview. Backend rules/contracts unchanged; actual acceptance pending.
+
+Selected detailed-policy UI,2026-10-27: /settings/working-hours keeps its existing
+administrator gate and exact policy/preview/save contract. Seven summary rows
+preserve every period/pause; a guarded drawer owns the complete editable proposal.
+New rows are blank. Every edit invalidates the preview lease immediately; late
+previews cannot authorize save. Conflict comparison shows current complete rows,
+retains input and requires a new preview. Role/authority denial removes old impact
+content. Backend working-time, capacity, affected-visit hash and version checks
+are unchanged. Source checks pass; native and real-PostgreSQL workflow acceptance
+remains pending. [Evidence](../03-planning/design-migration-evidence/settings-forms-2026-10-27.json).
+
+## Selected general Notes mapping (2026-10-26)
+
+General notes are separate from overlap_reason and terminal outcome. The selected
+form/read disclosure now binds to optional notes (technical cap1000, a proposal
+matching existing visit text bounds). Omission on edit preserves stored notes;
+explicit empty clears. All existing current-scope/version/terminal rules apply.
+New immutable snapshots include notes; pre-migration snapshots stay unchanged.
+
+The trusted facade requests X-Kay-Visit-Notes:1 on visit metadata and calendar/context.
+Opt-in context adds notes_supported:true; detail/list snapshots include notes and
+history includes it only when originally recorded. Without opt-in, responses keep
+the old strict shape. With an older backend, support/notes are absent and the new
+form sends no notes. Absent notes preserve legacy receipt-body hashes. Free/busy
+stays metadata-free. This is representation negotiation, never an access grant.
+
+Prepared revision0036 adds an empty-default String1000 and deferred event matching;
+it refuses destructive downgrade in development or with retained note history.
+Apply the additive schema before deploying the new backend. No migration was
+executed in this slice. Real PostgreSQL/native acceptance remains pending; see
+[execution](../03-planning/design-prototype-migration-execution.md).
+
 Status: implemented and technically accepted locally; product review pending
 Date: 2026-10-15
 Authority: C01/C07/C13/C14, BR-06/16/30 and accepted Q-07.
 Evidence: [SP-14 execution](../03-planning/sprints/sp-14-execution.md).
+
+## Current selected presentation (2026-10-26)
+
+The owner's frozen-design migration replaces the historical hourly/mini-month
+presentation with day columns, drawer filters and a phone agenda. Current scoped
+facets, numbered pages and safe colleague intervals remain authoritative. The
+Next booking entry additionally accepts a strict optional date context alongside
+contact_id, carrying only a real2000–2100 date through authorized contact selection.
+No hour/instant is supplied by that link. Separate date/time controls retain the
+existing backend local-time resolver, skipped/repeated-time choices and final
+preview/booking checks. This is presentation/context adaptation, not a new API
+permission or scheduling rule. Native/final acceptance remains pending.
+[Implementation evidence](../03-planning/design-migration-evidence/calendar-2026-10-26.json).
+
+## Selected routed drawer refinement (2026-10-26)
+
+The visits layout owns the calendar while the existing create/detail routes open
+shared guarded drawers. Page identity/UUID/query/password gates remain. Forms
+retain date-only entry, resolved instants, scoped contact/property/dossier choices,
+participants, reviewed versions, retries and explicit commands. Draft rescheduling
+retains its draft status without a booking preview. Saved overlap explanations
+remain separate from outcomes. History lazily presents the existing latest100
+entries in20-entry cards; current denial clears the old view. Native route/focus/
+stacking acceptance remains pending. The prototype's separate general Notes field
+still needs a persistence mapping and is not claimed implemented by this UI slice.
+[Current execution](../03-planning/design-prototype-migration-execution.md).
 
 ## Rule and authority
 

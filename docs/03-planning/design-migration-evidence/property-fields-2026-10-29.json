@@ -1,0 +1,238 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "c53e7d3057d550e66d513be9417f42f5bf14cfd2",
+  "scope": "Selected property detail field map and proven hidden saved room orientation loss on unrelated edit; accepted-baseline payload/review retention without new control or backend rule",
+  "checks": [
+    {
+      "command": "node --test tests/unit/property-listing-recovery.test.mjs",
+      "phase": "before fix",
+      "exitCode": 1,
+      "failed": 1,
+      "observed": "Actual component/command emits orientation:null instead of saved north; synthetic harness, not actual DB"
+    },
+    {
+      "command": "node --test tests/unit/property-listing-recovery.test.mjs",
+      "phase": "after fix",
+      "exitCode": 0,
+      "passed": 25
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 932,
+      "additionalCases": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 522,
+      "buttonFiles": 159,
+      "violations": 0,
+      "boundary": "Full gate before prepared native file; separate final focused gate covers added file"
+    },
+    {
+      "command": "npx eslint tests/e2e/property-room-orientation.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "phase": "final including prepared native file"
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 573,
+      "additionalCases": 1,
+      "deselected": 723,
+      "boundary": "Engine/psycopg connection-forbidden; existing strict EditProperty contract only, not actual persistence"
+    },
+    {
+      "command": "node design-taste-frontend/scripts/lint.mjs --app --json <changed UI source>",
+      "exitCode": 0,
+      "files": 1,
+      "findings": 0,
+      "boundary": "Static only; no actual inspector or rendered evidence"
+    },
+    {
+      "command": "Read-only AST/source field mapping",
+      "exitCode": 0,
+      "detailKeys": 24,
+      "backendDetailKeys": 24,
+      "selectedAmenities": 29,
+      "missing": 0,
+      "note": "Initial mapping assumption corrected for separate amenity label map, not a missing application feature"
+    },
+    {
+      "command": "Frozen reference/main/protected-state review",
+      "exitCode": 0,
+      "inputs": 254,
+      "protectedUnstagedLessonsAdditions": 35,
+      "motionNoteUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9003,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1293,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check and exact staged allowlist/hash/protected-state review",
+      "exitCode": 0,
+      "stagedFiles": 13,
+      "canonicalSourceHashes": 4
+    }
+  ],
+  "preparedNotRun": {
+    "file": "frontend/tests/e2e/property-room-orientation.spec.ts",
+    "cases": 2,
+    "widths": [
+      390,
+      1440
+    ],
+    "scenarios": [
+      "manager creates legal synthetic oriented room",
+      "unrelated selected title edit with no orientation control",
+      "review/PATCH/readback retain north and zero counts",
+      "page no horizontal overflow"
+    ],
+    "trace": false,
+    "video": false,
+    "screenshots": false
+  },
+  "fieldMap": {
+    "location": [
+      "region",
+      "city",
+      "district",
+      "neighborhood",
+      "address",
+      "google_maps_url"
+    ],
+    "characteristics": [
+      "bedrooms",
+      "bathrooms",
+      "capacity",
+      "minimum_nights",
+      "condition",
+      "age_band",
+      "floor_type",
+      "unit_floor",
+      "building_floors",
+      "orientation",
+      "plot_area_sqm",
+      "land_delivery",
+      "land_status"
+    ],
+    "equipmentDimensions": [
+      "garden_area_sqm",
+      "terrace_area_sqm",
+      "garage_spaces"
+    ],
+    "other": [
+      "amenities",
+      "description"
+    ],
+    "root": [
+      "reference",
+      "category",
+      "marketing_name",
+      "location",
+      "area_sqm",
+      "rooms"
+    ],
+    "hierarchy": [
+      "development_id",
+      "floor_id",
+      "unit_type_id"
+    ],
+    "boundary": "Names/source homes, not full conditional/native/stock proof"
+  },
+  "invariants": {
+    "acceptedSavedRoomOrientationPreserved": true,
+    "freshOrientationAfterExplicitComparison": true,
+    "reviewAndPayloadSameAcceptedFact": true,
+    "noAdditionalSelectedControl": true,
+    "noNewRoomHiddenDirection": true,
+    "nullUnchanged": true,
+    "visibleChangeAndClearRemain": true,
+    "explicitNonresidentialCategoryClearRemains": true,
+    "zeroFactsRetained": true,
+    "noBackendProductionApiSchemaPermissionChange": true,
+    "noStylesTokensGlyphsMotionLibrariesChange": true,
+    "occupationFromServerOfferingNotPrototypeFixture": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionUnstaged": true
+  },
+  "notRun": [
+    "backend Ruff/mypy",
+    "actual SQL/legacy/concurrency/rights/stock/file/native/device/focus/zoom/contrast/security/CI/AFTER/product acceptance",
+    "migrations0036/0037"
+  ],
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "status": "Source guard and synthetic checks only; block-only selection/floor/review semantics, remaining P0 domain/context/legacy selectors and P8 acceptance pending; full goal active",
+  "sourceHashes": [
+    {
+      "file": "backend/tests/test_property_listing_unit.py",
+      "bytes": 6764,
+      "sha256": "1193482a7ca72993c187521e8e721393c96ad7194a8930cc6e13783be4a7eec9"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-listing-wizard.tsx",
+      "bytes": 39295,
+      "sha256": "25323b0a463ce735686e7365a64effb40e5e4c9d6e9d41436cc02ded56457956"
+    },
+    {
+      "file": "frontend/tests/unit/property-listing-recovery.test.mjs",
+      "bytes": 24026,
+      "sha256": "b957d40a38c46c5ac3cf36bab1bdb9a02d4b8d520d6a23bc09fee392db832d1d"
+    },
+    {
+      "file": "frontend/tests/e2e/property-room-orientation.spec.ts",
+      "bytes": 3552,
+      "sha256": "5a04b4ebec03d99bcf0b7f312ace6f8b5b4d7cb3047423f309d096734791d03e"
+    }
+  ]
+}

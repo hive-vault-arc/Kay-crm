@@ -1,16 +1,17 @@
 # KAY frontend working rules
 
 Read and follow the root `../AGENTS.md`, current sprint and KAY design contracts.
-The framework guidance below complements those rules. KAY uses Radix/New York
-shadcn/ui, Tailwind 4.3.3, Iconsax and the light Riviera tokens. Current fonts are
-self-hosted Fraunces1.000 (titles), Manrope4.505 (UI) and DM Sans4.004 (metadata),
-with original OFL notices retained. See `../branding/riviera/README.md`; the
-2026-10-18 owner-selected handoff supersedes older system/Satoshi color/type notes.
+The framework guidance below complements those rules. The current selected-design
+migration uses `../DESIGN.md`, the frozen KAY reference and the current design
+system/screen map. Use Radix/New York shadcn/ui, Tailwind 4.3.3 and Bklit charts.
+The selected workspace uses self-hosted Inter and the 64 source-pinned semantic
+glyphs. Earlier Riviera font/icon descriptions are historical provenance, not
+instructions to redraw this selected design. Retain the original font/icon notices.
 Use only the typed semantic exports from `@/components/icons`; the official
 browser-only loader is not imported. Keep `THIRD_PARTY_NOTICES.md` and the
-public Iconsax notice with distributions. After shadcn/Bklit updates, migrate
+existing public icon notices with distributions. After shadcn/Bklit updates, migrate
 generated interface icons to this layer before accepting them; never alter
-chart geometry or mix in a second icon family. See the Iconsax migration record.
+chart geometry or mix in a second icon family. See the selected migration record.
 Charts use Bklit when introduced in SP-17. Keep future business states explicit;
 authentication is implemented in SP-03 with per-page guards, transient CSRF and
 protected cookies. SP-04 adds administrator-only Settings/users, strict versioned

@@ -1,0 +1,748 @@
+{
+  "date": "2026-10-30",
+  "base": "2c45cf6c708a206e923052253edf7ccc97bdc339",
+  "branch": "codex/redesign",
+  "kind": "Static/source design review only; no rendered/current-browser audit",
+  "skill": {
+    "frontendTasteAppGuidance": true,
+    "selectedDesignPreserved": true,
+    "newDirectionDraw": false,
+    "originalMachineAntislopAndDesignSystemOpsAvailable": false,
+    "formalAfterAuditCompleted": false,
+    "cosmeticAuditFixesApplied": false
+  },
+  "scan": {
+    "command": "node C:/Users/ali-a/.codex/skills/design-taste-frontend/scripts/lint.mjs frontend/src --app --json",
+    "exitCode": 1,
+    "files": 514,
+    "rawMatches": 76,
+    "rawFails": 4,
+    "rawWarnings": 72,
+    "byRule": {
+      "gradient": 4,
+      "shadow": 32,
+      "glass": 8,
+      "framework-colour": 27,
+      "scale-zero": 2,
+      "bounce": 1,
+      "numbering": 2
+    },
+    "triage": {
+      "gradient": "Legacy neutral photo/hero scrims; source rule lacks current-render/exception context. Preserve selected design; no automatic CSS fix.",
+      "shadow": "Selected inset/focus/panel and overlay/Bklit contexts; raw matches are not demonstrated misplaced shadows.",
+      "glass": "Selected shell/rail/popover/tooltip material. Requires rendered comparison, not global removal.",
+      "framework-colour": "Selected status tone variables/names in workspace-status.css; not evidence of an unauthorized palette.",
+      "scale-zero": "False positive: numeric chart scale(0) locates its data baseline; it is not a CSS transform.",
+      "bounce": "Standard shadcn loading Skeleton animate-pulse; global reduced-motion rules exist; not an ornamental attention badge.",
+      "numbering": "False positives: two-decimal finance formatting and canonical PDF model code 01."
+    },
+    "findings": [
+      {
+        "level": "FAIL",
+        "id": "gradient",
+        "file": "frontend/src/app/globals.css",
+        "line": 383,
+        "match": "linear-gradient(",
+        "message": "Gradient fill. Use a flat colour or a real image (a neutral scrim over a photo is the one exception)."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/globals.css",
+        "line": 395,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/globals.css",
+        "line": 475,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "FAIL",
+        "id": "gradient",
+        "file": "frontend/src/app/globals.css",
+        "line": 553,
+        "match": "linear-gradient(",
+        "message": "Gradient fill. Use a flat colour or a real image (a neutral scrim over a photo is the one exception)."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/globals.css",
+        "line": 602,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "FAIL",
+        "id": "gradient",
+        "file": "frontend/src/app/globals.css",
+        "line": 658,
+        "match": "linear-gradient(",
+        "message": "Gradient fill. Use a flat colour or a real image (a neutral scrim over a photo is the one exception)."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/globals.css",
+        "line": 701,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/globals.css",
+        "line": 722,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "FAIL",
+        "id": "gradient",
+        "file": "frontend/src/app/globals.css",
+        "line": 733,
+        "match": "linear-gradient(",
+        "message": "Gradient fill. Use a flat colour or a real image (a neutral scrim over a photo is the one exception)."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace-calendar.css",
+        "line": 14,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace-calendar.css",
+        "line": 22,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace-calendar.css",
+        "line": 29,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace-collections.css",
+        "line": 21,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace-dashboard.css",
+        "line": 14,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "glass",
+        "file": "frontend/src/app/workspace-dashboard.css",
+        "line": 14,
+        "match": "backdrop-filter:",
+        "message": "Backdrop blur. One sticky bar at most; glass cards are a tell."
+      },
+      {
+        "level": "WARN",
+        "id": "glass",
+        "file": "frontend/src/app/workspace-dashboard.css",
+        "line": 164,
+        "match": "backdrop-filter:",
+        "message": "Backdrop blur. One sticky bar at most; glass cards are a tell."
+      },
+      {
+        "level": "WARN",
+        "id": "glass",
+        "file": "frontend/src/app/workspace-dashboard.css",
+        "line": 165,
+        "match": "backdrop-filter:",
+        "message": "Backdrop blur. One sticky bar at most; glass cards are a tell."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace-kanban.css",
+        "line": 17,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace-kanban.css",
+        "line": 18,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace-settings.css",
+        "line": 38,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 23,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 25,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 27,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 53,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 55,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 57,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 83,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 85,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 87,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 135,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 137,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 139,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 165,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 167,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 169,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 195,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 197,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 199,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 248,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 250,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 252,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 278,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 280,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 282,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 308,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 310,
+        "match": "#60a5fa",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "framework-colour",
+        "file": "frontend/src/app/workspace-status.css",
+        "line": 312,
+        "match": "#1d4ed8",
+        "message": "A framework default colour (Tailwind blue, green, red, amber). Take the accent and status colours from the dealt style."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace-work.css",
+        "line": 53,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "glass",
+        "file": "frontend/src/app/workspace.css",
+        "line": 15,
+        "match": "backdrop-filter:",
+        "message": "Backdrop blur. One sticky bar at most; glass cards are a tell."
+      },
+      {
+        "level": "WARN",
+        "id": "glass",
+        "file": "frontend/src/app/workspace.css",
+        "line": 28,
+        "match": "backdrop-filter:",
+        "message": "Backdrop blur. One sticky bar at most; glass cards are a tell."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace.css",
+        "line": 48,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "glass",
+        "file": "frontend/src/app/workspace.css",
+        "line": 48,
+        "match": "backdrop-filter:",
+        "message": "Backdrop blur. One sticky bar at most; glass cards are a tell."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/app/workspace.css",
+        "line": 55,
+        "match": "box-shadow:",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "glass",
+        "file": "frontend/src/app/workspace.css",
+        "line": 92,
+        "match": "backdrop-filter:",
+        "message": "Backdrop blur. One sticky bar at most; glass cards are a tell."
+      },
+      {
+        "level": "WARN",
+        "id": "scale-zero",
+        "file": "frontend/src/components/charts/bar.tsx",
+        "line": 352,
+        "match": "scale(0)",
+        "message": "Entering from scale(0). Start at 0.95–0.98 with opacity 0."
+      },
+      {
+        "level": "WARN",
+        "id": "scale-zero",
+        "file": "frontend/src/components/charts/bar.tsx",
+        "line": 369,
+        "match": "scale(0)",
+        "message": "Entering from scale(0). Start at 0.95–0.98 with opacity 0."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/pie-slice.tsx",
+        "line": 158,
+        "match": "drop-shadow(",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/pie-slice.tsx",
+        "line": 183,
+        "match": "drop-shadow(",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/pie-slice.tsx",
+        "line": 292,
+        "match": "drop-shadow(",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/pie-slice.tsx",
+        "line": 314,
+        "match": "drop-shadow(",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/pie-slice.tsx",
+        "line": 454,
+        "match": "drop-shadow(",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/pie-slice.tsx",
+        "line": 481,
+        "match": "drop-shadow(",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/tooltip/date-ticker.tsx",
+        "line": 79,
+        "match": "shadow-lg",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/tooltip/date-ticker.tsx",
+        "line": 176,
+        "match": "shadow-lg",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/tooltip/tooltip-box.tsx",
+        "line": 52,
+        "match": "shadow",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/charts/tooltip/tooltip-box.tsx",
+        "line": 57,
+        "match": "shadow-[0_1px_rgb(0_0_0/0.04)]",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "glass",
+        "file": "frontend/src/components/charts/tooltip/tooltip-box.tsx",
+        "line": 195,
+        "match": "backdrop-blur",
+        "message": "Backdrop blur. One sticky bar at most; glass cards are a tell."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/shared/unsaved-guard.tsx",
+        "line": 71,
+        "match": "shadow-lg",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/ui/alert-dialog.tsx",
+        "line": 13,
+        "match": "shadow-lg",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/ui/dialog.tsx",
+        "line": 13,
+        "match": "shadow-lg",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/ui/dropdown-menu.tsx",
+        "line": 12,
+        "match": "shadow-lg",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/ui/popover.tsx",
+        "line": 11,
+        "match": "shadow-lg",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "shadow",
+        "file": "frontend/src/components/ui/sheet.tsx",
+        "line": 68,
+        "match": "shadow-lg",
+        "message": "Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may."
+      },
+      {
+        "level": "WARN",
+        "id": "bounce",
+        "file": "frontend/src/components/ui/skeleton.tsx",
+        "line": 7,
+        "match": "animate-pulse",
+        "message": "Looping attention animation (bounce / ping / pulse dot)."
+      },
+      {
+        "level": "WARN",
+        "id": "numbering",
+        "file": "frontend/src/features/finance/contracts.ts",
+        "line": 22,
+        "match": "padStart(2, \"0\")",
+        "message": "Zero-padding in script. Fine for a clock, a date or a price; if it builds 01 / 02 / 03 labels, remove it."
+      },
+      {
+        "level": "WARN",
+        "id": "numbering",
+        "file": "frontend/src/features/generated/use-preparation.ts",
+        "line": 13,
+        "match": "\"01\"",
+        "message": "Decorative index numbering (01 / 02 / 03)."
+      }
+    ]
+  },
+  "assets": {
+    "filesScanned": 514,
+    "uniqueLiteralImages": 5,
+    "missing": [],
+    "scope": "Literal public image references; dynamic private media and rendered placement not verified"
+  },
+  "sourceConformance": [
+    {
+      "requirement": "Contact Aperçu/Activités only; linked dossiers below responsibility and Recherches action",
+      "files": [
+        "frontend/src/features/contacts/contact-record.tsx",
+        "frontend/src/features/contacts/contact-dossiers.tsx"
+      ],
+      "result": "Supported in source; rendered flow unverified"
+    },
+    {
+      "requirement": "Owner Patrimoine only in right rail; content-sized rail",
+      "files": [
+        "frontend/src/features/owners/owner-record.tsx",
+        "frontend/src/components/shared/record-workspace.tsx",
+        "frontend/src/app/workspace-collections.css"
+      ],
+      "result": "Supported in source; rendered flow unverified"
+    },
+    {
+      "requirement": "Cards instead of tables inside side panels",
+      "files": [
+        "frontend/src/components/shared/data-table.tsx",
+        "frontend/src/app/workspace-files.css"
+      ],
+      "result": "phone || inSheet chooses cards; file drawer has tonal-entry recipe"
+    },
+    {
+      "requirement": "Phone Lead/Deal list only with list control retained; no Kanban",
+      "files": [
+        "frontend/src/features/contacts/lead-list.tsx",
+        "frontend/src/features/deals/deal-list.tsx",
+        "frontend/src/components/shared/directory-view-switch.tsx"
+      ],
+      "result": "Supported in source; rendered flow unverified"
+    },
+    {
+      "requirement": "Phone project image-left cards, no Cards/List switch",
+      "files": [
+        "frontend/src/features/inventory/project-results-view.tsx",
+        "frontend/src/app/workspace-collections.css"
+      ],
+      "result": "phone forces cards; phone CSS hides switch and keeps compact media"
+    },
+    {
+      "requirement": "Inventory Documents/Modifier in header and offer actions in section",
+      "files": [
+        "frontend/src/features/inventory/property-record.tsx",
+        "frontend/src/features/inventory/development-record.tsx",
+        "frontend/src/features/inventory/inventory-offer-section.tsx"
+      ],
+      "result": "Supported in source; rendered flow unverified"
+    },
+    {
+      "requirement": "Help topic/guide grid without removed FAQ block",
+      "files": [
+        "frontend/src/features/help/help-directory.tsx",
+        "frontend/src/app/workspace-help.css"
+      ],
+      "result": "Supported in source; rendered flow unverified"
+    },
+    {
+      "requirement": "Clickable short stepper labels with final validation",
+      "files": [
+        "frontend/src/features/inventory/inventory-wizard-steps.tsx",
+        "frontend/src/features/inventory/property-listing-wizard.tsx"
+      ],
+      "result": "Supported in source and existing synthetic tests; browser flow unverified"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F01",
+      "severity": "merge-blocking",
+      "status": "Runtime/visual/SQL/manual acceptance unverified; existing app-access restriction"
+    },
+    {
+      "id": "F02",
+      "severity": "low dependency advisory",
+      "status": "Fixed by removing unused vulnerable CLI; security audit now0/0 with0 exceptions"
+    },
+    {
+      "id": "F03",
+      "severity": "documentation consistency",
+      "status": "Fixed active frontend instructions to selected Inter/semantic glyphs; no UI source edit"
+    }
+  ],
+  "limits": [
+    "514-file heuristic scan is not manual semantic/security review of every changed source file",
+    "No browser screenshots, computed layout, click/touch/zoom/contrast or state inspection",
+    "No claim that all visual misplacements or missing fields have been excluded",
+    "Existing exact-field/legacy selector coverage and actual acceptance gates remain open"
+  ]
+}

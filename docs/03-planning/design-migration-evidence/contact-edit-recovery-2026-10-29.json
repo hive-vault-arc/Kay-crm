@@ -1,0 +1,242 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "fabfa21deb87d9247b37fe012037505f01ff91ff",
+  "scope": "Canonical Contact full/inline selected editors: original operation identity, fresh scoped completion, mounted drafts and actual root bindings",
+  "fieldMap": {
+    "contact": 8,
+    "enquiryInline": 4,
+    "dealInline": 9,
+    "boundary": "Source map only; ownership/provenance/permissions remain separate"
+  },
+  "checks": [
+    {
+      "command": "Focused contact owner/full/inline units",
+      "exitCode": 0,
+      "passed": 32
+    },
+    {
+      "command": "npm run lint",
+      "phase": "intermediate",
+      "exitCode": 1,
+      "observed": "One exhaustive-dependencies warning from constructing alias refusal every render; fixed with useMemo, no suppression"
+    },
+    {
+      "command": "npm run test:unit",
+      "phase": "final",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 949,
+      "additionalCases": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run lint",
+      "phase": "final",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 523,
+      "buttonFiles": 160,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste lint.mjs --app --json <changed UI sources>",
+      "exitCode": 0,
+      "files": 11,
+      "findings": 0,
+      "boundary": "Static only; no actual app/rendered inspector acceptance"
+    },
+    {
+      "command": "Backend",
+      "executed": false,
+      "productionChanged": false,
+      "retainedPriorConnectionForbiddenUnits": 573
+    },
+    {
+      "command": "Frozen reference/main/protected state review",
+      "exitCode": 0,
+      "inputs": 254,
+      "sourceChanges": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9015,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1297,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/contact-edit-recovery.spec.ts",
+    "cases": 3,
+    "widths": [
+      390,
+      1440
+    ],
+    "typechecked": true,
+    "executed": false,
+    "scenarios": [
+      "Contact full drawer: real isolated edit followed by lost receipt, original replay and one-counter readback",
+      "Prospect/Deal inline: acknowledged edit then current-read503; completion retry without another PATCH"
+    ],
+    "privateArtifacts": {
+      "trace": false,
+      "video": false,
+      "screenshot": false
+    }
+  },
+  "behavior": [
+    "Clone and freeze original body/key/expected Contact counter/callback",
+    "Fresh same-actor/role proof before dispatch and before current read/completion",
+    "Strict exact-root/expected-plus-one/coherent primary-method receipt",
+    "Unknown later409 stays unknown; definite409 needs exact fresh comparison acceptance",
+    "Acknowledged read/handoff failures retry completion only",
+    "Wrong alias/old projection/current denial/disposal cannot install private completion",
+    "All eight fields and full collections preserved; metadata/version updates do not reset dirty forms",
+    "Actual Contact/Owner/Prospect/Deal root binding; existing same-version reconciliation preserved"
+  ],
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Actual SQL/native/device/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Remaining exact settings/job/alias/legacy-selector reconciliation"
+  ],
+  "status": "Source/synthetic checkpoint only; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5447,
+      "sha256": "b58a986206b70df28c003de488d0943901e7f1f4ea3bbb7435d72b41d66416ce"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/contacts/[id]/page.tsx",
+      "bytes": 983,
+      "sha256": "5b2dc005a093fc41ef21146e2a25a48c698129f2eedd7292b319b593ceff9e75"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/owners/[id]/page.tsx",
+      "bytes": 1135,
+      "sha256": "7ba423455b7032d53739efdfa6641b78adfdca18cea7aa816356f5bbeaa40d87"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-editor.tsx",
+      "bytes": 7623,
+      "sha256": "3a39d7ba51d56085a9c1a63008648227d885b77bbf02c1b11a2167a90184e654"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-inline-field.tsx",
+      "bytes": 10769,
+      "sha256": "3e1223de70be8b2b408c7ae11e2a45306b593538b62891b545a5a9221cfbc1c0"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-profile-panel.tsx",
+      "bytes": 5223,
+      "sha256": "8b309e3e7caab11191c807e3a331488dd0de45e19aad82c7d5492b7fe4a9ebce"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-record.tsx",
+      "bytes": 8521,
+      "sha256": "34bde5b469db751a6c738c7139db022e490f0ace5d5e7a1175a43a42db991fb3"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-record.tsx",
+      "bytes": 11004,
+      "sha256": "2c1ebc902c50dced753d7d4819f0ebffcfc2f405a94fff5707ff4a57a5c7ffaf"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-workspace.tsx",
+      "bytes": 10275,
+      "sha256": "7c2374a6e52ea4355d6f7d784ae821e5324fb68407cf7ef0d34a113f38b8c536"
+    },
+    {
+      "file": "frontend/src/features/owners/owner-details.tsx",
+      "bytes": 3526,
+      "sha256": "d8525668739720df440e6b57f55055fb2498b8600deac0543b3c5520b091f90d"
+    },
+    {
+      "file": "frontend/src/features/owners/owner-record.tsx",
+      "bytes": 5905,
+      "sha256": "a6cf450d64556018f29b758f6924fa0cb27a9316ea6975f1f81fcb016e1d684d"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-edit-intent.ts",
+      "bytes": 1488,
+      "sha256": "ccb9e69bbac76ad0edeff0707bba11cef77ce83edd22874d2eca5710274b7f96"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-edit-recovery.tsx",
+      "bytes": 1192,
+      "sha256": "8ce02d0fa8556fac8163de18ab26a0f8d0278dc1b115a8327adbe4dd3c775328"
+    },
+    {
+      "file": "frontend/src/features/contacts/use-contact-edit-command.ts",
+      "bytes": 8867,
+      "sha256": "efe1eac8383f860fcfd566b6583836b35cbae7c093b374165da21386c63e1438"
+    },
+    {
+      "file": "frontend/tests/unit/contact-edit-command.test.mjs",
+      "bytes": 7024,
+      "sha256": "e74ff74fd093ee17b1d7f0df3bf2b2ce83aea1f3ee0859161a738150ac7197ea"
+    },
+    {
+      "file": "frontend/tests/unit/contact-edit-fixtures.mjs",
+      "bytes": 4409,
+      "sha256": "9e86cc041145d2dde617fc1d13bbc1a6dd73321c1a396d8c936ab3794fdb1049"
+    },
+    {
+      "file": "frontend/tests/unit/dossier-forms.test.mjs",
+      "bytes": 28538,
+      "sha256": "284d1b5d46d563553a8fc1a3eff467063e0346ec6a2b4ebd4c5c1bbe21bdf0c2"
+    },
+    {
+      "file": "frontend/tests/unit/inline-editing.test.mjs",
+      "bytes": 29603,
+      "sha256": "6326fc8372083e3f49f93649053d5fccf8e64d2d72d626253f0f521510e15ca8"
+    },
+    {
+      "file": "frontend/tests/e2e/contact-edit-recovery.spec.ts",
+      "bytes": 6150,
+      "sha256": "1f19ce809cfc058830137f2b03e3224ee7157f80a4f73ce6de7d75bc8ea6c897"
+    }
+  ]
+}

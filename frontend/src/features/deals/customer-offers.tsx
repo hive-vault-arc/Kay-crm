@@ -1,35 +1,48 @@
 "use client";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { FinanceIcon } from "@/components/icons";
+import { DataTable } from "@/components/shared/data-table";
+import { RecordDrawer } from "@/components/shared/record-drawer";
+import { RecordEntry } from "@/components/shared/record-entry";
+import { RecordSection } from "@/components/shared/record-workspace";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { NativeSelect } from "@/components/ui/native-select";
-import { Textarea } from "@/components/ui/textarea";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { RecordError } from "@/features/contacts/record-states";
 import { queryPath, useQuery } from "@/features/contacts/use-query";
 import { useHydrated } from "@/hooks/use-hydrated";
-import { formatBusinessDate, formatInstant, formatMAD } from "@/lib/format";
-import { customerOfferSchema, offerFieldsSchema, offersSchema, offerStatusLabels, type CustomerOffer, type Deal, type OfferFields } from "./contracts";
+import type { ApiError } from "@/lib/api/client";
+import { formatBusinessDate } from "@/lib/format";
+import type { CustomerOffer, Deal } from "./contracts";
+import { ProposalAmount, ProposalDetails, ProposalStatus } from "./customer-offer-facts";
+import { proposalPageSchema, type ProposalComparison } from "./customer-offer-model";
+import { CustomerOfferForm } from "./customer-offer-form";
 import type { MutateDeal } from "./pipeline";
+import type { DealCommandRecovery } from "./deal-command-intent";
 
-export function OfferFacts({ value }: { value: CustomerOffer }) {
-  return <div className="grid min-w-0 gap-2"><p className="font-medium tabular-nums wrap-anywhere">{formatMAD(value.amount_mad)}{value.price_period === "month" ? " / mois" : value.price_period === "year" ? " / an" : " · vente"}: {offerStatusLabels[value.status]}</p>{value.annual_amount_mad ? <p className="tabular-nums wrap-anywhere">Comparaison annuelle exacte : {formatMAD(value.annual_amount_mad)}</p> : null}<p className="whitespace-pre-wrap wrap-anywhere">Conditions : {value.conditions || "Non renseignées"}</p><p>Échéance : {value.expires_on ? formatBusinessDate(value.expires_on) : "Non renseignée"} (sans expiration automatique).</p><p className="text-sm text-muted-foreground">Version {value.version} · modifiée le {formatInstant(value.updated_at)}. Les auteurs sont conservés dans l’historique.</p></div>;
-}
-export function CustomerOffers({ deal, writable, busy, mutate }: { deal: Deal; writable: boolean; busy: boolean; mutate: MutateDeal }) {
-  const [page, setPage] = useState(1);
-  const [selection, setSelection] = useState<{ version: number; offer: CustomerOffer }>();
-  const editing = selection?.version === deal.version ? selection.offer : undefined;
-  const hydrated = useHydrated();
-  function setEditing(offer?: CustomerOffer) { setSelection(offer ? { version: deal.version, offer } : undefined); }
-  const query = useQuery(queryPath(`deals/${deal.id}/customer-offers`, { page, page_size: 20 }), offersSchema, deal.version);
-  return <section className="grid min-w-0 gap-6 border-t pt-6" aria-label="Propositions client"><h2 className="text-section font-medium">Propositions client</h2><p>Une proposition client est distincte de l’offre d’inventaire. Une proposition acceptée ne clôture pas l’affaire et ne change pas le stock.</p>{query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des propositions…</p> : <><p>{query.value.total} proposition(s) enregistrée(s).</p>{query.value.items.length ? <ul className="grid min-w-0 gap-6">{query.value.items.map(row => <li key={row.id} className="grid min-w-0 gap-4 border-b pb-4"><OfferFacts value={row} />{writable ? <Button action="edit" type="button" variant="outline" disabled={!hydrated || busy} className="justify-self-start" onClick={() => setEditing(row)}>Modifier la proposition du {formatBusinessDate(row.created_at.slice(0, 10))}</Button> : null}</li>)}</ul> : <p>Aucune proposition client sur cette page.</p>}<NumberedPages label="Pages des propositions client" page={page} total={query.value.total} size={20} change={setPage} /></>}{writable ? <OfferForm key={`${deal.version}:${editing ? `${editing.id}:${editing.version}` : "new"}`} deal={deal} value={editing} busy={busy} mutate={mutate} cancel={editing ? () => setEditing(undefined) : undefined} /> : null}</section>;
-}
-function OfferForm({ deal, value, busy, mutate, cancel }: { deal: Deal; value?: CustomerOffer; busy: boolean; mutate: MutateDeal; cancel?: () => void }) {
-  const initial: OfferFields = value ? customerOfferSchema.parse(value) : { amount_mad: "", currency: "MAD", price_period: deal.offering?.price_period === "month" || deal.offering?.price_period === "year" ? deal.offering.price_period : null, conditions: "", expires_on: null, status: "pending" };
-  const form = useForm<OfferFields>({ resolver: zodResolver(offerFieldsSchema), defaultValues: { amount_mad: initial.amount_mad, currency: "MAD", price_period: initial.price_period, conditions: initial.conditions, expires_on: initial.expires_on, status: initial.status } }); const hydrated = useHydrated();
-  async function submit(fields: OfferFields) { const body = value ? { ...fields, expected_version: value.version, expected_deal_version: deal.version } : { ...fields, expected_version: deal.version }; await mutate(value ? `/api/v1/customer-offers/${value.id}` : `/api/v1/deals/${deal.id}/customer-offers`, body, value ? "PATCH" : "POST"); }
-  return <Form {...form}><form noValidate aria-label={value ? "Modifier une proposition client" : "Nouvelle proposition client"} aria-busy={busy || form.formState.isSubmitting} className="grid min-w-0 max-w-reading gap-6" onSubmit={event => void form.handleSubmit(submit)(event)}><fieldset disabled={!hydrated || busy || form.formState.isSubmitting} className="grid min-w-0 gap-4"><h3 className="font-medium">{value ? "Modifier une proposition client" : "Enregistrer une proposition client"}</h3><div className="grid gap-4 sm:grid-cols-2"><FormField control={form.control} name="amount_mad" render={({ field }) => <FormItem><FormLabel>Montant proposé (MAD)</FormLabel><FormControl><Input {...field} inputMode="decimal" maxLength={19} onChange={e => field.onChange(e.target.value.replace(",", "."))} /></FormControl><FormMessage /></FormItem>} /><FormField control={form.control} name="price_period" render={({ field }) => <FormItem><FormLabel>Période du prix proposé</FormLabel><FormControl><NativeSelect value={field.value ?? "sale"} onChange={e => field.onChange(e.target.value === "sale" ? null : e.target.value)}><option value="sale">Vente (sans période)</option><option value="month">Location par mois</option><option value="year">Location par an</option></NativeSelect></FormControl><FormMessage /></FormItem>} /><FormField control={form.control} name="status" render={({ field }) => <FormItem><FormLabel>Statut de la proposition</FormLabel><FormControl><NativeSelect {...field}>{Object.entries(offerStatusLabels).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</NativeSelect></FormControl><FormMessage /></FormItem>} /><FormField control={form.control} name="expires_on" render={({ field }) => <FormItem><FormLabel>Échéance (facultatif)</FormLabel><FormControl><Input {...field} type="date" value={field.value ?? ""} onChange={e => field.onChange(e.target.value || null)} /></FormControl><FormMessage /></FormItem>} /></div><FormField control={form.control} name="conditions" render={({ field }) => <FormItem><FormLabel>Conditions proposées</FormLabel><FormControl><Textarea {...field} maxLength={4000} /></FormControl><FormMessage /></FormItem>} /><div className="flex flex-wrap gap-2"><Button action="save" type="submit">{busy ? "Enregistrement…" : value ? "Enregistrer la proposition modifiée" : "Enregistrer la proposition"}</Button>{cancel ? <Button action="cancel" type="button" variant="outline" onClick={cancel}>Annuler la modification de proposition</Button> : null}</div></fieldset></form></Form>;
+export function CustomerOffers({ deal, writable, busy, busyChanged, mutate, error, denied, recovery }: { deal: Deal; writable: boolean; busy: boolean; busyChanged?: (busy: boolean) => void; mutate: MutateDeal; error?: ApiError; denied?: (error: ApiError) => void; recovery?: DealCommandRecovery }) {
+  const [page, setPage] = useState(1), [panel, setPanel] = useState<ProposalComparison>();
+  const heading = useRef<HTMLHeadingElement>(null), returnFocus = useRef<HTMLElement | null>(null), hydrated = useHydrated();
+  const schema = useMemo(() => proposalPageSchema(deal.id, page, 20), [deal.id, page]);
+  const query = useQuery(queryPath(`deals/${deal.id}/customer-offers`, { page, page_size: 20 }), schema, deal.version);
+  const lost = query.error && [401, 403, 404].includes(query.error.status);
+  useEffect(() => { if (query.error && [401, 403, 404].includes(query.error.status)) denied?.(query.error); }, [query.error, denied]);
+  const open = (target: HTMLElement, proposal?: CustomerOffer) => { if (!hydrated || busy || recovery?.protected || recovery?.locked() || !writable || proposal && proposal.deal_id !== deal.id) return; returnFocus.current = target; setPanel({ deal, proposal }); };
+  const action = (proposal: CustomerOffer) => writable ? <Button action="edit" type="button" variant="quiet" disabled={!hydrated || busy || recovery?.protected} aria-label={`Modifier la proposition du ${formatBusinessDate(proposal.created_at.slice(0, 10))}`} onClick={event => open(event.currentTarget, proposal)}>Modifier</Button> : <span className="text-xs text-muted-foreground">Lecture seule</span>;
+  const columns: ColumnDef<CustomerOffer>[] = [
+    { id: "amount", header: "Montant", cell: ({ row }) => <ProposalAmount value={row.original} /> },
+    { id: "status", header: "Statut", cell: ({ row }) => <ProposalStatus status={row.original.status} /> },
+    { id: "deadline", header: "Échéance", cell: ({ row }) => row.original.expires_on ? formatBusinessDate(row.original.expires_on) : "Non renseignée" },
+    { id: "conditions", header: "Conditions", cell: ({ row }) => <ProposalDetails value={row.original} /> },
+    { id: "actions", header: "Actions", cell: ({ row }) => action(row.original) },
+  ];
+  return <>
+    <RecordSection title="Propositions client" headingRef={heading} count={!query.error ? query.value?.total : undefined} description="Distinctes des offres d’inventaire : une acceptation ne clôture pas l’affaire, ne réserve aucun bien et ne change pas le stock." action={writable ? <Button action="create" type="button" variant="outline" disabled={!hydrated || busy || recovery?.protected} onClick={event => open(event.currentTarget)}>Nouvelle proposition</Button> : undefined}>
+      {query.error ? <RecordError error={query.error} retry={() => { if (lost) setPanel(undefined); query.refresh(); }} /> : !query.value ? <p role="status" className="text-sm text-muted-foreground">Chargement des propositions…</p> : <>
+        <DataTable columns={columns} rows={query.value.items} getRowId={value => value.id} caption="Propositions client" footerCaption scrollLabel="Tableau des propositions client" emptyLabel="Aucune proposition enregistrée." mobileCard={value => <RecordEntry icon={FinanceIcon} title={<ProposalAmount value={value} />} status={<ProposalStatus status={value.status} />} meta={[{ label: "Échéance", value: value.expires_on ? formatBusinessDate(value.expires_on) : "Non renseignée" }]} actions={action(value)}><ProposalDetails value={value} /></RecordEntry>} />
+        {query.value.has_previous || query.value.has_next || page > 1 ? <NumberedPages compact label="Pages des propositions client" page={page} total={query.value.total} size={query.value.page_size} change={setPage} /> : null}
+      </>}
+    </RecordSection>
+    {!lost && panel ? <RecordDrawer key={panel.proposal?.id ?? "new"} label="Proposition client" title={panel.proposal ? "Modifier la proposition" : "Nouvelle proposition"} description="Montant et conditions proposés par le client, sans effet automatique sur le stock." initialOpen hideTrigger busy={busy || recovery?.protected} returnFocus={returnFocus} fallbackFocus={heading} onClosed={() => setPanel(undefined)}>{(close, done) => <CustomerOfferForm recovery={recovery} initial={panel} writable={writable} busy={busy} busyChanged={busyChanged} mutate={mutate} error={error} denied={denied} cancel={close} saved={() => { query.refreshQuietly(); done(); }} />}</RecordDrawer> : null}
+  </>;
 }

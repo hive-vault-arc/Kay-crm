@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "foundation": "fed7ded",
+  "scope": "Shared record/directory interactions, Contacts and Leads source layouts, Deal directory/status palette; whole migration in progress",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "result": "passed; 51 semantic icons / 392 Button sites / zero violations"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:unit",
+      "result": "111 passed"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed; Next 16.4.2"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "sha256": "6244e48ffb4fe5f1273884237a1a3df011467b82703eb9608fc888fb917de790",
+      "path": "frontend/src/app/workspace-collections.css"
+    },
+    {
+      "sha256": "94e96c69579629690f7e31346351b8630074270bb880564adf135883efb9c441",
+      "path": "frontend/src/app/workspace-status.css"
+    },
+    {
+      "sha256": "85c56e70b9d8516768802bc0651027fddcbed38d1fe9153032db0c09185245b9",
+      "path": "branding/prototype/kay-status.tokens.json"
+    },
+    {
+      "sha256": "73b8515ac430084e66579a7b44a6965932334dae154e027e46d5aea8ddf96009",
+      "path": "branding/prototype/kay-glyphs.json"
+    },
+    {
+      "sha256": "7a0860a0230b4943144eb92f070f77d4204125b3b0bce5a3fea09b27ad2dde1c",
+      "path": "frontend/src/components/shared/record-workspace.tsx"
+    },
+    {
+      "sha256": "38542709549c4f10bbdb9fd1fb316013fd0199bc766e3108ecf0a3644140e7d5",
+      "path": "frontend/src/components/shared/unsaved-guard.tsx"
+    },
+    {
+      "sha256": "18c8fed37fae020f9912e3c0c8e82f4955b3f85121a01ff07433e2ec91563fae",
+      "path": "frontend/src/components/shared/record-drawer.tsx"
+    },
+    {
+      "sha256": "ecfc4268156c16f10b91aea59d649ff4fefc5b3a776dda56f5f5d244bc2dbf74",
+      "path": "frontend/src/components/shared/data-table.tsx"
+    },
+    {
+      "sha256": "fc09f39f5a32effb6cca5c4f5142c1523100bd25009ddbee65da81ac43e95fff",
+      "path": "frontend/src/features/contacts/contact-record.tsx"
+    },
+    {
+      "sha256": "3d6089af8022195d1f4bff4ae37ffe7b47a25669cdccd48391d97f89a15eb3cc",
+      "path": "frontend/src/features/contacts/lead-record.tsx"
+    },
+    {
+      "sha256": "04f3ef405faf9425a8617ef5f4f8cf22e2ed3bbe5a90ce12705d8ecc9c1d67bd",
+      "path": "frontend/src/features/contacts/lead-status-menu.tsx"
+    },
+    {
+      "sha256": "2c9fa1b3c87f935b25707ed6986c3892d59427a5a6382bd9852610c6e662dcc2",
+      "path": "frontend/src/features/schedule/contact-visits.tsx"
+    },
+    {
+      "sha256": "664c116d8fde95389a0f170610e5787c91f42fe4bbb0de4dd794eda1d2e33b69",
+      "path": "frontend/tests/unit/workspace-interactions.test.mjs"
+    }
+  ],
+  "limitations": [
+    "No app HTTP or native browser access",
+    "No backend/database/worker/private transfer operations or final security/full-stack acceptance",
+    "Remaining P2 Back/Forward and responsive focus; exact inline form/document parity and remaining feature layouts",
+    "Historical browser selectors still require migration",
+    "Native AFTER/product review pending after implementation",
+    "No push/main change/merge"
+  ]
+}

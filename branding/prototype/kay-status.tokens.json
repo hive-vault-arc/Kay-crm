@@ -1,0 +1,356 @@
+{
+  "name": "Selected KAY status surfaces",
+  "source": "Frozen prototype status.js and crm-status-palette.js; owner refinement 2026-10-24",
+  "light": {
+    "neutral": {
+      "text": "#52657d",
+      "bg": "#f2f5f8",
+      "dot": "#52657d",
+      "border": "#e8ecf2",
+      "solid": "#52657d"
+    },
+    "not-contacted": {
+      "text": "#c24150",
+      "bg": "#fff2f4",
+      "dot": "#c24150",
+      "border": "#ffe7ea",
+      "solid": "#c24150"
+    },
+    "contacted": {
+      "text": "#1389b2",
+      "bg": "#eff9fd",
+      "dot": "#1389b2",
+      "border": "#e0f4fb",
+      "solid": "#0e7490"
+    },
+    "follow-up": {
+      "text": "#4338ca",
+      "bg": "#f2f3ff",
+      "dot": "#4338ca",
+      "border": "#e6e8ff",
+      "solid": "#4338ca"
+    },
+    "analysis": {
+      "text": "#1d4ed8",
+      "bg": "#f6faff",
+      "dot": "#1d4ed8",
+      "border": "#e1edfb",
+      "solid": "#1d4ed8"
+    },
+    "qualified": {
+      "text": "#8b5cc7",
+      "bg": "#f8f2ff",
+      "dot": "#8b5cc7",
+      "border": "#f4eafd",
+      "solid": "#7c4db5"
+    },
+    "not-qualified": {
+      "text": "#52657d",
+      "bg": "#f2f5f8",
+      "dot": "#52657d",
+      "border": "#e8ecf2",
+      "solid": "#52657d"
+    },
+    "converted": {
+      "text": "#0f9f8a",
+      "bg": "#edfbf8",
+      "dot": "#0f9f8a",
+      "border": "#dff7f3",
+      "solid": "#0f766e"
+    },
+    "lost": {
+      "text": "#c24150",
+      "bg": "#fff2f4",
+      "dot": "#c24150",
+      "border": "#ffe7ea",
+      "solid": "#c24150"
+    },
+    "junk": {
+      "text": "#52657d",
+      "bg": "#f2f5f8",
+      "dot": "#52657d",
+      "border": "#e8ecf2",
+      "solid": "#52657d"
+    },
+    "proposition": {
+      "text": "#1d4ed8",
+      "bg": "#f6faff",
+      "dot": "#1d4ed8",
+      "border": "#e1edfb",
+      "solid": "#1d4ed8"
+    },
+    "visite": {
+      "text": "#1389b2",
+      "bg": "#eff9fd",
+      "dot": "#1389b2",
+      "border": "#e0f4fb",
+      "solid": "#0e7490"
+    },
+    "negotiation": {
+      "text": "#4338ca",
+      "bg": "#f2f3ff",
+      "dot": "#4338ca",
+      "border": "#e6e8ff",
+      "solid": "#4338ca"
+    },
+    "pending": {
+      "text": "#8b5cc7",
+      "bg": "#f8f2ff",
+      "dot": "#8b5cc7",
+      "border": "#f4eafd",
+      "solid": "#7c4db5"
+    },
+    "closed-won": {
+      "text": "#0f8f80",
+      "bg": "#edfbf7",
+      "dot": "#0f8f80",
+      "border": "#e0f6f1",
+      "solid": "#0f7f72"
+    },
+    "closed-lost": {
+      "text": "#c24150",
+      "bg": "#fff2f4",
+      "dot": "#c24150",
+      "border": "#ffe7ea",
+      "solid": "#c24150"
+    },
+    "rating-cold": {
+      "text": "#1d4ed8",
+      "bg": "#f6faff",
+      "dot": "#1d4ed8",
+      "border": "#e1edfb",
+      "solid": "#1d4ed8"
+    },
+    "rating-normal": {
+      "text": "#52657d",
+      "bg": "#f2f5f8",
+      "dot": "#52657d",
+      "border": "#e8ecf2",
+      "solid": "#52657d"
+    },
+    "rating-hot": {
+      "text": "#c24150",
+      "bg": "#fff2f4",
+      "dot": "#c24150",
+      "border": "#ffe7ea",
+      "solid": "#c24150"
+    },
+    "available": {
+      "text": "#0f8f80",
+      "bg": "#edfbf7",
+      "dot": "#0f8f80",
+      "border": "#e0f6f1",
+      "solid": "#0f7f72"
+    },
+    "confirmed": {
+      "text": "#0f8f80",
+      "bg": "#edfbf7",
+      "dot": "#0f8f80",
+      "border": "#e0f6f1",
+      "solid": "#0f7f72"
+    },
+    "active": {
+      "text": "#1389b2",
+      "bg": "#eff9fd",
+      "dot": "#1389b2",
+      "border": "#e0f4fb",
+      "solid": "#0e7490"
+    }
+  },
+  "dark": {
+    "neutral": {
+      "text": "#cbd5e1",
+      "bg": "rgb(100 116 139 / 12%)",
+      "dot": "#cbd5e1",
+      "border": "rgb(148 163 184 / 14%)",
+      "solid": "#475569"
+    },
+    "not-contacted": {
+      "text": "#fda4af",
+      "bg": "rgb(194 65 80 / 12%)",
+      "dot": "#fda4af",
+      "border": "rgb(253 164 175 / 14%)",
+      "solid": "#9f3443"
+    },
+    "contacted": {
+      "text": "#7dd3fc",
+      "bg": "rgb(19 137 178 / 12%)",
+      "dot": "#7dd3fc",
+      "border": "rgb(125 211 252 / 14%)",
+      "solid": "#0e7490"
+    },
+    "follow-up": {
+      "text": "#a7a1ff",
+      "bg": "rgb(81 71 199 / 12%)",
+      "dot": "#a7a1ff",
+      "border": "rgb(167 161 255 / 14%)",
+      "solid": "#4338ca"
+    },
+    "analysis": {
+      "text": "#60a5fa",
+      "bg": "rgb(29 78 216 / 12%)",
+      "dot": "#60a5fa",
+      "border": "rgb(147 197 253 / 14%)",
+      "solid": "#1d4ed8"
+    },
+    "qualified": {
+      "text": "#c4b5fd",
+      "bg": "rgb(139 92 199 / 12%)",
+      "dot": "#c4b5fd",
+      "border": "rgb(196 181 253 / 14%)",
+      "solid": "#6d46a3"
+    },
+    "not-qualified": {
+      "text": "#cbd5e1",
+      "bg": "rgb(100 116 139 / 12%)",
+      "dot": "#cbd5e1",
+      "border": "rgb(148 163 184 / 14%)",
+      "solid": "#475569"
+    },
+    "converted": {
+      "text": "#5eead4",
+      "bg": "rgb(15 159 138 / 12%)",
+      "dot": "#5eead4",
+      "border": "rgb(94 234 212 / 14%)",
+      "solid": "#0f766e"
+    },
+    "lost": {
+      "text": "#fda4af",
+      "bg": "rgb(194 65 80 / 12%)",
+      "dot": "#fda4af",
+      "border": "rgb(253 164 175 / 14%)",
+      "solid": "#9f3443"
+    },
+    "junk": {
+      "text": "#cbd5e1",
+      "bg": "rgb(100 116 139 / 12%)",
+      "dot": "#cbd5e1",
+      "border": "rgb(148 163 184 / 14%)",
+      "solid": "#475569"
+    },
+    "proposition": {
+      "text": "#60a5fa",
+      "bg": "rgb(29 78 216 / 12%)",
+      "dot": "#60a5fa",
+      "border": "rgb(147 197 253 / 14%)",
+      "solid": "#1d4ed8"
+    },
+    "visite": {
+      "text": "#7dd3fc",
+      "bg": "rgb(19 137 178 / 12%)",
+      "dot": "#7dd3fc",
+      "border": "rgb(125 211 252 / 14%)",
+      "solid": "#0e7490"
+    },
+    "negotiation": {
+      "text": "#a7a1ff",
+      "bg": "rgb(81 71 199 / 12%)",
+      "dot": "#a7a1ff",
+      "border": "rgb(167 161 255 / 14%)",
+      "solid": "#4338ca"
+    },
+    "pending": {
+      "text": "#c4b5fd",
+      "bg": "rgb(139 92 199 / 12%)",
+      "dot": "#c4b5fd",
+      "border": "rgb(196 181 253 / 14%)",
+      "solid": "#6d46a3"
+    },
+    "closed-won": {
+      "text": "#5eead4",
+      "bg": "rgb(15 143 128 / 12%)",
+      "dot": "#5eead4",
+      "border": "rgb(94 234 212 / 14%)",
+      "solid": "#0f766e"
+    },
+    "closed-lost": {
+      "text": "#fda4af",
+      "bg": "rgb(194 65 80 / 12%)",
+      "dot": "#fda4af",
+      "border": "rgb(253 164 175 / 14%)",
+      "solid": "#9f3443"
+    },
+    "rating-cold": {
+      "text": "#60a5fa",
+      "bg": "rgb(29 78 216 / 12%)",
+      "dot": "#60a5fa",
+      "border": "rgb(147 197 253 / 14%)",
+      "solid": "#1d4ed8"
+    },
+    "rating-normal": {
+      "text": "#cbd5e1",
+      "bg": "rgb(100 116 139 / 12%)",
+      "dot": "#cbd5e1",
+      "border": "rgb(148 163 184 / 14%)",
+      "solid": "#475569"
+    },
+    "rating-hot": {
+      "text": "#fda4af",
+      "bg": "rgb(194 65 80 / 12%)",
+      "dot": "#fda4af",
+      "border": "rgb(253 164 175 / 14%)",
+      "solid": "#9f3443"
+    },
+    "available": {
+      "text": "#5eead4",
+      "bg": "rgb(15 143 128 / 12%)",
+      "dot": "#5eead4",
+      "border": "rgb(94 234 212 / 14%)",
+      "solid": "#0f766e"
+    },
+    "confirmed": {
+      "text": "#5eead4",
+      "bg": "rgb(15 143 128 / 12%)",
+      "dot": "#5eead4",
+      "border": "rgb(94 234 212 / 14%)",
+      "solid": "#0f766e"
+    },
+    "active": {
+      "text": "#7dd3fc",
+      "bg": "rgb(19 137 178 / 12%)",
+      "dot": "#7dd3fc",
+      "border": "rgb(125 211 252 / 14%)",
+      "solid": "#0e7490"
+    }
+  },
+  "wireRoles": {
+    "new": "not-contacted",
+    "in_progress": "contacted",
+    "follow_up": "follow-up",
+    "analysis": "analysis",
+    "qualified": "qualified",
+    "not_qualified": "not-qualified",
+    "converted": "converted",
+    "lost": "lost",
+    "junk_lead": "junk",
+    "closed": "neutral",
+    "warm": "rating-normal",
+    "cold": "rating-cold",
+    "hot": "rating-hot",
+    "normal": "rating-normal",
+    "visit": "visite",
+    "negotiation": "negotiation",
+    "documents": "converted",
+    "reserved": "pending",
+    "won": "closed-won",
+    "cancelled": "neutral",
+    "active": "active",
+    "archived": "neutral",
+    "scheduled": "neutral",
+    "confirmed": "confirmed",
+    "completed": "closed-won",
+    "not_completed": "follow-up",
+    "draft": "neutral",
+    "open": "follow-up",
+    "available": "available",
+    "sold": "closed-won",
+    "rented": "converted",
+    "withdrawn": "neutral",
+    "review": "follow-up"
+  },
+  "contextRoles": {
+    "deal": {
+      "new": "proposition"
+    }
+  }
+}

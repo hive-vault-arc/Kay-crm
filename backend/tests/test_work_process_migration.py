@@ -136,6 +136,7 @@ def test_populated_0016_migration_preserves_visit_actor_history_and_backfills_ou
                 text("SELECT to_jsonb(v) FROM visit v WHERE id=:id"), dict(id=vid)
             ).scalar_one()
             assert current.pop("schedule_version") == 1
+            assert current.pop("notes") == ""
             assert current.pop("enquiry_id") is None and current == old_visit
             assert (
                 connection.execute(

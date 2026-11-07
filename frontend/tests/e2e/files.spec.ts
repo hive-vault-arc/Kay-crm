@@ -2,12 +2,13 @@ import { test, expect, createActor, removeActor, signIn, clearActorContext } fro
 import { createLead, staffCommand } from "../helpers/leads";
 import { createProperty } from "../helpers/inventory";
 import { createDevelopment } from "../helpers/developments";
-import { downloadFile, syntheticFile, uploadFile } from "../helpers/files";
+import { chooseDocument, downloadFile, openDocuments, syntheticFile, uploadFile } from "../helpers/files";
 import { testControl } from "../helpers/api-process";
 import { manage, previewOperation, confirmOperation } from "../helpers/ownership";
 import { testPorts } from "../../scripts/test-ports.mjs";
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(20000); });
+test.use({ trace: "off", video: "off", screenshot: "off" });
 
 // SP-09 focus: real bytes, actual separate worker, scoped grants, clean/rejected/recovery.
 test("SP09 AT-06/26/35: private contact versus shared property/programme and actual clean/rejected bytes", async ({ page }) => {
@@ -18,7 +19,7 @@ test("SP09 AT-06/26/35: private contact versus shared property/programme and act
     await signIn(page, owner);
     const lead = await createLead(page, "SP09 contact privé synthétique");
     const contact = (await (await page.request.get(`/api/v1/enquiries/${lead}`)).json()).contact;
-    await page.goto(`/contacts/${contact.id}`); await page.getByRole("tab", { name: "Documents", exact: true }).click();
+    await page.goto(`/contacts/${contact.id}`); await openDocuments(page, "contact");
     await testControl("worker-stop");
     const privateRow = await uploadFile(page, clean);
     await expect(privateRow.getByText("En quarantaine, analyse en attente", { exact: true })).toBeVisible();
@@ -34,9 +35,11 @@ test("SP09 AT-06/26/35: private contact versus shared property/programme and act
     const copiedPermit = await (await staffCommand(page, "files/permits", { action: "download", document_id: privateDocument.id, expected_version: privateDocument.version, version_id: privateDocument.versions[0].id })).json();
     await clearActorContext(page); await signIn(page, manager);
     const property = await createProperty(page);
+    await openDocuments(page, "inventory");
     const sharedRow = await uploadFile(page, cleanDocument);
     await expect(sharedRow.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 20_000 });
     const development = await createDevelopment(page);
+    await openDocuments(page, "inventory");
     const rejectedRow = await uploadFile(page, rejected);
     await expect(rejectedRow.getByText("Fichier rejeté par l’antivirus", { exact: true })).toBeVisible({ timeout: 20_000 });
     await expect(rejectedRow.getByRole("button", { name: `Télécharger ${rejected.name}`, exact: true })).toBeDisabled();
@@ -47,18 +50,21 @@ test("SP09 AT-06/26/35: private contact versus shared property/programme and act
     expect(copiedResponse.status()).toBe(403);
     expect((await copiedResponse.json()).error.code).toBe("FILE_PERMIT_INVALID");
     await page.goto(`/projects/properties/${property}`);
-    await expect(page.getByRole("button", { name: "Envoyer le fichier", exact: true })).toHaveCount(0);
+    const sharedDocuments = await openDocuments(page, "inventory");
+    await expect(sharedDocuments.getByRole("button", { name: "Ajouter un document", exact: true })).toHaveCount(0);
+    await expect(sharedDocuments.getByText("Les pièces jointes sont gérées par les responsables.", { exact: true })).toBeVisible();
     await downloadFile(page, cleanDocument.name, cleanDocument.buffer);
     const documents = await (await page.request.get(`/api/v1/documents?parent_kind=property&parent_id=${property}`)).json();
     expect(JSON.stringify(documents).includes(contact.id)).toBe(false);
     expect((await staffCommand(page, "files/permits", { action: "upload", document_id: documents.items[0].id, expected_version: documents.items[0].version })).status()).toBe(403);
     await page.goto(`/projects/${development.id}`);
+    await openDocuments(page, "inventory");
     await expect(page.getByText("Fichier rejeté par l’antivirus", { exact: true })).toBeVisible();
     await clearActorContext(page); await signIn(page, manager); await page.goto(`/contacts/${contact.id}`);
     await manage(page, "archive"); await previewOperation(page); await confirmOperation(page);
-    await page.getByRole("tab", { name: "Documents", exact: true }).click();
-    await expect(page.getByText("Contact archivé : les documents ne peuvent pas être modifiés tant que le contact n’est pas restauré.", { exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Choisir un fichier", exact: true })).toHaveCount(0);
+    const archivedDocuments = await openDocuments(page, "contact");
+    await expect(archivedDocuments.getByText("Documents en lecture seule dans l’état actuel du dossier.", { exact: true })).toBeVisible();
+    await expect(archivedDocuments.getByRole("button", { name: "Ajouter un document", exact: true })).toHaveCount(0);
     await downloadFile(page, clean.name, clean.buffer);
   } finally { await testControl("worker-start"); await clearActorContext(page); await removeActor(manager); await removeActor(owner); await removeActor(outsider); }
 });
@@ -68,33 +74,37 @@ test("SP09: interrupted network transfer and unavailable scanner recover without
   const manager = await createActor("manager");
   try {
     await signIn(page, manager); await createProperty(page);
+    const documents = await openDocuments(page, "inventory");
     const file = await syntheticFile("clean-document");
     const transferRoute = `https://localhost:${testPorts().api}/api/v1/transfers/**`;
     await page.route(transferRoute, route => route.abort("connectionfailed"));
-    await page.getByLabel("Fichier à ajouter", { exact: true }).setInputFiles(file);
-    await page.getByRole("button", { name: "Envoyer le fichier", exact: true }).click();
-    await expect(page.getByRole("alert").filter({ hasText: "Transfert interrompu" })).toBeVisible();
+    const uploader = await chooseDocument(page, file);
+    await uploader.getByRole("button", { name: "Envoyer le fichier", exact: true }).click();
+    await expect(uploader.getByRole("alert").filter({ hasText: "Transfert interrompu" })).toBeVisible();
     await page.unroute(transferRoute);
     await testControl("worker-unavailable");
     const publication = page.waitForResponse(response => response.request().method() === "PUT" && new URL(response.url()).pathname.startsWith("/api/v1/transfers/"));
-    await page.getByRole("button", { name: "Réessayer le transfert", exact: true }).click();
+    await uploader.getByRole("button", { name: "Réessayer", exact: true }).click();
     expect((await publication).status()).toBe(200);
-    await expect(page.getByText(/L’analyse est indisponible/)).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByRole("button", { name: `Télécharger ${file.name}`, exact: true })).toBeDisabled();
+    await expect(uploader).not.toBeVisible();
+    const row = documents.getByRole("listitem").filter({ has: page.getByRole("heading", { name: file.name, exact: true }) });
+    await expect(row.getByText(/L’analyse est indisponible/)).toBeVisible({ timeout: 20_000 });
+    await expect(row.getByRole("button", { name: `Télécharger ${file.name}`, exact: true })).toBeDisabled();
     await testControl("worker-stop");
     const scanRetry = page.waitForResponse(response => response.request().method() === "POST" && new URL(response.url()).pathname.endsWith("/retry-scan"));
-    await page.getByRole("button", { name: "Réessayer l’analyse", exact: true }).click();
+    await row.getByRole("button", { name: `Réessayer l’analyse de ${file.name}`, exact: true }).click();
     const scanResponse = await scanRetry;
     const scanPayload = await scanResponse.json();
     expect([200, 409]).toContain(scanResponse.status());
     if (scanResponse.status() === 409) expect(scanPayload.error.code).toBe("FILE_SCAN_IN_PROGRESS");
     await testControl("worker-start");
     // Forced worker termination can leave its fenced 90-second lease until recovery.
-    await expect(page.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 120_000 });
+    await expect(row.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 120_000 });
     await downloadFile(page, file.name, file.buffer);
-    await page.getByRole("button", { name: `Archiver ${file.name}`, exact: true }).click();
-    await expect(page.getByRole("alertdialog")).toBeVisible();
-    await page.getByRole("button", { name: "Confirmer l’archivage", exact: true }).click();
-    await expect(page.getByText(/Aucune pièce jointe sur cette page/)).toBeVisible();
+    await row.getByRole("button", { name: `Archiver ${file.name}`, exact: true }).click();
+    const confirmation = page.getByRole("alertdialog", { name: "Archiver cette pièce jointe ?", exact: true }); await expect(confirmation).toBeVisible();
+    await confirmation.getByRole("button", { name: "Confirmer l’archivage", exact: true }).click();
+    await expect(confirmation).not.toBeVisible(); await expect(row).not.toBeVisible();
+    await expect(documents.getByText(/Aucune pièce jointe sur cette page/)).toBeVisible();
   } finally { await testControl("worker-start"); await clearActorContext(page); await removeActor(manager); }
 });

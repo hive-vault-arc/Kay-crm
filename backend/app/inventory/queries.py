@@ -12,7 +12,8 @@ from app.contacts.models import Contact
 from app.db.session import Database
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
-from app.inventory.contracts import InventoryQuery, PropertiesQuery
+from app.inventory.contracts import InventoryQuery, InventoryQueryFields, PropertiesQuery
+from app.inventory.directory_filters import directory_filters
 from app.inventory.hierarchy_models import Block, Development, Floor, UnitType
 from app.inventory.models import InventoryEvent, Offering, Property, PropertyOwner
 from app.inventory.outcome_history import metadata
@@ -208,7 +209,7 @@ def read_detail(database: Database, token: str, pid: UUID) -> dict[str, object]:
 
 
 def numbered(
-    items: list[dict[str, object]], total: int, query: InventoryQuery
+    items: list[dict[str, object]], total: int, query: InventoryQueryFields
 ) -> dict[str, object]:
     return {
         "items": items,
@@ -261,15 +262,7 @@ def read_list(
                 conditions.append(Property.development_id.is_(None))
             elif query.target_level == "unit":
                 conditions.append(Property.development_id.is_not(None))
-            if query.offering_kind or (query.state and query.state != "all"):
-                campaign = select(Offering.id).where(Offering.property_id == Property.id)
-                if query.offering_kind:
-                    campaign = campaign.where(Offering.kind == query.offering_kind)
-                if query.state and query.state != "all":
-                    campaign = campaign.where(Offering.state == query.state)
-                if query.state != "withdrawn":
-                    campaign = campaign.where(Offering.is_current)
-                conditions.append(campaign.exists())
+            conditions.extend(directory_filters(query))
             if query.property_id:
                 conditions.append(Property.id == query.property_id)
             counts = dict.fromkeys(

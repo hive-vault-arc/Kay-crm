@@ -1,0 +1,157 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "3db194f9b1c7fa196f5ccbaeb283986fc1f567a7",
+  "scope": "Selected prospect creation recovery with original POST ownership, originating actor/role proof, coherent provenance, explicit canonical contact reuse, retained metadata host and completion-only navigation retry",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 691,
+      "additionalCases": 14,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic actual route/controller/form/host tests and synthetic TLS; creation suite registered"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 501,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <creation sheet>",
+      "exitCode": 0,
+      "files": 1,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1275,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8914,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "validationCorrection": "New fixtures traverse message slots and await void event handlers; existing dossier success carries coherent submission/creator and synthetic role. Render-ref lint findings fixed with committed availability and stable origin state, without suppression.",
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/creation-recovery.spec.ts",
+    "browserCases": 2,
+    "typechecked": true,
+    "scenarios": [
+      "New-contact lost creation acknowledgement at desktop width",
+      "Existing-contact lost creation acknowledgement at phone width"
+    ],
+    "syntheticIsolatedFixturesOnly": true,
+    "tracesVideosScreenshots": false
+  },
+  "preserved": {
+    "selectedThreeSectionsAndHeader": true,
+    "allContactCollectionsAndQualification": true,
+    "explicitContactChoiceResponsibilityQueueAndAgentAuthority": true,
+    "originalBodySubmissionKey": true,
+    "originatingActorRole": true,
+    "completionOnlyAfterAcknowledgement": true,
+    "canonicalContactReadsBeforeExplicitReuse": true,
+    "backendAuthorityAtomicityReceiptsMergeHistory": true,
+    "noBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Prospect conversion recovery",
+    "Other domain commands and exact field/context audit",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: no backend change this checkpoint",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/simulator/account/customer records/private configuration/import/export/transfer access",
+    "Executed migrations0036/0037 or another migration",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4642,
+      "sha256": "7822fe096fd581a067a6a253477d8557128df9d9956f0cd9b2ec1c15169b568d"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/leads/new/page.tsx",
+      "bytes": 512,
+      "sha256": "3f6da43d881819b663ef53b82f06fae4011d1cdd7f103e38c6341edb40a8d632"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-create.tsx",
+      "bytes": 11980,
+      "sha256": "2044385296ac0dd5dd7ee8d8309865d2ea89b2d62b4e1bad4ae82bf812042b8a"
+    },
+    {
+      "file": "frontend/src/features/contacts/use-enquiry-command.ts",
+      "bytes": 8075,
+      "sha256": "36e9663ff5cb3488e7a9537bbf8e984f6a2bda5b10931fb565d4aa846851df61"
+    },
+    {
+      "file": "frontend/tests/unit/dossier-forms.test.mjs",
+      "bytes": 23619,
+      "sha256": "f958f822c10e10cbd7fa6797b8d6e04813914aa321a970b95e374deef33e8048"
+    },
+    {
+      "file": "frontend/tests/unit/editor-fixtures.mjs",
+      "bytes": 8415,
+      "sha256": "7ba5c0cff67b2087f8a4d30541c74b9446b18682e5466ace93d8c4447f7d2d2a"
+    },
+    {
+      "file": "frontend/tests/unit/enquiry-fixtures.mjs",
+      "bytes": 1754,
+      "sha256": "ec37921c2fecd206f4d7fa12c120cb67f6fbce9874640998b3bc26987242cf3c"
+    },
+    {
+      "file": "frontend/tests/unit/creation-recovery.test.mjs",
+      "bytes": 13296,
+      "sha256": "e993b0f2f920bcda40b2282c3bc2fa55cc88698696845ca6c6803dbd191aae9a"
+    },
+    {
+      "file": "frontend/tests/e2e/creation-recovery.spec.ts",
+      "bytes": 4891,
+      "sha256": "dac328640e3136a1f291d428fb0535d51c5234b96995b4045026717abc996c5e"
+    }
+  ]
+}

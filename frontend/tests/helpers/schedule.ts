@@ -17,13 +17,14 @@ export async function scheduleFixture(page: Page, actors: TestActor[]) {
 }
 export async function configureSchedule(page: Page) {
   await page.goto("/settings/working-hours");
-  const monday = page.getByRole("region",{name:"Lundi",exact:true});
-  await monday.getByRole("button",{name:"Ajouter plage de travail Lundi",exact:true}).click();
-  await monday.getByLabel("Plage de travail 1 : début",{exact:true}).fill("09:00");
-  await monday.getByLabel("Plage de travail 1 : fin",{exact:true}).fill("18:00");
-  await monday.getByRole("button",{name:"Ajouter pause déjeuner Lundi",exact:true}).click();
-  await monday.getByLabel("Pause déjeuner 1 : début",{exact:true}).fill("13:00");
-  await monday.getByLabel("Pause déjeuner 1 : fin",{exact:true}).fill("14:00");
+  await page.getByRole("button", { name: "Plages et pauses par jour", exact: true }).click();
+  const monday = page.getByRole("dialog", { name: "Plages de travail et pauses", exact: true }).getByRole("region",{name:"Lundi",exact:true});
+  await monday.getByRole("button",{name:"Ajouter une plage",exact:true}).click();
+  await monday.getByLabel("Début Plages de travail 1 Lundi",{exact:true}).fill("09:00");
+  await monday.getByLabel("Fin Plages de travail 1 Lundi",{exact:true}).fill("18:00");
+  await monday.getByRole("button",{name:"Ajouter une pause",exact:true}).click();
+  await monday.getByLabel("Début Pauses 1 Lundi",{exact:true}).fill("13:00");
+  await monday.getByLabel("Fin Pauses 1 Lundi",{exact:true}).fill("14:00");
   await page.getByRole("button",{name:"Prévisualiser l’impact",exact:true}).click();
   await expect(page.getByRole("heading",{name:"0 visite(s) future(s) à revoir",exact:true})).toBeVisible();
   await page.getByRole("button",{name:"Enregistrer les horaires",exact:true}).click();
@@ -32,27 +33,30 @@ export async function configureSchedule(page: Page) {
 export async function fillVisit(page: Page, cid: string, kind="company_car", start="2030-01-07T10:30", end="2030-01-07T11:30", title="SP14 visite synthétique") {
   await page.goto(`/visits/new?contact_id=${cid}`);
   const form = page.getByRole("form",{name:"Nouvelle visite",exact:true});
-  await expect(form.getByLabel("Titre de la visite",{exact:true})).toBeEnabled();
+  await expect(form.getByLabel("Titre *",{exact:true})).toBeEnabled();
   const prospect = form.getByLabel("Prospect concerné", { exact: true });
   await expect.poll(() => prospect.locator("option").count()).toBeGreaterThan(1);
   await prospect.selectOption({ index: 1 });
-  await form.getByLabel("Titre de la visite",{exact:true}).fill(title);
-  await form.getByLabel("Lieu de la visite",{exact:true}).fill("SP14 lieu synthétique uniquement");
+  await form.getByLabel("Titre *",{exact:true}).fill(title);
+  await form.getByLabel("Lieu *",{exact:true}).fill("SP14 lieu synthétique uniquement");
   await form.getByLabel("Type de visite",{exact:true}).selectOption(kind);
   await setVisitTimes(page,start,end);
   return form;
 }
 export async function setVisitTimes(page: Page, start: string, end: string) {
-  await page.getByLabel("Début (heure de Casablanca)",{exact:true}).fill(start);
-  await page.getByLabel("Fin (heure de Casablanca)",{exact:true}).fill(end);
+  for (const [label, value] of [["Début", start], ["Fin", end]]) {
+    const [day, time] = value.split("T");
+    await page.getByLabel(`${label} · Date`, { exact: true }).fill(day);
+    await page.getByLabel(`${label} · Heure`, { exact: true }).fill(time);
+  }
   await expect(page.getByRole("button",{name:"Vérifier le créneau",exact:true})).toBeEnabled();
   await page.getByRole("button",{name:"Vérifier le créneau",exact:true}).click();
-  await expect(page.getByRole("region",{name:"Disponibilité du créneau",exact:true})).toBeVisible();
+  await expect(page.locator('[aria-label="Disponibilité du créneau"]')).toBeVisible();
 }
 export async function saveVisit(page: Page) {
-  await page.getByRole("button",{name:"Enregistrer la visite",exact:true}).click();
+  await page.getByRole("button",{name:"Planifier",exact:true}).click();
   await expect.poll(()=>/^\/visits\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
-  await expect(page.getByRole("heading",{name:"Historique de la visite",exact:true})).toBeVisible();
+  await expect(page.getByRole("dialog").getByText("Historique de la visite", { exact: true })).toBeVisible();
   return new URL(page.url()).pathname.split("/")[2];
 }
 export function visitBody(uid:string,cid:string,changes:object={}) {

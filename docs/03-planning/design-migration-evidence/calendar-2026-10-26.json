@@ -1,0 +1,117 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "previous": "6108a15",
+  "scope": "Selected calendar day columns/drawer filters/phone agenda, strict date-only booking context, original server-time resolution and guarded snapshot-based visit actions; migration remains in progress",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "result": "passed; 62 semantic glyphs / 404 Button sites / zero violations"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:unit",
+      "result": "147 passed; 9 new calendar component/controller/SSR cases"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed; pinned Next16.4.2 including fresh TypeScript"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "result": "8616 indexed; zero forbidden/oversized; 14 ignore probes"
+    },
+    {
+      "command": "& ./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "result": "passed; 1227 links / 22 sprints / 42 acceptance mappings / 12 API JSON examples"
+    }
+  ],
+  "structuralChecks": {
+    "kind": "Executed inline Node/PostCSS parser and var-reference comparison against workspace.css/workspace-status.css/globals.css",
+    "rules": 61,
+    "roleReferences": 14,
+    "missingRoles": 0,
+    "dynamicRoom": "--kay-calendar-room is written only by the owned CalendarFrame observer and has a CSS fallback"
+  },
+  "sourceHashes": [
+    {
+      "path": "frontend/scripts/test-facade.mjs",
+      "sha256": "0329bb59d8023da399aba8483d3ff4d6285917f3a64296151daad749973e8d1d"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/visits/new/page.tsx",
+      "sha256": "08654ae6ed644519736c140008c72577b1c8c2ae1131126713d1b2d8daa8edc0"
+    },
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "a5f42c479ed65dcfb4e3f2be92ecc5f554bee76a259b8f9942d9561a792cfadf"
+    },
+    {
+      "path": "frontend/src/app/workspace-calendar.css",
+      "sha256": "b5028e9f4e5b994aa3957b4b906edb3a5f3dc595e268ee857d38f735557593fe"
+    },
+    {
+      "path": "frontend/src/components/ui/button-actions.ts",
+      "sha256": "88c137531f0b60d607d88cfeef23801100387cc6d5059d8b41dfaff3911d2c0f"
+    },
+    {
+      "path": "frontend/src/features/schedule/calendar-frame.tsx",
+      "sha256": "18d9c09330ce5fa33fdab0ec76ae760d790661963afa3362e3a760817535503e"
+    },
+    {
+      "path": "frontend/src/features/schedule/calendar-model.ts",
+      "sha256": "a8fd05a27459db9b58514e494527a7185964707b104c6028bd6249bed7aa2287"
+    },
+    {
+      "path": "frontend/src/features/schedule/calendar-sidebar.tsx",
+      "sha256": "5ada9fed25813701ceab30f96b5eca7ef5c4d06768a7fa9cc9a0a7c5814c38eb"
+    },
+    {
+      "path": "frontend/src/features/schedule/calendar-visit.tsx",
+      "sha256": "189c539496eb84803f8d733b11839c9115ad744278fc903e1df3d65874c0726c"
+    },
+    {
+      "path": "frontend/src/features/schedule/contracts.ts",
+      "sha256": "3e676056a981d29a501521f2f73e8bbe6bc04f524cab491159ba03da052cca10"
+    },
+    {
+      "path": "frontend/src/features/schedule/local-time-field.tsx",
+      "sha256": "2176ed0ce9584825273efcb839282e1dd2d95ee74e63b214a507f1ca661479cc"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-calendar.tsx",
+      "sha256": "7ab7b9b9d87d9095335cd7996b8c7e375cea6de36a317e5e8c2960da2f7e2ca8"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-create.tsx",
+      "sha256": "ec2db689f2fb781758a73b232b45ecf0d3e9882a085b1157d7bfd728cd7dfd24"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-form.tsx",
+      "sha256": "b2f766815f42fc28439f1f071b069a7340ec74096aae18bea12b7964ced0d2f0"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-record.tsx",
+      "sha256": "6320ccdeda9bdd412d38fa73c2ceb12dba348bce3585139c0cfbeed0c20b3c35"
+    },
+    {
+      "path": "frontend/src/features/schedule/week-grid.tsx",
+      "sha256": "ccadbf84ceef8eaba1338db64c7caef839d2d337066c8304484846dab7bccb20"
+    },
+    {
+      "path": "frontend/tests/unit/calendar-workspace.test.mjs",
+      "sha256": "25c1f59b9f8c1d3a2b0c18c01605a122a852dfdc72f853e0149b4695a1279126"
+    }
+  ],
+  "security": "Existing scoped visit/free-busy schemas and facade; authoritative backend week/time resolution; no default time/instant; opened version/body/retry snapshot; synchronous submission lock; current-denial removal and guarded drafts",
+  "limitations": [
+    "No app HTTP/native browser access",
+    "No real calendar/booking/capacity/timezone/database race or native focus/resize/visual acceptance",
+    "Remaining forms/inline record editing/PDF/reports/admin/search surfaces incomplete",
+    "No backend/facade/dependency/database/worker change",
+    "No push/main change/merge"
+  ]
+}

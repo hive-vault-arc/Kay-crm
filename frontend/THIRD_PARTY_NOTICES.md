@@ -1,5 +1,54 @@
 # Third-party notices
 
+## Selected Bklit pie components
+
+`src/components/charts/pie-chart.tsx`, `pie-context.tsx` and `pie-slice.tsx` are
+copied from the owner-frozen Bklit source in the KAY prototype. Their original MIT
+notice is retained verbatim in `public/licenses/workspace/Bklit-MIT.txt`. The only
+source adaptation is the existing local `cn` helper import. The pie reuses Bklit's
+existing parent measurement/mount-animation helpers; KAY composes the semicircle,
+exact accessible legend and reduced-motion behavior in feature wrappers.
+
+The directly imported `@visx/group@4.0.0` and `d3-shape@3.2.0` already existed in
+the locked/installed chart tree; their exact versions are now declared directly.
+No different chart library or dependency upgrade is introduced. Source hashes,
+full-prototype comparison and dependency audit evidence are recorded in
+`../docs/03-planning/design-migration-evidence/dashboard-ui-2026-10-27.json`.
+
+## Selected workspace assets
+
+The owner-selected screen uses Inter Variable, distributed under SIL OFL1.1.
+The original font notice is retained in `public/licenses/workspace/Inter-OFL.txt`.
+Brand/atmosphere assets are copied from the owner's frozen KAY prototype and
+listed by checksum in the migration inventory, not assigned to business records.
+
+The selected workspace glyphs are frozen vector nodes from `lucide@1.59.0`, under its
+ISC license with applicable Feather notices. The complete original license is
+retained in `public/licenses/workspace/lucide-LICENSE.txt`. Only selected shapes
+are integrated into the typed semantic icon layer; no runtime icon package or
+loose icon pack is installed. `branding/prototype/kay-glyphs.json` records their
+provenance and hashes. The owner's current prototype-fidelity instruction governs
+these glyphs. All45 prior semantic exports retain their names and behavior via
+this selected visual family; additional Help/Owner/theme aliases share the same
+source. Existing Iconsax source notices/manifests remain as historical provenance.
+
+## HEIC/HEIF decoder
+
+libheif1.23.7/libde2651.1.3 (Dirk Farin and contributors, LGPL-3.0) are built
+from their complete, retained upstream source using pinned Emscripten4.0.23.
+The separately replaceable CSP-compatible library loads in a disposable module
+worker only when native decoding cannot open HEIC/HEIF. Build/dev verifies its
+exact SHA256; no runtime CDN or conversion provider is contacted. Corresponding
+source archives ship with the decoder. See [rebuild/replacement instructions](vendor/photo-codecs/README.md).
+See distributed [notice/source/replacement instructions](public/licenses/heic/NOTICE.txt)
+and full LGPL/GPL texts in that directory. No application-code licence is invented.
+
+Safari canvas export uses the separate, source-built libwebp1.6.0 encoder
+fallback, loaded only when native WebP encoding is absent. Only encoder/memory
+functions are exported; it receives bounded canvas RGBA, never original files.
+See [upstream notices and source](public/licenses/webp/NOTICE.txt), including
+libwebp's BSD licence/patent grant and the Emscripten runtime notices.
+
 ## Riviera variable fonts: SIL Open Font License 1.1
 
 Fraunces 1.000, Manrope 4.505 and DM Sans 4.004 use the SIL Open Font License 1.1

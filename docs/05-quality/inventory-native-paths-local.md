@@ -1,0 +1,142 @@
+# Standalone inventory native-path reconciliation
+
+Prepared source checkpoint,2026-10-29. AT-06/08/23/27/31/39; browser execution and
+actual-stack acceptance pending. This changes test paths, not production UI,
+contracts, fixtures or permissions. Base is `98f77ab`.
+
+## Current selected homes
+
+| Old target | Current selected path |
+| --- | --- |
+| Standalone Aperçu tab | Single Informations du bien region; no visible one-tab switch |
+| Offres tab and separate Vente/Location regions | Offres section, retained sale/rental prices and annual comparison, exact action labels per kind |
+| Create campaign surface | Créer une offre de vente/location drawer; price, original period/conditions and existing create command |
+| Inline availability reason/action | Exact per-kind action, Confirmer la disponibilité drawer and Motif de confirmation |
+| Propriétaires tab/editor | Right Propriétaires section, Modifier, Propriétaires légaux drawer and labelled tonal entries |
+| Historique tab | Actions then Historique drawer; current/retired campaigns and immutable facts stay visible |
+| Prix demandés overview | Current Offres section and its exact money values |
+| Property edit link | Header Modifier link, separate from owner/offer edit buttons |
+| Category checkboxes | Current single-category radios; all category choices still checked for presence before selecting Local commercial |
+| Property wizard sequential-only helper | Selected clickable stepper, current-step attribute; save still performs full production validation |
+| Interrupted edit with editable replacement fields | Frozen review/recovery marker and disabled step controls; original-operation retry action |
+| Automatic conflict snapshot region | Explicit fresh compare, current version section and retained draft/keep choice |
+| Attached documents in overview | Header Documents drawer and current empty-state copy |
+
+`tests/helpers/inventory.ts` targets these actual components rather than
+restoring old tabs. `openProperty`'s optional section name is a test navigation
+target, not an assertion that a tab exists. Original API-created empty-property
+fixture purpose remains: campaign lifecycle tests need no initial offering. The
+selected standalone creation wizard has separate coverage.
+
+Seven `tests/e2e/inventory.spec.ts` scenarios retain their session/logout,
+hold/release, legal owner, exact sale/rental/annual money, unrelated agent privacy,
+403/404, category/incomplete draft, positive-price, exactly-once history,
+real-outage and conflict/role-revocation assertions. Missing-owner/price failures
+stay in their own availability drawers; leaving typed failed forms explicitly
+confirms discard before the next action. No successful command response or new
+timeout is substituted. The one held-owner test title now says drawer controls
+instead of tabs because those standalone tabs were intentionally removed.
+
+## Evidence and limits
+
+Focused ESLint and full frontend typecheck pass. A TypeScript AST source check
+confirms all3 direct `staffCommand` calls with their exact arguments, all6
+`test.setTimeout` settings and all3 `apiProcess` calls are unchanged. Seven tests
+remain; only the specified purpose title changes. No old standalone Offres/
+Propriétaires/Historique/Aperçu tab/tabpanel target remains in this file.
+
+These are source checks only. No Playwright listing/import/execution, real
+account, DB/service/outage control, browser capture, worker/file transfer,
+migration, main edit, push/merge/deployment or alternate access occurred.
+Production unchanged; prior977 frontend units/lint/build/history and573 backend
+connection-forbidden units are retained, not rerun. Frontend typechecking is
+rerun for the changed native source.
+
+The shared inventory helper has8 direct consumer files: development, files,
+inventory, owners, project permissions, property edit wizard, visible files
+Chrome and visible inventory Chrome. This checkpoint prepares the standalone
+inventory file and helper functions only. Other consumers' old selectors,
+development helpers, actual device/zoom/focus/SQL/CI/security/AFTER/product checks
+and full field/job/alias reconciliation remain pending; none is certified by
+compilation. [Evidence](../03-planning/design-migration-evidence/inventory-native-paths-2026-10-29.json).
+
+
+## Agent permission follow-through,2026-10-29
+
+Two project-permission source cases now use current Modifier links and actual
+Offres/Propriétaires action names. Absence checks scope the real create-offer and
+owner-edit controls, avoiding a pass against obsolete labels. Unit editing uses
+the distinct Modifier l’unité form/save label through the shared helper. Locked
+placement is checked at its first-step home, including exactly3 disabled selectors,
+before navigating to editable surface. Existing stock/hierarchy equality and
+private developer/404 assertions remain. Two titles,2 direct business commands
+and2 timeouts are AST-identical to base094fa5f. Focused ESLint/full types pass;
+actual native/SQL/permission verification remains unrun. Production and prior
+977 frontend/573 backend evidence unchanged. Other helper consumers remain open.
+[Evidence](../03-planning/design-migration-evidence/inventory-permission-paths-2026-10-29.json).
+
+
+## Outcome/wizard consumer follow-through,2026-10-30
+
+Three existing outcome and four standalone listing-wizard cases retain their
+purpose and business assertions. The external-sale action is scoped to the
+selected Offres section instead of the removed standalone tab. Holiday creation
+checks Informations du bien/Localisation, exact Ouvrir Google Maps href and one
+actual Location vacances summary/price; missing ordinary Location is represented
+by its enabled create action instead of an invented empty campaign region.
+Stepper verification uses the actual current-step button, including320px land
+keyboard flow. No production/form values/field IDs/API/business change.
+
+All7 titles and22 protected calls are AST-identical:4 timeouts,13 protected reads,
+2 direct business commands, one route fault/removal and one screenshot request.
+Original close/reopen/concurrency/stock/privacy/outcome assertions, room rental
+exact monthly value and category/period normalization, holiday details/Maps and
+land non-residential fields remain. Scoped ESLint/full frontend types pass.
+No Playwright listing/import/execution or actual account/DB/worker/private data/
+capture occurred. Prior994 frontend/573 backend and production gates retained,
+not rerun. Wider review/deep-link/legacy selector and actual SQL/native/security/
+CI/AFTER/product gates remain pending; goal active.
+[Consumer evidence](../03-planning/design-migration-evidence/inventory-consumer-paths-2026-10-30.json).
+
+
+## Visible inventory caller,2026-10-30
+
+The existing SP07 visible review now uses selected Offers, legal-owner and offer
+drawers, current labels, Actions/History and the single detail region. Owner
+control geometry is measured within its actual dialog rather than the inert
+background main. The zoom edit uses header Modifier, current advertisement-title
+label and the shared final-step save helper. Mobile cards, private owner denial,
+44px controls, current annual comparison and loading/error/retry remain. Capture
+preflight can find the hydrated notification control behind the active modal.
+
+The shared property fixture intentionally creates no offering; this caller now
+explicitly creates its positive sale before the original sale confirmation. This
+is one additional fixture command through the existing UI, not a production
+seed/default or fabricated result. All original13 protected fixture/fault/timeout/
+CDP calls and its title are AST-identical. Focused lint/full types pass; no native
+listing/import/execution, actual account/service/DB/capture/zoom or main change.
+Actual visual/security/SQL/full-journey acceptance remains pending.
+[Review evidence](../03-planning/design-migration-evidence/inventory-review-paths-2026-10-30.json).
+
+
+## Selected inventory design-review source,2026-10-30
+
+Four original inventory design-review cases now target current section/record
+names, header Documents/Modifier/Actions semantic icons, Surface icon and absence
+of removed standalone tabs. Offers and programme offers stay in their selected
+sections; agent absence checks the real create-offer action. Property title is
+the entered advertisement name, with reference still checked separately; the
+programme behaves similarly. Creation stage checks use aria-current; the320px
+stepper checks all5 real buttons and their nonoverlapping viewport bounds rather
+than obsolete short labels. Promoter selection uses current Rechercher, preserves
+private-name exclusion from its summary, and explicitly confirms dirty leave.
+
+Original4 titles and21 protected event/fixture/read/screenshot/timeout calls are
+AST-identical. Original pre-submit zero/create-once count, exact sale/annual
+rental amounts, backend draft/period values, positive/two-decimal validation,
+category-dependent fields, retained land surface, optional promoter unlinking,
+private summary, keyboard and desktop/mobile capture requests remain. Scoped
+ESLint/full types pass. Production unchanged; no native listing/import/execution,
+actual capture/account/DB/browser/worker access. Source checking does not establish
+rendered fidelity, actual security or full-journey acceptance.
+[Design-review evidence](../03-planning/design-migration-evidence/inventory-design-paths-2026-10-30.json).

@@ -5,16 +5,22 @@ and the separate API/worker:
 [Local startup](../docs/06-delivery-and-operations/local-startup.md).
 
 
-The former nine-image design reference was retired under D41; this cleanup does
-not change the implemented interface. Current visual direction is in
-[DESIGN.md](../DESIGN.md), the [design system](../docs/04-design/design-system.md)
-and [Riviera branding](../branding/riviera/README.md). shadcn/ui, Tailwind and
-Bklit remain; Iconsax replaces Lucide under
-[D33](../decisions.md) through the SSR-safe semantic layer. [Migration coverage,
-license and verification](../docs/reference/iconsax/migration.md). All API-backed
-commands/fields/permissions are retained. The system font and opaque original
-logo remain deliberate asset adaptations. Human approval and DESIGN.md's
-documentation merge choice are separate; nothing is deployed by these checks.
+The current migration follows the owner-selected frozen KAY design, as recorded
+in [DESIGN.md](../DESIGN.md), the [design system](../docs/04-design/design-system.md)
+and [screen map](../docs/04-design/screen-map.md). The selected workspace uses
+self-hosted Inter and 64 source-pinned semantic glyphs; shadcn/ui, Tailwind and
+Bklit remain. Earlier Riviera/Iconsax notes below describe historical provenance.
+Keep all font/icon licenses and the SSR-safe semantic layer. API-backed fields,
+commands and permissions remain authoritative. Human design approval and merge
+approval are separate; these checks do not deploy the application.
+
+The unused shadcn generation CLI is no longer an installed development dependency
+because its current deepmerge chain has an unpatched advisory. The reviewed
+shadcn/Radix component source, `components.json` and Bklit registry configuration
+remain. Do not run an unpinned CLI or reinitialize/overwrite customized primitives.
+For component maintenance, compare pinned upstream source with the local component
+and review the diff, accessibility and dependencies. Restore a generator only
+after its exact dependency tree passes the existing security policy.
 
 SP-22 cumulative verification, the required browser profiles and local compiled
 startup are documented in the [acceptance procedure](../docs/06-delivery-and-operations/local-final-acceptance.md).

@@ -151,6 +151,8 @@ def test_server_casablanca_bounds_and_index_explain_on_1000_synthetic_actions(se
 
 
 def test_repeatable_snapshot_transfer_on_separate_connection_then_revoked_scope(settings, database):
+    # This enquiry is received now; a fixed October window expires in November.
+    period = PeriodQuery()
     _, token, contact, _ = setup(settings, database)
     uid, _ = actor(settings, database)
     _, manager = actor(settings, database, "manager")
@@ -167,7 +169,7 @@ def test_repeatable_snapshot_transfer_on_separate_connection_then_revoked_scope(
     event.listen(database.engine, "before_cursor_execute", pause)
     try:
         with ThreadPoolExecutor(1) as pool:
-            future = pool.submit(dashboard, database, token, PERIOD)
+            future = pool.submit(dashboard, database, token, period)
             assert waiting.wait(10)
             change(settings, database, manager, contact, intent("assign", primary_agent_id=uid))
             release.set()
@@ -176,7 +178,7 @@ def test_repeatable_snapshot_transfer_on_separate_connection_then_revoked_scope(
     finally:
         release.set()
         event.remove(database.engine, "before_cursor_execute", pause)
-    assert all(m["total"] == 0 for m in metrics(database, token).values())
+    assert all(m["total"] == 0 for m in metrics(database, token, period).values())
 
 
 @pytest.mark.anyio

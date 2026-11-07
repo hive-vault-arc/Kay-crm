@@ -3,6 +3,7 @@ import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { test, expect, createActor, removeActor, signIn, clearActorContext } from "../helpers/auth";
 import { createLead } from "../helpers/leads";
+import { inventorySection } from "../helpers/inventory";
 
 const evidence = path.resolve("output/playwright/inventory-design");
 
@@ -25,7 +26,7 @@ test("inventory forms and records use the workspace width without losing their a
     await propertyForm.locator("#property-reference").fill(propertyReference);
     await propertyForm.locator("#property-marketing_name").fill("Bien de contrôle synthétique");
     await propertyForm.locator("#property-price_mad").fill("900000.01");
-    await expect(propertyForm.getByText("Étape 1 sur 5")).toBeVisible();
+    await expect(propertyForm.getByRole("navigation", { name: "Progression de la création", exact: true }).getByRole("button", { name: /^Étape 1 sur 5 :/ })).toHaveAttribute("aria-current", "step");
     await expect(propertyForm.locator("#property-area_sqm")).toHaveCount(0);
     await page.screenshot({ path: path.join(evidence, "property-create-desktop.png") });
     await propertyForm.getByRole("button", { name: "Suivant", exact: true }).click();
@@ -48,19 +49,21 @@ test("inventory forms and records use the workspace width without losing their a
     expect(propertyCreates).toBe(0);
     console.log("INVENTORY_REVIEW_PROPERTY_SUBMIT");
     await propertyForm.getByRole("button", { name: "Créer le bien", exact: true }).click({ timeout: 10_000 });
-    await expect(page.getByRole("heading", { name: propertyReference, exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Bien de contrôle synthétique", exact: true, level: 1 })).toBeVisible(); await expect(page.getByRole("main")).toContainText(propertyReference);
     console.log("INVENTORY_REVIEW_PROPERTY_CREATED");
     expect(propertyCreates).toBe(1);
-    await expect(page.getByLabel("Prix demandés")).toContainText("900 000,01 MAD");
+    await expect(inventorySection(page, "Offres")).toContainText("900 000,01 MAD");
     const propertyPath = new URL(page.url()).pathname;
-    await expect(page.getByRole("tab", { name: "Aperçu", exact: true }).locator("svg[data-kay-icon='dashboard']")).toHaveCount(1);
-    await expect(page.getByRole("tab", { name: "Propriétaires", exact: true }).locator("svg[data-kay-icon='contacts']")).toHaveCount(1);
-    await expect(page.getByRole("tab", { name: "Offres", exact: true }).locator("svg[data-kay-icon='deal']")).toHaveCount(1);
-    await expect(page.getByRole("tab", { name: "Historique", exact: true }).locator("svg[data-kay-icon='clock']")).toHaveCount(1);
+    await expect(page.getByRole("region", { name: "Informations du bien", exact: true })).toBeVisible();
+    await expect(page.getByRole("tab", { name: /^(Aperçu|Propriétaires|Offres|Historique)$/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Documents", exact: true }).locator("svg[data-kay-icon='file']")).toHaveCount(1);
+    await expect(page.getByRole("link", { name: "Modifier", exact: true }).locator("svg[data-kay-icon='edit']")).toHaveCount(1);
+    await expect(page.getByRole("button", { name: "Actions", exact: true }).locator("svg[data-kay-icon='more']")).toHaveCount(1);
+    await expect(inventorySection(page, "Propriétaires").getByRole("button", { name: "Modifier", exact: true })).toBeEnabled();
     await expect(page.getByText("Surface", { exact: true }).locator("xpath=..").locator("xpath=..").locator("svg[data-kay-icon='columns']")).toHaveCount(1);
     await page.screenshot({ path: path.join(evidence, "property-detail-desktop.png") });
-    await page.getByRole("tab", { name: "Offres", exact: true }).click();
-    await expect(page.getByRole("region", { name: "Vente", exact: true })).toBeVisible();
+    await inventorySection(page, "Offres").scrollIntoViewIfNeeded();
+    await expect(inventorySection(page, "Offres").getByText("Vente", { exact: true })).toBeVisible();
     await page.screenshot({ path: path.join(evidence, "property-offers-desktop.png") });
     console.log("INVENTORY_REVIEW_PROPERTY_OFFERS");
     await page.goto("/projects");
@@ -72,7 +75,7 @@ test("inventory forms and records use the workspace width without losing their a
     const developmentReference = `UI-${randomUUID().slice(0, 8)}`.toUpperCase();
     await developmentForm.getByLabel("Référence du programme", { exact: true }).fill(developmentReference);
     await developmentForm.getByLabel("Nom du programme", { exact: true }).fill("Programme de contrôle synthétique");
-    await expect(developmentForm.getByText("Étape 1 sur 3")).toBeVisible();
+    await expect(developmentForm.getByRole("navigation", { name: "Progression de la création", exact: true }).getByRole("button", { name: /^Étape 1 sur 3 :/ })).toHaveAttribute("aria-current", "step");
     await expect(developmentForm.getByLabel("Présentation partagée (facultative)")).toHaveCount(0);
     await page.screenshot({ path: path.join(evidence, "development-create-desktop.png") });
     await developmentForm.getByRole("button", { name: "Suivant", exact: true }).click();
@@ -85,10 +88,10 @@ test("inventory forms and records use the workspace width without losing their a
     console.log("INVENTORY_REVIEW_DEVELOPMENT_SUBMIT");
     await page.screenshot({ path: path.join(evidence, "development-review-desktop.png") });
     await developmentForm.getByRole("button", { name: "Créer le programme", exact: true }).click();
-    await expect(page.getByRole("heading", { name: developmentReference, exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Programme de contrôle synthétique", exact: true, level: 1 })).toBeVisible(); await expect(page.getByRole("main")).toContainText(developmentReference);
     console.log("INVENTORY_REVIEW_DEVELOPMENT_CREATED");
     await page.screenshot({ path: path.join(evidence, "development-detail-desktop.png") });
-    await page.getByRole("tab", { name: "Offres du programme", exact: true }).click();
+    await inventorySection(page, "Offres du programme").scrollIntoViewIfNeeded();
     await page.screenshot({ path: path.join(evidence, "development-offers-desktop.png") });
 
     mobile = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, viewport: { width: 360, height: 800 }, hasTouch: true, locale: "fr-FR", timezoneId: "Africa/Casablanca" });
@@ -97,10 +100,10 @@ test("inventory forms and records use the workspace width without losing their a
     await signIn(mobilePage, manager);
     console.log("INVENTORY_REVIEW_MOBILE_READY");
     await mobilePage.goto(propertyPath);
-    await expect(mobilePage.getByRole("heading", { name: propertyReference, exact: true })).toBeVisible();
+    await expect(mobilePage.getByRole("heading", { name: "Bien de contrôle synthétique", exact: true, level: 1 })).toBeVisible(); await expect(mobilePage.getByRole("main")).toContainText(propertyReference);
     expect(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     await mobilePage.screenshot({ path: path.join(evidence, "property-detail-mobile.png") });
-    await mobilePage.getByRole("tab", { name: "Offres", exact: true }).tap();
+    await inventorySection(mobilePage, "Offres").scrollIntoViewIfNeeded();
     await mobilePage.screenshot({ path: path.join(evidence, "property-offers-mobile.png") });
     await mobilePage.goto("/projects/properties/new");
     await expect(mobilePage.getByRole("form", { name: "Créer un bien indépendant" })).toBeVisible();
@@ -111,9 +114,10 @@ test("inventory forms and records use the workspace width without losing their a
     await expect(mobilePage.locator("#property-price_mad")).toBeVisible();
     await mobilePage.screenshot({ path: path.join(evidence, "property-price-mobile.png") });
     await mobilePage.setViewportSize({ width: 320, height: 640 });
-    const labels = await Promise.all(["Offre", "Adresse", "Détails", "Options", "Vérifier"].map(label => mobilePage.getByRole("navigation", { name: "Progression de la création" }).getByText(label, { exact: true }).boundingBox()));
+    const stepper = mobilePage.getByRole("navigation", { name: "Progression de la création", exact: true }).getByRole("button"); await expect(stepper).toHaveCount(5);
+    const labels = await Promise.all(Array.from({ length: 5 }, (_, index) => stepper.nth(index).boundingBox()));
     expect(labels.every(Boolean)).toBe(true);
-    expect(labels[0]!.x + labels[0]!.width).toBeLessThan(labels[1]!.x);
+    expect(labels.every((box, index) => box!.x >= 0 && box!.x + box!.width <= 320 && (!index || labels[index - 1]!.x + labels[index - 1]!.width < box!.x))).toBe(true);
     expect(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     await mobilePage.screenshot({ path: path.join(evidence, "property-create-mobile-320.png") });
     await mobilePage.setViewportSize({ width: 360, height: 800 });
@@ -161,12 +165,12 @@ test("an agent must enter a valid rental price before creating a priced draft", 
     await expect(form.getByRole("complementary", { name: "Aperçu du dossier" })).toContainText("8 000,50 MAD / an");
     await form.getByRole("button", { name: "Créer le bien", exact: true }).click();
     await expect(page.getByRole("heading", { name: reference, exact: true })).toBeVisible();
-    await expect(page.getByLabel("Prix demandés")).toContainText("8 000,50 MAD / an");
+    await expect(inventorySection(page, "Offres")).toContainText("8 000,50 MAD / an");
     const id = new URL(page.url()).pathname.split("/")[3];
     const detail = await (await page.request.get(`/api/v1/properties/${id}`)).json();
     expect(detail.offerings).toMatchObject([{ kind: "rental", state: "draft", price_mad: "8000.50", price_period: "year" }]);
-    await page.getByRole("tab", { name: "Offres", exact: true }).click();
-    await expect(page.getByRole("button", { name: /Créer une campagne/ })).toHaveCount(0);
+    await inventorySection(page, "Offres").scrollIntoViewIfNeeded();
+    await expect(inventorySection(page, "Offres").getByRole("button", { name: /^Créer une offre de / })).toHaveCount(0);
     await page.goto("/projects");
     const card = page.getByRole("article").filter({ has: page.locator(`a[href="/projects/properties/${id}"]`) });
     await expect(card).toContainText("8 000,50 MAD / an");
@@ -225,11 +229,11 @@ test("programme creation keeps its draft through keyboard navigation and optiona
     await form.getByLabel("Nom du programme", { exact: true }).fill("Programme synthétique");
     await form.getByRole("button", { name: "Suivant", exact: true }).focus();
     await page.keyboard.press("Enter");
-    await expect(form.getByText("Étape 2 sur 3")).toBeVisible();
+    await expect(form.getByRole("navigation", { name: "Progression de la création", exact: true }).getByRole("button", { name: /^Étape 2 sur 3 :/ })).toHaveAttribute("aria-current", "step");
     await form.getByRole("button", { name: "Ajouter un promoteur (facultatif)" }).click();
     await expect(form.getByLabel("Libellé commercial du promoteur (facultatif)")).toBeVisible();
     await form.getByLabel("Rechercher un contact accessible").fill("Promoteur de contrôle synthétique");
-    await form.getByRole("button", { name: "Rechercher le contact" }).click();
+    await form.getByRole("button", { name: "Rechercher", exact: true }).click();
     await form.getByRole("button", { name: "Choisir Promoteur de contrôle synthétique" }).click();
     await form.getByRole("button", { name: "Suivant", exact: true }).click();
     const summary = form.getByRole("complementary", { name: "Aperçu du dossier" });
@@ -237,10 +241,11 @@ test("programme creation keeps its draft through keyboard navigation and optiona
     await expect(summary).not.toContainText("Promoteur de contrôle synthétique");
     await form.getByRole("button", { name: "Précédent", exact: true }).click();
     await form.getByRole("button", { name: "Dissocier le promoteur" }).click();
-    await expect(form.getByRole("button", { name: "Rechercher le contact" })).toBeVisible();
+    await expect(form.getByRole("button", { name: "Rechercher", exact: true })).toBeVisible();
     await form.getByRole("button", { name: "Précédent", exact: true }).click();
     await expect(form.getByLabel("Référence du programme", { exact: true })).toHaveValue("WIZARD-PROGRAMME");
     await form.getByRole("link", { name: "Annuler", exact: true }).click();
+    await page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true }).getByRole("button", { name: "Quitter sans enregistrer", exact: true }).click();
     await expect(page).toHaveURL(/\/projects$/);
   } finally { await removeActor(manager); await removeActor(contactOwner); }
 });

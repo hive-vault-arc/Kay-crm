@@ -1,0 +1,208 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "e6e419887c9ecf7ff1a1c71a6d75a5a48930c328",
+  "scope": "Selected Contact notes, Prospect/Deal activities and prospect assignment request ownership, immutable unknown retries, acknowledgement-only completion, fresh actor/role proof, scoped refresh and denial/disposal",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 653,
+      "additionalCases": 14,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic actual target/body/controller/transport/forms/history/facade and synthetic TLS units; entry suite registered. Existing activity hydration/optional fields/overlap/denial coverage retained."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 498,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <eleven changed UI files>",
+      "exitCode": 0,
+      "files": 11,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1272,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8899,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "validationCorrection": "Corrected assignment button JSX delimiter; explicit scoped refresh now also clears a prior options-query failure, covered alongside unknown and denial states. No suppression.",
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/entry-recovery.spec.ts",
+    "browserCases": 4,
+    "typechecked": true,
+    "scenarios": [
+      "Contact note original lost-response retry and one history entry",
+      "Prospect activity original optional context retry and one history entry",
+      "Deal activity original optional context retry and one history entry",
+      "Explicit queue assignment original version/reason/key retry and one event"
+    ],
+    "syntheticIsolatedFixturesOnly": true,
+    "tracesVideosScreenshots": false
+  },
+  "preserved": {
+    "selectedTabsDrawerPlacementAndFieldSpacing": true,
+    "allExistingNoteActivityAssignmentFields": true,
+    "exactOriginalTargetBodyKey": true,
+    "backendTrueActorHistoryAndReceiptPolicies": true,
+    "realActivityIdOnlyResult": true,
+    "explicitScopedAssignmentRefresh": true,
+    "noExternalSendOrBooking": true,
+    "noBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notPerformed": [
+    "Backend tests: no backend change this checkpoint",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/simulator/account/customer records/private configuration/import/export/transfer access",
+    "Executed migrations0036/0037 or another migration",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4510,
+      "sha256": "2aedd854dcab6dc1e655385bc3a6758869919cbff72d027b4c3b301228ff78ab"
+    },
+    {
+      "file": "frontend/src/features/activities/activity-form.tsx",
+      "bytes": 5747,
+      "sha256": "8c6b255ad0d8e18f6d29cf33d503b0eb32996aec5cd1c9ca9552880eb9751450"
+    },
+    {
+      "file": "frontend/src/features/activities/activity-history.tsx",
+      "bytes": 8153,
+      "sha256": "ed4f4c2498013cc1be250ac2c1b92a896b5dc7f2cceeff0cf20c448d52d19eb2"
+    },
+    {
+      "file": "frontend/src/features/activities/entry-client.ts",
+      "bytes": 1429,
+      "sha256": "98a6837435d0f6761da12a3f767e82663d6001d3257bfc5c6ef171e8b932a95e"
+    },
+    {
+      "file": "frontend/src/features/activities/entry-command.ts",
+      "bytes": 1798,
+      "sha256": "7fa65a01eb35e1f64065b86d885507b37d51ccb073a893da128faa3c125398da"
+    },
+    {
+      "file": "frontend/src/features/activities/use-entry-command.ts",
+      "bytes": 5888,
+      "sha256": "ace72f1d3a1c70c0ce96af72d2f973705a9886a4dc81574f34e5eb043db6ee1c"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-history.tsx",
+      "bytes": 7318,
+      "sha256": "10f8e96179b95dc9dafa26af0739f698e816e41cbee3e00091e63fdedd43946c"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-note-form.tsx",
+      "bytes": 3638,
+      "sha256": "272109490e016062e170f44a614045b4f5fefa1b15867c87210563d58b42f23c"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-record.tsx",
+      "bytes": 8294,
+      "sha256": "2071f86d3e5afd238d6802ed61571ba4cb9206d6ade85918b4187bbcea486033"
+    },
+    {
+      "file": "frontend/src/features/contacts/enquiry-assignment.tsx",
+      "bytes": 6176,
+      "sha256": "1f0f4f58872959014d890936388850c07fcc2c85a535e23de35bbe8effcea0da"
+    },
+    {
+      "file": "frontend/src/features/contacts/facade.ts",
+      "bytes": 8386,
+      "sha256": "6b60ce790e661b90d6250a054b38bacee9b9ebcebb0a5937ba11e87e18bce55e"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-kanban.tsx",
+      "bytes": 5448,
+      "sha256": "25751aae07fb2c57ca3a6c27e132a3f484a83a457dd54a6bc0bec1188c19fb8e"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-record.tsx",
+      "bytes": 9490,
+      "sha256": "e7552af58b9fb91e3ded242d131084a5dde3a35073e657ca95c8d3a6c3d5486f"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-record.tsx",
+      "bytes": 5177,
+      "sha256": "e7dbdfb4e4708075d2fb1196cb3436bc48a396f7c84665dfb289fc8b7a1095fa"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-workspace.tsx",
+      "bytes": 9587,
+      "sha256": "25f484e774514458e2ec862040339d912dbdbb0978261729f6dc180cf11b7c99"
+    },
+    {
+      "file": "frontend/src/features/owners/owner-record.tsx",
+      "bytes": 5848,
+      "sha256": "7cb8b5282bb24d92f82f6395f4b39f51d83ad9b42a5452f5d5363425968a0fee"
+    },
+    {
+      "file": "frontend/tests/e2e/entry-recovery.spec.ts",
+      "bytes": 7357,
+      "sha256": "a24bc7453047393ca81254960b724e6518112bade81b21a6792106dcc84f4fed"
+    },
+    {
+      "file": "frontend/tests/unit/entry-fixtures.mjs",
+      "bytes": 2071,
+      "sha256": "ea4f6bef934e6904e6a7230f2961098ab1b6ae2e4979a428cf3a8529b6f541d7"
+    },
+    {
+      "file": "frontend/tests/unit/entry-recovery.test.mjs",
+      "bytes": 23220,
+      "sha256": "2590238dbf369b8110028d8fd1064528e427c5607dc0857ad887799ea3f56ea7"
+    },
+    {
+      "file": "frontend/tests/unit/work-forms.test.mjs",
+      "bytes": 13362,
+      "sha256": "b6fc1a50b0cddda414dfd294fd0e59be44a1f3e62432124e274b3182d2a014b8"
+    }
+  ]
+}

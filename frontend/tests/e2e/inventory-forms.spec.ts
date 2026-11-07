@@ -1,0 +1,62 @@
+import { randomUUID } from "node:crypto";
+import { test, expect, createActor, removeActor, signIn, clearActorContext } from "../helpers/auth";
+import { staffCommand } from "../helpers/leads";
+
+// Prepared for the isolated supervisor only. No app/browser execution is claimed.
+for (const width of [1440, 390]) test(`Selected inventory drawers: structure, legal owners and discard at ${width}px`, async ({ page }) => {
+  const agent = await createActor("agent"), manager = await createActor("manager"), suffix = randomUUID().slice(0, 8);
+  const name = `Propriétaire synthétique ${suffix}`, reference = `SYN-FORM-${suffix}`.toUpperCase();
+  try {
+    await page.setViewportSize({ width, height: 900 });
+    await signIn(page, agent);
+    const digits = String(Math.floor(Math.random() * 1_000_000)).padStart(6, "0");
+    const contactResponse = await staffCommand(page, "contacts", { name, type: "person", phones: [{ number: `+212612${digits}`, label: "Principal", is_primary: true }], emails: [], roles: ["owner"], country: "MA", nationality: "", languages: [] });
+    expect(contactResponse.status()).toBe(200); const contact = await contactResponse.json();
+    await signIn(page, manager);
+    const response = await staffCommand(page, "developments", { reference, name: "Programme synthétique de formulaire", category: "mixed", location: null, briefing_text: null, developer_contact_id: null, developer_marketing_display: null });
+    expect(response.status()).toBe(200); const { development_id: id } = await response.json();
+    await page.goto(`/projects/${id}?tab=hierarchy`);
+    const structure = page.getByRole("dialog", { name: "Structure du programme", exact: true });
+    await structure.getByRole("button", { name: "Créer un bloc", exact: true }).click();
+    const block = structure.getByRole("form", { name: "Créer un bloc", exact: true });
+    await block.getByLabel("Code", { exact: true }).fill("B1");
+    await block.getByLabel("Libellé", { exact: true }).fill("Bloc synthétique");
+    await block.getByRole("button", { name: "Retour", exact: true }).click();
+    const discard = page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true });
+    await expect(discard).toBeVisible();
+    await discard.getByRole("button", { name: "Continuer la modification", exact: true }).click();
+    await expect(block.getByLabel("Libellé", { exact: true })).toHaveValue("Bloc synthétique");
+    await block.getByRole("button", { name: "Enregistrer", exact: true }).click();
+    await expect(block).toHaveCount(0);
+    await structure.getByRole("button", { name: "Étages de B1", exact: true }).click();
+    await structure.getByRole("button", { name: "Créer un étage", exact: true }).click();
+    const floor = structure.getByRole("form", { name: "Créer un étage", exact: true });
+    await floor.getByLabel("Code", { exact: true }).fill("F1"); await floor.getByLabel("Libellé", { exact: true }).fill("Étage synthétique");
+    await floor.getByRole("button", { name: "Enregistrer", exact: true }).click();
+    await expect(structure.getByRole("link", { name: "Unités de F1", exact: true })).toBeVisible();
+    await structure.getByRole("tab", { name: "Types", exact: true }).click();
+    await structure.getByRole("button", { name: "Créer un type", exact: true }).click();
+    const type = structure.getByRole("form", { name: "Créer un type réutilisable", exact: true });
+    await type.getByLabel("Code", { exact: true }).fill("T3"); await type.getByLabel("Libellé", { exact: true }).fill("Type synthétique");
+    await type.getByLabel("Surface par défaut (m²)", { exact: true }).fill("108,50"); await type.getByLabel("Pièces par défaut", { exact: true }).fill("3");
+    await type.getByRole("button", { name: "Enregistrer", exact: true }).click();
+    await expect(type).toHaveCount(0); await expect(structure.getByText("T3 · Type synthétique", { exact: true })).toBeVisible();
+    await expect(structure.getByRole("table")).toHaveCount(0);
+    await structure.getByRole("button", { name: "Fermer : Structure du programme", exact: true }).click();
+    await page.goto(`/projects/${id}?tab=owners`);
+    const owners = page.getByRole("dialog", { name: "Propriétaires légaux", exact: true });
+    await owners.getByLabel("Rechercher un contact accessible", { exact: true }).fill(name);
+    await owners.getByRole("button", { name: "Rechercher", exact: true }).click();
+    await owners.getByRole("button", { name: `Choisir ${name}`, exact: true }).click();
+    const shared = owners.getByLabel("Libellé commercial partagé (facultatif)", { exact: true });
+    await expect(shared).toHaveValue(""); await shared.fill("Vendeur synthétique partagé");
+    await owners.getByRole("button", { name: "Annuler", exact: true }).click();
+    await expect(discard).toBeVisible(); await discard.getByRole("button", { name: "Continuer la modification", exact: true }).click();
+    await expect(shared).toHaveValue("Vendeur synthétique partagé");
+    await owners.getByRole("button", { name: "Enregistrer", exact: true }).click(); await expect(owners).toHaveCount(0);
+    const record = await (await page.request.get(`/api/v1/developments/${id}`)).json();
+    expect(record.owners).toEqual([{ contact: { id: contact.id, name }, marketing_display: "Vendeur synthétique partagé" }]);
+    expect((await (await page.request.get(`/api/v1/contacts/${contact.id}`)).json()).primary_agent.id).toBe(agent.id);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  } finally { await clearActorContext(page); await removeActor(manager); await removeActor(agent); }
+});

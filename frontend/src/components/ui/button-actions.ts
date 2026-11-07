@@ -1,10 +1,10 @@
 import type { KayIconComponent } from "@/components/icons";
 import {
   AddIcon, ArchiveIcon, BackIcon, CalendarIcon, ChevronDownIcon, CloseIcon,
-  ColumnsIcon, CompareIcon, CompletedIcon, ContactIcon, ContactsIcon, DealIcon,
-  DeleteIcon, DownloadIcon, EditIcon, EmptyFolderIcon, EnquiryIcon, FinanceIcon,
-  FilterIcon, ForwardIcon, HidePasswordIcon, PasswordIcon, PropertyIcon,
-  RefreshIcon, RestoreIcon, SearchIcon, SettingsIcon, ShowPasswordIcon,
+  ColumnsIcon, ListIcon, KanbanIcon, CompareIcon, CompletedIcon, ContactIcon, ContactsIcon, DealIcon,
+  DeleteIcon, DownloadIcon, EditIcon, FileIcon, EnquiryIcon, FinanceIcon,
+  FilterIcon, HelpIcon, ForwardIcon, HidePasswordIcon, PasswordIcon, PropertyIcon,
+  RefreshIcon, RestoreIcon, SearchIcon, SettingsIcon, ShowPasswordIcon, CameraIcon,
   SignOutIcon, TaskIcon, UploadIcon, PhoneIcon, EmailIcon,
 } from "@/components/icons";
 
@@ -16,6 +16,8 @@ export type ActionDefinition = {
 };
 
 export const buttonActions = {
+  list: { icon: ListIcon, tone: "neutral", variant: "outline" },
+  board: { icon: KanbanIcon, tone: "neutral", variant: "outline" },
   create: { icon: AddIcon, tone: "warning", variant: "creation" },
   add: { icon: AddIcon, tone: "warning", variant: "outline" },
   save: { icon: CompletedIcon, tone: "success", variant: "success" },
@@ -36,6 +38,7 @@ export const buttonActions = {
   filter: { icon: FilterIcon, tone: "warning", variant: "outline" },
   reset: { icon: RestoreIcon, tone: "neutral", variant: "outline" },
   refresh: { icon: RefreshIcon, tone: "info", variant: "outline" },
+  photos: { icon: CameraIcon, tone: "neutral", variant: "outline" },
   retry: { icon: RefreshIcon, tone: "info", variant: "outline" },
   compare: { icon: CompareIcon, tone: "purple", variant: "outline" },
   select: { icon: CompletedIcon, tone: "success", variant: "outline" },
@@ -46,18 +49,20 @@ export const buttonActions = {
   export: { icon: DownloadIcon, tone: "teal", variant: "outline" },
   download: { icon: DownloadIcon, tone: "teal", variant: "outline" },
   upload: { icon: UploadIcon, tone: "teal", variant: "outline" },
-  file: { icon: EmptyFolderIcon, tone: "teal", variant: "outline" },
+  file: { icon: FileIcon, tone: "teal", variant: "outline" },
   columns: { icon: ColumnsIcon, tone: "purple", variant: "outline" },
   preview: { icon: ShowPasswordIcon, tone: "info", variant: "outline" },
   signout: { icon: SignOutIcon, tone: "danger", variant: "outline" },
   password: { icon: PasswordIcon, tone: "purple", variant: "outline" },
   show: { icon: ShowPasswordIcon, tone: "info", variant: "outline" },
   hide: { icon: HidePasswordIcon, tone: "info", variant: "outline" },
+  help: { icon: HelpIcon, tone: "neutral", variant: "outline" },
   settings: { icon: SettingsIcon, tone: "neutral", variant: "outline" },
   contact: { icon: ContactIcon, tone: "info", variant: "outline" },
   phone: { icon: PhoneIcon, tone: "neutral", variant: "outline" },
   email: { icon: EmailIcon, tone: "neutral", variant: "outline" },
   enquiry: { icon: EnquiryIcon, tone: "purple", variant: "outline" },
+  activity: { icon: TaskIcon, tone: "info", variant: "outline" },
   task: { icon: TaskIcon, tone: "info", variant: "outline" },
   deal: { icon: DealIcon, tone: "warning", variant: "outline" },
   inventory: { icon: PropertyIcon, tone: "teal", variant: "outline" },

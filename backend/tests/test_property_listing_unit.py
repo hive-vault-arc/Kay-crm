@@ -5,7 +5,29 @@ from uuid import uuid4
 import pytest
 from pydantic import ValidationError
 
-from app.inventory.contracts import CreateProperty, EditProperty, ListingDetails, NewOffering
+from app.inventory.contracts import (
+    CreateProperty,
+    DevelopmentQuery,
+    EditProperty,
+    InventoryQuery,
+    ListingDetails,
+    NewOffering,
+    PropertiesQuery,
+)
+
+
+def test_development_category_filter_does_not_broaden_property_categories() -> None:
+    assert DevelopmentQuery(category="mixed", page_size=20).category == "mixed"
+    for schema in (InventoryQuery, PropertiesQuery):
+        with pytest.raises(ValidationError):
+            schema.model_validate({"category": "mixed"})
+    for category in ("castle", "room", "office", "farm", "riad"):
+        with pytest.raises(ValidationError):
+            DevelopmentQuery.model_validate({"category": category})
+    with pytest.raises(ValidationError):
+        DevelopmentQuery.model_validate({"category": "mixed", "private_owner": True})
+    with pytest.raises(ValidationError, match="INVALID_COMPARISON_RANGE"):
+        DevelopmentQuery(min_comparison_mad="100", max_comparison_mad="50")
 
 
 def listing(category: str = "apartment", kind: str = "sale") -> dict[str, object]:
@@ -49,6 +71,19 @@ def test_all_listing_categories(category: str, kind: str) -> None:
     row = CreateProperty.model_validate(listing(category, kind))
     assert row.category == category
     assert row.listing_details is not None and row.listing_details.city == "Tanger"
+
+
+def test_room_orientation_remains_a_valid_saved_fact_on_unrelated_edit() -> None:
+    body = listing("room", "rental")
+    body.pop("initial_offering")
+    body.update(expected_version=7, marketing_name="Synthetic unrelated room edit")
+    details = body["listing_details"]
+    assert isinstance(details, dict)
+    details.update(orientation="north", bathrooms=0, unit_floor=0)
+    edited = EditProperty.model_validate(body)
+    assert edited.listing_details is not None
+    saved = edited.listing_details.model_dump(exclude_none=True)
+    assert (saved["orientation"], saved["bathrooms"], saved["unit_floor"]) == ("north", 0, 0)
 
 
 @pytest.mark.parametrize("category", ["land", "farm", "commercial", "office"])

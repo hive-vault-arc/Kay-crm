@@ -84,6 +84,7 @@ def snapshot(session: Session, row: Visit) -> dict[str, object]:
         "property_id": str(row.property_id) if row.property_id else None,
         "participant_ids": [str(uid) for uid in participants(session, row.id)],
         "overlap_reason": row.overlap_reason,
+        "notes": row.notes,
         "outcome": row.outcome,
         "policy_version": row.policy_version,
         "schedule_version": row.schedule_version,

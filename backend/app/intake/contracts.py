@@ -34,7 +34,8 @@ class Submission(StrictBody):
         if self.submitted_at.tzinfo is None or not 2000 <= self.submitted_at.year <= 2100:
             raise ValueError("AWARE_SUBMISSION_TIME_REQUIRED")
         if len(self.enquiry_message()) > 4000 or re.search(
-            r"[\x00-\x08\x0b\x0c\x0e-\x1f]", self.name + self.message
+            r"[\x00-\x08\x0b\x0c\x0e-\x1f]",
+            self.name + self.message + (self.property_reference or ""),
         ):
             raise ValueError("INVALID_SUBMISSION_TEXT")
         return self

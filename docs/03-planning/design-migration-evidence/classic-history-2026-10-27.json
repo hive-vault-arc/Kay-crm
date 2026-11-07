@@ -1,0 +1,225 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "d522f31",
+  "scope": "Classic same-document Back/Forward adapter for the shared draft/busy/history guard, preferred native path unchanged; native/physical-browser acceptance remains open",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 471,
+      "failed": 0,
+      "newRegisteredCases": 17
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 100,
+      "iconSites": 338,
+      "buttonSites": 477,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true,
+      "compiledFunctions": [
+        {
+          "file": "frontend/.next/server/chunks/ssr/frontend_src_components_shared_unsaved-guard_tsx_1bn5-aixvkna7._.js",
+          "bytes": 2686,
+          "sha256": "95f540189a71100fd6516ab65544218b65390bf52e62dda6c2871a08f6440540"
+        },
+        {
+          "file": "frontend/.next/server/chunks/ssr/_0zkov84junom8._.js",
+          "bytes": 2684,
+          "sha256": "ef766e113bf8d733999a3610b97423921d544fecf925dd73ec464e6745d5b7f7"
+        }
+      ]
+    },
+    {
+      "command": "node .git/codex-classic-history-source-check.cjs",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8781,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1254,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "implementation": "Closed root beforeInteractive first-party script and idempotent client backup, classic adapter with namespaced scope/position/id, same shared decision/return controller",
+    "nativePath": "Preferred Navigation API still skips classic instrumentation and history-state writes",
+    "historyState": "Opaque existing framework fields pass through unchanged; only KAY scope/position/id bookkeeping is added, not form values/private tree/session or authorization proofs",
+    "dependencies": "No package/lock dependency or version change; package scripts only register a repeatable compiled bootstrap check",
+    "backendApiPermissionMigrationDataCssThemeChartChange": false
+  },
+  "invariants": [
+    "Initial replace adds no entry; setup/restoration introduce no dummy push, Forward truncation or URL rewrite; ordinary application pushes preserve native semantics",
+    "Actual Next16.4.2 history wrappers run in both nesting orders and retain original opaque tree/custom fields; installed app bootstrap runs beforeInteractive script before hydration callback",
+    "Push produces distinct identity even for duplicate URLs; replace preserves identity; retained metadata can survive a document reload",
+    "Current/target same-scope valid positions are required for relative traversal; distinct same-position keys never invoke go(0)",
+    "Captured dirty/busy traversal is restored before prompting; explicit discard resumes only the reviewed destination; stale decisions, rapid opposite movement, command waits and bounded retry remain",
+    "Unknown/non-record/failed-initial-write entries keep a fail-closed controller rather than guessing a direction or releasing a dirty Next restore",
+    "Native hash entry metadata keeps the current React editor; no incomplete hash-state restoration is forwarded to Next",
+    "Core metadata tracking lasts for the document, while editor guard listeners clean up and late prompts are suppressed",
+    "No private form/record/cookie/credential data is collected into the marker or another registry/storage/log/network path; markers confer no server authority",
+    "Emitted bootstrap is tested standalone without loading app modules/server/listeners/HTTP; native frame/CSP/cache/gesture behavior is not inferred"
+  ],
+  "correctedAttempts": [
+    "Initial prepared-browser edit passed typecheck but lint found an unused page.evaluate mode argument; source review also caught a separate serialized callback capturing the outer loop variable, and both now use explicit arguments",
+    "Review of failed initial stamping changed silent fallback absence into an installed unknown-entry controller that holds dirty navigation closed",
+    "Actual installed Next wrappers and pre-hydration bootstrap source were exercised rather than assuming integration from a local imitation",
+    "Compiled function extraction tested two emitted variants and a repeatable npm history:check command was added so serialization closure safety is reproducible after future compiler changes"
+  ],
+  "references": [
+    {
+      "title": "Next Script beforeInteractive",
+      "url": "https://nextjs.org/docs/app/api-reference/components/script",
+      "scope": "Current documentation supports placement/order; installed16.4.2 source/tests remain authoritative for this checkout, no upgrade"
+    },
+    {
+      "title": "History interface",
+      "url": "https://html.spec.whatwg.org/multipage/nav-history-apis.html#the-history-interface",
+      "scope": "Classic state/go/replace semantics, not native acceptance"
+    },
+    {
+      "title": "popstate ordering",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event",
+      "scope": "Traversal/state timing explains return-before-router handling, not proof of browser races"
+    }
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/history-drafts.spec.ts",
+    "variants": [
+      "preferred native Navigation API",
+      "forced classic adapter before page load"
+    ],
+    "executed": false,
+    "scope": "Synthetic DOM draft with real Next entry movement; business-form CRUD/focus/gesture cases remain required"
+  },
+  "pending": [
+    "Native real-form/browser-baseline/physical-device keyboard/touch/back-gesture/history-menu/focus/zoom/stop/interruption/cache and CSP/startup cases",
+    "Joint-session/nested-frame or otherwise untracked entries can require held-return recovery; positions describe app-owned main-frame writes, not universal platform history enumeration",
+    "Full-stack/CI/AFTER/owner review and all remaining P0–P8 ledger items including M01 appendix/context/report/work reconciliation"
+  ],
+  "restrictions": [
+    "Existing automatic app-access rejection remains binding: no browser/CUA/CDP/app HTTP or alternate-origin workaround",
+    "No backend test rerun, database/service/worker/scanner/migration/records/private credential or configuration operation; no main/push/merge/deploy/production operation",
+    "Original-machine mandatory skills remain unavailable; dense product UI excludes marketing workflow; AFTER timing preserved",
+    "Protected35 pre-existing lesson additions and untracked motion note remain outside staged work"
+  ],
+  "sourceHashes": [
+    {
+      "file": "frontend/package.json",
+      "bytes": 1957,
+      "sha256": "f40b120ae49d01ce619b32de299a843bf93b5b7c2824fff941cfa2e79a9b153d",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/scripts/check-history-bootstrap.mjs",
+      "bytes": 3391,
+      "sha256": "51f3b54677b649ff0cb827f4ac0a9c4701cb82208626c78111d55382056dee19",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4007,
+      "sha256": "03af74c45f62b19944697c9912475374f9e4c837cbce7a123a8752c4f9554f1f",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/app/layout.tsx",
+      "bytes": 2275,
+      "sha256": "3029ec4d49ed1fe0c96ccb64fed8b0af4fe4377bfe14e0e6c8994bb26f338b99",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/components/shared/unsaved-guard.tsx",
+      "bytes": 7009,
+      "sha256": "6133a75927c739304ce1f46846aae6f89fec306de6f5a5da89a6359984e95421",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/lib/history-draft-guard.ts",
+      "bytes": 5470,
+      "sha256": "fbd5441681f93e35c776411a5e324cb491c8d8112603365c6e56583cb2436c7c",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/lib/classic-history-bootstrap.ts",
+      "bytes": 6062,
+      "sha256": "935860d3235024e75705989be79089177b1e0cd30ab3e2bf560df85e4a41710f",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/e2e/history-drafts.spec.ts",
+      "bytes": 3892,
+      "sha256": "2bbe16541f8b2ea05f4c16b682de5b651403f6a51187fbc5551ce291202fec24",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/classic-history.test.mjs",
+      "bytes": 16635,
+      "sha256": "c1a2ea42dfbf27e18efc53266134a2657dd78643af3bae47aec9181ff1c5fbb6",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/history-drafts.test.mjs",
+      "bytes": 17079,
+      "sha256": "60893c4a304a6c437e68e77afb0ebf1c70fbd730f38e7fce6e4a82e2e03fdb28",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/dossier-forms.test.mjs",
+      "bytes": 22388,
+      "sha256": "2f6cd4f8ec84b585e6b36e5f679f2b22fc4feed0e4599e8c994c710465477f5f",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/finance-workspace.test.mjs",
+      "bytes": 49204,
+      "sha256": "7bf97340e519eb2d134f0c4eb167fc50c82b3a2ade0017b157f2e5b364f4e2d0",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 33722,
+      "sha256": "5c19641ec7a969350ff260b21eca9f9ef4b9f9d441354b10a62eee10b9aef7d7",
+      "basis": "canonical staged Git blob"
+    }
+  ]
+}

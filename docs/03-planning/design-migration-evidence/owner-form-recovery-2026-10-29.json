@@ -1,0 +1,274 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "56a0fa0ce529e0240966dd6b0815332da0b156e7",
+  "scope": "Owned full owner create/edit/reuse/open commands, retained drafts and selected native-path preparation",
+  "checks": [
+    {
+      "command": "node --test tests/unit/owner-forms.test.mjs",
+      "phase": "before fix",
+      "exitCode": 1,
+      "observed": "Actual full-form interruption leaves no recovery marker and replacement fields enabled"
+    },
+    {
+      "command": "Focused owner units",
+      "phase": "first integration",
+      "exitCode": 1,
+      "failed": 5,
+      "observed": "Legacy fixtures used invalid success receipts, exception snapshots or same-reference completion; corrected with strict receipts/independent reads/value equality"
+    },
+    {
+      "command": "node --test tests/unit/owner-forms.test.mjs tests/unit/owner-form-command.test.mjs",
+      "cwd": "frontend",
+      "phase": "final",
+      "exitCode": 0,
+      "passed": 29
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "phase": "initial",
+      "exitCode": 1,
+      "observed": "Two exhaustive-deps cleanup warnings; captured owned maps in cleanup"
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "phase": "final",
+      "exitCode": 0,
+      "passed": 977,
+      "additionalCases": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "phase": "final",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 525,
+      "buttonFiles": 160,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "phase": "final",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "phase": "after cleanup correction and final types",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true
+    },
+    {
+      "command": "Frontend Taste lint.mjs <4 owner UI files> --app --json",
+      "exitCode": 0,
+      "files": 4,
+      "findings": 0,
+      "boundary": "Static scan only"
+    },
+    {
+      "command": "Backend",
+      "executed": false,
+      "productionChanged": false,
+      "retainedPriorConnectionForbiddenUnits": 573
+    },
+    {
+      "command": "Frozen/main/protected review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9036,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1307,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "fieldMap": {
+    "canonicalGroups": [
+      "name",
+      "type",
+      "phones",
+      "emails",
+      "roles",
+      "country",
+      "nationality",
+      "languages"
+    ],
+    "newContactResponsibility": "Explicit eligible M/A agent; no Agent override",
+    "reuse": "Fresh canonical selection; add owner role at reviewed counter or current no-write opening",
+    "separateDomains": "No legal link, enquiry, deal or provenance/assignment edit"
+  },
+  "behavior": [
+    "Original actor/role/target/body/key/counter/callback remain bound after unknown result",
+    "Strict receipt and fresh same-actor protected current completion; alias retargeting refused",
+    "Acknowledged operation retries current read/original awaited handoff without another write",
+    "Definite conflict requires explicit fresh comparison and exact offered object/counter acceptance",
+    "Metadata/contact outages and newer host versions retain same mounted draft/counter",
+    "Current authority loss masks private fields; disposal aborts late callbacks",
+    "Selected form/header/footer/owner tabs/right-only portfolio/layout/theme/icons/motion unchanged"
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/owner-form-recovery.spec.ts",
+    "cases": 3,
+    "widths": [
+      390,
+      1440
+    ],
+    "typechecked": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "faults": "Interrupted real isolated receipt for create/add-role; current-read503 after real isolated edit acknowledgement",
+    "artifactPolicy": {
+      "trace": false,
+      "video": false,
+      "screenshot": false
+    },
+    "legacyPaths": [
+      "Owner phone action",
+      "Right-only current/former portfolio",
+      "Property Actions/history drawer",
+      "Legal-owner drawer/tonal entries"
+    ],
+    "sharedHelperDirectConsumerFiles": 4,
+    "broaderHelpersAndConsumersAccepted": false
+  },
+  "skills": {
+    "frontendTaste": "Relevant app-screen truthful states/grouping/responsive continuity within frozen design",
+    "staticAudit": true,
+    "nativeInspection": false,
+    "unavailableOriginalMachineSkillsNotClaimed": true,
+    "afterTimingUnchanged": true
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Actual SQL/native/device/identity/role-loss/merge/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Remaining exact field/job/alias/legacy-selector reconciliation"
+  ],
+  "status": "Source checkpoint only; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5535,
+      "sha256": "896d89aef4e054c96932902c384dc2bbd9f99b9cab52742b33706f3ed57a9415"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/owners/page.tsx",
+      "bytes": 580,
+      "sha256": "f4b0a47b3be0a6c140afa8132e9efad41c0dcde96298f93f49c9116cdbed976d"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/owners/new/page.tsx",
+      "bytes": 583,
+      "sha256": "e9533a71fcdd2a18752cffd6038e62ab9b27c7e40015511757e5403adb201692"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/owners/[id]/edit/page.tsx",
+      "bytes": 820,
+      "sha256": "a7647864963dd95070f79575031f4abc8b56acc3ceb1e534f9eddaedd600aef1"
+    },
+    {
+      "file": "frontend/src/features/owners/owner-form-intent.ts",
+      "bytes": 2251,
+      "sha256": "81e92f2369cd4a4198059b718845e8f641c0f6ac2e34dedbce9961c4bd8fef5d"
+    },
+    {
+      "file": "frontend/src/features/owners/use-owner-form-command.ts",
+      "bytes": 10169,
+      "sha256": "f995525bfea1ed159b544a7086c9f97138fa086b4b756dfccb2cbc0f3533ea6a"
+    },
+    {
+      "file": "frontend/src/features/owners/owner-form.tsx",
+      "bytes": 17230,
+      "sha256": "02bbc2131ac831b3fddc22aaec80e6b783af047936de609739f8e203c93209da"
+    },
+    {
+      "file": "frontend/src/features/owners/owner-directory.tsx",
+      "bytes": 7760,
+      "sha256": "eb027e6c20e28ac82b5611680f56392fcbe8b28f29a34f32e10c2b30668a6d7d"
+    },
+    {
+      "file": "frontend/src/features/owners/owner-preview.tsx",
+      "bytes": 4810,
+      "sha256": "9acb71540507f16a06fe8673d0039d685672f7c2fbe806ff3f2762483063da7b"
+    },
+    {
+      "file": "frontend/src/features/owners/owner-record.tsx",
+      "bytes": 6086,
+      "sha256": "117347e436f5a62c061fb8c9c447790f7d658571e748b2d9f0b65152b018d6a2"
+    },
+    {
+      "file": "frontend/tests/unit/owner-form-command-fixtures.mjs",
+      "bytes": 4509,
+      "sha256": "27de212b6a4d6b49f9e79b2976b4e3c306b585602b395cb0aecfb362768ed52d"
+    },
+    {
+      "file": "frontend/tests/unit/owner-form-command.test.mjs",
+      "bytes": 8311,
+      "sha256": "caf583004b15619838b6919f888db226baf4eade4318231288fe45c7afed5b8e"
+    },
+    {
+      "file": "frontend/tests/unit/owner-forms.test.mjs",
+      "bytes": 32044,
+      "sha256": "052b9e27ddbe8c4eeceabfa004b884d33369e99e940a67de501fc7e89bdc67f7"
+    },
+    {
+      "file": "frontend/tests/e2e/owner-form-recovery.spec.ts",
+      "bytes": 5995,
+      "sha256": "e30ccd0b6b5d116356ef940c2f5c07f92f68f565db08de1ceae776ae1c2b1ac6"
+    },
+    {
+      "file": "frontend/tests/e2e/owners.spec.ts",
+      "bytes": 5776,
+      "sha256": "950d347a55503e230648884581f96e07fc72fa8322e00753b80367ee0b0c079a"
+    },
+    {
+      "file": "frontend/tests/e2e/developments.spec.ts",
+      "bytes": 19374,
+      "sha256": "37e029204c76b1012ecbc937170920d0a84c73dd4d09dd987b8509a49a13f44e"
+    },
+    {
+      "file": "frontend/tests/helpers/inventory.ts",
+      "bytes": 5385,
+      "sha256": "24066d27aac959a34e346abe028471a2ae227b4261cb37bace262b2f0b4011a7"
+    }
+  ]
+}

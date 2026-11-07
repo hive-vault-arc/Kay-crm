@@ -41,9 +41,17 @@ def read_history(
     parent_kind: Parent,
     parent_id: UUID,
     page: Annotated[int, Query(ge=1, le=1000000)] = 1,
+    include_actor: Annotated[Literal["true"] | None, Query()] = None,
 ) -> dict[str, object]:
-    validate_query(request, {"parent_kind", "parent_id", "page"})
-    return history(resources(request)[0], token, parent_kind, parent_id, page)
+    validate_query(request, {"parent_kind", "parent_id", "page", "include_actor"})
+    return history(
+        resources(request)[0],
+        token,
+        parent_kind,
+        parent_id,
+        page,
+        include_actor=include_actor == "true",
+    )
 
 
 @router.post("")

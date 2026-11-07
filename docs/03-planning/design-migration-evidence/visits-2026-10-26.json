@@ -1,0 +1,193 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "base": "5816960",
+  "scope": "Selected routed visit drawers, guarded scheduling forms, bounded history and controlled command lifetimes",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 421,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 193,
+      "failed": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8641,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1231,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    }
+  ],
+  "sourceAnalysis": {
+    "formCssRules": 50,
+    "existingRoles": 4,
+    "missingRoles": 0,
+    "prototypeInputs": 254,
+    "prototypeHashDrift": 0
+  },
+  "sources": [
+    {
+      "path": "frontend/scripts/test-facade.mjs",
+      "sha256": "2649d7e3805d3707379fc784b511b91a82f13b8d72890f5d8646f7b68d828cbc"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/visits/[id]/page.tsx",
+      "sha256": "1fc3375a6e565681d4367792fe3e59645227a452cf01fe7aef96d12a0798828c"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/visits/layout.tsx",
+      "sha256": "a5d428b838e70e979e916be715b044d5b67cae7c71b948a2b94d975928faa3f2"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/visits/new/page.tsx",
+      "sha256": "d21c2408be7442042ccb4a1fa44df15e8ae3e7dcd43a814c126d5223b566604b"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/visits/page.tsx",
+      "sha256": "f978f6a0451c92cb4d7c922859c4fe9c0eac8ccf822d70029f5e3a7d93e0bf24"
+    },
+    {
+      "path": "frontend/src/app/workspace-forms.css",
+      "sha256": "c3e42ad08786b139523ecad8207dad762b652fae8720dc4d409e8eaa82ef5808"
+    },
+    {
+      "path": "frontend/src/components/shared/dossier-form.tsx",
+      "sha256": "40948f2c77159f912037a2e01f5a30a1f30fdfc9df8858d85ae9e745cf9d97f8"
+    },
+    {
+      "path": "frontend/src/components/shared/record-drawer.tsx",
+      "sha256": "fe65c614778e81494081f9de262ec9c8c1ccef42f200e87675ebf7fe9139dc85"
+    },
+    {
+      "path": "frontend/src/features/contacts/contact-editor.tsx",
+      "sha256": "7c40675f54f873dc2405b7b785b45405c2fd4bd5e338fe65c2d3e6f1a61b78ce"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-create.tsx",
+      "sha256": "596a5bd5280ce9e56f672342acbfbcb843b8b6d6c6348ded244e4e16c8061725"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-editor.tsx",
+      "sha256": "ae582f314c9ab9af843f0705c7a7e2f97467c871e469b11752c0827c9420baa7"
+    },
+    {
+      "path": "frontend/src/features/contacts/use-query.ts",
+      "sha256": "9712638cd41714a0ac9fd238bdf50757a2c46455f25b399d8c5067d92ab2c18f"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-form.tsx",
+      "sha256": "7e3d89c05cceb2c16c9f7d867b980d5cbabf4bcd45eeb996f4dfc98bafc503eb"
+    },
+    {
+      "path": "frontend/src/features/realtime/live-updates.tsx",
+      "sha256": "2e5d3fa4520e0b9cf7625afb044fd4962230647769b76c8737300f231be59ff6"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-create.tsx",
+      "sha256": "5e7a0aa3e60b5b10fd1f41fc34a99348573b5127de6c5e5178b4be7831e5d790"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-form.tsx",
+      "sha256": "a93c286cf898c3816690608d3e6c7c2efdd7079fe034b4b7de97fdfdeb867558"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-record.tsx",
+      "sha256": "859b984540e466b5d264c2a91f6142c69a77a1659f7426821f9abda98f9392ad"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-route-drawer.tsx",
+      "sha256": "a747a49a0842676a1ff38127bff612922f30e47eacd3f8b010fcf8cbee68d501"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-slot-preview.tsx",
+      "sha256": "1d50637a04b2fd13b3f1bbd708fe14f55120b1ecac2b433b6cb74679244bb396"
+    },
+    {
+      "path": "frontend/src/features/work/task-form.tsx",
+      "sha256": "f8e28feebe8dbe1d92ee2258ad7c4c6708d166ae838f3da977bd562b5c8bb1a8"
+    },
+    {
+      "path": "frontend/src/features/work/work-property-select.tsx",
+      "sha256": "e41a544bd2a0c3aee36464cfe37894fb600911f5e0eecda40e898fee0ac46076"
+    },
+    {
+      "path": "frontend/tests/unit/calendar-workspace.test.mjs",
+      "sha256": "e7a73df029d1bd6b26a70c63132471961c368b9a015f2f84dc1b3cadbb6903ab"
+    },
+    {
+      "path": "frontend/tests/unit/draft-lifecycle.test.mjs",
+      "sha256": "9ee857a71259d236f62ec2f8fb7c9c03c5ed2748f8f1bbbc078578a0bf9f3723"
+    },
+    {
+      "path": "frontend/tests/unit/query-drafts.test.mjs",
+      "sha256": "767f5d0fa791563e9ba4c38659c80eeaffae0fa2c28969d0e5047de8b4771af9"
+    },
+    {
+      "path": "frontend/tests/unit/visit-forms.test.mjs",
+      "sha256": "10c6cdced6bd0c6a29e0c327816f2a37b99704a6022fea588294a62174f23559"
+    }
+  ],
+  "security": "Exact existing protected routes/DTOs/scopes/versions, UTC instants and stable retry identity; serialized preview/save; explicit terminal commands; denial clears old data; bounded history; same-path validated quiet-read deferral during managed dirty/busy lifetimes only; field-free release events, no persistence",
+  "remainingFieldMappings": [
+    {
+      "surface": "Visit general Notes",
+      "prototype": [
+        "src/visit-ui.js notes control",
+        "src/visit-model.js visitDraft/saveVisit notes"
+      ],
+      "crm": [
+        "frontend/src/features/schedule/contracts.ts",
+        "backend/app/schedule/contracts.py",
+        "backend/app/schedule/models.py"
+      ],
+      "status": "unmapped; separate scoped persistence/history and compatibility work remains; no overloaded overlap_reason/outcome"
+    }
+  ],
+  "adaptations": [
+    "No prototype demo title/place/hour/actor defaults are copied into real booking data",
+    "Existing properties/units context is selected explicitly through real scoped numbered reads",
+    "Draft rescheduling matches existing backend semantics without implicit confirmation or capacity reservation",
+    "Calendar retention and focus handoff are implemented in source; native verification is still required"
+  ],
+  "limitations": [
+    "No app HTTP/browser/CDP/native access or workaround",
+    "No real database, booking/scope races, worker/reminder or native focus/modal/touch/zoom acceptance",
+    "General visit Notes plus other inventory/finance/PDF/report/admin/search/Back-Forward migration and final review remain incomplete",
+    "Original-machine mandatory skills unavailable; dense CRM/form exclusions and AFTER timing retained",
+    "No backend/facade/session/dependency/worker/database/private transfer/main/push/merge change"
+  ],
+  "commandCorrections": [
+    "Windows PowerShell 5 refused script execution under its policy; no policy was changed or bypassed. The CI-declared pwsh interpreter (7.6.5, existing RemoteSigned policy) ran the repository-only validator successfully."
+  ]
+}

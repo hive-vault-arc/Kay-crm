@@ -1,0 +1,4 @@
+# Synthetic UUIDv7 used to check the creation-key schema and expiry.
+50b4b263cc5bf5eeb5d59ea490adeff86df95c93:frontend/tests/unit/finance-creation-keys.test.mjs:generic-api-key:14
+# Design-note prose about authentication and duplicate query parameter rejection.
+2e3a7dbd8de618c8c8d16002bd3a2f8b1994b940:docs/03-planning/design-prototype-migration-execution.md:generic-api-key:917

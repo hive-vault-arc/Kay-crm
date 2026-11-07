@@ -12,7 +12,8 @@ from app.contacts.models import Contact
 from app.db.session import Database
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
-from app.inventory.contracts import InventoryQuery
+from app.inventory.contracts import DevelopmentQuery, InventoryQuery
+from app.inventory.directory_filters import directory_filters
 from app.inventory.hierarchy_models import Block, Development, DevelopmentOwner, Floor, UnitType
 from app.inventory.hierarchy_rules import development_record
 from app.inventory.models import InventoryEvent, Offering, Property
@@ -33,7 +34,9 @@ def scoped_contact(
     return {"id": str(contact.id), "name": contact.name}
 
 
-def summary(session: Session, items: list[Development]) -> list[dict[str, object]]:
+def summary(
+    session: Session, items: list[Development], *, phase_enabled: bool = False
+) -> list[dict[str, object]]:
     ids = [item.id for item in items]
     offerings: dict[UUID, list[dict[str, object]]] = {did: [] for did in ids}
     rows = session.scalars(
@@ -86,12 +89,15 @@ def summary(session: Session, items: list[Development]) -> list[dict[str, object
             "unit_count": counts.get(item.id, 0),
             "available_unit_count": available.get(item.id, 0),
             "offerings": offerings[item.id],
+            **({"phase": item.phase, "phase_supported": True} if phase_enabled else {}),
         }
         for item in items
     ]
 
 
-def detail(session: Session, identity: CurrentIdentity, did: UUID) -> dict[str, object]:
+def detail(
+    session: Session, identity: CurrentIdentity, did: UUID, *, phase_enabled: bool = False
+) -> dict[str, object]:
     item = development_record(session, did)
     links = session.scalars(
         select(DevelopmentOwner)
@@ -122,7 +128,7 @@ def detail(session: Session, identity: CurrentIdentity, did: UUID) -> dict[str, 
             }
         )
     return {
-        **summary(session, [item])[0],
+        **summary(session, [item], phase_enabled=phase_enabled)[0],
         "briefing_text": item.briefing_text,
         "developer": {
             "marketing_display": item.developer_marketing_display,
@@ -150,7 +156,13 @@ def level_view(row: Block | Floor | UnitType) -> dict[str, object]:
 
 
 def read_hierarchy(
-    database: Database, token: str, operation: str, target: UUID | None, query: InventoryQuery
+    database: Database,
+    token: str,
+    operation: str,
+    target: UUID | None,
+    query: InventoryQuery | DevelopmentQuery,
+    *,
+    phase_enabled: bool = False,
 ) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
@@ -159,7 +171,7 @@ def read_hierarchy(
         if operation == "detail":
             if target is None:
                 raise IdentityError("NOT_FOUND", 404)
-            return detail(session, identity, target)
+            return detail(session, identity, target, phase_enabled=phase_enabled)
         if operation == "developments":
             filters: list[ColumnElement[bool]] = []
             if query.archive != "all":
@@ -183,15 +195,9 @@ def read_hierarchy(
                 )
             if query.category:
                 filters.append(Development.category == query.category)
-            if (query.state and query.state != "all") or query.offering_kind:
-                campaign = select(Offering.id).where(Offering.development_id == Development.id)
-                if query.state and query.state != "all":
-                    campaign = campaign.where(Offering.state == query.state)
-                if query.offering_kind:
-                    campaign = campaign.where(Offering.kind == query.offering_kind)
-                if query.state != "withdrawn":
-                    campaign = campaign.where(Offering.is_current)
-                filters.append(campaign.exists())
+            if isinstance(query, DevelopmentQuery) and query.phase:
+                filters.append(Development.phase == query.phase)
+            filters.extend(directory_filters(query, development=True))
             total = (
                 session.scalar(select(func.count()).select_from(Development).where(*filters)) or 0
             )
@@ -207,7 +213,10 @@ def read_hierarchy(
                 .offset((query.page - 1) * query.page_size)
                 .limit(query.page_size)
             ).all()
-            return numbered(summary(session, list(rows)), total, query)
+            return {
+                **numbered(summary(session, list(rows), phase_enabled=phase_enabled), total, query),
+                **({"phase_supported": True} if phase_enabled else {}),
+            }
         if operation in {"blocks", "unit-types", "history", "owners", "inventory"}:
             if target is None:
                 raise IdentityError("NOT_FOUND", 404)
@@ -244,6 +253,11 @@ def read_hierarchy(
                                 "display_name": row.actor_display_name,
                             },
                             "action": row.action,
+                            **(
+                                {"development_phase": row.development_phase}
+                                if phase_enabled
+                                else {}
+                            ),
                             "property_version": row.property_version,
                             "offering_version": row.offering_version,
                             "state": row.state,
@@ -290,15 +304,7 @@ def read_hierarchy(
                             Property.marketing_name.ilike(pattern),
                         )
                     )
-                if (query.state and query.state != "all") or query.offering_kind:
-                    campaign = select(Offering.id).where(Offering.property_id == Property.id)
-                    if query.state and query.state != "all":
-                        campaign = campaign.where(Offering.state == query.state)
-                    if query.offering_kind:
-                        campaign = campaign.where(Offering.kind == query.offering_kind)
-                    if query.state != "withdrawn":
-                        campaign = campaign.where(Offering.is_current)
-                    conditions.append(campaign.exists())
+                conditions.extend(directory_filters(query))
                 total = (
                     session.scalar(select(func.count()).select_from(Property).where(*conditions))
                     or 0
@@ -312,7 +318,7 @@ def read_hierarchy(
                 ).all()
                 return {
                     **numbered(properties_view(session, units), total, query),
-                    "development": summary(session, [item])[0],
+                    "development": summary(session, [item], phase_enabled=phase_enabled)[0],
                 }
             model = Block if operation == "blocks" else UnitType
             filters_level = model.development_id == target

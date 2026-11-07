@@ -1,33 +1,41 @@
 "use client";
-
 import Link from "next/link";
 import { useState } from "react";
-import { ContactIcon, EmailIcon, PhoneIcon } from "@/components/icons";
-import { CrmAgent, CrmRecordHeader, CrmStatusBadge } from "@/components/shared/crm-presentation";
+import { CrmRecordHeader, CrmStatusBadge } from "@/components/shared/crm-presentation";
+import { InlineEditScope } from "@/components/shared/inline-record-field";
 import { PageHeader } from "@/components/shared/page-header";
+import { RecordDrawer } from "@/components/shared/record-drawer";
+import { RecordSection, RecordWorkspace } from "@/components/shared/record-workspace";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { contactSchema } from "@/features/contacts/contracts";
 import { ContactTimeline } from "@/features/contacts/contact-history";
+import { contactSchema, type StaffRole } from "@/features/contacts/contracts";
+import { OwnershipControls } from "@/features/contacts/ownership-controls";
 import { RecordError } from "@/features/contacts/record-states";
-import { useQuery } from "@/features/contacts/use-query";
-import { useHydrated } from "@/hooks/use-hydrated";
-import { OwnerPortfolio } from "./owner-portfolio";
+import { apiGet } from "@/lib/api/client";
+import { OwnerDetails } from "./owner-details";
+import { OwnerForm } from "./owner-form";
 import { OwnerLoading } from "./owner-loading";
+import { OwnerPortfolio } from "./owner-portfolio";
+import { useOwnerContact } from "./use-owner-contact";
 
-export function OwnerRecord({ id }: { id: string }) {
-  const hydrated = useHydrated();
-  const query = useQuery(`/api/v1/contacts/${id}`, contactSchema);
-  const [tab, setTab] = useState("current");
-  const heading = <PageHeader title="Fiche propriétaire" description="Coordonnées et biens liés à ce contact." route={`/owners/${id}`} icon={ContactIcon} />;
-  if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
-  if (!query.value) return <>{heading}<OwnerLoading label="Chargement du propriétaire" /></>;
-  const owner = query.value;
-  return <div className="crm-record-view record-stack grid min-w-0 gap-5">
-    <Button action="back" asChild variant="quiet" className="crm-record-back justify-self-start"><Link href="/owners">Tous les propriétaires</Link></Button>
-    <CrmRecordHeader contact={owner} title={owner.name} route={`/owners/${id}`} badges={<CrmStatusBadge state={owner.archived_at ? "archived" : "active"}>{owner.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge>} actions={!owner.archived_at ? <Button action="edit" asChild variant="outline"><Link href={`/owners/${owner.id}/edit`}>Modifier le propriétaire</Link></Button> : undefined} />
-    {owner.id !== id ? <p>Cette fiche a été fusionnée. <Link href={`/owners/${owner.id}`} className="text-link underline">Ouvrir la fiche conservée</Link>.</p> : null}
-    <section className="surface grid min-w-0 gap-4" aria-label="Coordonnées du propriétaire"><h2 className="text-section font-medium">Coordonnées</h2><dl className="grid gap-4 sm:grid-cols-2"><div><dt className="flex items-center gap-2 text-sm text-muted-foreground"><PhoneIcon aria-hidden="true" className="size-4" /> Téléphone</dt><dd className="grid gap-1">{owner.phones.map(phone => <a key={phone.number} href={`tel:${phone.number}`} className="inline-flex min-h-control items-center justify-self-start text-link underline">{phone.number}{phone.is_primary ? " (principal)" : ""}</a>)}</dd></div><div><dt className="flex items-center gap-2 text-sm text-muted-foreground"><EmailIcon aria-hidden="true" className="size-4" /> E-mail</dt><dd className="grid gap-1">{owner.emails.length ? owner.emails.map(email => <a key={email.email} href={`mailto:${email.email}`} className="inline-flex min-h-control items-center justify-self-start text-link underline wrap-anywhere">{email.email}</a>) : "Non renseigné"}</dd></div><div><dt className="text-sm text-muted-foreground">Type</dt><dd>{owner.type === "person" ? "Personne" : "Organisation"}</dd></div><div><dt className="text-sm text-muted-foreground">Agent responsable</dt><dd><CrmAgent name={owner.primary_agent.display_name} /></dd></div></dl><Link href={`/contacts/${owner.id}`} className="inline-flex min-h-control items-center justify-self-start text-link underline">Voir la fiche contact complète</Link></section>
-    <Tabs value={tab} onValueChange={setTab}><TabsList aria-label="Patrimoine et historique du propriétaire"><TabsTrigger value="current" disabled={!hydrated}>Biens actuels</TabsTrigger><TabsTrigger value="past" disabled={!hydrated}>Anciens biens</TabsTrigger><TabsTrigger value="timeline" disabled={!hydrated}>Historique du contact</TabsTrigger></TabsList><TabsContent value="current"><OwnerPortfolio key={`${owner.id}:current`} id={owner.id} status="current" /></TabsContent><TabsContent value="past"><OwnerPortfolio key={`${owner.id}:past`} id={owner.id} status="past" /></TabsContent><TabsContent value="timeline"><ContactTimeline id={owner.id} archived={Boolean(owner.archived_at)} /></TabsContent></Tabs>
-  </div>;
+export function OwnerRecord({ id, actorId, role = "agent", initialTab = "overview", initialPortfolio = "current" }: { id: string; actorId?: string; role?: StaffRole; initialTab?: "overview" | "activity"; initialPortfolio?: "current" | "past" }) {
+  const owner = useOwnerContact(id), contact = owner.contact;
+  const [portfolio, setPortfolio] = useState(initialPortfolio), [visited, setVisited] = useState(() => new Set([initialPortfolio]));
+  const [managementNotice, setManagementNotice] = useState("");
+  const heading = <PageHeader title="Fiche propriétaire" description="Coordonnées et patrimoine accessible." route={`/owners/${id}`} />;
+  if (owner.error) return <>{heading}{managementNotice ? <p role="status">{managementNotice}</p> : null}<RecordError error={owner.error} retry={() => { setManagementNotice(""); owner.retry(); }} /></>;
+  if (!contact) return <>{heading}<OwnerLoading label="Chargement du propriétaire" /></>;
+  const editAction = <RecordDrawer hideTrigger={Boolean(contact.archived_at)} label="Modifier" action="edit" title="Modifier le propriétaire" description="Coordonnées du contact propriétaire, partagées par ses dossiers.">{(close, done) => <OwnerForm id={contact.id} actorId={actorId} role={role} presentation="drawer" cancel={close} onDenied={(failure, acknowledged) => { setManagementNotice(acknowledged ? "La modification est enregistrée. Les droits d’accès ont changé." : ""); owner.denied(failure); }} onSaved={(_id, value) => { if (value) owner.saved(value); else owner.refresh(); done(); }} />}</RecordDrawer>;
+  const managementAction = role !== "agent" ? <RecordDrawer label="Gérer le contact" action="settings" description="Attribution, collaboration et conservation avec aperçu de l’impact.">{(_close, done) => <OwnershipControls embedded contact={contact} role={role} denied={(failure, acknowledged) => { setManagementNotice(acknowledged ? "L’opération est enregistrée. Les droits d’accès ont changé." : ""); owner.denied(failure); }} changed={async (target, _operation, signal) => { const fresh = await apiGet(`/api/v1/contacts/${target}`, contactSchema, signal); if (!signal.aborted) { owner.saved(fresh); done(); } }} />}</RecordDrawer> : undefined;
+  return <InlineEditScope><div className="kay-record-page kay-owner-record-page">
+    <CrmRecordHeader contact={contact} title={contact.name} route={`/owners/${id}`} backHref="/owners" reference="Propriétaire" showContact={false} badges={<CrmStatusBadge state={contact.archived_at ? "archived" : "active"}>{contact.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge>} actions={<Button action="contact" asChild variant="outline"><Link prefetch={false} href={`/contacts/${contact.id}`}>Fiche du contact</Link></Button>} />
+    {contact.id !== id ? <p className="mb-3 text-sm">Cette fiche a été fusionnée. <Link prefetch={false} href={`/owners/${contact.id}`} className="inline-flex min-h-control items-center underline">Voir la fiche conservée</Link>.</p> : null}
+    {contact.archived_at ? <p role="status" className="mb-3 text-sm text-muted-foreground">Contact archivé : les coordonnées restent en lecture seule.</p> : null}
+    {owner.notice ? <p role="status" className="mb-3 text-sm text-success">{owner.notice}</p> : null}
+    <RecordWorkspace initialTab={initialTab} label="Rubriques du propriétaire" tabs={[
+      { id: "overview", label: "Aperçu", content: <OwnerDetails actorId={actorId} role={role} contact={contact} saved={owner.saved} denied={owner.denied} editAction={editAction} managementAction={managementAction} /> },
+      { id: "activity", label: "Activités", content: <ContactTimeline key={contact.id} id={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} denied={(failure, acknowledged) => { setManagementNotice(acknowledged ? "L’entrée est enregistrée. Les droits d’accès ont changé." : ""); owner.denied(failure); }} /> },
+    ]} aside={<RecordSection title="Patrimoine" action={<Button action="inventory" asChild variant="outline"><Link prefetch={false} href="/projects">Projets</Link></Button>}><Tabs value={portfolio} onValueChange={value => { const next = value === "past" ? "past" : "current"; setVisited(current => new Set([...current, next])); setPortfolio(next); }} className="kay-owner-portfolio"><TabsList aria-label="Patrimoine du propriétaire"><TabsTrigger value="current">Biens actuels</TabsTrigger><TabsTrigger value="past">Anciens biens</TabsTrigger></TabsList>{visited.has("current") ? <TabsContent forceMount value="current" hidden={portfolio !== "current"}><OwnerPortfolio compact id={contact.id} status="current" denied={owner.denied} /></TabsContent> : null}{visited.has("past") ? <TabsContent forceMount value="past" hidden={portfolio !== "past"}><OwnerPortfolio compact id={contact.id} status="past" denied={owner.denied} /></TabsContent> : null}</Tabs></RecordSection>} />
+  </div></InlineEditScope>;
 }

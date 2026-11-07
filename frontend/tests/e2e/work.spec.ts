@@ -128,6 +128,7 @@ test("Visit follow-up after two hours records a distinct missed outcome in the l
     expect(notifications.total).toBe(1);
     expect(notifications.items[0].kind).toBe("visit.follow_up");
     await page.goto(`/visits/${vid}`);
+    await page.getByRole("dialog").getByRole("button", { name: "Actions", exact: true }).click();
     await page.getByRole("button", { name: "Marquer non réalisée", exact: true }).click();
     await page.getByRole("alertdialog").getByLabel("Pourquoi la visite n’a pas eu lieu (obligatoire)", { exact: true }).fill("Le client était absent au rendez-vous synthétique.");
     await page.getByRole("alertdialog").getByRole("button", { name: "Marquer non réalisée", exact: true }).click();
@@ -139,7 +140,7 @@ test("Visit follow-up after two hours records a distinct missed outcome in the l
     const history = await (await page.request.get(`/api/v1/enquiries/${leads.items[0].id}/activities`)).json();
     expect(history.items.some((item: { action: string; reason: string }) => item.action === "visits.not_completed" && item.reason.includes("client était absent"))).toBe(true);
     await page.goto("/visits");
-    await page.getByLabel("Semaine contenant le", { exact: true }).fill(missed.start_local.slice(0, 10));
+    await page.getByLabel("Aller à une date", { exact: true }).fill(missed.start_local.slice(0, 10));
     await page.getByRole("tab", { name: "Agenda", exact: true }).click();
     const missedCard = page.locator(".calendar-agenda-visit").filter({ has: page.locator(`a[href="/visits/${vid}"]`) });
     await expect(missedCard).toBeVisible();

@@ -1,5 +1,203 @@
 # Acceptance scenarios
 
+Selected affair forms,2026-10-29 (AT-23/24): preserve all contact/qualification/
+project/context fields, zero, creation-only stage and both atomic edit versions.
+Unknown writes retain original body/key; acknowledged current-read/parent failure
+cannot write again. Verify originating identity, receipt kind/ID, current affair/
+contact coherence and normalized baselines before handoff. Test unchanged repeated
+Save, deliberate later edit, explicit conflict reload, canonical/closed read-only
+states, duplicate reuse, exact prefill IDs, contact-dependent search removal,
+metadata/validation/disposal/denial and parent busy release.727 frontend units
+pass,20 added; three native create/edit acknowledgement/read-outage cases prepared/
+typechecked, not run. Backend unchanged; actual role/SQL/device checks pending.
+[Contract](../04-design/deal-form-recovery-local.md).
+
+Selected prospect conversion recovery,2026-10-28 (AT-23/24): preserve the separate
+selected project/budget/purchase-reason dialog and language prerequisite. Unknown
+POST keeps opening source/version/body/key through props/metadata changes;
+Cancel/Escape/stale handlers cannot discard it. Require same actor/role and prove
+receipt/source/affair/creator/current canonical contact before navigation.
+Acknowledged read/navigation recovery cannot POST again. Known conflicts require
+explicit source review/new confirmation; canonical/archived/converted reads finish
+read-only. Test malformed/foreign/proposal results, denial, disposal, hydration,
+board availability and completed-operation refusal.707 frontend units pass,
+16 added; two native acknowledgement/read-outage cases prepared/typechecked,
+not run. Backend unchanged; actual role/SQL/native/device checks remain pending.
+[Contract](../04-design/prospect-conversion-recovery-local.md).
+
+Selected prospect creation recovery,2026-10-28 (AT-03/23/24): preserve both contact
+modes, full collections, qualification, M/A owner/queue and Agent authority in
+the selected sheet. Unknown POST retries its original body/submission/key; inputs,
+cancel and reuse cannot replace it. Bind first/retry dispatch to the originating
+current actor/role, verify result coherence and retry only navigation after
+acknowledgement. A completed creation cannot create again. Known duplicate reuse
+is explicit and currently scoped, including canonical reads. Metadata outages
+retain drafts and recovery, block new saves and mask on denial. Validation,
+disposal and identity replacement cannot dispatch/reset/navigate late.691 frontend
+units pass,14 added; two native new/existing-contact cases prepared/typechecked,
+not run. Backend unchanged; actual role/SQL/native/device checks remain pending.
+[Contract](../04-design/prospect-creation-recovery-local.md).
+
+Selected full prospect editor recovery,2026-10-28 (AT-05/23/24):
+verify both versioned atomic collections and all qualification fields in the
+selected sheet. Unknown saves retain original body/key; acknowledged contact-read
+failure must not PATCH again. Normalize/reset baselines only after scoped current
+read, refuse unchanged repeated save, permit a deliberate new draft, and retain
+required language/budget with optional empty message. Host transient reads keep
+the owner; validation/disposal/denial cannot publish late/private fields. Conflict
+reload is explicit and scoped; verified canonical/converted results end read-only
+without retargeting, and unverified/stale replies cannot reset the form.
+677 frontend units pass,11 added; two native cases prepared/typechecked, not run.
+Backend unchanged; actual role/SQL/merge/native/device checks remain pending.
+[Contract](../04-design/prospect-editor-recovery-local.md).
+
+Selected prospect status/inline recovery,2026-10-28 (AT-05/23/24):
+retain all menu groups/states and four inline editors. Verify original body/
+version/key after changed props/drafts, failed retry preflight, synchronous
+overlap refusal, cancel/Escape locks and acknowledgement-only completion.
+Known conflict rebases preserve unrelated current fields; owned refresh must
+not deadlock on its own lock. Board and metadata transient reads retain the
+same review/editor; current denial masks it. Check result/contact/current IDs,
+fresh same-actor/role proof, disposal and backward-compatible API callbacks.
+666 frontend units pass,13 added; two native status/description cases are
+prepared/typechecked, not run. Full create/editor/conversion and actual role/
+SQL/native/device gates remain pending. Backend rules unchanged.
+[Contract](../04-design/prospect-edit-recovery-local.md).
+
+Selected note/activity/assignment recovery,2026-10-28 (AT-05/23/24):
+verify all current note/activity/assignment fields in their selected drawers,
+immutable original retry after changed draft/parent/options failure, synchronous
+overlap refusal, fresh same-actor/role proof and acknowledgement-only completion.
+Current denial must mask private form/history/parents and abort late callbacks.
+Validate note/assignment receipt contact/action; retain activity ID-only results.
+Explicit assignment refresh must preserve reason/agent/queue, read actual versions,
+recover an initial query failure and reject alias retargeting.653 frontend units
+pass,14 added; four current-label native cases are prepared/typechecked, not run.
+Backend rules unchanged; actual role/SQL/native/device gates remain pending.
+[Contract](../04-design/entry-recovery-local.md).
+
+Selected contact/owner management recovery,2026-10-28 (AT-04/05/23/24):
+retain the selected contextual form and operation fields. Verify exact intent/
+version/proof/key after lost response, synchronous overlap refusal, cancel/
+Escape/edit/refresh locks, fresh same-actor/role proof and acknowledgement-only
+completion. Match preview/receipt IDs, versions, resulting owner and operation;
+reversed merge order must keep ID-correct headings. Alias refresh must offer an
+explicit link without retargeting. Current denial masks private parent/review
+content, lifetime disposal cancels late work and background version refresh
+cannot reset an unresolved command.639 frontend units pass,18 added; two native
+cases are prepared/typechecked, not run. Actual role/SQL/native/device review
+remains pending. Backend rules unchanged. [Contract](../04-design/ownership-recovery-local.md).
+
+Selected public reference form,2026-10-28 (AT-22/23/30):
+verify the optional property-reference field, existing optional message, combined
+normalized4000-codepoint text bound,100-character reference and8192-byte raw UTF-8
+cap. Local rejection must preserve editable inputs and send nothing; unknown
+acknowledgement retries the same bytes/id/time/reference. No staff/source/
+inventory authority enters the payload, and the reference is only enquiry text.
+Extend the existing forbidden-control check to reference text; preserve Unicode,
+multiline text, receipt-only status, disposal and cookie-free public transport.
+558 backend/621 frontend units pass, including11/9 added cases. Three simulator
+cases are prepared/typechecked, not run; actual signed intake/SQL/worker/native/
+device/role checks remain pending. [Contract](../04-design/intake-form-local.md).
+
+Selected import resume/ownership,2026-10-28 (AT-20/21/23/39):
+reopen awaiting/uploading batches, resume with matching file metadata and no
+second batch create, preserve the previous batch when explicitly starting a new
+lot, and bind the composer to its route. Unknown sent metadata must pin its
+original file/fallback/key and bypass only its own child lock on retry; ordinary
+new uploads retain the draft guard. Check synchronous upload/review exclusion,
+preflight versus unknown approval, stale acknowledged callbacks, fresh same-actor
+M/A proof, foreign reads and disposal/denial.612 frontend units pass, including14
+added cases; three current-label browser cases are prepared/typechecked, not
+run. No backend/CSV/atomic/permanent replay rule changed. Actual transfer/SQL/
+native/device/role checks remain pending. [Contract](../04-design/import-resume-local.md).
+
+Selected export operation recovery,2026-10-28 (AT-22/24/29/39):
+verify the opening kind/filters/count, fresh same-actor M/A proof, exact original
+key/body retry after lost response, parent-list loading/error survival, guarded
+cancel/Escape/outside/history/checkbox and acknowledged completion without a
+second job create. Denial must mask old review/abort/refuse stale handlers;
+foreign kind/detail/permit responses fail closed.598 frontend units pass,
+including13 added cases. Two current-label native cases are prepared/typechecked,
+not run; actual job/SQL/worker/transfer/focus/device/role checks remain pending.
+[Contract](../04-design/export-recovery-local.md).
+
+Selected staff retry/editor ownership,2026-10-28 (AT-01/02/38/39):
+preserve D37 selected initial/reset passwords,24h expiry, own change/fresh login,
+confirmed Delete/history and last-admin rules. Check fresh same-actor admin
+before dispatch, synchronous shared profile/security ownership, preflight versus
+unknown response, pinned body/key/version retry and acknowledged completion
+without another write. Mask foreign detail/command responses and authority loss;
+abort old target lifetimes and ignore late callbacks. No secret draft snapshots,
+storage or diagnostics.585 frontend units pass, including12 added cases; two
+browser recovery journeys are prepared/typechecked, not run. Existing selected
+labels are reconciled in the older staff suite. Actual identity/SQL/native gates
+remain pending. [Contract](../04-design/staff-workflow-local.md).
+
+Selected shared unit listing wizard,2026-10-28 (AT-27/31/32/35/36/41):
+verify all five steps and full reviewed location/details/equipment/description,
+known zeros, missing unknowns, exact MAD and one atomic property/draft offer.
+Apartment placement must still require a same-programme floor/type; other unit
+categories can remain direct. Block-only intent cannot silently disappear,
+incompatible types are visible but disabled with complete server paging, and
+existing offers lock identity/placement. Category changes clear incompatible
+types without copying defaults. Cancel uses the drawer guard. Standalone rich
+requirements remain.13 backend/9 frontend cases pass; four PostgreSQL/two native
+cases and a migrated shared unit browser helper are prepared/not run.
+[Source contract and limits](../04-design/unit-listing-workflow-local.md).
+
+Selected dossier directory filters,2026-10-28 (AT-03/04/22/24/29/39):
+verify M/A queue filtering/status totals/paging/export, Agent empty queue and
+UUID-only assignment writes. Enquiry assignee choices must reflect assigned
+users rather than contact ownership, include readable inactive history and
+disappear after contact revocation. Affair creation and modification civil-day
+ranges must intersect before scoped counts/pages; invalid drafts preserve both
+applied ranges and page. Retain legacy response shapes and compact phone/list/
+desktop board behavior.15 backend and8 frontend cases pass; four PostgreSQL and
+two browser cases are prepared/not run. Earlier Contacts browser fixture bodies
+are now runtime-schema validated before a command, still not browser-verified.
+[Scope](../04-design/dossier-directory-local.md).
+
+Selected Contacts directory,2026-10-28 (AT-03/04/22/24/29/39): verify
+current scope before responsibility/role/language/country/creation/linked filters
+and whole-result counts/pages/CSV. Working-dossier counts must match Contact detail,
+including conversion/archive and the Agent assignment restriction; revocation
+must remove private labels/counts/choices. Inactive responsibility is filterable
+without granting assignment. Reject copied/duplicate/invalid parameters, mixed
+legacy counts and changed-filter same-key exports. Check desktop Agent and phone
+M/A filter/reset/empty/denied states and compact cards. Four PostgreSQL cases and
+two browser journeys are prepared, not run.
+[Contract and boundary](../04-design/contact-directory-local.md).
+
+Selected programme phase,2026-10-28 (AT-27/31/32/35/36/41): verify real shared
+agent/manager phase create/edit/read/filter, unknown legacy records, immutable
+original phase/actor/version snapshots, same-key legacy replay and omitted-field
+preservation. Reject copied/duplicate/invalid filters and half-attested projections;
+retain exact legacy shapes and stock/private-owner authority. A direct phase
+change without matching history must fail at commit. Check form capability load/
+reviewed retry, four-fact overview, compact phone image cards/filter sheets and
+phase history across create/edit.23 added backend units and11 frontend cases
+pass; four PostgreSQL cases and one browser journey are prepared/not run.
+[Contract and current limits](../04-design/development-phase-local.md).
+
+Selected dashboard projection,2026-10-27 (AT-18/19/23/36/39): verify complete
+scoped headline/record parity and preview limits, private/copied responsible filters,
+current ownership transfer, immutable closing attribution, UUID-backed catalogue
+interests/link deduplication, exact campaign decimals, no owner/child-stock leakage,
+strict facade queries/errors and authoritative clock boundaries. Four
+[PostgreSQL scenarios](../../backend/tests/test_workspace_reports.py) are prepared,
+not executed. Source SQL/controller evidence and remaining selected-layout/native/
+real-stack/performance work are distinguished in the [contract](../04-design/dashboard-workspace-local.md).
+
+Selected visit-Notes mapping,2026-10-26 (AT-16/23/40): verify bounded separate
+notes creation, interrupted same-key retry, legacy omitted-field preservation,
+explicit clear and immutable true-actor snapshots; reject stale/denied edits and
+mismatched database notes/history. Confirm old-client response compatibility and
+unchanged metadata-free free/busy. The [PostgreSQL cases](../../backend/tests/test_visit_notes.py)
+are prepared, not executed. Connection-forbidden/controller/facade checks are
+recorded separately in [evidence](../03-planning/design-migration-evidence/visit-notes-2026-10-26.json); native/real-stack
+acceptance remains pending.
+
 ## Generated Lead/Deal PDF preparations (2026-10-20)
 
 All twelve supplied working models render a branded preparation sheet with
@@ -354,3 +552,363 @@ copied private links and existing French desktop/mobile/keyboard/touch/200%.
 Browser-engine emulation does not pass actual iOS Safari/assistive-technology
 checks. No SP-17 KPI, real-device, production, load, backup/recovery or human
 approval is implied by the implemented AT-16/17/23 variants.
+
+
+## Selected affair action source coverage,2026-10-29
+
+751 synthetic frontend units pass,24 added for strict intent/identity/receipt/
+version checks, frozen unknown retries, completion-only reads, explicit conflict
+acceptance, all nine inline fields, legacy financing, original dialog callback,
+dismissal and account/role-bound board handoff. Existing exact proposal/period/
+version and full-form cases remain. Two isolated browser cases in
+`frontend/tests/e2e/deal-action-recovery.spec.ts` are prepared/typechecked,
+not run: phone stage lost acknowledgement and desktop inline result-read outage.
+See the [contract](../04-design/deal-action-recovery-local.md). This is not actual
+SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance or
+completion of reservation/outcome controllers.
+
+
+## Selected affair stock recovery source coverage,2026-10-29
+
+762 synthetic frontend units pass,11 added for reserve/release/close/reopen
+original retry and completion-only recovery, coherent parent/offering/target/
+version/fingerprint review, exact money, changed direction/target/contact/
+reservation, explicit conflicts, null inventory, role denial and disposal.
+Reservation/outcome browser helpers use the selected stage menu. Two cases in
+`frontend/tests/e2e/deal-stock-recovery.spec.ts` are prepared/typechecked, not
+run: phone reserve lost acknowledgement and desktop close result-read outage.
+[Contract](../04-design/deal-stock-recovery-local.md). Actual stock concurrency/
+SQL/native/device/focus/zoom/visual/CI/AFTER/product acceptance and broader legacy
+selectors remain pending; no AT-wide closure or backend verification is inferred.
+
+
+## Selected external-stock source coverage,2026-10-29
+
+782 synthetic frontend units pass,20 added for property/unit/programme and M/A
+review/command scope, frozen retry, exact versions/fingerprint, coherent and
+foreign facts/receipts, completion-only recovery/async handoff, known conflicts,
+changed offers, retained hosts/monotonic acceptance, role denial and disposal.
+Actual record/route/facade sources participate. Two cases in
+`frontend/tests/e2e/external-stock-recovery.spec.ts` are prepared/typechecked,
+not run: phone property acknowledged-read outage and desktop programme lost
+acknowledgement. [Contract](../04-design/external-stock-recovery-local.md). No
+actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/product
+acceptance or full AT closure; backend unchanged/not rerun.
+
+
+## Selected inventory record-form source coverage,2026-10-29
+
+804 synthetic frontend units pass,22 added for strict intent routes, original
+body/key/callback, one commit, completion-only reads/async handoff, foreign/stale
+receipts/records, explicit conflicts, exact values/nulls, roles/hydration/source
+outage, protected stale input/dismissal, disposal and verified host installation.
+Three cases in frontend/tests/e2e/inventory-record-recovery.spec.ts are prepared/
+typechecked, not run: phone owner lost acknowledgement, desktop offering read
+outage and phone agent block lost acknowledgement.
+[Contract](../04-design/inventory-record-command-recovery-local.md). Backend
+unchanged/not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/
+CI/AFTER/product acceptance and broad old-selector audit remain pending. No AT-wide
+closure or runtime acceptance is inferred.
+
+
+## Selected programme editor source coverage,2026-10-29
+
+815 synthetic frontend units pass,11 added for all three staff roles, strict
+programme intent, unknown phase/association omission/null/selection, frozen
+request/key/callback, completion-only recovery, explicit comparison/reload, newer
+parent acceptance race, foreign/stale/archived review, normalization, current
+privacy masking, validation/hydration/source outage, denial/disposal and actual
+scoped edit host. Two cases in frontend/tests/e2e/development-edit-recovery.spec.ts
+are prepared/typechecked, not run: phone agent lost acknowledgement and desktop
+agent acknowledged result-read outage.
+[Contract](../04-design/development-edit-recovery-local.md). Backend unchanged/
+not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
+product acceptance and broader selectors remain pending. No AT-wide closure.
+
+
+## Selected programme creation source coverage,2026-10-29
+
+828 synthetic frontend units pass,13 added for all roles, strict fields and real
+route actor/key, frozen original body/key/phase/promoter/callback, one synthetic
+create, completion-only read/UI recovery, foreign receipt/current record, explicit
+known correction, legacy metadata, hydration/validation/source outage, account/
+role/password/picker/capability denial, saved generic fact, stale handlers, double
+dispatch and disposal. Two cases in frontend/tests/e2e/development-creation-recovery.spec.ts
+are prepared/typechecked, not run: phone agent lost acknowledgement and desktop
+agent acknowledged result-read outage.
+[Contract](../04-design/development-creation-recovery-local.md). Backend unchanged/
+not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
+product acceptance and broader legacy selectors remain pending. No AT-wide closure.
+
+
+## Selected property listing source coverage,2026-10-29
+
+848 synthetic frontend units pass,20 added across independent/unit create/edit,
+roles, strict scope/fields, frozen original request/key/placement, atomic receipt
+counters, completion-only recovery, foreign/stale identities/records/hierarchy/
+offers, historical completion, explicit comparison/reload/locked identity choice,
+newer-host race, normalization/zero/invalid numeric dirty state, known correction,
+source/hydration/authority/picker guards, disposal and real host/route ownership.
+Three cases in frontend/tests/e2e/property-listing-recovery.spec.ts are prepared/
+typechecked, not run: phone independent creation lost acknowledgement, phone unit
+drawer creation lost acknowledgement and desktop edit result-read outage.
+[Contract](../04-design/property-listing-recovery-local.md). Backend unchanged/not
+rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/product
+acceptance and broader legacy selectors remain pending. No AT-wide closure.
+
+
+## Selected inventory lifecycle source coverage,2026-10-29
+
+865 synthetic frontend units pass,17 added for both inventory roots/operations,
+M/A/current authority, strict body/path/counter, frozen reason/key/action, stale
+outer controls, one commit, completion-only read/partial parent recovery, exact/
+historical state proof, explicit conflicts, current campaigns/any child, no action
+flip, validation/hydration/source, saved generic denial, double dispatch, deferred
+discard/result disposal, verified host installation and facade rejection. Two
+cases in frontend/tests/e2e/inventory-lifecycle-recovery.spec.ts are prepared/
+typechecked, not run: phone manager property archive lost acknowledgement and
+desktop manager programme restore result-read outage.
+[Contract](../04-design/inventory-lifecycle-recovery-local.md). Backend unchanged/
+not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
+product acceptance and broader legacy selectors remain pending. No AT-wide closure.
+
+
+## Selected prospect/affair archive and restore recovery,2026-10-29
+
+890 synthetic frontend units pass,25 added for exact kind/ID/action/body/counter,
+both operations, current origin identity and assigned-versus-primary authority,
+strict receipt/current proof, historical later state, lost acknowledgement and
+completion-only read/callback recovery. Actual dialog and all four hosts cover
+protected edits/duplicate/dismissal, explicit current comparison, authoritative
+expiry/linked blockers, selection/page retention, verified result installation,
+current-denial projection clearing and disposal. Two native cases in frontend/
+tests/e2e/record-lifecycle-recovery.spec.ts are prepared/typechecked, not run:
+phone prospect archive lost acknowledgement and desktop affair restore result-
+read outage. [Contract](../04-design/record-lifecycle-recovery-local.md). Backend
+unchanged/not rerun. Actual SQL/concurrency/native/device/focus/zoom/visual/CI/
+AFTER/product acceptance and broader legacy selectors remain pending. No AT-wide
+closure.
+
+
+## Selected Finance owner and current-completion cases,2026-10-29
+
+915 synthetic frontend units pass,25 added for all five typed financial intents,
+exact roots/body/version/decimal/null/evidence/receipt identity, current M/A
+origin, strict receipt and current financial proof, historical completion,
+original nested body/key/callback, unknown409, completion-only retries, exact
+current acceptance, read-only/blocked receipt review, local denial masking,
+completion baselines, stale submits, actor-lifetime wiring and disposal. Existing
+Finance field/calculation/confirmation/collection/history/departure cases remain.
+Two cases in frontend/tests/e2e/finance-command-recovery.spec.ts are prepared/
+typechecked, not run: phone new commission lost acknowledgement and desktop
+receipt completion-read outage, retaining the recovery-departure prompt.
+[Contract](../04-design/finance-command-recovery-local.md). Backend unchanged/not
+rerun; actual ledger/SQL/concurrency/native/device/focus/zoom/visual/security/CI/
+AFTER/product acceptance and broader legacy selectors remain pending. No AT-wide
+closure.
+
+
+## Commission creation retry expiry on redesign,2026-10-29
+
+927 frontend units pass,12 added for server-key metadata, pending issuance/body
+ownership, identity loss/disposal, same-key unknown expiry, explicit current
+acceptance, completion-only recovery and actual facade/catchall routing.572
+connection-forbidden backend units pass,14 added for timestamp bounds, M/A scope,
+current authority after waits, retained23-hour replay, simulated25-hour committed
+pruning with unchanged parent, legacy keys and fully stubbed in-process HTTP.
+[Contract](../04-design/finance-creation-keys-local.md).
+
+Three isolated PostgreSQL cases and one native phone case are prepared, not run.
+The phone expiry response is simulated and does not prove actual receipt pruning.
+No AT-wide closure, financial ledger/SQL/concurrency/native/device/security/CI/
+AFTER/product acceptance is inferred. The24-hour receipt contract and selected
+Finance presentation remain; no new schema, ordinary Deal counter/history or
+permission change.
+
+
+## Selected Finance visible-review source,2026-10-29
+
+One existing prepared Chrome case now targets the selected drawer/cards/history,
+actual recognition return focus, explicit current comparison/unknown departure,
+held/denied re-entry and four ordinary Agent tabs. It preserves six widths,
+touch/keyboard/44px/overflow/4.5 contrast and actual200% zoom, measuring the
+portalled surface with nonempty samples;15 manual capture paths are planned.
+Focused ESLint/typecheck and source/AST review pass. The case and every intended
+frame remain **not run**, not rendered/AT-wide acceptance. No production change;
+prior unit/build evidence retained. [Coverage](finance-native-reconciliation.md).
+
+
+## Property detail preservation and field mapping,2026-10-29
+
+932 frontend units pass, five added for existing room orientation on unrelated
+edit/review, current comparison acceptance, null/new-room isolation, visible
+change/clear and explicit category change. The first regression was observed
+failing null versus north before the fix.573 connection-forbidden backend units
+pass, one strict legal room orientation/zero-fact edit case added. Read-only
+mapping accounts for24 detail keys/29 amenities, not all native behavior.
+Two390/1440 browser edit/review/PATCH/readback/no-overflow cases are prepared/
+typechecked, not run. No AT-wide SQL/legacy/rights/stock/file/native/device/CI/
+AFTER/product closure. [Field contract](../04-design/property-field-reconciliation-local.md).
+
+
+## Hierarchy parent context and existing block guard,2026-10-29
+
+938 frontend units pass, six added. Four actual picker cases cover all kinds,
+wrong/mixed-parent refusal, healthy retry, parent changes and retained type/count/
+paging/category/denial semantics. The first new case was observed failing before
+the fix. Two actual wizard-owner cases confirm0 writes for block-without-floor,
+corrected floor-derived block and deliberate direct-programme attachment. Focused
+40 cases and frontend gates pass. [Contract](../04-design/hierarchy-picker-context-local.md).
+Two390/1440 cases simulate foreign read then healthy retry and guard0 POSTs;
+they are prepared/typechecked, not run, and do not prove backend leakage or
+native geometry. No AT-wide SQL/rights/stock/native/device/CI/AFTER/product closure.
+Backend unchanged;573 prior connection-forbidden units retained, not rerun.
+
+
+## Canonical Contact full/inline recovery follow-through,2026-10-29
+
+The eight-field Contact map preserves every phone/e-mail and profile value;
+four Enquiry and nine Deal inline fields retain their separate command owners.
+Eleven added synthetic cases cover original nested body/key/callback ownership,
+completion-only retry, exact-root/counter/method receipts, explicit comparison,
+unknown409, identity/alias/stale/late refusal, full dirty form retention across
+metadata/version changes and denial masking.949 frontend units and frontend
+gates pass. Existing same-version parent reconciliation already favors fresh
+related Contact data; no new root-version rule is introduced.
+
+Three390/1440 native cases prepare real isolated PATCH/readback with lost receipt
+and completion-read failure in Contact/Prospect/Deal surfaces. Prepared/typechecked
+only: no native geometry, SQL race/permission/security/CI/AFTER/product acceptance
+is inferred. Backend unchanged/prior573 units retained.
+[Contract](../04-design/contact-edit-recovery-local.md).
+
+
+## Contact alias projection follow-through,2026-10-29
+
+Two actual workspace regressions demonstrate stale name and archive state through
+a merged Contact URL; both fail before correction. Canonical local full/inline
+saves now show immediately, same-counter authoritative reads win, and another
+survivor requires the scoped root refresh. Current denial masks the record.
+Focused46/final951 frontend units and gates pass; one390px synthetic real-merge/
+retained-alias-read/edit/readback browser case is prepared/typechecked only. No
+actual SQL/merge/scope/native/security/CI/AFTER/product acceptance is inferred.
+[Contract](../04-design/contact-alias-projection-local.md).
+
+
+## AT-40 working-hours recovery follow-through,2026-10-29
+
+An actual-form regression first fails on unlocked controls after interrupted PUT.
+The owner now binds original reviewed policy/hash/version/key/administrator and
+completion, invalidates stale/late previews and requires exact fresh comparison
+before a new preview. Known receipt/read failure does not repeat PUT. Ten added
+synthetic cases cover complete proposal/impact receipt, unknown409, identity,
+disposal, stale host/handlers and retained parent-outage drafts. Focused21/full961
+frontend units and gates pass. Two390/1440 receipt/read-loss native cases are
+prepared/typechecked only; the prior AT-40 case now opens the selected drawer and
+uses current labels. No actual scheduling/SQL/permission/concurrency/native/CI/
+AFTER/product acceptance is inferred. Backend unchanged/prior573 units retained.
+[Contract](../04-design/policy-command-recovery-local.md).
+
+
+## AT-04/05/23/24 selected Contact native-path preparation,2026-10-29
+
+Five existing ownership scenarios now use actual selected Aperçu/Activités,
+management/activity/assignment drawers, attribution disclosure, linked dossiers
+and current archive controls. Permission, exact replay/entry count, true-author,
+relationship, source identity and stale-impact assertions remain. One deal Contact
+timeline segment uses current visible link labels/counts/destinations. Focused
+ESLint/typecheck pass; these scenarios remain prepared, not run. No AT-wide
+native/SQL/security/CI/AFTER/product closure or full helper-consumer acceptance.
+Production unchanged; prior961 frontend/573 backend units retained, not rerun.
+[Path map](contact-native-paths-local.md).
+
+
+## Export file-delivery follow-through,2026-10-29
+
+The new actual-component regression fails before correction on a pending signal
+after list403. Five added cases cover cancellation/current row readiness, read/
+hydration/disposal, known withdrawal versus unrelated pages, fresh identity/role/
+password before permit and refused late blob handoff. Focused31/full966 frontend
+units and gates pass. Two390/1440 prepared native cases simulate metadata denial
+while a permit is held; no real export job, worker or CSV success is substituted.
+Prepared/typechecked only, not run. Backend unchanged/prior573 units retained.
+Actual SQL/native/private-transfer/role-revocation/security/CI/AFTER/product
+acceptance remains pending. [Contract](../04-design/export-delivery-local.md).
+
+
+## Owner full-form recovery follow-through,2026-10-29
+
+Eleven added source cases and the existing owner form assertions cover original
+create/role-add/edit intent and handoff, strict receipts/current reads, fresh
+conflict acceptance, current authority/alias/old-counter refusal, disposal,
+unknown-operation locking and draft retention through host/metadata outages.
+Focused29/full977 frontend units and source gates pass. Three390/1440 native
+recovery journeys and updated older owner/right-portfolio/legal-owner paths are
+prepared/typechecked, not run. Other inventory helper consumers retain unreviewed
+paths. Backend unchanged/prior573 units retained. No AT-wide SQL/native/security/
+CI/AFTER/product or full-goal acceptance inferred.
+[Contract](../04-design/owner-form-recovery-local.md).
+
+
+## Standalone inventory selected native paths,2026-10-29
+
+AT-06/08/23/27/31/39 source scenarios keep exact price/annual comparison, current
+stock/ownership, unrelated agent privacy/403/404, single history write, interrupted
+acknowledgement, real-outage and explicit conflict/role-revocation assertions.
+Selected section/drawer/radio/stepper paths replace removed standalone tabs.
+Focused ESLint/types and AST preservation checks pass. Seven scenarios prepared,
+not run; wider8 shared helper consumers and actual SQL/native/device/security/CI/
+AFTER/product gates pending. Production/prior977 frontend/573 backend evidence
+retained, not rerun. [Path map](inventory-native-paths-local.md).
+
+
+## Programme selected hierarchy/unit paths,2026-10-29
+
+AT-23/31/32/35/36/41's five development source scenarios retain mixed-unit stock,
+per-unit surface/price independence, reusable defaults, whole offering, plain
+briefing/unsafe-script nonexecution, private identity/403/404, authorized hierarchy
+write, exact retry/outage/counter, incomplete input/focus and editor identity.
+Selected scoped structure/filter/offer drawers and explicit discard/current
+comparison replace removed tabs. Focused ESLint/types and AST preservation checks
+pass. Prepared only; actual SQL/native/device/security/CI/AFTER/product and wider
+8 helper consumers remain unaccepted. Production/prior977 frontend/573 backend
+evidence retained. [Path map](development-native-paths-local.md).
+
+
+## Inventory agent action source checks,2026-10-29
+
+Two project permission native source cases now check real selected offer/owner
+actions, unit editor identity and all3 locked placement controls at their current
+step. Area, development/floor/type/offering preservation and private developer/
+404/403 assertions remain. AST retains titles/direct commands/timeouts; ESLint/
+types pass. Native/SQL/actual permission and wider helper acceptance unrun.
+Production/prior977 frontend/573 backend evidence retained.
+[Path map](inventory-native-paths-local.md#agent-permission-follow-through2026-10-29).
+
+
+## Document uploader recovery follow-through,2026-10-30
+
+Two initial actual-component failures establish unknown-file replacement and
+metadata lifetime gaps. Seven added source cases cover original metadata/key/File,
+disposal, observed exact published-version recovery, wrong metadata/ID/opening or
+later actor, writability loss, explicit discard and real pre-permit guard/proof/
+cancellation behavior. Focused23/full984 frontend units and source gates pass.
+Two390/1440 isolated native scenarios prepared/typechecked, not run; no clean
+verdict or real transfer completion is inferred. Backend/prior573 units unchanged.
+Generic file-row/archive/retry/delivery, older native selectors and actual SQL/
+worker/AV/transfer/device/security/CI/AFTER/product acceptance remain pending.
+[Contract](../04-design/document-upload-recovery-local.md).
+
+
+## File row command/delivery source evidence,2026-10-30
+
+Two initial actual-component faults and a later worker-result regression fail
+before correction. Ten added source cases cover original archive/analysis replay,
+newer/missing list rows and later409, acknowledged current read/parent completion,
+read/denial/actor/hydration changes, malformed permit/bytes/current document,
+read-only delivery, disposal and preview cleanup. Final994 frontend units and
+source gates pass. Two390/1440 actual-stack archive scenarios prepared/typechecked,
+not run; no real AV/private-transfer acceptance inferred. Backend unchanged/
+prior573 units retained. Older file helpers and actual SQL/native/device/security/
+CI/AFTER/product acceptance remain pending.
+[Contract](../04-design/file-row-recovery-local.md).

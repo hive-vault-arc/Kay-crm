@@ -23,7 +23,10 @@ export const InternationalPhoneInput = forwardRef<HTMLInputElement, {
   const [preferred, setPreferred] = useState(() => [...countries]
     .sort((a, b) => b.calling_code.length - a.calling_code.length)
     .find(country => value.startsWith(country.calling_code))?.code ?? "MA");
+  const [international, setInternational] = useState(() => !countries.length || value.startsWith("+") && !countries.some(option => value.startsWith(option.calling_code)));
   const wanted = countries.find(country => country.code === preferred) ?? countries[0];
+  const referenced = [...countries].sort((a, b) => b.calling_code.length - a.calling_code.length).find(option => value.startsWith(option.calling_code));
+  if (international || !wanted || value.startsWith("+") && !referenced) return <div className="grid min-w-0 gap-2"><Label htmlFor={props.id ?? id + "-number"}>{label} · Numéro international</Label><Input {...props} id={props.id ?? id + "-number"} ref={ref} type="tel" inputMode="tel" autoComplete="tel" maxLength={48} value={value} onChange={event => { setInternational(true); onChange(event.target.value.trim().replace(/^00/, "+").replace(/[^\d+]/g, "")); }} aria-describedby={[props["aria-describedby"], id + "-fallback"].filter(Boolean).join(" ")} /><p id={id + "-fallback"} role="status" className="text-xs text-muted-foreground">Saisissez le numéro international complet avec « + » ; il sera vérifié à l’enregistrement.</p></div>;
   const country = !value || value.startsWith(wanted.calling_code) ? wanted
     : [...countries].sort((a, b) => b.calling_code.length - a.calling_code.length)
       .find(candidate => value.startsWith(candidate.calling_code)) ?? wanted;

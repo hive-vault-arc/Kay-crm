@@ -19,7 +19,9 @@ export async function importFixture(page: Page, actors: TestActor[]) {
 }
 export async function selectCsv(page: Page, data: Buffer, name = "contacts-synthetiques.csv") {
   const previous = new URL(page.url()).searchParams.get("batch");
-  const choice = page.waitForEvent("filechooser"); await page.getByRole("button", { name: "Choisir un CSV", exact: true }).click();
+  const composer = page.getByRole("form", { name: "Fichier CSV de contacts", exact: true });
+  if (previous && !await composer.getByRole("button", { name: "Parcourir", exact: true }).isVisible()) await page.getByText("Envoyer un fichier corrigé", { exact: true }).click();
+  const choice = page.waitForEvent("filechooser"); await composer.getByRole("button", { name: "Parcourir", exact: true }).click();
   await (await choice).setFiles({ name, mimeType: "text/csv", buffer: data });
   const preview = page.waitForResponse(response => /\/api\/v1\/imports\/[a-f0-9-]+\/preview$/.test(new URL(response.url()).pathname) && response.request().method() === "POST");
   await page.getByRole("button", { name: /^(Envoyer et prévisualiser|Réessayer le fichier)$/ }).click();
@@ -28,6 +30,10 @@ export async function selectCsv(page: Page, data: Buffer, name = "contacts-synth
   await expect(page.getByText("Transfert et aperçu en cours…", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Chargement du lot…", { exact: true })).toHaveCount(0);
   return new URL(page.url()).searchParams.get("batch")!;
+}
+export async function expectImportCounts(page: Page, eligible: number, skipped: number, invalid: number, committed: number) {
+  const counts = page.getByRole("group", { name: "Comptage du lot", exact: true });
+  for (const label of [`${eligible} à créer`, `${skipped} ignorée(s)`, `${invalid} à corriger`, `${committed} créée(s)`]) await expect(counts.getByText(label, { exact: true })).toBeVisible();
 }
 export async function prepareCorrected(page: Page, agent: TestActor, other: TestActor) {
   await selectCsv(page, csv([csvRow("+212600000001", "", "SP18 contact déjà connu synthétique"), csvRow("+212600111001", agent.email), csvRow("+33612345678", "", "SP18 second contact\n synthétique")]), "contacts-corriges-synthetiques.csv");

@@ -59,3 +59,13 @@ test("staff facade rejects credential-bearing success and redacts unknown upstre
     assert.equal((await result.json()).error.code, "DEPENDENCY_UNAVAILABLE");
   }
 });
+
+test("staff detail and mutation facades bind successful responses to the requested account", async () => {
+  const foreign = { ...user, id: "00000000-0000-4000-8000-000000000002" };
+  for (const [key, method, body] of [[`users/${id}`, "GET", undefined], [`users/${id}`, "PATCH", { ...named, expected_version: 1 }], [`users/${id}`, "DELETE", { expected_version: 1 }], [`users/${id}/reset-password`, "POST", { expected_version: 1, admin_password: password, temporary_password: password }]]) {
+    const { relay } = facade({ status: 200, body: method === "GET" ? foreign : { user: foreign } });
+    const input = method === "GET" ? new Request(`${origin}/api/v1/${key}`) : request(key, method, body);
+    const result = await relay(key, input, "request");
+    assert.equal(result.status, 503); assert.deepEqual(await result.json(), { error: { code: "DEPENDENCY_UNAVAILABLE" } });
+  }
+});

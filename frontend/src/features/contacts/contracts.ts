@@ -40,6 +40,7 @@ export const editEnquirySchema = z.object({ expected_version: z.number().int().p
 export const resolveSchema = z.object({ phone: z.string().trim().min(1).max(48) }).strict();
 export const recordLifecycleSchema = z.object({ expected_version: z.number().int().positive(), reason: z.string().trim().min(1).max(1000) }).strict();
 export const recordLifecycleResultSchema = z.object({ id: z.uuid(), version: z.number().int().positive() }).strict();
+export function lifecycleReceiptMatches(id: string, expectedVersion: number, receipt: z.infer<typeof recordLifecycleResultSchema>) { return receipt.id === id && receipt.version > expectedVersion; }
 export const contactSummarySchema = z.object({
   id: z.uuid(), name: z.string().min(1).max(160), type: z.enum(["person", "organization"]),
   primary_agent: agentSchema, primary_phone: z.string().regex(/^\+[1-9][0-9]{6,14}$/), primary_email: z.string().max(254).nullable(), version: z.number().int().positive(),
@@ -65,19 +66,28 @@ export function numberedPage<T extends z.ZodType>(item: T) {
   return z.object({ items: z.array(item).max(100), page: z.number().int().positive(), page_size: z.number().int().min(1).max(100), total: z.number().int().nonnegative(), has_next: z.boolean(), has_previous: z.boolean() }).strict();
 }
 export const enquiriesSchema = numberedPage(enquirySummarySchema).extend({ status_counts: z.record(statusSchema, z.number().int().nonnegative()) });
-export const contactsSchema = numberedPage(contactSummarySchema);
+const directoryContactSchema = contactSummarySchema.extend({ dossier_counts: z.object({ enquiries: z.number().int().nonnegative(), deals: z.number().int().nonnegative() }).strict().optional() });
+export const contactsSchema = numberedPage(directoryContactSchema).extend({ directory_supported: z.literal(true).optional() }).superRefine((value, context) => {
+  if (value.items.some(item => (item.dossier_counts !== undefined) !== (value.directory_supported === true))) context.addIssue({ code: "custom", message: "CONTACT_DIRECTORY_ATTESTATION_REQUIRED" });
+});
+export type DirectoryContact = z.infer<typeof directoryContactSchema>;
 export const agentsSchema = numberedPage(agentSchema);
 export const privateConflictSchema = z.object({ responsible_agent: z.object({ display_name: z.string().min(1).max(160) }).strict() });
 export const duplicateSchema = z.object({ contacts: z.array(z.object({ id: z.uuid(), name: z.string().min(1).max(160) }).strict()).min(1).max(10) });
 export const listQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(1000000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional(),
-  q: z.string().trim().max(160).optional(), sort: z.enum(["-updated_at", "-received_at", "name"]).optional(), status: statusSchema.optional(), source: receivedSourceSchema.optional(),
-  assigned_agent_id: z.uuid().optional(), received_from: z.iso.date().optional(), received_to: z.iso.date().optional(), contact_id: z.uuid().optional(),
+  q: z.string().trim().max(160).optional(), sort: z.enum(["-updated_at", "-received_at", "-created_at", "name"]).optional(), status: statusSchema.optional(), source: receivedSourceSchema.optional(),
+  assigned_agent_id: z.union([z.uuid(), z.literal("unassigned")]).optional(), received_from: z.iso.date().optional(), received_to: z.iso.date().optional(), contact_id: z.uuid().optional(),
   archive: z.enum(["active", "archived", "all"]).optional(),
   record_archive: z.enum(["active", "archived", "all"]).optional(),
   owner_directory: z.literal("true").optional(),
+  primary_agent_id: z.uuid().optional(), linked: z.enum(["enquiries", "deals", "none"]).optional(), role: roleSchema.optional(), created_from: z.iso.date().optional(), created_to: z.iso.date().optional(),
   campaign_source: campaignSchema.optional(), rating: ratingSchema.optional(), country: z.string().regex(/^[A-Z]{2}$/).optional(), language: z.string().trim().min(1).max(60).optional(),
-}).strict().refine(value => !value.received_from || !value.received_to || value.received_from <= value.received_to);
+}).strict().refine(value => !value.received_from || !value.received_to || value.received_from <= value.received_to).refine(value => !value.created_from || !value.created_to || value.created_from <= value.created_to);
+export const contactOnlyFilterKeys = ["primary_agent_id", "linked", "role", "created_from", "created_to"] as const;
+export function validListKind(kind: "contacts" | "enquiries", filters: z.infer<typeof listQuerySchema>) {
+  return kind === "contacts" ? !(filters.status || filters.source || filters.campaign_source || filters.rating || filters.assigned_agent_id || filters.received_from || filters.received_to || filters.sort === "-received_at") : !(filters.owner_directory || contactOnlyFilterKeys.some(key => filters[key] !== undefined) || filters.sort === "-created_at");
+}
 export type Contact = z.infer<typeof contactSchema>;
 export type ContactSummary = z.infer<typeof contactSummarySchema>;
 export type ContactFields = z.infer<typeof contactFieldsSchema>;
@@ -88,7 +98,7 @@ export type StaffRole = "administrator" | "manager" | "agent";
 export function contactRoute(key: string, method: string) {
   if (["contacts", "enquiries"].includes(key)) return method === "GET" || method === "POST";
   if (key === "contacts/resolve-phone") return method === "POST";
-  if (["contacts/assignment-options", "contacts/metadata"].includes(key)) return method === "GET";
+  if (["contacts/assignment-options", "contacts/responsible-options", "enquiries/assigned-options", "contacts/metadata"].includes(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/(timeline|assignment-events)$/.test(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/portfolio$/.test(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/collaborators$/.test(key)) return method === "PUT";

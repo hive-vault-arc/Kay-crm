@@ -1,0 +1,192 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "b981a320e29296762cfb7cb6a36fde360e2b5d10",
+  "scope": "Parent-bound shared hierarchy picker choices preserving selected unit filters/wizard and existing block/floor save guard",
+  "checks": [
+    {
+      "command": "node --test tests/unit/hierarchy-picker-context.test.mjs",
+      "phase": "before fix",
+      "exitCode": 1,
+      "observed": "Shape-valid foreign-parent block page remains enabled; synthetic component response fault, not actual backend leakage"
+    },
+    {
+      "command": "Focused hierarchy/listing rerun",
+      "phase": "intermediate",
+      "exitCode": 1,
+      "observed": "Wrong relative path prevented old fixture metadata edit; old-fixture failure retained; corrected path and fail-fast edit check before final gates"
+    },
+    {
+      "command": "node --test tests/unit/hierarchy-picker-context.test.mjs tests/unit/unit-listing-wizard.test.mjs tests/unit/property-listing-recovery.test.mjs",
+      "phase": "final",
+      "exitCode": 0,
+      "passed": 40
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 938,
+      "additionalCases": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 522,
+      "buttonFiles": 159,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "node design-taste-frontend/scripts/lint.mjs --app --json <changed UI source>",
+      "exitCode": 0,
+      "files": 1,
+      "findings": 0,
+      "boundary": "Static only; no actual inspector/rendered acceptance"
+    },
+    {
+      "command": "Read-only hierarchy/source guard review",
+      "exitCode": 0,
+      "finding": "Existing save validates every prior section and refuses selected block without floor; direct step navigation preserved; actual owner tests now cover guard and direct attachment"
+    },
+    {
+      "command": "Frozen reference/main/protected-state review",
+      "exitCode": 0,
+      "inputs": 254,
+      "protectedUnstagedLessonsAdditions": 35,
+      "motionNoteUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9007,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1295,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check and exact staged allowlist/hash/protected-state review",
+      "exitCode": 0,
+      "stagedFiles": 16,
+      "canonicalSourceHashes": 6
+    }
+  ],
+  "preparedNotRun": {
+    "file": "frontend/tests/e2e/hierarchy-picker-context.spec.ts",
+    "cases": 2,
+    "widths": [
+      390,
+      1440
+    ],
+    "scenarios": [
+      "isolated manager programme/block fixture",
+      "shape-valid simulated foreign-parent read disables and hides choices",
+      "healthy retry restores scoped block",
+      "existing block-without-floor guard emits0 property POSTs",
+      "page no horizontal overflow"
+    ],
+    "trace": false,
+    "video": false,
+    "screenshots": false
+  },
+  "invariants": {
+    "blocksAndTypesMatchRequestedDevelopment": true,
+    "floorsMatchRequestedBlock": true,
+    "mixedPageRefusedWhole": true,
+    "noForeignChoicesRetainedLabelOrPartialPager": true,
+    "noChoiceOrClearMutationFromInvalidPage": true,
+    "healthyRetryRetainsCallerSelection": true,
+    "fullMixedCategoryCountsPagingAndOffPageLabelsPreserved": true,
+    "realDenialPropagatesWithoutInvented403": true,
+    "existingBlockIntentGuardConfirmedNotReplaced": true,
+    "directProgrammeAttachmentRemainsOptional": true,
+    "noNewPhysicalBlockFieldOrAllUnitFloorRequirement": true,
+    "clickableStepsPreserved": true,
+    "noBackendProductionApiSchemaPermissionStockChange": true,
+    "noStylesTokensGlyphsMotionLibrariesChange": true
+  },
+  "retainedNotRerun": {
+    "backendConnectionForbiddenUnits": 573,
+    "checkpoint": "b981a320e29296762cfb7cb6a36fde360e2b5d10",
+    "boundary": "Unchanged backend; not a fresh backend result"
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionUnstaged": true
+  },
+  "notRun": [
+    "actual SQL/legacy/races/rights/stock/file/native/device/focus/zoom/contrast/security/CI/AFTER/product acceptance",
+    "migrations0036/0037"
+  ],
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "status": "Source guard and synthetic evidence only; continue exact Contact/Lead/Deal contexts, settings/job filters, aliases/legacy selectors and P8; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5399,
+      "sha256": "3c37d4140b13518941754dcdc9559da1c16ecfa65af07ce0609494ad537660ca"
+    },
+    {
+      "file": "frontend/src/features/inventory/level-picker.tsx",
+      "bytes": 4116,
+      "sha256": "aceacaf157303064fff74923b58216930a34d29efbd7fdbc4ca59086289a64b8"
+    },
+    {
+      "file": "frontend/tests/unit/hierarchy-picker-context.test.mjs",
+      "bytes": 6776,
+      "sha256": "0fa1f05c31bdcfdcfe53d1bcfefee2ed2d3c2f7856d0aa8273174822c90d9d1a"
+    },
+    {
+      "file": "frontend/tests/unit/property-listing-recovery.test.mjs",
+      "bytes": 25708,
+      "sha256": "b0664b4aec20ff89f0c97ad2e921ea7bd37a67f894e02c65b5e3b13b9474b724"
+    },
+    {
+      "file": "frontend/tests/unit/unit-listing-wizard.test.mjs",
+      "bytes": 15449,
+      "sha256": "14544b2943ed6a7f5b90859a524bb27d592bff312f84bb8f2012421a0f674b80"
+    },
+    {
+      "file": "frontend/tests/e2e/hierarchy-picker-context.spec.ts",
+      "bytes": 4375,
+      "sha256": "8d177e8a5cec4a232f3dd07412944c298321831d4f300b1b4315565b6bcac5f7"
+    }
+  ]
+}

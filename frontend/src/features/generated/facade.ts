@@ -6,9 +6,9 @@ import { boundedJson, frontendOrigin } from "@/lib/auth/facade";
 import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
 import { frenchApiError } from "@/lib/api/errors";
-import { generateBodySchema, generatedContextSchema, generatedHistorySchema, generatedItemSchema, generatedParentSchema } from "./contracts";
+import { generateBodySchema, generatedContextSchema, generatedHistorySchema, generatedHistoryWithActorsSchema, generatedItemSchema, generatedParentSchema } from "./contracts";
 
-const query = generatedParentSchema.extend({ page: z.coerce.number().int().min(1).max(1_000_000).optional() }).strict();
+const query = generatedParentSchema.extend({ page: z.coerce.number().int().min(1).max(1_000_000).optional(), include_actor: z.literal("true").optional() }).strict();
 const known = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "IDEMPOTENCY_CONFLICT", "RATE_LIMITED", "FILE_TOO_LARGE", "FILE_STORAGE_UNAVAILABLE"]);
 
 export async function relayGenerated(key: string, request: Request, requestId: string) {
@@ -18,7 +18,7 @@ export async function relayGenerated(key: string, request: Request, requestId: s
   if (!read && !write) return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url);
   const entries = [...url.searchParams];
-  if (new Set(entries.map(([name]) => name)).size !== entries.length || (read ? !query.safeParse(Object.fromEntries(entries)).success || (key.endsWith("/context") && url.searchParams.has("page")) : entries.length > 0)) return facadeError(422, "VALIDATION_ERROR", requestId);
+  if (new Set(entries.map(([name]) => name)).size !== entries.length || (read ? !query.safeParse(Object.fromEntries(entries)).success || (key.endsWith("/context") && (url.searchParams.has("page") || url.searchParams.has("include_actor"))) : entries.length > 0)) return facadeError(422, "VALIDATION_ERROR", requestId);
   const retryKey = request.headers.get("Idempotency-Key") ?? undefined;
   let body: string | undefined;
   if (write) {
@@ -38,7 +38,7 @@ export async function relayGenerated(key: string, request: Request, requestId: s
       const code = result.success && known.has(result.data.error.code) ? result.data.error.code : "DEPENDENCY_UNAVAILABLE";
       return Response.json({ error: { code, message: frenchApiError(code), field_errors: {}, request_id: requestId } }, { status: code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
     }
-    const result = (write ? generatedItemSchema : key.endsWith("/context") ? generatedContextSchema : generatedHistorySchema).parse(upstream.body);
+    const result = (write ? generatedItemSchema : key.endsWith("/context") ? generatedContextSchema : url.searchParams.has("include_actor") ? generatedHistoryWithActorsSchema : generatedHistorySchema).parse(upstream.body);
     return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

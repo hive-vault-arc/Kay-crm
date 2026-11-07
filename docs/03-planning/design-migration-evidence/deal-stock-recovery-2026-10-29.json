@@ -1,0 +1,186 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "dc052aa0eb064fb06443fdde71a3d102779e597a",
+  "scope": "Selected reserve/release/close/reopen confirmations: strict shared original stock request/result ownership, coherent scoped reviews, protected original action direction and awaited verified UI/prerequisite handoff",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 762,
+      "additionalCases": 11,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic actual reader/command/dialog source harness; no actual app or DB"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 510,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <reservation/outcome/stage menu>",
+      "exitCode": 0,
+      "files": 3,
+      "findings": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8940,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1279,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/deal-stock-recovery.spec.ts",
+      "cases": 2,
+      "scenarios": [
+        "phone reservation lost acknowledgement",
+        "desktop closure acknowledged result-read outage"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedDedicatedConfirmationsAndSeparateNextStage": true,
+    "originatingActorRoleFirstRetryReviewAndCompletion": true,
+    "strictFourStockIntentsAndFrozenOriginalKey": true,
+    "bracketedParentVersionOfferingAndStockVersions": true,
+    "exactAmountsDateFingerprintAndReasons": true,
+    "unknownDismissalInputAndRefreshProtection": true,
+    "changedTargetContactReservationDirectionReadOnly": true,
+    "acknowledgedCompletionOnlyWithAwaitedUICallback": true,
+    "verifiedPrerequisiteHandoffWithoutUnownedReload": true,
+    "denialDisposalAndLateWorkFencing": true,
+    "backendAuthorityConcurrentStockHistoryFinanceReceiptRetentionUnchanged": true,
+    "noPersistentBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Manager external stock outcomes",
+    "Remaining exact domain fields/actions/context reconciliation",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/account/private configuration/customer records/services/workers/scanners/simulator/import/export/transfer access",
+    "Migrations0036/0037 or other migration execution",
+    "Actual SQL/concurrent stock/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4872,
+      "sha256": "c9f502f113b8c35c85d3d59ded2dc2c448680a7c410317e3eb5da49af341df1b"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-command-intent.ts",
+      "bytes": 4034,
+      "sha256": "420d21af6bff0b77ee5004e705a78ba5db7be53a79bddf3ce3cdf033968a2133"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-stage-menu.tsx",
+      "bytes": 8656,
+      "sha256": "f6df3054e18a03062eedbd52bdecd3622b0f8b395b7a7534b2ca02a77e2689ef"
+    },
+    {
+      "file": "frontend/src/features/deals/outcome-panel.tsx",
+      "bytes": 11432,
+      "sha256": "6dde53ec0bc393e483e0a08d3efccf9940125d7c7671b040d434a911913cd9ff"
+    },
+    {
+      "file": "frontend/src/features/deals/reservation-panel.tsx",
+      "bytes": 10122,
+      "sha256": "9737dda387de8f84dc8eb58b902c53ad0c0244b4544214a2098e29cb06c6fb2b"
+    },
+    {
+      "file": "frontend/src/features/deals/use-deal-command.ts",
+      "bytes": 11205,
+      "sha256": "b3086474b518b5345819b5c75ee293d3f68ce7544998c9c3c944252678429f14"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-stock-review.ts",
+      "bytes": 1624,
+      "sha256": "72b6d0bc75a3b11e4397be71c77ef2af1a2a989c488865ddfb8c5547814972af"
+    },
+    {
+      "file": "frontend/src/features/deals/use-deal-stock-review.ts",
+      "bytes": 2531,
+      "sha256": "2125dd921936b61a5792fa2aa6e33fdb562bd71a24e560643ed0fa05c294b3ed"
+    },
+    {
+      "file": "frontend/tests/helpers/outcomes.ts",
+      "bytes": 3692,
+      "sha256": "9c52d39054ef8f3da522f3516c3636f230c72823cec7afdea68298b0eb0759d7"
+    },
+    {
+      "file": "frontend/tests/helpers/reservations.ts",
+      "bytes": 2988,
+      "sha256": "5c4dc320e8736c85b9e9737cb9029b9db2bcbc57c471981b39b4a7ee60770836"
+    },
+    {
+      "file": "frontend/tests/unit/deal-action-fixtures.mjs",
+      "bytes": 4322,
+      "sha256": "bded91b8e384f481adb6a2c5c0136cefd9b51dde9e817fdd2a355c3fd4e10805"
+    },
+    {
+      "file": "frontend/tests/unit/deal-stock-fixtures.mjs",
+      "bytes": 7250,
+      "sha256": "7f0f5705167b1170ed3348c9820af0cc273075d7884bde252ea4c6f5789157b7"
+    },
+    {
+      "file": "frontend/tests/unit/deal-stock-recovery.test.mjs",
+      "bytes": 8672,
+      "sha256": "ce4ba9df0da729f078b1adf2ef428705742d2b68063288e2248f89478b0b12f6"
+    },
+    {
+      "file": "frontend/tests/e2e/deal-stock-recovery.spec.ts",
+      "bytes": 3791,
+      "sha256": "06d600216f088b598ba1cb2df23af77f4fbac675ce293f5ff5dddbc41f3dba4a"
+    }
+  ]
+}

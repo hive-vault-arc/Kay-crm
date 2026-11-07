@@ -3,6 +3,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from io import BytesIO
+from pathlib import Path
 from uuid import UUID, uuid4
 
 import pytest
@@ -15,6 +16,8 @@ from app.files.models import DocumentVersion
 from app.files.service import document_command, issue_permit, list_documents, read_document
 from app.files.storage import PrivateStorage
 from app.generated import service as generated_service
+from app.generated.appendix import AppendixUnavailable
+from app.generated.catalog import BY_CODE
 from app.generated.contracts import GenerateRequest
 from app.generated.service import context, generate, history
 from app.identity.security import IdentityError, csrf_token
@@ -211,6 +214,54 @@ def test_same_key_concurrent_generation_has_one_result(settings, database):
         )
     assert results[0]["id"] == results[1]["id"]
     assert history(database, token, "enquiry", eid, 1)["total"] == 1
+
+
+@pytest.mark.parametrize("kind,code", [("enquiry", "01"), ("deal", "01"), ("deal", "10")])
+def test_retained_pdf_receipt_survives_new_appendix_dependency_failure(
+    settings, database, monkeypatch, kind, code
+):
+    """Prepared real-stack case: an old result must not depend on new renderer assets."""
+    _, token, contact, enquiry = setup(settings, database)
+    if code == "10":
+        _, token = actor(settings, database, "manager")
+    pid = enquiry if kind == "enquiry" else UUID(run(settings, database, token, new(contact))["id"])
+    body = GenerateRequest(parent_kind=kind, parent_id=pid, template_code=code, values={})
+    key = uuid4()
+    retained = (
+        Path(generated_service.__file__).parent / "templates" / BY_CODE[code].source
+    ).read_bytes()
+    monkeypatch.setattr(generated_service, "render_pdf", lambda *_: retained)
+    created = generate(database, settings, token, key, body)
+    storage = PrivateStorage(settings)
+    with database.session() as session:
+        before = session.get(DocumentVersion, UUID(created["version_id"]))
+        signature = before.object_key, before.size_bytes, before.sha256
+    assert storage.read(*signature) == retained
+
+    def unavailable(*_):
+        raise AppendixUnavailable("APPENDIX_UNAVAILABLE")
+
+    def no_storage(*_):
+        raise AssertionError("REPLAY_MUST_NOT_OPEN_STORAGE")
+
+    monkeypatch.setattr(generated_service, "render_pdf", unavailable)
+    monkeypatch.setattr(generated_service, "PrivateStorage", no_storage)
+    assert generate(database, settings, token, key, body) == created
+    with pytest.raises(IdentityError, match="^IDEMPOTENCY_CONFLICT$"):
+        generate(
+            database,
+            settings,
+            token,
+            key,
+            body.model_copy(update={"values": {"client_name": "Synthetic changed body"}}),
+        )
+    with pytest.raises(IdentityError, match="^DEPENDENCY_UNAVAILABLE$"):
+        generate(database, settings, token, uuid4(), body)
+    with database.session() as session:
+        after = session.get(DocumentVersion, UUID(created["version_id"]))
+        assert (after.object_key, after.size_bytes, after.sha256) == signature
+    assert storage.read(*signature) == retained
+    assert history(database, token, kind, pid, 1)["total"] == 1
 
 
 def test_storage_interruption_rolls_back_and_same_key_retries(settings, database, monkeypatch):

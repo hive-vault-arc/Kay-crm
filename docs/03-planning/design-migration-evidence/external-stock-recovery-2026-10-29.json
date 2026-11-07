@@ -1,0 +1,191 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "051060055b86c51660b5dd1ace218146da48c974",
+  "scope": "Selected manager external stock results: strict original target/offering/actor command ownership, coherent facts and validated result, retained property/programme hosts with monotonic handoff and scoped route lifetimes",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 782,
+      "additionalCases": 20,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Actual reader/controller/dialog/facade/record/route sources in synthetic harnesses; no actual app or DB"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 511,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <external action/property/programme record>",
+      "exitCode": 0,
+      "files": 3,
+      "findings": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8948,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1280,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/external-stock-recovery.spec.ts",
+      "cases": 2,
+      "scenarios": [
+        "phone property acknowledged result-read outage",
+        "desktop programme lost acknowledgement"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedOfferActionDialogAndExistingLayout": true,
+    "currentOriginatingManagerOrAdministratorProof": true,
+    "strictOriginalTargetOfferingBodyVersionsFingerprintAndKey": true,
+    "coherentBracketedReviewAndReadonlyReplacement": true,
+    "receiptKindIdentityOfferingAndNewerVersion": true,
+    "acknowledgedCompletionOnlyAndAwaitedHandoff": true,
+    "sourceOutageDraftAndProtectedOfferingRetention": true,
+    "monotonicVerifiedHostAcceptance": true,
+    "currentDenialMasksPrivateWork": true,
+    "synchronousInputDismissalScopeAndDisposalFencing": true,
+    "backendAuthorityStockFinanceHistoryRetentionUnchanged": true,
+    "noPersistentBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Generic inventory command owner and development-creation-wizard.tsx/development-editor.tsx/hierarchy-editor.tsx/offering-editor.tsx/owner-editor.tsx/property-listing-wizard.tsx consumers",
+    "Remaining exact domain field/action/context reconciliation",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/accounts/private configuration/customer records/services/workers/scanners/simulator/import/export/transfer access",
+    "Migrations0036/0037 or other migration execution",
+    "Actual SQL/concurrent stock/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4923,
+      "sha256": "aa1eb97146c88075caa437cd9b3be754ab6ef338ae2644f994f6fbf1bd3489ff"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/projects/[id]/edit/page.tsx",
+      "bytes": 1066,
+      "sha256": "1145401296bb19f71cdd813b2e5ff65d560b1ccae2bb06da40c47b1e0337302c"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/projects/[id]/page.tsx",
+      "bytes": 1351,
+      "sha256": "d6f2153a5a6902d22e45f0c62fa3adbba94ecc7a868cda9bbbb6ff11e798651a"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/projects/properties/[id]/page.tsx",
+      "bytes": 946,
+      "sha256": "5373d8def34fc5356be91fa51946ceaf006005a8a60c9623141515b4c6399b06"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-record.tsx",
+      "bytes": 10633,
+      "sha256": "2f8f1ca985043c08fd6869ea479d28147f3dd3f960428b92fe164becb4f48472"
+    },
+    {
+      "file": "frontend/src/features/inventory/external-outcome.tsx",
+      "bytes": 8945,
+      "sha256": "206c253298c11a37e2bb0a592741144192bb3f073fb69269d7fb5570b3fd6e0c"
+    },
+    {
+      "file": "frontend/src/features/inventory/facade.ts",
+      "bytes": 8600,
+      "sha256": "d7c7ec9243cb1b6f6980ab0a20166eb3a12fa7d43ff25fbd967cefc8c3770c57"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-record.tsx",
+      "bytes": 9500,
+      "sha256": "6a3887f8b047d4563303f766a71f959de64022c8a0379356e8c1ae5d74fe21c3"
+    },
+    {
+      "file": "frontend/src/features/inventory/external-stock-review.ts",
+      "bytes": 2798,
+      "sha256": "4f354f47328eaa4687d38674630951be963363077315f5a7772fd1a757f3dae3"
+    },
+    {
+      "file": "frontend/src/features/inventory/record-scope.ts",
+      "bytes": 679,
+      "sha256": "67cdfa35fc064c39b661e770c638cabd4586ddbfa7a52105922d62be0f49cc29"
+    },
+    {
+      "file": "frontend/src/features/inventory/use-external-outcome-command.ts",
+      "bytes": 10200,
+      "sha256": "576bb561362251c00163465d8598ec652a23866cc1ac6629c41e5f39c892babd"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 32362,
+      "sha256": "6467fef8b9203712f60d1f1695411d6d6a3a60c8bd145af6c645214151ca434f"
+    },
+    {
+      "file": "frontend/tests/unit/external-stock-fixtures.mjs",
+      "bytes": 10910,
+      "sha256": "ab271b76607ba8a1c5b775ba713f6bc8e85afaa7102889b625e2143a46037a08"
+    },
+    {
+      "file": "frontend/tests/unit/external-stock-recovery.test.mjs",
+      "bytes": 22579,
+      "sha256": "77ddc27bb8e3ad95b25b4ea847fab618acaba83acb74c0d66fdbc910956ce828"
+    },
+    {
+      "file": "frontend/tests/e2e/external-stock-recovery.spec.ts",
+      "bytes": 4697,
+      "sha256": "6a0280f9c9c410f410b74dd182fd8c4b630325e32420ae7d888fe8d915de83c7"
+    }
+  ]
+}

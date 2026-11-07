@@ -1,69 +1,88 @@
 "use client";
-import { useCallback, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { SearchIcon } from "@/components/icons";
+import { RecordEntry } from "@/components/shared/record-entry";
+import { RecordSection } from "@/components/shared/record-workspace";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { contactSchema } from "@/features/contacts/contracts";
+import { activityLabels, dealActivityLabels, timelineSchema } from "@/features/contacts/ownership-contracts";
 import { NumberedPages } from "@/features/contacts/numbered-pages";
 import { RecordError } from "@/features/contacts/record-states";
 import { queryPath, useQuery } from "@/features/contacts/use-query";
-import { currentRecord } from "@/features/realtime/current-record";
 import { useHydrated } from "@/hooks/use-hydrated";
-import { apiGet, ApiError } from "@/lib/api/client";
-import { apiCommand } from "@/lib/api/command";
-import type { Offering } from "@/features/inventory/contracts";
-import { detailSchema, requirementsSchema, resultSchema, type Requirement } from "./contracts";
+import { ApiError } from "@/lib/api/client";
+import { formatInstant, formatMAD } from "@/lib/format";
+import { detailSchema, requirementsSchema, type RequirementSummary } from "./contracts";
+import { readRequirement, REQUIREMENT_PAGE_SIZE, requirementDenied, requirementPageValid, restoreRequirementReturn, validRequirement, type RequirementReturn, type RequirementSelection } from "./model";
+import { OfferingFacts } from "./offering-card";
 import { RequirementFacts } from "./requirement-facts";
 import { RequirementForm } from "./requirement-form";
-import { OfferingSearch } from "./offering-search";
-import { OfferingFacts } from "./offering-card";
+import { ShortlistForm } from "./shortlist-form";
+import type { RequirementDenied, RequirementResult, RequirementSaved } from "./use-requirement-command";
 
-export function RequirementPanel({ contactId, writable, compact = false }: { contactId: string; writable: boolean; compact?: boolean }) {
-  const [page, setPage] = useState(1); const [selected, setSelected] = useState<string>(); const [notice, setNotice] = useState("");
-  const heading = useRef<HTMLHeadingElement>(null); const hydrated = useHydrated();
-  const list = useQuery(queryPath("requirements", { contact_id: contactId, page, page_size: 10 }), requirementsSchema);
-  function close() { setSelected(undefined); requestAnimationFrame(() => heading.current?.focus()); }
-  if (list.error) return <section className="grid min-w-0 gap-4" aria-label="Recherches du contact"><h2 className="text-section font-medium">Recherches du contact</h2><RecordError error={list.error} retry={list.refresh} /></section>;
-  return <section className={compact ? "surface grid min-w-0 gap-3" : "surface grid min-w-0 gap-6"} aria-label="Recherches du contact"><h2 tabIndex={-1} ref={heading} className={compact ? "text-base font-medium" : "text-section font-medium"}>Recherches du contact</h2><p className={compact ? "text-sm text-muted-foreground" : undefined}>Chaque recherche est indépendante. Les choix et avis restent liés à cette recherche, pas à toutes les demandes du contact.</p>{!writable ? <p className="text-muted-foreground">Contact archivé : recherches conservées en lecture seule. Restaurez le contact pour les modifier.</p> : null}{notice ? <p role="status" className="text-success">{notice}</p> : null}
-    {list.error ? <RecordError error={list.error} retry={list.refresh} /> : !list.value ? <p role="status">Chargement des recherches…</p> : <>{!compact || list.value.total > 0 ? <p className="text-sm text-muted-foreground">{list.value.total} recherche(s) accessible(s).</p> : null}{list.value.items.length ? <ul className="grid min-w-0 gap-2">{list.value.items.map(row => <li key={row.id}><Button action={selected === row.id ? "select" : "search"} variant="outline" className="h-auto min-h-control max-w-full items-start justify-start whitespace-normal text-left aria-pressed:border-ring aria-pressed:bg-accent aria-pressed:text-accent-foreground" disabled={!hydrated || selected === "new"} aria-pressed={selected === row.id} onClick={() => { setSelected(row.id); setNotice(""); }}><span className="min-w-0 wrap-anywhere">{row.title} ({row.intent === "sale" ? "achat" : "location"}, {row.shortlist_count} offre(s))</span></Button></li>)}</ul> : <p>Aucune recherche enregistrée. Ajoutez un besoin d’achat ou de location pour commencer.</p>}{!compact || list.value.total > 10 ? <NumberedPages label="Pages des recherches" page={page} total={list.value.total} size={10} change={next => { setPage(next); close(); }} /> : null}</>}
-    {writable && !selected ? <Button action="create" className="justify-self-start" disabled={!hydrated || Boolean(list.error) || !list.value} onClick={() => { setSelected("new"); setNotice(""); }}>Nouvelle recherche</Button> : null}
-    {selected === "new" && writable ? <RequirementForm contactId={contactId} cancel={close} saved={async id => { await apiGet(`/api/v1/requirements/${id}`, detailSchema); setSelected(id); setNotice("Recherche enregistrée."); list.refreshQuietly(); }} /> : selected ? <RequirementDetail key={selected} id={selected} contactId={contactId} writable={writable} close={close} changed={list.refreshQuietly} /> : null}
+export function RequirementPanel(props: { contactId: string; writable: boolean; compact?: boolean }) { return <RequirementBoundary key={props.contactId} {...props} />; }
+function RequirementBoundary(props: { contactId: string; writable: boolean; compact?: boolean }) {
+  const [denial, setDenial] = useState<ApiError>(), [generation, setGeneration] = useState(0);
+  return denial ? <RecordError error={denial} retry={() => { setGeneration(value => value + 1); setDenial(undefined); }} /> : <RequirementContext key={generation} {...props} denied={setDenial} />;
+}
+function RequirementContext({ contactId, writable, compact, denied }: { contactId: string; writable: boolean; compact?: boolean; denied: RequirementDenied }) {
+  const parent = useQuery(`/api/v1/contacts/${contactId}`, contactSchema);
+  const authority = parent.error && requirementDenied(parent.error) ? parent.error : undefined;
+  useEffect(() => { if (authority) denied(authority); }, [authority, denied]);
+  return parent.error ? <RecordError error={parent.error} retry={parent.refresh} /> : !parent.value ? <p role="status">Chargement du contact et de ses recherches…</p> : <RequirementWorkspace key={parent.value.id} contactId={parent.value.id} writable={writable && !parent.value.archived_at} compact={compact} denied={denied} />;
+}
+export function RequirementWorkspace({ contactId, writable, compact = false, denied }: { contactId: string; writable: boolean; compact?: boolean; denied: RequirementDenied }) {
+  const [page, setPage] = useState(1), [historyPage, setHistoryPage] = useState(1), [revision, setRevision] = useState(0), [selection, setSelection] = useState<RequirementSelection>(), [notice, setNotice] = useState("");
+  const scope = useRef<HTMLDivElement>(null), heading = useRef<HTMLHeadingElement>(null), restore = useRef<RequirementReturn | undefined>(undefined), hydrated = useHydrated();
+  const query = useQuery(queryPath("requirements", { contact_id: contactId, page, page_size: REQUIREMENT_PAGE_SIZE }), requirementsSchema, revision);
+  const invalid = query.value && (!requirementPageValid(query.value, page) || query.value.items.some(item => item.contact_id !== contactId));
+  const authority = query.error && requirementDenied(query.error) ? query.error : undefined;
+  useEffect(() => { if (authority) denied(authority); }, [authority, denied]);
+  const restoreFocus = useCallback((readyId?: string) => { if (!selection && restore.current && restoreRequirementReturn(scope.current, heading.current, restore.current, readyId, Boolean(query.value))) restore.current = undefined; }, [selection, query.value]);
+  useEffect(() => { restoreFocus(); }, [restoreFocus]);
+  function open(value: RequirementSelection, action: string) { if (!hydrated || !writable) return; restore.current = { id: value.id, offeringId: value.offeringId, action, scroll: scope.current?.closest<HTMLElement>(".kay-drawer-body")?.scrollTop ?? 0 }; setSelection(value); setNotice(""); }
+  function close() { setSelection(undefined); }
+  async function saved(result: RequirementResult, signal: AbortSignal) {
+    const current = await readRequirement(result.id, contactId, signal);
+    if (current.version < result.version) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503);
+    if (signal.aborted) return;
+    close(); setNotice("Recherche, sélection ou avis enregistré."); setRevision(value => value + 1); query.refresh();
+  }
+  return <div ref={scope} className={compact ? "grid min-w-0 gap-4" : "grid min-w-0 gap-5"}>
+    {authority ? <RecordError error={authority} /> : selection ? selection.id ? <RequirementEditor key={`${selection.id}:${selection.mode}:${selection.offeringId ?? "new"}`} selection={selection} contactId={contactId} writable={writable} denied={denied} saved={saved} cancel={close} /> : <RequirementForm contactId={contactId} writable={writable} denied={denied} saved={saved} cancel={close} /> : <>
+      <RecordSection title="Recherches du contact" count={!query.error && !invalid ? query.value?.total : undefined} headingRef={heading} action={writable ? <Button action="create" type="button" disabled={!hydrated || !query.value || Boolean(query.error) || Boolean(invalid)} onClick={() => open({ mode: "edit" }, "create")}>Nouvelle recherche</Button> : undefined} description="Chaque recherche garde ses propres critères, offres sélectionnées et avis.">
+        {!writable ? <p className="text-sm text-muted-foreground">Recherches conservées en lecture seule pour ce dossier.</p> : null}{notice ? <p role="status" className="text-sm text-success">{notice}</p> : null}
+        {query.error || invalid ? <RecordError error={query.error ?? new ApiError("DEPENDENCY_UNAVAILABLE", 503)} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des recherches…</p> : <>
+          {query.value.items.length ? <ul className="grid min-w-0 gap-3">{query.value.items.map(item => <li key={item.id} data-requirement-id={item.id}><RecordEntry title={item.title} icon={SearchIcon} status={<Badge variant="neutral">{item.intent === "sale" ? "Achat" : "Location"}</Badge>} meta={[{ label: "Budget d’origine", value: <>De {formatMAD(item.budget_min_mad)} à {formatMAD(item.budget_max_mad)}{item.budget_period === "month" ? " / mois" : item.budget_period === "year" ? " / an" : ""}</> }, ...(item.intent === "rental" ? [{ label: "Comparaison annuelle", value: <>De {formatMAD(item.annual_budget_min_mad)} à {formatMAD(item.annual_budget_max_mad)}</> }] : [])]} actions={writable ? <><Button action="edit" type="button" variant="quiet" disabled={!hydrated} onClick={() => open({ id: item.id, mode: "edit" }, "edit")}>Modifier</Button><Button action="select" type="button" variant="outline" disabled={!hydrated} onClick={() => open({ id: item.id, mode: "shortlist" }, "select")}>Sélectionner une offre</Button><Button action="create" variant="quiet" asChild><Link href={`/deals/new?contact_id=${contactId}&requirement_id=${item.id}`}>Créer une affaire</Link></Button></> : undefined} related={item.shortlist_count ? <RequirementShortlist key={item.id} value={item} contactId={contactId} writable={writable} denied={denied} revision={revision} ready={restoreFocus} edit={offeringId => open({ id: item.id, mode: "shortlist", offeringId }, "edit")} /> : undefined}>{item.criteria.some(criterion => criterion.value !== null) ? <RequirementFacts compact value={item} /> : null}</RecordEntry></li>)}</ul> : <p className="text-sm text-muted-foreground">Aucune recherche sur cette page. Ajoutez un besoin d’achat ou de location pour commencer.</p>}
+          {query.value.has_previous || query.value.has_next || page > 1 ? <NumberedPages compact page={page} total={query.value.total} size={REQUIREMENT_PAGE_SIZE} change={setPage} label="Pages des recherches" /> : null}
+        </>}
+      </RecordSection><RequirementHistory contactId={contactId} page={historyPage} changePage={setHistoryPage} denied={denied} revision={revision} />
+    </>}
+  </div>;
+}
+export function RequirementEditor({ selection, contactId, writable, denied, saved, cancel }: { selection: RequirementSelection; contactId: string; writable: boolean; denied: RequirementDenied; saved: RequirementSaved; cancel: () => void }) {
+  const query = useQuery(`/api/v1/requirements/${selection.id}`, detailSchema);
+  const invalid = query.value && (!validRequirement(query.value, selection.id!, contactId) || Boolean(selection.offeringId && !query.value.shortlist.some(item => item.offering.id === selection.offeringId)));
+  useEffect(() => { if (query.error && requirementDenied(query.error)) denied(query.error); }, [query.error, denied]);
+  return query.error || invalid ? <div className="grid min-w-0 gap-4"><RecordError error={query.error ?? new ApiError("DEPENDENCY_UNAVAILABLE", 503)} retry={query.refresh} /><Button action="back" type="button" variant="quiet" onClick={cancel}>Retour aux recherches</Button></div> : !query.value ? <div className="grid min-w-0 gap-4"><p role="status">Chargement de la recherche actuelle…</p><Button action="back" type="button" variant="quiet" onClick={cancel}>Retour aux recherches</Button></div> : selection.mode === "edit" ? <RequirementForm contactId={contactId} value={query.value} writable={writable} saved={saved} denied={denied} cancel={cancel} /> : <ShortlistForm value={query.value} originalId={selection.offeringId} writable={writable} saved={saved} denied={denied} cancel={cancel} />;
+}
+export function RequirementShortlist({ value, contactId, writable, denied, edit, ready, revision }: { value: RequirementSummary; contactId: string; writable: boolean; denied: RequirementDenied; edit: (id: string) => void; ready: (id: string) => void; revision: number }) {
+  const hydrated = useHydrated(), query = useQuery(`/api/v1/requirements/${value.id}`, detailSchema, revision);
+  const invalid = query.value && (!validRequirement(query.value, value.id, contactId) || query.value.version < value.version);
+  useEffect(() => { if (query.error && requirementDenied(query.error)) denied(query.error); }, [query.error, denied]);
+  useEffect(() => { if (query.value || query.error) ready(value.id); }, [query.value, query.error, value.id, ready]);
+  return <section className="grid min-w-0 gap-3" aria-label={`Offres sélectionnées · ${value.title}`}>
+    {query.error || invalid ? <RecordError error={query.error ?? new ApiError("DEPENDENCY_UNAVAILABLE", 503)} retry={query.refresh} /> : !query.value ? <p role="status">Chargement de la sélection…</p> : <><h4 className="text-sm font-medium">Offres sélectionnées · {query.value.shortlist_count}</h4><ul className="grid min-w-0 gap-4">{query.value.shortlist.map(item => <li key={item.offering.id} data-shortlist-id={item.offering.id} className="border-t pt-4 first:border-0 first:pt-0"><RecordEntry variant="related" title={item.offering.target?.label || item.offering.target?.reference || "Offre sélectionnée"} status={<Badge variant="neutral">{item.offering.kind === "sale" ? "Vente" : item.offering.kind === "rental" ? "Location" : "Vacances"}</Badge>} meta={[{ label: "Référence", value: item.offering.target?.reference || "Non vérifiable" }]} actions={writable ? <><Button action="edit" type="button" variant="quiet" disabled={!hydrated} onClick={() => { if (hydrated && writable) edit(item.offering.id); }}>Modifier l’avis / retirer</Button><Button action="create" variant="quiet" asChild><Link href={`/deals/new?contact_id=${contactId}&requirement_id=${value.id}&offering_id=${item.offering.id}`}>Créer une affaire avec cette offre</Link></Button></> : undefined}><p className="whitespace-pre-wrap wrap-anywhere">{item.feedback || "Sans avis enregistré."}</p><details className="kay-entry-note"><summary>Détails de l’offre exacte</summary><div className="pt-3"><OfferingFacts offering={item.offering} /></div></details></RecordEntry></li>)}</ul>{!query.value.shortlist.length ? <p className="text-sm text-muted-foreground">Aucune offre sélectionnée.</p> : null}</>}
   </section>;
 }
-
-function RequirementDetail({ id, contactId, writable, close, changed }: { id: string; contactId: string; writable: boolean; close: () => void; changed: () => void }) {
-  const query = useQuery(`/api/v1/requirements/${id}`, detailSchema);
-  const [fresh, setFresh] = useState<Requirement>(); const [editing, setEditing] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState<ApiError>(); const [notice, setNotice] = useState("");
-  const attempt = useRef({ key: "", fingerprint: "" }); const value = currentRecord(query.value, fresh, id);
-  const focusEdit = useRef(false);
-  const restoreEditFocus = useCallback((node: HTMLButtonElement | null) => {
-    if (node && focusEdit.current) { focusEdit.current = false; node.focus(); }
-  }, []);
-  const shortlistHeading = useRef<HTMLHeadingElement>(null);
-  function endEdit() { focusEdit.current = true; setEditing(false); }
-  async function reload() { const current = await apiGet(`/api/v1/requirements/${id}`, detailSchema); setFresh(current); return current; }
-  async function mutate(offering: Offering, feedback?: string | null, remove = false) {
-    if (!value || busy) return;
-    const body = remove ? { expected_version: value.version } : { expected_version: value.version, offering_id: offering.id, expected_offering_version: offering.version, feedback: feedback ?? null };
-    const path = `/api/v1/requirements/${id}/shortlist${remove ? `/${offering.id}` : ""}` as const;
-    const fingerprint = JSON.stringify({ path, body });
-    if (attempt.current.fingerprint !== fingerprint) attempt.current = { key: crypto.randomUUID(), fingerprint };
-    setBusy(true); setError(undefined); setNotice("");
-    try { await apiCommand(path, body, resultSchema, attempt.current.key, remove ? "DELETE" : "POST"); await reload(); changed(); setNotice(remove ? "Offre retirée de cette sélection." : "Sélection et avis enregistrés."); if (remove) requestAnimationFrame(() => shortlistHeading.current?.focus()); }
-    catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
-    finally { setBusy(false); }
-  }
-  if (query.error) return <RecordError error={query.error} retry={query.refresh} />;
-  if (error && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED"].includes(error.code)) return <RecordError error={error} />;
-  if (!value) return <p role="status">Chargement de la recherche…</p>;
-  return <section className="grid min-w-0 gap-6 border-t pt-6" aria-label="Recherche sélectionnée">{editing && writable ? <RequirementForm key={`${value.id}:${value.version}`} contactId={contactId} value={value} cancel={endEdit} saved={async () => { await reload(); endEdit(); changed(); setNotice("Recherche enregistrée."); }} /> : <><RequirementFacts value={value} /><div className="flex flex-wrap gap-2">{writable ? <Button action="edit" ref={restoreEditFocus} type="button" disabled={busy} onClick={() => { setEditing(true); setNotice(""); }}>Modifier la recherche</Button> : null}<Button action="close" type="button" variant="outline" disabled={busy} onClick={close}>Fermer la recherche</Button></div>{notice ? <p role="status" className="text-success">{notice}</p> : null}{error ? <div className="grid gap-4"><RecordError error={error} /><p>La saisie reste affichée. Une réponse interrompue peut avoir été enregistrée : réessayez la même action sans la modifier. En cas de conflit, comparez les offres puis actualisez les versions avant une nouvelle tentative.</p><Button action="refresh" type="button" variant="outline" className="h-auto min-h-control justify-self-start whitespace-normal" disabled={busy} onClick={() => { void reload().then(() => setError(undefined)).catch(reason => setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503))); }}>Actualiser les versions</Button></div> : null}
-      <section className="grid min-w-0 gap-6" aria-label="Sélection de la recherche"><h3 ref={shortlistHeading} tabIndex={-1} className="text-section font-medium">Offres sélectionnées</h3>{value.shortlist.length ? <ul className="grid min-w-0 gap-6">{value.shortlist.map(entry => <li key={entry.offering.id} className="grid min-w-0 gap-4 border-t pt-4"><OfferingFacts offering={entry.offering} /><Feedback offering={entry.offering} initial={entry.feedback} writable={writable} busy={busy} save={feedback => void mutate(entry.offering, feedback)} remove={() => void mutate(entry.offering, undefined, true)} /></li>)}</ul> : <p>Aucune offre sélectionnée pour cette recherche.</p>}</section>
-      {writable ? <div className="grid gap-2"><Link className="inline-flex min-h-control items-center justify-self-start text-link underline" href={`/deals/new?contact_id=${contactId}&requirement_id=${id}`}>Créer une affaire pour cette recherche</Link>{value.shortlist.map(entry => <Link key={entry.offering.id} className="inline-flex min-h-control items-center justify-self-start wrap-anywhere text-link underline" href={`/deals/new?contact_id=${contactId}&requirement_id=${id}&offering_id=${entry.offering.id}`}>Créer une affaire avec {entry.offering.target?.reference ?? "cette offre"}</Link>)}</div> : null}
-      {writable ? <OfferingSearch requirement={value} pending={busy} select={offering => void mutate(offering)} /> : null}
-    </>}</section>;
-}
-
-function Feedback({ offering, initial, writable, busy, save, remove }: { offering: Offering; initial: string | null; writable: boolean; busy: boolean; save: (value: string | null) => void; remove: () => void }) {
-  const [feedback, setFeedback] = useState(initial ?? ""); const id = useId();
-  return writable ? <form className="grid min-w-0 max-w-reading gap-4" onSubmit={event => { event.preventDefault(); save(feedback || null); }} aria-label={`Avis pour ${offering.target?.reference ?? "l’offre"}`}><div className="grid gap-2"><Label htmlFor={id}>Avis sur cette offre</Label><Input id={id} maxLength={2000} value={feedback} disabled={busy} onChange={event => setFeedback(event.target.value)} /></div><div className="flex flex-wrap gap-2"><Button action="save" type="submit" variant="outline" disabled={busy}>{busy ? "Enregistrement…" : "Enregistrer l’avis"}</Button><Button action="remove" type="button" variant="destructive" disabled={busy} onClick={remove}>Retirer de la sélection</Button></div></form> : <p className="whitespace-pre-wrap wrap-anywhere">Avis : {initial || "non renseigné"}</p>;
+export function RequirementHistory({ contactId, page, changePage, denied, revision }: { contactId: string; page: number; changePage: (page: number) => void; denied: RequirementDenied; revision: number }) {
+  const query = useQuery(`/api/v1/contacts/${contactId}/timeline?page=${page}&page_size=${REQUIREMENT_PAGE_SIZE}`, timelineSchema, revision);
+  const invalid = query.value && (!requirementPageValid(query.value, page) || query.value.items.some(item => item.contact_id !== contactId));
+  useEffect(() => { if (query.error && requirementDenied(query.error)) denied(query.error); }, [query.error, denied]);
+  if (!query.error && !invalid && query.value?.total === 0 && page === 1) return null;
+  return <RecordSection title="Historique du dossier" label="Historique du contact" description="Modifications et activités de ce contact." count={!query.error && !invalid ? query.value?.total : undefined}>
+    {query.error || invalid ? <RecordError error={query.error ?? new ApiError("DEPENDENCY_UNAVAILABLE", 503)} retry={query.refresh} /> : !query.value ? <p role="status">Chargement de l’historique du contact…</p> : <><ol className="grid min-w-0 gap-3">{query.value.items.map(item => <li key={item.id}><RecordEntry title={activityLabels[item.action] ?? dealActivityLabels[item.action as keyof typeof dealActivityLabels] ?? item.action} icon={SearchIcon} meta={[{ label: "Date", value: formatInstant(item.occurred_at) }, { label: "Auteur", value: item.actor.display_name }]}>{item.body ? <p className="whitespace-pre-wrap wrap-anywhere">{item.body}</p> : null}{item.reason ? <p className="whitespace-pre-wrap wrap-anywhere">{item.reason}</p> : null}</RecordEntry></li>)}</ol>{!query.value.items.length ? <p className="text-sm text-muted-foreground">Aucun événement sur cette page.</p> : null}{query.value.has_previous || query.value.has_next || page > 1 ? <NumberedPages compact page={page} total={query.value.total} size={REQUIREMENT_PAGE_SIZE} change={changePage} label="Pages de l’historique du contact" /> : null}</>}
+  </RecordSection>;
 }

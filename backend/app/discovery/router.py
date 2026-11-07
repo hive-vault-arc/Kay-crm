@@ -1,12 +1,12 @@
-from typing import Annotated, cast
+from typing import Annotated, Literal, cast
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
 
 from app.contacts.contracts import StrictBody
 from app.contacts.router import Proof, configuration
-from app.discovery.audit import read_audit
-from app.discovery.contracts import AuditQuery, NewExport, PageQuery, SearchQuery
+from app.discovery.audit import read_audit, read_audit_actors
+from app.discovery.contracts import AuditActorsQuery, AuditQuery, NewExport, PageQuery, SearchQuery
 from app.discovery.exports import download, issue_download, read_exports, request_export
 from app.discovery.search import search
 from app.files.router import transfer_proof
@@ -21,10 +21,13 @@ RetryKey = Annotated[UUID, Header(alias="Idempotency-Key")]
 
 @router.get("/search")
 def find(
-    request: Request, token: Proof, query: Annotated[SearchQuery, Query()]
+    request: Request,
+    token: Proof,
+    query: Annotated[SearchQuery, Query()],
+    prepared_version: Annotated[Literal["2"] | None, Header(alias="X-Kay-Search-Version")] = None,
 ) -> dict[str, object]:
     validate_query(request, set(SearchQuery.model_fields))
-    return search(configuration(request)[0], token, query)
+    return search(configuration(request)[0], token, query, prepared=prepared_version == "2")
 
 
 @router.get("/audit/events")
@@ -33,6 +36,14 @@ def audit(
 ) -> dict[str, object]:
     validate_query(request, set(AuditQuery.model_fields))
     return read_audit(configuration(request)[0], token, query)
+
+
+@router.get("/audit/actors")
+def audit_actors(
+    request: Request, token: Proof, query: Annotated[AuditActorsQuery, Query()]
+) -> dict[str, object]:
+    validate_query(request, set(AuditActorsQuery.model_fields))
+    return read_audit_actors(configuration(request)[0], token, query)
 
 
 @router.post("/exports")

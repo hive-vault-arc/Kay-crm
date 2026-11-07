@@ -1,0 +1,178 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "base": "1020edb",
+  "scope": "Selected separate visit Notes mapping, protected persistence/history and legacy compatibility",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 421,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 198,
+      "failed": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check app/schedule alembic/versions/0036_visit_notes.py tests/test_visit_notes.py tests/test_visit_notes_unit.py tests/unit_selection.py",
+      "cwd": "backend",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app/schedule",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 12
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 301,
+      "deselected": 685
+    },
+    {
+      "command": "explicit .venv Python Alembic ScriptDirectory graph inspection",
+      "cwd": "backend",
+      "exitCode": 0,
+      "head": "0036_visit_notes",
+      "parent": "0035_project_photos",
+      "revisions": 36,
+      "databaseOpened": false
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8646,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1232,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    }
+  ],
+  "sources": [
+    {
+      "path": "backend/alembic/versions/0036_visit_notes.py",
+      "sha256": "d966e4cb72e56d933c3fce5ce8bfdec1048b190c2ec88eea4c879b549034f060"
+    },
+    {
+      "path": "backend/app/schedule/commands.py",
+      "sha256": "db565f98bb7ae4195a1e20adf0c28874d6979d85c13193274ccdd878a5fb37ec"
+    },
+    {
+      "path": "backend/app/schedule/contracts.py",
+      "sha256": "59d0cce11ec60cc853b9b5150016f78ff050b6ebd360450b5400a954e487f40d"
+    },
+    {
+      "path": "backend/app/schedule/models.py",
+      "sha256": "a746051f198e50af3adea40349fc468d8d7a37c441048a5dcb02203fff91d096"
+    },
+    {
+      "path": "backend/app/schedule/presentation.py",
+      "sha256": "40338728176813a99d57240e35423c18413621557ae8f6857b0dcf641fafe537"
+    },
+    {
+      "path": "backend/app/schedule/records.py",
+      "sha256": "20803d1a6b052cb4c754ce9f373bd5cb1bd96c04c8335c25c90ada6e8e3b6a7e"
+    },
+    {
+      "path": "backend/app/schedule/router.py",
+      "sha256": "cd69a683935e7ce9beb216e3cb934bb333882942175a26dbf8a77982c819c7d9"
+    },
+    {
+      "path": "backend/tests/test_visit_notes.py",
+      "sha256": "5f7a0910aa2ca5e1f1ba6c313e998a1313526a634a17784eccfaee3ae6eede07"
+    },
+    {
+      "path": "backend/tests/test_visit_notes_unit.py",
+      "sha256": "9565a3cc7cddf3ef6119c5fcc667c045b67fdd2468076c0d30a4945d0517b62b"
+    },
+    {
+      "path": "backend/tests/unit_selection.py",
+      "sha256": "9e0887d163c86e1c68146896cab05860e7c7bb119684d899840365650407beca"
+    },
+    {
+      "path": "frontend/src/features/schedule/contracts.ts",
+      "sha256": "e04f5db4fce82c5931e4400bdd68251b4dffbacce13242164a791097525b67ea"
+    },
+    {
+      "path": "frontend/src/features/schedule/facade.ts",
+      "sha256": "e0ad81c54ef5846ae056098231f237144299eea6449b9f6268242b59cffa8dff"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-form.tsx",
+      "sha256": "8150a9b38d2b9133435688d4b4183908ec51021c850fefbcac392248b134bf73"
+    },
+    {
+      "path": "frontend/src/features/schedule/visit-record.tsx",
+      "sha256": "cccdba33f3444a824239c83afdcae28759088de85fc90d6eda5909a7ad155903"
+    },
+    {
+      "path": "frontend/src/lib/api/facade.ts",
+      "sha256": "c2763f19f6d762bb6e0041018e91d2bd4155533bd04da207343c6474b98a6854"
+    },
+    {
+      "path": "frontend/tests/unit/calendar.test.mjs",
+      "sha256": "400cc8592dce6c3753f164c893cdb62f879a6dbe2ca311839a844a37af8d9359"
+    },
+    {
+      "path": "frontend/tests/unit/facade-tls.test.mjs",
+      "sha256": "3ad2672b302a5149b92a695d1ed992bb7e432b7cdff9ab1c17893875afc7f2c6"
+    },
+    {
+      "path": "frontend/tests/unit/visit-forms.test.mjs",
+      "sha256": "34e261625a327a0d8bc443b17f573a496762ad735f90756eb639e3712a952a8b"
+    }
+  ],
+  "mapping": {
+    "prototype": [
+      "src/visit-ui.js notes control/disclosure",
+      "src/visit-model.js visitDraft/saveVisit notes"
+    ],
+    "persistence": "0036_visit_notes (prepared, unapplied)",
+    "command": "optional notes; omitted preserves and retains old receipt digest; explicit empty clears",
+    "history": "new immutable snapshots; old JSON never rewritten; deferred current-row/event check",
+    "compatibility": "path-bounded opt-in projection, optional support/field for old backend; free/busy unchanged"
+  },
+  "technicalProposals": [
+    "1000-character notes bound matches existing visit text fields; no new commercial or permission rule"
+  ],
+  "limits": [
+    "No backend/API/database service or migration run",
+    "PostgreSQL acceptance cases prepared, not executed",
+    "No native/browser/CUA/CDP/app-HTTP access",
+    "Full implementation/final security/visual/AFTER/product review remains pending",
+    "No prototype change, dependency change, main/push/merge/deploy"
+  ],
+  "sourceAnalysis": {
+    "prototypeInputs": 254,
+    "prototypeHashDrift": 0,
+    "verifiedSources": 18
+  }
+}

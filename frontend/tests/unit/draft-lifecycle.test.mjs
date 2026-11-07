@@ -1,0 +1,24 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { randomUUID } from "node:crypto";
+import { setTimeout as delay } from "node:timers/promises";
+import { loadServer } from "./load-server.mjs";
+const runtime={jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
+function lifecycle(){let cursor=0;const values=[],deps=[],effects=[],cleanups=[];const changed=(prior,next)=>!prior||next.some((v,i)=>!Object.is(v,prior[i]));const react={useState(initial){const index=cursor++;if(!(index in values))values[index]=typeof initial==="function"?initial():initial;return[values[index],next=>{values[index]=typeof next==="function"?next(values[index]):next;}];},useRef(initial){const index=cursor++;if(!(index in values))values[index]={current:initial};return values[index];},useMemo(callback,next){const index=cursor++;if(changed(deps[index],next)){values[index]=callback();deps[index]=[...next];}return values[index];},useEffect(callback,next){const index=cursor++;if(changed(deps[index],next)){deps[index]=[...next];effects.push(()=>{cleanups[index]?.();cleanups[index]=callback();});}}};return{react,render(callback){cursor=0;const value=callback();effects.splice(0).forEach(effect=>effect());return value;},unmount(){cleanups.forEach(cleanup=>cleanup?.());}};}
+class Event{constructor(type){this.type=type;}}
+
+test("Managed drafts release deferred reads only after both dirty editing and a pending command end",()=>{
+ const h=lifecycle(),events=[],loaded=loadServer("src/components/shared/dossier-form.tsx",{modules:{react:h.react,"react/jsx-runtime":runtime,"./record-header":{}},globals:{Event,window:{dispatchEvent:event=>events.push(event.type)}}});let values={title:"Synthetic original"},busy=false;const render=()=>h.render(()=>loaded.useDossierDraft(values,busy));assert.equal(render().dirty,false);values={title:"Synthetic draft"};assert.equal(render().dirty,true);busy=true;render().accept();assert.equal(render().dirty,false);assert.deepEqual(events,[]);busy=false;render();assert.deepEqual(events,["kay:draft-cleared"]);h.unmount();assert.deepEqual(events,["kay:draft-cleared"]);
+});
+
+test("A completed route/unmount releases a held draft once without persisting or publishing its fields",()=>{
+ const h=lifecycle(),events=[],loaded=loadServer("src/components/shared/dossier-form.tsx",{modules:{react:h.react,"react/jsx-runtime":runtime,"./record-header":{}},globals:{Event,window:{dispatchEvent:event=>events.push(event)}}});let values={title:"Original synthetic title"};h.render(()=>loaded.useDossierDraft(values));values={title:"Edited synthetic title"};h.render(()=>loaded.useDossierDraft(values,true));h.unmount();assert.equal(events.length,1);assert.equal(events[0].type,"kay:draft-cleared");assert.deepEqual(Object.keys(events[0]),["type"]);
+});
+
+test("The real live-update input listener respects the managed draft owner, while ordinary forms still track edits",async()=>{
+ const h=lifecycle(),documentEvents={},windowEvents={},intervals=new Set();let sequence=0,sockets=0;
+ class Element{constructor(form){this.form=form;}closest(){return this.form;}}
+ const document={documentElement:{dataset:{}},visibilityState:"visible",querySelector:()=>null,addEventListener:(name,callback)=>{documentEvents[name]=callback;},removeEventListener:name=>{delete documentEvents[name];}};
+ const {LiveUpdates}=loadServer("src/features/realtime/live-updates.tsx",{modules:{react:h.react,"react/jsx-runtime":runtime,"next/navigation":{usePathname:()=>"/visits"},"./ticket-request":{requestTicket:async()=>({enabled:false})}},globals:{crypto:{randomUUID},Element,document,window:{addEventListener:(name,callback)=>{windowEvents[name]=callback;},removeEventListener:name=>{delete windowEvents[name];}},setInterval:()=>{const id=++sequence;intervals.add(id);return id;},clearInterval:id=>intervals.delete(id),WebSocket:class WebSocket{static OPEN=1;constructor(){sockets++;}}}});
+ h.render(()=>LiveUpdates());await delay(0);const managed={dataset:{},hasAttribute:()=>true,querySelector:()=>null};documentEvents.input({target:new Element(managed)});assert.equal(managed.dataset.liveDirty,undefined);const ordinary={dataset:{},hasAttribute:()=>false,querySelector:()=>null};documentEvents.change({target:new Element(ordinary)});assert.equal(ordinary.dataset.liveDirty,"true");const filter={dataset:{},hasAttribute:()=>false,querySelector:()=>({})};documentEvents.input({target:new Element(filter)});assert.equal(filter.dataset.liveDirty,undefined);assert.equal(sockets,0);h.unmount();assert.equal(intervals.size,0);assert.equal(Object.keys(documentEvents).length,0);assert.equal(Object.keys(windowEvents).length,0);
+});

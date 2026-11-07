@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "base": "7db093aae8c4b2253f05d963dfd65bb8a7cac3a5",
+  "scope": "Selected visible Contact ownership path and intake Contact history entrance",
+  "checks": [
+    {
+      "command": "npx eslint tests/review/ownership.chrome.spec.ts tests/review/intake.chrome.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript source AST invariants",
+      "exitCode": 0,
+      "titlesUnchanged": 2,
+      "originalProtectedCalls": 63,
+      "unchangedCalls": 63,
+      "intentionalAdditionalCall": "manage(mobile, merge) opens current drawer instead of removed merge shortcut",
+      "files": [
+        {
+          "file": "frontend/tests/review/ownership.chrome.spec.ts",
+          "titles": 1,
+          "originalCalls": 40,
+          "unchangedCalls": 40,
+          "addedMergeIntent": 1
+        },
+        {
+          "file": "frontend/tests/review/intake.chrome.spec.ts",
+          "titles": 1,
+          "originalCalls": 23,
+          "unchangedCalls": 23,
+          "addedMergeIntent": 0
+        }
+      ]
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9060,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1323,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "retainedPriorEvidence": {
+    "frontendUnits": 994,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "preparedNative": {
+    "ownershipCases": 1,
+    "intakeHistoryEntryOnly": true,
+    "typechecked": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "capturesAndZoomExecuted": false,
+    "broaderIntakeAndFullJourneysAccepted": false
+  },
+  "frozen": {
+    "inputs": 254,
+    "drift": 0,
+    "mainUnchanged": true
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Broader historical Deal/intake/recovery review paths",
+    "Actual native/device/zoom/focus/SQL/AV/private transfer/security/CI/AFTER/product gates",
+    "Migrations0036/0037 and remaining field/job/alias/selectors"
+  ],
+  "status": "Prepared native source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/review/ownership.chrome.spec.ts",
+      "bytes": 14518,
+      "sha256": "cbbc561efd7d14423ff52d4f8994be9001572498d00a2e654405ea2466171272"
+    },
+    {
+      "file": "frontend/tests/review/intake.chrome.spec.ts",
+      "bytes": 11117,
+      "sha256": "83cd4b726d139ed6b81464e207c44cb03973875cf915e4d7cc4ac05941342132"
+    }
+  ]
+}

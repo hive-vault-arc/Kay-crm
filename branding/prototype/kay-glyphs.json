@@ -1,0 +1,1836 @@
+{
+  "source": "Owner-selected prototype lucide@1.59.0",
+  "license": "ISC with retained Feather notices",
+  "scope": "Selected visual family, with semantic aliases for retained real CRM capabilities; no runtime package",
+  "icons": [
+    {
+      "export": "CarIcon",
+      "name": "car",
+      "source": "CarFront",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m21 8-2 2-1.5-3.7A2 2 0 0 0 15.646 5H8.4a2 2 0 0 0-1.903 1.257L5 10 3 8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M7 14h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M17 14h.01"
+          }
+        ],
+        [
+          "rect",
+          {
+            "width": "18",
+            "height": "8",
+            "x": "3",
+            "y": "10",
+            "rx": "2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M5 18v2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M19 18v2"
+          }
+        ]
+      ],
+      "sha256": "6ccf7bd792532ad4b3443ed6fd3726ad9d0c40fccd4064fbc967f78698b36703"
+    },
+    {
+      "export": "ClockIcon",
+      "name": "clock",
+      "source": "Clock3",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 6v6h4"
+          }
+        ]
+      ],
+      "sha256": "6dcad4beee45ae5cdc4a7f9fff831808bf14a0fa287fdee2a8e2212871422946"
+    },
+    {
+      "export": "AlertIcon",
+      "name": "alert",
+      "source": "CircleAlert",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "line",
+          {
+            "x1": "12",
+            "x2": "12",
+            "y1": "8",
+            "y2": "12"
+          }
+        ],
+        [
+          "line",
+          {
+            "x1": "12",
+            "x2": "12.01",
+            "y1": "16",
+            "y2": "16"
+          }
+        ]
+      ],
+      "sha256": "68d8233ad53ba9aa6df29beb594eca452b97c0cbae0c331a5c6713752ff73ac3"
+    },
+    {
+      "export": "EmptyFolderIcon",
+      "name": "empty-folder",
+      "source": "Search",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m21 21-4.34-4.34"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "11",
+            "cy": "11",
+            "r": "8"
+          }
+        ]
+      ],
+      "sha256": "7ef625bc9cd6f86bafe04b5b707937af56db855eeb74894d275f2b56b5d3c42e"
+    },
+    {
+      "export": "CheckIcon",
+      "name": "check",
+      "source": "Check",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M20 6 9 17l-5-5"
+          }
+        ]
+      ],
+      "sha256": "ab4347e7adf6b32287f8d623f659ef18e4686d9ef0a5d9f56b379024daf16f3e"
+    },
+    {
+      "export": "ChevronDownIcon",
+      "name": "chevron-down",
+      "source": "ChevronDown",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m6 9 6 6 6-6"
+          }
+        ]
+      ],
+      "sha256": "e0d9c628e17cca6f0106162bcc5286c8fa44c6ba3691deb7880267ae26962fa6"
+    },
+    {
+      "export": "CloseIcon",
+      "name": "close",
+      "source": "X",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M18 6 6 18"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m6 6 12 12"
+          }
+        ]
+      ],
+      "sha256": "7bf13b1e2e2ab7bb7226b828a7b6ded9a6482211bdeafc7a1e61ea450232d212"
+    },
+    {
+      "export": "RadioIndicatorIcon",
+      "name": "radio-indicator",
+      "source": "Circle",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ]
+      ],
+      "sha256": "dbef0dc6ec02734dcfaa120e5f3e1d7c64791da6df5b1b146755ccfafb0bae5e"
+    },
+    {
+      "export": "PasswordIcon",
+      "name": "password",
+      "source": "LockKeyhole",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "16",
+            "r": "1"
+          }
+        ],
+        [
+          "rect",
+          {
+            "x": "3",
+            "y": "10",
+            "width": "18",
+            "height": "12",
+            "rx": "2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M7 10V7a5 5 0 0 1 10 0v3"
+          }
+        ]
+      ],
+      "sha256": "12650733cf16aaca4f4e14320e66a7b795c120e381d65deffd0060beb1b87f38"
+    },
+    {
+      "export": "SignInIcon",
+      "name": "sign-in",
+      "source": "LogIn",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m10 17 5-5-5-5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M15 12H3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"
+          }
+        ]
+      ],
+      "sha256": "9d13ebc100b676032dd498c918bc2aff2656ac4fcc148acadfcc95f352c6aff4"
+    },
+    {
+      "export": "ShowPasswordIcon",
+      "name": "show-password",
+      "source": "Eye",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "3"
+          }
+        ]
+      ],
+      "sha256": "014a92e763d1b66b6bed4270adc2938768277921fa6747925da48bcddfc454bc"
+    },
+    {
+      "export": "HidePasswordIcon",
+      "name": "hide-password",
+      "source": "EyeOff",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M14.084 14.158a3 3 0 0 1-4.242-4.242"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m2 2 20 20"
+          }
+        ]
+      ],
+      "sha256": "7158556a7e9f61d7cab1f74d7b61b271a9d185b3881cf2d25d48a749643d1543"
+    },
+    {
+      "export": "PhoneIcon",
+      "name": "phone",
+      "source": "Phone",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"
+          }
+        ]
+      ],
+      "sha256": "2d7aca1e3808ae31ba4bd02079649f069527133764e16b77f077a214371a70b3"
+    },
+    {
+      "export": "EmailIcon",
+      "name": "email",
+      "source": "Mail",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"
+          }
+        ],
+        [
+          "rect",
+          {
+            "x": "2",
+            "y": "4",
+            "width": "20",
+            "height": "16",
+            "rx": "2"
+          }
+        ]
+      ],
+      "sha256": "11cb8dbe31ac51761c0fc0633a09bd030fcc53f7fa31bbc19a388f504af4d490"
+    },
+    {
+      "export": "ContactIcon",
+      "name": "contact",
+      "source": "UserRound",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "8",
+            "r": "5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M20 21a8 8 0 0 0-16 0"
+          }
+        ]
+      ],
+      "sha256": "eac4a624f27e2199141646098b6da0650f2fb25600a60f9df19f19b17a82ab8c"
+    },
+    {
+      "export": "TaskIcon",
+      "name": "task",
+      "source": "ClipboardCheck",
+      "nodes": [
+        [
+          "rect",
+          {
+            "width": "8",
+            "height": "4",
+            "x": "8",
+            "y": "2",
+            "rx": "1",
+            "ry": "1"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m9 14 2 2 4-4"
+          }
+        ]
+      ],
+      "sha256": "1819057640ab5dd0bcc55c7b230db629852c001cb6749458d1211e5488e1ac9a"
+    },
+    {
+      "export": "EnquiryIcon",
+      "name": "enquiry",
+      "source": "UsersRound",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M18 21a8 8 0 0 0-16 0"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "10",
+            "cy": "8",
+            "r": "5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"
+          }
+        ]
+      ],
+      "sha256": "fa9e91087b0a13514fec2d9fcdb4a89b380acd070814f6e060e580bd42b4a315"
+    },
+    {
+      "export": "DealIcon",
+      "name": "deal",
+      "source": "BriefcaseBusiness",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M12 12h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M22 13a18.15 18.15 0 0 1-20 0"
+          }
+        ],
+        [
+          "rect",
+          {
+            "width": "20",
+            "height": "14",
+            "x": "2",
+            "y": "6",
+            "rx": "2"
+          }
+        ]
+      ],
+      "sha256": "3d06327946ffa45bf0151a73402103952471545a7080583aa20ef5f6dc7e4981"
+    },
+    {
+      "export": "FinanceIcon",
+      "name": "finance",
+      "source": "Coins",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M13.744 17.736a6 6 0 1 1-7.48-7.48"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M15 6h1v4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m6.134 14.768.866-.5 2 3.464"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "16",
+            "cy": "8",
+            "r": "6"
+          }
+        ]
+      ],
+      "sha256": "6284de58285be3951a94b9cccefcce5e36a600f0cb817a1ca1c727f28d4ef7d6"
+    },
+    {
+      "export": "DevelopmentIcon",
+      "name": "development",
+      "source": "Building2",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M10 12h4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M10 8h4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M14 21v-3a2 2 0 0 0-4 0v3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"
+          }
+        ]
+      ],
+      "sha256": "af1da9a3a93b60028ddc51d50a8ec4301ebf57caed890c68e85d964339f6b747"
+    },
+    {
+      "export": "PropertyIcon",
+      "name": "property",
+      "source": "Building2",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M10 12h4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M10 8h4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M14 21v-3a2 2 0 0 0-4 0v3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"
+          }
+        ]
+      ],
+      "sha256": "af1da9a3a93b60028ddc51d50a8ec4301ebf57caed890c68e85d964339f6b747"
+    },
+    {
+      "export": "LocationIcon",
+      "name": "location",
+      "source": "MapPin",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "10",
+            "r": "3"
+          }
+        ]
+      ],
+      "sha256": "2f1e6776538a10948d2015a8598883ec034a3a8536b091fc2e4e122edf5b756f"
+    },
+    {
+      "export": "CompletedIcon",
+      "name": "completed",
+      "source": "Check",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M20 6 9 17l-5-5"
+          }
+        ]
+      ],
+      "sha256": "ab4347e7adf6b32287f8d623f659ef18e4686d9ef0a5d9f56b379024daf16f3e"
+    },
+    {
+      "export": "InboxIcon",
+      "name": "inbox",
+      "source": "Mail",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"
+          }
+        ],
+        [
+          "rect",
+          {
+            "x": "2",
+            "y": "4",
+            "width": "20",
+            "height": "16",
+            "rx": "2"
+          }
+        ]
+      ],
+      "sha256": "11cb8dbe31ac51761c0fc0633a09bd030fcc53f7fa31bbc19a388f504af4d490"
+    },
+    {
+      "export": "ContactsIcon",
+      "name": "contacts",
+      "source": "UsersRound",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M18 21a8 8 0 0 0-16 0"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "10",
+            "cy": "8",
+            "r": "5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"
+          }
+        ]
+      ],
+      "sha256": "fa9e91087b0a13514fec2d9fcdb4a89b380acd070814f6e060e580bd42b4a315"
+    },
+    {
+      "export": "NotificationIcon",
+      "name": "notification",
+      "source": "Bell",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M10.268 21a2 2 0 0 0 3.464 0"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"
+          }
+        ]
+      ],
+      "sha256": "ea5c64f1d8088cd0adbab1423496f4914f7c6e243fef21b77d75a2011da11056"
+    },
+    {
+      "export": "NavigationMenuIcon",
+      "name": "navigation-menu",
+      "source": "Menu",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M4 5h16"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M4 12h16"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M4 19h16"
+          }
+        ]
+      ],
+      "sha256": "eb20c804a099dffe93b6d077b427da2fa84572d6d73b00be1f683cb82f4a8a42"
+    },
+    {
+      "export": "CalendarIcon",
+      "name": "calendar",
+      "source": "CalendarDays",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M8 2v3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 2v3"
+          }
+        ],
+        [
+          "rect",
+          {
+            "x": "3",
+            "y": "3",
+            "width": "18",
+            "height": "18",
+            "rx": "2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 9h18"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 13h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 13h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 13h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 17h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 17h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 17h.01"
+          }
+        ]
+      ],
+      "sha256": "699b2ab786fc3fcbc93b32a2d24509f474707ba6d846c180c886053276ff0d7a"
+    },
+    {
+      "export": "DashboardIcon",
+      "name": "dashboard",
+      "source": "LayoutDashboard",
+      "nodes": [
+        [
+          "rect",
+          {
+            "width": "7",
+            "height": "9",
+            "x": "3",
+            "y": "3",
+            "rx": "1"
+          }
+        ],
+        [
+          "rect",
+          {
+            "width": "7",
+            "height": "5",
+            "x": "14",
+            "y": "3",
+            "rx": "1"
+          }
+        ],
+        [
+          "rect",
+          {
+            "width": "7",
+            "height": "9",
+            "x": "14",
+            "y": "12",
+            "rx": "1"
+          }
+        ],
+        [
+          "rect",
+          {
+            "width": "7",
+            "height": "5",
+            "x": "3",
+            "y": "16",
+            "rx": "1"
+          }
+        ]
+      ],
+      "sha256": "4f6c38132bb34b1bca4c004198d4b89166ce9d0c9ba3cd38371c58e4ad83f7cb"
+    },
+    {
+      "export": "SettingsIcon",
+      "name": "settings",
+      "source": "Settings2",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M14 17H5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M19 7h-9"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "17",
+            "cy": "17",
+            "r": "3"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "7",
+            "cy": "7",
+            "r": "3"
+          }
+        ]
+      ],
+      "sha256": "44d88fb7c6ff8912411e71c2ca8d3ffc131bf8b0a7356d1bd0de05a18f4d591b"
+    },
+    {
+      "export": "SearchIcon",
+      "name": "search",
+      "source": "Search",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m21 21-4.34-4.34"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "11",
+            "cy": "11",
+            "r": "8"
+          }
+        ]
+      ],
+      "sha256": "7ef625bc9cd6f86bafe04b5b707937af56db855eeb74894d275f2b56b5d3c42e"
+    },
+    {
+      "export": "AddIcon",
+      "name": "add",
+      "source": "Plus",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M5 12h14"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 5v14"
+          }
+        ]
+      ],
+      "sha256": "3ed1784e53a9252aa47f2392c529dc2078803a22e84522f68ec8165c23f05bb0"
+    },
+    {
+      "export": "EditIcon",
+      "name": "edit",
+      "source": "Pencil",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m15 5 4 4"
+          }
+        ]
+      ],
+      "sha256": "2789740c6e1205f1c233a553cfe467614397df47a791f5c37e882fa203105900"
+    },
+    {
+      "export": "DeleteIcon",
+      "name": "delete",
+      "source": "Trash2",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M10 11v6"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M14 11v6"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 6h18"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+          }
+        ]
+      ],
+      "sha256": "0887db16204aec49dbefc692233cd54fe3844849ddbada6d52709cfba3b70e28"
+    },
+    {
+      "export": "ArchiveIcon",
+      "name": "archive",
+      "source": "Archive",
+      "nodes": [
+        [
+          "rect",
+          {
+            "width": "20",
+            "height": "5",
+            "x": "2",
+            "y": "3",
+            "rx": "1"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M10 12h4"
+          }
+        ]
+      ],
+      "sha256": "60e8b7c4b29ad6f5e7b4612edaf4bf9b4ada4a83d0abfa0155551350a8fafdac"
+    },
+    {
+      "export": "BackIcon",
+      "name": "back",
+      "source": "ArrowLeft",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m12 19-7-7 7-7"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M19 12H5"
+          }
+        ]
+      ],
+      "sha256": "3d4b4db320f90ace8a58bbe1a5beae179c58647d5d31e0d0242a5145592b605d"
+    },
+    {
+      "export": "ForwardIcon",
+      "name": "forward",
+      "source": "ArrowRight",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M5 12h14"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m12 5 7 7-7 7"
+          }
+        ]
+      ],
+      "sha256": "2f0991761ea920afc88b854d23bbcd9870c1af6c95787b55b1794c1e5c912ebb"
+    },
+    {
+      "export": "FilterIcon",
+      "name": "filter",
+      "source": "Filter",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"
+          }
+        ]
+      ],
+      "sha256": "bddd314022c0d0156660d43197d1cbefc4ad1137ecf13c8ab62361862e19ed7a"
+    },
+    {
+      "export": "ColumnsIcon",
+      "name": "columns",
+      "source": "Columns2",
+      "nodes": [
+        [
+          "rect",
+          {
+            "width": "18",
+            "height": "18",
+            "x": "3",
+            "y": "3",
+            "rx": "2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 3v18"
+          }
+        ]
+      ],
+      "sha256": "c173d1b732908b256c7e0dd998169db1bc1895984b5091bfc586668c167cd9af"
+    },
+    {
+      "export": "DownloadIcon",
+      "name": "download",
+      "source": "Download",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M12 15V3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m7 10 5 5 5-5"
+          }
+        ]
+      ],
+      "sha256": "e0fa296985600d9ad021ba1a74c28c6612d098dad43e3d514c158d2274e6e352"
+    },
+    {
+      "export": "UploadIcon",
+      "name": "upload",
+      "source": "Upload",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M12 3v12"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m17 8-5-5-5 5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+          }
+        ]
+      ],
+      "sha256": "928d706e4ba421feaf7af2aa703777223a5b2fd545420d629f3f4fa61d99a946"
+    },
+    {
+      "export": "RefreshIcon",
+      "name": "refresh",
+      "source": "RotateCcw",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 3v5h5"
+          }
+        ]
+      ],
+      "sha256": "55d5abaaec811df5937e3daa844c3fe32277901e9b30a7c0793aaabe24b67f00"
+    },
+    {
+      "export": "SignOutIcon",
+      "name": "sign-out",
+      "source": "LogOut",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m16 17 5-5-5-5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M21 12H9"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+          }
+        ]
+      ],
+      "sha256": "e41f1357d33db8a2ad98eecdc2b799d62e56237d87348aa287611e22a6bbd180"
+    },
+    {
+      "export": "RestoreIcon",
+      "name": "restore",
+      "source": "RotateCcw",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 3v5h5"
+          }
+        ]
+      ],
+      "sha256": "55d5abaaec811df5937e3daa844c3fe32277901e9b30a7c0793aaabe24b67f00"
+    },
+    {
+      "export": "CompareIcon",
+      "name": "compare",
+      "source": "Columns2",
+      "nodes": [
+        [
+          "rect",
+          {
+            "width": "18",
+            "height": "18",
+            "x": "3",
+            "y": "3",
+            "rx": "2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 3v18"
+          }
+        ]
+      ],
+      "sha256": "c173d1b732908b256c7e0dd998169db1bc1895984b5091bfc586668c167cd9af"
+    },
+    {
+      "export": "SunIcon",
+      "name": "sun",
+      "source": "Sun",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 2v2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 20v2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m4.93 4.93 1.41 1.41"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m17.66 17.66 1.41 1.41"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M2 12h2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M20 12h2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m6.34 17.66-1.41 1.41"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m19.07 4.93-1.41 1.41"
+          }
+        ]
+      ],
+      "sha256": "00ac7e740a646c428ece1bf4633d12f2c4440e270b655e268edbd8720be80049"
+    },
+    {
+      "export": "MoonIcon",
+      "name": "moon",
+      "source": "Moon",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"
+          }
+        ]
+      ],
+      "sha256": "ce9f231702a2bbe88af18766efddfac13ff5f13229342399e90c1b5edc34d4dd"
+    },
+    {
+      "export": "MonitorIcon",
+      "name": "monitor",
+      "source": "Monitor",
+      "nodes": [
+        [
+          "rect",
+          {
+            "width": "20",
+            "height": "14",
+            "x": "2",
+            "y": "3",
+            "rx": "2"
+          }
+        ],
+        [
+          "line",
+          {
+            "x1": "8",
+            "x2": "16",
+            "y1": "21",
+            "y2": "21"
+          }
+        ],
+        [
+          "line",
+          {
+            "x1": "12",
+            "x2": "12",
+            "y1": "17",
+            "y2": "21"
+          }
+        ]
+      ],
+      "sha256": "2aaec26650fb4136af44c80bddd0a86a8ad89dfa67aff54280336aa0bdfd6d1f"
+    },
+    {
+      "export": "HelpIcon",
+      "name": "help",
+      "source": "CircleHelp",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 17h.01"
+          }
+        ]
+      ],
+      "sha256": "1f4c92b16abf8a678f1511225254eca5fa028157e1a3af0299a1c3022091fdad"
+    },
+    {
+      "export": "OwnerIcon",
+      "name": "owner",
+      "source": "House",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          }
+        ]
+      ],
+      "sha256": "e953ba3c3258efa64b5b475f193b1b219a8696009b7f81c4b4acde8f52c105e6"
+    },
+    {
+      "export": "MoreIcon",
+      "name": "more",
+      "source": "Ellipsis",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "19",
+            "cy": "12",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "5",
+            "cy": "12",
+            "r": "1"
+          }
+        ]
+      ],
+      "sha256": "9c981baf4eb4ba9dbd33b4d1d274f8085907d6f9d21b1ae757600203de09bbbe"
+    },
+    {
+      "export": "FileIcon",
+      "name": "file",
+      "source": "FileText",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M14 2v5a1 1 0 0 0 1 1h5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M10 9H8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 13H8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 17H8"
+          }
+        ]
+      ],
+      "sha256": "3736b6a310328a969af9a64e8f1ff879c9905560a35ad80c30bdc545cd7aa679"
+    },
+    {
+      "export": "BlockIcon",
+      "name": "block",
+      "source": "Ban",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M4.929 4.929 19.07 19.071"
+          }
+        ]
+      ],
+      "sha256": "606a1907c40977898ac793935f173949f0ae594f5e4ce8685a15caa4f9f5a140"
+    },
+    {
+      "export": "FailureIcon",
+      "name": "failure",
+      "source": "CircleX",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m15 9-6 6"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m9 9 6 6"
+          }
+        ]
+      ],
+      "sha256": "8e70d5ff720e29f27ed48307f48e1c571b5283be4f0f53ba9ae5f45918b03bfc"
+    },
+    {
+      "export": "NewLeadIcon",
+      "name": "new-lead",
+      "source": "UserRoundPlus",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M2 21a8 8 0 0 1 13.292-6"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "10",
+            "cy": "8",
+            "r": "5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M19 16v6"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M22 19h-6"
+          }
+        ]
+      ],
+      "sha256": "3ee5b82117e5fb68101f875bbe83880b4d50409c9a61d271cb378bdccb644ebb"
+    },
+    {
+      "export": "QualifiedLeadIcon",
+      "name": "qualified-lead",
+      "source": "UserRoundCheck",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M2 21a8 8 0 0 1 13.292-6"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "10",
+            "cy": "8",
+            "r": "5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m16 19 2 2 4-4"
+          }
+        ]
+      ],
+      "sha256": "2868de47665ec63442bc6278186031d2fb247374e2df3688ac05a47657147a06"
+    },
+    {
+      "export": "RejectedLeadIcon",
+      "name": "rejected-lead",
+      "source": "UserRoundX",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m16.5 16.5 5 5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M2 21a8 8 0 0 1 11.531-7.18"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m21.5 16.5-5 5"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "10",
+            "cy": "8",
+            "r": "5"
+          }
+        ]
+      ],
+      "sha256": "0842fbfa8b219faa0126054d20abb2b19962ac8421a346fcf84e3f1160aa5a26"
+    },
+    {
+      "export": "NegotiationIcon",
+      "name": "negotiation",
+      "source": "Handshake",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m11 17 2 2a1 1 0 1 0 3-3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m21 3 1 11h-2"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 4h8"
+          }
+        ]
+      ],
+      "sha256": "5bb3b19d31bfad523d24d56dde938d64611d31f96da64877e1cdace67f644552"
+    },
+    {
+      "export": "FlagIcon",
+      "name": "flag",
+      "source": "Flag",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"
+          }
+        ]
+      ],
+      "sha256": "ae8ac48ef77ff46aba6676c31ed76f1dd4f741530709514b578db303342c3186"
+    },
+    {
+      "export": "ListIcon",
+      "name": "list",
+      "source": "List",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M3 5h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 12h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M3 19h.01"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 5h13"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 12h13"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 19h13"
+          }
+        ]
+      ],
+      "sha256": "2509e885fc347e824a475bf98b2ffc16cac1d21186caa3a17150d61f30574037"
+    },
+    {
+      "export": "KanbanIcon",
+      "name": "kanban",
+      "source": "Kanban",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M5 3v14"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 3v8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M19 3v18"
+          }
+        ]
+      ],
+      "sha256": "ab696f7767a491b0ba582bcc6eebbcdd55246c0508e77f4ff2eaab7827c2eb48"
+    },
+    {
+      "export": "GripIcon",
+      "name": "grip",
+      "source": "GripVertical",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "9",
+            "cy": "12",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "9",
+            "cy": "5",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "9",
+            "cy": "19",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "15",
+            "cy": "12",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "15",
+            "cy": "5",
+            "r": "1"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "15",
+            "cy": "19",
+            "r": "1"
+          }
+        ]
+      ],
+      "sha256": "4d6361e64fa67dc57c314af06da71a7b66c13aece034abe85ce6b6ff685d8792"
+    },
+    {
+      "export": "CameraIcon",
+      "name": "camera",
+      "source": "Camera",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"
+          }
+        ],
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "13",
+            "r": "3"
+          }
+        ]
+      ],
+      "sha256": "8069c65ef1b1bc0bc0bc11003cca8e988b095f9ca9432428405690496f303cc0"
+    },
+    {
+      "export": "ChartIcon",
+      "name": "chart",
+      "source": "ChartNoAxesCombined",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "M12 16v5"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 14.639V21"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M20 10.656V21"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M4 18.463V21"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 14.656V21"
+          }
+        ]
+      ],
+      "sha256": "f324ba4c312a692d786dea5754e230462b7d41e131a1ec72d9a2a2314f68d9d9"
+    }
+  ]
+}

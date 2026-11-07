@@ -18,6 +18,7 @@ class DevelopmentFields(StrictBody):
     briefing_text: str | None = Field(default=None, max_length=10000)
     developer_contact_id: UUID | None = None
     developer_marketing_display: str | None = Field(default=None, min_length=1, max_length=160)
+    phase: Literal["preparation", "marketing"] | None = None
 
     @field_validator("reference")
     @classmethod

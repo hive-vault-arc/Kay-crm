@@ -1,0 +1,137 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "c1de4e4190dc55a233e0099ab7867d66e0402cf6",
+  "scope": "Selected same-batch CSV transfer resume, route-keyed composer, pinned unknown metadata, synchronous upload/review ownership, same-actor proof and approval/disposal/foreign-result recovery",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 612,
+      "additionalCases": 14,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic real import hook/client/UI/facade and synthetic TLS units; existing import suite registered."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 496,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <2 changed UI sources>",
+      "exitCode": 0,
+      "files": 2,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1269,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8879,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "correctedBeforeFinalPass": [
+    "Hook dependency warning fixed by observing the actual query authority error without suppression.",
+    "Source review found original metadata retry could deadlock on its own child region busy guard; only that original retry bypasses its own guard, with unit regression and a third prepared native case."
+  ],
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/import-resume.spec.ts",
+    "browserCases": 3,
+    "typechecked": true,
+    "states": [
+      "awaiting_upload",
+      "uploading",
+      "lost new metadata acknowledgement while an old batch report is mounted"
+    ],
+    "contactApprovalOrWorkerInvokedByCases": false
+  },
+  "preserved": {
+    "selectedLayoutEightCsvFieldsAndMapping": true,
+    "backendSharedMaBatchScope": true,
+    "backendCsvAtomicityPermanentReplayProvenance": true,
+    "privateIssuingSessionGenerationHashAndTransfer": true,
+    "noOriginalByteIdentityClaimFromMetadata": true,
+    "noAutomaticReplacementBatchOnResume": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notPerformed": [
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/account/customer records/private configuration/import/export/transfer",
+    "Backend test rerun or behavior/schema change",
+    "Executed migrations0036/0037",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/src/features/imports/batch-review.tsx",
+      "bytes": 8205,
+      "sha256": "bce86ca31144bf496972991d0d8d11cc15d023dd75d982ede973353a51cd880f"
+    },
+    {
+      "file": "frontend/src/features/imports/client.ts",
+      "bytes": 4458,
+      "sha256": "99ba2548a3a441bbc743a0db6da3ca11a1541cd183550e88169bd2b4e31cbb52"
+    },
+    {
+      "file": "frontend/src/features/imports/import-panel.tsx",
+      "bytes": 12686,
+      "sha256": "bc2e3ed7b1428ce73ed665fc04aa22292e01db9df58c3d55d4c9c17c72319661"
+    },
+    {
+      "file": "frontend/src/features/imports/use-import-review.ts",
+      "bytes": 7407,
+      "sha256": "06dfd70af752d2e3f7c377e26abb02eb11ad7030508961197fbfee85f5cd9f40"
+    },
+    {
+      "file": "frontend/tests/unit/imports-workspace.test.mjs",
+      "bytes": 40573,
+      "sha256": "75668a2ef00df598a3b40a52c15e954fc1ae75e89993eeb59ee657029b2fbbde"
+    },
+    {
+      "file": "frontend/tests/e2e/import-resume.spec.ts",
+      "bytes": 5982,
+      "sha256": "9ddf5e714ca35602c11a901521006a52ec1926128e3b29dc9030709949e12411"
+    }
+  ]
+}

@@ -35,7 +35,7 @@ async function geometry(page: Page, panel: Locator, desktop: boolean) {
   const panelBox = (await panel.boundingBox())!;
   for (const control of await panel.locator("input, select, button, summary").all()) {
     if (!await control.isVisible()) continue;
-    const box = await control.evaluate(element => (element.matches('[role="checkbox"], input[type="checkbox"]') ? element.closest("label") ?? element : element).getBoundingClientRect().toJSON());
+    const box = await control.evaluate(element => (element.matches('[role="checkbox"], [role="radio"], input[type="checkbox"], input[type="radio"]') ? element.closest("label") ?? element : element).getBoundingClientRect().toJSON());
     expect(box.width).toBeGreaterThanOrEqual(44);
     expect(box.height).toBeGreaterThanOrEqual(44);
     expect(box.x).toBeGreaterThanOrEqual(panelBox.x);

@@ -70,6 +70,25 @@ def read(
                 .limit(query.page_size)
             ).all()
             items: list[dict[str, object]] = [view(session, row) for row in rows]
+        elif mode == "deal_history":
+            deal = deal_access(session, identity, identifier)
+            revisions = (
+                select(CommissionRevision)
+                .join(Commission, Commission.id == CommissionRevision.commission_id)
+                .where(Commission.deal_id == deal.id)
+            )
+            total = session.scalar(select(func.count()).select_from(revisions.subquery())) or 0
+            items = [
+                revision_view(item)
+                | {"commission_id": str(item.commission_id), "deal_id": str(deal.id)}
+                for item in session.scalars(
+                    revisions.order_by(
+                        CommissionRevision.created_at.desc(), CommissionRevision.id.desc()
+                    )
+                    .offset((query.page - 1) * query.page_size)
+                    .limit(query.page_size)
+                )
+            ]
         else:
             row = authorized(session, identity, identifier)
             if mode == "detail":

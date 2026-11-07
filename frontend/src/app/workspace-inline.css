@@ -1,0 +1,36 @@
+/* Selected record-field rows: quiet values, local editor and explicit commit/revert. */
+.kay-inline-fact > dt { padding-top:11px; }
+.kay-inline-fact > dd { min-width:0; }
+.kay-inline-display { display:flex; flex-wrap:wrap; align-items:start; gap:4px 8px; min-width:0; }
+.kay-inline-value[data-slot=button] { display:flex; flex:1; justify-content:space-between; gap:8px; min-width:0; width:100%; padding:9px 12px; border-radius:999px; text-align:left; font-size:14px; font-weight:500; line-height:1.5; color:var(--workspace-ink); background:transparent; }
+.kay-inline-value > span { min-width:0; overflow-wrap:anywhere; }
+.kay-inline-value > svg { flex:none; color:var(--workspace-muted); opacity:0; }
+.kay-inline-value:hover,.kay-inline-value:focus-visible { background:var(--workspace-field); }
+.kay-inline-value:hover > svg,.kay-inline-value:focus-visible > svg { opacity:1; }
+.kay-inline-static { min-width:0; min-height:44px; padding:9px 0; overflow-wrap:anywhere; }
+.kay-inline-methods { display:flex; flex-wrap:wrap; align-items:center; gap:4px; }
+.kay-inline-methods > a { display:flex; align-items:center; justify-content:center; width:44px; min-height:44px; border-radius:999px; color:var(--workspace-muted); }
+.kay-inline-methods > a:hover { color:var(--workspace-ink); background:var(--workspace-field); }
+.kay-inline-methods > a:focus-visible { outline:2px solid var(--workspace-focus); outline-offset:2px; }
+.kay-inline-form { container-type:inline-size; display:grid; align-items:start; grid-template-columns:minmax(0,1fr); gap:8px; min-width:0; }
+.kay-inline-controls { display:grid; align-content:start; gap:12px; min-width:0; }
+.kay-inline-controls > [data-slot=input],.kay-inline-controls > [data-slot=textarea],.kay-inline-controls > select { width:100%; min-width:0; }
+.kay-inline-actions { display:flex; align-items:start; justify-content:flex-end; gap:4px; }
+.kay-inline-error { font-size:13px; line-height:1.5; color:var(--workspace-danger); }
+.kay-inline-conflict { display:grid; gap:8px; padding-top:12px; border-top:1px solid var(--workspace-line); font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
+.kay-inline-controls .kay-inline-conflict [data-slot=button] { font-size:12px; }
+.kay-inline-project { display:grid; gap:8px; min-width:0; }
+.kay-record-aside .kay-inline-fact { grid-template-columns:minmax(0,1fr); gap:6px; }
+.kay-record-aside .kay-inline-fact > dt { padding-top:0; }
+@container dossier (min-width:1024px) {
+  .kay-inline-form { grid-template-columns:minmax(0,1fr) auto; }
+}
+@media (max-width:830px) {
+  .kay-inline-fact > dt { padding-top:0; }
+  .kay-inline-value[data-slot=button] { padding-inline:8px; font-size:13px; }
+  .kay-inline-value > svg { opacity:1; }
+  .kay-inline-static { min-height:0; padding:2px 0; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .kay-inline-value[data-slot=button] { transition:none; }
+}

@@ -18,7 +18,7 @@ test("SP22: persisted contact/deal survives API restart and expired sessions rec
   try { await apiProcess("stop"); } finally { await apiProcess("start"); }
   expect(await (await page.request.get(`/api/v1/deals/${deal}`)).json()).toEqual(before);
   await page.goto(`/contacts/${enquiry.contact.id}`);
-  await expect(page.getByText("Contact : SP22 continuité synthétique", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "SP22 continuité synthétique", exact: true, level: 1 })).toBeVisible();
   await changeActor(actor, "expire");
   for (const route of ["/dashboard", "/leads", "/deals", "/visits", "/projects", "/settings/users"]) {
     await page.goto(route);

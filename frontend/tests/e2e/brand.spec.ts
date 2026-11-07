@@ -37,7 +37,7 @@ test("KAY branding: supplied originals, real favicon assets and server-rendered 
   try {
     const serverPage = await noScript.newPage();
     await serverPage.goto("/login");
-    await expect(serverPage.getByRole("img", { name: "KAY Real Estate", exact: true })).toHaveAttribute("src", /kay-champagne-gold/);
+    await expect(serverPage.getByRole("img", { name: "KAY", exact: true })).toHaveAttribute("src", /images\/workspace\/kay-logo\.svg/);
     await expect(serverPage.locator('link[rel="icon"]')).toHaveAttribute("href", iconUrl);
     await expect(serverPage.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", /^\/_next\/static\/media\/kay-apple-icon\.[\w-]+\.png$/);
   } finally { await noScript.close(); }
@@ -57,7 +57,7 @@ test("KAY branding: supplied originals, real favicon assets and server-rendered 
     const pixels = context.getImageData(0, 0, 48, 48).data;
     return [...pixels].some((value, index) => index % 4 === 0 && value > 150 && pixels[index + 1] > 100);
   }, iconUrl)).toBe(true);
-  const logo = page.getByRole("img", { name: "KAY Real Estate", exact: true });
+  const logo = page.getByRole("img", { name: "KAY", exact: true });
   await expect(logo).toBeVisible();
   await expect.poll(() => logo.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   expect(await logo.evaluate(image => getComputedStyle(image.parentElement!).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
@@ -78,7 +78,7 @@ test("KAY branding: separate website simulator serves every advertised icon", as
       try { return (await page.request.get(simulatorOrigin)).status(); } catch { return 0; }
     }, { timeout: 10000 }).toBe(200);
     await page.goto(simulatorOrigin);
-    await expect(page.getByRole("heading", { name: "Formulaire web local", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Demande web", exact: true })).toBeVisible();
     const urls = await page.locator('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]').evaluateAll(links => links.map(link => (link as HTMLLinkElement).href));
     expect(urls.length).toBeGreaterThanOrEqual(3);
     for (const url of urls) {
@@ -95,8 +95,8 @@ test("KAY branding: mandatory password-change screen reuses transparent artwork"
   try {
     await signIn(page, actor);
     await expect(page).toHaveURL(/\/change-password$/);
-    const logo = page.getByRole("img", { name: "KAY Real Estate", exact: true });
-    await expect(logo).toHaveAttribute("src", /kay-champagne-gold/);
+    const logo = page.getByRole("img", { name: "KAY", exact: true });
+    await expect(logo).toHaveAttribute("src", /images\/workspace\/kay-logo\.svg/);
     await expect.poll(() => logo.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
     await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", iconUrl);
   } finally { await clearActorContext(page); await removeActor(actor); }
@@ -111,13 +111,11 @@ test("KAY branding: shared shell covers every navigation family and responsive d
     await page.setViewportSize({ width: 1440, height: 900 });
     for (const route of ["/dashboard", "/leads", "/deals", "/visits", "/projects", "/settings", "/settings/users", "/settings/working-hours"]) {
       await page.goto(route);
-      const logo = page.locator("aside[data-sidebar]").getByRole("img", { name: "KAY Real Estate", exact: true });
+      const logo = page.getByRole("banner").getByRole("img", { name: "KAY", exact: true });
       await expect(logo).toBeVisible();
-      await expect(logo).toHaveAttribute("src", /kay-champagne-gold/);
+      await expect(logo).toHaveAttribute("src", /images\/workspace\/kay-logo\.svg/);
       await expect.poll(() => logo.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-      const illustration = page.locator("aside[data-sidebar] .sidebar-illustration img");
-      await expect(illustration).toHaveAttribute("src", /login-architecture/);
-      await expect.poll(() => illustration.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+      await expect(page.locator("aside[data-sidebar]").getByRole("img", { name: "KAY", exact: true })).toHaveCount(0);
       expect(await logo.evaluate(image => getComputedStyle(image.parentElement!).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
       await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", iconUrl);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

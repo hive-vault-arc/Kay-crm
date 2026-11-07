@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "95815c221a9f36efbd46663f4044a8ad98709d3b",
+  "scope": "Selected two-tab PDF preparation/history, per-model managed drafts and exact uncertain recovery, opt-in retained creator metadata and guarded private downloads",
+  "checks": [
+    {
+      "command": "npm.cmd run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 423,
+      "failed": 0,
+      "newRegisteredCases": 20
+    },
+    {
+      "command": "npm.cmd run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 96,
+      "iconSites": 334,
+      "buttonSites": 478,
+      "violations": 0
+    },
+    {
+      "command": "npm.cmd run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm.cmd run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 384,
+      "deselected": 696,
+      "newRegisteredCases": 8,
+      "boundary": "Connection-forbidden synthetic units; no database/listener. New ASGI case stubs every business/session service."
+    },
+    {
+      "command": ".venv/Scripts/ruff.exe check app/generated/router.py app/generated/service.py tests/test_generated_history_actor_unit.py tests/unit_selection.py",
+      "cwd": "backend",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/ruff.exe format --check app/generated/router.py app/generated/service.py tests/test_generated_history_actor_unit.py tests/unit_selection.py",
+      "cwd": "backend",
+      "exitCode": 0,
+      "formattedFiles": 4
+    },
+    {
+      "command": ".venv/Scripts/mypy.exe app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 216
+    },
+    {
+      "command": "node .git/codex-document-workspace-source-check.cjs",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0,
+      "compiledDesktopModels": true,
+      "compiledModelTarget": true,
+      "compiledBodyScroll": true,
+      "compiledHistoryScroll": true,
+      "compiledShortThree": true,
+      "compiledPhoneFieldSpacing": true,
+      "compiledPhoneFooterSafeArea": true,
+      "compiledHiddenImportant": true,
+      "bundledOriginalModels": 12,
+      "originalModelsUnchanged": true,
+      "catalogsCoreEqual": true,
+      "nativeVisualEvidence": false
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8764,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1250,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "reference": "Frozen documents-help.css with final mobile-app.css overrides; actual real catalogues agree for all12 model cores",
+    "layout": "Two shared tabs; desktop model rail, compact narrow-screen select, grouped fields, bounded native scroll owners, retained managed form and footer; four desktop history columns and phone/drawer cards",
+    "sourceHashes": {
+      "backend/app/generated/router.py": "3e16ae6563e042cfe4fa849497127438ec0825d9d370eb8b9add422b23d4d351",
+      "backend/app/generated/service.py": "701fb61727c68411d0a82ef717a24fce25d0847f72f16d2ecfc29732ac37e5a0",
+      "backend/tests/unit_selection.py": "7fda840b617bdc66cd3508046ff188e7abdbd018f95b1c52f28fb926343886e7",
+      "backend/tests/test_generated_history_actor_unit.py": "abfdfcf4c8357c21bf9300122f4a938ea258f64e6003ab34c97d8ac4a9ade230",
+      "frontend/scripts/test-facade.mjs": "d23be6c08b7fad0632167c7ae40fd6e238015f3cf066a28502fcfa704766af7a",
+      "frontend/src/app/globals.css": "3276dc75dafa04678ee250a2e19633db5b7ad496c2f297a88fd63c94c3efe63a",
+      "frontend/src/app/workspace-documents.css": "31b4ecc71f3f6446bbd46a9d31dbc7bffdc583a26f919b1fe955bbd26ed8a20a",
+      "frontend/src/features/generated/contracts.ts": "ab6b0466f5a33ac4819ad2e6a672248e73623e716cbbc201ee6d9abee90b0280",
+      "frontend/src/features/generated/facade.ts": "24071b9469166ea08e1ac7e1979ba594d9e103d11ac514b3941b19cb338a89f0",
+      "frontend/src/features/generated/document-workspace.tsx": "0b0b45b5507e114b1dcf68128b714552a63fb9238dbf6e2c21dfb7943dac9069",
+      "frontend/src/features/generated/prepared-documents.tsx": "cd04528603c23b7b470a0728ef9c31a4a477e717e71327caf84a545a50aaf658",
+      "frontend/src/features/generated/preparation-model.ts": "990352d82b50d2322eb2197edc4587d7bae69a48bb052474e5373ae1f5d3c675",
+      "frontend/src/features/generated/use-preparation.ts": "01e7d284856e09d4b39cf611b12fbbe542b80371eacc17b5bdc3bd00e172e367",
+      "frontend/tests/unit/generated-documents.test.mjs": "b6d8057bfbcd8708ed39a558dc03d8d8cc0319000e315c61409c924ecc39751b",
+      "frontend/tests/unit/prepared-history.test.mjs": "4597677d444f75d19be41a25ac6fb3dc78ff27bab4932472217d0b71d5ee52f4",
+      "frontend/tests/unit/document-workspace.test.mjs": "f3d820cefbb02cf2580f5da7735c8a517e66f0beec461f7b4547c4701322ec74",
+      "frontend/tests/e2e/generated-documents.spec.ts": "aa3b2c1e19c12e2733c0a8a93f677db3ab20f910f885549dfc0ec7b77263fc2c"
+    },
+    "hashEncoding": "SHA-256 of staged Git blob bytes (canonical line endings)"
+  },
+  "invariants": [
+    "Current backend authorization, finance template visibility, archive read/write split, immutable generated bytes/storage and fresh one-use private permits remain authoritative",
+    "One per-parent keyed controller and one form at every width; per-model accepted baselines preserve other drafts on success",
+    "Unknown outcome pins exact per-model body/key across switches; only explicit confirmation abandons recovery without a write; changed uncertain catalog cannot submit",
+    "Hydration and synchronous global lock guard writes; exact declared fields, Unicode/control and UTF-8 request bounds apply",
+    "Current denial from context/history/command hides private values and clears/prunes retained memory; client abort/late-result suppression does not imply rollback",
+    "Creator opt-in reads only retained document creator ID/display name after scoped filtering/paging; same-agency lookup preserves deleted/disabled attribution and fails closed on missing identity",
+    "Omitted-flag history, context and POST receipt shapes stay unchanged; deploy backend support before strict new frontend",
+    "A stale/non-displayed version cannot request a permit; denial or unmount aborts transfer before browser download",
+    "No private values or proofs in storage/logs/export/URLs; no real data/services/configuration accessed"
+  ],
+  "correctedAttempts": [
+    "Initial synchronous effect-state lint failure: visibility stays synchronously derived while cancellable scoped microtask reconciles retained memory; no lint disable",
+    "Test harness hook renamed to a valid custom-hook name",
+    "Initial full suite found cross-VM array prototype inequality in column assertion; normalized realm with Array.from, preserving exact expected values",
+    "Focused recovery review included current history denial in private-field cleanup and transfer abort; final423-case suite/build rerun"
+  ],
+  "preparedBrowser": [
+    "frontend/tests/e2e/generated-documents.spec.ts:1440/390 Lead and Deal real synthetic fixtures, two tabs, scoped10-model Agent catalogue, independent drafts, committed-but-lost response/exact retry, original creator/private download, phone/table, discard retention and return route; source/type-checked, not executed"
+  ],
+  "remaining": [
+    "M01 actual preparation-sheet PDF styling and original/styled appendix token/page/provenance reconciliation; no PDF bytes changed",
+    "Other P0-P8 gaps, finance/per-field context refinements and old-browser same-document navigation fallback",
+    "Existing automatic app-access rejection: no browser/CUA/CDP/app HTTP or workaround",
+    "Native keyboard/touch/focus/zoom/accessibility/AFTER; real session/current-role/SQL/transfer/races, full stack/CI and owner review"
+  ],
+  "preserved": [
+    "All254 frozen prototype inputs and12 bundled original model PDFs",
+    "No schema/migration, write-grant, generation/storage/private-config/data/service change",
+    "Unrelated35-line lesson work and untracked motion plan",
+    "main, push, merge, deployment and production"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

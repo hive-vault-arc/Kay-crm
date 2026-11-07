@@ -1,0 +1,272 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "8299fc1",
+  "scope": "Selected inline Finance receipts and dossier financial history, retained focused forms/pages and non-stealing deferred focus",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 454,
+      "failed": 0,
+      "newRegisteredCases": 8,
+      "retiredDetailCase": 1,
+      "netAdditionalCases": 7
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 100,
+      "iconSites": 338,
+      "buttonSites": 477,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 417,
+      "deselectedIntegration": 697,
+      "newRegisteredCases": 7,
+      "connectionsForbidden": true
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check app/finance/queries.py app/finance/router.py tests/test_finance_history_unit.py tests/test_finance.py tests/test_finance_http.py tests/unit_selection.py",
+      "cwd": "backend",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff format --check app/finance/queries.py app/finance/router.py tests/test_finance_history_unit.py tests/test_finance.py tests/test_finance_http.py tests/unit_selection.py",
+      "cwd": "backend",
+      "exitCode": 0,
+      "targets": 6
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 217
+    },
+    {
+      "command": "node .git/codex-finance-collection-source-check.cjs",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0,
+      "compiledManagedFormGrid": true,
+      "compiledSharedFooter": true,
+      "compiledPhonePair": true,
+      "compiledHiddenImportant": true,
+      "compiledFullWidthEntry": true,
+      "compiledTonalEntry": true,
+      "compiledBorderedEntry": true,
+      "compiledPairedMetadata": true,
+      "compiledDrawerScroll": true,
+      "compiledRelatedFlat": true,
+      "compiledRelatedActionsStart": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8777,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1253,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "reference": [
+      "src/parity-ui.js",
+      "src/app.css",
+      "src/drawer-cards.css"
+    ],
+    "composition": "Receipts below recognized commission actions, separator-style related entries, dossier financial history below collection and one focused editor; old detail navigation removed",
+    "transport": "New GET /deals/{id}/finance-history, existing bounded FinanceQuery and revision fields plus commission_id/deal_id; legacy reads/commands unchanged",
+    "css": "Two scoped shared related-entry rules; no theme/token/font/icon-family/kit/dependency/chart change",
+    "databaseMigration": false
+  },
+  "invariants": [
+    "Current M/A authority precedes Deal lookup/count/page; authorized Deal scopes both aggregate count and revision page through one commission join",
+    "History order created_at DESC/id DESC is stable and bounded; no client concatenation or unbounded scan; original actor/reason/exact decimal/server civil-time facts remain",
+    "Legacy per-commission revision projection remains unchanged; new route is read-only and closed to unknown/duplicate/oversized query parameters",
+    "Inline receipts validate exact commission/page/unique identities and retain original/replacement/void/proof/actor facts; each original correction keeps selected page and snapshot",
+    "Expected commissions make no receipt query; at most20 recognized-commission reads accompany a20-row commission page, each receipt page bounded20",
+    "One focused form replaces collection/history; receipt/history page state survives return; four main Deal tabs remain",
+    "Existing managed draft/authority unmount/exact unknown retry and acknowledged read-only completion safeguards remain",
+    "Return waits for the exact receipt read, falls back for a missing/moved target and stops if user focus moved on; validation focuses only after invalid controls render",
+    "Current denied/foreign/invalid pages expose no private cached rows; proof access/grants and business write rules are not expanded",
+    "No private facts/proofs/retry keys enter storage/logs/URL payloads"
+  ],
+  "correctedAttempts": [
+    "First backend unit run failed at100 passed because a new fixture assumed Casablanca always used+01:00; the test now verifies retained instants and separately injects a deterministic projection zone, leaving real policy unchanged",
+    "A patch referring to the unformatted function signature was refused atomically after Ruff wrapped it; the actual source was read and the edit reapplied",
+    "Source inspection of prepared native focus assertions found validation queried stale aria-invalid attributes in the submit handler; focus now runs after commit and has an actual-controller timing test",
+    "Related receipts initially reused full nested card frames; two scoped related-entry rules now implement selected separators without changing outer cards",
+    "Focus review found late receipt readiness could refocus the heading repeatedly; restoration now focuses once and stops after an intervening user focus move"
+  ],
+  "preparedIntegration": {
+    "databaseCase": "backend/tests/test_finance.py::test_dossier_finance_history_pages_all_commissions_without_changing_their_facts",
+    "httpCase": "backend/tests/test_finance_http.py::test_finance_transport_roles_strict_money_pages_csrf_and_no_store",
+    "native": "frontend/tests/e2e/finance.spec.ts: cumulative SP16 profile plus1440/390 variants",
+    "executed": false,
+    "olderReviewSelectors": "frontend/tests/review/finance.chrome.spec.ts remains pending"
+  },
+  "pending": [
+    "Real SQL/session/current-role/HTTP/race/proof/full-stack/CI acceptance and maximum-page query/render performance",
+    "Native desktop/phone keyboard/touch/zoom/focus/accessibility and older Finance review selector migration",
+    "AFTER/owner review and all remaining P0–P8 migration ledger items, including M01 appendix/context/report/work reconciliation"
+  ],
+  "restrictions": [
+    "Existing automatic app-access rejection remains binding; no browser/CUA/CDP/app HTTP/alternate-origin workaround; stubbed in-process ASGI opens no listener/database",
+    "Original-machine mandatory antislop/design-system-ops files unavailable; installed design-taste excludes dense multi-step product UI; AFTER timing preserved",
+    "No real/development database, service/worker/scanner, migration, records, private credentials/configuration, main, push/merge/deploy/production operation",
+    "Protected35 pre-existing lesson additions and untracked motion note remain outside staged work; backend-first rollout required"
+  ],
+  "sourceHashes": [
+    {
+      "file": "backend/app/finance/queries.py",
+      "bytes": 6976,
+      "sha256": "45b23477ccfaed6fb9e3235ff04a84e2c6a4018f1cd45714b116ddb0f5968f70",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/app/finance/router.py",
+      "bytes": 3117,
+      "sha256": "1422591cf240ab3ee42d7c47a3e130f624095f7fbcf2a776487a56cf81b831ca",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/tests/test_finance_history_unit.py",
+      "bytes": 8032,
+      "sha256": "d2633fae7c563b18a37f6cb7f2d181fded491d5e18c0990a0247da75f015a77b",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/tests/test_finance.py",
+      "bytes": 8952,
+      "sha256": "2a0a13847365bc888fbc477c800c35394a64476a68f9a94f10b19f2d6b9b4895",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/tests/test_finance_http.py",
+      "bytes": 4123,
+      "sha256": "0abcd5881eac8a249bfb2bc625ef0727b4d42853c4fd84e97d0c67edb08014e3",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "backend/tests/unit_selection.py",
+      "bytes": 1250,
+      "sha256": "24c51ec9b2cbe1b63349549351e6d4eff521849d6bee004671e5ef693d14b5a3",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/app/api/v1/[...path]/route.ts",
+      "bytes": 7214,
+      "sha256": "bc4970197947642cbdfb025a5efc2313011f94f5929743829a8c961e2a16dc27",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/app/workspace-work.css",
+      "bytes": 4336,
+      "sha256": "28fe1654182d5891e3f1e0c2ce32ba88a6af18a5176bd169e059d35ba8fead2f",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/components/shared/record-entry.tsx",
+      "bytes": 1214,
+      "sha256": "a5c48f25cd22a3e94162740424b897650fed8df26182f4961c8a9fa603123dc2",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/collection.tsx",
+      "bytes": 5972,
+      "sha256": "b8eaae7527792d58798867416d20a55ff9c7786072485633af9690f4d09f23ef",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/commission-record.tsx",
+      "bytes": 5560,
+      "sha256": "e2c600834119a64405267e054fb92337c2d8abf104d64cf7961c24310d5e231c",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/contracts.ts",
+      "bytes": 5990,
+      "sha256": "c2b472598bb5b0996cd9560db7410647bf7410b90dfdd96514ed0838f1d1ceb6",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/facade.ts",
+      "bytes": 3934,
+      "sha256": "2037277236adacb2ca0eefb0067e7f6b901981cf6b74e8484a73f37bcfdaf66d",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/finance-panel.tsx",
+      "bytes": 9008,
+      "sha256": "96422833e6cc396a89a116e5302c9ec7aebbe941a0534a7e5b3762996116d952",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/model.ts",
+      "bytes": 3579,
+      "sha256": "e5f3baa264f13a79d1ddcd16aa9c7f7669e4d444473a31c4aa3c54da7c17cb91",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/terms-form.tsx",
+      "bytes": 9236,
+      "sha256": "c18c639ac4367e2ed87818fa0adb3f26c4f4279f14e44866e9d2797ec266d1a0",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/finance/receipt-form.tsx",
+      "bytes": 12207,
+      "sha256": "891e329a361144b4cffddaf3f57591c53ed1a051992a420b0fcef32f63a29e0e",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/e2e/finance.spec.ts",
+      "bytes": 11153,
+      "sha256": "2ac97a664dcbdb127c9b82a7ecab9f518a79a304701bbf16265206b7a489f00f",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/helpers/finance.ts",
+      "bytes": 4230,
+      "sha256": "e389eb7d80cd5cfb4b27476473a6cd7324a47c73bdf5625934d7430f53994194",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/finance-workspace.test.mjs",
+      "bytes": 49135,
+      "sha256": "8d70610f5bd76114438a73aeb15ebe99eebf6a8688dca07553f964a0008f8c27",
+      "basis": "canonical staged Git blob"
+    }
+  ]
+}
