@@ -109,8 +109,17 @@ test("Action buttons: real CRM route families, responsive forms, dialogs and pre
   test.setTimeout(300_000);
   const owner = await createActor("agent");
   const failures: string[] = [];
-  page.on("pageerror", () => failures.push("PAGE_ERROR"));
-  page.on("console", message => { if (message.type() === "error") failures.push("CONSOLE_ERROR"); });
+  let currentSurface = "fixture setup";
+  page.on("pageerror", () => failures.push(`${currentSurface}: PAGE_ERROR`));
+  page.on("console", message => {
+    if (message.type() !== "error") return;
+    const status = /^Failed to load resource: the server responded with a status of (\d{3})/.exec(message.text())?.[1];
+    const resource = message.location().url;
+    const area = resource.includes("/api/v1/") ? "backend API"
+      : resource.includes("/api/") ? "frontend API"
+      : resource.includes("/_next/") ? "Next.js resource" : "page";
+    failures.push(`${currentSurface}: ${area} ${status ?? "CONSOLE_ERROR"}`);
+  });
   try {
     await signIn(page, owner);
     const lead = await createLead(page, "SP05 contact synthétique des actions");
@@ -132,7 +141,7 @@ test("Action buttons: real CRM route families, responsive forms, dialogs and pre
       ["working-hours", "/settings/working-hours"], ["audit", "/dashboard?view=audit"],
       ["simulator", "/website-simulator"],
     ];
-    const metrics = [];
+    const metrics: ({ route: string } & Awaited<ReturnType<typeof inspectActions>>)[] = [];
     await page.setViewportSize({ width: 360, height: 1000 });
     await page.goto("/leads/new");
     await page.getByRole("button", { name: "Ajouter un téléphone", exact: true }).click();
@@ -163,15 +172,21 @@ test("Action buttons: real CRM route families, responsive forms, dialogs and pre
     const contactLink = page.getByRole("link", { name: "Voir le contact", exact: true });
     await contactLink.click(); await expect(page.getByRole("heading", { name: "SP05 contact synthétique des actions", exact: true })).toBeVisible();
     for (const [name, route] of routes) {
-      await page.setViewportSize({ width: 1440, height: 1000 });
-      const response = await page.goto(route); expect(response?.status()).toBe(200);
-      await expect(page.locator("main").getByRole("heading").first()).toBeVisible();
-      await expect(page.locator("main").getByRole("status").filter({ hasText: /Chargement|Vérification/ })).toHaveCount(0);
-      for (const width of [1440, 360]) {
-        await page.setViewportSize({ width, height: 1000 });
-        metrics.push({ route: name, ...(await inspectActions(page)) });
-        if (["leads", "lead-new", "development", "working-hours"].includes(name)) await capture(page, `${name}-${width}`);
-      }
+      await test.step(`Inspect ${name} controls on desktop and mobile`, async () => {
+        currentSurface = name;
+        await page.setViewportSize({ width: 1440, height: 1000 });
+        const response = await page.goto(route); expect(response?.status()).toBe(200);
+        const surface = name === "visit-new"
+          ? page.getByRole("dialog", { name: "Planifier une visite", exact: true })
+          : page.getByRole("main");
+        await expect(surface.getByRole("heading").first()).toBeVisible();
+        await expect(surface.getByRole("status").filter({ hasText: /Chargement|Vérification/ })).toHaveCount(0);
+        for (const width of [1440, 360]) {
+          await page.setViewportSize({ width, height: 1000 });
+          metrics.push({ route: name, ...(await inspectActions(page)) });
+          if (["leads", "lead-new", "development", "working-hours"].includes(name)) await capture(page, `${name}-${width}`);
+        }
+      });
     }
     await writeFile(path.join(artifacts, "routes-geometry.json"), JSON.stringify(metrics, null, 2));
     expect(failures).toEqual([]);

@@ -217,7 +217,9 @@ requires complete canonical facets and preserves explicit empty selection.
 D38 extends `GET /visits` with exact unique CSV `types`/`statuses`, explicit-empty
 selection, pre-page filtering and scoped full-range counts. Busy intervals never
 return those counts and reject all type/status filters. Existing current-session,
-range, page bounds and authorization apply. The
+range, page bounds and authorization apply. A single authorized `contact_id`
+allows a range of up to 32 days for the dossier's Casablanca month view.
+Unscoped visit lists and free/busy remain bounded to eight days. The
 [scheduling contract](visit-scheduling-local.md) defines exact vocabulary and
 snapshot semantics; [evidence](../03-planning/calendar-reference-refresh.md)
 separates this local extension from full-product acceptance.

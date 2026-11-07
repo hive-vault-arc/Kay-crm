@@ -3472,7 +3472,7 @@ test database, SQL shell or direct row insertion is used.
 
 ## Redesign and iPhone upload integration (2026-11-06)
 
-The combined checkout passed `npm run test:unit` (1002 tests), the frontend
+The combined checkout passed `npm run test:unit` (1003 tests), the frontend
 production build, and backend `scripts/kay.ps1 -Task check` and
 `python -m tests.unit_runner` in the project venv (581 tests).
 A disposable loopback PostgreSQL 18 target upgraded first to
@@ -3488,3 +3488,11 @@ child unit outcome changed the programme version. Close and reopen now record
 that version and phase with a generic shared-stock reason. The revised test
 fixtures use supported archive and ownership commands and set dates before
 creation, preserving existing database guards.
+
+Hosted [run 42321116808](https://github.com/hive-vault-arc/Kay-crm/actions/runs/42321116808)
+passed 1,304 backend cases and five real-time browser cases on `76f2f6be`.
+The full compiled browser step stopped at five failures. The contact-month
+follow-up passed all 11 cases in `tests/test_calendar_filters.py` on disposable
+PostgreSQL, including authorized monthly reads, denied contact access and retained
+weekly/free-busy bounds. The compiled 26-route action sweep and the three calendar
+reference cases passed locally with the redesigned drawers.

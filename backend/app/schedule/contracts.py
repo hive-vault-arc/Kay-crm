@@ -139,6 +139,14 @@ class CalendarQuery(Period):
     types: Annotated[str, Field(max_length=80)] | None = None
     statuses: Annotated[str, Field(max_length=80)] | None = None
 
+    @model_validator(mode="after")
+    def period(self) -> Self:
+        # Contact dossiers use Casablanca month boundaries, including offset changes.
+        limit = timedelta(days=32 if self.contact_id is not None else 8)
+        if not timedelta(0) < self.end_at - self.start_at <= limit:
+            raise ValueError("INVALID_VISIT_PERIOD")
+        return self
+
     @field_validator("types", "statuses", mode="before")
     @classmethod
     def selections(cls, value: object, info: ValidationInfo) -> str | None:
