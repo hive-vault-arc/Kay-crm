@@ -15,6 +15,7 @@
 .kay-filter-rail .crm-filter-heading h2 { flex:1; font-size:16px; }
 .kay-filter-rail .crm-filter-heading > span { width:100%; order:2; color:var(--workspace-muted); font-size:12px; }
 .kay-filter-rail label,.kay-filter-fields label { font-size:13px; font-weight:500; }
+.kay-filter-rail summary,.kay-filter-fields summary { min-height:var(--control-touch-target); align-content:center; }
 .kay-list-controls { display:flex; justify-content:flex-end; align-items:center; gap:8px; min-width:0; }
 .kay-list-search { flex:1; min-width:0; }
 .kay-list-search input { max-width:360px; }

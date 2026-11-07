@@ -17,14 +17,25 @@ export async function discoveryFixture(page: Page, actors: TestActor[]) {
   return { agent, other, manager, visible, hidden, pid };
 }
 export async function searchFor(page: Page, text = "SP19") {
-  await page.getByRole("button", { name: "Rechercher", exact: true }).click();
-  await page.getByLabel("Nom, téléphone, référence ou document", { exact: true }).fill(text);
-  await page.getByRole("button", { name: "Lancer la recherche", exact: true }).click();
+  await page.getByRole("searchbox", { name: "Recherche globale", exact: true }).fill(text);
+  await page.getByRole("link", { name: "Voir tous les résultats", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: /résultat\(s\) accessible/ })).toBeVisible();
 }
+
+export async function openExport(page: Page) {
+  await page.getByRole("button", { name: "Autres actions de la liste", exact: true }).click();
+  await page.getByRole("button", { name: "Exporter les résultats filtrés", exact: true }).click();
+  const drawer = page.getByRole("dialog", { name: "Exporter les résultats filtrés", exact: true });
+  await drawer.getByRole("checkbox", { name: "Confirmer ce périmètre", exact: true }).check();
+  return drawer;
+}
 export async function lifecycle(page: Page, restore = false) {
+  await page.getByRole("button", { name: "Actions", exact: true }).click();
+  await page.getByRole("button", { name: "Gérer le dossier", exact: true }).click();
+  const drawer = page.getByRole("dialog", { name: "Gérer le dossier", exact: true });
   await page.getByRole("button", { name: restore ? "Restaurer ce dossier" : "Archiver ce dossier", exact: true }).click();
   await page.getByLabel("Motif obligatoire", { exact: true }).fill("SP19 contrôle synthétique");
   await page.getByRole("button", { name: restore ? "Confirmer la restauration" : "Confirmer l’archivage", exact: true }).click();
   await expect(page.getByRole("heading", { name: restore ? "État : Actif" : "État : Archivé", exact: true })).toBeVisible();
+  await drawer.getByRole("button", { name: "Fermer : Gérer le dossier", exact: true }).click();
 }

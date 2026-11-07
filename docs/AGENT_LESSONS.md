@@ -2301,3 +2301,12 @@ Report-specific readiness belongs in report tests. This keeps a dashboard
 section redesign from blocking unrelated protected-route checks. When merging
 parallel upload work, preserve the current drawer's permit ownership and
 recovery contract while integrating the new picker and decoder.
+
+## Keep compiled browser builds immutable during a run (2026-11-07)
+
+Do not rebuild `.next` while a production-mode Playwright supervisor is serving
+it. Replacing its chunks mid-run can prevent hydration and produce disabled-login
+failures unrelated to the feature under test. Stop the owned suite, finish the
+build, then launch a fresh supervisor. Discard runs affected by workstation
+suspension or a changed build. Diagnostic DOM/style mutations are investigation,
+not product verification; remove them and rerun the original interaction.

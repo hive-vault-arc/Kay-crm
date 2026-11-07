@@ -3496,3 +3496,30 @@ follow-up passed all 11 cases in `tests/test_calendar_filters.py` on disposable
 PostgreSQL, including authorized monthly reads, denied contact access and retained
 weekly/free-busy bounds. The compiled 26-route action sweep and the three calendar
 reference cases passed locally with the redesigned drawers.
+
+## PR37 release regression continuation (2026-11-07)
+
+The hosted run42326649516 on2c67706c passed1,305 real-PostgreSQL tests
+and all5 real-time browser cases, but the ordinary browser gate failed.
+The release remains gated on a fresh complete integration run of the new head.
+
+Focused browser checks were updated for the selected global search, explicit
+CSV scope confirmation, automatically refreshed exports, dossier management
+drawer, 831px filter breakpoint, scoped assignee options and current contact/
+programme filters. The CSV content/scope and lost-acknowledgement checks remain;
+agent tests still verify the readable assignee boundary and denied export/import.
+Focus contrast now waits for the existing color transition and converts browser
+CSS colors to sRGB before applying the unchanged3:1 requirement.
+
+The offering creation drawer/trigger now retain their component identity while
+the saved record hides its creation action. The save receipt and fresh authorized
+record read still precede completion. Shared filter summaries receive the existing
+44px touch target. Local diagnostic runs that temporarily changed layout styles,
+and the run interrupted by workstation suspension, are not release passes.
+The full integration job now has75minutes and collects up to12 failures rather
+than stopping after5; any failure still rejects its aggregate gate.
+
+Production recovery preflight (read-only): DigitalOcean shows managed PostgreSQL
+recovery to the latest transaction or a point within7days and App Platform
+maintenance mode. No restore was executed and no restore drill is claimed.
+Production remains at main e0bdc09 and migration0035 until the final gates pass.
