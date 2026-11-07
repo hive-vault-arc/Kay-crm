@@ -31,7 +31,7 @@ export function FilePicker({ id, label, accept, description, selected, choose, s
   }
   return <div className="kay-file-picker" data-has-file={Boolean(selected)} data-dragging={dragging && !disabled}>
     <Label id={`${id}-label`} htmlFor={id}>{label}</Label>
-    <div className="kay-file-drop" role="group" aria-labelledby={`${id}-label`} onDragOver={event => { event.preventDefault(); event.dataTransfer.dropEffect = disabled ? "none" : "copy"; if (!disabled) setDragging(true); }} onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false); }} onDrop={event => { event.preventDefault(); picked(event.dataTransfer.files); }}>
+    <div className="kay-file-drop" role="group" aria-label="Zone de dépôt" onDragOver={event => { event.preventDefault(); event.dataTransfer.dropEffect = disabled ? "none" : "copy"; if (!disabled) setDragging(true); }} onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false); }} onDrop={event => { event.preventDefault(); picked(event.dataTransfer.files); }}>
       <Input ref={inputRef} id={id} type="file" tabIndex={-1} className="kay-file-input" accept={accept} multiple={multiple} disabled={disabled} aria-describedby={`${id}-help ${id}-selection`} onChange={event => picked(event.target.files)} />
       <span className="kay-upload-symbol"><UploadIcon aria-hidden="true" size={24} /></span>
       <strong>{multiple ? selected ? "Changer la sélection" : "Choisissez vos fichiers" : selected ? "Changer le fichier" : "Choisissez votre fichier"}</strong>

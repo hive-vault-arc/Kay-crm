@@ -58,5 +58,6 @@ export function useDevelopmentCreation({ actorId, role, available }: { actorId?:
     const parsed = developmentFieldsSchema.safeParse(body); if (!parsed.success) { const failure = new ApiError("VALIDATION_ERROR", 422); setError(failure); return Promise.resolve(failure); }
     const owned: Attempt = { body: structuredClone(parsed.data), key: crypto.randomUUID(), dispatched: false, uncertain: false, complete }; attempt.current = owned; setAcknowledged(false); return run(owned);
   }
-  return { error, denied, pending, uncertain, acknowledged, protected: pending || uncertain, locked, canEdit, deny, submit, retry: () => attempt.current?.uncertain ? run(attempt.current) : Promise.resolve(undefined) };
+  const editable = hydrated && available && !denied && !pending && !uncertain && !acknowledged;
+  return { error, denied, pending, uncertain, acknowledged, editable, protected: pending || uncertain, locked, canEdit, deny, submit, retry: () => attempt.current?.uncertain ? run(attempt.current) : Promise.resolve(undefined) };
 }

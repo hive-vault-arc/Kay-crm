@@ -23,6 +23,14 @@ function fixture({ role = "agent", hydrated = true, supported = true, dispatch, 
   return { ...h, actorId, props, render, calls, navigations, focused, registrations, step, change, values: () => values, commits: () => commits, server: () => server, identity: next => { identity = next; }, capabilities: next => { capabilities = next; }, prepare() { step(0); change("reference", "SYN-NEW-P"); change("name", "Synthetic new programme"); }, async save() { find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await tick(); } };
 }
 
+test("Programme fields become editable when capabilities arrive after the first render", () => {
+  const s = fixture();
+  s.capabilities({ refresh() {} });
+  assert.equal(find(s.render(), "fieldset")[0].props.disabled, true);
+  s.capabilities({ value: { items: [], phase_supported: true }, refresh() {} });
+  assert.equal(find(s.render(), "fieldset")[0].props.disabled, false);
+});
+
 test("All existing staff roles create one verified programme with the selected original fields before navigation", async () => {
   for (const role of ["agent", "manager", "administrator"]) {
     const s = fixture({ role }); s.prepare(); s.step(1); s.change("briefing_text", "  Synthetic shared programme context  "); s.step(2); await s.save(); assert.equal(s.commits(), 1); assert.equal(s.calls[0][0], "/api/v1/developments"); assert.equal(s.calls[0][4], "POST"); assert.equal(s.calls[0][1].briefing_text, "Synthetic shared programme context"); assert.equal(s.calls[0][1].phase, "preparation"); assert.equal(s.calls[0][1].developer_contact_id, null); assert.deepEqual(s.navigations, [`/projects/${s.server().id}`]); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], undefined); await s.save(); assert.equal(s.calls.length, 1);

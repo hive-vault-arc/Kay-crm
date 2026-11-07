@@ -6,7 +6,9 @@ export async function createDevelopment(page: Page, category = "mixed") {
   await page.goto("/projects/new");
   const reference = `SP08-${randomUUID().slice(0, 8)}`.toUpperCase();
   const name = "Programme mixte synthétique";
-  await page.getByLabel("Référence du programme", { exact: true }).fill(reference);
+  const referenceField = page.getByLabel("Référence du programme", { exact: true });
+  await expect(referenceField).toBeEditable();
+  await referenceField.fill(reference);
   await page.getByLabel("Nom du programme", { exact: true }).fill(name);
   await page.getByLabel("Catégorie du programme", { exact: true }).selectOption(category);
   const form = page.getByRole("form", { name: "Créer un programme" });

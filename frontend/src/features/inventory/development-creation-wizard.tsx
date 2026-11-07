@@ -117,7 +117,7 @@ export function DevelopmentCreationWizard({ actorId, role }: { actorId?: string;
         <SectionHeading icon={steps[step].icon}>{steps[step].label}</SectionHeading>
         <p className="mt-2 text-sm text-muted-foreground">{step === 0 ? "Un programme regroupe plusieurs biens. Sa fiche ne décrit pas un appartement précis." : step === 1 ? "Ajoutez le contexte connu. Le promoteur et la présentation sont facultatifs." : "Vérifiez le programme avant de le créer. Les blocs, étages, unités et offres viendront ensuite."}</p>
       </div>
-      <fieldset disabled={!command.canEdit()} className="grid min-w-0 gap-4">
+      <fieldset disabled={!command.editable} className="grid min-w-0 gap-4">
         {step === 0 ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
           <div className="grid gap-2"><Label htmlFor="development-reference">Référence du programme</Label><Input id="development-reference" maxLength={80} required aria-invalid={Boolean(form.formState.errors.reference)} aria-describedby={form.formState.errors.reference ? "development-validation" : undefined} {...field("reference")} /></div>
           <div className="grid gap-2"><Label htmlFor="development-name">Nom du programme</Label><Input id="development-name" maxLength={160} required aria-invalid={Boolean(form.formState.errors.name)} aria-describedby={form.formState.errors.name ? "development-validation" : undefined} {...field("name")} /></div>
@@ -137,7 +137,7 @@ export function DevelopmentCreationWizard({ actorId, role }: { actorId?: string;
       {command.uncertain ? <p role="status">{command.acknowledged ? "Le programme est enregistré. Actualisez son résultat sans le créer à nouveau." : "La réponse est interrompue. Réessayez la même opération pour retrouver le programme."}</p> : null}
       <div role="group" aria-label="Navigation du formulaire" className="flex flex-wrap gap-2 border-t pt-4">
         {step > 0 ? <Button action="back" type="button" variant="outline" disabled={command.protected} onClick={() => { if (lock.current || command.locked()) return; setValidation(""); focusStep(step - 1); }}>Précédent</Button> : null}
-        {step < 2 ? <Button action="forward" variant="creation" type="button" disabled={!hydrated || command.protected} onClick={event => { event.preventDefault(); next(); }}>Suivant</Button> : <Button action="create" type="submit" disabled={!hydrated || command.pending || !command.uncertain && !command.canEdit()}>{command.pending ? "Enregistrement…" : command.uncertain ? command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération" : "Créer le programme"}</Button>}
+        {step < 2 ? <Button action="forward" variant="creation" type="button" disabled={!hydrated || command.protected} onClick={event => { event.preventDefault(); next(); }}>Suivant</Button> : <Button action="create" type="submit" disabled={!hydrated || command.pending || !command.uncertain && !command.editable}>{command.pending ? "Enregistrement…" : command.uncertain ? command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération" : "Créer le programme"}</Button>}
         <Button action="cancel" variant="outline" disabled={command.protected} asChild><Link href="/projects" aria-disabled={command.protected} tabIndex={command.protected ? -1 : undefined} onClick={event => { if (lock.current || command.locked()) event.preventDefault(); }}>Annuler</Link></Button>
       </div>
     </div>

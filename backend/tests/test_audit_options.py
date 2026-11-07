@@ -5,6 +5,7 @@ from uuid import uuid4
 
 import pytest
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from app.discovery.audit import read_audit, read_audit_actors
 from app.discovery.contracts import AuditActorsQuery, AuditQuery
@@ -71,20 +72,20 @@ def test_current_actor_role_and_session_are_rechecked_before_audit_options(setti
     assert read_audit_actors(database, token, AuditActorsQuery())["total"] >= 1
     with database.session() as session, session.begin():
         session.get(User, uid).role = "agent"
-    with pytest.raises(IdentityError, match="FORBIDDEN"):
+    with pytest.raises(IdentityError, match="UNAUTHENTICATED"):
         read_audit_actors(database, token, AuditActorsQuery())
     with database.session() as session, session.begin():
         user = session.get(User, uid)
         user.role, user.state = "manager", "disabled"
-    with pytest.raises(IdentityError):
+    with pytest.raises(IdentityError, match="UNAUTHENTICATED"):
         read_audit_actors(database, token, AuditActorsQuery())
 
 
-def test_web_and_legacy_unattributed_events_keep_existing_safe_shape_without_staff_fabrication(
+def test_web_events_keep_their_attribution_and_new_unattributed_events_are_rejected(
     settings, database
 ):
     uid, manager = actor(settings, database, "manager")
-    source_id, unattributed_id, web_id = uuid4(), uuid4(), uuid4()
+    source_id, web_id = uuid4(), uuid4()
     with database.session() as session, session.begin():
         session.add(
             WebsiteSource(
@@ -97,22 +98,22 @@ def test_web_and_legacy_unattributed_events_keep_existing_safe_shape_without_sta
             )
         )
         session.flush()
-        session.add_all(
-            [
-                AuditEvent(id=unattributed_id, action="tasks.updated"),
-                AuditEvent(id=web_id, website_source_id=source_id, action="enquiries.created"),
-            ]
-        )
+        session.add(AuditEvent(id=web_id, website_source_id=source_id, action="enquiries.created"))
+    with pytest.raises(IntegrityError, match="audit_event_true_actor"):
+        with database.session() as session, session.begin():
+            session.add(AuditEvent(action="tasks.updated"))
     rows = read_audit(database, manager, AuditQuery())["items"]
-    unattributed = next(row for row in rows if row["id"] == str(unattributed_id))
     web = next(row for row in rows if row["id"] == str(web_id))
-    assert unattributed["actor_name"] == "Auteur non renseigné" and unattributed["actor_id"] is None
     assert web["actor_name"] == "Source web : " + "S" * 160 and web["actor_id"] is None
-    assert (
-        set(unattributed)
-        == set(web)
-        == {"id", "action", "actor_id", "actor_name", "created_at", "target_user_id", "targets"}
-    )
+    assert set(web) == {
+        "id",
+        "action",
+        "actor_id",
+        "actor_name",
+        "created_at",
+        "target_user_id",
+        "targets",
+    }
     choices = read_audit_actors(database, manager, AuditActorsQuery(q="S" * 160))
     assert choices["total"] == 1 and choices["items"] == [
         {
@@ -124,14 +125,11 @@ def test_web_and_legacy_unattributed_events_keep_existing_safe_shape_without_sta
     unattributed_choices = read_audit_actors(
         database, manager, AuditActorsQuery(q="Auteur non renseigné")
     )
-    assert unattributed_choices["items"] == [
-        {"kind": "unattributed", "id": None, "display_name": "Auteur non renseigné"}
-    ]
+    assert unattributed_choices["items"] == []
     web_rows = read_audit(database, manager, AuditQuery(website_source_id=source_id))
     assert web_rows["total"] == 1 and web_rows["items"][0]["id"] == str(web_id)
     unattributed_rows = read_audit(database, manager, AuditQuery(unattributed_actor="true"))
-    assert any(row["id"] == str(unattributed_id) for row in unattributed_rows["items"])
-    assert not any(row["id"] == str(web_id) for row in unattributed_rows["items"])
+    assert unattributed_rows["items"] == []
     with database.session() as session:
         assert (
             session.scalar(select(WebsiteSource.name).where(WebsiteSource.id == source_id))
