@@ -17,7 +17,7 @@
       "solid": "#c24150"
     },
     "contacted": {
-      "text": "#1389b2",
+      "text": "#0e7490",
       "bg": "#eff9fd",
       "dot": "#1389b2",
       "border": "#e0f4fb",
@@ -38,7 +38,7 @@
       "solid": "#1d4ed8"
     },
     "qualified": {
-      "text": "#8b5cc7",
+      "text": "#7c4db5",
       "bg": "#f8f2ff",
       "dot": "#8b5cc7",
       "border": "#f4eafd",
@@ -52,7 +52,7 @@
       "solid": "#52657d"
     },
     "converted": {
-      "text": "#0f9f8a",
+      "text": "#0f766e",
       "bg": "#edfbf8",
       "dot": "#0f9f8a",
       "border": "#dff7f3",
@@ -80,7 +80,7 @@
       "solid": "#1d4ed8"
     },
     "visite": {
-      "text": "#1389b2",
+      "text": "#0e7490",
       "bg": "#eff9fd",
       "dot": "#1389b2",
       "border": "#e0f4fb",
@@ -94,14 +94,14 @@
       "solid": "#4338ca"
     },
     "pending": {
-      "text": "#8b5cc7",
+      "text": "#7c4db5",
       "bg": "#f8f2ff",
       "dot": "#8b5cc7",
       "border": "#f4eafd",
       "solid": "#7c4db5"
     },
     "closed-won": {
-      "text": "#0f8f80",
+      "text": "#0f7f72",
       "bg": "#edfbf7",
       "dot": "#0f8f80",
       "border": "#e0f6f1",
@@ -136,21 +136,21 @@
       "solid": "#c24150"
     },
     "available": {
-      "text": "#0f8f80",
+      "text": "#0f7f72",
       "bg": "#edfbf7",
       "dot": "#0f8f80",
       "border": "#e0f6f1",
       "solid": "#0f7f72"
     },
     "confirmed": {
-      "text": "#0f8f80",
+      "text": "#0f7f72",
       "bg": "#edfbf7",
       "dot": "#0f8f80",
       "border": "#e0f6f1",
       "solid": "#0f7f72"
     },
     "active": {
-      "text": "#1389b2",
+      "text": "#0e7490",
       "bg": "#eff9fd",
       "dot": "#1389b2",
       "border": "#e0f4fb",

@@ -9,10 +9,10 @@ test.use({ trace: "off", video: "off", screenshot: "off" });
 for (const scenario of [{ kind: "enquiries", operation: "archive", width: 390, failure: "acknowledgement" }, { kind: "deals", operation: "restore", width: 1440, failure: "result-read" }] as const) {
   // Prepared/typechecked only. No actual app/SQL/native execution is claimed.
   test(`${scenario.kind} ${scenario.operation} keeps its exact confirmation through ${scenario.failure}`, async ({ page }) => {
-    test.setTimeout(180_000); const actor = await createActor("manager"), attempts: { body: string | null; key?: string }[] = []; let blockRead = false;
+    test.setTimeout(180_000); const actor = await createActor("manager"), owner = await createActor("agent"), attempts: { body: string | null; key?: string }[] = []; let blockRead = false;
     try {
       await signIn(page, actor);
-      const created = await staffCommand(page, "enquiries", directoryLeadDraft("Synthetic lifecycle dossier", `+2126${Date.now().toString().slice(-8)}`));
+      const created = await staffCommand(page, "enquiries", directoryLeadDraft("Synthetic lifecycle dossier", `+2126${Date.now().toString().slice(-8)}`, { primaryAgentId: owner.id }));
       if (created.status() !== 200) throw new Error("SYNTHETIC_RECORD_LIFECYCLE_SETUP_FAILED"); const enquiry = enquirySchema.parse(await created.json()); let id = enquiry.id;
       if (scenario.kind === "deals") {
         const converted = await staffCommand(page, `enquiries/${enquiry.id}/convert`, convertLeadSchema.parse({ expected_version: enquiry.version, project: { external_name: "Synthetic lifecycle project" }, initial_budget: "500000", purchase_reasons: ["residence"] }));
@@ -31,6 +31,6 @@ for (const scenario of [{ kind: "enquiries", operation: "archive", width: 390, f
       expect(attempts.length).toBe(scenario.failure === "acknowledgement" ? 2 : 1); if (attempts.length === 2) expect(attempts[0].body === attempts[1].body && attempts[0].key === attempts[1].key).toBe(true);
       const response = await page.request.get(path); if (response.status() !== 200) throw new Error("SYNTHETIC_RECORD_LIFECYCLE_RESULT_FAILED"); const current = scenario.kind === "enquiries" ? enquirySchema.parse(await response.json()) : dealSchema.parse(await response.json()); expect(current.id === id && current.version === initial.version + 1 && Boolean(current.archived_at) === (scenario.operation === "archive")).toBe(true);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
-    } finally { await clearActorContext(page); await removeActor(actor); }
+    } finally { try { await clearActorContext(page); } finally { await removeActor(actor); await removeActor(owner); } }
   });
 }

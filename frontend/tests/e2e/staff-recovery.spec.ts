@@ -39,7 +39,9 @@ for (const operation of ["profile", "reset"] as const) {
       }
       const retry = page.getByRole("button", { name: "Réessayer la même opération", exact: true });
       await expect.poll(() => retry.isVisible()).toBe(true);
-      await expect.poll(() => page.getByRole("button", { name: "Enregistrer", exact: true }).isDisabled()).toBe(true);
+      // A modal security dialog hides the profile from the accessibility tree.
+      // Its native save control must still be disabled by the shared operation owner.
+      await expect.poll(() => page.getByRole("button", { name: "Enregistrer", exact: true, includeHidden: true }).isDisabled()).toBe(true);
       if (operation === "reset") {
         await expect.poll(() => page.getByLabel("Votre mot de passe administrateur", { exact: true }).isDisabled()).toBe(true);
         await page.keyboard.press("Escape");

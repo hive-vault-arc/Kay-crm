@@ -11,6 +11,12 @@ connected heading when its trigger becomes hidden. A style-mutated diagnostic
 pass, workstation-suspended run or build replaced under a running server is
 not release evidence.
 
+Use a short test-specific directory under the project output root for persistent
+Chrome profiles on Windows. Long generated per-test names can put the browser's
+Default/Preferences file beyond its supported path length even when navigation
+works. Keep the path containment checks and actual devicePixelRatio/viewport
+assertions; changing device scale alone is not a substitute for native zoom.
+
 ## Recheck domain permissions before reusing a presentation flag (2026-10-26)
 
 D34 permits active agents to edit shared programme facts and create units. Keep
@@ -2321,3 +2327,14 @@ failures unrelated to the feature under test. Stop the owned suite, finish the
 build, then launch a fresh supervisor. Discard runs affected by workstation
 suspension or a changed build. Diagnostic DOM/style mutations are investigation,
 not product verification; remove them and rerun the original interaction.
+
+## Verify settled controls and current workflow boundaries (2026-11-07)
+
+When a redesign changes tabs, drawers, field labels or grouped menus, keep the
+original permission, atomicity and retry assertions but navigate through the
+current controls. Wait for a closing popover to finish before reopening it.
+Measure contrast after CSS color transitions finish and recognize native
+`:disabled`, including controls disabled by an ancestor fieldset. Keep the
+contrast/touch thresholds unchanged; do not replace failures with snapshots or
+raise timeouts to hide a missing control. Add bounded action timeouts to expose
+the failing step instead of waiting for a long workflow timeout.

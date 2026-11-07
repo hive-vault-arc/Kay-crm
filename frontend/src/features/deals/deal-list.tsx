@@ -47,7 +47,7 @@ const columns: Record<ColumnId, ColumnDef<Deal>> = {
   languages: { id: "languages", header: "Langues", cell: ({ row }) => row.original.contact.languages.map(code => languageLabels[code] ?? code).join(", ") || "Non renseignées" },
   email: { id: "email", header: "E-mail", cell: ({ row }) => <span className="wrap-anywhere">{row.original.contact.primary_email || "Non renseigné"}</span> },
 };
-const defaults = { q: "", stage: "", assigned_agent_id: "", offering_kind: "", campaign_source: "", rating: "", country: "", language: "", created_from: "", created_to: "", updated_from: "", updated_to: "", archive: "active", sort: "-updated_at", page_size: 20 };
+const defaults = { q: "", stage: "", assigned_agent_id: "", offering_kind: "", campaign_source: "", rating: "", country: "", language: "", created_from: "", created_to: "", updated_from: "", updated_to: "", archive: "active", sort: "-updated_at", page_size: 50 };
 
 type Props = { role: StaffRole; actorId?: string; contactId?: string; archived?: boolean; revision?: number };
 export function DealList(props: Props) { return <DealListLifetime key={`${props.actorId ?? ""}:${props.role}:${props.contactId ?? ""}:${props.archived ?? false}`} {...props} />; }

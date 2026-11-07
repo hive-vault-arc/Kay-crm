@@ -10,6 +10,10 @@ for (const mode of ["native", "classic"] as const) test(`History navigation reta
     if (!await page.locator('a[href="/leads"]:visible').count()) await page.getByRole("button", { name: "Ouvrir la navigation", exact: true }).click();
     await page.locator('a[href="/leads"]:visible').first().click();
     await expect(page).toHaveURL(/\/leads$/);
+    // Next can update the URL before the destination route has committed.
+    // Mount the synthetic draft only after the actual directory is ready.
+    await expect(page.getByRole("heading", { name: "Prospects", level: 1, exact: true })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: /^0 demande$/ })).toBeVisible();
     expect(await page.evaluate(() => {
       const navigation = (window as Window & { navigation?: EventTarget & { currentEntry?: unknown } }).navigation ?? window.__kayClassicHistoryV1;
       return Boolean(navigation?.currentEntry);

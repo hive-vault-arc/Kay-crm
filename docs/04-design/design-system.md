@@ -11,6 +11,20 @@ trigger has become hidden. The synthetic mixed-unit/programme workflow and
 and phone captures were inspected. This is a rendering/accessibility correction
 within the selected design, not a new visual direction or product approval.
 
+Property and programme directories also retain equal card rows with the
+selected whole-card link, hover and focus treatment. Existing media, padding,
+radii and phone thumbnail layout are unchanged. Location text is limited to
+two visible lines with its full value in the title, preventing pasted map URLs
+from expanding one card. Native Chrome verifies equal dimensions, 44px minimum
+click targets, keyboard/touch opening and overflow at320–1920px; desktop and
+phone captures were inspected with synthetic records.
+
+Status label accessibility correction, 2026-11-07: nine light-theme label
+foregrounds use the existing darker solid colors from the selected status
+palette. Contrast against each matching background is at least 4.59:1. Dots,
+surfaces, status meanings and dark-theme values stay the same. The browser
+contrast check waits for CSS transitions and keeps its 4.5:1 threshold.
+
 ## Current selected prototype migration: 2026-10-26
 
 The owner's current visual/UX authority is the frozen selected KAY prototype,

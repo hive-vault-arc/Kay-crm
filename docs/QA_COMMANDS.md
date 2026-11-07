@@ -3535,3 +3535,29 @@ real-time cases passed. Its stale help/import/dashboard/filter selectors are
 being updated to the selected UI, preserving scope, atomic CSV content, denied
 access, keyboard recovery and phone behavior. This evidence does not mark the
 full release gate or production verification complete.
+
+The `8f096f7b` follow-up passed 1,305 PostgreSQL cases and five real-time browser
+cases in hosted run 42415896856; its ordinary browser gate failed. Subsequent
+local compiled checks passed 8 history/lifecycle/staff recovery cases, all 8 Lead
+qualification/list cases, the selected notification read retry, both owner
+quick-drawer sizes, all 3 record-removal journeys and the 17-route workspace
+branding/responsive journey. These are focused results, not a full release pass.
+
+The follow-up restores the requested default 50 rows for Leads/Deals and verifies
+page 2 is not fetched until requested. Property/programme image cards now have
+equal heights with bounded long-location text. Notification read recovery restores
+keyboard focus after a lost acknowledgement. A stock-review warning hidden by
+the new action-only outcome panel is restored on the Deal page. No business
+write, permission, session, storage, push or migration changes here.
+Frontend units remain 1003 passed; lint, types and the compiled build passed.
+Exact-head hosted integration and coordinated production rollout remain required.
+
+The external-sale browser case exposed a missing nested offering target in the
+inventory detail response. Detail reads now include the same shared target/version
+projection already used by exact-offering selection; directory reads remain
+unchanged. The affected `tests/test_outcomes.py` passed 10 PostgreSQL cases in
+21.36s, including 3 new standalone/unit/programme response-coherence checks.
+Ruff, format and mypy pass (223 application source files). Frontend units remain
+1003 passed. Nine light status label colors now use their existing darker solid
+palette values, with calculated contrast at least 4.59:1 against their surfaces;
+decorative dots and dark-theme tokens are unchanged.

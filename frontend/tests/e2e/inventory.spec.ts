@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { clearActorContext, test, expect, createActor, removeActor, signIn, changeActor } from "../helpers/auth";
+import { clearActorContext, test, expect, createActor, removeActor, signIn, changeActor, openWorkspaceAccount } from "../helpers/auth";
 import { createLead, staffCommand } from "../helpers/leads";
 import { addOwners, confirmCampaign, createCampaign, createProperty, inventorySection, openAvailability, openInventoryHistory, openOwnerEditor, openProperty, propertyEditStep, savePropertyEdit } from "../helpers/inventory";
 import { apiProcess } from "../helpers/api-process";
@@ -27,7 +27,7 @@ test("SP07 AT-23/39: a late inventory denial cannot replace intentional logout",
       await logoutGate; await route.fulfill({ response }).catch(() => {});
     });
     await page.goto("/projects"); await readStarted;
-    await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
+    await (await openWorkspaceAccount(page)).getByRole("button", { name: "Se déconnecter", exact: true }).click();
     expect(await logoutStatus).toBe(200);
     releaseRead();
     await expect(page.getByRole("alert").filter({ hasText: "Votre session a expiré. Reconnectez-vous." })).toBeVisible();
@@ -46,7 +46,7 @@ test("SP07 AT-23/39: failed logout restores normal session-expiry handling", asy
     await signIn(page, actor); await page.goto("/projects");
     await expect(page.getByText("0 bien correspondant", { exact: true })).toBeVisible();
     await page.route("**/api/v1/auth/logout", route => route.abort("failed"), { times: 1 });
-    await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
+    await (await openWorkspaceAccount(page)).getByRole("button", { name: "Se déconnecter", exact: true }).click();
     await expect(page.getByRole("alert").filter({ hasText: "Le service local est indisponible." })).toBeVisible();
     await expect(page.getByRole("button", { name: "Se déconnecter", exact: true })).toBeEnabled();
     await changeActor(actor, "revoke");

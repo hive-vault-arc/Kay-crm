@@ -5,11 +5,11 @@ import { staffCommand } from "../helpers/leads";
 import { geometry } from "../helpers/report-review";
 
 async function cardGeometry(page: Page, count: number) {
-  await expect(page.locator("article.project-card")).toHaveCount(count);
+  await expect(page.locator("article.kay-project-card:visible")).toHaveCount(count);
   await page.evaluate(() => document.fonts.ready);
-  const cards = await page.locator("article.project-card").evaluateAll(elements => elements.map(card => {
+  const cards = await page.locator("article.kay-project-card:visible").evaluateAll(elements => elements.map(card => {
     const rect = card.getBoundingClientRect();
-    const footer = card.querySelector<HTMLElement>(".project-card-link")!;
+    const footer = card.querySelector<HTMLElement>(".kay-project-open")!;
     const action = footer.getBoundingClientRect();
     return { width: rect.width, height: rect.height, footerWidth: action.width, footerHeight: action.height, bottomGap: rect.bottom - action.bottom, leftGap: action.left - rect.left, rightGap: rect.right - action.right };
   }));
@@ -17,15 +17,16 @@ async function cardGeometry(page: Page, count: number) {
   expect(Math.max(...cards.map(card => card.width)) - Math.min(...cards.map(card => card.width))).toBeLessThanOrEqual(1);
   for (const card of cards) {
     expect(card.footerHeight).toBeGreaterThanOrEqual(44);
-    expect(card.footerWidth).toBeGreaterThanOrEqual(card.width - 2);
-    expect(Math.abs(card.bottomGap)).toBeLessThanOrEqual(1);
-    expect(Math.abs(card.leftGap)).toBeLessThanOrEqual(1);
-    expect(Math.abs(card.rightGap)).toBeLessThanOrEqual(1);
+    expect(card.footerWidth).toBeGreaterThanOrEqual(card.width - 10);
+    expect(card.footerHeight).toBeGreaterThanOrEqual(card.height - 10);
+    expect(Math.abs(card.bottomGap)).toBeLessThanOrEqual(5);
+    expect(Math.abs(card.leftGap)).toBeLessThanOrEqual(5);
+    expect(Math.abs(card.rightGap)).toBeLessThanOrEqual(5);
   }
   await geometry(page);
 }
 
-test("project cards: equal sizes and full-width hover, keyboard and touch footer", async ({ page, browser, baseURL }) => {
+test("project cards: equal sizes and full-card hover, keyboard and touch navigation", async ({ page, browser, baseURL }) => {
   test.setTimeout(180_000);
   const actor = await createActor("administrator", false, "SP06 Cartes synthétiques");
   const longLocation = `https://www.google.com/maps/place/${"quartier-synthetique-".repeat(20)}`;
@@ -44,8 +45,8 @@ test("project cards: equal sizes and full-width hover, keyboard and touch footer
     await page.goto("/projects");
     await cardGeometry(page, 6);
     await expect(page.getByText(/1.250.000,00 MAD/)).toBeVisible();
-    await expect(page.locator(".project-card-location span[title]").filter({ hasText: longLocation })).toHaveAttribute("title", longLocation);
-    const footer = page.locator(".project-card-link").first();
+    await expect(page.locator(".kay-project-location span[title]").filter({ hasText: longLocation })).toHaveAttribute("title", longLocation);
+    const footer = page.locator(".kay-project-open:visible").first();
     const href = await footer.getAttribute("href");
     const resting = await footer.evaluate(element => getComputedStyle(element).backgroundColor);
     await footer.hover();
@@ -66,14 +67,14 @@ test("project cards: equal sizes and full-width hover, keyboard and touch footer
     const touch = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, viewport: { width: 360, height: 844 }, hasTouch: true });
     try {
       const phone = await touch.newPage(); await signIn(phone, actor); await phone.goto("/projects");
-      await expect(phone.locator(".project-card-link")).toHaveCount(6);
-      const destination = await phone.locator(".project-card-link").first().getAttribute("href");
-      await phone.locator(".project-card-link").first().tap(); await expect(phone).toHaveURL(new RegExp(`${destination}$`));
+      await expect(phone.locator(".kay-project-open:visible")).toHaveCount(6);
+      const destination = await phone.locator(".kay-project-open:visible").first().getAttribute("href");
+      await phone.locator(".kay-project-open:visible").first().tap(); await expect(phone).toHaveURL(new RegExp(`${destination}$`));
     } finally { await touch.close(); }
   } finally { await removeActor(actor); }
 });
 
-test("programme cards share the equal-height full-width footer", async ({ page }) => {
+test("programme cards share the equal-height full-card navigation", async ({ page }) => {
   const actor = await createActor("administrator", false, "SP06 Programmes synthétiques");
   try {
     await page.setViewportSize({ width: 1920, height: 1000 }); await signIn(page, actor);
@@ -91,7 +92,7 @@ test("programme cards share the equal-height full-width footer", async ({ page }
     await page.setViewportSize({ width: 1920, height: 1000 });
     await mkdir("output/playwright/project-card-layout", { recursive: true });
     await page.screenshot({ path: "output/playwright/project-card-layout/programmes.png", fullPage: true });
-    const footer = page.locator(".project-card-link").first(), href = await footer.getAttribute("href");
+    const footer = page.locator(".kay-project-open:visible").first(), href = await footer.getAttribute("href");
     await footer.click(); await expect(page).toHaveURL(new RegExp(`${href}$`));
   } finally { await removeActor(actor); }
 });

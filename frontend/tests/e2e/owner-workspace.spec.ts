@@ -14,7 +14,7 @@ for (const width of [1440, 390]) test(`Selected owner directory and quick drawer
     const created = await staffCommand(page, "properties", { reference: `SYN-OWNER-${suffix}`, category: "house", marketing_name: "Bien lié synthétique", location: null, area_sqm: null }); expect(created.status()).toBe(200);
     const { property_id: propertyId } = await created.json(), property = await (await page.request.get(`/api/v1/properties/${propertyId}`)).json();
     const linked = await staffCommand(page, `properties/${propertyId}/owners`, { expected_version: property.version, owners: [{ contact_id: contact.id, marketing_display: "Vendeur synthétique partagé" }] }, "PUT"); expect(linked.status()).toBe(200);
-    await signIn(page, agent);
+    await clearActorContext(page); await signIn(page, agent);
     let detailReads = 0;
     page.on("request", request => { if (request.method() === "GET" && new URL(request.url()).pathname === `/api/v1/contacts/${contact.id}`) detailReads++; });
     await page.goto("/owners");

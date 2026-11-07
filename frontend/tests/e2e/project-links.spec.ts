@@ -5,7 +5,7 @@ import { createLead, staffCommand } from "../helpers/leads";
 import { convertLead } from "../helpers/deals";
 import { geometry } from "../helpers/report-review";
 
-test("Lead and Deal keep separate discussed and visited catalogue links above compact contact searches", async ({ page }) => {
+test("Lead and Deal keep independent catalogue links and lazily opened contact searches", async ({ page }) => {
   test.setTimeout(150_000);
   const actor = await createActor("agent");
   const reference = `LINK-${randomUUID().slice(0, 8)}`.toUpperCase();
@@ -19,6 +19,7 @@ test("Lead and Deal keep separate discussed and visited catalogue links above co
     expect(response.status()).toBe(200);
     const projectId = (await response.json()).development_id as string;
     const leadId = await createLead(page, "Client synthétique liens catalogue");
+    await page.getByRole("tab", { name: "Projets", exact: true }).click();
     const panel = page.getByRole("region", { name: "Projets liés au dossier" });
     const discussed = panel.getByRole("region", { name: "Projets discutés" });
     const visited = panel.getByRole("region", { name: "Projets visités" });
@@ -38,24 +39,24 @@ test("Lead and Deal keep separate discussed and visited catalogue links above co
     await expect(visited.getByRole("link", { name })).toBeVisible();
     const links = await (await page.request.get(`/api/v1/enquiries/${leadId}/project-links?kind=visited&page=1&page_size=25`)).json();
     expect(links.total).toBe(1);
+    await page.getByRole("tab", { name: "Activités", exact: true }).click();
     const history = page.getByRole("region", { name: "Historique du prospect", exact: true });
     await expect(history.getByText("Projet lié à la demande").first()).toBeVisible();
     mkdirSync("output/playwright/project-links", { recursive: true });
     await page.screenshot({ path: "output/playwright/project-links/lead-desktop.png", fullPage: true });
-    const searches = page.getByText("Gérer les recherches du contact", { exact: true });
+    await page.getByRole("tab", { name: "Aperçu", exact: true }).click();
+    const searches = page.getByRole("button", { name: "Recherches", exact: true });
     await expect(searches).toBeVisible();
-    expect(await page.evaluate(() => {
-      const history = document.querySelector('[aria-label="Historique du prospect"]');
-      const searches = [...document.querySelectorAll("summary")].find(item => item.textContent?.includes("Gérer les recherches du contact"));
-      return Boolean(history && searches && history.compareDocumentPosition(searches) & Node.DOCUMENT_POSITION_FOLLOWING);
-    })).toBe(true);
+    await expect(page.getByRole("heading", { name: "Recherches du contact", exact: true })).toHaveCount(0);
     await searches.focus();
     await page.keyboard.press("Enter");
     await expect(page.getByRole("heading", { name: "Recherches du contact" })).toBeVisible();
-    await expect(page.getByText("Aucune recherche enregistrée. Ajoutez un besoin d’achat ou de location pour commencer.")).toBeVisible();
+    await expect(page.getByText("Aucune recherche sur cette page. Ajoutez un besoin d’achat ou de location pour commencer.")).toBeVisible();
     await expect(page.getByRole("navigation", { name: "Pages des recherches" })).toHaveCount(0);
-    await page.getByRole("region", { name: "Recherches du contact" }).screenshot({ path: "output/playwright/project-links/lead-search-empty.png" });
+    await page.getByRole("dialog", { name: "Recherches", exact: true }).screenshot({ path: "output/playwright/project-links/lead-search-empty.png" });
+    await page.getByRole("button", { name: "Fermer : Recherches", exact: true }).click();
     const dealId = await convertLead(page);
+    await page.getByRole("tab", { name: "Projets", exact: true }).click();
     const dealPanel = page.getByRole("region", { name: "Projets liés au dossier" });
     const dealVisited = dealPanel.getByRole("region", { name: "Projets visités" });
     await expect(dealVisited.getByText("Aucun projet visité enregistré.")).toBeVisible();
@@ -65,10 +66,8 @@ test("Lead and Deal keep separate discussed and visited catalogue links above co
     await dealVisited.getByLabel("Projet", { exact: true }).selectOption(projectId);
     await dealVisited.getByRole("button", { name: "Ajouter à cette liste" }).click();
     await expect(dealVisited.getByRole("link", { name })).toBeVisible();
-    const dealSearches = page.getByText("Gérer les recherches du contact", { exact: true });
-    await expect(dealSearches).toBeVisible();
     await expect(page.getByRole("heading", { name: "Recherches du contact" })).toHaveCount(0);
-    expect(await dealSearches.evaluate(element => element.closest(".crm-record-view")?.lastElementChild === element.closest("details"))).toBe(true);
+    await expect(page.getByRole("dialog", { name: "Recherches", exact: true })).toHaveCount(0);
     expect((await (await page.request.get(`/api/v1/deals/${dealId}/project-links?kind=visited`)).json()).total).toBe(1);
     await dealVisited.getByRole("button", { name: "Retirer" }).click();
     await dealVisited.getByRole("button", { name: "Confirmer le retrait" }).click();

@@ -10,7 +10,7 @@ for (const [width, level] of [[1440, "development"], [390, "property"]] as const
   try {
     await signIn(page, manager); await page.setViewportSize({ width, height: 900 });
     const digits = String(Math.floor(Math.random() * 1_000_000)).padStart(6, "0");
-    const ownerReply = await staffCommand(page, "contacts", { name: `Propriétaire offre synthétique ${suffix}`, type: "person", phones: [{ number: `+212612${digits}`, label: "Principal", is_primary: true }], emails: [], roles: ["owner"], country: "MA", nationality: "", languages: [], primary_agent_id: manager.id });
+    const ownerReply = await staffCommand(page, "contacts", { name: `Propriétaire offre synthétique ${suffix}`, type: "person", phones: [{ number: `+212612${digits}`, label: "Principal", is_primary: true }], emails: [], roles: ["owner"], country: "MA", nationality: "", languages: [], primary_agent_id: agent.id });
     expect(ownerReply.status()).toBe(200); const owner = await ownerReply.json();
     const response = await staffCommand(page, root, level === "property" ? { reference: `SYN-OFFER-${suffix}`, category: "house", marketing_name: "Bien synthétique d’offre", location: null, area_sqm: null } : { reference: `SYN-OFFER-${suffix}`, name: "Programme synthétique d’offre", category: "mixed", location: null, briefing_text: null, developer_contact_id: null, developer_marketing_display: null });
     expect(response.status()).toBe(200); const created = await response.json(), id = level === "property" ? created.property_id : created.development_id;
@@ -34,7 +34,7 @@ for (const [width, level] of [[1440, "development"], [390, "property"]] as const
     await edit.getByRole("button", { name: "Enregistrer la campagne", exact: true }).click(); await edit.getByRole("button", { name: "Comparer l’offre actuelle", exact: true }).click();
     await expect(edit.getByLabel("Prix (MAD, facultatif)", { exact: true })).toHaveValue("1100000.75"); await edit.getByRole("button", { name: "Conserver ma saisie sur cette version", exact: true }).click(); await edit.getByRole("button", { name: "Enregistrer la campagne", exact: true }).click(); await expect(edit).toHaveCount(0);
     const after = await (await page.request.get(`/api/v1/${root}/${id}`)).json(); expect(after.offerings.find((item: { id: string }) => item.id === offer.id).price_mad).toBe("1100000.75");
-    await signIn(page, agent); await page.goto(route); await expect(page.getByRole("button", { name: "Modifier la campagne vente", exact: true })).toHaveCount(0); await expect(page.getByRole("button", { name: "Confirmer la disponibilité vente", exact: true })).toHaveCount(0);
+    await clearActorContext(page); await signIn(page, agent); await page.goto(route); await expect(page.getByRole("button", { name: "Modifier la campagne vente", exact: true })).toHaveCount(0); await expect(page.getByRole("button", { name: "Confirmer la disponibilité vente", exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   } finally { await clearActorContext(page); await removeActor(agent); await removeActor(manager); }
 });

@@ -1,5 +1,13 @@
 # HTTP contracts for `/api/v1`
 
+Inventory detail correction, 2026-11-07: property and development detail GETs
+include the existing exact-offering `target` projection on their current offers.
+Its shared inventory identity, level and target/development versions match the
+external stock-review response. Owner identities and private contact fields are
+not copied into this projection. List/summary reads retain their existing bounded
+shape and query cost. Mutation DTOs, server authority and stock fingerprints stay
+unchanged; no migration is added for this response correction.
+
 Selected affair forms,2026-10-29: existing manual creation and atomic affair/
 optional-contact PATCH DTOs, separate versions and result remain unchanged.
 Client recovery owns original body/context/key, same originating actor/role,

@@ -3,6 +3,8 @@ import { staffCommand } from "../helpers/leads";
 import { reservationBody, reservationFixture } from "../helpers/reservations";
 import { fillOutcome, outcomeBody, outcomeDialog, salePair } from "../helpers/outcomes";
 import { inventorySection } from "../helpers/inventory";
+import { propertySchema } from "@/features/inventory/contracts";
+import { stockReviewSchema } from "@/features/inventory/outcome-contracts";
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(25_000); page.setDefaultNavigationTimeout(30_000); });
 
@@ -19,8 +21,12 @@ test("SP13 AT-12/13/14/34: required close fields, committed retry, child review 
     await dialog.getByRole("button", { name: "Clôturer l’affaire", exact: true }).click();
     await expect(dialog.getByRole("alert").filter({ hasText: "Le service local est indisponible" })).toBeVisible();
     await expect(dialog.getByLabel("Explication du résultat (obligatoire)", { exact: true })).toHaveValue("SP13 accord synthétique confirmé");
-    await dialog.getByRole("button", { name: "Clôturer l’affaire", exact: true }).click(); await expect(dialog).not.toBeVisible(); await page.unroute(`**/api/v1/deals/${data.unit}/close`);
-    const detail = await (await page.request.get(`/api/v1/deals/${data.unit}`)).json(); expect(detail.stage).toBe("won"); expect(detail.offering.state).toBe("rented"); await expect(page.getByText("Pièces jointes en lecture seule pour l’état actuel de l’affaire ou du contact.", { exact: true })).toBeVisible(); await expect(page.getByText(/Contact archivé/)).toHaveCount(0);
+    await dialog.getByRole("button", { name: "Réessayer la même opération", exact: true }).click(); await expect(dialog).not.toBeVisible(); await page.unroute(`**/api/v1/deals/${data.unit}/close`);
+    const detail = await (await page.request.get(`/api/v1/deals/${data.unit}`)).json(); expect(detail.stage).toBe("won"); expect(detail.offering.state).toBe("rented");
+    await page.getByRole("tab", { name: "Documents", exact: true }).click();
+    await expect(page.getByText("Documents en lecture seule dans l’état actuel du dossier.", { exact: true })).toBeVisible(); await expect(page.getByText(/Contact archivé/)).toHaveCount(0);
+    await page.getByRole("tab", { name: "Activités", exact: true }).click();
+    await page.getByText("Résultats, clôture et réouverture", { exact: true }).click();
     await expect(page.getByRole("region", { name: "Résultats et réouvertures", exact: true }).getByText(/SP13 accord synthétique confirmé/)).toBeVisible();
     await page.goto(`/deals/${data.whole}`); const whole = await outcomeDialog(page); await fillOutcome(whole);
     await expect(whole.getByRole("alert").filter({ hasText: "Une unité a déjà été vendue ou louée" })).toBeVisible();
@@ -68,7 +74,14 @@ test("SP13 AT-11/13: manager external sale creates no KAY win and intervening st
     await page.goto(`/projects/properties/${pair.pid}`); await expect(page.getByRole("button", { name: "Marquer vendue ailleurs", exact: true })).toHaveCount(0);
     await clearActorContext(page); await signIn(page, data.manager);
     await page.goto(`/projects/properties/${pair.pid}`); const offers = inventorySection(page, "Offres"); await expect(offers).toBeVisible();
+    const stock = propertySchema.parse(await (await page.request.get(`/api/v1/properties/${pair.pid}`)).json());
+    const saleOffering = stock.offerings.find(offering => offering.id === pair.saleOffer)!;
+    const reviewed = stockReviewSchema.parse(await (await page.request.get(`/api/v1/properties/${pair.pid}/stock-review?offering_id=${pair.saleOffer}`)).json());
+    expect({ current: saleOffering.is_current, state: saleOffering.state, target: saleOffering.target?.version === stock.version, parent: reviewed.expected_development_version === saleOffering.target?.development_version, offering: reviewed.expected_offering_version === saleOffering.version, targetReview: reviewed.expected_target_version === stock.version }).toEqual({ current: true, state: "available", target: true, parent: true, offering: true, targetReview: true });
     await offers.getByRole("button", { name: "Marquer vendue ailleurs", exact: true }).click(); const external = page.getByRole("alertdialog", { name: "Marquer vendue ailleurs", exact: true });
+    await expect(external.getByText("Vérification du périmètre et des effets…", { exact: true })).toHaveCount(0);
+    expect(await external.getByRole("alert").allTextContents()).toEqual([]);
+    await expect(external.getByText("Cette offre a changé ou n’est plus active. Fermez ce panneau pour consulter la fiche actuelle avant une nouvelle action.", { exact: true })).toHaveCount(0);
     await expect(external.getByRole("button", { name: "Marquer vendue ailleurs", exact: true })).toBeEnabled();
     await external.getByLabel("Date du résultat externe (obligatoire)", { exact: true }).fill("2026-10-15");
     await external.getByLabel("Motif partagé, sans donnée privée (obligatoire)", { exact: true }).fill("SP13 vente externe synthétique confirmée");

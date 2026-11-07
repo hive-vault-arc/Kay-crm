@@ -1,6 +1,6 @@
 import { mkdir } from "node:fs/promises";
 import type { Page } from "@playwright/test";
-import { expect, signedInTest as test, signIn } from "../helpers/auth";
+import { expect, signedInTest as test, signIn, openWorkspaceAccount } from "../helpers/auth";
 
 const browserErrors = new WeakMap<Page, string[]>();
 test.beforeEach(({ page }) => {
@@ -30,7 +30,7 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
     )
       failures.push(request.url());
   });
-  await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
+  await (await openWorkspaceAccount(page)).getByRole("button", { name: "Se déconnecter", exact: true }).click();
   await expect(page).toHaveURL(/\/login\?signed_out=1$/);
   await page.goto("/");
   await expect(page).toHaveURL(/\/login$/);
@@ -89,7 +89,7 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Paramètres",
   );
-  await expect(page.getByRole("link", { name: "Tous les utilisateurs", exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Sections des paramètres", exact: true }).getByRole("link", { name: /^Utilisateurs/ })).toHaveAttribute("href", "/settings/users");
   await page
     .getByRole("navigation", { name: "Navigation principale" })
     .getByRole("link", { name: "Tableau de bord", exact: true })
@@ -98,77 +98,45 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
   expect(failures).toEqual([]);
 });
 
-test("Riviera desktop rail collapses without hiding destinations or search @shell", async ({ page }) => {
+test("selected compact rail exposes all destinations and global search @shell", async ({ page }) => {
   await mkdir("output/playwright/sidebar", { recursive: true });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/dashboard");
   const sidebar = page.locator("aside[data-sidebar]");
   const navigation = sidebar.getByRole("navigation", { name: "Navigation principale" });
-  const collapse = sidebar.getByRole("button", { name: "Réduire la navigation", exact: true });
-  await expect(collapse).toHaveAttribute("aria-expanded", "true");
-  await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(224);
-  await expect.poll(async () => {
-    const rail = await sidebar.boundingBox();
-    const control = await collapse.boundingBox();
-    return rail && control ? Math.abs(control.x + control.width / 2 - (rail.x + rail.width)) : Infinity;
-  }).toBeLessThan(2);
-  expect((await collapse.boundingBox())?.width).toBeGreaterThanOrEqual(44);
-  await page.screenshot({ path: "output/playwright/sidebar/expanded.png" });
-  await collapse.focus();
-  await page.keyboard.press("Enter");
-  const reopen = sidebar.getByRole("button", { name: "Développer la navigation", exact: true });
-  await expect(reopen).toHaveAttribute("aria-expanded", "false");
-  await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(72);
-  await expect.poll(async () => {
-    const rail = await sidebar.boundingBox();
-    const control = await reopen.boundingBox();
-    return rail && control ? Math.abs(control.x + control.width / 2 - (rail.x + rail.width)) : Infinity;
-  }).toBeLessThan(2);
-  const collapsedToggle = await reopen.boundingBox();
-  const collapsedSearch = await sidebar.getByRole("button", { name: "Rechercher", exact: true }).boundingBox();
-  await page.screenshot({ path: "output/playwright/sidebar/collapsed.png" });
-  expect(collapsedToggle && collapsedSearch && collapsedToggle.y + collapsedToggle.height <= collapsedSearch.y).toBe(true);
-  const collapsedBrand = await sidebar.locator(".sidebar-brand").boundingBox();
-  expect(collapsedToggle && collapsedBrand && collapsedBrand.y + collapsedBrand.height <= collapsedToggle.y).toBe(true);
-  for (const label of ["Tableau de bord", "Prospects", "Affaires", "Calendrier des visites", "Projets"]) {
-    await expect(navigation.getByRole("link", { name: label, exact: true })).toBeVisible();
+  await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(96);
+  for (const label of ["Tableau de bord", "Prospects", "Affaires", "Calendrier des visites", "Contacts", "Propriétaires", "Projets"]) {
+    const link = navigation.getByRole("link", { name: label, exact: true });
+    await expect(link).toBeVisible(); await expect(link).toHaveAttribute("title", label);
+    expect(Math.round((await link.boundingBox())!.width)).toBeGreaterThanOrEqual(44);
+    expect(Math.round((await link.boundingBox())!.height)).toBeGreaterThanOrEqual(44);
   }
-  const search = sidebar.getByRole("button", { name: "Rechercher", exact: true });
+  await page.screenshot({ path: "output/playwright/sidebar/compact.png" });
+  const search = page.getByRole("banner").getByRole("searchbox", { name: "Recherche globale", exact: true });
   await expect(search).toBeVisible();
-  await search.click();
-  await expect(page.getByRole("dialog", { name: "Recherche globale" })).toBeVisible();
+  await search.focus(); await search.fill("Recherche synthétique");
+  await expect(page.getByRole("dialog", { name: "Suggestions de recherche", exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
-  await reopen.focus();
-  await page.keyboard.press("Space");
-  await expect(sidebar.getByRole("button", { name: "Réduire la navigation", exact: true })).toHaveAttribute("aria-expanded", "true");
-  await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(224);
+  await expect(search).toBeFocused();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test("Riviera rail fits the viewport and gives short windows the drawer @shell", async ({ page }) => {
+test("selected rail fits short viewports and narrow windows use the drawer @shell", async ({ page }) => {
   await mkdir("output/playwright/sidebar", { recursive: true });
-  for (const height of [900, 800, 768, 720]) {
+  for (const height of [900, 800, 768, 720, 680, 600]) {
     await page.setViewportSize({ width: 1440, height });
     await page.goto("/dashboard");
     const sidebar = page.locator("aside[data-sidebar]");
-    const content = sidebar.locator(".sidebar-scroll");
     await expect(sidebar).toBeVisible();
     await expect(page.getByRole("button", { name: "Ouvrir les notifications" })).toBeEnabled();
-    expect(await content.evaluate(element => getComputedStyle(element).overflowY)).toBe("hidden");
-    expect(await content.evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
-    await expect(sidebar.getByRole("button", { name: "Se déconnecter" })).toBeInViewport();
-    const toggle = sidebar.getByRole("button", { name: "Réduire la navigation" });
-    const face = toggle.locator(".sidebar-toggle-face");
-    expect((await toggle.boundingBox())?.width).toBeGreaterThanOrEqual(44);
-    expect((await face.boundingBox())?.width).toBe(32);
-    expect(await face.evaluate(element => parseFloat(getComputedStyle(element).borderRadius) >= element.clientWidth / 2)).toBe(true);
-    expect(await face.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe("rgb(255, 255, 255)");
-    await page.screenshot({ path: `output/playwright/sidebar/expanded-${height}.png` });
-    await toggle.click();
-    expect(await content.evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
-    await expect(sidebar.getByRole("button", { name: "Se déconnecter" })).toBeInViewport();
+    expect(await sidebar.evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
+    for (const label of ["Aide", "Paramètres"]) await expect(sidebar.getByRole("link", { name: label, exact: true })).toBeInViewport();
+    const account = await openWorkspaceAccount(page);
+    await expect(account.getByRole("button", { name: "Se déconnecter", exact: true })).toBeInViewport();
+    await page.keyboard.press("Escape");
+    await page.screenshot({ path: `output/playwright/sidebar/compact-${height}.png` });
   }
-  await page.setViewportSize({ width: 1440, height: 700 });
+  await page.setViewportSize({ width: 830, height: 700 });
   await page.goto("/dashboard");
   await expect(page.locator("aside[data-sidebar]")).toBeHidden();
   const trigger = page.getByRole("button", { name: "Ouvrir la navigation" });
@@ -186,11 +154,12 @@ test("desktop rail stays in place while workspace pages scroll @shell", async ({
     await page.goto(route);
     const sidebar = page.locator("aside[data-sidebar]");
     await expect(sidebar).toBeVisible();
+    const original = await sidebar.boundingBox();
     await page.locator("main").evaluate(element => { element.style.minHeight = "250vh"; });
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-    await expect.poll(async () => Math.abs((await sidebar.boundingBox())?.y ?? Infinity)).toBeLessThan(2);
-    expect(await sidebar.locator(".sidebar-scroll").evaluate(element => element.scrollTop)).toBe(0);
+    await expect.poll(async () => Math.abs(((await sidebar.boundingBox())?.y ?? Infinity) - original!.y)).toBeLessThan(2);
+    expect(await sidebar.evaluate(element => element.scrollTop)).toBe(0);
     await page.evaluate(() => window.scrollTo(0, 0));
   }
 });
@@ -229,7 +198,7 @@ test("AT-23: sheet keyboard, containment, Escape and focus return @shell", async
 test("AT-23: responsive widths, long French labels and touch geometry @shell", async ({
   page,
 }) => {
-  await expect(page.getByText("0 notification(s) actuelle(s) non lue(s).", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   await expect(page.getByRole("status").filter({ hasText: /Chargement|Résolution/ })).toHaveCount(0);
   for (const width of [320, 360, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
@@ -238,7 +207,7 @@ test("AT-23: responsive widths, long French labels and touch geometry @shell", a
     await page.goto("/visits");
     await (await colleagues).finished();
     await expect(page.getByRole("button", { name: "Actualiser les visites", exact: true })).toBeEnabled();
-    const rulesTrigger = page.getByRole("button", { name: "Règles et disponibilités", exact: true }).and(page.locator(".calendar-rules-trigger"));
+    const rulesTrigger = page.getByRole("button", { name: "Règles et disponibilités", exact: true });
     await rulesTrigger.click();
     const rules = page.getByRole("dialog", { name: "Règles et disponibilités", exact: true });
     await expect(rules.getByText(/^Politique version/)).toBeVisible();
@@ -252,7 +221,7 @@ test("AT-23: responsive widths, long French labels and touch geometry @shell", a
       ),
     ).toBe(true);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    if (width < 1024) {
+    if (width <= 830) {
       const trigger = page.getByRole("button", {
         name: "Ouvrir la navigation",
       });

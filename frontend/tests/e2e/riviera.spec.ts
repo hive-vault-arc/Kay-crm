@@ -4,7 +4,7 @@ import { staffCommand } from "../helpers/leads";
 import { dealBody } from "../helpers/deals";
 import { geometry } from "../helpers/report-review";
 
-test("Riviera: self-hosted fonts, live route families and responsive shared branding", async ({ page, actor }) => {
+test("Selected workspace: self-hosted fonts, live route families and responsive shared branding", async ({ page, actor }) => {
   test.setTimeout(240_000);
   const errors: string[] = [];
   page.on("pageerror", () => errors.push("PAGE_ERROR"));
@@ -51,9 +51,9 @@ test("Riviera: self-hosted fonts, live route families and responsive shared bran
     await expect(page.locator("main h1")).toBeVisible();
     await expect(page.locator("main").getByRole("status").filter({ hasText: /Chargement|Vérification/ })).toHaveCount(0);
     await page.evaluate(() => document.fonts.ready);
-    await expect(page.locator("body")).toHaveCSS("background-color", "rgb(250, 248, 244)");
-    await expect(page.locator("body")).toHaveCSS("font-family", /manrope/i);
-    await expect(page.locator("main h1")).toHaveCSS("font-family", /fraunces/i);
+    await expect(page.locator("body")).toHaveCSS("background-color", "rgb(246, 247, 249)");
+    await expect(page.locator("body")).toHaveCSS("font-family", /inter/i);
+    await expect(page.locator("main h1")).toHaveCSS("font-family", /inter|fraunces/i);
     await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
     await geometry(page);
     if (["dashboard", "leads", "lead-detail", "projects", "deal-detail"].includes(name))

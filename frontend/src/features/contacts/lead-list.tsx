@@ -48,7 +48,7 @@ const columns: Record<ColumnId, ColumnDef<LeadSummary>> = {
   message: { id: "message", header: "Demande", cell: ({ row }) => <span className="wrap-anywhere">{row.original.message_preview || "Non renseignée"}</span> },
   updatedAt: { id: "updatedAt", header: "Modifié le", cell: ({ row }) => <span className="crm-date-cell">{formatInstant(row.original.updated_at)}</span> },
 };
-const defaults = { q: "", status: "", campaign_source: "", source: "", rating: "", assigned_agent_id: "", received_from: "", received_to: "", country: "", language: "", sort: "-updated_at", page_size: 20 };
+const defaults = { q: "", status: "", campaign_source: "", source: "", rating: "", assigned_agent_id: "", received_from: "", received_to: "", country: "", language: "", sort: "-updated_at", page_size: 50 };
 
 type Props = { role: StaffRole; actorId?: string; contactId?: string; archived?: boolean; revision?: number };
 export function LeadList(props: Props) { return <LeadListLifetime key={`${props.actorId ?? ""}:${props.role}:${props.contactId ?? ""}:${props.archived ?? false}`} {...props} />; }

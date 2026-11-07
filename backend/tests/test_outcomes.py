@@ -14,10 +14,13 @@ from app.deals.outcome_models import DealOutcome, DealReopening
 from app.deals.outcome_queries import outcomes, stock_review
 from app.deals.queries import read_detail
 from app.identity.security import IdentityError
+from app.inventory.contracts import InventoryQuery
+from app.inventory.hierarchy_queries import read_hierarchy
 from app.inventory.models import Offering
 from app.inventory.outcome_contracts import ExternalOutcome
 from app.inventory.outcome_models import StockEffect, StockOutcome
 from app.inventory.outcome_queries import stock_review as external_review
+from app.inventory.queries import read_detail as property_detail
 from tests.contact_support import actor
 from tests.deal_support import new, run
 from tests.test_inventory import confirm, offering_draft
@@ -63,6 +66,31 @@ def sale_fixture(settings, database):
         )["id"]
     )
     return token, contact, manager, pid, rental, rental_deal, sale, sale_deal
+
+
+@pytest.mark.parametrize("level", ["standalone", "unit", "development"])
+def test_inventory_detail_offering_target_matches_external_review(settings, database, level):
+    if level == "standalone":
+        _, _, manager, pid, oid, _, _, _ = sale_fixture(settings, database)
+        target_id = pid
+    else:
+        _, _, manager, parent, pid, oid, whole, _ = project_fixture(settings, database)
+        target_id = parent if level == "development" else pid
+        oid = whole if level == "development" else oid
+    is_development = level == "development"
+    detail = (
+        read_hierarchy(database, manager, "detail", target_id, InventoryQuery())
+        if is_development
+        else property_detail(database, manager, target_id)
+    )
+    offering = next(item for item in detail["offerings"] if item["id"] == str(oid))
+    target = offering["target"]
+    review = external_review(database, manager, target_id, oid, development=is_development)
+    assert target["id"] == str(target_id) and target["level"] == level
+    assert target["version"] == detail["version"] == review["expected_target_version"]
+    assert target["development_version"] == review["expected_development_version"]
+    assert offering["version"] == review["expected_offering_version"]
+    assert not {"owners", "contact", "phone", "email", "developer"} & target.keys()
 
 
 def test_sale_releases_rental_flags_without_closing_and_reopens_without_resurrecting_hold(

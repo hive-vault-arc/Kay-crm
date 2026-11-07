@@ -20,6 +20,7 @@ from app.inventory.models import InventoryEvent, Offering, Property
 from app.inventory.outcome_history import metadata
 from app.inventory.queries import money, numbered, offering_view, properties_view
 from app.inventory.reservations import shared_conflicts
+from app.inventory.selection import target_views
 from app.inventory.stock_review import occupied
 
 
@@ -35,7 +36,11 @@ def scoped_contact(
 
 
 def summary(
-    session: Session, items: list[Development], *, phase_enabled: bool = False
+    session: Session,
+    items: list[Development],
+    *,
+    phase_enabled: bool = False,
+    offering_targets: bool = False,
 ) -> list[dict[str, object]]:
     ids = [item.id for item in items]
     offerings: dict[UUID, list[dict[str, object]]] = {did: [] for did in ids}
@@ -46,6 +51,7 @@ def summary(
     ).all()
     conflicts = shared_conflicts(session, rows)
     occupancy = occupied(session, rows)
+    targets = target_views(session, rows) if offering_targets and rows else {}
     for offering in rows:
         if offering.development_id is None:
             raise IdentityError("INVALID_HIERARCHY", 422)
@@ -54,6 +60,7 @@ def summary(
                 **offering_view(offering),
                 "occupied": offering.id in occupancy,
                 "reservation_conflict": conflicts[offering.id],
+                **({"target": targets[offering.id]} if offering_targets else {}),
             }
         )
     counts = dict(
@@ -128,7 +135,7 @@ def detail(
             }
         )
     return {
-        **summary(session, [item], phase_enabled=phase_enabled)[0],
+        **summary(session, [item], phase_enabled=phase_enabled, offering_targets=True)[0],
         "briefing_text": item.briefing_text,
         "developer": {
             "marketing_display": item.developer_marketing_display,

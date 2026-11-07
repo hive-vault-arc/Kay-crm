@@ -55,7 +55,7 @@ export function OutcomePanel({ deal, writable, busy, saved, mutate, recovery, er
     finally { submitting.current = false; }
   }
   return <section hidden={dialogOnly} className={dialogOnly ? "hidden" : "grid min-w-0 gap-4 border-y py-6"} aria-label="Clôture et réouverture"><h2 className="text-section font-medium">Clôture et réouverture</h2>
-    {deal.stock_review_required ? <p role="status" className="text-warning">Le stock lié a changé. Faites vérifier cette affaire par un responsable. Elle n’a pas été clôturée automatiquement.</p> : null}
+    {!dialogOnly && deal.stock_review_required ? <p role="status" className="text-warning">Le stock lié a changé. Faites vérifier cette affaire par un responsable. Elle n’a pas été clôturée automatiquement.</p> : null}
     <p>La commission est facultative. Clôturer ou rouvrir n’enregistre aucun encaissement et n’efface aucune donnée financière.</p>
     {!writable && !open ? <p>Résultats conservés en lecture seule.</p> : <AlertDialog open={open} onOpenChange={next => { if (!submitting.current && !reviewed.locked() && !recovery?.locked()) { setOpen(next); if (!next) closed?.(); if (next) { setInvalid(""); void reviewed.refresh(); } } }}>
       {!dialogOnly ? <AlertDialogTrigger asChild><Button action={reopening ? "restore" : "outcome"} type="button" className="justify-self-start" disabled={!hydrated || pending || recovery?.protected}>{action}</Button></AlertDialogTrigger> : null}

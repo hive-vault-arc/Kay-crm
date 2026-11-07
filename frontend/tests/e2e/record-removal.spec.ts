@@ -11,6 +11,7 @@ test("D44: owner archives and restores a Lead and a deal from their pages", asyn
     await signIn(page, agent);
     const leadId = await createLead(page, "D44 prospect synthétique");
     const lead = await (await page.request.get(`/api/v1/enquiries/${leadId}`)).json();
+    await page.getByRole("button", { name: "Actions", exact: true }).click();
     const archiveLead = page.getByRole("button", { name: "Archiver le prospect" });
     await archiveLead.focus();
     await page.keyboard.press("Enter");
@@ -21,11 +22,11 @@ test("D44: owner archives and restores a Lead and a deal from their pages", asyn
     const leadDialog = page.getByRole("alertdialog", { name: "Archiver le prospect" });
     await leadDialog.getByLabel("Motif obligatoire").fill("Contrôle synthétique du retrait");
     await leadDialog.getByRole("button", { name: "Confirmer : archiver le prospect" }).click();
-    await expect(page.getByText(/Prospect archivé\. Restauration possible/)).toBeVisible();
+    await expect(page.getByText(/Prospect archivé : historique conservé/)).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath("d44-lead-detail-desktop.png") });
     await page.goto("/leads");
     expect((await (await page.request.get("/api/v1/enquiries")).json()).total).toBe(0);
-    await expect(page.getByRole("button", { name: "Archives des prospects" })).toBeVisible();
+    await page.getByRole("button", { name: "Autres actions de la liste", exact: true }).click();
     await page.getByRole("button", { name: "Archives des prospects" }).click();
     await expect(page.getByText("Archives · 1 demande")).toBeVisible();
     await page.setViewportSize({ width: 360, height: 780 });
@@ -43,13 +44,15 @@ test("D44: owner archives and restores a Lead and a deal from their pages", asyn
     expect(created.status()).toBe(200);
     const dealId = (await created.json()).id;
     await page.goto(`/deals/${dealId}`);
+    await page.getByRole("button", { name: "Actions", exact: true }).click();
     await page.getByRole("button", { name: "Archiver l’affaire" }).click();
     const dealDialog = page.getByRole("alertdialog", { name: "Archiver l’affaire" });
     await dealDialog.getByLabel("Motif obligatoire").fill("Contrôle synthétique de l’affaire");
     await dealDialog.getByRole("button", { name: "Confirmer : archiver l’affaire" }).click();
-    await expect(page.getByText(/Affaire archivée\. Restauration possible/)).toBeVisible();
+    await expect(page.getByText(/Affaire archivée : historique conservé/)).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath("d44-deal-detail-desktop.png") });
     await page.goto("/deals");
+    await page.getByRole("button", { name: "Autres actions de la liste", exact: true }).click();
     await page.getByRole("button", { name: "Archives des affaires" }).click();
     await expect(page.getByText("Archives · 1 affaire")).toBeVisible();
     await page.getByRole("checkbox", { name: "Sélectionner D44 prospect synthétique" }).check();
@@ -67,7 +70,8 @@ test("D44: a manager finds the project archive from its header", async ({ page }
   try {
     await signIn(page, manager);
     const project = await createDevelopment(page);
-    await page.getByRole("link", { name: "Archiver le projet" }).click();
+    await page.getByRole("button", { name: "Actions", exact: true }).click();
+    await page.getByRole("button", { name: "Gérer le dossier", exact: true }).click();
     await expect(page.getByRole("region", { name: "Cycle de vie de l’inventaire" })).toBeInViewport();
     await page.getByRole("button", { name: "Archiver ce dossier" }).click();
     await page.getByLabel("Motif obligatoire").fill("Retrait synthétique du projet");

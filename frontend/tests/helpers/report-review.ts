@@ -22,6 +22,7 @@ export async function geometry(page: Page) {
   await page.evaluate(async () => {
     await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
     await new Promise<void>(resolve => setTimeout(resolve, 20));
+    await Promise.allSettled(document.getAnimations().filter(animation => animation instanceof CSSTransition).map(animation => animation.finished));
   });
   const result = await page.evaluate(() => {
     const root = document.querySelector('[role="alertdialog"]') ?? document.querySelector('[role="dialog"]') ?? document.querySelector("main") ?? document.body;
@@ -42,10 +43,10 @@ export async function geometry(page: Page) {
       return color[3] === 1 ? color : [...composite(color, el.parentElement ? background(el.parentElement) : [255, 255, 255]), 1];
     }
     const controls = [...root.querySelectorAll<HTMLElement>("button,input,select,textarea")].filter(visible).map(el => { const target = el.matches('input[type="file"][tabindex="-1"]:is(.sr-only,.kay-file-input)') ? (el.closest('[role="group"]') ?? el.closest("fieldset"))?.querySelector("button") ?? el : el.matches('[role="checkbox"],[role="radio"],input[type="checkbox"],input[type="radio"]') ? el.closest("label") ?? el : el; const r = target.getBoundingClientRect(); return { width: r.width, height: r.height, tag: el.tagName, id: el.id, slot: el.dataset.slot }; });
-    const ratios = [...root.querySelectorAll<HTMLElement>("p,h1,h2,h3,label,button,a")].filter(el => visible(el) && el.textContent?.trim() && !el.hasAttribute("disabled")).map(el => { const backdrop = background(el), a = luminance(composite(rgba(getComputedStyle(el).color), backdrop)), b = luminance(backdrop); return (Math.max(a, b) + .05) / (Math.min(a, b) + .05); });
+    const contrast = [...root.querySelectorAll<HTMLElement>("p,h1,h2,h3,label,button,a")].filter(el => visible(el) && el.textContent?.trim() && !el.matches(':disabled,[aria-disabled="true"]')).map(el => { const backdrop = background(el), style = getComputedStyle(el), a = luminance(composite(rgba(style.color), backdrop)), b = luminance(backdrop); return { ratio: (Math.max(a, b) + .05) / (Math.min(a, b) + .05), tag: el.tagName, className: el.className, color: style.color, background: backdrop }; });
     const overflowElements = [...document.body.querySelectorAll<HTMLElement>("*")].filter(el => { const r = el.getBoundingClientRect(); return r.width && r.right > innerWidth + 1 && getComputedStyle(el).position !== "fixed"; }).slice(0, 8).map(el => ({ tag: el.tagName, className: typeof el.className === "string" ? el.className : "svg", width: el.getBoundingClientRect().width }));
-    return { width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth, overflowElements, dialogOverflow: root.scrollWidth > root.clientWidth, minimumContrast: Math.min(...ratios), normalizedColors: [...normalizedColors], controls, dialogPadding: document.querySelector('[role="alertdialog"]') ? getComputedStyle(root).padding : null };
+    return { width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth, overflowElements, dialogOverflow: root.scrollWidth > root.clientWidth, minimumContrast: Math.min(...contrast.map(item => item.ratio)), contrastFailures: contrast.filter(item => item.ratio < 4.5), normalizedColors: [...normalizedColors], controls, dialogPadding: document.querySelector('[role="alertdialog"]') ? getComputedStyle(root).padding : null };
   });
-  expect(result.overflow, JSON.stringify({ width: result.width, elements: result.overflowElements })).toBe(false); expect(result.dialogOverflow).toBe(false); expect(result.minimumContrast).toBeGreaterThanOrEqual(4.5); expect(result.controls.filter(v => v.width < 43.999 || v.height < 43.999)).toEqual([]);
+  expect(result.overflow, JSON.stringify({ width: result.width, elements: result.overflowElements })).toBe(false); expect(result.dialogOverflow).toBe(false); expect(result.minimumContrast, JSON.stringify({ route: new URL(page.url()).pathname, failures: result.contrastFailures })).toBeGreaterThanOrEqual(4.5); expect(result.controls.filter(v => v.width < 43.999 || v.height < 43.999)).toEqual([]);
   return result;
 }

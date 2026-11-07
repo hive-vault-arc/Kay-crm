@@ -1,4 +1,4 @@
-/* Exact selected prototype status surfaces; wire identifiers remain authoritative. */
+/* Selected status surfaces; darker existing label tokens preserve AA contrast. */
 :root {
   --kay-status-neutral-text:#52657d;
   --kay-status-neutral-bg:#f2f5f8;
@@ -10,7 +10,7 @@
   --kay-status-not-contacted-dot:#c24150;
   --kay-status-not-contacted-border:#ffe7ea;
   --kay-status-not-contacted-solid:#c24150;
-  --kay-status-contacted-text:#1389b2;
+  --kay-status-contacted-text:#0e7490;
   --kay-status-contacted-bg:#eff9fd;
   --kay-status-contacted-dot:#1389b2;
   --kay-status-contacted-border:#e0f4fb;
@@ -25,7 +25,7 @@
   --kay-status-analysis-dot:#1d4ed8;
   --kay-status-analysis-border:#e1edfb;
   --kay-status-analysis-solid:#1d4ed8;
-  --kay-status-qualified-text:#8b5cc7;
+  --kay-status-qualified-text:#7c4db5;
   --kay-status-qualified-bg:#f8f2ff;
   --kay-status-qualified-dot:#8b5cc7;
   --kay-status-qualified-border:#f4eafd;
@@ -35,7 +35,7 @@
   --kay-status-not-qualified-dot:#52657d;
   --kay-status-not-qualified-border:#e8ecf2;
   --kay-status-not-qualified-solid:#52657d;
-  --kay-status-converted-text:#0f9f8a;
+  --kay-status-converted-text:#0f766e;
   --kay-status-converted-bg:#edfbf8;
   --kay-status-converted-dot:#0f9f8a;
   --kay-status-converted-border:#dff7f3;
@@ -55,7 +55,7 @@
   --kay-status-proposition-dot:#1d4ed8;
   --kay-status-proposition-border:#e1edfb;
   --kay-status-proposition-solid:#1d4ed8;
-  --kay-status-visite-text:#1389b2;
+  --kay-status-visite-text:#0e7490;
   --kay-status-visite-bg:#eff9fd;
   --kay-status-visite-dot:#1389b2;
   --kay-status-visite-border:#e0f4fb;
@@ -65,12 +65,12 @@
   --kay-status-negotiation-dot:#4338ca;
   --kay-status-negotiation-border:#e6e8ff;
   --kay-status-negotiation-solid:#4338ca;
-  --kay-status-pending-text:#8b5cc7;
+  --kay-status-pending-text:#7c4db5;
   --kay-status-pending-bg:#f8f2ff;
   --kay-status-pending-dot:#8b5cc7;
   --kay-status-pending-border:#f4eafd;
   --kay-status-pending-solid:#7c4db5;
-  --kay-status-closed-won-text:#0f8f80;
+  --kay-status-closed-won-text:#0f7f72;
   --kay-status-closed-won-bg:#edfbf7;
   --kay-status-closed-won-dot:#0f8f80;
   --kay-status-closed-won-border:#e0f6f1;
@@ -95,17 +95,17 @@
   --kay-status-rating-hot-dot:#c24150;
   --kay-status-rating-hot-border:#ffe7ea;
   --kay-status-rating-hot-solid:#c24150;
-  --kay-status-available-text:#0f8f80;
+  --kay-status-available-text:#0f7f72;
   --kay-status-available-bg:#edfbf7;
   --kay-status-available-dot:#0f8f80;
   --kay-status-available-border:#e0f6f1;
   --kay-status-available-solid:#0f7f72;
-  --kay-status-confirmed-text:#0f8f80;
+  --kay-status-confirmed-text:#0f7f72;
   --kay-status-confirmed-bg:#edfbf7;
   --kay-status-confirmed-dot:#0f8f80;
   --kay-status-confirmed-border:#e0f6f1;
   --kay-status-confirmed-solid:#0f7f72;
-  --kay-status-active-text:#1389b2;
+  --kay-status-active-text:#0e7490;
   --kay-status-active-bg:#eff9fd;
   --kay-status-active-dot:#1389b2;
   --kay-status-active-border:#e0f4fb;

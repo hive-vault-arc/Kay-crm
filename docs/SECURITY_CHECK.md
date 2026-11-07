@@ -3366,3 +3366,17 @@ zero runtime and full-tree advisories. Both hash-locked Python audits pass with
 pypdf 6.21.4. The two exact Gitleaks exceptions identify a fixture UUID and
 design-note prose; the full-history scan still runs. The synthetic Alembic test
 does not establish the production schema or backup state.
+
+PR37 regression follow-up (2026-11-07): UI corrections bound card layout,
+restore the approved 50-row list default, recover notification keyboard focus
+and expose an existing stock-review flag. Notification retries retain the same
+record/key through the existing command hook. Detail reads additionally expose
+the existing shared offering target/version projection so the stock-action guard
+can validate it; private ownership/contact expansion and directory reads are
+unchanged. Three PostgreSQL cases verify target/review version coherence and
+absence of private fields. No new authorization, push delivery, database write
+or real-account mutation is introduced.
+Synthetic browser checks retain private-contact denial, exact replay, archive
+recovery, scoped owner membership and immutable origin history assertions.
+Production sign-in is unverified because the owner no longer has the password;
+no credential reset, guessed sign-in or privileged session was substituted.
