@@ -13,13 +13,17 @@ from app.inventory.contracts import (
 from app.inventory.hierarchy_queries import read_hierarchy
 from app.inventory.queries import read_list
 from tests.contact_support import actor
-from tests.test_developments import campaign, development
+from tests.test_developments import campaign, development, hierarchy
 from tests.test_inventory import offering_draft, run
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
 
 def asset(settings, database, token, *, area="100.00", rooms=3, parent=None):
+    floor, unit_type = None, None
+    if parent:
+        _, floors, unit_type = hierarchy(settings, database, token, parent)
+        floor = floors[0]
     result = run(
         settings,
         database,
@@ -31,6 +35,8 @@ def asset(settings, database, token, *, area="100.00", rooms=3, parent=None):
             area_sqm=area,
             rooms=rooms,
             development_id=parent,
+            floor_id=floor,
+            unit_type_id=unit_type,
         ),
     )
     return UUID(result["property_id"])

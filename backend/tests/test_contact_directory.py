@@ -8,8 +8,10 @@ from uuid import UUID, uuid4
 import pytest
 from sqlalchemy import update
 
+from app.archive.records import RecordLifecycle
+from app.archive.records import command as archive_record
 from app.contacts.contracts import ListQuery
-from app.contacts.models import Contact, ContactCollaborator, Enquiry
+from app.contacts.models import Contact, ContactCollaborator
 from app.contacts.queries import assignment_options, read_list, responsible_options
 from app.discovery.contracts import NewExport
 from app.discovery.csv_export import generate
@@ -40,12 +42,16 @@ def test_link_counts_and_filters_match_active_lists_after_conversion_and_archive
     result = listing(database, token, primary_agent_id=uid, linked="enquiries", role="owner")
     assert result["total"] == 1
     assert result["items"][0]["dossier_counts"] == {"enquiries": 1, "deals": 2}
-    with database.session() as session, session.begin():
-        session.execute(
-            update(Enquiry)
-            .where(Enquiry.id == UUID(second["id"]))
-            .values(archived_at=datetime.now(UTC))
-        )
+    archive_record(
+        database,
+        token,
+        settings.facade_secret.get_secret_value(),
+        uuid4(),
+        "enquiries",
+        UUID(second["id"]),
+        "archive",
+        RecordLifecycle(expected_version=second["version"], reason="Archivage synthétique"),
+    )
     assert listing(database, token, linked="enquiries")["total"] == 0
     assert listing(database, token, linked="deals")["total"] == 1
     assert listing(database, token, linked="none")["total"] == 0

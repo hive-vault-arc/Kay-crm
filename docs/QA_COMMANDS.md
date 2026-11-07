@@ -3479,3 +3479,12 @@ A disposable loopback PostgreSQL 18 target upgraded first to
 `0035_project_photos`, then to `0037_development_phase`; `alembic current`
 reported one head and `alembic check` found no pending schema operations.
 These checks precede the exact candidate's hosted integration and release gate.
+
+Visible Chrome passed the five iPhone scenarios covering real HEIC/HEIF,
+sequential conversion, cancellation, a lost acknowledgement at capacity, the
+ten-photo preview budget and private attachments with unchanged DOCX bytes.
+The database regression exposed a missing programme history record when a
+child unit outcome changed the programme version. Close and reopen now record
+that version and phase with a generic shared-stock reason. The revised test
+fixtures use supported archive and ownership commands and set dates before
+creation, preserving existing database guards.

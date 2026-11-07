@@ -11,6 +11,7 @@ from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity
 from app.inventory.commands import available, bump
 from app.inventory.hierarchy_models import Development
+from app.inventory.history import record
 from app.inventory.models import Offering, Property
 from app.inventory.outcome_models import StockEffect, StockOutcome, StockReversal
 from app.inventory.stock_effects import event, flag_deals, release_hold
@@ -77,6 +78,13 @@ def close_stock(
         parent = session.get(Development, target.development_id)
         if parent:
             bump(parent)
+            record(
+                session,
+                identity,
+                parent,
+                "offerings.outcome.created",
+                reason="Le résultat d’une unité a modifié le stock du programme.",
+            )
     session.flush()
     session.add(
         StockOutcome(
@@ -154,5 +162,12 @@ def reopen_stock(
         parent = session.get(Development, target.development_id)
         if parent:
             bump(parent)
+            record(
+                session,
+                identity,
+                parent,
+                "offerings.outcome.reopened",
+                reason="La réouverture d’une unité a modifié le stock du programme.",
+            )
     affected, _ = scope(session, offering)
     flag_deals(session, identity, [o.id for o in affected], reopening.deal_id)

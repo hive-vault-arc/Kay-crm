@@ -108,7 +108,8 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
                     "WHERE contact_id=:cid ORDER BY id",
                     "SELECT to_jsonb(p)-ARRAY['archived_at','listing_details'] "
                     "FROM property p WHERE id=:pid",
-                    "SELECT to_jsonb(e) FROM inventory_event e WHERE property_id=:pid ORDER BY id",
+                    "SELECT to_jsonb(e)-'development_phase' FROM inventory_event e "
+                    "WHERE property_id=:pid ORDER BY id",
                 )
             ]
 

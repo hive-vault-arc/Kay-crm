@@ -221,14 +221,10 @@ def test_retained_pdf_receipt_survives_new_appendix_dependency_failure(
     settings, database, monkeypatch, kind, code
 ):
     """Prepared real-stack case: an old result must not depend on new renderer assets."""
-    _, token, contact, _ = setup(settings, database)
+    _, token, contact, enquiry = setup(settings, database)
     if code == "10":
         _, token = actor(settings, database, "manager")
-    pid = UUID(
-        create_lead(settings, database, token)["id"]
-        if kind == "enquiry"
-        else run(settings, database, token, new(contact))["id"]
-    )
+    pid = enquiry if kind == "enquiry" else UUID(run(settings, database, token, new(contact))["id"])
     body = GenerateRequest(parent_kind=kind, parent_id=pid, template_code=code, values={})
     key = uuid4()
     retained = (

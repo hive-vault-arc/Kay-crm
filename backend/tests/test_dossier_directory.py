@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import pytest
-from sqlalchemy import update
+from sqlalchemy import event, update
 
 from app.contacts.contracts import ListQuery
 from app.contacts.models import ContactCollaborator
@@ -21,6 +21,7 @@ from app.discovery.exports import request_export
 from app.identity.models import User
 from tests.contact_support import actor, create_lead, new_lead
 from tests.deal_support import new, run
+from tests.test_ownership import change, intent
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
@@ -100,12 +101,7 @@ def test_assignee_choices_retain_inactive_enquiry_assignees_and_revoke_with_cont
         ][0]["id"]
         == assigned["id"]
     )
-    with database.session() as session, session.begin():
-        session.execute(
-            update(ContactCollaborator)
-            .where(ContactCollaborator.contact_id == cid, ContactCollaborator.user_id == colleague)
-            .values(revoked_at=datetime.now(UTC))
-        )
+    change(settings, database, manager, cid, intent("collaborators", collaborator_ids=[]))
     assert enquiry_assignee_options(database, reader, ListQuery())["total"] == 0
     assert (
         read_enquiries(database, reader, "enquiries", ListQuery(assigned_agent_id=assignee))[
@@ -122,17 +118,19 @@ def test_created_and_modified_days_intersect_before_authorized_total_and_paging(
     _, owner = actor(settings, database)
     _, manager = actor(settings, database, "manager")
     contact = UUID(create_lead(settings, database, owner)["contact"]["id"])
-    first, second = [UUID(run(settings, database, owner, new(contact))["id"]) for _ in range(2)]
-    with database.session() as session, session.begin():
-        for target, day in ((first, 1), (second, 2)):
-            session.execute(
-                update(Deal)
-                .where(Deal.id == target)
-                .values(
-                    created_at=datetime(2026, 1, day, 23, 30, tzinfo=UTC),
-                    updated_at=datetime(2026, 1, 3, 23, 30, tzinfo=UTC),
-                )
-            )
+
+    def create_on(day: int) -> UUID:
+        def set_times(mapper, connection, deal):
+            deal.created_at = datetime(2026, 1, day, 23, 30, tzinfo=UTC)
+            deal.updated_at = datetime(2026, 1, 3, 23, 30, tzinfo=UTC)
+
+        event.listen(Deal, "before_insert", set_times)
+        try:
+            return UUID(run(settings, database, owner, new(contact))["id"])
+        finally:
+            event.remove(Deal, "before_insert", set_times)
+
+    first, second = create_on(1), create_on(2)
     token = owner if role == "agent" else manager
     for day, target in (("2026-01-02", first), ("2026-01-03", second)):
         filters = DealQuery(

@@ -8,7 +8,9 @@ from app.contacts.models import Contact, ContactPhone, ContactRole, Enquiry
 from app.contacts.queries import read_list
 from app.deals.contracts import ChildQuery
 from app.deals.queries import read_children, read_detail
+from app.identity.sessions import current_identity
 from app.inventory.hierarchy_models import Block, Development, Floor, UnitType
+from app.inventory.history import record
 from app.inventory.reservation_models import Reservation
 from benchmarks.dataset import identity, populate_inventory
 from tests.contact_support import actor
@@ -62,15 +64,15 @@ def test_load_generator_qualifies_programme_and_standalone_conversion(settings, 
         if number == 1:
             did = identity("development", 1)
             bid, fid, tid = identity("block", 1), identity("floor:1", 2), identity("type:1", 2)
-            session.add(
-                Development(
-                    id=did,
-                    reference="SP22-D-1",
-                    name="Programme synthétique SP22 1",
-                    created_by_user_id=uid,
-                )
+            development = Development(
+                id=did,
+                reference="SP22-D-1",
+                name="Programme synthétique SP22 1",
+                created_by_user_id=uid,
             )
+            session.add(development)
             session.flush()
+            record(session, current_identity(session, token), development, "developments.created")
             session.add(Block(id=bid, development_id=did, code="B1", label="Bloc synthétique"))
             session.flush()
             session.add(Floor(id=fid, block_id=bid, code="F2", label="Étage synthétique 2"))

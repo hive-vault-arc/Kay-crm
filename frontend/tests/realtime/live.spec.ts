@@ -43,6 +43,8 @@ test("live Lead detail/list refresh and protected draft over real WSS", async ({
   await expect(page.getByText("Des données ont changé. Votre saisie est conservée pendant la modification.", { exact: false })).toBeVisible();
   await expect(draft).toHaveValue("Brouillon synthétique à conserver");
   await page.locator('a[href="/leads"]').first().click();
+  const discard = page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true });
+  await discard.getByRole("button", { name: "Quitter sans enregistrer", exact: true }).click();
   await expect(page.getByText("Des données ont changé. Votre saisie est conservée pendant la modification.", { exact: false })).toHaveCount(0);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('[data-realtime-status="connected"]')).toHaveCount(1);
@@ -100,14 +102,14 @@ for (const scope of ["contact", "deal"] as const) test(`live ${scope} revision r
     if (scope === "contact") {
       for (let index = 0; index < 26; index++) expect((await staffCommand(page, `contacts/${lead.contact.id}/notes`, { kind: "note", body: `Pagination synthétique ${index}` })).status()).toBe(200);
       await page.goto(`/contacts/${lead.contact.id}`);
-      await page.getByRole("tab", { name: "Historique", exact: true }).click();
+      await page.getByRole("tab", { name: "Activités", exact: true }).click();
       const pages = page.getByRole("navigation", { name: "Pages de l’historique", exact: true });
       await pages.getByRole("button", { name: "Page 2", exact: true }).click();
       await expect(pages.getByRole("button", { name: "Page 2", exact: true })).toHaveAttribute("aria-current", "page");
       const current = await (await page.request.get(`/api/v1/contacts/${lead.contact.id}`)).json();
       const changed = await staffCommand(page, `contacts/${current.id}`, { expected_version: current.version, name: "Contact synthétique actualisé", type: current.type, phones: current.phones, emails: current.emails, roles: current.roles, country: current.country, nationality: current.nationality, languages: current.languages }, "PATCH");
       expect(changed.status()).toBe(200);
-      await expect(page.getByRole("heading", { name: "Contact : Contact synthétique actualisé", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Contact synthétique actualisé", exact: true, level: 1 })).toBeVisible();
       await expect(pages.getByRole("button", { name: "Page 2", exact: true })).toHaveAttribute("aria-current", "page");
       await expect(page.getByText("Chargement de l’historique…", { exact: true })).toHaveCount(0);
     } else {
@@ -116,6 +118,7 @@ for (const scope of ["contact", "deal"] as const) test(`live ${scope} revision r
       const deal = await created.json();
       for (let index = 0; index < 21; index++) expect((await staffCommand(page, `deals/${deal.id}/activities`, { kind: "note", body: `Pagination synthétique ${index}` })).status()).toBe(200);
       await page.goto(`/deals/${deal.id}`);
+      await page.getByRole("tab", { name: "Activités", exact: true }).click();
       const history = page.getByRole("region", { name: "Activités de l’affaire", exact: true });
       await history.getByLabel("Filtrer les activités", { exact: true }).selectOption("note");
       const pages = history.getByRole("navigation", { name: "Pages : Activités de l’affaire", exact: true });
@@ -123,7 +126,7 @@ for (const scope of ["contact", "deal"] as const) test(`live ${scope} revision r
       await expect(pages.getByRole("button", { name: "Page 2", exact: true })).toHaveAttribute("aria-current", "page");
       const current = await (await page.request.get(`/api/v1/deals/${deal.id}`)).json();
       expect((await staffCommand(page, `deals/${deal.id}/transition`, { expected_version: current.version, stage: "documents", reason: "Transition synthétique de pagination" })).status()).toBe(200);
-      await expect(page.getByRole("region", { name: "Pipeline de l’affaire", exact: true }).locator('li[aria-current="step"]')).toHaveText(/Documents/);
+      await expect(page.getByRole("button", { name: "Étape actuelle : Documents. Changer étape", exact: true })).toBeVisible();
       await expect(history.getByLabel("Filtrer les activités", { exact: true })).toHaveValue("note");
       await expect(pages.getByRole("button", { name: "Page 2", exact: true })).toHaveAttribute("aria-current", "page");
       await expect(history.getByText("Chargement de l’historique…", { exact: true })).toHaveCount(0);
