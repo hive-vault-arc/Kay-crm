@@ -144,8 +144,8 @@ jobs:
           }
 
   release-integration:
-    name: Release integration required
-    if: ${{ always() && inputs.browser_scope == 'full' }}
+    name: ${{ inputs.browser_scope == 'full' && 'Release integration required' || 'Recovery diagnostic only' }}
+    if: ${{ always() }}
     needs: [integration]
     runs-on: ubuntu-24.04
     timeout-minutes: 2

@@ -46,10 +46,12 @@ test("only manual workflow contains database services, migrations and integratio
     assert.match(manual, pattern);
   assert.doesNotMatch(manual, /continue-on-error|\$\{\{\s*secrets\.|pull_request_target/);
   assert.match(manual, /suite: \$\{\{ fromJSON\(inputs\.browser_scope == 'recovery-only' && '\["browser"\]' \|\| '\["backend","browser"\]'\) \}\}/);
-  assert.match(manual, /name: Release integration required/);
   assert.match(triggers, /browser_scope:[\s\S]*default: full/);
   const releaseGate = manual.split("  release-integration:")[1];
-  assert.match(releaseGate, /if: \$\{\{ always\(\) && inputs\.browser_scope == 'full' \}\}/);
+  // A skipped required-name job is treated as success by branch protection.
+  // Diagnostic runs must emit a different check name instead of skipping it.
+  assert.match(releaseGate, /name: \$\{\{ inputs\.browser_scope == 'full' && 'Release integration required' \|\| 'Recovery diagnostic only' \}\}/);
+  assert.match(releaseGate, /if: \$\{\{ always\(\) \}\}/);
   assert.match(releaseGate, /needs: \[integration\]/);
   assert.match(releaseGate, /test "\$RESULT" = success/);
 });
