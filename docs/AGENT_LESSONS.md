@@ -2348,3 +2348,20 @@ before measuring its replacement cards. A shared offering target is a current
 projection: after a property edit, compare persisted offering terms unchanged
 and assert the target's new property version separately. Confirm the unsaved
 navigation dialog before expecting cancellation to have left the form.
+
+## Compare unordered coordinates by their canonical value (2026-11-08)
+
+Contact edits replace coordinate rows. Rows sharing a creation timestamp can
+change their UUID tie order even when every phone/email, label and primary flag
+is unchanged. Where the API has no editable position contract, compare complete
+coordinate objects by canonical number/email; retain exact checks for identity,
+provenance, assignment and membership. A single passing random order is not
+evidence that an order-sensitive assertion is deterministic.
+
+## Restore test infrastructure independently of browser teardown (2026-11-08)
+
+When a recovery test switches the shared API supervisor to a restored target,
+always restore that routing in a `finally` independent of page/cookie cleanup.
+A timed-out page may already be closed; allowing its cleanup error to skip the
+supervisor switch makes later synthetic actors sign in against the wrong
+database and obscures the first actionable failure.

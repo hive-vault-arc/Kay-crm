@@ -3594,3 +3594,21 @@ the new dashboard-to-Lead task link, no false filter draft, actual task edits,
 read state, rescheduling, two-hour missed-visit outcome and unrelated-agent
 denial. Build, lint and types pass. The exact final commit still requires the
 complete hosted backend, real-time and ordinary browser gate before promotion.
+
+The exact463f0dba hosted run passed1308 PostgreSQL cases and5 real-time cases,
+but exposed a nondeterministic owner-reuse assertion: coordinate replacement
+kept every value, label and primary flag while new row UUIDs changed tie order.
+The contact API does not expose an editable coordinate position. The browser
+assertion now compares complete coordinate objects by their canonical number/
+email, while identity, provenance, assignment and other fields remain exact.
+The corrected owner-reuse case passed3 consecutive compiled runs in53.7s.
+This correction still requires the full exact-head integration gate.
+
+That run's restored-stack journey reached the restored application, but waited
+for the obsolete exact `Unités` tab name instead of its current count suffix.
+The selector now matches the scoped programme tab. Cleanup always attempts to
+return the API supervisor to the normal isolated target and clear the recovery
+fixture, even if Playwright has closed its page after timeout. The original
+failure previously prevented that switch and caused ten later401 login failures.
+The complete restoration and remaining browser cases still require a fresh
+hosted run; the local recovery identity guard remains unchanged.

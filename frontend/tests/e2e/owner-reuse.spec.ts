@@ -23,7 +23,13 @@ test("Owner reuse preserves canonical identity/assignment and opening an existin
     expect((await patched).status()).toBe(200);
     await expect(page).toHaveURL(new RegExp(`/owners/${original.id}$`));
     const saved = await (await page.request.get(`/api/v1/contacts/${original.id}`)).json();
-    for (const field of ["name", "type", "phones", "emails", "country", "nationality", "languages", "primary_agent", "source", "source_submission_id", "created_by_user_id"]) expect(saved[field]).toEqual(original[field]);
+    for (const field of ["name", "type", "country", "nationality", "languages", "primary_agent", "source", "source_submission_id", "created_by_user_id"]) expect(saved[field]).toEqual(original[field]);
+    // Coordinates have no editable position: replacement rows receive new UUIDs.
+    // Compare every value/label/primary flag without treating UUID tie order as data.
+    for (const [field, key] of [["phones", "number"], ["emails", "email"]] as const) {
+      const ordered = (values: Record<string, unknown>[]) => [...values].sort((left, right) => String(left[key]).localeCompare(String(right[key])));
+      expect(ordered(saved[field])).toEqual(ordered(original[field]));
+    }
     expect(saved.roles).toContain("owner"); expect(saved.roles).toContain("buyer"); expect(saved.roles).toContain("developer");
     const portfolio = await (await page.request.get(`/api/v1/contacts/${original.id}/portfolio`)).json(); expect(portfolio.total).toBe(0);
     await page.goto("/owners/new");

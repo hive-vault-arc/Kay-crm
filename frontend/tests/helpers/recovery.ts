@@ -73,7 +73,7 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
     await capture("deal-desktop");
     await page.goto(`/projects/${data.development_id}`);
     await expect(page.getByText("Programme synthétique", { exact: true }).first()).toBeVisible();
-    await page.getByRole("tab", { name: "Unités", exact: true }).click();
+    await page.getByRole("tablist", { name: "Rubriques du programme", exact: true }).getByRole("tab", { name: /^Unités(?:\s*\d+)?$/ }).click({ timeout: 10_000 });
     await expect(page.getByText(/80[.,]00 m²/).first()).toBeVisible();
     await capture("project-desktop");
     await page.goto(`/visits/${(data as RestoredFixture & { visit_id: string }).visit_id}`);
@@ -116,9 +116,11 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
   } catch (failure) { initialFailure = true; throw failure; }
   finally {
     try {
-      await clearActorContext(page);
-      await testControl("recovery-stop");
-      await testControl("fixture", { action: "recovery-clear" });
+      try { await clearActorContext(page); }
+      finally {
+        try { await testControl("recovery-stop"); }
+        finally { await testControl("fixture", { action: "recovery-clear" }); }
+      }
     } catch (cleanupFailure) { if (!initialFailure) throw cleanupFailure; console.warn("RESTORED_STACK_CLEANUP_FAILED"); }
   }
 }
