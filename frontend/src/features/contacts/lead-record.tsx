@@ -35,9 +35,9 @@ import { campaignLabels, ratingLabels } from "./qualification-contracts";
 import { ContactProfilePanel } from "./contact-profile-panel";
 import { LeadStatusMenu } from "./lead-status-menu";
 
-type Props = { id: string; edit?: boolean; role?: StaffRole; actorId?: string; initialTab?: string };
+type Props = { id: string; edit?: boolean; role?: StaffRole; actorId?: string; initialTab?: string; initialTask?: string };
 export function LeadRecord(props: Props) { return <LeadRecordLifetime key={`${props.id}:${props.actorId ?? ""}:${props.role ?? "agent"}`} {...props} />; }
-function LeadRecordLifetime({ id, edit = false, role = "agent", actorId, initialTab }: Props) {
+function LeadRecordLifetime({ id, edit = false, role = "agent", actorId, initialTab, initialTask }: Props) {
   const [edited, setEdited] = useState<Enquiry>();
   const [scopeError, setScopeError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
@@ -76,7 +76,7 @@ function LeadRecordLifetime({ id, edit = false, role = "agent", actorId, initial
       { id: "activity", label: "Activités", content: <ActivityHistory key={id} scope="enquiries" id={id} writable={writable} denied={(failure, acknowledged) => { setNotice(acknowledged ? "Activité enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} revision={enquiry.version + historyRevision} /> },
       { id: "documents", label: "Documents", content: <><FilePanel actorId={actorId} role={role} parentKind="contact" parentId={enquiry.contact.id} writable={writable} /><PreparedDocuments parentKind="enquiry" id={id} /></> },
     ]} aside={<>
-      <RecordSection title="Suivi" action={writable ? <RecordDrawer label="Planifier une relance" action="task" description="Créer une tâche reliée à ce prospect et à son contact.">{(close, saved) => <TaskForm contactId={enquiry.contact.id} enquiryId={enquiry.id} saved={async () => { saved(); setNotice("Relance planifiée."); }} cancel={close} />}</RecordDrawer> : undefined}><RecordDrawer label="Voir les tâches du contact" title="Tâches du contact" action="task" description="Tâches partagées entre les dossiers de ce contact."><TaskPanel contactId={enquiry.contact.id} writable={writable} /></RecordDrawer>{role !== "agent" && writable ? <RecordDrawer label="Attribuer le prospect" action="assign" description="Choisissez un agent autorisé sur le contact.">{(_close, saved) => <EnquiryAssignment key={enquiry.id} enquiry={enquiry} denied={(failure, acknowledged) => { setNotice(acknowledged ? "Attribution enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} saved={() => { saved(); setNotice("Attribution enregistrée."); refreshQuietly(); }} />}</RecordDrawer> : null}</RecordSection>
+      <RecordSection title="Suivi" action={writable ? <RecordDrawer label="Planifier une relance" action="task" description="Créer une tâche reliée à ce prospect et à son contact.">{(close, saved) => <TaskForm contactId={enquiry.contact.id} enquiryId={enquiry.id} saved={async () => { saved(); setNotice("Relance planifiée."); }} cancel={close} />}</RecordDrawer> : undefined}><RecordDrawer label="Voir les tâches du contact" title="Tâches du contact" action="task" description="Tâches partagées entre les dossiers de ce contact." initialOpen={Boolean(initialTask)}><TaskPanel contactId={enquiry.contact.id} writable={writable} initialTask={initialTask} /></RecordDrawer>{role !== "agent" && writable ? <RecordDrawer label="Attribuer le prospect" action="assign" description="Choisissez un agent autorisé sur le contact.">{(_close, saved) => <EnquiryAssignment key={enquiry.id} enquiry={enquiry} denied={(failure, acknowledged) => { setNotice(acknowledged ? "Attribution enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} saved={() => { saved(); setNotice("Attribution enregistrée."); refreshQuietly(); }} />}</RecordDrawer> : null}</RecordSection>
       <ContactVisits contactId={enquiry.contact.id} writable={writable} />
     </>} />
   </div></InlineEditScope>;

@@ -8,7 +8,7 @@ test("Owner reuse preserves canonical identity/assignment and opening an existin
   const digits = String(Math.floor(Math.random() * 1_000_000)).padStart(6, "0");
   try {
     await signIn(page, agent);
-    const result = await staffCommand(page, "contacts", { name, type: "organization", phones: [{ number: `+212612${digits}`, label: "Principal conservé", is_primary: true }, { number: `+212613${digits}`, label: "Secondaire conservé", is_primary: false }], emails: [{ email: `synthetic-owner-${suffix}@example.invalid`, label: "Bureau conservé", is_primary: true }], roles: ["buyer", "developer"], country: "MA", nationality: "FR", languages: ["french", "darija"] });
+    const result = await staffCommand(page, "contacts", { name, type: "organization", phones: [{ number: `+212612${digits}`, label: "Principal conservé", is_primary: true }, { number: `+212613${digits}`, label: "Secondaire conservé", is_primary: false }], emails: [{ email: `synthetic-owner-${suffix}@example.com`, label: "Bureau conservé", is_primary: true }], roles: ["buyer", "developer"], country: "MA", nationality: "FR", languages: ["french", "darija"] });
     expect(result.status()).toBe(200);
     const original = await result.json();
     await page.goto("/owners/new");

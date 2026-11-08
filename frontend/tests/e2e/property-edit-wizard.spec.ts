@@ -73,14 +73,15 @@ test("property edit: rich fields are prefilled, saved and reopened without chang
     expect(savedResponse.status()).toBe(200);
     const sent = savedResponse.request().postDataJSON();
     expect(sent).not.toHaveProperty("initial_offering");
-    await expect(page.getByRole("link", { name: "Modifier le bien", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Modifier", exact: true })).toBeVisible();
     const after = await (await page.request.get(`/api/v1/properties/${id}`)).json();
-    expect(after.offerings).toEqual(before.offerings);
+    expect(after.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target")))).toEqual(before.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target"))));
+    expect(after.offerings.every((item: { target: { version: number } }) => item.target.version === after.version)).toBe(true);
     expect(after.location).toBeNull();
     const expectedDetails = { ...before.listing_details, city: "Tétouan", bedrooms: 4, amenities: ["terrace", "garage", "internet"], description: "Description synthétique révisée." };
     delete expectedDetails.garden_area_sqm;
     expect(after.listing_details).toEqual(expectedDetails);
-    await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
+    await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await expect(form.locator("#property-marketing_name")).toHaveValue("Appartement synthétique révisé");
     await propertyEditStep(page, 2);
     await expect(form.locator("#property-bedrooms")).toHaveValue("4");
@@ -97,7 +98,7 @@ test("property edit: agents can edit legacy land with dynamic fields and cancel 
     await signIn(page, actor);
     const id = await createProperty(page, "land");
     const before = await (await page.request.get(`/api/v1/properties/${id}`)).json();
-    await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
+    await page.getByRole("link", { name: "Modifier", exact: true }).click();
     const form = page.getByRole("form", { name: "Modifier le bien", exact: true });
     await form.locator("#property-category").selectOption("office");
     await propertyEditStep(page, 2);
@@ -114,16 +115,20 @@ test("property edit: agents can edit legacy land with dynamic fields and cancel 
     await page.setViewportSize({ width: 320, height: 740 });
     await geometry(page);
     await savePropertyEdit(page);
-    await expect(page.getByRole("link", { name: "Modifier le bien", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Modifier", exact: true })).toBeVisible();
     const after = await (await page.request.get(`/api/v1/properties/${id}`)).json();
     expect(after.listing_details.land_delivery).toBe("titled");
     expect(after.listing_details.land_status).toBe("subdivided");
     expect(after.area_sqm).toBeNull();
-    expect(after.offerings).toEqual(before.offerings);
-    await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
+    expect(after.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target")))).toEqual(before.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target"))));
+    expect(after.offerings.every((item: { target: { version: number } }) => item.target.version === after.version)).toBe(true);
+    await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await form.locator("#property-reference").fill("UNSAVED-SYNTHETIC");
     await form.getByRole("link", { name: "Annuler", exact: true }).click();
-    await expect(page.getByRole("link", { name: "Modifier le bien", exact: true })).toBeVisible();
+    const discard = page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true });
+    await expect(discard).toBeVisible();
+    await discard.getByRole("button", { name: "Quitter sans enregistrer", exact: true }).click();
+    await expect(page.getByRole("link", { name: "Modifier", exact: true })).toBeVisible();
     expect((await (await page.request.get(`/api/v1/properties/${id}`)).json()).reference).toBe(after.reference);
   } finally { await removeActor(actor); }
 });
@@ -131,7 +136,7 @@ test("property edit: agents can edit legacy land with dynamic fields and cancel 
 test("property edit: native 200 percent zoom and touch keep the wizard usable", async ({ page, browser, baseURL }, info) => {
   test.setTimeout(120_000);
   const actor = await createActor("agent");
-  const profile = info.outputPath("property-edit-zoom-profile");
+  const profile = path.join(info.project.outputDir, "property-edit-zoom", "property-edit-zoom-profile");
   const launch = { baseURL, ignoreHTTPSErrors: true, channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, args: ["--window-size=1440,1000"] } as const;
   let zoom: Awaited<ReturnType<typeof chromium.launchPersistentContext>> | undefined;
   try {
@@ -172,7 +177,7 @@ test("property edit: native 200 percent zoom and touch keep the wizard usable", 
     } finally { await touch.close(); }
   } finally {
     await zoom?.close();
-    expect(path.resolve(profile).startsWith(path.resolve("test-results") + path.sep)).toBe(true);
+    expect(path.resolve(profile).startsWith(path.resolve(info.project.outputDir) + path.sep)).toBe(true);
     expect(path.basename(profile)).toBe("property-edit-zoom-profile");
     await rm(profile, { recursive: true, force: true });
     await removeActor(actor);

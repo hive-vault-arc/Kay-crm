@@ -21,7 +21,7 @@ export function OfferingSearch({ requirement, disabled, choice, select, denied }
   const initial = { q: "", category: "", target_level: "", state: "available", development_id: "", block_id: "", floor_id: "", unit_type_id: "", min_comparison_mad: "", max_comparison_mad: "", min_area_sqm: "", min_rooms: "" };
   const [draft, setDraft] = useState(initial), [filters, setFilters] = useState(initial), [page, setPage] = useState(1), [invalid, setInvalid] = useState(false);
   const id = useId(), hydrated = useHydrated(), selected = new Set(requirement.shortlist.map(entry => entry.offering.id));
-  const path = queryPath("offerings", { ...filters, page, page_size: REQUIREMENT_PAGE_SIZE, kind: requirement.intent, archive: "active" });
+  const path = queryPath("offerings", { ...filters, page, page_size: REQUIREMENT_PAGE_SIZE, kind: requirement.intent });
   const result = useQuery(path, offeringsSchema);
   const invalidPage = result.value && (!requirementPageValid(result.value, page) || result.value.items.some(item => item.kind !== requirement.intent));
   const rows = result.error || invalidPage ? [] : result.value?.items ?? [];

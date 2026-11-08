@@ -38,7 +38,9 @@ for (const [kind, width] of [["property", 1440], ["development", 390]] as const)
     await expect(gallery.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 60_000 });
     await expect(gallery.getByRole("button", { name: "Archiver", exact: true })).toHaveCount(0);
     await gallery.getByRole("button", { name: "Ouvrir la photo patio.webp", exact: true }).click();
-    const viewer = page.getByRole("dialog", { name: "Photos du dossier", exact: true }); await expect(viewer.locator('img[src^="blob:"]')).toBeVisible();
+    const viewer = page.getByRole("dialog", { name: "Photos du dossier", exact: true }).filter({ has: page.getByRole("button", { name: "Fermer la photo", exact: true }) });
+    const image = viewer.getByRole("img", { name: "Photo du dossier : patio.webp", exact: true });
+    await expect(image).toBeVisible(); await expect(image).toHaveAttribute("src", /^blob:/);
     await viewer.getByRole("button", { name: "Fermer la photo", exact: true }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   } finally { await clearActorContext(page); await removeActor(actor); }

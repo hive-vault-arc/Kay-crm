@@ -3561,3 +3561,36 @@ Ruff, format and mypy pass (223 application source files). Frontend units remain
 1003 passed. Nine light status label colors now use their existing darker solid
 palette values, with calculated contrast at least 4.59:1 against their surfaces;
 decorative dots and dark-theme tokens are unchanged.
+
+Hosted run42423115208 on6a086e25 passed all1308 PostgreSQL cases in862.45s.
+Its ordinary browser gate is not yet a release pass. Subsequent compiled local
+checks passed owner reuse, both photo retry/viewer sizes, project permissions,
+rich property editing/native200% zoom and all three scoped activity journeys.
+The remaining cases are being run against the same immutable compiled stack.
+Test selectors now distinguish hidden inventory tabs, viewer images from their
+thumbnails and guarded cancellation from completed navigation. Offering tests
+compare every persisted commercial field while checking the newly current
+derived target version separately. No test is skipped or threshold reduced.
+
+Reservation-conflict warnings, like stock-review warnings, are visible on the
+Deal dossier outside its action-only dialog. There is no new business write or
+private expansion. The temporary local PostgreSQL cluster is not the registered
+recovery target: recovery preparation fails closed there. Do not change its
+identity guard; the fresh hosted full regression must run the real restoration
+journey on its signed disposable recovery target before release.
+
+Further compiled checks found two functional integration defects: the manual
+offer picker sent an unsupported `archive` parameter (422), and Lead task links
+did not select the task. The picker now relies on the existing active-inventory
+server default; Leads validate and pass the UUID task context to the existing
+scoped task drawer. Its exact-rental/unit/programme search journey passed45.8s.
+Task-period controls are marked as filters, and the live-update observer now
+respects that same boundary as the navigation guard. The real browser check
+verifies filtering/closing does not prompt to discard a draft. Managed business
+forms remain protected. The frontend1003-unit run passes after the final changes.
+
+The final local compiled `work.spec.ts` run passed all8 cases in3.1m, including
+the new dashboard-to-Lead task link, no false filter draft, actual task edits,
+read state, rescheduling, two-hour missed-visit outcome and unrelated-agent
+denial. Build, lint and types pass. The exact final commit still requires the
+complete hosted backend, real-time and ordinary browser gate before promotion.

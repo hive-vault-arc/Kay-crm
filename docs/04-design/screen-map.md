@@ -493,6 +493,13 @@ current-scope denial before private facts. Create/edit is inline; complete/cance
 uses the existing explicit confirmation. Failure drafts and retry identity are
 retained; stale versions require deliberate comparison.
 
+The selected workspace opens tasks in contextual drawers. Contact, Lead and
+Deal routes accept a UUID-only `?task=` link and select that existing task after
+the current record's access check; task detail also checks its contact/Deal
+context. Dashboard task-period filters are read-only controls, excluded from
+both navigation and live-update dirty-form tracking. Real task forms keep their
+own draft, pending-command and confirmation protection.
+
 S09 reschedule/cancel/complete changes invalidate old reminders; follow-up opens
 the same visit, never an implicit duplicate. Existing French shadcn/Tailwind
 tokens/layout are preserved. No new navigation destination, KPI/chart, external

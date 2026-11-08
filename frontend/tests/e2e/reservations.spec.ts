@@ -21,15 +21,16 @@ test("SP12 AT-09/33: unit hold, committed-response retry and explicit release", 
     });
     await dialog.getByRole("button", { name: "Réserver l’offre", exact: true }).click();
     await expect(dialog.getByRole("alert").filter({ hasText: "Le service local est indisponible" })).toBeVisible();
-    await dialog.getByRole("button", { name: "Réserver l’offre", exact: true }).click();
+    await dialog.getByRole("button", { name: "Réessayer la même opération", exact: true }).click();
     await expect(dialog).not.toBeVisible(); await page.unroute(`**/api/v1/deals/${unit}/reserve`);
-    await expect(page.getByRole("region", { name: "Réservation de l’affaire", exact: true }).getByText(/Aucune expiration automatique/)).toBeVisible();
+    await expect(page.getByText("Une réservation est active sur l’offre liée. Gérez-la depuis le menu Étape.", { exact: true })).toBeVisible();
     const held = await (await page.request.get(`/api/v1/deals/${unit}`)).json();
     expect(held.version).toBe(2); expect(held.stage).toBe("reserved"); expect(held.offering.state).toBe("reserved");
     expect(held.active_reservation.created_by_user_id).toBe(agent.id);
     const inventoryState = await (await page.request.get(`/api/v1/properties/${inventory.pid}`)).json(); expect(inventoryState.offerings[0].state).toBe("reserved");
     expect((await staffCommand(page, `deals/${unit}/reserve`, body)).status()).toBe(409);
     const release = await reservationDialog(page, true);
+    await expect(release.getByText(/Aucune expiration automatique/)).toBeVisible();
     await release.getByRole("button", { name: "Libérer la réservation", exact: true }).click();
     await expect(release.getByText(/Indiquez un motif de libération/)).toBeVisible();
     await release.getByLabel("Motif de la libération", { exact: true }).fill("SP12 libération explicite synthétique");
@@ -65,7 +66,7 @@ test("SP12 AT-33: same offering and whole/unit conflicts stay private, whole tar
     await blocked.getByRole("button", { name: "Retour", exact: true }).click();
     expect((await staffCommand(page, `deals/${unit}/release-reservation`, { ...await reservationBody(page, unit), reason: "SP12 libérer pour le programme" })).status()).toBe(200);
     expect((await staffCommand(page, `deals/${whole}/reserve`, staleWhole)).status()).toBe(200);
-    await page.reload(); const region = page.getByRole("region", { name: "Réservation de l’affaire", exact: true }); await expect(region.getByRole("button", { name: "Libérer la réservation", exact: true })).toBeVisible();
+    await page.reload(); const release = await reservationDialog(page, true); await expect(release.getByRole("button", { name: "Libérer la réservation", exact: true })).toBeVisible();
     expect((await staffCommand(page, `deals/${unit}/reserve`, await reservationBody(page, unit))).status()).toBe(409);
     const held = await (await page.request.get(`/api/v1/developments/${inventory.did}`)).json(); expect(held.offerings[0].state).toBe("reserved");
   } finally { await clearActorContext(page); for (const actor of actors) await removeActor(actor); }

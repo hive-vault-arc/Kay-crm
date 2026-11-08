@@ -3380,3 +3380,15 @@ Synthetic browser checks retain private-contact denial, exact replay, archive
 recovery, scoped owner membership and immutable origin history assertions.
 Production sign-in is unverified because the owner no longer has the password;
 no credential reset, guessed sign-in or privileged session was substituted.
+
+The dossier also exposes its existing reservation-conflict code with generic
+stock-review guidance, never a competing private Deal identity. Local restoration
+cleanup retains its registered database identity restriction; an unregistered
+temporary cluster is refused, not authorized by changing the test environment.
+
+The manual offer picker uses the already enforced active-inventory default;
+the facade/backend query allowlists are not broadened. Lead task links accept
+only UUIDs and reuse current Lead authority plus the TaskRecord contact-context
+check. Read-only task filters are excluded from both dirty observers, while
+managed form and pending-command protections remain unchanged. No task write is
+performed by following a link.

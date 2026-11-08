@@ -2338,3 +2338,13 @@ Measure contrast after CSS color transitions finish and recognize native
 contrast/touch thresholds unchanged; do not replace failures with snapshots or
 raise timeouts to hide a missing control. Add bounded action timeouts to expose
 the failing step instead of waiting for a long workflow timeout.
+
+## Regression checks for retained inventory tabs (2026-11-07)
+
+Mounted hidden inventory tabs can contain the same labels as the active tab.
+Use the active accessible region/control or a deliberately visible card selector;
+do not count every article on the page. Wait for the requested filter/sort read
+before measuring its replacement cards. A shared offering target is a current
+projection: after a property edit, compare persisted offering terms unchanged
+and assert the target's new property version separately. Confirm the unsaved
+navigation dialog before expecting cancellation to have left the form.

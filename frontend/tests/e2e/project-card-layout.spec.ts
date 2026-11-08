@@ -17,8 +17,8 @@ async function cardGeometry(page: Page, count: number) {
   expect(Math.max(...cards.map(card => card.width)) - Math.min(...cards.map(card => card.width))).toBeLessThanOrEqual(1);
   for (const card of cards) {
     expect(card.footerHeight).toBeGreaterThanOrEqual(44);
-    expect(card.footerWidth).toBeGreaterThanOrEqual(card.width - 10);
-    expect(card.footerHeight).toBeGreaterThanOrEqual(card.height - 10);
+    expect(Math.round((card.width - card.footerWidth) * 1000) / 1000).toBeLessThanOrEqual(10);
+    expect(Math.round((card.height - card.footerHeight) * 1000) / 1000).toBeLessThanOrEqual(10);
     expect(Math.abs(card.bottomGap)).toBeLessThanOrEqual(5);
     expect(Math.abs(card.leftGap)).toBeLessThanOrEqual(5);
     expect(Math.abs(card.rightGap)).toBeLessThanOrEqual(5);

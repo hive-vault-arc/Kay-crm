@@ -16,7 +16,7 @@ export async function runReminders(clock: Date) {
   return await testControl("fixture", { action: "work-run", clock: clock.toISOString() }) as { processed: number };
 }
 export async function openTasks(page: Page, cid: string) {
-  await page.goto(`/contacts/${cid}`); await page.getByRole("tab", { name: "Tâches", exact: true }).click();
+  await page.goto(`/contacts/${cid}`); await page.getByRole("button", { name: "Voir les tâches", exact: true }).click();
   await expect(page.getByRole("button", { name: "Créer une tâche", exact: true })).toBeEnabled();
 }
 export async function selectFirstProspect(page: Page) {
@@ -25,9 +25,10 @@ export async function selectFirstProspect(page: Page) {
   await select.selectOption({ index: 1 });
 }
 export async function setTaskDue(page: Page, local: string) {
-  const response = page.waitForResponse(r => r.url().includes("/api/v1/calendar/local-time?") && r.request().method() === "GET" && r.status() === 200);
   await page.getByLabel("Échéance de la tâche (heure de Casablanca)", { exact: true }).fill(local);
-  const result = await (await response).json();
+  const response = await page.request.get(`/api/v1/calendar/local-time?local=${encodeURIComponent(local)}`);
+  expect(response.status()).toBe(200);
+  const result = await response.json();
   if (result.choices.length === 1) await expect(page.getByRole("form", { name: /^(Créer une tâche|Modifier la tâche)$/ }).getByText(new RegExp(`UTC\\${result.choices[0].local.slice(-6, -5)}`))).toBeVisible();
 }
 export async function createTaskUi(page: Page, cid: string, due: Date, title = "SP15 tâche synthétique") {

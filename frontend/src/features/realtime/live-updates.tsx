@@ -62,7 +62,8 @@ export function LiveUpdates() {
     }
     function focused() { if (document.visibilityState === "visible") invalidate(); }
     function dirty(event: Event) {
-      const form = event.target instanceof Element ? event.target.closest<HTMLElement>("form, [role=dialog], [role=alertdialog]") : null;
+      if (!(event.target instanceof Element) || event.target.closest("[data-filter-panel]")) return;
+      const form = event.target.closest<HTMLElement>("form, [role=dialog], [role=alertdialog]");
       if (form?.hasAttribute("data-draft-managed") || form?.querySelector('[data-action="filter"], [data-action="search"]')) return;
       if (form) form.dataset.liveDirty = "true";
     }

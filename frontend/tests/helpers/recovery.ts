@@ -39,17 +39,17 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
     await expect(page.getByRole("button", { name: "Se connecter", exact: true })).toBeVisible();
     expect(new URL(page.url()).pathname).toBe("/login");
     await capture("invalidated-login-desktop");
-    const old = await page.request.get(`https://localhost:8100/api/v1/transfers/${data.old_permit.permit_id}`, { headers: { Origin: baseURL, "X-File-Permit": data.old_permit.token, "X-File-Session": data.old_permit.binding } });
+    const old = await page.request.get(`https://localhost:${process.env.KAY_E2E_API_PORT ?? "8100"}/api/v1/transfers/${data.old_permit.permit_id}`, { headers: { Origin: baseURL, "X-File-Permit": data.old_permit.token, "X-File-Session": data.old_permit.binding } });
     expect(old.status()).toBe(403);
     await clearActorContext(page); await signIn(page, data.agent);
     await expect(page.getByRole("heading", { name: "Tableau de bord", exact: true })).toBeVisible();
-    await expect(page.getByText("Mes dossiers accessibles", { exact: true })).toBeVisible();
+    await expect(page.getByText(/Dossiers attribués ou partagés/)).toBeVisible();
     const dashboard = await page.request.get("/api/v1/reports/dashboard");
     expect(dashboard.status()).toBe(200);
     expect((await dashboard.json()).scope).toBe("assigned_or_shared");
     await capture("dashboard-desktop");
     await page.goto(`/contacts/${data.contact_id}`);
-    await expect(page.getByText("Contact : SP05 contact synthétique", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "SP05 contact synthétique", exact: true, level: 1 })).toBeVisible();
     if (visible) {
       for (const width of [320, 360, 390, 768, 1024, 1440]) { await page.setViewportSize({ width, height: 1000 }); measurements.push(await geometry(page)); }
     }
@@ -77,14 +77,14 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
     await expect(page.getByText(/80[.,]00 m²/).first()).toBeVisible();
     await capture("project-desktop");
     await page.goto(`/visits/${(data as RestoredFixture & { visit_id: string }).visit_id}`);
-    await expect(page.getByText("Visite synthétique SP14", { exact: true })).toBeVisible();
+    await expect(page.getByRole("dialog").getByRole("heading", { name: "Visite synthétique SP14", exact: true })).toBeVisible();
     await capture("visit-desktop");
     await page.goto("/visits");
     await expect(page.getByRole("heading", { name: "Calendrier des visites", exact: true })).toBeVisible();
     await capture("calendar-desktop");
     await clearActorContext(page); await signIn(page, data.admin);
     expect((await page.request.get(`/api/v1/enquiries/${data.post_point_enquiry}`)).status()).toBe(404);
-    await page.goto(`/deals/${data.deal_id}`); await page.getByRole("tab", { name: "Finance", exact: true }).click();
+    await page.goto(`/deals/${data.deal_id}`); await page.getByRole("button", { name: "Voir la finance", exact: true }).click();
     await expect(page.getByText(/7[\s\u202f]500,00/).first()).toBeVisible();
     await capture("finance-desktop");
     expect(await testControl("fixture", { action: "recovery-run" })).toEqual({ finance_receipts: 1, committed_imports: 1, processed_website: 1, running_jobs: 0 });

@@ -39,7 +39,8 @@ test("Project permissions: agent creates and edits projects, structure, units an
     expect(unitAfter.development_id).toBe(unitBefore.development_id);
     expect(unitAfter.floor_id).toBe(unitBefore.floor_id);
     expect(unitAfter.unit_type_id).toBe(unitBefore.unit_type_id);
-    expect(unitAfter.offerings).toEqual(unitBefore.offerings);
+    expect(unitAfter.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target")))).toEqual(unitBefore.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target"))));
+    expect(unitAfter.offerings.every((item: { target: { version: number } }) => item.target.version === unitAfter.version)).toBe(true);
     await openDevelopment(page, project.id);
     await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await page.getByLabel("Nom du programme", { exact: true }).fill("Programme modifié par agent");

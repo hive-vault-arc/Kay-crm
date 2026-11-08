@@ -7,13 +7,28 @@ import { createTaskApi, createTaskUi, openTasks, runReminders, selectFirstProspe
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(25_000); page.setDefaultNavigationTimeout(30_000); });
 
+async function openInbox(page: import("@playwright/test").Page) {
+  const trigger = page.getByRole("button", { name: "Ouvrir les notifications", exact: true });
+  await expect(trigger).toBeVisible();
+  await trigger.click();
+  await page.getByRole("dialog", { name: "Notifications", exact: true }).getByRole("button", { name: /^Tout voir/ }).click();
+  const inbox = page.getByRole("region", { name: "Notifications internes", exact: true });
+  await expect(inbox).toBeVisible();
+  return inbox;
+}
+async function openDashboardWork(page: import("@playwright/test").Page) {
+  await page.goto("/dashboard");
+  await page.getByRole("button", { name: "Travail", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Travail et suivi", exact: true })).toBeVisible();
+}
+
 test("SP15: deal task due edit, explicit cancellation, refresh and retained context", async ({ page }) => {
   test.setTimeout(150_000); const actors: TestActor[] = [];
   try {
     const { contactId } = await workFixture(page, actors);
     const dealResponse = await staffCommand(page, "deals", dealBody(contactId, "SP15 affaire de suivi"));
     expect(dealResponse.status()).toBe(200); const did = (await dealResponse.json()).id;
-    await page.goto(`/deals/${did}`); const panel = page.getByRole("region", { name: "Tâches du dossier", exact: true });
+    await page.goto(`/deals/${did}`); await page.getByRole("button", { name: "Voir les tâches", exact: true }).click(); const panel = page.getByRole("region", { name: "Tâches du dossier", exact: true });
     await panel.getByRole("button", { name: "Créer une tâche", exact: true }).click();
     await page.getByLabel("Titre de la tâche", { exact: true }).fill("SP15 tâche du dossier affaire");
     const context = await (await page.request.get("/api/v1/work/context")).json();
@@ -27,7 +42,8 @@ test("SP15: deal task due edit, explicit cancellation, refresh and retained cont
     await expect(selected.getByRole("button", { name: "Modifier la tâche", exact: true })).toBeVisible();
     const edited = await (await page.request.get(`/api/v1/tasks/${initial.id}`)).json();
     expect(edited.schedule_version).toBe(2); expect(edited.due_at).not.toBe(initial.due_at);
-    await selected.getByRole("button", { name: "Annuler la tâche", exact: true }).click(); await page.keyboard.press("Escape");
+    await selected.getByRole("button", { name: "Annuler la tâche", exact: true }).click();
+    await expect(page.getByRole("alertdialog", { name: "Annuler la tâche", exact: true })).toBeVisible(); await page.keyboard.press("Escape");
     await expect(selected.getByRole("button", { name: "Annuler la tâche", exact: true })).toBeFocused();
     await selected.getByRole("button", { name: "Annuler la tâche", exact: true }).click();
     await page.getByRole("alertdialog").getByLabel("Compte rendu (facultatif)", { exact: true }).fill("SP15 suivi annulé explicitement");
@@ -50,9 +66,12 @@ test("SP15 AT-17/23: task creation, overdue delivery/read and completion in curr
     const due = new Date(now.getTime() - 60_000), tid = await createTaskUi(page, contactId, due);
     const before = await (await page.request.get("/api/v1/notifications")).json(); expect(before.total).toBe(0);
     expect((await runReminders(now)).processed).toBe(3); expect((await runReminders(now)).processed).toBe(0);
-    await page.goto("/dashboard"); await page.getByLabel("Période des tâches", { exact: true }).selectOption("overdue");
+    await openDashboardWork(page); await page.getByLabel("Période des tâches", { exact: true }).selectOption("overdue");
     await expect(page.getByRole("region", { name: "Travail à faire", exact: true }).getByRole("link", { name: "SP15 tâche synthétique", exact: true })).toBeVisible();
-    const inbox = page.getByRole("region", { name: "Notifications internes", exact: true });
+    await page.getByRole("button", { name: "Fermer : Travail et suivi", exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "Travail et suivi", exact: true })).not.toBeVisible();
+    await expect(page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true })).toHaveCount(0);
+    const inbox = await openInbox(page);
     await expect(inbox.getByRole("heading", { name: "Échéance de tâche", exact: true })).toHaveCount(1);
     const [readResponse] = await Promise.all([
       page.waitForResponse(response => /\/api\/v1\/notifications\/[^/]+\/read$/.test(new URL(response.url()).pathname) && response.request().method() === "POST", { timeout: 5000 }),
@@ -60,8 +79,8 @@ test("SP15 AT-17/23: task creation, overdue delivery/read and completion in curr
     ]);
     expect(readResponse.status()).toBe(200);
     await expect(inbox.getByText("Notification marquée comme lue.", { exact: true })).toBeVisible();
-    await page.getByLabel("Notifications affichées", { exact: true }).selectOption("unread"); await expect(inbox.getByRole("heading", { name: "Échéance de tâche", exact: true })).toHaveCount(0);
-    await page.getByLabel("Notifications affichées", { exact: true }).selectOption("read"); await inbox.getByRole("link", { name: "Ouvrir le dossier", exact: true }).click();
+    await inbox.getByRole("button", { name: "Non lues", exact: true }).click(); await expect(inbox.getByRole("heading", { name: "Échéance de tâche", exact: true })).toHaveCount(0);
+    await inbox.getByRole("button", { name: "Lues", exact: true }).click(); await inbox.getByRole("link", { name: "Ouvrir le dossier", exact: true }).click();
     await expect(page.getByRole("region", { name: "Tâche sélectionnée", exact: true }).getByRole("heading", { name: "SP15 tâche synthétique", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Terminer la tâche", exact: true }).click(); await page.getByRole("alertdialog").getByRole("button", { name: "Terminer la tâche", exact: true }).click();
     await expect(page.getByRole("alertdialog")).not.toBeVisible(); await expect(page.getByText("Tâche terminée. Les rappels obsolètes sont invalidés.", { exact: true })).toBeVisible();
@@ -87,15 +106,17 @@ test("SP15 AT-17/16: actual visit reminders track reschedule, cancellation and u
     expect((await (await page.request.get("/api/v1/notifications")).json()).total).toBe(0);
     expect((await runReminders(new Date(start.getTime() - 3600_000))).processed).toBe(0);
     expect((await runReminders(new Date(nextStart.getTime() - 86400_000))).processed).toBe(1);
-    await page.goto("/dashboard"); await expect(page.getByRole("heading", { name: "Rappel de visite : J-1", exact: true })).toBeVisible();
+    await page.goto("/dashboard"); await openInbox(page); await expect(page.getByRole("heading", { name: "Rappel de visite : J-1", exact: true })).toBeVisible();
     await page.getByRole("region", { name: "Notifications internes", exact: true }).getByRole("link", { name: "Ouvrir le dossier", exact: true }).click();
+    await page.getByRole("dialog").getByRole("button", { name: "Actions", exact: true }).click();
     await page.getByRole("button", { name: "Annuler la visite", exact: true }).click();
     await page.getByRole("alertdialog").getByLabel("Motif d’annulation (obligatoire)", { exact: true }).fill("SP15 annulation synthétique");
     await page.getByRole("alertdialog").getByRole("button", { name: "Annuler la visite", exact: true }).click(); await expect(page.getByRole("alertdialog")).not.toBeVisible();
     expect((await runReminders(new Date(nextStart.getTime() - 3600_000))).processed).toBe(0);
     const past = await commandVisit(page, agent.id, contactId, { type: "office", start_at: new Date(now.getTime() - 7200_000).toISOString(), end_at: new Date(now.getTime() - 3600_000).toISOString() });
-    await page.goto("/dashboard"); const followup = page.getByRole("region", { name: "Visites à renseigner", exact: true }); await expect(followup.getByRole("link")).toHaveCount(1);
+    await openDashboardWork(page); const followup = page.getByRole("region", { name: "Visites à renseigner", exact: true }); await expect(followup.getByRole("link")).toHaveCount(1);
     await followup.getByRole("link").click(); await expect(page).toHaveURL(new RegExp(`/visits/${past}$`));
+    await page.getByRole("dialog").getByRole("button", { name: "Actions", exact: true }).click();
     await page.getByRole("button", { name: "Terminer la visite", exact: true }).click(); await page.getByRole("alertdialog").getByLabel("Résultat de la visite (obligatoire)", { exact: true }).fill("SP15 résultat consigné sans deuxième visite"); await page.getByRole("alertdialog").getByRole("button", { name: "Terminer la visite", exact: true }).click(); await expect(page.getByRole("alertdialog")).not.toBeVisible();
     expect((await (await page.request.get("/api/v1/visits/follow-up")).json()).total).toBe(0);
   } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
@@ -167,6 +188,25 @@ test("Lead context chooser stays usable by keyboard on narrow screens", async ({
   } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
 });
 
+test("Lead task links from the dashboard open the exact selected task", async ({ page }) => {
+  test.setTimeout(120_000); const actors: TestActor[] = [];
+  try {
+    const { contactId, now } = await workFixture(page, actors);
+    const title = "SP15 tâche liée au prospect synthétique";
+    const tid = await createTaskUi(page, contactId, new Date(now.getTime() - 60_000), title);
+    const task = await (await page.request.get(`/api/v1/tasks/${tid}`)).json();
+    expect(task.enquiry_id).toBeTruthy();
+    await openDashboardWork(page);
+    await page.getByLabel("Période des tâches", { exact: true }).selectOption("overdue");
+    const link = page.getByRole("region", { name: "Travail à faire", exact: true }).getByRole("link", { name: title, exact: true });
+    await expect(link).toHaveAttribute("href", `/leads/${task.enquiry_id}?task=${tid}`);
+    await link.focus(); await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(new RegExp(`/leads/${task.enquiry_id}\\?task=${tid}$`));
+    await expect(page.getByRole("region", { name: "Tâche sélectionnée", exact: true }).getByRole("heading", { name: title, exact: true })).toBeVisible();
+    expect((await (await page.request.get(`/api/v1/tasks/${tid}`)).json()).version).toBe(task.version);
+  } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
+});
+
 test("SP15 AT-17/23: unrelated staff cannot open task or notification links", async ({ page }) => {
   test.setTimeout(150_000); const actors: TestActor[] = [];
   try {
@@ -175,7 +215,7 @@ test("SP15 AT-17/23: unrelated staff cannot open task or notification links", as
     const outsider = await createActor("agent", false, "SP06 SP15 tiers synthétique"); actors.push(outsider); await clearActorContext(page); await signIn(page, outsider);
     expect((await page.request.get(`/api/v1/tasks/${tid}`)).status()).toBe(404); expect((await staffCommand(page, `notifications/${notification.id}/read`, {})).status()).toBe(404);
     await page.goto(`/contacts/${contactId}?task=${tid}`); await expect(page.getByRole("alert").filter({ hasText: "introuvable" })).toBeVisible();
-    await page.goto("/dashboard"); await expect(page.getByText("0 notification(s) actuelle(s) non lue(s).", { exact: true })).toBeVisible();
+    await page.goto("/dashboard"); const inbox = await openInbox(page); await expect(inbox.getByText("Aucune notification pour ce filtre. Les rappels apparaissent à leur échéance.", { exact: true })).toBeVisible();
     expect((await (await page.request.get("/api/v1/tasks")).json()).total).toBe(0);
   } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
 });

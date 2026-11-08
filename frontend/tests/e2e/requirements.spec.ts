@@ -19,7 +19,11 @@ test("SP10 AT-07/08/36: independent searches, exact rents and real unit/whole of
     const detail = await (await page.request.get(`/api/v1/requirements/${first}`)).json();
     expect(detail.criteria.find((c: { key: string }) => c.key === "area_sqm").value).toBeNull(); expect(detail.criteria.find((c: { key: string }) => c.key === "parking").value).toBe(false);
     const unit = await openShortlist(page, first); await unit.getByLabel("Niveau de la cible", { exact: true }).selectOption("unit"); await unit.getByText("Filtres complémentaires", { exact: true }).click();
-    await unit.getByLabel("Loyer annuel minimum (MAD)", { exact: true }).fill("143999.88"); await unit.getByLabel("Loyer annuel maximum (MAD)", { exact: true }).fill("143999.88"); await unit.getByRole("button", { name: "Filtrer les offres", exact: true }).click();
+    await unit.getByLabel("Loyer annuel minimum (MAD)", { exact: true }).fill("143999.88"); await unit.getByLabel("Loyer annuel maximum (MAD)", { exact: true }).fill("143999.88");
+    const matched = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === "/api/v1/offerings" && url.searchParams.get("target_level") === "unit" && url.searchParams.get("min_comparison_mad") === "143999.88"; });
+    await unit.getByRole("button", { name: "Filtrer les offres", exact: true }).click();
+    const matchedResponse = await matched; expect(matchedResponse.status()).toBe(200);
+    expect((await matchedResponse.json()).items.map((item: { id: string }) => item.id)).toEqual([inventory.unitOffer]);
     await expect(unit.getByLabel("Offre d’inventaire", { exact: true }).locator("option[value]:not([value=''])")).toHaveCount(1);
     await unit.getByLabel("Offre d’inventaire", { exact: true }).selectOption(inventory.unitOffer); await unit.getByLabel("Avis sur cette offre", { exact: true }).fill("SP10 avis synthétique sur l’unité 201"); await saveShortlist(page, first);
     await expect(card.locator("[data-shortlist-id]")).toHaveCount(1); await expect(card).toContainText("SP10 avis synthétique sur l’unité 201");
