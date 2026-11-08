@@ -1,35 +1,18 @@
 "use client";
-import { useRef, useState } from "react";
+import { RecordEntry } from "@/components/shared/record-entry";
 import { Button } from "@/components/ui/button";
 import { RecordError } from "@/features/contacts/record-states";
-import { dealSchema } from "@/features/deals/contracts";
-import { apiGet, ApiError } from "@/lib/api/client";
-import { apiCommand } from "@/lib/api/command";
-import { commissionSchema, mad, resultSchema, type Commission } from "./contracts";
+import { stageLabels } from "@/features/deals/contracts";
+import { mad, type Commission } from "./contracts";
+import { useFinanceMutation } from "./use-finance-command";
+export { useFinanceMutation } from "./use-finance-command";
+export type { Denied, Saved, FinanceBinding } from "./use-finance-command";
 
-export type Saved = (result: { id: string; version: number }) => void | Promise<void>;
-export type Denied = (error: ApiError) => void;
-export function useFinanceMutation(dealId: string, commissionId: string | undefined, saved: Saved, denied: Denied) {
-  const [busy, setBusy] = useState(false), [error, setError] = useState<ApiError>(), [comparison, setComparison] = useState<{ version: number; commission?: Commission }>();
-  const lock = useRef(false), attempt = useRef({ fingerprint: "", key: "" });
-  const [latest, setLatest] = useState<Commission>();
-  async function save(path: `/api/v1/${string}`, body: unknown) {
-    if (lock.current) return false;
-    lock.current = true; setBusy(true); setError(undefined); setComparison(undefined);
-    const fingerprint = JSON.stringify({ path, body }); if (attempt.current.fingerprint !== fingerprint) attempt.current = { fingerprint, key: crypto.randomUUID() };
-    try { const result = await apiCommand(path, body, resultSchema, attempt.current.key); await saved(result); return true; }
-    catch (failure) { const problem = failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503); setError(problem); if (["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "CONTACT_ARCHIVED"].includes(problem.code)) denied(problem); return false; }
-    finally { lock.current = false; setBusy(false); }
-  }
-  async function compare() {
-    if (lock.current) return; lock.current = true; setBusy(true);
-    try { if (commissionId) { const current = await apiGet(`/api/v1/commissions/${commissionId}`, commissionSchema); setLatest(current); setComparison({ version: current.version, commission: current }); } else { const current = await apiGet(`/api/v1/deals/${dealId}`, dealSchema); setComparison({ version: current.version }); } }
-    catch (failure) { const problem = failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503); setError(problem); if (["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED"].includes(problem.code)) denied(problem); }
-    finally { lock.current = false; setBusy(false); }
-  }
-  return { busy, error, comparison, latest, save, compare, clear: () => { setError(undefined); setComparison(undefined); } };
-}
-export function FinanceFailure({ mutation, acceptVersion }: { mutation: ReturnType<typeof useFinanceMutation>; acceptVersion: (version: number) => void }) {
+export function FinanceFailure({ mutation, acceptVersion }: { mutation: ReturnType<typeof useFinanceMutation>; acceptVersion: (version: number, commission?: Commission) => void }) {
   if (!mutation.error) return null;
-  return <section className="grid min-w-0 gap-4" aria-label="Reprise de l’action financière"><RecordError error={mutation.error} /><p>Votre saisie est conservée. Si la réponse a été interrompue, réessayez la même action sans la modifier. En cas de conflit, comparez avant de reprendre.</p><Button action="compare" type="button" variant="outline" className="justify-self-start" disabled={mutation.busy} onClick={() => void mutation.compare()}>Comparer la version financière actuelle</Button>{mutation.comparison ? <section className="grid min-w-0 gap-4 border-y py-4" aria-label="Version financière actuelle"><p>Version actuelle : {mutation.comparison.version}</p>{mutation.comparison.commission ? <><p>Montant actuel : {mad(mutation.comparison.commission.current.amount_mad)}</p><p>Solde actuel : {mutation.comparison.commission.balance_mad === null ? "Commission non reconnue" : mad(mutation.comparison.commission.balance_mad)}</p><p>État : {mutation.comparison.commission.current.state === "recognized" ? "Reconnue" : "Prévue"}</p></> : null}<Button action="compare" type="button" variant="outline" className="h-auto min-h-control justify-self-start whitespace-normal" onClick={() => { acceptVersion(mutation.comparison!.version); mutation.clear(); }}>Conserver ma saisie avec cette version</Button></section> : null}</section>;
+  const current = mutation.comparison;
+  return <section className="grid min-w-0 gap-4" aria-label="Reprise de l’action financière"><RecordError error={mutation.error} />
+    {mutation.uncertain ? <><p className="text-sm text-muted-foreground">{mutation.acknowledged ? "L’opération est enregistrée. Actualisez son résultat sans enregistrer une seconde fois." : "La réponse a été interrompue. Réessayez exactement l’opération confirmée pour retrouver son résultat."}</p><Button action="retry" type="button" variant="outline" disabled={mutation.busy || !mutation.writable && !mutation.acknowledged} onClick={() => void mutation.retry()}>{mutation.acknowledged ? "Actualiser l’opération enregistrée" : "Réessayer la même opération"}</Button></> : <><p className="text-sm text-muted-foreground">Votre saisie est conservée. Comparez la version actuelle avant de reprendre un conflit.</p>{mutation.error.status === 409 ? <Button action="compare" type="button" variant="outline" className="justify-self-start" disabled={mutation.busy} onClick={() => void mutation.compare()}>Comparer la version financière actuelle</Button> : null}</>}
+    {current ? <RecordEntry title={`Version actuelle · ${current.version}`} meta={current.commission ? [{ label: "Montant", value: mad(current.commission.current.amount_mad) }, { label: "Calcul", value: current.commission.current.kind === "fixed" ? "Montant fixe" : `${current.commission.current.rate_percent} %` }, { label: "Base", value: mad(current.commission.current.base_mad) }, { label: "Échéance", value: current.commission.current.due_on ?? "Non renseignée" }, { label: "État", value: current.commission.current.state === "recognized" ? "Reconnue" : "Prévue" }, { label: "Encaissé", value: mad(current.commission.collected_mad) }, { label: "Solde", value: current.commission.balance_mad === null ? "Non reconnu" : mad(current.commission.balance_mad) }] : current.deal ? [{ label: "Contact", value: current.deal.contact.name }, { label: "Affaire", value: current.deal.title }, { label: "Étape", value: stageLabels[current.deal.stage] }] : []} actions={!current.blocked ? <Button action="compare" type="button" variant="outline" disabled={mutation.busy || mutation.uncertain || !mutation.writable} onClick={() => { if (mutation.accept(current)) acceptVersion(current.version, current.commission); }}>Conserver ma saisie avec cette version</Button> : undefined}>{current.blocked ? <p role="status">{current.blocked}</p> : current.commission?.current.review_required ? <p className="text-warning">Revue financière requise après réouverture.</p> : null}</RecordEntry> : null}
+  </section>;
 }

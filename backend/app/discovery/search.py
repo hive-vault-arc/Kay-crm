@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import (
     ColumnElement,
     String,
+    case,
     cast,
     false,
     func,
@@ -19,7 +20,10 @@ from app.contacts.models import Contact, ContactEmail, ContactPhone, Enquiry
 from app.db.session import Database
 from app.deals.models import Deal
 from app.discovery.contracts import SearchQuery
-from app.files.models import Document
+from app.files.models import Document, DocumentVersion
+from app.generated.catalog import TEMPLATES
+from app.generated.visibility import visible_template_codes
+from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
 from app.inventory.hierarchy_models import Development, UnitType
 from app.inventory.models import Property
@@ -38,7 +42,9 @@ def page_result(
     )
 
 
-def projections(identity: CurrentIdentity, query: SearchQuery) -> Subquery:
+def projections(
+    identity: CurrentIdentity, query: SearchQuery, *, prepared: bool = False
+) -> Subquery:
     contacts = (
         select(Contact.id)
         .where(
@@ -80,12 +86,16 @@ def projections(identity: CurrentIdentity, query: SearchQuery) -> Subquery:
         identifier: SQLColumnExpression[UUID],
         label: SQLColumnExpression[str],
         path: SQLColumnExpression[str],
-    ) -> Select[str, UUID, str, str]:
+        template_title: SQLColumnExpression[str] | None = None,
+    ) -> Select[str, UUID, str, str, str | None]:
         return select(
             literal(kind).label("kind"),
             identifier.label("id"),
             label.label("label"),
             path.label("href"),
+            (template_title if template_title is not None else literal(None, String)).label(
+                "template_title"
+            ),
         )
 
     def href(prefix: str, identifier: SQLColumnExpression[UUID | None]) -> ColumnElement[str]:
@@ -160,17 +170,64 @@ def projections(identity: CurrentIdentity, query: SearchQuery) -> Subquery:
         records.append(
             row("document", Document.id, Document.filename, href(prefix, parent)).where(
                 Document.archived_at.is_(None),
+                Document.purpose != "generated",
+                Document.template_code.is_(None),
                 parent.in_(ids),
                 Document.filename.ilike(needle, escape="\\"),
+            )
+        )
+    codes = visible_template_codes(identity.user.role)
+    title = case(
+        {template.code: template.title for template in TEMPLATES if template.code in codes},
+        value=Document.template_code,
+        else_="",
+    )
+    parents = [(Document.deal_id, deals, "/deals/")]
+    if prepared:
+        enquiries = select(Enquiry.id).where(
+            Enquiry.contact_id.in_(select(contacts.c.id)),
+            Enquiry.archived_at.is_(None),
+            Enquiry.assigned_agent_id.is_not(None)
+            if identity.user.role == "agent"
+            else literal(True),
+        )
+        parents.append((Document.enquiry_id, enquiries, "/leads/"))
+    for parent, ids, prefix in parents:
+        records.append(
+            row(
+                "generated_document" if prepared else "document",
+                Document.id,
+                Document.filename,
+                href(prefix, parent) + "?tab=documents" if prepared else href(prefix, parent),
+                title if prepared else None,
+            ).where(
+                Document.archived_at.is_(None),
+                Document.purpose == "generated",
+                Document.mime_type == "application/pdf",
+                Document.template_code.in_(codes),
+                parent.in_(ids),
+                select(DocumentVersion.id)
+                .where(
+                    DocumentVersion.document_id == Document.id,
+                    DocumentVersion.state == "clean",
+                )
+                .exists(),
+                or_(Document.filename.ilike(needle, escape="\\"), title.ilike(needle, escape="\\"))
+                if prepared
+                else Document.filename.ilike(needle, escape="\\"),
             )
         )
     return union_all(*records).subquery("visible_matches")
 
 
-def search(database: Database, token: str, query: SearchQuery) -> dict[str, object]:
+def search(
+    database: Database, token: str, query: SearchQuery, *, prepared: bool = False
+) -> dict[str, object]:
+    if query.kind == "generated_document" and not prepared:
+        raise IdentityError("VALIDATION_ERROR", 422)
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
-        matches = projections(current_identity(session, token), query)
+        matches = projections(current_identity(session, token), query, prepared=prepared)
         counts: dict[str, int] = dict(
             session.execute(select(matches.c.kind, func.count()).group_by(matches.c.kind)).all()
         )
@@ -187,7 +244,15 @@ def search(database: Database, token: str, query: SearchQuery) -> dict[str, obje
             .mappings()
             .all()
         )
-        items = [
-            dict(kind=r["kind"], id=str(r["id"]), label=r["label"], href=r["href"]) for r in rows
-        ]
-        return page_result(items, total, query.page, query.page_size) | {"counts": counts}
+        items: list[dict[str, object]] = []
+        for row in rows:
+            item: dict[str, object] = dict(
+                kind=row["kind"], id=str(row["id"]), label=row["label"], href=row["href"]
+            )
+            if prepared and row["kind"] == "generated_document":
+                item["template_title"] = row["template_title"]
+            items.append(item)
+        result = page_result(items, total, query.page, query.page_size) | {"counts": counts}
+        if prepared:
+            result["search_version"] = 2
+        return result

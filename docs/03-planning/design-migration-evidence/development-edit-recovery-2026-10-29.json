@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "fec4aacbdbe1218ab5f747338673ddeade4c5bdf",
+  "scope": "Selected programme edit: strict scoped facts intent and existing-role grants, protected original PATCH/key/callback, explicit current review, promoter privacy, normalized draft and verified navigation; nondecreasing comparison acceptance across scoped forms",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 815,
+      "additionalCases": 11,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Actual intents/controllers/forms/record host in synthetic harnesses; no actual app or SQL"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 346,
+      "buttonSites": 514,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <programme editor and record>",
+      "exitCode": 0,
+      "files": 2,
+      "findings": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8959,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1282,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/development-edit-recovery.spec.ts",
+      "cases": 2,
+      "scenarios": [
+        "phone agent programme edit lost acknowledgement",
+        "desktop agent programme edit acknowledged result-read outage"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedProgrammeFieldsSummaryTokensGlyphsSpacingMotion": true,
+    "existingAgentManagerAdministratorSharedFactAuthority": true,
+    "scopedRecordActorRoleAndBusyHostOnEditRoute": true,
+    "strictExactProgrammeOriginalPatchBodyKeyCallback": true,
+    "unknownInputCancelNavigationProtected": true,
+    "acknowledgedCompletionOnlyAndVerifiedProgrammeNavigation": true,
+    "explicitCurrentComparisonAndGuardedReload": true,
+    "comparisonCannotLowerNewerReceivedParentVersion": true,
+    "normalizedDraftAndPhaseCapabilityOmission": true,
+    "protectedPromoterOmissionNullSelectionAndCurrentPrivacy": true,
+    "currentDenialDisposalAndSourceRetention": true,
+    "backendAuthorizationVersionArchiveMarketabilityUnchanged": true,
+    "noPersistentBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Old generic command owner in development-creation-wizard.tsx and property-listing-wizard.tsx",
+    "Remaining exact domain field/action/context reconciliation",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged; existing promoter scoping inspected in source only",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/accounts/private configuration/records/services/workers/scanners/simulator/import/export/transfer access",
+    "Migrations0036/0037 or other migration execution",
+    "Actual SQL/concurrent stock/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5027,
+      "sha256": "247560dcc337d5678c2d705c7ca1a2ffb170ed1a360ab32a340f538360e2a4cd"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-editor.tsx",
+      "bytes": 16726,
+      "sha256": "982fb009892d37ac94ce20efb3750c093245dbe345b295c990f655c720033cba"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-record.tsx",
+      "bytes": 11283,
+      "sha256": "922be8d2c73b9aac9109ffc0c53f76c46e87ab1f4e2f35b82e400f9525f46de8"
+    },
+    {
+      "file": "frontend/src/features/inventory/record-command-intent.ts",
+      "bytes": 4997,
+      "sha256": "f69083f8e069aea07520c666ab004d145ad5271a1f8b7f7200a29cc5f2309016"
+    },
+    {
+      "file": "frontend/src/features/inventory/use-record-command.ts",
+      "bytes": 11306,
+      "sha256": "c7fd2cb44c0aa5cdae526eefe05e8db9d012191f4f9f1d3d22b3616e2fce61c8"
+    },
+    {
+      "file": "frontend/tests/e2e/development-edit-recovery.spec.ts",
+      "bytes": 3989,
+      "sha256": "99cd820549e8a51b94f4126b1abf38b5348f1d15176798ea07bf6cff0c5b324a"
+    },
+    {
+      "file": "frontend/tests/unit/development-edit-recovery.test.mjs",
+      "bytes": 14986,
+      "sha256": "7c61d5ce8f3bf3b233a6b5af3fcb087aef22271a765abd2f5f9bd4c9998da886"
+    },
+    {
+      "file": "frontend/tests/unit/development-phase.test.mjs",
+      "bytes": 13742,
+      "sha256": "346f5fac2d5ffb680710e16a77548ade75b9786450f5305eb698f6b845a0d201"
+    },
+    {
+      "file": "frontend/tests/unit/record-command-fixtures.mjs",
+      "bytes": 5651,
+      "sha256": "a786d77b778c70b0212c899068be651de94aa18f2c3981246b6d98d42d3b799e"
+    },
+    {
+      "file": "frontend/tests/unit/record-command-recovery.test.mjs",
+      "bytes": 15983,
+      "sha256": "b61f036635775a39af0bb85b2b5d239e59aa4597d63ebab7cf729c3faead36be"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 32561,
+      "sha256": "4a1323ce1da0bdb574f916697ee9f4fca22a8306e2c56c7579f5508224879bb4"
+    }
+  ]
+}

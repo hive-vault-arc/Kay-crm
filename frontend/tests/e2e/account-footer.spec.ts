@@ -12,7 +12,10 @@ async function capture(page: Page, name: string) {
   await page.screenshot({ path: path.join(artifacts, `${name}.png`) });
 }
 
-test("account footer: one account location, real role, long name and responsive navigation", async ({ page }) => {
+const account = (page: Page) => page.getByRole("dialog", { name: "Compte utilisateur", exact: true });
+const accountButton = (page: Page) => page.getByRole("banner").getByRole("button", { name: /^Compte de / });
+
+test("workspace account: one account location, real role, long name and responsive navigation", async ({ page }) => {
   test.setTimeout(120_000);
   const name = "SP06 responsable synthétique avec un nom très long pour vérifier le retour à la ligne et les informations du compte utilisateur".padEnd(160, "x");
   const actor = await createActor("manager", false, name);
@@ -20,50 +23,44 @@ test("account footer: one account location, real role, long name and responsive 
     await signIn(page, actor);
     await page.goto("/leads");
     const header = page.getByRole("banner");
-    await expect(header.getByText(name, { exact: true })).toHaveCount(0);
-    await expect(header.getByRole("button", { name: "Se déconnecter", exact: true })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "Changer le mot de passe", exact: true })).toHaveCount(0);
+    await expect(accountButton(page)).toHaveAccessibleName(`Compte de ${name}`);
     await expect(header.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
     for (const width of [320, 360, 768, 1024, 1440]) {
-      await page.setViewportSize({ width, height: 900 });
-      const mobile = width < 1024;
+      await page.setViewportSize({ width, height: width === 360 ? 480 : 900 });
+      const mobile = width < 831;
       if (mobile) await page.getByRole("button", { name: "Ouvrir la navigation", exact: true }).click();
-      const sidebar = mobile ? page.getByRole("dialog", { name: "Navigation KAY", exact: true }) : page.locator("aside[data-sidebar]");
-      await expect(sidebar).toHaveCSS("background-color", "rgb(18, 21, 18)");
-      await expect(sidebar.getByRole("link", { name: "Prospects", exact: true })).toHaveCSS("background-color", "rgb(37, 45, 36)");
-      const footer = sidebar.getByRole("region", { name: "Compte utilisateur", exact: true });
-      await expect(footer.getByText(name, { exact: true })).toBeVisible();
-      await expect(footer.getByText("Responsable", { exact: true })).toBeVisible();
-      await expect(sidebar.getByRole("link", { name: "Paramètres", exact: true })).toHaveCount(0);
-      const logout = footer.getByRole("button", { name: "Se déconnecter", exact: true });
+      const navigation = mobile ? page.getByRole("dialog", { name: "Navigation KAY", exact: true }) : page.locator("aside[data-sidebar]");
+      await expect(navigation.getByRole("link", { name: "Prospects", exact: true })).toHaveAttribute("aria-current", "page");
+      await expect(navigation.getByRole("link", { name: "Paramètres", exact: true })).toHaveCount(0);
+      await expect(navigation.getByRole("button", { name: "Se déconnecter", exact: true })).toHaveCount(0);
+      expect(await navigation.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+      if (mobile) await page.keyboard.press("Escape");
+
+      await accountButton(page).click();
+      const menu = account(page);
+      await expect(menu.getByText(name, { exact: true })).toBeVisible();
+      await expect(menu.getByText("Responsable", { exact: true })).toBeVisible();
+      await expect(menu.getByRole("link", { name: "Changer le mot de passe", exact: true })).toHaveCount(0);
+      const logout = menu.getByRole("button", { name: "Se déconnecter", exact: true });
       await expect(logout).toBeEnabled();
-      await logout.scrollIntoViewIfNeeded();
       await expect(logout).toBeInViewport();
       const box = await logout.boundingBox();
       expect(box!.width).toBeGreaterThanOrEqual(44);
       expect(box!.height).toBeGreaterThanOrEqual(44);
-      const sidebarContent = mobile ? sidebar : sidebar.locator(".sidebar-scroll");
-      expect(await sidebarContent.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       if (width === 360 || width === 1440) await capture(page, `long-name-${width}`);
-      if (mobile) await page.keyboard.press("Escape");
+      await page.keyboard.press("Escape");
+      await expect(menu).not.toBeVisible();
     }
-    await page.setViewportSize({ width: 360, height: 480 });
-    await page.getByRole("button", { name: "Ouvrir la navigation", exact: true }).click();
-    const drawer = page.getByRole("dialog", { name: "Navigation KAY", exact: true });
-    const logout = drawer.getByRole("button", { name: "Se déconnecter", exact: true });
-    await logout.scrollIntoViewIfNeeded();
-    await expect(logout).toBeInViewport();
-    await capture(page, "short-drawer");
-    await page.keyboard.press("Escape");
   } finally { await clearActorContext(page); await removeActor(actor); }
 });
 
-test("account footer: plain logout button retains pending, failure, keyboard retry and revocation", async ({ page, actor }) => {
+test("workspace account: logout button retains pending, failure, keyboard retry and revocation", async ({ page, actor }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await signIn(page, actor);
   await page.goto("/leads");
-  const footer = page.locator("aside[data-sidebar]").getByRole("region", { name: "Compte utilisateur", exact: true });
+  await accountButton(page).click();
+  const footer = account(page);
   await expect(footer.getByText("Administrateur", { exact: true })).toBeVisible();
   await expect(footer.getByRole("button")).toHaveCount(1);
   await capture(page, "desktop");
@@ -78,8 +75,7 @@ test("account footer: plain logout button retains pending, failure, keyboard ret
   } finally { hold.resolve(); }
   const error = footer.getByRole("alert");
   await expect(error).toBeVisible();
-  await expect(error).toHaveCSS("background-color", "rgb(251, 237, 234)");
-  await expect(error).toHaveCSS("color", "rgb(153, 74, 64)");
+  await expect(error).toContainText(/Réessayez|indisponible/i);
   expect((await page.request.get("/api/v1/auth/me")).status()).toBe(200);
   await capture(page, "logout-error");
   await page.unroute("**/api/v1/auth/logout");
@@ -91,7 +87,7 @@ test("account footer: plain logout button retains pending, failure, keyboard ret
   expect((await page.request.get("/api/v1/auth/me")).status()).toBe(401);
 });
 
-test("account footer: mobile agent can sign out by touch from the navigation drawer", async ({ page, browser, baseURL }) => {
+test("workspace account: mobile agent can sign out by touch from the account menu", async ({ page, browser, baseURL }) => {
   const actor = await createActor("agent", false, "SP06 agent synthétique de navigation");
   const mobile = await browser.newContext({ baseURL, viewport: { width: 360, height: 800 }, hasTouch: true, ignoreHTTPSErrors: true });
   try {
@@ -100,12 +96,10 @@ test("account footer: mobile agent can sign out by touch from the navigation dra
     const phone = await mobile.newPage();
     await phone.goto("/leads");
     await expect(phone.getByRole("banner").getByRole("button", { name: "Se déconnecter", exact: true })).toHaveCount(0);
-    await phone.getByRole("button", { name: "Ouvrir la navigation", exact: true }).tap();
-    const drawer = phone.getByRole("dialog", { name: "Navigation KAY", exact: true });
-    await expect(drawer).toHaveCSS("background-color", "rgb(18, 21, 18)");
-    const footer = drawer.getByRole("region", { name: "Compte utilisateur", exact: true });
+    await accountButton(phone).tap();
+    const footer = account(phone);
     await expect(footer.getByText("Agent", { exact: true })).toBeVisible();
-    await expect(drawer.getByRole("link", { name: "Changer le mot de passe", exact: true })).toHaveCount(0);
+    await expect(footer.getByRole("link", { name: "Changer le mot de passe", exact: true })).toHaveCount(0);
     await capture(phone, "mobile");
     await footer.getByRole("button", { name: "Se déconnecter", exact: true }).tap();
     await expect(phone).toHaveURL(/\/login\?signed_out=1$/);

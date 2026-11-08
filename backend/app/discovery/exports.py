@@ -41,10 +41,18 @@ def owned(session: Session, eid: UUID, uid: UUID, *, lock: bool = False) -> Expo
     return row
 
 
+def export_payload(body: NewExport) -> dict[str, object]:
+    # Keep every pre-extension default byte-for-byte in canonical old receipts.
+    values = body.model_dump(mode="json")
+    for key in ("primary_agent_id", "linked", "role", "created_from", "created_to"):
+        if key not in body.filters.model_fields_set:
+            values["filters"].pop(key)
+    return values
+
+
 def request_export(database: Database, token: str, key: UUID, body: NewExport) -> dict[str, object]:
-    digest = hashlib.sha256(
-        json.dumps(body.model_dump(mode="json"), sort_keys=True).encode()
-    ).digest()
+    payload = export_payload(body)
+    digest = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).digest()
     with database.session() as session, session.begin():
         identity = authorized(session, token, lock=True)
         previous = session.scalar(
@@ -62,7 +70,7 @@ def request_export(database: Database, token: str, key: UUID, body: NewExport) -
             request_key=key,
             request_hash=digest,
             kind=body.kind,
-            filters=body.filters.model_dump(mode="json"),
+            filters=payload["filters"],
         )
         session.add(row)
         session.flush()

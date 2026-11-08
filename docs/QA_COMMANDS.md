@@ -1,5 +1,733 @@
 # KAY QA command register
 
+Selected affair form recovery,2026-10-29: frontend cwd `npm run test:unit`:
+727 pass/0 failed/skipped,20 added actual form/controller/route/context/record-
+host cases. Existing dossier coverage uses coherent full receipts and the real
+owner. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass.64 glyphs/104 consumers/345 icon sites and504 Button
+sites have0 violations. Static Frontend Taste app lint covers4 changed UI files,
+0 findings. Three native create/edit acknowledgement/contact-read cases prepared/
+typechecked, not run. Backend unchanged/not rerun. No actual app/DB/account/config/
+service/worker/transfer access, migration, workaround, native/SQL/CI/AFTER/product
+or main/push/merge/deploy acceptance.
+[Contract](04-design/deal-form-recovery-local.md).
+
+Selected prospect conversion recovery,2026-10-28: frontend cwd
+`npm run test:unit`:707 pass/0 failed/skipped,16 added actual dialog/controller/
+picker cases plus existing board status/conversion coverage. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and `npm run history:check`
+pass.64 glyphs/104 consumers/345 icon sites and502 Button sites have0 violations.
+Static Frontend Taste app lint covers4 changed UI sources,0 findings. A composite
+picker test invocation was corrected to enter its component hook owner, without
+suppression. Two native conversion acknowledgement/destination-read cases are
+prepared/typechecked, not run. Backend unchanged/not rerun. No actual app/DB/
+account/config/service/worker/transfer access, migration, workaround, native/SQL/
+CI/AFTER/product or main/push/merge/deploy acceptance.
+[Contract](04-design/prospect-conversion-recovery-local.md).
+
+Selected prospect creation recovery,2026-10-28: frontend cwd
+`npm run test:unit`:691 pass/0 failed/skipped,14 added actual route/controller/
+form/host cases. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2)
+and `npm run history:check` pass.64 glyphs/104 consumers/345 icon sites and501
+Button sites have0 violations. Static Frontend Taste app lint covers1 UI source,
+0 findings. Test-helper traversal/awaiting and coherent creation provenance were
+corrected; lint's render-ref findings were fixed using committed availability
+and stable origin state without suppression. Two native new/existing-contact
+lost-ack cases are prepared/typechecked, not run. Backend unchanged/not rerun.
+No actual app/DB/account/config/service/worker/transfer, migration, workaround,
+native/SQL/CI/AFTER/product or main/push/merge/deploy acceptance.
+[Contract](04-design/prospect-creation-recovery-local.md).
+
+Selected full prospect editor recovery,2026-10-28: frontend cwd
+`npm run test:unit`:677 pass/0 failed/skipped,11 added actual editor/host/
+controller cases. Existing dossier atomic-edit coverage remains with independent
+component hook state and the real command hook; its DOM-equivalent dirty prop
+assertion was corrected. `npm run lint`, `npm run typecheck`, `npm run build`
+(Next16.4.2) and `npm run history:check` pass.64 glyphs/104 consumers/345 icon
+sites and501 Button sites have0 violations. Static Frontend Taste app lint
+covers1 UI source,0 findings. Two native atomic-save/read-outage cases are
+prepared/typechecked, not run. Canonical reads are verified through the current
+enquiry and finish read-only; unverified foreign reads cannot reset the form.
+Backend unchanged/not rerun. No actual app/DB/account/config/service/worker/
+transfer, migration, workaround, native/SQL/CI/AFTER/product or main/push/merge/
+deploy acceptance. [Contract](04-design/prospect-editor-recovery-local.md).
+
+Selected prospect status/inline recovery,2026-10-28: frontend cwd
+`npm run test:unit`:666 pass/0 failed/skipped,13 added actual hook/API-helper/
+dialog/inline/metadata/board/facade cases in the registered enquiry suite.
+Existing status and inline retry cases retain coverage using the actual hook
+and a strict full status fixture. `npm run lint`, `npm run typecheck`,
+`npm run build` (Next16.4.2) and `npm run history:check` pass.64 glyphs/104
+consumers/345 icon sites and499 Button sites have0 violations. Static Frontend
+Taste app lint covers5 changed UI sources,0 findings. An unused import warning
+was removed; metadata transient-failure ownership and owned-refresh self-lock
+are explicitly covered. Two native status/description cases are prepared/
+typechecked, not run. Backend unchanged/not rerun. No actual app/DB/account/
+config/service/worker/transfer access, migration, workaround, native/SQL/CI/AFTER/
+product or main/push/merge/deploy acceptance.
+[Contract](04-design/prospect-edit-recovery-local.md).
+
+Selected notes/activities/assignment recovery,2026-10-28: frontend cwd
+`npm run test:unit`:653 pass/0 failed/skipped,14 added cases in the newly
+registered entry suite. Existing activity hydration/context/retry/overlap/denial
+and history-drawer coverage is retained. `npm run lint`, `npm run typecheck`,
+`npm run build` (Next16.4.2) and `npm run history:check` pass.64 glyphs/104
+consumers/345 icon sites and498 Button sites have0 violations. Static Frontend
+Taste app lint covers11 changed UI sources,0 findings. Four native Contact/
+Prospect/Deal/assignment recovery cases are prepared/typechecked, not run.
+An assignment syntax diagnostic was corrected; explicit refresh now also clears
+an initial options-query failure, with regression coverage. Backend unchanged/
+not rerun. No actual app/DB/account/config/service/worker/transfer access,
+migration, workaround, native/SQL/CI/AFTER/product or main/push/merge/deploy
+acceptance. [Contract](04-design/entry-recovery-local.md).
+
+Selected contact/owner management recovery,2026-10-28: frontend cwd
+`npm run test:unit`:639 pass/0 failed/skipped,18 added hook/client/facade/dialog/
+parent cases in the newly registered ownership suite. Existing owner management
+denial phases retain preview/commit/follow-up/refresh/transient coverage with
+strict fixtures. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2)
+and `npm run history:check` pass.64 glyphs/104 consumers/345 icon sites and497
+Button sites have0 violations. Static Frontend Taste app lint covers4 changed
+UI sources,0 findings; no rendered acceptance. Initial React immutability and
+TypeScript receipt-presence diagnostics were corrected without suppression.
+Two real-stack Contacts/Owners recovery cases are prepared/typechecked, not run.
+Backend unchanged/not rerun; no actual app/DB/account/configuration/service/
+worker/transfer access, migration, workaround, native/SQL/CI/AFTER/product or
+main/push/merge/deploy acceptance. [Contract](04-design/ownership-recovery-local.md).
+
+Selected public intake reference,2026-10-28: backend cwd explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:558 pass/720 integration
+deselected,11 added real Submission/property-reference/control/Unicode bounds
+cases. Ruff check/format--check pass2 paths; backend-cwd mypy passes220 sources.
+Frontend `npm run test:unit`:621 pass/0 failed/skipped,9 added cases in the
+registered intake suite. `npm run lint`, `npm run typecheck`, `npm run build`
+(Next16.4.2) and `npm run history:check` pass.64 glyphs/104 consumers/345 icon
+sites and496 Button sites have0 violations. Static Frontend Taste app lint
+covers1 UI source,0 findings, not native rendering. Three simulator cases are
+prepared/typechecked, not run; workers stay stopped in those prepared cases.
+The reference control-validation correction does not add business scope,
+inventory resolution or a migration. No actual app/DB/account/config/signing-key
+access, simulator/service/worker/transfer, workaround or final native/SQL/CI/
+AFTER/product/main/push/merge/deploy acceptance.
+[Contract](04-design/intake-form-local.md).
+
+Selected import resume/ownership,2026-10-28: frontend cwd
+`npm run test:unit`:612 pass/0 failed/skipped,14 added cases in the registered
+import suite. `npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2)
+and `npm run history:check` pass.64 glyphs/104 consumers/345 icon sites and496
+Button sites have0 violations; two conditional resume/new-lot actions added.
+Static Frontend Taste app lint covers2 changed UI sources,0 findings, not native
+render. The initial dependency warning was corrected without suppression;
+source review also found and fixed an owned-retry/child-guard deadlock, with
+explicit regression coverage and a prepared third native case.
+Three native cases are prepared/typechecked, not run. Backend behavior/schema
+unchanged; no backend rerun, actual app/DB/account/config access, transfer/worker,
+migration, workaround, final native/SQL/CI/AFTER/product or main/push/merge/deploy
+acceptance. [Contract](04-design/import-resume-local.md).
+
+Selected export request ownership,2026-10-28: frontend cwd
+`npm run test:unit`:598 pass/0 failed/skipped,13 added recovery/transport/facade/
+host/UI cases in the already-registered export suite. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and `npm run history:check`
+pass.64 glyphs/104 consumers/345 icon sites and494 Button sites have0 violations.
+Static Frontend Taste app lint covers4 UI sources,0 findings, not native render.
+The initial wider run caught a Contact denial test requiring disposal of its
+export owner and synchronous effect state updates; the source now derives denied
+projection before effect cancellation and the test checks its retained disabled
+owner. Final full checks above pass without suppression.
+Two new native Contacts/Prospects recovery cases are prepared/typechecked, not
+run. Backend behavior/schema unchanged; no backend rerun, actual app/DB/account/
+config access, worker/transfer, migration, access workaround or final native/SQL/
+CI/AFTER/product/main/push/merge/deploy acceptance.
+[Contract](04-design/export-recovery-local.md).
+
+Selected staff retry/editor ownership,2026-10-28: frontend cwd
+`npm run test:unit`:585 pass/0 failed/skipped,12 added command/scope/transport/
+editor/facade/form cases. The new staff-command suite is registered explicitly
+in `scripts/test-facade.mjs`; its isolated run also passes. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and `npm run history:check`
+pass.64 glyphs/104 consumers/345 icon sites and494 Button sites have0 violations.
+Static Frontend Taste app lint covers5 UI sources,0 findings; no native render
+claim. Two real-stack profile/reset recovery cases are prepared/typechecked,
+not run. Existing users browser selectors match current required labels.
+Backend rules/schema are unchanged; no new backend test execution is claimed.
+No app/DB/account/config access, service, migration, browser access workaround,
+native/SQL/CI/AFTER/product acceptance or main/push/merge/deploy.
+[Contract](04-design/staff-workflow-local.md).
+
+Selected unit/property listing workflow,2026-10-28: backend cwd explicit
+venv `.venv/Scripts/python.exe -m tests.unit_runner`:547 pass/720 integration
+deselected,13 added contract/actual hierarchy-stock guard/serialization cases.
+Ruff check/format--check pass4 changed Python paths; backend-cwd mypy passes220
+sources. Four new isolated PostgreSQL cases are prepared/not run.
+Frontend `npm run test:unit`:573 pass/0 failed/skipped, nine added actual wizard/
+review/metadata/schema/fixture cases; existing step-jump regression retained.
+`npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass;64 glyphs/104 consumers/345 icon sites and494 Button
+sites have0 violations after removing the duplicate creator. Static Frontend
+Taste app lint covers7 UI sources,0 findings; not native rendering. Two new
+browser journeys are typechecked/prepared, not run. The old shared unit-creation
+helper is migrated to the current five-step controls and receives a separate
+post-edit targeted lint/type check. No real SQL/native/service/access workaround,
+migration/private config/account/records/transfer/main/push/merge/deploy or
+whole-redesign/AFTER/product acceptance is claimed.
+[Contract](04-design/unit-listing-workflow-local.md).
+
+Selected dossier directory filters,2026-10-28: backend cwd explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:534 pass/716 integration
+deselected,15 added compiled SQL/stub-read/ASGI/query/write-boundary cases.
+Ruff check and format--check pass8 changed Python paths; backend-cwd mypy
+passes220 sources. Four new isolated PostgreSQL cases are prepared/not run.
+Frontend `npm run test:unit`:564 pass/0 failed/skipped, eight added schema/
+facade/actual picker/directory/hook/fixture cases. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass;64 glyphs/105 consumers/349 icon sites and497
+Button sites have0 violations. Static Frontend Taste app lint covers four
+changed UI files,0 findings; no native/aesthetic review is claimed. Two new
+browser journeys and two corrected earlier Contacts journeys are prepared and
+typechecked, not run. Their command factory also passes actual facade schema
+validation in a pure test.
+
+A reused SQL-loop variable first failed mypy; the date loop now has its own
+name and the final220-source gate passes. Source review found missing emails/
+phone labels in earlier prepared browser fixtures, corrected before any run.
+No tests/authority/type/compatibility gates were weakened. No actual SQL/app/
+browser/HTTP/DB/service/config/account/import/export/transfer/migration,
+main/push/merge/deploy or final review.
+[Contract](04-design/dossier-directory-local.md).
+
+Selected Contacts directory,2026-10-28: backend cwd explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:519 passed/712 integration
+deselected,20 added pure/compiled SQL/stubbed function/ASGI/export replay cases.
+Ruff check/format--check cover9 changed Python paths; backend-cwd mypy passes220
+sources. Four new isolated PostgreSQL cases are prepared, not run.
+Frontend `npm run test:unit`:556 passed/0 failed/skipped, six additional cases
+including exact TLS negotiation. `npm run lint`, `npm run typecheck`,
+`npm run build` (Next16.4.2) and `npm run history:check` pass;64 glyphs/105
+consumers/349 icon sites and497 Button sites have0 violations. Two new browser
+journeys are typechecked/prepared, not run. Frontend Taste static app lint covers
+two changed UI files with0 findings; this is not a native/aesthetic review.
+
+Initial cases exposed hardcoded future/current Casablanca offsets in the test,
+a test checking selected User.state rather than a state predicate, and a missing
+country formatter in the UI harness. They were corrected with the pinned known
+January fixture, predicate-specific assertion and helper stub; no timezone,
+authority or compatibility policy was weakened. The final full runs above pass.
+No app/browser/HTTP workaround, real database/service/private-config access,
+executed migration, main/push/merge/deploy or final product acceptance.
+[Scope and prepared cases](04-design/contact-directory-local.md).
+
+Selected programme phase,2026-10-28: backend cwd explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:499 pass/708 integration
+deselected;23 added contract/payload/actual command/history/summary/compiled SQL/
+stubbed ASGI/migration cases. Root explicit-venv Ruff check/format--check pass14
+changed Python paths; backend `.venv/Scripts/python.exe -m mypy app`:219 sources
+pass. Four PostgreSQL cases are prepared, not run; migration0037 is not applied.
+Frontend `npm run test:unit`:550 pass/0 failed/skipped,11 added cases plus expanded
+role/layout coverage. `npm run lint`, `npm run typecheck`, `npm run build`
+(Next16.4.2) and `npm run history:check` pass;64 glyphs/105 consumers/349 icon
+sites and496 Button sites have0 violations. The final historical-unknown label
+has an eight-case focused rerun/targeted ESLint and final production build.
+Static Frontend Taste app lint checks nine UI sources; one browser journey is
+prepared/type-checked, not executed. An old summary test stub needed its new
+explicit keyword; initial formatting/loop binding and one atomic edit-script
+declaration error were corrected. No app/native/real SQL/CI pass is inferred.
+[Evidence](03-planning/design-migration-evidence/development-phase-2026-10-28.json).
+
+Selected property category choices,2026-10-28: frontend `npm run test:unit`:
+539 pass/0 failed/skipped, three added actual radio/controller recovery cases
+plus revised category-choice semantics. `npm run lint`, `npm run typecheck`,
+`npm run build` (Next16.4.2) and `npm run history:check` pass.64 glyphs/105
+consumers/348 sites and496 Button sites have0 violations. Frontend Taste static
+app lint checks the changed filter UI with0 findings. Photo/campaign/rail browser
+sources now cover selected radios, real counts, legacy house, empty recovery,
+annual-rent bounds and labelled touch targets; updated/type-checked, not run.
+A final test-only record-heading assertion was checked with targeted ESLint and
+typecheck after the build; application sources were unchanged. No backend rerun;
+8da316c retains476 connection-forbidden units/704 integration deselected.
+[Evidence](03-planning/design-migration-evidence/property-category-2026-10-28.json).
+
+Selected project presentation,2026-10-28: frontend `npm run test:unit`:536 pass,
+0 failed/skipped;four added actual view/controller/list/navigation cases.
+`npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass;64 glyphs/105 consumers/348 sites and496 Button
+sites have0 violations. Frontend Taste `scripts/lint.mjs --app --json` checks
+four changed UI sources with0 findings. A new real browser journey is prepared,
+type-checked, not run. Initial focused checks found missing explicit test imports
+and a JSX whitespace assertion; both corrected. Type check caught passing an
+actor ID to cleanup expecting TestActor; corrected before the final build.
+No backend code/test rerun;8da316c retains476 connection-forbidden units/704
+integration deselected. No native or full-stack acceptance is inferred.
+[Evidence](03-planning/design-migration-evidence/project-presentation-2026-10-28.json).
+
+Selected inventory ranges,2026-10-28: frontend `npm run test:unit`:532 pass,
+0 failed/skipped;12 new actual range/controller/facade cases. `npm run lint`,
+`npm run typecheck`, `npm run build` (Next16.4.2) and `npm run history:check` pass.
+64 glyphs/105 consumers/348 icon sites and495 Button sites have0 violations.
+Backend cwd `backend`, explicit `.venv/Scripts/python.exe -m tests.unit_runner`:
+476 pass/704 integration deselected;13 new pure/SQL compilation/stubbed ASGI
+cases. Explicit venv Ruff check/format pass nine changed Python paths; cwd
+backend `.venv/Scripts/python.exe -m mypy app` passes219 sources. An initial
+root-cwd mypy invocation missed backend configuration and reported unrelated
+settings/finance errors; the correct documented invocation passes without
+unrelated edits. Four PostgreSQL cases and one browser journey are prepared,
+not executed. No DB/listener/app inspection or native acceptance is claimed.
+[Evidence](03-planning/design-migration-evidence/inventory-directory-2026-10-28.json).
+
+Selected supporting reports,2026-10-28: frontend `npm run test:unit`:520 pass,
+0 failed/skipped;15 added report model/controller/render/navigation cases.
+`npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass.64 glyphs/105 consumers/348 icon sites;495 Button
+sites/0 violations. A permitted PostCSS `node --input-type=module -` probe checks
+10 emitted rules in2 CSS chunks; this is not native layout proof. Frozen254
+inputs remain unchanged. Real report helpers/e2e/visible-review sources are
+updated/type-checked, not executed; no backend or real-stack rerun. Initial
+focused tests found a cross-VM array assertion; lint found ref/dependency usage,
+all corrected without suppressions. One focused rerun passed22 before a further
+contributor-refresh case; the final full suite includes all15 new cases.
+[Evidence](03-planning/design-migration-evidence/report-workspace-2026-10-28.json).
+
+Approved styled appendices,2026-10-28: backend explicit venv
+`.venv/Scripts/python.exe -m tests.unit_runner`:463 passed/700 integration
+deselected;46 added pure/stubbed cases,3 new real-stack cases prepared/not run.
+Root `backend/.venv/Scripts/python.exe -m ruff check` and `-m ruff format --check`
+pass for `backend/app/generated/{appendix,render,service}.py`,
+`backend/tests/test_generated{_unit,_appendix_unit,_documents}.py` and
+`backend/tests/unit_selection.py` (actual explicit7 paths, no shell brace expansion).
+Backend explicit-venv `-m mypy app`:218 sources pass. Root explicit-venv
+`-m pip wheel --no-index --no-deps --no-build-isolation --wheel-dir
+.git/styled-appendix-wheel ./backend` passes; zip-byte validation checks33 PDF/
+font/license/JSON resources. No install/deploy. All254 frozen inputs/12 original
+PDFs retain hashes. Twelve synthetic combined PDFs/38 pages were Poppler-rendered
+at85dpi and all opened; blank appendix streams/geometry/metadata/total checks pass.
+The PDF create marker ran once before this phase. Frontend505-unit/lint/type/build
+evidence is retained, not rerun. No app/real-stack/SQL/native/CI acceptance.
+[Evidence](03-planning/design-migration-evidence/styled-appendix-2026-10-28.json).
+
+Selected notification inbox,2026-10-28:505 frontend units pass;17 new actual
+hook/render/model cases replace one older denial case with its coverage retained.
+`npm run lint`, `npm run typecheck`, `npm run build` (Next16.4.2) and
+`npm run history:check` pass in frontend. Inventories:63 semantic glyphs,
+102 consumers/341 icon sites,489 Button sites/0 violations. A permitted PostCSS
+`node --input-type=module -` probe checks seven emitted geometry/touch/short-window
+rules in two CSS chunks; it does not prove native layout. All254 frozen inputs
+are unchanged. One new real-stack/touch journey and two legacy dialog selectors
+are prepared/type-checked, not run. No backend rerun or app/real-stack acceptance.
+[Evidence](03-planning/design-migration-evidence/notification-inbox-2026-10-28.json).
+
+Read-only appendix comparison,2026-10-28: explicit backend venv Python runs
+`backend/tools/compare_pdf_appendices.py --prototype <frozen-root> --output
+docs/03-planning/design-migration-evidence/pdf-appendix-comparison-2026-10-28.json`
+from root, checking12 models/641 literal chunks and whole-body normalization.
+Four separate negative controls reject changed/added/removed text or punctuation.
+Explicit-venv Ruff check/format and mypy pass for that one tool. Two model02 first
+pages were Poppler-rendered/visually inspected; no all-page/native/app/SQL/real-
+stack/frontend rerun or legal equivalence. Current appendix bytes stay unchanged
+pending the [M01 choice](04-design/pdf-appendix-reconciliation.md).
+
+Latest Recherches workspace (2026-10-27):489 frontend units pass, including18
+new actual controller/model/render cases. `npm run lint`, `npm run typecheck`,
+`npm run build` (pinned Next16.4.2) and `npm run history:check` pass in frontend.
+Inventories:63 semantic glyphs,101 consumers/340 icon sites,484 Button sites,
+zero violations. A permitted `node --input-type=module -` emitted-CSS probe checks
+six shared layout declarations in two compiled CSS chunks; native layout is not
+verified. The first probe assumed declaration order/unmerged selectors; corrected
+selector/declaration inspection passes without changing CSS. All254 frozen inputs
+retain their registered bytes/hashes. Prepared SP-10 e2e/native and linked-Deal
+selectors compile but have not run. No backend rerun or real-stack acceptance.
+Native/CI/AFTER/owner gates and wider redesign work remain pending under the
+existing app-access restriction. No real DB/service/private-config/data/main/
+push/merge/deploy operation.
+[Evidence](03-planning/design-migration-evidence/requirements-workspace-2026-10-27.json).
+
+Latest classic-history compatibility slice (2026-10-27):471 frontend units pass,
+including17 new actual bootstrap/controller/workspace/installed-Next integration
+cases. Lint/typecheck and pinned Next16.4.2 build pass (63 glyphs,100 consumers/
+338 icon sites,477 Button sites/zero violations). `npm run history:check` after
+build extracts two distinct emitted bootstrap functions and executes their own
+closed code for initial stamp/push/pop, preserving Next fields. It never loads
+the app/server; the check is now a repeatable frontend script. All254 frozen
+inputs remain unchanged. The first prepared-browser edit passed types but lint
+found an unused evaluate argument; source review also caught a separate callback
+capturing its loop variable. Both callbacks now pass/use arguments explicitly.
+Native and forced-classic browser cases are prepared/type-checked, not executed.
+Unknown entries and failed writes retain a fail-closed controller; relative
+traversal is never guessed or converted to go(0). Tests cover actual installed
+Next wrappers in both nesting orders and its beforeInteractive bootstrap order,
+not native cache/CSP/gesture/joint-frame behavior. Real forms, browser cache,
+startup failure, history-menu/back gestures, nested frames, focus/zoom, full-stack/
+CI/AFTER/owner review and wider migration work remain open. No backend test rerun,
+API/grant/data/service/private-config/main/push/merge/deploy operation.
+[Evidence](03-planning/design-migration-evidence/classic-history-2026-10-27.json).
+
+Latest Finance collection follow-up (2026-10-27):454 frontend units pass and417
+connection-forbidden backend units pass/697 real integration cases deselected.
+Eight new frontend cases replace one obsolete detail-rendering case; its retained
+actor/time/receipt coverage now exercises the inline collection. Seven new backend
+cases cover current M/A-before-lookup authority, the scoped aggregate count/page,
+original actor/decimal/local-time projection, stable bounded SQL and closed
+read-only route through fully stubbed in-process ASGI, without a listener/DB.
+The first backend run failed a hard-coded Casablanca offset assumption; the
+test now verifies retained instants and injects a separate deterministic zone
+for projection behavior. Runtime time policy is unchanged. Lint/typecheck and
+pinned Next16.4.2 build pass (63 glyphs,100 consumers/338 icon sites,477 Button
+sites/zero violations). Explicit backend/.venv Ruff/format6 targets and mypy217
+sources pass. Inline receipts/history replace the extra detail navigation;
+focused forms retain pages, exact retries and original correction IDs. Validation
+focus waits for rendered invalid fields, and delayed receipt restoration does
+not steal focus after user navigation. Three native cases and real PostgreSQL/
+HTTP history coverage are prepared, not executed. Older review selectors,
+maximum-page performance, native/scope/SQL/race/proof/full-stack/AFTER/CI/owner
+review and wider migration work remain open. Source/compiled declaration checks
+are not rendered geometry. No database/service/private-config/main/merge/deploy
+operation. [Evidence](03-planning/design-migration-evidence/finance-collection-2026-10-27.json).
+
+Latest Finance form/workspace checkpoint (2026-10-27):447 frontend units pass,
+including24 new actual controller/form/model/facade cases. Lint/typecheck and
+pinned Next16.4.2 production build pass (63 glyphs,99 consumers/338 icon sites,
+481 Button sites/zero violations). Tonal cards/focused managed forms preserve
+exact decimal calculation, reviewed confirmations, immutable correction/void,
+explicit comparison, pinned uncertain retry and read-only acknowledged completion
+recovery. Current denial removes the entire private controller before retry.
+The first full run was444/445: renamed Finance tests had dropped the required
+SP16 acceptance profile case. Its identity/coverage is restored; the19-case
+representative selection check now passes without lowering its expectation.
+Prepared native source retains excess/refusal/reopen/Agent cases and explicit
+1440/390 variants; no native execution. Earlier hook/fixture/lint corrections
+remain recorded in the evidence. The initial compiled hidden-selector checker
+expected an unqualified selector; AST inspection confirmed Tailwind's actual
+until-found exception and corrected the checker, with no CSS change.
+All254 frozen inputs remain intact; compiled card/form/footer/scroll declarations
+are not native geometry/focus proof. Inline collection receipt/history parity,
+older finance Chrome selectors and real scope/SQL/proof/race/native/full-stack/
+AFTER/CI/owner gates and wider migration work remain open. No backend/data/service
+operation. [Evidence](03-planning/design-migration-evidence/finance-workspace-2026-10-27.json).
+
+Latest PDF stationery slice (2026-10-27):410 connection-forbidden backend units
+pass/696 integration cases deselected, including26 new actual layout/render/
+metadata/decimal/asset/font/service-context cases. Explicit backend/.venv Ruff/
+format and mypy217 source files pass. Selected Manrope stationery replaces the
+old preparation-sheet styling;12 original appendices remain byte/content-stream
+intact. Poppler4 final preparation pages from3 synthetic samples were inspected,
+plus a frozen reference. The first image pass exposed ReportLab's shared internal
+font-name collision; distinct embedded faces fixed it and the final images were
+re-rendered/reviewed. Initial old title-case/dash assertions and a text-token
+Ruff false positive were corrected. Offline no-index wheel build and zip checks
+prove18 required resources match source, without installation/deployment.
+All254 frozen inputs stay intact. Frontend is unchanged from the prior423-unit/
+lint/type/build checkpoint; those are retained results, not new execution.
+M01 restyled-appendix content/provenance and native app/real SQL/scope/transfer/
+race/full-stack/AFTER/CI/owner gates and wider migration work remain pending.
+[Evidence](03-planning/design-migration-evidence/pdf-stationery-2026-10-27.json).
+
+Latest PDF workspace slice (2026-10-27):423 frontend units pass, including20 new
+actual model/controller/composition/facade/transfer cases. Selected two-tab PDF
+preparation uses the real scoped catalogue, per-model drafts and exact uncertain
+retry; history adds true retained creator metadata through an explicit strict
+opt-in. Lint/typecheck and pinned Next16.4.2 build pass (63 glyphs,96 consumers/
+334 icon sites,478 Button sites/zero violations). Initial synchronous-effect/
+test-hook lint failures and a cross-VM array-prototype assertion were corrected,
+without relaxing production contracts.384 connection-forbidden backend units
+pass/696 integration cases deselected, including8 new author/query/SQL-source
+cases; explicit backend/.venv Ruff/format and mypy216 sources pass. The stubbed
+in-process ASGI case opens no listener or database. Two1440/390 journeys replace
+stale PDF selectors in `tests/e2e/generated-documents.spec.ts`; prepared and
+type-checked, not executed.254 frozen inputs and12 original models stay intact;
+compiled scroll/field/footer rules are not native geometry/focus evidence.
+M01 PDF-byte styling/provenance, real roles/SQL/private transfer/races, native/
+full-stack/AFTER/CI/owner review and wider migration work remain open.
+[Evidence](03-planning/design-migration-evidence/document-workspace-2026-10-27.json).
+
+Latest customer-proposal slice (2026-10-27):403 frontend units pass, including18
+new actual model/controller/composition cases. Selected projects/linked inventory
+and proposals live in Projets; four main tabs remain. Desktop table, phone cards
+and an independent focused editor preserve scoped identities, exact amounts/
+periods, managed drafts, unchanged retries and explicit current comparison.
+Lint/typecheck and pinned Next16.4.2 build pass (63 glyphs,96 consumers/332 icon
+sites,474 Button sites/zero violations). Initial strict summary-fixture and
+synthetic whitespace failures were corrected without weakening real schemas.
+Two1440/390 journeys in `tests/e2e/customer-proposals.spec.ts` are prepared, not
+run; older Deal/Contact/pipeline helpers remain. Source/compiled checks retain254
+frozen inputs and shared responsive/footer/disclosure/hidden declarations, not
+native visibility/focus evidence. Existing app-access restriction and final
+real-role/stock/race/SQL/native/full-stack/AFTER/CI/owner gates remain pending.
+[Evidence](03-planning/design-migration-evidence/customer-proposals-2026-10-27.json).
+
+Latest offering-form slice (2026-10-27):385 frontend units pass, including13 new
+actual model/controller/composition cases. Lint/typecheck and pinned Next16.4.2
+build pass (63 glyphs,93 consumers/328 icon sites,469 Button sites/zero violations).
+Offer commands are beside each row and open one focused form; exact money,
+market period, parent/offering versions and current stock rules remain. Managed
+drafts/duplicate locks/exact retry and deliberate comparison/reload replace the
+old unguarded form. Foreign/replaced/engaged/archived baselines cannot be adopted.
+Two native journeys in `tests/e2e/offering-forms.spec.ts` are prepared, not run;
+their source passes type checking. Frozen254 inputs and compiled shared/footer/
+phone grid checks pass, without claiming native visual/focus behavior. Existing
+app-access restriction, older inventory selectors, real current-role/stock/race/
+SQL/full-stack/AFTER/CI/owner and wider migration work remain pending.
+[Evidence](03-planning/design-migration-evidence/offering-forms-2026-10-27.json).
+
+Latest owner-workspace slice (2026-10-27):372 frontend units pass, including20 new
+actual-module cases for directory/current-contact state, drawer reuse, canonical
+aliases, full/quick identity, bounded current preview, link history/paging,
+native-link fallback, connected focus fallback and denial propagation. Lint/
+typecheck and pinned Next16.4.2 build pass (63 glyphs,92 consumers/326 icon sites,
+467 Button sites/zero violations). The primary/secondary editor remains the same
+canonical Contact controller; Patrimoine appears only on the right. Initial
+synthetic calling_code omission and static closed-dialog counting were corrected
+before rerun. Two1440/390 journeys in `tests/e2e/owner-workspace.spec.ts` are
+prepared, not executed. Source/compiled checks confirm254 unchanged frozen inputs
+and scoped responsive declarations, not native visibility/focus fidelity. The
+existing app-access restriction remains; native/current-role/merge/race/SQL/
+full-stack/AFTER/CI/owner gates and older browser selectors remain pending.
+No backend/data/service operation.
+[Evidence](03-planning/design-migration-evidence/owner-workspace-2026-10-27.json).
+
+Latest photo-workspace slice (2026-10-27):352 frontend units pass, including18 new
+actual conversion/controller/gallery/media/transfer/request-lifetime cases. Lint/
+typecheck and pinned Next16.4.2 build pass (63 glyphs,91 consumers/321 icon sites,
+466 Button sites/zero violations). Selected gallery cards and explicit upload
+step retain private WebP/AV/permit/ten-slot rules and exact uncertain retries.
+Common managed markers survive metadata-only writes; optional signals and bounded
+request composition do not require AbortSignal.any. Initial hook/fixture/loader
+failures were corrected, not recorded as passing attempts. Two native isolated
+journeys are prepared in `tests/e2e/photo-workspace.spec.ts`, not executed; older
+photo/inventory selectors remain. Native/real transfer/role/slot/scanner/race/
+full-stack/AFTER/CI/owner review is pending. No backend/data/service operation.
+[Evidence](03-planning/design-migration-evidence/photo-workspace-2026-10-27.json).
+
+Latest inventory-form slice (2026-10-27):334 frontend units pass, including14 new
+actual model/controller/command cases for protected legal-owner lists, explicit
+comparison/rebase/reload, exact retry keys, duplicate locks, typed hierarchy
+payloads and paged current-item identity/version checks. Lint/typecheck and
+Next16.4.2 build pass (62 glyphs,90 consumers/319 icon sites/465 Button sites/zero
+violations). The new unit file was initially outside the explicit runner list;
+it is now registered and the334-case gate passed. Prepared1440/390 native journeys
+in `tests/e2e/inventory-forms.spec.ts` are not run. Existing older inventory browser
+selectors remain open. No backend/API/data/service change. Native/real authority/
+stock/race/full-stack/AFTER/owner review is pending.
+[Evidence](03-planning/design-migration-evidence/inventory-forms-2026-10-27.json).
+
+Latest owner identity slice (2026-10-27):320 frontend units pass, including15 new
+payload/assignment/retry/validation/canonical reuse/role no-op/archive/denial/
+stale lookup/conflict/mode/layout/duplicate-copy cases. Lint/typecheck and pinned
+Next16.4.2 build pass (62 glyphs,88 consumers/316 icon sites/455 Button sites/zero
+violations). Initial missing required fact icons were corrected, not called a
+passing run. `tests/e2e/owner-reuse.spec.ts` and updated owner form name selectors
+are prepared, not executed; other old owner directory/detail selectors remain
+open. No backend/API route/CSS/dependency or actual data operation. Native,
+real permission/merge/race/full-stack/AFTER/owner gates remain pending.
+[Evidence](03-planning/design-migration-evidence/owner-forms-2026-10-27.json).
+
+Latest draft/history slice (2026-10-27):305 frontend units pass, including15 new
+history/rapid movement/confirmation/busy/marker settlement/workspace/Next-listener
+cases. Lint/typecheck and Next16.4.2 build pass (62 glyphs,88 consumers/309 icon
+sites/450 Button sites/zero violations). An existing dossier fixture initially
+missed new helper imports; it was corrected and the full suite rerun successfully.
+`tests/e2e/history-drafts.spec.ts` is prepared, not run. When authorized, the
+existing `npm run test:e2e -- tests/e2e/history-drafts.spec.ts` command runs it
+through the isolated supervised stack; its synthetic DOM boundary does not prove
+all business-form/native gestures or focus. Older-browser same-document fallback,
+full native/stack/AFTER/owner gates remain open. No backend/data/service operation.
+[Evidence](03-planning/design-migration-evidence/history-drafts-2026-10-27.json).
+
+Latest public-intake UI slice (2026-10-27):376 connection-forbidden backend units
+pass/696 integration cases deselected, including13 new exact-public-asset/Host/
+query/cookie/private-path/response-cap ASGI cases. Explicit backend/.venv Ruff,
+format and mypy pass. Frontend290 units pass, including7 new exact-byte retry,
+validation/rate-limit, receipt binding/refresh, abort and selected composition
+cases; lint/typecheck/Next16.4.2 build pass (62 glyphs,88 consumers/309 icon sites,
+449 Button sites/zero violations). Prepared browser selectors are updated, not
+run. Native/full-stack/HMAC/worker/database/race/load/AFTER/owner gates remain
+pending. No real source/configuration/CLI/service/data or main promotion.
+[Evidence](03-planning/design-migration-evidence/intake-ui-2026-10-27.json).
+
+Latest contact-import UI slice (2026-10-27):283 frontend units pass, including15
+new changed-preview/unknown-retry/mapping/parent/row/lookup-denial/private-transfer/
+facade cases. Final lint/typecheck and pinned Next16.4.2 build pass (62 glyphs,
+88 consumers/309 icon sites/449 Button sites/zero violations). All254 frozen
+inputs still match. Initial VM cross-realm assertion and reserved test-variable
+naming failures were corrected; those initial runs are not passes. Browser
+selectors are prepared, not executed. No backend/API route, data/service/worker,
+migration, CSS/dependency or source-prototype edit. Native desktop/mobile/drawer/
+focus/touch/zoom/accessibility, real atomic import/revocation/races/performance,
+AFTER and owner review remain pending.
+[Evidence](03-planning/design-migration-evidence/import-ui-2026-10-27.json).
+
+Latest audit slice (2026-10-27): explicit backend/.venv Ruff/mypy pass for9 app
+modules;363 connection-forbidden units pass/696 integration cases deselected.
+Thirty-three new role/query/actual SQL/route/typed-attribution cases are included.
+Four PostgreSQL cases are prepared and not run. Frontend268 units pass, including
+nine new facade/route/filter/lookup/denial/link cases, with lint/typecheck and
+pinned Next16.4.2 build (62 glyphs/450 Button sites/zero violations). Real database/
+performance, native desktop/phone/drawer/keyboard/touch/zoom/accessibility and
+product/AFTER verification remain pending.
+[Evidence](03-planning/design-migration-evidence/audit-ui-2026-10-27.json).
+
+Latest export UI slice (2026-10-27):259 frontend units pass, including13 new
+review/filter/retry/menu-focus/job/private-transfer/facade controller cases.
+Typecheck, pinned Next16.4.2 build and final lint pass (62 glyphs/444 Button sites/zero violations).
+All254 pinned design inputs still match; no dependency/CSS/backend/data change.
+The existing whole-result/owned-job/worker/private-delivery contracts remain.
+Actual worker/database/native byte delivery, desktop/mobile/focus/accessibility
+and product/AFTER verification are not run.
+[Evidence](03-planning/design-migration-evidence/export-ui-2026-10-27.json).
+
+Latest prepared-PDF search slice (2026-10-27): backend explicit .venv Ruff/mypy
+pass for12 app modules;330 connection-forbidden units pass/692 integration cases
+deselected. Twenty new actual SQL/route/visibility cases are included; three real
+PostgreSQL scenarios are prepared, not run. Frontend246 units, lint/typecheck and
+pinned Next16.4.2 build pass (62 glyphs/444 Button sites/zero violations). Thirteen
+new schema/facade/controller cases cover the bounded version2 opt-in, real destinations
+and legacy behavior. No known dependency vulnerabilities or prototype hash drift.
+Native, real SQL/scope/performance and final product verification remain pending.
+[Evidence](03-planning/design-migration-evidence/prepared-search-2026-10-27.json).
+
+Latest selected-search UI slice (2026-10-27):233 frontend units pass, including
+eight new actual route/controller cases. Lint/typecheck and pinned Next16.4.2 build
+pass, including `/search` (62 glyphs/445 Button sites/zero violations). Search CSS
+parses with37 rules/seven existing roles/one verified Radix runtime role and no
+missing aliases. All254 prototype hashes match. Native/app-HTTP/real SQL/focus/
+touch/zoom/AFTER/product review remain pending; prepared-PDF search parity remains
+explicit next data work. [Evidence](03-planning/design-migration-evidence/search-ui-2026-10-27.json).
+
+Latest selected-dashboard UI slice (2026-10-27):225 frontend units pass, including
+eight new component/controller cases. Lint/typecheck and pinned Next16.4.2 build
+pass (62 glyphs/444 Button sites/zero violations). Dashboard CSS parses with151
+rules/13 existing roles/zero undefined aliases. All254 prototype hashes match.
+Runtime/full dependency audits report zero known vulnerabilities; only two existing
+exact locked transitives became explicit Bklit pie dependencies. Native/app-HTTP,
+real SQL/scope/performance, AFTER and final owner review remain pending.
+[Evidence](03-planning/design-migration-evidence/dashboard-ui-2026-10-27.json).
+
+Latest selected-dashboard data slice (2026-10-27): explicit backend .venv Ruff/
+mypy (9 report modules) pass;310 connection-forbidden units pass with689 integration
+cases deselected. Four new PostgreSQL scenarios are prepared, not run. Frontend
+lint/typecheck/build and217 units pass (62 glyphs/425 Button sites/zero violations).
+The new API/strict facade supplies complete scoped totals and bounded previews;
+selected dashboard visuals/native and real SQL/performance review remain pending.
+[Evidence](03-planning/design-migration-evidence/dashboard-data-2026-10-27.json).
+
+Latest staff/policy form slice (2026-10-27): frontend lint/typecheck,211 units
+and pinned Next16.4.2 build pass (62 glyphs/425 Button sites/zero violations).
+Nine new actual controller cases cover reviewed credential commands, retry and
+clearance, full policy windows, serialized preview/save, stale handlers and denial.
+Settings CSS parses with73 rules/4 existing roles. Native/auth/real scheduling,
+browser selector migration and final product acceptance remain pending.
+[Evidence](03-planning/design-migration-evidence/settings-forms-2026-10-27.json).
+
+Latest selected settings overview/navigation slice (2026-10-26): frontend lint,
+typecheck,202 units and pinned Next16.4.2 build pass (62 glyphs/420 Button sites,
+zero violations). Four SSR/route cases cover authoritative totals/weekdays,
+current-section routing and denied data. Settings CSS parses with51 rules and4
+existing roles. Native account/form/resize/focus acceptance remains pending.
+[Evidence](03-planning/design-migration-evidence/settings-2026-10-26.json).
+
+Latest separate-visit-Notes slice (2026-10-26): frontend lint/typecheck/build and
+198 units pass; backend explicit .venv Ruff and mypy (12 modules) pass. The
+connection-forbidden tests.unit_runner passes301, with685 integration cases
+intentionally deselected. Alembic graph inspection finds one0036 head/36 revisions,
+without executing migration code or opening a database. Revision0036 is unapplied;
+new PostgreSQL and native acceptance cases remain pending. [Evidence](03-planning/design-migration-evidence/visit-notes-2026-10-26.json).
+
+Latest routed-visit/draft-lifetime slice (2026-10-26): lint/typecheck/build and193
+frontend units pass (62 glyphs/421 Button sites/zero inventory violations). Fifteen
+new controller/hook/SSR cases cover real DTOs, preview/retry/version/denial, draft
+rescheduling, persistent-layout composition and managed live-refresh lifetimes.
+Form CSS parses with50 rules/4 existing roles;254 prototype input hashes match.
+These are source/synthetic checks. Native route/focus/zoom and real scheduling/
+security acceptance remain pending. Separate general visit Notes persistence is
+still unmapped. [Evidence](03-planning/design-migration-evidence/visits-2026-10-26.json).
+
+Latest task/activity form slice (2026-10-26): lint/typecheck/build and178 frontend
+units pass (62 glyphs/415 Button sites/zero violations). Form CSS parses with37
+rules/4 existing roles. Six new synthetic component/controller
+cases cover typed existing commands, resolved time, optional physical-property
+context, preserved page selections, guarded drafts and hydration/denial boundaries.
+Native/real-stack workflow, current-authority and reminder acceptance remain pending.
+Latest command results are recorded in [work form evidence](03-planning/design-migration-evidence/work-forms-2026-10-26.json).
+
+Latest full Contact/Lead/Deal form slice (2026-10-26): lint/typecheck/build and172
+frontend units pass (62 semantic glyphs/415 Button sites/zero violations). Ten
+new component/controller cases cover full atomic payloads, scoped contact reuse,
+version/retry/draft baselines, concurrent validation and pending navigation.
+Form CSS parses with32 rules/4 existing roles;254 prototype input hashes match.
+Native/real-stack acceptance remains pending.
+Evidence: [forms](03-planning/design-migration-evidence/forms-2026-10-26.json).
+
+Latest dossier-field slice (2026-10-26): frontend lint/typecheck/build and162
+units pass;62 glyphs/418 Button sites/zero inventory violations. Eleven new
+inline component/controller/SSR cases and four actual query-hook cases cover
+reviewed complete payloads/retries, primary/collection retention, field-only
+conflict rebase, denial, legacy qualification and safe background draft reads.
+Inline CSS parses with27 rules/6 role references/zero missing roles. Native and
+real record/security verification remain pending.
+Evidence: [inline fields](03-planning/design-migration-evidence/inline-2026-10-26.json).
+
+Latest selected calendar slice (2026-10-26): frontend lint/typecheck/build
+pass;147 units pass,62 semantic glyphs/404 Button sites/zero inventory violations.
+Nine new actual-component/controller/SSR cases cover complete day placement,
+private busy reads, whole-range/zero facets, responsive draft ownership, date-only
+context, authoritative local-time choices and original action retry/version locks.
+Calendar CSS parses with61 rules/14 role references/zero missing roles. These are
+synthetic/source checks, not native or real scheduling/capacity/DST acceptance.
+Evidence: [calendar](03-planning/design-migration-evidence/calendar-2026-10-26.json).
+
+Latest desktop Kanban slice (2026-10-26): lint and pinned Next16.4.2 build
+(including fresh TypeScript) pass;62 semantic glyphs/401 Button sites/zero
+violations;138 units pass. `npm run security:check` reports runtime0/full0/zero exceptions.
+New synthetic cases exercise per-column complete query/page/total, internal-only
+drag, guarded phone/list behavior, original retry/version boundaries and explicit
+second confirmation after reopening. Final native/full-stack review remains pending.
+Evidence: [Kanban](03-planning/design-migration-evidence/kanban-2026-10-26.json).
+
+Latest work-entry/pagination slice (2026-10-26): frontend lint/typecheck/build
+pass,128 units pass;59 semantic icons/392 Button sites/zero violations. Added
+supplied-clock/terminal task, notification current-denial and shrinking-page
+navigation cases are synthetic; no database/reminder/native pass is claimed.
+
+Latest selected Help slice (2026-10-26): frontend lint/typecheck/build pass,
+125 units pass;59 semantic icons/392 Button sites/zero violations. New SSR/route
+cases cover current-role topic filtering, bounded URLs/static pages, query
+escaping and complete guide-content retention. Native review remains pending.
+
+## Selected workspace redesign branch, 2026-10-26
+
+Branch `codex/redesign`, base/main `e0bdc09`; foundation `fed7ded`, first records
+checkpoint `ac2001e`, Deal checkpoint `bbd9f09`.
+From `frontend/`, `npm run lint`, `npm run typecheck`, `npm run test:unit` and
+`npm run build` pass for the shared-interaction/Lead/Contact/Deal source batches:
+latest inventory batch59 semantic icons,391 Button sites, zero inventory violations,118 unit cases,
+pinned Next16.4.2 production build. New cases exercise navigation exclusions,
+interrupted status retries and reviewed versions, retained tab drafts and
+cancel/busy/discard boundaries. These are synthetic source/controller/facade
+checks, not browser/real-database acceptance. The registered unit runner includes
+synthetic TLS fixture servers and browser test discovery, without app access.
+
+Initially installed Next16.4.0 did not match the existing16.4.2 lock pin; its
+build guard correctly failed. `npm ci` restored the existing lock without a
+manifest change; subsequent production builds pass. `npm run security:check`
+reports runtime0/full0 vulnerabilities and0 exceptions. No blanket install-script
+approval was issued. Repository guard and repository-only sprint validation pass
+at the foundation checkpoint; latest scoped evidence is linked below.
+
+The subsequent document/picker/narrow-collection batch passes frontend lint,
+typecheck,122 units and the pinned production build (59 glyphs,393 Button sites,
+zero violations). Its new actual-controller/React/TanStack SSR cases cover picker
+cancel/drop, same-key upload retry, existing-document version/metadata boundaries,
+escaped full card values/actions/selection and desktop table retention. Evidence:
+[documents](03-planning/design-migration-evidence/files-2026-10-26.json).
+
+No app HTTP/native browser access, backend/DB/worker/scanner operation or native
+visual/keyboard/touch/zoom verification occurred in this branch batch. Previous
+automatic approval restriction remains binding. Final verification and owner
+product approval follow implementation; old browser selectors need updating.
+No push, main change, merge or deployment. Details, corrections and limits:
+[execution](03-planning/design-prototype-migration-execution.md),
+[foundation evidence](03-planning/design-migration-evidence/foundation-2026-10-26.json),
+[record evidence](03-planning/design-migration-evidence/records-2026-10-26.json),
+[Deal evidence](03-planning/design-migration-evidence/deals-2026-10-26.json).
+
 ## Bug-sweep publication audit, 2026-10-25
 
 PR31 initial candidatef96490d passes hosted repository/frontend/managed runtime,
@@ -1428,7 +2156,7 @@ scenarios are not passing results.
 | HTTPS API startup/smoke | `.venv/Scripts/python.exe -m app.cli.serve`; in another terminal `-m app.cli.smoke` | 2026-10-15 SP-08: final development API restarted on localhost:8000 HTTPS; explicit CA, live/ready, missing-authority403, no-store and untrusted-CA refusal pass. No global TLS bypass/system trust change. |
 | First-administrator bootstrap and initial handoff | `scripts/kay.ps1 -Task bootstrap` or `.venv/Scripts/python.exe -m app.cli.bootstrap_admin`, from an interactive terminal in backend/ | 2026-10-14 SP-03/SP-04: real hidden TTY success/weak/mismatch/interrupt/repeat; non-TTY/argument/echo-fallback refusal and real PostgreSQL atomicity/races pass. Staff creation/handoff/reset/restricted change/fresh login verified synthetically. Actual administrator chooses their own password; no real/default account created. Actual staff delivery remains a human operation. |
 | Playwright browser installation | `npx playwright install chromium firefox webkit` | 2026-10-14: exit 0; Chromium 156.0.8078.4/rev 1248, Firefox 157/rev 1555, WebKit 27.2/rev 2370 installed. Chrome/Edge channels use installed browsers. |
-| Playwright E2E | `npm run test:e2e -- --grep 'SP08\|SP07\|SP06\|@shell' --max-failures=1`; corrected remaining targets `--project=firefox --project=webkit` with the same grep | 2026-10-15 SP-08:105 distinct affected cases verified across five targets. Original command:66 passed/1 Firefox validation-message failure/38 not run,14.2m,not clean. Its63 completed Chromium/Chrome/Edge cases plus the corrected complete Firefox/WebKit42/42,zero skipped,15.3m cover21 per target,including25 new SP08 cases. Application source unchanged by the explicit POST422-before-message synchronization. Earlier interrupted100-case command and genuine record-key fix are retained in evidence; no mock business success. |
+| Playwright E2E | `npm run test:e2e -- --grep 'SP08\|SP07\|SP06\|@shell' --max-failures=1`; corrected remaining targets `--project=firefox --project=webkit` with the same grep | 2026-10-15 SP-08:105 distinct affected cases verified across five targets. Original command:66 passed/1 Firefox validation-message failure/38 not run,14.2m,not clean. Its63 completed Chromium/Chrome/Edge cases plus the corrected complete Firefox/WebKit42/42,zero skipped,15.3m cover21 per target,including26 new SP08 cases. Application source unchanged by the explicit POST422-before-message synchronization. Earlier interrupted100-case command and genuine record-key fix are retained in evidence; no mock business success. |
 | Visible isolated Chrome sprint review | `npm run test:chrome -- --grep 'SP08 visible\|SP07 visible\|SP08 AT-23' --max-failures=1` | 2026-10-15 SP-08: refreshed5/5 pass,zero skipped,1.7m; actual hierarchy/units/template/briefing, prior standalone inventory, outage/invalid/record-switch checks.320/360/768/1024/1440,keyboard/touch,long labels and applicable states; actual200% edit,DPR2→4,width1427→713,overflowfalse,2854x1702 viewport. Main-agent inspection16 refreshed SP08 captures; AFTER008:0 HIGH/0 MEDIUM/1 optional LOW pending Khalid's selection. No audit-only fix; product/design review pending. |
 | Built-server browser smoke | After `npm run build`, temporarily set KAY_E2E_PRODUCTION=1; `npm run test:e2e -- --project=chrome --grep 'SP08\|SP07\|SP06\|@shell' --max-failures=1`; restore previous variable | 2026-10-15 SP-08:21/21 passed,zero skipped,3.6m. Build 0mZyw9I1IbVqz57TCdg3n on HTTPS3100 with isolated API/PostgreSQL and synthetic actors. All five SP08 cases plus seven inventory,five ownership and four shell regressions. Local optimized build quality,not deployment. |
 | Locust load run | Not configured | Record dataset, users, duration, p95 result, and environment. |
@@ -2180,3 +2908,781 @@ ClamAV dependency running/healthy on loopback3310 for local uploads. Other
 containers/shared5432 are untouched. All changes remain local/unstaged on
 `codex/local-bug-sweep`; no commit, push, merge, production access or migration.
 
+
+Recherches checkpoint finalization,2026-10-28: repository/index check passes
+(8787 files,0 refused,14 ignore probes); `pwsh -NoProfile -File
+docs/03-planning/validate-sprints.ps1 -RepositoryOnly` passes22 sprint specs,
+1255 local links/anchors,42 acceptance mappings,13 Mermaid pairs and12 API JSON
+samples. The Windows PowerShell invocation was refused by its script policy;
+the standard PowerShell7 invocation passed without a policy change. Cached
+whitespace check passes; this does not add native/runtime acceptance.
+
+Styled-appendix checkpoint finalization,2026-10-28: `node
+.github/scripts/repository-check.mjs` passes8814 files/0 refused/14 ignore probes.
+`pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly`
+passes22 sprints/1258 links/42 mappings/13 Mermaid pairs/12 API JSON examples.
+Cached whitespace and23 canonical staged source hashes pass. The upstream
+content snapshot has a narrow byte/whitespace attribute exception to retain its
+published CRLF/hash; originals/selected/content staged hashes match provenance.
+This does not add real-stack/native acceptance.
+
+Selected-report checkpoint finalization,2026-10-28: repository/index check passes
+8821 files/0 refused/14 ignore probes; repository-only docs pass22 sprints/1259
+links/42 acceptance mappings/13 Mermaid pairs/12 API JSON samples. Cached
+whitespace and20 canonical staged source hashes pass. Main remains unchanged;
+this does not add native/real-stack acceptance.
+
+
+## Selected affair actions,2026-10-29
+
+751 frontend units pass,24 added across actual shared command/intent/facade,
+selected stage/inline/board and proposal protection cases. Lint/types/build/
+history and static Frontend Taste app lint11 pass,0 findings. See the
+[contract](04-design/deal-action-recovery-local.md) and checkpoint evidence.
+Two isolated native stage-lost-ack/inline-result-read cases are prepared and
+typechecked, not run. Backend unchanged/not rerun; actual SQL/native/device/
+visual/focus/zoom/CI/AFTER/product acceptance and migrations0036/0037 remain
+pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected affair stock recovery,2026-10-29
+
+762 frontend units pass,11 added for all four reservation/outcome commands,
+coherent scoped stock review, exact values/versions/fingerprint, frozen unknown
+retry, completion-only reads/async handoff, changed target/read-only, denial and
+disposal. Lint/types/build/history and static Frontend Taste app lint3 pass.
+Two isolated phone-reserve-ack/desktop-close-result-read cases are prepared/
+typechecked, not run. [Contract](04-design/deal-stock-recovery-local.md). Backend
+unchanged/not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/
+CI/AFTER/product checks and migrations0036/0037 remain pending. No actual access/
+workaround, main/push/merge/deploy.
+
+
+## Selected external-stock result recovery,2026-10-29
+
+782 frontend units pass,20 added actual reader/command/dialog/facade/host/route
+cases. Lint/types/build/history and static Frontend Taste app lint3 pass,0
+findings. Property/unit/programme and both elevated roles, original request/key,
+coherent review, completion-only retry, explicit conflict, changed offering,
+source retention, monotonic handoff, denial/scope/disposal are covered.
+[Contract](04-design/external-stock-recovery-local.md). Two isolated browser
+property-read/programme-ack cases prepared/typechecked, not run. Backend unchanged/
+not rerun; actual SQL/concurrent stock/native/device/focus/zoom/visual/CI/AFTER/
+product acceptance and migrations0036/0037 remain pending. No actual app/DB/
+account/config/service/worker/transfer access or workaround, main/push/merge/deploy.
+
+
+## Selected inventory record-form recovery,2026-10-29
+
+804 frontend units pass,22 added actual strict intent/controller/form/host/handoff
+cases. Lint/types/build/history and static Frontend Taste app lint8 pass,0 findings.
+[Contract](04-design/inventory-record-command-recovery-local.md). Three isolated
+native owner lost-ack, offering result-read and agent block lost-ack cases are
+prepared/typechecked, not run. Backend unchanged/not rerun. Actual SQL/concurrent
+stock/native/device/focus/zoom/visual/CI/AFTER/product acceptance and migrations
+0036/0037 remain pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected programme editor recovery,2026-10-29
+
+815 frontend units pass,11 added actual intent/form/controller/host cases.
+Lint/types/build/history and static Frontend Taste app lint2 pass,0 findings.
+[Contract](04-design/development-edit-recovery-local.md). Two isolated native
+phone agent lost-ack/desktop agent result-read cases prepared/typechecked, not
+run. Backend unchanged/not rerun. Actual SQL/concurrent stock/native/device/
+focus/zoom/visual/CI/AFTER/product acceptance and migrations0036/0037 remain
+pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected programme creation recovery,2026-10-29
+
+828 frontend units pass,13 added actual owner/wizard/route cases. Lint/types/
+build/history and static Frontend Taste app lint3 pass,0 findings.
+[Contract](04-design/development-creation-recovery-local.md). Two isolated native
+phone agent lost-ack/desktop agent result-read cases prepared/typechecked, not
+run. Backend unchanged/not rerun; actual SQL/concurrent stock/native/device/
+focus/zoom/visual/CI/AFTER/product acceptance and migrations0036/0037 pending.
+No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected property listing recovery,2026-10-29
+
+848 frontend units pass,20 added actual intent/controller/wizard/host/route cases.
+Lint/types/build/history and static Frontend Taste app lint5 pass,0 findings.
+[Contract](04-design/property-listing-recovery-local.md). Three isolated native
+phone independent/unit create lost-ack and desktop edit result-read cases are
+prepared/typechecked, not run. Backend unchanged/not rerun. Actual SQL/concurrent
+stock/native/device/focus/zoom/visual/CI/AFTER/product acceptance and migrations
+0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected inventory lifecycle recovery,2026-10-29
+
+865 frontend units pass,17 added actual intent/review/controller/panel/host/facade
+cases. Lint/types/build/history and static Frontend Taste app lint3 pass,0 findings.
+[Contract](04-design/inventory-lifecycle-recovery-local.md). Two native phone
+manager property archive lost-ack/desktop manager programme restore result-read
+cases prepared/typechecked, not run. Backend unchanged/not rerun. Source/test
+search confirms0 useInventoryCommand references. Actual SQL/concurrent stock/
+native/device/focus/zoom/visual/CI/AFTER/product acceptance and migrations0036/0037
+pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected prospect/affair lifecycle recovery,2026-10-29
+
+890 frontend units pass,25 added for actual owner/dialog/contracts/facades and all
+four detail/list hosts. Lint/types/build/history and static Frontend Taste app
+lint7 pass,0 findings. [Contract](04-design/record-lifecycle-recovery-local.md).
+Two isolated native phone prospect archive lost-ack/desktop affair restore result-
+read cases prepared/typechecked, not run. Backend unchanged/not rerun. Actual
+SQL/concurrency/native/device/focus/zoom/visual/CI/AFTER/product acceptance and
+migrations0036/0037 pending. No actual access/workaround, main/push/merge/deploy.
+
+
+## Selected financial command recovery,2026-10-29
+
+915 frontend units pass,25 added across actual intents/owner/facade/origin wiring
+and all three editors. Lint/types/build/history and static Frontend Taste app
+lint6 pass,0 findings. [Contract](04-design/finance-command-recovery-local.md).
+Two isolated native phone new commission lost-ack/desktop receipt result-read
+cases prepared/typechecked, not run. Backend unchanged/not rerun. Actual SQL/
+ledger/concurrency/native/device/focus/zoom/visual/security/CI/AFTER/product
+acceptance and migrations0036/0037 pending. No actual access/workaround,
+main/push/merge/deploy.
+
+
+## Commission creation expiry follow-through,2026-10-29
+
+Frontend npm run test:unit reports927 passed/0 failed/0 skipped,12 added. Retained
+terminal logs also complete npm run lint and npm run typecheck with no errors;
+the original wrapper exit handles were unavailable after context truncation, so
+no recovered numeric exit is asserted for those three commands. npm run build
+and npm run history:check exit0. Backend .venv/Scripts/python.exe -m
+tests.unit_runner exits0:572 passed/723 deselected,14 added, with all database
+connections forbidden. This rerun follows a caught/fixed missing UUID import in
+a prepared PostgreSQL HTTP case; it does not execute that database test.
+
+Three PostgreSQL expiry/legacy cases and one native phone recovery case are
+prepared, not run; existing finance fixtures use the new creation keys. Backend
+Ruff/mypy, actual ledger/SQL/concurrency/native/device/security/CI/AFTER/product
+acceptance and migrations0036/0037 remain pending. No actual access/workaround,
+main/push/merge/deploy. [Contract](04-design/finance-creation-keys-local.md) and
+[evidence](03-planning/design-migration-evidence/finance-creation-keys-2026-10-29.json).
+The old creation-replay finding above now has a source guard, not actual-stack
+acceptance or full redesign closure.
+
+
+## Selected Finance visible-review preparation,2026-10-29
+
+Executed from frontend, both exit0: npx eslint tests/review/finance.chrome.spec.ts
+tests/helpers/finance.ts --max-warnings=0; npm run typecheck. Read-only AST/source review confirms one
+prepared case,15 distinct intended manual frames, no retired selection/refresh/
+close selectors and zero production changes. Full units/build/history/backend
+are not rerun for this test-only edit; preceding927/572/build/history evidence
+remains scoped to unchanged production.
+
+Required future npm run test:chrome -- review/finance.chrome.spec.ts
+--max-failures=1 is **not run**. No browser/app/HTTP/DB/account/config/service or
+workaround access; all native geometry/focus/touch/zoom/contrast and actual-stack
+acceptance remain pending. [Preparation](05-quality/finance-native-reconciliation.md)
+and [evidence](03-planning/design-migration-evidence/finance-native-preparation-2026-10-29.json).
+
+
+## Property detail field reconciliation,2026-10-29
+
+Initial focused node --test tests/unit/property-listing-recovery.test.mjs exits1:
+the new room edit regression receives null instead of north. After the scoped
+fix, focused25/25 and full npm run test:unit932/932 pass, five cases added. Full
+npm run lint, npm run typecheck, npm run build and npm run history:check exit0;
+additional npx eslint tests/e2e/property-room-orientation.spec.ts --max-warnings=0
+and final typecheck pass. Static Frontend Taste app lint checks one changed UI
+source with0 findings. Read-only AST/source mapping accounts for24 detail fields
+across backend/frontend/payload/formatter and29 selected amenity keys. An initial
+mapping assumption was corrected for the separate selected amenity label map;
+no missing amenity capability or invented widget resulted.
+
+Backend .venv/Scripts/python.exe -m tests.unit_runner exits0:573 passed/723
+deselected, one new strict room edit contract case, connections forbidden.
+Ruff/mypy and actual SQL/native/device/security/CI/AFTER/product acceptance remain
+pending. Two390/1440 cases are prepared/typechecked, not run; no actual app/DB/
+account/private config/service/transfer access or workaround, migrations,
+main/push/merge/deploy. [Contract](04-design/property-field-reconciliation-local.md)
+and [evidence](03-planning/design-migration-evidence/property-fields-2026-10-29.json).
+
+
+## Hierarchy picker parent context,2026-10-29
+
+Initial node --test tests/unit/hierarchy-picker-context.test.mjs exits1: a valid
+foreign-parent block page remains enabled. After the scoped guard/fixture update,
+focused node --test tests/unit/hierarchy-picker-context.test.mjs
+tests/unit/unit-listing-wizard.test.mjs tests/unit/property-listing-recovery.test.mjs
+exits0,40 passed. Full npm run test:unit exits0,938 passed/0 failed/0 skipped,
+six added. An intermediate fixture edit used the wrong relative path; its failed
+update and old-fixture failure are not hidden. Corrected fixture metadata and
+explicit edit-failure stopping precede final passing gates.
+
+npm run lint, npm run typecheck, npm run build and npm run history:check exit0;
+static Frontend Taste app lint checks one changed UI file with0 findings. Two
+390/1440 cases in tests/e2e/hierarchy-picker-context.spec.ts are typechecked,
+not run. Backend unchanged/not rerun; prior573 units retained. No actual app/DB/
+account/config/service access or workaround, migration/main/push/merge/deploy.
+Actual SQL/native/device/security/CI/AFTER/product gates and migrations0036/0037
+remain pending. [Contract](04-design/hierarchy-picker-context-local.md) and
+[evidence](03-planning/design-migration-evidence/hierarchy-picker-context-2026-10-29.json).
+
+
+## Canonical Contact full/inline edit recovery,2026-10-29
+
+Source review found the remaining canonical Contact editors reused draft-derived
+keys after interrupted saves, did not await parent completion and remounted dirty
+forms on metadata/version changes. The shared owner now retains original body,
+key, counter, actor/role and callback; exact acknowledgement is separate from a
+fresh scoped read/completion. Definite conflicts need explicit current comparison.
+All eight Contact groups and existing selected layouts remain.
+
+Focused node --test tests/unit/contact-edit-command.test.mjs
+ tests/unit/inline-editing.test.mjs tests/unit/dossier-forms.test.mjs passes32.
+The first full lint exits1 on one exhaustive-dependencies warning in alias
+refusal construction; memoization fixes it without suppression. Final frontend
+npm run test:unit passes949/949,0 failed/skipped, eleven added; npm run lint,
+npm run typecheck, npm run build and npm run history:check exit0. Static
+Frontend Taste --app --json scans11 changed UI files with0 findings; static only.
+Three390/1440 cases in tests/e2e/contact-edit-recovery.spec.ts are prepared and
+typechecked, not run. Backend production unchanged; prior573 connection-forbidden
+units retained, not rerun. No actual app/browser/HTTP/DB/accounts/config/services
+or workaround, migration/main/push/merge/deploy. SQL/native/device/security/CI/
+AFTER/product gates and migrations0036/0037 remain pending.
+[Contract](04-design/contact-edit-recovery-local.md) and
+[evidence](03-planning/design-migration-evidence/contact-edit-recovery-2026-10-29.json).
+
+
+## Canonical Contact alias display,2026-10-29
+
+Corrected regressions in node --test tests/unit/ownership-recovery.test.mjs
+first fail2: a canonical full save keeps the old heading; archive keeps the old
+active state through a merged URL. One first-draft test traversal error was
+corrected before this observed pair. The Contact caller now reconciles against
+the scoped canonical ID, matching Owner, and installs management completion only
+for its canonical target/read. Focused ownership/owner/realtime checks pass46;
+final frontend951 units pass,0 failed/skipped, two added. Lint/types/build/history
+and static app lint1 exit0. One additional390px real-merge/retained-alias-read/
+canonical-edit native case is prepared/typechecked only, not run. No backend
+change/rerun; prior573 units retained. No actual access/workaround/migration/
+main/push/merge/deploy. Actual SQL/native/security/CI/AFTER/product gates remain.
+[Contract](04-design/contact-alias-projection-local.md) and
+[evidence](03-planning/design-migration-evidence/contact-alias-projection-2026-10-29.json).
+
+
+## Working-hours command ownership,2026-10-29
+
+Initial node --test tests/unit/settings-forms.test.mjs exits1: the new actual-form
+case proves controls editable after interrupted PUT. The shared policy owner now
+pins body/hash/counter/key/administrator/callback and separates exact receipt from
+fresh scoped read/completion. Focused policy-command/settings-forms21 pass; full
+frontend npm run test:unit passes961/961,0 failed/skipped, ten added. Focused lint
+initially rejects one unused legacy constant; removed without suppression. Final
+npm run lint/typecheck/build/history:check exit0; static Frontend Taste --app
+--json scans2 UI files,0 findings, static only. Two390/1440 native recovery cases
+are prepared/typechecked, not run. Existing AT-40 source selectors now open the
+selected drawer and match current period/pause labels, also unrun. Backend
+unchanged/prior573 units retained; no actual access/workaround/migration/main/
+push/merge/deploy. Real SQL/native/device/security/CI/AFTER/product gates remain.
+[Contract](04-design/policy-command-recovery-local.md) and
+[evidence](03-planning/design-migration-evidence/policy-command-recovery-2026-10-29.json).
+
+
+## Contact ownership native-path preparation,2026-10-29
+
+Focused npx eslint tests/helpers/ownership.ts tests/e2e/ownership.spec.ts
+ tests/e2e/deals.spec.ts --max-warnings=0 and npm run typecheck exit0. Actual-source
+review maps removed Identité/Historique/Attributions/Demandes tabs to selected
+Aperçu/Activités, attribution disclosure, linked dossier section and management/
+activity/assignment drawers. Five ownership scenarios and one Contact segment of
+the deal scenario retain actual denial/one-entry retry/author/archive/merge-origin
+assertions. Shared helper has seven direct consumers; their unrelated paths are
+not certified. No production edit, new mock success or browser timeout increase.
+
+Prepared/typechecked only, not run or listed/imported through Playwright. Prior961
+frontend units/build/history and573 backend units retained, not rerun. No actual
+app/browser/HTTP/DB/accounts/private config/services/restart/transfer or workaround,
+migration/main/push/merge/deploy. Actual SQL/native/device/security/CI/AFTER/product
+gates, migrations0036/0037 and wider selectors remain pending.
+[Path map](05-quality/contact-native-paths-local.md) and
+[evidence](03-planning/design-migration-evidence/contact-native-paths-2026-10-29.json).
+
+
+## Current export file delivery,2026-10-29
+
+Initial node --test tests/unit/exports-workspace.test.mjs exits1: current list403
+does not abort the pending download signal. Current owner/read/ready-row guards
+now cancel known denial/withdrawal and refuse stale or disposed handlers. Client
+checks actual M/A actor/role/password context before permit and live handoff.
+Focused31/full966 frontend units pass, five added; npm run lint/typecheck/build/
+history:check exit0. Static Frontend Taste --app --json scans2 UI files,0 findings,
+static only. Native probe fetch receiver was preserved; its focused lint/typecheck
+pass again after that test-only edit. Two390/1440 simulated list-denial/held-permit
+cases are prepared/typechecked, not run; no CSV bytes, worker or successful permit.
+
+Backend unchanged/prior573 units retained, not rerun. No actual app/browser/HTTP/
+DB/accounts/private config/service/worker/transfer or workaround, migration/main/
+push/merge/deploy. Real SQL/native/device/worker/private transfer/security/CI/AFTER/
+product gates, migrations0036/0037 and remaining exact domain work stay pending.
+[Contract](04-design/export-delivery-local.md) and
+[evidence](03-planning/design-migration-evidence/export-delivery-2026-10-29.json).
+
+
+## Owner full-form recovery,2026-10-29
+
+Initial node --test tests/unit/owner-forms.test.mjs exits1 on missing recovery
+marker/enabled replacement fields. The first focused integration run exposes5
+old fixtures expecting invalid version/provenance receipts, exception snapshots
+or reference identity. They now model strict receipts, independent current reads
+and value equality without removing their business assertions. First lint finds
+2 exhaustive-deps cleanup warnings; effect cleanup now captures its own maps.
+Final focused29/full977 frontend units pass,11 added; npm run lint, npm run
+typecheck, npm run build and npm run history:check exit0. Frontend Taste lint.mjs
+--app --json scans4 changed UI files with0 findings, static only. Backend unchanged;
+prior573 connection-forbidden units retained, not rerun.
+
+Three new owner create/edit/add-role recovery cases at390/1440 and updated older
+owner/legal-owner drawer paths are prepared/typechecked only. No Playwright
+listing/import/execution, actual app/browser/HTTP/DB/accounts/private config/
+services/worker/transfer or workaround, migration/main/push/merge/deploy. Actual
+SQL/native/device/security/CI/AFTER/product checks and wider consumers remain
+pending. [Contract](04-design/owner-form-recovery-local.md) and
+[evidence](03-planning/design-migration-evidence/owner-form-recovery-2026-10-29.json).
+
+
+## Standalone inventory native path preparation,2026-10-29
+
+npx eslint tests/helpers/inventory.ts tests/e2e/inventory.spec.ts --max-warnings=0
+and npm run typecheck exit0. TypeScript AST comparison confirms all3 direct
+staffCommand calls/arguments,6 test timeouts and3 apiProcess calls unchanged;
+7 cases remain, one purpose title changes from removed tabs to drawer controls.
+Current selected component labels/section and portal boundaries were inspected
+in source. No old standalone tab/tabpanel target remains in that scenario file.
+No new mirrored unit test, mock write success or timeout increase.
+
+Prepared/typechecked only, no Playwright listing/import/execution, app/browser/
+HTTP/DB/accounts/private config/service/outage control/transfer or workaround,
+migration/main/push/merge/deploy. Production unchanged; prior977 frontend units/
+build/history/lint and573 backend units retained, not rerun. The8 direct helper
+consumers retain wider unreviewed paths; actual SQL/native/device/security/CI/
+AFTER/product acceptance remains pending.
+[Path map](05-quality/inventory-native-paths-local.md) and
+[evidence](03-planning/design-migration-evidence/inventory-native-paths-2026-10-29.json).
+
+
+## Programme hierarchy/unit native path preparation,2026-10-29
+
+npx eslint tests/helpers/developments.ts tests/e2e/developments.spec.ts
+--max-warnings=0 and npm run typecheck exit0. TypeScript AST comparison preserves
+5 titles,3 direct staffCommand argument sets,4 timeouts and3 apiProcess calls.
+Current components supply scoped drawer/tab/form/stepper labels, explicit
+current comparison and recovery. Source review corrected a broad-replacement
+initial-save/retry mismatch before final gates; no compiler/native success is
+inferred from that review. No obsolete root structure/presentation/offer tabs
+remain in the five-case scenario file.
+
+Prepared/typechecked only. No Playwright listing/import/execution, actual app/
+browser/HTTP/DB/account/config/service/outage/file/worker/transfer or workaround,
+migration/main/push/merge/deploy. Production unchanged; prior977 frontend units/
+lint/build/history and573 backend units retained, not rerun. Wider8 development
+helper consumers and shared inventory consumers still require their own path
+review and actual SQL/native/device/security/CI/AFTER/product verification.
+[Path map](05-quality/development-native-paths-local.md) and
+[evidence](03-planning/design-migration-evidence/development-native-paths-2026-10-29.json).
+
+
+## Inventory permission selected native actions,2026-10-29
+
+npx eslint tests/helpers/inventory.ts tests/e2e/project-permissions.spec.ts
+--max-warnings=0 and npm run typecheck exit0. Source AST confirms2 unchanged titles,
+2 exact staffCommand argument sets and2 timeouts. Current absence checks use real
+create-offer/owner-edit labels; unit form identity and exactly3 disabled placement
+selectors are checked at the first step before surface editing. No production
+edit, mock success, new timeout or mirrored unit test. Native cases prepared,
+not listed/imported/executed. Prior977 frontend/573 backend units/build/history
+retained, not rerun; actual SQL/native/permission/security/CI/AFTER/product pending.
+No actual app/DB/accounts/config/service/worker/file/transfer or workaround,
+migration/main/push/merge/deploy. Broader file upload paths remain pending.
+[Evidence](03-planning/design-migration-evidence/inventory-permission-paths-2026-10-29.json).
+
+
+## Document uploader ownership,2026-10-30
+
+Initial node --test tests/unit/document-upload.test.mjs exits1 on both new actual
+component faults: unknown metadata leaves replacement enabled, and disposal has
+no metadata abort signal. Intermediate strict comparison exposed raw-versus-
+validated metadata object realms; dispatch now uses the owned validated body.
+Existing selected-picker fixtures model coherent next-counter grants and fresh
+identity. First lint has2 reset-helper dependency warnings; stable module helper
+corrects them. Final focused23/full984 frontend units pass,7 added/registered;
+npm run lint, npm run typecheck, npm run build and npm run history:check exit0,
+including final actual actor/role propagation through all5 call sites. Static
+Frontend Taste --app --json scans6 changed UI files with0 findings, static only.
+
+Two new390/1440 native metadata-response cases are prepared/typechecked only;
+no Playwright listing/import/execution. Backend unchanged/prior573 connection-
+forbidden units retained, not rerun. No actual app/browser/HTTP/DB/accounts/config/
+services/worker/scanner/transfer or workaround, migration/main/push/merge/deploy.
+Native/SQL/AV/private transfer/device/security/CI/AFTER/product checks and generic
+file-row/older native paths remain pending. [Contract](04-design/document-upload-recovery-local.md)
+and [evidence](03-planning/design-migration-evidence/document-upload-recovery-2026-10-30.json).
+
+
+## File row recovery and private handoff,2026-10-30
+
+Initial node --test tests/unit/file-row.test.mjs exits1 on both actual-component
+faults: disposed bytes can reach a browser URL, and a version-keyed list remount
+loses unknown archive state. A later scan-result case fails before old in-progress
+error retirement. The stale hydration case was corrected to render the changed
+hook state and guards now read the live binding. Initial scoped lint finds a
+state-in-effect/cache reset and missing callback dependency; render-state reset
+and stable ref-based delivery predicate correct them. A root-cwd ESLint invocation
+had no config and was not an application check; actual frontend-scoped lint ran.
+
+Focused29 before the final worker-state case and final full994 frontend units
+pass,10 added/registered. npm run lint/typecheck/build/history:check exit0; source
+icon/button checks have0 violations. Static Frontend Taste --app --json scans3
+files with0 findings, static only. Two390/1440 real-stack archive source scenarios
+are prepared/typechecked, not listed/imported/executed. No fake write/AV success.
+Backend unchanged/prior573 units retained, not rerun. No actual app/browser/HTTP/
+DB/accounts/config/services/worker/scanner/transfer or workaround, migration/main/
+push/merge/deploy. Native/SQL/device/AV/private-transfer/security/CI/AFTER/product
+and older file helper paths remain pending.
+[Contract](04-design/file-row-recovery-local.md) and
+[evidence](03-planning/design-migration-evidence/file-row-recovery-2026-10-30.json).
+
+
+## Selected document native paths,2026-10-30
+
+`npx eslint tests/helpers/files.ts tests/e2e/files.spec.ts --max-warnings=0` and
+`npm run typecheck`, cwd `frontend`, exit0. TypeScript source AST invariants retain
+32 protected calls across both files, including2 scenario titles and2 unchanged
+fixture/digest functions. No Playwright listing/import/execution. Prior994
+frontend/573 backend unit and production-gate evidence retained, not rerun.
+[Evidence](03-planning/design-migration-evidence/document-native-paths-2026-10-30.json).
+
+
+## Document review/recovery entrances,2026-10-30
+
+`npx eslint tests/review/files.chrome.spec.ts tests/review/deals.chrome.spec.ts
+tests/review/v3.chrome.spec.ts tests/helpers/recovery.ts --max-warnings=0` and
+`npm run typecheck`, cwd `frontend`, final exit0. Source AST:4 scenario titles
+and45 protected calls unchanged; one photo metadata response wait intentionally
+narrowed. No Playwright listing/import/execution, capture/zoom or service control.
+Prior994 frontend/573 backend and production gates retained, not rerun. Broader
+journeys remain unaccepted. [Evidence](03-planning/design-migration-evidence/document-review-paths-2026-10-30.json).
+
+
+## Selected photo native paths,2026-10-30
+
+`npx eslint tests/helpers/photos.ts tests/e2e/property-photos.spec.ts
+--max-warnings=0` and `npm run typecheck`, cwd `frontend`, exit0. TypeScript AST:
+all25 protected calls unchanged, including2 timeouts/4 worker controls/6 business
+commands/2 route faults/2 unroutes/2 reads/7 screenshots; one purpose title drops
+historical automatic wording. No Playwright listing/import/execution or actual
+capture/service/AV/private transfer. Prior994 frontend/573 backend evidence and
+production gates retained, not rerun. [Evidence](03-planning/design-migration-evidence/photo-native-paths-2026-10-30.json).
+
+
+## Inventory outcome/wizard consumers,2026-10-30
+
+`npx eslint tests/e2e/outcomes.spec.ts tests/e2e/property-listing-wizard.spec.ts
+--max-warnings=0` and `npm run typecheck`, cwd `frontend`, exit0. Source AST:7
+titles and22 protected calls unchanged, including4 timeouts/13 reads/2 business
+commands/one route fault-removal pair/one screenshot. `git diff --check` exit0.
+No native/listing/import/capture/account/DB/service execution. Prior994 frontend/
+573 backend and production evidence retained, not rerun.
+[Evidence](03-planning/design-migration-evidence/inventory-consumer-paths-2026-10-30.json).
+
+
+## Visible inventory/programme review paths,2026-10-30
+
+`npx eslint tests/review/inventory.chrome.spec.ts
+tests/review/developments.chrome.spec.ts --max-warnings=0` and `npm run typecheck`,
+cwd `frontend`, exit0. Source AST retains2 titles/all30 original protected calls;
+one explicit sale fixture creation is added for the empty property helper.
+`git diff --check` exit0. No Playwright listing/import/execution, actual capture/
+zoom/account/DB/service control. Prior994 frontend/573 backend units and production
+gates retained, not rerun for these source paths.
+[Evidence](03-planning/design-migration-evidence/inventory-review-paths-2026-10-30.json).
+
+
+## Selected inventory design-review paths,2026-10-30
+
+`npx eslint tests/review/inventory-design.chrome.spec.ts --max-warnings=0` and
+`npm run typecheck`, cwd `frontend`, exit0. TypeScript AST retains4 titles and21
+protected event/fixture/read/screenshot/timeout calls. `git diff --check` exit0.
+No native listing/import/execution/capture/account/DB/browser/service control.
+Prior994 frontend/573 backend and production gates retained, not rerun for these
+test paths. [Evidence](03-planning/design-migration-evidence/inventory-design-paths-2026-10-30.json).
+
+
+## Contact ownership/history native sources,2026-10-30
+
+`npx eslint tests/review/ownership.chrome.spec.ts tests/review/intake.chrome.spec.ts
+--max-warnings=0` and `npm run typecheck`, cwd `frontend`, exit0. Source AST:2 titles/
+all63 original protected calls retained; one explicit merge-drawer intent added.
+`git diff --check` exit0. No Playwright listing/import/execution/capture/zoom/
+account/DB/service access. Prior994 frontend/573 backend and production evidence
+retained, not rerun. Broader intake review remains unaccepted.
+[Evidence](03-planning/design-migration-evidence/contact-review-paths-2026-10-30.json).
+
+
+## Fresh redesign candidate verification,2026-10-30
+
+Candidate befcaf6: actual frontend994/backend573 connection-forbidden units pass;
+backend723 deselected. Full frontend lint/types/build/history and repository-only
+gates pass. Production npm audit0; full audit3 low development-package entries
+from GHSA-gcqx-w48m-w2h4; security:check fails NEW_VULNERABILITY_REFUSED. No
+exception/dependency change or actual app/browser/DB/AV/transfer execution. Not
+complete/merge-ready; remaining native/SQL/CI/AFTER/product and field/selector work
+remains. Goal observed paused; only requested verification performed.
+[Report](03-planning/redesign-verification-2026-10-30.md) and
+[evidence](03-planning/design-migration-evidence/checkpoint-verification-2026-10-30.json).
+
+
+## Unused vulnerable CLI cleanup and requested source review,2026-10-30
+
+After removing only the unused generation CLI, frontend unit994/lint/types/build/
+history pass. security:check reports runtime0/full0/exceptions0. App source/public
+files548 and required runtime entries180 remain unchanged; all575 retained package
+versions/integrities remain. Initial conservative graph assertion failed on5
+removed devOptional validators; corrected required/full retained graph checks
+pass. Prior backend573/723 deselected retained, not rerun. Static Taste source
+scan:514 files/76 raw matches, exit1; context triaged, no cosmetic fix or rendered
+acceptance claimed. Five literal public image paths exist. origin/main fetched,
+unchanged/ancestor; no remote redesign head, no push/merge/deploy.
+[Remediation](03-planning/redesign-dependency-cleanup-2026-10-30.md),
+[source review](05-quality/redesign-source-review-2026-10-30.md) and
+[evidence](03-planning/design-migration-evidence/unused-cli-removal-2026-10-30.json).
+
+## Local first-admin recovery (2026-11-02)
+
+Focused coverage: `backend/.venv/Scripts/python.exe -m tests.unit_runner`, which
+includes `backend/tests/test_local_admin_recovery.py`: local environment/URL/
+connected-address guard, valid loopback, bootstrap-state refusal, ambiguous
+administrator refusal, credential/version update, session revocation, failed-
+login counter clearing and self-attributed target audit. The one-time local operation additionally verifies the
+live PostgreSQL database identity before transaction. No production, isolated
+test database, SQL shell or direct row insertion is used.
+
+
+## Redesign and iPhone upload integration (2026-11-06)
+
+The combined checkout passed `npm run test:unit` (1003 tests), the frontend
+production build, and backend `scripts/kay.ps1 -Task check` and
+`python -m tests.unit_runner` in the project venv (581 tests).
+A disposable loopback PostgreSQL 18 target upgraded first to
+`0035_project_photos`, then to `0037_development_phase`; `alembic current`
+reported one head and `alembic check` found no pending schema operations.
+These checks precede the exact candidate's hosted integration and release gate.
+
+Visible Chrome passed the five iPhone scenarios covering real HEIC/HEIF,
+sequential conversion, cancellation, a lost acknowledgement at capacity, the
+ten-photo preview budget and private attachments with unchanged DOCX bytes.
+The database regression exposed a missing programme history record when a
+child unit outcome changed the programme version. Close and reopen now record
+that version and phase with a generic shared-stock reason. The revised test
+fixtures use supported archive and ownership commands and set dates before
+creation, preserving existing database guards.
+
+Hosted [run 42321116808](https://github.com/hive-vault-arc/Kay-crm/actions/runs/42321116808)
+passed 1,304 backend cases and five real-time browser cases on `76f2f6be`.
+The full compiled browser step stopped at five failures. The contact-month
+follow-up passed all 11 cases in `tests/test_calendar_filters.py` on disposable
+PostgreSQL, including authorized monthly reads, denied contact access and retained
+weekly/free-busy bounds. The compiled 26-route action sweep and the three calendar
+reference cases passed locally with the redesigned drawers.
+
+## PR37 release regression continuation (2026-11-07)
+
+The hosted run42326649516 on2c67706c passed1,305 real-PostgreSQL tests
+and all5 real-time browser cases, but the ordinary browser gate failed.
+The release remains gated on a fresh complete integration run of the new head.
+
+Focused browser checks were updated for the selected global search, explicit
+CSV scope confirmation, automatically refreshed exports, dossier management
+drawer, 831px filter breakpoint, scoped assignee options and current contact/
+programme filters. The CSV content/scope and lost-acknowledgement checks remain;
+agent tests still verify the readable assignee boundary and denied export/import.
+Focus contrast now waits for the existing color transition and converts browser
+CSS colors to sRGB before applying the unchanged3:1 requirement.
+
+The offering creation drawer/trigger now retain their component identity while
+the saved record hides its creation action. The save receipt and fresh authorized
+record read still precede completion. Shared filter summaries receive the existing
+44px touch target. Local diagnostic runs that temporarily changed layout styles,
+and the run interrupted by workstation suspension, are not release passes.
+The full integration job now has75minutes and collects up to12 failures rather
+than stopping after5; any failure still rejects its aggregate gate.
+
+Production recovery preflight (read-only): DigitalOcean shows managed PostgreSQL
+recovery to the latest transaction or a point within7days and App Platform
+maintenance mode. No restore was executed and no restore drill is claimed.
+Production remains at main e0bdc09 and migration0035 until the final gates pass.
+
+The subsequent intrinsic dossier correction passed the unmodified mixed-unit
+programme workflow and full directory geometry case locally, plus a headed
+Chrome programme run with desktop/390px captures and phone availability
+confirmation. A new focus assertion also passed on the compiled build. The
+1003 frontend units, full lint, typecheck, compiled history check and dependency
+audit pass (zero runtime/full advisories and no exceptions). The first hosted
+follow-up on0dd6aacf still failed ordinary browser regression; backend and five
+real-time cases passed. Its stale help/import/dashboard/filter selectors are
+being updated to the selected UI, preserving scope, atomic CSV content, denied
+access, keyboard recovery and phone behavior. This evidence does not mark the
+full release gate or production verification complete.
+
+The `8f096f7b` follow-up passed 1,305 PostgreSQL cases and five real-time browser
+cases in hosted run 42415896856; its ordinary browser gate failed. Subsequent
+local compiled checks passed 8 history/lifecycle/staff recovery cases, all 8 Lead
+qualification/list cases, the selected notification read retry, both owner
+quick-drawer sizes, all 3 record-removal journeys and the 17-route workspace
+branding/responsive journey. These are focused results, not a full release pass.
+
+The follow-up restores the requested default 50 rows for Leads/Deals and verifies
+page 2 is not fetched until requested. Property/programme image cards now have
+equal heights with bounded long-location text. Notification read recovery restores
+keyboard focus after a lost acknowledgement. A stock-review warning hidden by
+the new action-only outcome panel is restored on the Deal page. No business
+write, permission, session, storage, push or migration changes here.
+Frontend units remain 1003 passed; lint, types and the compiled build passed.
+Exact-head hosted integration and coordinated production rollout remain required.
+
+The external-sale browser case exposed a missing nested offering target in the
+inventory detail response. Detail reads now include the same shared target/version
+projection already used by exact-offering selection; directory reads remain
+unchanged. The affected `tests/test_outcomes.py` passed 10 PostgreSQL cases in
+21.36s, including 3 new standalone/unit/programme response-coherence checks.
+Ruff, format and mypy pass (223 application source files). Frontend units remain
+1003 passed. Nine light status label colors now use their existing darker solid
+palette values, with calculated contrast at least 4.59:1 against their surfaces;
+decorative dots and dark-theme tokens are unchanged.
+
+Hosted run42423115208 on6a086e25 passed all1308 PostgreSQL cases in862.45s.
+Its ordinary browser gate is not yet a release pass. Subsequent compiled local
+checks passed owner reuse, both photo retry/viewer sizes, project permissions,
+rich property editing/native200% zoom and all three scoped activity journeys.
+The remaining cases are being run against the same immutable compiled stack.
+Test selectors now distinguish hidden inventory tabs, viewer images from their
+thumbnails and guarded cancellation from completed navigation. Offering tests
+compare every persisted commercial field while checking the newly current
+derived target version separately. No test is skipped or threshold reduced.
+
+Reservation-conflict warnings, like stock-review warnings, are visible on the
+Deal dossier outside its action-only dialog. There is no new business write or
+private expansion. The temporary local PostgreSQL cluster is not the registered
+recovery target: recovery preparation fails closed there. Do not change its
+identity guard; the fresh hosted full regression must run the real restoration
+journey on its signed disposable recovery target before release.
+
+Further compiled checks found two functional integration defects: the manual
+offer picker sent an unsupported `archive` parameter (422), and Lead task links
+did not select the task. The picker now relies on the existing active-inventory
+server default; Leads validate and pass the UUID task context to the existing
+scoped task drawer. Its exact-rental/unit/programme search journey passed45.8s.
+Task-period controls are marked as filters, and the live-update observer now
+respects that same boundary as the navigation guard. The real browser check
+verifies filtering/closing does not prompt to discard a draft. Managed business
+forms remain protected. The frontend1003-unit run passes after the final changes.
+
+The final local compiled `work.spec.ts` run passed all8 cases in3.1m, including
+the new dashboard-to-Lead task link, no false filter draft, actual task edits,
+read state, rescheduling, two-hour missed-visit outcome and unrelated-agent
+denial. Build, lint and types pass. The exact final commit still requires the
+complete hosted backend, real-time and ordinary browser gate before promotion.
+
+The exact463f0dba hosted run passed1308 PostgreSQL cases and5 real-time cases,
+but exposed a nondeterministic owner-reuse assertion: coordinate replacement
+kept every value, label and primary flag while new row UUIDs changed tie order.
+The contact API does not expose an editable coordinate position. The browser
+assertion now compares complete coordinate objects by their canonical number/
+email, while identity, provenance, assignment and other fields remain exact.
+The corrected owner-reuse case passed3 consecutive compiled runs in53.7s.
+This correction still requires the full exact-head integration gate.
+
+That run's restored-stack journey reached the restored application, but waited
+for the obsolete exact `Unités` tab name instead of its current count suffix.
+The selector now matches the scoped programme tab. Cleanup always attempts to
+return the API supervisor to the normal isolated target and clear the recovery
+fixture, even if Playwright has closed its page after timeout. The original
+failure previously prevented that switch and caused ten later401 login failures.
+The complete restoration and remaining browser cases still require a fresh
+hosted run; the local recovery identity guard remains unchanged.
+
+At6479bd55, the isolated15546 benchmark target was empty. The unchanged
+`APP_ENVIRONMENT=benchmark` project-venv `-m benchmarks.dataset` prepared100
+synthetic accounts,200000 contacts/enquiries,20000 properties/deals and200
+programmes at migration0037. With `REALTIME_ENABLED=true` and
+`KAY_BENCHMARK_REALTIME=1`, two uncontested `-m benchmarks.run` executions
+passed the unchanged100-user/socket and ordinary1000ms/dashboard2000ms gates
+with4 API processes. They completed6833/6435 requests with0 errors or unexpected
+disconnects over60.293/60.224s steady windows. Ordinary p95 maxima were315.044/
+789.324ms; dashboard442.457/1195.914ms. Both had4 LISTEN connections; total
+database connections34/37. The first process-lifetime sampled lag peak was
+10770.966ms; the repeat's476.460ms, with0 observed listener reconnects in both.
+Keep that first setup-inclusive spike in evidence; do not represent either
+local result as production capacity or exhaustive per-process lag telemetry.
+
+All39 compiled cases after the recovery journey and the3 icon/login cases pass
+locally. The hosted run found an archive-test focus assumption: after Escape,
+the parent action menu can close and correctly return focus to Actions. The
+test now checks the available trigger, retains real keyboard focus assertions
+and reopens the closed menu. Its complete archive/restore journey passed3
+consecutive runs in1.3m. No product focus behavior or lifecycle rule changed.
+
+Hosted full run42431081146 on6479bd55 passed1308 PostgreSQL cases in874.11s
+and5 WSS cases in3.6m. Its ordinary browser result was235/242: both file-row
+recovery checks queried an accessibility-hidden background drawer; both public
+limit checks also counted Next's route announcer; archive keyboard return expected
+an unmounted child; one directory assertion ran after switching actor during an
+outage journey; and restoration completed all data checks but collected one
+console error. These are failures, not a release pass. The background-row and
+specific-validation selectors now retain their original DOM/retry/no-submit
+assertions and pass4/4 local repeats each. Agent directory verification now
+awaits and validates the actual unfiltered200 read and all12 records before
+checking rendered cards. The unmodified directory journey separately passed3
+consecutive local runs. Restoration permits only the expected auth/me401 during
+the explicit revoked-cookie check and reports fixed categories for other console
+errors; no raw console text, URL or token is logged. Its isolated diagnostic and
+the final full-scope hosted gate remain required.
+
+The complete two-case project-directory file passes1.5m with the explicit agent
+read check, including its preceding eight scanned-image/zoom/filter case. The
+workflow YAML parses with the installed js-yaml dependency; eight aggregate
+policy tests verify the full default, both full-suite matrix entries, required
+prerequisites and full-scope-only release aggregate. The recovery-only selector
+lists exactly one restored-stack test; it is diagnostic, not a release pass.
+Frontend lint and types pass after these harness changes.
+
+On4e4893db, the restored-stack diagnostic42436268721 passed42.3s with
+unexpectedErrors=[]; synthetic RPO3.442s, restore2.922s and incident-to-verified
+18.219s. These are isolated measurements, not a production restore drill.
+The exact-head load gate also passed7032 requests/0 errors/100 users and sockets,
+60.253s steady/4 API processes. Ordinary p95max310.977ms/dashboard447.872ms,
+sampled process-lifetime lag205.275ms,35 database/4 LISTEN connections and0
+unexpected disconnects or observed listener reconnects. All limits unchanged.
+
+The subsequent full run exposed an intermittent four-minute broad CRM-reference
+timeout that did not reproduce in a fresh local54.4s run. Its directory flow
+could select existing12 rows before the350ms search debounce remounted them.
+It now awaits the actual q-filtered200 response and exact12 count before row
+selection; per-action timeout is reduced to15s to expose missing controls while
+the overall240s allowance remains. A fixed `crm-reference-only` diagnostic scope
+is available on a separate hosted disposable target and cannot emit the release
+check name. The full-scope matrix, real scanner and recovery guards remain.
+All3 corrected local CRM-reference repeats pass in2.2m; focused ESLint, types,
+workflow YAML parsing and all8 aggregate policy checks pass.
+
+The hosted CRM-reference diagnostic42438451524 on35f6c6fb passes. The bounded
+font-status/screenshot version also passes3 local repeats in2.2m; cleanup now
+retains the original error and still removes the synthetic owner if its page
+was closed by timeout. The cancelled4e run additionally exposed a focus-offset
+sample taken before the complete focus style settled. The check now waits for
+hydration and all existing conditions (focus-visible, solid2px outline,
+offset>=2px, contrast>=3), retaining every threshold. Three local repeats pass
+19.5s; ESLint and TypeScript pass. These are harness corrections, not a full
+release result, and no product styling or authorization was changed.

@@ -1,0 +1,157 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "562264e",
+  "scope": "Authoritative selected-dashboard summary/records/responsible choices, bounded real previews and typed facade; UI wiring remains",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 425,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 217,
+      "failed": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check app/reports tests/test_workspace_reports.py tests/test_workspace_reports_unit.py tests/unit_selection.py",
+      "cwd": "backend",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app/reports",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 9
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 310,
+      "deselected": 689
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8663,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1235,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    }
+  ],
+  "sourceAnalysis": {
+    "prototypeInputs": 254,
+    "prototypeHashDrift": 0,
+    "postgresqlScenariosPrepared": 4,
+    "postgresqlScenariosExecuted": 0
+  },
+  "sources": [
+    {
+      "path": "backend/app/reports/router.py",
+      "sha256": "e35a4dbdde4e9dfe0071dc293cdb8d52729e27d8e8c7d5eb8dde9af97f8424b3"
+    },
+    {
+      "path": "backend/app/reports/workspace.py",
+      "sha256": "9bf8847a3eaaa06c27f7abed7e9d9ae8916fbdd0eac1c1034cbbea03704fa0b3"
+    },
+    {
+      "path": "backend/app/reports/workspace_contracts.py",
+      "sha256": "e17903a33d2f5786f97dd22c3596952ead9eeaca72270ac84ea9e57279490b6b"
+    },
+    {
+      "path": "backend/app/reports/workspace_previews.py",
+      "sha256": "709c5f591e186bf69b5f438ff30a35008afe8a2e739a185fea3e16f9c6a3e846"
+    },
+    {
+      "path": "backend/app/reports/workspace_sources.py",
+      "sha256": "fd708a05dd757347a62e0c8d5964cecfe06f1b74d50f011b9f1f3df591983b03"
+    },
+    {
+      "path": "backend/tests/test_workspace_reports.py",
+      "sha256": "d39992e6445c1bf830697f6453bc8d6ed8ff265d5df1d50e8af1e9c933c1e07b"
+    },
+    {
+      "path": "backend/tests/test_workspace_reports_unit.py",
+      "sha256": "d7a5cae11f1b8f263ed5e5f434965d58f9f369486b768e96a5b094d87c5524b5"
+    },
+    {
+      "path": "backend/tests/unit_selection.py",
+      "sha256": "054a98a2be225c5a7e7d337b98b1e55165f49e6339ec0ced35a4bb6aea9fe7c5"
+    },
+    {
+      "path": "frontend/scripts/test-facade.mjs",
+      "sha256": "aeb9eb6958b6e57d4cb079b40976c23a327c7dbd03e56953eef4c4b7d510e6a7"
+    },
+    {
+      "path": "frontend/src/features/realtime/query-topics.ts",
+      "sha256": "7c9548ef88764ae2e5679bcb61059e9adf625da3f015fd2b20199f4c1df435ec"
+    },
+    {
+      "path": "frontend/src/features/reports/facade.ts",
+      "sha256": "61a388eb4a15919c0e1c1670cdc1d69e708db0c2bb191f7ac0f023731fa15603"
+    },
+    {
+      "path": "frontend/src/features/reports/workspace-contracts.ts",
+      "sha256": "6522f6d20e55280bb637f865d642ac4ebef151d3be30b304f3aaab1827c5f86d"
+    },
+    {
+      "path": "frontend/tests/unit/workspace-reports.test.mjs",
+      "sha256": "ecf3d13bd92eb2bb44a319771ffca662bcfccfb1e3162c9136e57cee020a1f60"
+    }
+  ],
+  "authority": [
+    "Current identity before all rowsets; READ ONLY REPEATABLE READ; no cached grants",
+    "Active canonical contacts intersect responsible filter; no scope/role/clock overrides",
+    "BR-18 current portfolio vs immutable closing-owner attribution preserved",
+    "Full counts before preview/page limits; same headline rowsets for numbered records",
+    "UUID interests/project links/selected offering dedup; no external-name joins or whole-programme expansion",
+    "No owner/contact detail, finance grant or public file URL; exact current-campaign money strings"
+  ],
+  "technicalProposals": [
+    "Upcoming scheduled/confirmed visits start in period and have end_at >= server clock; drafts excluded",
+    "Follow-up counts compare current unconverted cohort state, not historical status snapshots",
+    "Previous cohort equal inclusive length/current scope; before1900 comparison is null",
+    "Responsible choice list derives from current accessible contacts, not a staff directory"
+  ],
+  "correctedFindings": [
+    "Immutable closing attribution retained independently of current portfolio filter",
+    "UUID-backed DealProject interests included alongside current ProjectLink/selected offerings",
+    "SQLAlchemy2.1 variadic Select types corrected without broad ignores",
+    "Integration imports sorted"
+  ],
+  "remaining": [
+    "Selected greeting/four KPI cards/pipeline/photo/agenda/priority/task/team composition",
+    "Full supplemental reports/work tool wiring and browser selector migration",
+    "Real PostgreSQL/performance/permission/transfer/concurrent snapshot checks",
+    "Native layout/input/zoom/accessibility/AFTER/product review",
+    "No full-goal completion; no migration/dependency/prototype/service/real data/main/push/merge/deploy operation"
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "88452611bd7c51be0f147cc138fdd0a8e13a3d00",
+  "scope": "Selected Contact/Owner ownership preview and command lifetime, original-request recovery, ID-based impact/receipt coherence, fresh same-actor role proof and parent disposal/denial handling",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 639,
+      "additionalCases": 18,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic actual hook/transport/facade/dialog/parent tests and synthetic TLS; new ownership suite registered. Existing five owner denial phases retained."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 497,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <four changed UI files>",
+      "exitCode": 0,
+      "files": 4,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1271,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8890,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "validationCorrection": "React effect-owned attempt objects are replaced immutably and the optional receipt is explicitly narrowed before completion; no lint suppression. A completed prior operation cannot supply the acknowledgement flag for a later denied attempt.",
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/ownership-recovery.spec.ts",
+    "browserCases": 2,
+    "typechecked": true,
+    "scenarios": [
+      "Contact lost archive acknowledgement: exact original request and one history event",
+      "Owner archive saved before completion read failure: read-only recovery without another mutation"
+    ],
+    "syntheticIsolatedFixturesOnly": true,
+    "tracesVideosScreenshots": false
+  },
+  "preserved": {
+    "selectedContactTabsAndDossiersPlacement": true,
+    "selectedOwnerTabsAndSingleRightPortfolio": true,
+    "allExistingOwnershipFieldsAndActions": true,
+    "exactReviewedIntentVersionsProofKey": true,
+    "canonicalReadsWithoutMutationRetargeting": true,
+    "backendScopeHistoryMergeLocksAnd24HourReceipts": true,
+    "noBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notPerformed": [
+    "Backend tests: no backend change this checkpoint",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/simulator/account/customer records/private configuration/import/export/transfer access",
+    "Executed migrations0036/0037 or another migration",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4468,
+      "sha256": "f4e31fd498ad8586a9cb0224ff3540172cb6b781e99401599426be5a43213c95"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-record.tsx",
+      "bytes": 8114,
+      "sha256": "1f5d4a90b23a18c1bfa36607897ac9c59de4c06fff41f25170c50e997b8cd8a6"
+    },
+    {
+      "file": "frontend/src/features/contacts/facade.ts",
+      "bytes": 7996,
+      "sha256": "d5bb8a67d8a4a1e551450956a0e4f2e4324b1e46510addcd21b514045613925a"
+    },
+    {
+      "file": "frontend/src/features/contacts/ownership-client.ts",
+      "bytes": 1578,
+      "sha256": "28d963606059868625149da52675e7906082fe299fb7526cb53c3dc9ff2454cf"
+    },
+    {
+      "file": "frontend/src/features/contacts/ownership-contracts.ts",
+      "bytes": 7795,
+      "sha256": "aaf01d2ac4027a12e2c0b2e52b516876d6060294c1b1540b58b4e4bfa40df46d"
+    },
+    {
+      "file": "frontend/src/features/contacts/ownership-controls.tsx",
+      "bytes": 11718,
+      "sha256": "32c3c080352cc22775cda5cdc4187df277bfcc4a2667622b90b0b483609e2620"
+    },
+    {
+      "file": "frontend/src/features/contacts/ownership-impact.tsx",
+      "bytes": 4058,
+      "sha256": "a146ec3a9f7fd548b1770fa34e24328ed61293dd4271143c1d5bd6afd761b4aa"
+    },
+    {
+      "file": "frontend/src/features/contacts/use-ownership-command.ts",
+      "bytes": 7714,
+      "sha256": "51cf7f32e51df21f28230d3e7cb53e68fe9ab1dadeb72f8f9ca3463082e5b0dc"
+    },
+    {
+      "file": "frontend/src/features/owners/owner-record.tsx",
+      "bytes": 5659,
+      "sha256": "f70f2c23008b5c79f475e7d3732630ebd03093070bb37ec50f80091ceafe415c"
+    },
+    {
+      "file": "frontend/tests/e2e/ownership-recovery.spec.ts",
+      "bytes": 4448,
+      "sha256": "13bdeec9866c1bc2b22f4483510ac96adbff221d04e8e7be8422e3a201512077"
+    },
+    {
+      "file": "frontend/tests/unit/owner-workspace.test.mjs",
+      "bytes": 28863,
+      "sha256": "744896fda68231fda82107d02b516b5215df745aa7c95d6cf51a92335f0aa0bb"
+    },
+    {
+      "file": "frontend/tests/unit/ownership-fixtures.mjs",
+      "bytes": 2862,
+      "sha256": "f849c6ced4b5c2181313e0000061169d3f4921a65823169c62d1affdc46787d3"
+    },
+    {
+      "file": "frontend/tests/unit/ownership-recovery.test.mjs",
+      "bytes": 29374,
+      "sha256": "774b65c2b7a7bc255f58841a140aa9bc11fa9f8ead712af4dbfb2afe91837bb5"
+    }
+  ]
+}

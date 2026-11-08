@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { frenchApiError } from "./errors";
+import { boundedRequestSignal } from "./request-signal";
 
 const errorEnvelope = z.object({
   error: z.object({ code: z.string(), request_id: z.string().optional() }),
@@ -30,36 +31,37 @@ export async function apiGet<T>(
   if (!/^\/api\/v1\/[a-zA-Z0-9/?=&_.%-]+$/.test(path) || !pathname || pathname.includes(".."))
     throw new TypeError("INVALID_API_PATH");
   let response: Response;
+  const bounded = boundedRequestSignal(signal, mutation?.timeoutMs ?? 10_000);
   try {
-    response = await fetch(path, {
-      credentials: "same-origin",
-      method: mutation ? mutation.method ?? "POST" : "GET",
-      body: mutation ? JSON.stringify(mutation.body) : undefined,
-      cache: "no-store",
-      signal: signal
-        ? AbortSignal.any([signal, AbortSignal.timeout(mutation?.timeoutMs ?? 10_000)])
-        : AbortSignal.timeout(mutation?.timeoutMs ?? 10_000),
-      headers: { Accept: "application/json", ...(mutation ? { "Content-Type": "application/json" } : {}), ...(mutation?.csrf ? { "X-CSRF-Token": mutation.csrf } : {}), ...(mutation?.key ? { "Idempotency-Key": mutation.key } : {}) },
-    });
-  } catch (error) {
-    if (signal?.aborted) throw error;
-    throw new ApiError("DEPENDENCY_UNAVAILABLE", 503);
-  }
-  const body: unknown = await response.json().catch(() => null);
-  if (!response.ok) {
-    const parsed = errorEnvelope.safeParse(body);
-    if (parsed.success && parsed.data.error.code === "UNAUTHENTICATED" && typeof window !== "undefined")
-      window.dispatchEvent(new Event("kay:session-expired"));
-    throw new ApiError(
-      parsed.success ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE",
-      response.status,
-      parsed.success ? parsed.data.error.request_id : undefined,
-      parsed.success ? parsed.data : undefined,
-    );
-  }
-  const parsed = schema.safeParse(body);
-  if (!parsed.success) throw new ApiError("INVALID_RESPONSE", response.status);
-  return parsed.data;
+    try {
+      response = await fetch(path, {
+        credentials: "same-origin",
+        method: mutation ? mutation.method ?? "POST" : "GET",
+        body: mutation ? JSON.stringify(mutation.body) : undefined,
+        cache: "no-store",
+        signal: bounded.signal,
+        headers: { Accept: "application/json", ...(mutation ? { "Content-Type": "application/json" } : {}), ...(mutation?.csrf ? { "X-CSRF-Token": mutation.csrf } : {}), ...(mutation?.key ? { "Idempotency-Key": mutation.key } : {}) },
+      });
+    } catch (error) {
+      if (signal?.aborted) throw error;
+      throw new ApiError("DEPENDENCY_UNAVAILABLE", 503);
+    }
+    const body: unknown = await response.json().catch(() => null);
+    if (!response.ok) {
+      const parsed = errorEnvelope.safeParse(body);
+      if (parsed.success && parsed.data.error.code === "UNAUTHENTICATED" && typeof window !== "undefined")
+        window.dispatchEvent(new Event("kay:session-expired"));
+      throw new ApiError(
+        parsed.success ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE",
+        response.status,
+        parsed.success ? parsed.data.error.request_id : undefined,
+        parsed.success ? parsed.data : undefined,
+      );
+    }
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) throw new ApiError("INVALID_RESPONSE", response.status);
+    return parsed.data;
+  } finally { bounded.release(); }
 }
 
 export function apiPost<T>(path: `/api/v1/${string}`, body: unknown, schema: z.ZodType<T>, csrf?: string) {

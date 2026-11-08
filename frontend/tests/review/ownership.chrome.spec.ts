@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { test, expect, createActor, removeActor, signIn } from "../helpers/auth";
 import { createLead } from "../helpers/leads";
-import { confirmOperation, contribute, manage, openContact, previewOperation } from "../helpers/ownership";
+import { contactActivity, contactAssignments, confirmOperation, contribute, manage, openContact, previewOperation } from "../helpers/ownership";
 
 test("SP06 visible Chrome: true authors, transfer, restore, mobile, keyboard and actual 200%", async ({ page, browser, baseURL }) => {
   test.setTimeout(240_000);
@@ -32,13 +32,14 @@ test("SP06 visible Chrome: true authors, transfer, restore, mobile, keyboard and
     await signIn(page, manager); await page.setViewportSize({ width: 1440, height: 900 });
     await openContact(page, contact.id);
     await page.screenshot({ path: path.join(root, "sp06-identity-desktop.png") });
-    await page.getByRole("tab", { name: "Identité", exact: true }).focus();
+    const contactTabs = page.getByRole("tablist", { name: "Rubriques du contact", exact: true }); await expect(contactTabs.getByRole("tab")).toHaveCount(2);
+    await contactTabs.getByRole("tab", { name: "Aperçu", exact: true }).focus();
     await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("tab", { name: "Demandes", exact: true })).toBeFocused();
-    await expect(page.getByRole("tab", { name: "Demandes", exact: true })).toHaveAttribute("aria-selected", "true");
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("tab", { name: "Historique", exact: true })).toBeFocused();
-    await expect(page.getByRole("tab", { name: "Historique", exact: true })).toHaveAttribute("aria-selected", "true");
+    await expect(contactTabs.getByRole("tab", { name: "Activités", exact: true })).toBeFocused();
+    await expect(contactTabs.getByRole("tab", { name: "Activités", exact: true })).toHaveAttribute("aria-selected", "true");
+    await page.keyboard.press("ArrowLeft");
+    await expect(contactTabs.getByRole("tab", { name: "Aperçu", exact: true })).toBeFocused();
+    await expect(contactTabs.getByRole("tab", { name: "Aperçu", exact: true })).toHaveAttribute("aria-selected", "true");
     await manage(page, "collaborators");
     await page.getByLabel("Collaborateur à ajouter", { exact: true }).selectOption(b.id);
     await page.getByRole("button", { name: "Ajouter le collaborateur", exact: true }).click();
@@ -46,9 +47,10 @@ test("SP06 visible Chrome: true authors, transfer, restore, mobile, keyboard and
     await signIn(mobile, b); await openContact(mobile, contact.id);
     await contribute(mobile, "SP06 note synthétique, auteur B conservé après transfert.");
     await mobile.screenshot({ path: path.join(root, "sp06-history-mobile.png"), fullPage: true });
-    await page.getByRole("tab", { name: "Historique", exact: true }).focus();
+    await page.getByRole("tab", { name: "Activités", exact: true }).focus();
     await page.keyboard.press("Enter");
     await expect(page.getByText("SP06 note synthétique, auteur B conservé après transfert.", { exact: true })).toBeVisible();
+    await expect(page.getByRole("row").filter({ has: page.getByText("SP06 note synthétique, auteur B conservé après transfert.", { exact: true }) })).toContainText("SP06 Agent B synthétique");
     await page.screenshot({ path: path.join(root, "sp06-history-desktop.png"), fullPage: true });
     await manage(page, "assign"); await page.getByLabel("Nouveau responsable", { exact: true }).selectOption(b.id);
     await previewOperation(page);
@@ -74,31 +76,39 @@ test("SP06 visible Chrome: true authors, transfer, restore, mobile, keyboard and
     await owner.setViewportSize({ width: 360, height: 800 });
     await owner.screenshot({ path: path.join(root, "sp06-former-agent-denied-mobile.png") });
     await mobile.reload();
-    await mobile.getByRole("tab", { name: "Attributions", exact: true }).tap();
+    await contactAssignments(mobile);
     await expect(mobile.getByText("Avant : SP06 Agent A synthétique · Après : SP06 Agent B synthétique", { exact: true })).toBeVisible();
     await mobile.screenshot({ path: path.join(root, "sp06-attributions-mobile.png"), fullPage: true });
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.getByRole("tab", { name: "Attributions", exact: true }).click();
+    await contactAssignments(page);
     await expect(page.getByText("Acteur : SP06 Responsable synthétique", { exact: true }).first()).toBeVisible();
     await page.screenshot({ path: path.join(root, "sp06-attributions-desktop.png"), fullPage: true });
     await manage(page, "archive"); await previewOperation(page); await confirmOperation(page);
     await mobile.reload(); await expect(mobile.getByText("Cette fiche est introuvable ou vous n’y avez plus accès.", { exact: true })).toBeVisible();
-    await page.getByRole("tab", { name: "Historique", exact: true }).click();
+    await contactActivity(page);
     await expect(page.getByText("SP06 note synthétique, auteur B conservé après transfert.", { exact: true })).toBeVisible();
+    await expect(page.getByRole("row").filter({ has: page.getByText("SP06 note synthétique, auteur B conservé après transfert.", { exact: true }) })).toContainText("SP06 Agent B synthétique");
     await page.setViewportSize({ width: 360, height: 800 });
     await page.screenshot({ path: path.join(root, "sp06-archived-history-mobile.png"), fullPage: true });
     await manage(page, "restore"); await previewOperation(page); await confirmOperation(page);
     await mobile.reload();
-    await mobile.getByRole("tab", { name: "Historique", exact: true }).tap();
+    await contactActivity(mobile);
     await contribute(mobile, "SP06 interaction tactile après restauration.", "call");
     for (const width of [320, 360, 768, 1024, 1440]) {
       await mobile.setViewportSize({ width, height: 900 });
       expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      for (const label of ["Type d’entrée", "Texte de l’entrée"]) expect((await mobile.getByLabel(label, { exact: true }).boundingBox())?.height).toBeGreaterThanOrEqual(44);
-      for (const tab of await mobile.getByRole("tab").all()) expect((await tab.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+      const tabs = mobile.getByRole("tablist", { name: "Rubriques du contact", exact: true }).getByRole("tab"); await expect(tabs).toHaveCount(2);
+      for (const tab of await tabs.all()) expect((await tab.boundingBox())?.height).toBeGreaterThanOrEqual(44);
     }
+    await mobile.getByRole("tabpanel", { name: "Activités", exact: true }).getByRole("button", { name: "Ajouter une activité", exact: true }).tap();
+    const activity = mobile.getByRole("dialog", { name: "Ajouter une activité", exact: true });
+    for (const width of [320, 360, 768, 1024, 1440]) {
+      await mobile.setViewportSize({ width, height: 900 }); expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      for (const label of ["Type d’entrée", "Texte de l’entrée"]) expect((await activity.getByLabel(label, { exact: true }).boundingBox())?.height).toBeGreaterThanOrEqual(44);
+    }
+    await activity.getByRole("button", { name: "Fermer : Ajouter une activité", exact: true }).click(); await expect(activity).not.toBeVisible();
     await mobile.setViewportSize({ width: 360, height: 800 });
-    await mobile.getByRole("tab", { name: "Identité", exact: true }).tap();
+    await mobile.getByRole("tab", { name: "Aperçu", exact: true }).tap();
     await mobile.screenshot({ path: path.join(root, "sp06-restored-identity-mobile.png"), fullPage: true });
 
     // Real browser zoom in a new disposable profile, not CSS zoom/emulation.
@@ -116,8 +126,8 @@ test("SP06 visible Chrome: true authors, transfer, restore, mobile, keyboard and
     zoomContext = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] });
     zoom = zoomContext.pages()[0]; monitor(zoom);
     await zoom.goto(`${baseURL}/contacts/${contact.id}`);
-    await expect(zoom.getByRole("tab", { name: "Historique", exact: true })).toBeEnabled();
-    await zoom.getByRole("tab", { name: "Historique", exact: true }).click();
+    await expect(zoom.getByRole("tab", { name: "Activités", exact: true })).toBeEnabled();
+    await contactActivity(zoom);
     await expect(zoom.getByText("SP06 note synthétique, auteur B conservé après transfert.", { exact: true })).toBeVisible();
     const measurement = await zoom.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth }));
     expect(measurement.ratio / baseline.ratio).toBeCloseTo(2, 1); expect(measurement.width).toBeLessThan(baseline.width * 0.6); expect(measurement.overflow).toBe(false);
@@ -126,6 +136,8 @@ test("SP06 visible Chrome: true authors, transfer, restore, mobile, keyboard and
     await expect(zoom.getByRole("alertdialog").getByText("SP06 Agent B synthétique", { exact: true }).first()).toBeVisible();
     await zoom.keyboard.press("Escape");
     await expect(zoom.getByRole("button", { name: "Vérifier l’impact", exact: true })).toBeFocused();
+    await zoom.getByRole("dialog", { name: "Gérer le contact", exact: true }).getByRole("button", { name: "Fermer : Gérer le contact", exact: true }).click();
+    await zoom.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true }).getByRole("button", { name: "Quitter sans enregistrer", exact: true }).click();
     await contribute(zoom, "SP06 entrée à 200 pour cent.");
     await zoom.getByText("SP06 entrée à 200 pour cent.", { exact: true }).scrollIntoViewIfNeeded();
     expect(await zoom.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -138,11 +150,13 @@ test("SP06 visible Chrome: true authors, transfer, restore, mobile, keyboard and
     await cdp.detach();
     await zoomContext.close(); zoomContext = undefined;
     // Source merge confirmation is reviewed on a touch surface too.
-    await mobile.getByRole("tab", { name: "Identité", exact: true }).tap();
+    await mobile.getByRole("tab", { name: "Aperçu", exact: true }).tap();
     const second = await createLead(mobile, "SP06 fiche conservée pour revue tactile", "+33600000002");
     const survivor = (await (await mobile.request.get(`/api/v1/enquiries/${second}`)).json()).contact;
     await openContact(mobile, contact.id);
-    await mobile.getByRole("button", { name: "Fusionner ce contact", exact: true }).tap();
+    await manage(mobile, "merge"); const management = mobile.getByRole("dialog", { name: "Gérer le contact", exact: true });
+    await management.getByLabel("Rechercher un contact accessible", { exact: true }).fill("SP06 fiche conservée pour revue tactile");
+    await management.getByRole("button", { name: "Rechercher", exact: true }).tap();
     await mobile.getByRole("button", { name: "Choisir SP06 fiche conservée pour revue tactile", exact: true }).tap();
     await mobile.getByLabel("Motif de l’opération", { exact: true }).fill("SP06 regroupement tactile synthétique");
     await previewOperation(mobile);

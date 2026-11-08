@@ -1,6 +1,6 @@
 import { mkdir } from "node:fs/promises";
 import { test, expect, createActor, removeActor, signIn, clearActorContext } from "../helpers/auth";
-import { createProperty, openProperty, propertyEditStep, savePropertyEdit } from "../helpers/inventory";
+import { createProperty, inventorySection, openProperty, propertyEditStep, savePropertyEdit } from "../helpers/inventory";
 import { createDevelopment, createBlock, createFloor, createType, createUnit, openDevelopment } from "../helpers/developments";
 import { createLead, staffCommand } from "../helpers/leads";
 
@@ -12,35 +12,37 @@ test("Project permissions: agent creates and edits projects, structure, units an
   try {
     await signIn(page, actor);
     const pid = await createProperty(page, "land");
-    await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
+    await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await propertyEditStep(page, 1);
     await page.getByLabel("Repère ou localisation courte (facultatif)", { exact: true }).fill("Tanger synthétique");
     await savePropertyEdit(page);
     await expect(page.getByText("Tanger synthétique", { exact: true })).toBeVisible();
     await openProperty(page, pid, "Offres");
-    await expect(page.getByRole("button", { name: /Créer une campagne/ })).toHaveCount(0);
+    await expect(inventorySection(page, "Offres").getByRole("button", { name: /^Créer une offre de / })).toHaveCount(0);
     await openProperty(page, pid, "Propriétaires");
-    await expect(page.getByRole("button", { name: "Modifier les propriétaires", exact: true })).toHaveCount(0);
+    await expect(inventorySection(page, "Propriétaires").getByRole("button", { name: "Modifier", exact: true })).toHaveCount(0);
     const project = await createDevelopment(page);
     await createBlock(page); await createFloor(page); await createType(page);
     const unit = await createUnit(page, project.id);
     const unitBefore = await (await page.request.get(`/api/v1/properties/${unit.id}`)).json();
-    await page.getByRole("link", { name: "Modifier le bien", exact: true }).click();
-    await propertyEditStep(page, 2);
+    await page.getByRole("link", { name: "Modifier", exact: true }).click();
     const placement = page.getByRole("group", { name: "Rattachement de l’unité", exact: true });
     await expect(placement).toHaveAttribute("disabled", "");
+    await expect(placement.getByRole("combobox")).toHaveCount(3);
     for (const select of await placement.getByRole("combobox").all()) await expect(select).toBeDisabled();
+    await propertyEditStep(page, 2);
     await page.locator("#property-area_sqm").fill("82");
     await savePropertyEdit(page);
-    await expect(page.getByRole("link", { name: "Modifier le bien", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Modifier", exact: true })).toBeVisible();
     const unitAfter = await (await page.request.get(`/api/v1/properties/${unit.id}`)).json();
     expect(unitAfter.area_sqm).toBe("82.00");
     expect(unitAfter.development_id).toBe(unitBefore.development_id);
     expect(unitAfter.floor_id).toBe(unitBefore.floor_id);
     expect(unitAfter.unit_type_id).toBe(unitBefore.unit_type_id);
-    expect(unitAfter.offerings).toEqual(unitBefore.offerings);
+    expect(unitAfter.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target")))).toEqual(unitBefore.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target"))));
+    expect(unitAfter.offerings.every((item: { target: { version: number } }) => item.target.version === unitAfter.version)).toBe(true);
     await openDevelopment(page, project.id);
-    await page.getByRole("link", { name: "Modifier le programme", exact: true }).click();
+    await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await page.getByLabel("Nom du programme", { exact: true }).fill("Programme modifié par agent");
     await page.getByLabel("Présentation partagée (facultative)", { exact: true }).fill("Présentation synthétique révisée.");
     const [saveResponse] = await Promise.all([
@@ -52,14 +54,14 @@ test("Project permissions: agent creates and edits projects, structure, units an
     const saved = await (await page.request.get(`/api/v1/developments/${project.id}`)).json();
     expect(saved.name).toBe("Programme modifié par agent");
     expect(saved.briefing_text).toBe("Présentation synthétique révisée.");
-    await page.getByRole("tab", { name: "Offres du programme", exact: true }).click();
-    await expect(page.getByRole("button", { name: /Créer une campagne/ })).toHaveCount(0);
+    await inventorySection(page, "Offres du programme").scrollIntoViewIfNeeded();
+    await expect(inventorySection(page, "Offres du programme").getByRole("button", { name: /^Créer une offre de / })).toHaveCount(0);
     expect((await staffCommand(page, `developments/${project.id}/archive`, { expected_version: 1, reason: "Test synthétique" })).status()).toBe(403);
     await page.getByRole("tab", { name: "Aperçu", exact: true }).click();
     await mkdir("output/playwright/project-permissions", { recursive: true });
     for (const width of [1440, 390]) {
       await page.setViewportSize({ width, height: 900 });
-      await expect(page.getByRole("link", { name: "Modifier le programme", exact: true })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Modifier", exact: true })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await page.screenshot({ path: `output/playwright/project-permissions/agent-${width}.png`, fullPage: true });
     }

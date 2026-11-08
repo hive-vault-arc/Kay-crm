@@ -1,0 +1,136 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "d3a1b61c6fcfb4cf0b9ee5d1d94e9b8553c34669",
+  "scope": "Prepared ownership Contact native helpers/scenarios and deal Contact timeline segment mapped to the selected homes",
+  "checks": [
+    {
+      "command": "npx eslint tests/helpers/ownership.ts tests/e2e/ownership.spec.ts tests/e2e/deals.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript AST/read-only source review",
+      "exitCode": 0,
+      "contactTabs": [
+        "Aperçu",
+        "Activités"
+      ],
+      "affectedOwnershipScenarios": 5,
+      "affectedDealContactSegments": 1,
+      "directHelperConsumers": [
+        "frontend/tests/e2e/deals.spec.ts",
+        "frontend/tests/e2e/files.spec.ts",
+        "frontend/tests/e2e/ownership.spec.ts",
+        "frontend/tests/review/deals.chrome.spec.ts",
+        "frontend/tests/review/files.chrome.spec.ts",
+        "frontend/tests/review/ownership.chrome.spec.ts",
+        "frontend/tests/review/requirements.chrome.spec.ts"
+      ],
+      "comparison": [
+        {
+          "file": "frontend/tests/e2e/ownership.spec.ts",
+          "tests": 5,
+          "timeoutsUnchanged": true,
+          "staffCommandsUnchanged": 4,
+          "denied404": 4,
+          "invalid422": 1
+        },
+        {
+          "file": "frontend/tests/e2e/deals.spec.ts",
+          "tests": 4,
+          "timeoutsUnchanged": true,
+          "staffCommandsUnchanged": 7,
+          "denied404": 3,
+          "invalid422": 4
+        }
+      ],
+      "boundary": "No test module import/list/run; source agreement only"
+    },
+    {
+      "command": "Unchanged production gates",
+      "executed": false,
+      "retainedFrontendUnits": 961,
+      "retainedBackendConnectionForbiddenUnits": 573,
+      "retainedBuildHistory": true
+    },
+    {
+      "command": "Frozen/main/protected review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9026,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1303,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "preparedNative": {
+    "executed": false,
+    "listedOrImportedInPlaywright": false,
+    "paths": [
+      "Aperçu management portal and explicit impact confirmation",
+      "Activités attribution disclosure and true-author cells",
+      "Separate activity drawers for unknown same-entry replay and next preflight-outage draft",
+      "Actual archive filter and overview linked-dossier count without rejected tabs",
+      "Merge current canonical notice/source-origin assertions and collaborator withdrawal",
+      "Deal Contact timeline visible links/destination/count and conversion history"
+    ],
+    "boundary": "Existing scenarios/HTTP assertions preserved; wider helper consumers and suites not accepted"
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "serviceRestart": false,
+    "screenshot": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Actual SQL/native/device/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Wider helper consumers and remaining exact job/filter/alias/legacy-selector reconciliation"
+  ],
+  "status": "Prepared source paths only; production unchanged; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/helpers/ownership.ts",
+      "bytes": 3238,
+      "sha256": "cecb26fe542b8d641cb5280a3ff5102df2fff8a4fb8ba5e55836ccbd4fcad810"
+    },
+    {
+      "file": "frontend/tests/e2e/ownership.spec.ts",
+      "bytes": 16843,
+      "sha256": "91207c792d66dc4221f63959ea05bc3868fda03594de81ad8ca027c77f305ffc"
+    },
+    {
+      "file": "frontend/tests/e2e/deals.spec.ts",
+      "bytes": 15158,
+      "sha256": "590270f2f7572444d1f82cebcedea9749d2114b0470c2fe3582a13f8a7cc1ed5"
+    }
+  ]
+}

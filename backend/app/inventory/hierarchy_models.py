@@ -37,12 +37,16 @@ class Development(Base):
             "briefing_text IS NULL OR length(briefing_text)<=10000", name="development_briefing"
         ),
         CheckConstraint("version>0", name="development_version"),
+        CheckConstraint(
+            "phase IS NULL OR phase IN ('preparation','marketing')", name="development_phase"
+        ),
         Index("ix_development_updated_id", "updated_at", "id"),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     reference: Mapped[str] = mapped_column(String(80), unique=True)
     name: Mapped[str] = mapped_column(String(160))
     category: Mapped[str] = mapped_column(String(20), server_default="mixed")
+    phase: Mapped[str | None] = mapped_column(String(16))
     location: Mapped[str | None] = mapped_column(String(500))
     briefing_text: Mapped[str | None] = mapped_column(Text)
     developer_contact_id: Mapped[UUID | None] = mapped_column(

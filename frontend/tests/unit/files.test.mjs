@@ -32,3 +32,15 @@ test("file facade requests capabilities while accepting both old and new backend
     assert.equal(response.headers.get("cache-control"), "no-store");
   }
 });
+
+test("A current upload-owner guard runs before a file permit is issued, with its cancellation signal and own session proof", async () => {
+  const calls = [], identity = { user: { id: "00000000-0000-4000-8000-000000000003", role: "manager" }, must_change_password: false, csrf_token: "synthetic-current-proof" };
+  class ApiError extends Error { constructor(code, status) { super(code); Object.assign(this, { code, status }); } }
+  const result = { permit_id: "00000000-0000-4000-8000-000000000004", version_id: "00000000-0000-4000-8000-000000000005", token: "a".repeat(43), document_version: 2, expires_at: "2026-10-29T12:02:00Z", transfer_url: "https://files.synthetic.invalid/api/v1/transfers/synthetic" };
+  const service = loadServer("src/features/files/transfers.ts", { modules: { "@/lib/api/client": { ApiError, apiGet: async (...args) => { calls.push(args); return args[0].endsWith("/auth/me") ? identity : files.permitSchema.parse(result); } }, "@/lib/auth/contracts": { meSchema: {} }, "./contracts": files, "@/lib/api/request-signal": {} } });
+  const body = { action: "upload", document_id: "00000000-0000-4000-8000-000000000001", expected_version: 1 }, controller = new AbortController();
+  await assert.rejects(service.requestFilePermit(body, controller.signal, () => { throw new ApiError("FORBIDDEN", 403); }), { code: "FORBIDDEN" }); assert.equal(calls.some(value => value[0].endsWith("/files/permits")), false);
+  const cancelled = new AbortController(); cancelled.abort(); await assert.rejects(service.requestFilePermit(body, cancelled.signal, () => { throw Error("Cancelled guard must not run"); })); assert.equal(calls.some(value => value[0].endsWith("/files/permits")), false);
+  const permit = await service.requestFilePermit(body, controller.signal, value => assert.equal(value, identity)); assert.equal(permit.binding, identity.csrf_token);
+  const sent = calls.find(value => value[0].endsWith("/files/permits")); assert.equal(sent[2], controller.signal); assert.equal(sent[3].body, body); assert.equal(sent[3].csrf, identity.csrf_token);
+});

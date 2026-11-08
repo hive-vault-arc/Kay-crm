@@ -1,0 +1,162 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "base": "ea0cdda",
+  "scope": "Selected full Contact/Lead/Deal create/edit forms and managed draft ownership",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 62,
+      "buttonSites": 415,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 172,
+      "failed": 0
+    },
+    {
+      "command": "node --test tests/unit/dossier-forms.test.mjs",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "indexedFiles": 8628,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "cwd": ".",
+      "exitCode": 0,
+      "localLinks": 1229,
+      "sprints": 22,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --check",
+      "cwd": ".",
+      "exitCode": 0
+    }
+  ],
+  "sourceAnalysis": {
+    "cssRules": 32,
+    "existingRoles": 4,
+    "missingRoles": 0,
+    "prototypeInputs": 254,
+    "prototypeHashDrift": 0
+  },
+  "sources": [
+    {
+      "path": "frontend/scripts/test-facade.mjs",
+      "sha256": "7c2305030ce01c1d1904993719a430077c17f6ed9c76263b9b12490e51bffb86"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/deals/new/page.tsx",
+      "sha256": "a435ac78309bb674a238d1b465a33f9e0c23f86fb6f4ab692ee8d028b7077522"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/leads/[id]/edit/page.tsx",
+      "sha256": "f42849eb3f0fa0280c114f6b935d2aefc06948b35c9a20099b1cbbbce7301591"
+    },
+    {
+      "path": "frontend/src/app/(workspace)/leads/new/page.tsx",
+      "sha256": "7c6747415938ddb80dab88216184ae92f1203862e6ae1f923084eee8948ff799"
+    },
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "f19787219a6d42e8ccd08bc011adb6835ad7bfdef02bc6ce6b33b529d4f8c951"
+    },
+    {
+      "path": "frontend/src/app/workspace-forms.css",
+      "sha256": "b433471775ab5c1255646882cd7f14fd03926ed6374fbcb718912cde63c02f4c"
+    },
+    {
+      "path": "frontend/src/components/shared/dossier-form.tsx",
+      "sha256": "090bd1ece460a56556797774ad6bc4494a41ffb4a14c88b95fcfba4944ca5d9c"
+    },
+    {
+      "path": "frontend/src/components/shared/unsaved-guard.tsx",
+      "sha256": "84898b5e4a41cd3aa1f5eb9fcaf733f4579df94ee294b81bf383680e71c921d8"
+    },
+    {
+      "path": "frontend/src/features/contacts/contact-editor.tsx",
+      "sha256": "de32cb6efc935ee98d1ad3b9846f33adf9b78211fafc85585126b88637c5c3b5"
+    },
+    {
+      "path": "frontend/src/features/contacts/contact-fields.tsx",
+      "sha256": "f4ef917ac247e600cee01ddbc9422bdb4af3749acda15f83c8efd45c3e609242"
+    },
+    {
+      "path": "frontend/src/features/contacts/contact-selector.tsx",
+      "sha256": "8ffc07054e817b87b9b84141098360f3aca92effa71bf5cf46b4557996babdfb"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-create.tsx",
+      "sha256": "417ad96344e23e61200fc7600086042b1fe95f5c0d0bab427851a82f90b39520"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-editor.tsx",
+      "sha256": "a1d7eeec0172f9fdd0193021bc4d9cd879a7e73e6e17f01bfb27b57152a0a853"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-qualification-fields.tsx",
+      "sha256": "983b88ed50c3f1c5fb36bcee63b4bc5512a1985f52cd500a5ec1f04d0bfa175f"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-record.tsx",
+      "sha256": "0c94796ba25d6c32040d5bb4fadadcf9c33ae997f620d8d3a7b991baa62b2505"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-create.tsx",
+      "sha256": "d20667da1d224ea66f1ea3e6053101f61998d47bc900eeca8a67e87af4db3a67"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-form.tsx",
+      "sha256": "9685f6a331c011d6af5d5705c7ef67db2d29419ef0fb4a04daec25ee3d3e3e22"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-record.tsx",
+      "sha256": "ecd5ef98e53ba2ea54bb1574ab56c70586c5d33d3e5fb1557dccc024b15f6e9f"
+    },
+    {
+      "path": "frontend/tests/unit/dossier-forms.test.mjs",
+      "sha256": "ddf3c13019df4badeac1996b379e148eeba2c256e77940b3428189970454886f"
+    }
+  ],
+  "security": "Existing scoped/atomic DTOs and explicit reuse/assignment; reviewed versions, complete collections, same-body retries and synchronous submit lock; no ordinary-form stock or provenance writes; transient managed drafts only",
+  "adaptations": [
+    "Real contact collections, type and roles are preserved beyond prototype primary text fields",
+    "Prototype relance/provenance remain their original task/source workflows",
+    "44px touch targets and narrow-panel top labels retained; exact native layout/focus acceptance pending"
+  ],
+  "limitations": [
+    "No app HTTP/native/browser/CDP access or workaround",
+    "No real database/security/concurrency or visual/focus/zoom acceptance",
+    "Original-machine mandatory skill paths unavailable; AFTER timing retained",
+    "Remaining inventory/work/admin forms, documents/PDF/report/search/audit/settings/Back-Forward/native migration incomplete",
+    "No backend/facade/dependency/worker/private transfer/main/push/merge change"
+  ]
+}

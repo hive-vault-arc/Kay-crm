@@ -1,93 +1,43 @@
 "use client";
-import { PageHeader } from "@/components/shared/page-header";
-import { CrmRecordHeader, CrmStatusBadge, CrmStatusBoard } from "@/components/shared/crm-presentation";
-import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
-import { SectionHeading } from "@/components/shared/section-heading";
-import { DealIcon, EnquiryIcon, FinanceIcon, InboxIcon, PropertyIcon, RadioIndicatorIcon, TaskIcon } from "@/components/icons";
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/shared/page-header";
 import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
-import { currentRecord } from "@/features/realtime/current-record";
-import { FilePanel } from "@/features/files/file-panel";
-import { OfferingFacts } from "@/features/requirements/offering-card";
-import { useHydrated } from "@/hooks/use-hydrated";
-import { apiGet, ApiError } from "@/lib/api/client";
-import { apiCommand } from "@/lib/api/command";
-import { dealSchema, ordinaryStages, resultSchema, stageLabels, type Deal } from "./contracts";
-import { CustomerOffers } from "./customer-offers";
-import { DealForm } from "./deal-form";
-import { DealHistory } from "./deal-history";
-import { Pipeline } from "./pipeline";
-import { ReservationPanel } from "./reservation-panel";
-import { OutcomePanel } from "./outcome-panel";
-import { OutcomeHistory } from "./outcome-history";
-import { TaskPanel } from "@/features/work/task-panel";
 import type { StaffRole } from "@/features/contacts/contracts";
-import { DealFinanceTabs } from "@/features/finance/finance-panel";
-import { campaignLabels, purchaseReasonLabels, ratingLabels } from "@/features/contacts/qualification-contracts";
-import { paymentLabels } from "./qualification-contracts";
-import { ContactProfilePanel } from "@/features/contacts/contact-profile-panel";
-import { ActivityHistory } from "@/features/activities/activity-history";
-import { RecordLifecycleAction } from "@/features/discovery/record-lifecycle-action";
-import { ProjectLinksPanel } from "@/features/project-links/project-links-panel";
-import { ContactSearchDisclosure } from "@/features/requirements/contact-search-disclosure";
+import { useLifecycleProjection } from "@/features/discovery/use-lifecycle-projection";
+import { currentRecord } from "@/features/realtime/current-record";
+import { useDealCommand } from "./use-deal-command";
+import { dealSchema, ordinaryStages, stageLabels, type Deal } from "./contracts";
+import { DealForm } from "./deal-form";
+import { DealWorkspace } from "./deal-workspace";
 
-export function DealRecord({ id, initialTask, role = "agent", actorId, initialTab }: { id: string; initialTask?: string; role?: StaffRole; actorId?: string; initialTab?: string }) {
-  const query = useQuery(`/api/v1/deals/${id}`, dealSchema); const [fresh, setFresh] = useState<Deal>(); const [editing, setEditing] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState<ApiError>(); const [comparison, setComparison] = useState<Deal>(); const [notice, setNotice] = useState("");
-  const [historyRevision, setHistoryRevision] = useState(0);
-  const lock = useRef(false); const attempt = useRef({ fingerprint: "", key: "" }); const focusEdit = useRef(false); const hydrated = useHydrated(); const value = currentRecord(query.value, fresh, id);
+type Props = { id: string; initialTask?: string; role?: StaffRole; actorId?: string; initialTab?: string };
+export function DealRecord(props: Props) { return <DealRecordLifetime key={`${props.id}:${props.actorId ?? ""}:${props.role ?? "agent"}`} {...props} />; }
+function DealRecordLifetime({ id, initialTask, role = "agent", actorId, initialTab }: Props) {
+  const query = useQuery(`/api/v1/deals/${id}`, dealSchema);
+  const [editing, setEditing] = useState(false), [editReview, setEditReview] = useState<Deal>(), [comparison, setComparison] = useState<Deal>(), [resetRevision, setResetRevision] = useState(0);
+  const [entryNotice, setEntryNotice] = useState("");
+  const command = useDealCommand(id, () => setComparison(undefined), { actorId, role, denied: (_failure, acknowledged) => { setEntryNotice(acknowledged ? "La modification est enregistrée. Les droits d’accès ont changé." : ""); } });
+  const { fresh, setFresh, busy, setBusy, error, setError, notice, setNotice, reload, mutate } = command;
+  const [cached, setCached] = useState<Deal>();
+  const focusEdit = useRef(false), remote = currentRecord(query.value?.id === id ? query.value : undefined, fresh, id), retained = currentRecord(remote, cached, id);
+  const lifecycle = useLifecycleProjection(retained, query.error), value = lifecycle.value ?? (editing ? editReview : undefined);
+  const deniedRead = query.error && [401, 403, 404].includes(query.error.status) ? query.error : undefined;
+  if (deniedRead && cached) setCached(undefined);
+  else if (!deniedRead && retained && retained !== cached) setCached(retained);
+  useLayoutEffect(() => { if (deniedRead) command.deny(deniedRead); }, [deniedRead, command]);
   const restoreFocus = useCallback((node: HTMLButtonElement | null) => { if (node && focusEdit.current) { focusEdit.current = false; node.focus(); } }, []);
-  function endEdit() { focusEdit.current = true; setEditing(false); }
-  async function reload() { const current = await apiGet(`/api/v1/deals/${id}`, dealSchema); setFresh(current); return current; }
-  async function mutate(path: `/api/v1/${string}`, body: unknown, method: "POST" | "PATCH" = "POST") {
-    if (lock.current) return false; lock.current = true; setBusy(true); setError(undefined); setNotice(""); setComparison(undefined);
-    const fingerprint = JSON.stringify({ path, body, method }); if (attempt.current.fingerprint !== fingerprint) attempt.current = { fingerprint, key: crypto.randomUUID() };
-    try { await apiCommand(path, body, resultSchema, attempt.current.key, method); await reload(); setNotice("Modification enregistrée. L’historique conserve son auteur."); return true; }
-    catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); return false; }
-    finally { lock.current = false; setBusy(false); }
-  }
-  async function compare() { setBusy(true); try { setComparison(await apiGet(`/api/v1/deals/${id}`, dealSchema)); } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); } finally { setBusy(false); } }
+  function endEdit() { focusEdit.current = true; setEditing(false); setEditReview(undefined); setBusy(false); }
+  async function compare() { try { const current = await command.inspect(); if (command.active()) setComparison(current); } catch { /* The command owner presents scoped read/authority errors. */ } }
   const returnLink = <Button action="back" asChild variant="quiet" size="compact" className="justify-self-start"><Link href="/deals">Retour aux affaires</Link></Button>;
   const heading = <div className="grid min-w-0 justify-items-start gap-2">{returnLink}<PageHeader title="Affaire" description="Pipeline, prochaine action, propositions client et historique." route={`/deals/${id}`} /></div>;
-  if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
-  if (error && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED", "CONTACT_ARCHIVED"].includes(error.code)) return <>{heading}<RecordError error={error} /></>;
+  if (query.error && ((!editing && !value) || deniedRead)) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
+  if (error && [401, 403, 404].includes(error.status)) return <>{heading}{entryNotice ? <p role="status">{entryNotice}</p> : null}<RecordError error={error} /></>;
   if (!value) return <>{heading}<p role="status">Chargement de l’affaire…</p></>;
   const writable = !value.contact.archived_at && !value.archived_at && (value.stage === "reserved" || ordinaryStages.includes(value.stage as typeof ordinaryStages[number]));
   const canArchive = !value.contact.archived_at && (role !== "agent" || (actorId && value.contact.primary_agent.id === actorId));
-  if (editing && writable) return <div className="grid min-w-0 gap-4"><PageHeader icon={DealIcon} title="Modifier l’affaire" description={value.contact.name} route={`/deals/${id}`} /><DealForm key={`edit:${value.id}`} value={value} contact={value.contact} denied={setError} busyChanged={setBusy} cancel={endEdit} saved={async () => { await reload(); endEdit(); setNotice("Affaire enregistrée."); }} /></div>;
-  return <div className="record-stack crm-record-view grid min-w-0 gap-4">{returnLink}<CrmRecordHeader contact={value.contact} title={value.title} route={`/deals/${id}`} badges={<><CrmStatusBadge state={value.stage}>{stageLabels[value.stage]}</CrmStatusBadge><CrmStatusBadge state={value.rating} dot={false}>{ratingLabels[value.rating]}</CrmStatusBadge>{value.archived_at ? <CrmStatusBadge state="archived">Archivée</CrmStatusBadge> : null}</>} actions={<><Button action="file" asChild variant="outline"><Link href={`/deals/${id}/documents`}>Documents et PDF</Link></Button>{writable ? <Button action="edit" variant="outline" ref={restoreFocus} type="button" disabled={!hydrated || busy} onClick={() => { setEditing(true); setNotice(""); setError(undefined); }}>Modifier l’affaire et la prochaine action</Button> : null}{canArchive ? <RecordLifecycleAction kind="deals" id={id} version={value.version} archivedAt={value.archived_at} label={value.title} onChanged={() => void reload()} /> : null}</>} />
-    <div className="crm-record-layout" role="region" aria-label="Contact et offre liée"><ContactProfilePanel contact={value.contact} /><div className="crm-record-primary"><CrmStatusBoard title="Étape de l’affaire" label="Étapes de l’affaire, lecture seule" current={value.stage} splitAt={4} items={Object.entries(stageLabels).map(([id, label]) => ({ id, label }))} />
-    <section className="crm-panel crm-detail-facts" aria-label="Qualification et suivi"><SectionHeading compact icon={DealIcon}>Qualification et suivi</SectionHeading><RecordFacts columns={2}>
-      <RecordFact icon={TaskIcon} label="Prochaine action">{value.next_action || "Non renseignée"}</RecordFact>
-      <RecordFact icon={TaskIcon} label="Notes">{value.notes || "Non renseignées"}</RecordFact>
-      <RecordFact icon={FinanceIcon} label="Budget">{value.initial_budget || "Non renseigné"}</RecordFact>
-      <RecordFact icon={DealIcon} label="Motifs d’achat">{value.purchase_reasons.map(code => purchaseReasonLabels[code]).join(", ") || "Non renseignés"}</RecordFact>
-      <RecordFact icon={PropertyIcon} label="Projets">{value.projects.map(project => project.name).join(" · ") || "Non renseignés"}</RecordFact>
-      <RecordFact icon={InboxIcon} label="Source">{campaignLabels[value.campaign_source]}</RecordFact>
-      <RecordFact icon={RadioIndicatorIcon} label="Qualification">{ratingLabels[value.rating]}</RecordFact>
-      <RecordFact icon={FinanceIcon} label="Financement">{value.payment_method ? paymentLabels[value.payment_method as keyof typeof paymentLabels] ?? value.payment_method : "Non renseigné"}</RecordFact>
-      <RecordFact icon={PropertyIcon} label="Nombre de pièces">{value.number_of_rooms ?? "Non renseigné"}</RecordFact>
-      <RecordFact icon={DealIcon} label="Étape actuelle"><strong>{stageLabels[value.stage]}</strong> · version {value.version}</RecordFact>
-      <RecordFact icon={EnquiryIcon} label="Demande d’origine">{value.enquiry_id ? <Link className="inline-flex min-h-control items-center wrap-anywhere text-link underline" href={`/leads/${value.enquiry_id}`}>Voir la demande d’origine conservée</Link> : "Sans demande d’origine liée."}</RecordFact>
-      {!value.offering ? <RecordFact icon={PropertyIcon} label="Offre d’inventaire">Aucune offre d’inventaire liée.</RecordFact> : null}
-    </RecordFacts></section>
-    {value.contact.archived_at ? <p role="status">Contact archivé : affaire et propositions conservées en lecture seule.</p> : null}{value.archived_at ? <p role="status">Affaire archivée. Restauration possible pendant 30 jours ; son historique reste consultable.</p> : null}
-    {value.offering ? <section className="surface grid min-w-0 gap-4" aria-label="Cible actuelle de l’affaire"><SectionHeading compact as="h3" icon={PropertyIcon} tone="teal">Offre d’inventaire liée</SectionHeading><OfferingFacts offering={value.offering} /></section> : null}</div></div>
-    <ProjectLinksPanel scope="deals" id={id} writable={!value.contact.archived_at && !value.archived_at} onChanged={() => setHistoryRevision(current => current + 1)} />
-    <DealFinanceTabs role={role} deal={value} initialTab={initialTab}>
-    <ActivityHistory key={`activities:${value.id}`} scope="deals" id={value.id} writable={!value.contact.archived_at && !value.archived_at} revision={value.version + historyRevision} />
-    {value.enquiry_id ? <ActivityHistory key={`origin:${value.id}`} scope="deals" id={value.id} origin /> : null}
-    {notice && !editing ? <p role="status" className="text-success">{notice}</p> : null}
-    {error ? <section className="grid gap-4" aria-label="Échec de la modification"><RecordError error={error} /><p>Votre saisie reste affichée. Une réponse interrompue peut avoir été enregistrée : réessayez la même action sans la modifier. En cas de conflit, comparez la version actuelle avant une nouvelle tentative.</p><Button action="compare" type="button" variant="outline" className="justify-self-start" disabled={busy} onClick={() => void compare()}>Comparer la version actuelle</Button>{comparison ? <div className="grid gap-4 border-y py-4"><p className="wrap-anywhere">Version actuelle {comparison.version} : {comparison.title} · {stageLabels[comparison.stage]}</p><p className="whitespace-pre-wrap wrap-anywhere">Prochaine action actuelle : {comparison.next_action || "Non renseignée"}</p><p>Le chargement remplacera les formulaires affichés. Copiez votre brouillon si vous souhaitez le conserver.</p><Button action="refresh" type="button" variant="outline" className="h-auto min-h-control justify-self-start whitespace-normal" onClick={() => { setFresh(comparison); setComparison(undefined); setError(undefined); }}>Charger cette version et réinitialiser les formulaires</Button></div> : null}</section> : null}
-    <div className="crm-record-grid"><ReservationPanel deal={value} writable={writable && !editing} busy={busy} busyChanged={setBusy} saved={reload} />
-    <OutcomePanel deal={value} writable={!value.contact.archived_at && !value.archived_at && !editing} busy={busy} busyChanged={setBusy} saved={reload} /></div>
-    <Pipeline key={`pipeline:${value.version}`} deal={value} writable={writable} busy={busy} mutate={mutate} /><CustomerOffers key={`offers:${value.id}`} deal={value} writable={writable} busy={busy} mutate={mutate} />
-    <TaskPanel key={value.id} contactId={value.contact.id} dealId={value.id} writable={!value.contact.archived_at && !value.archived_at} initialTask={initialTask} />
-    <OutcomeHistory key={`outcomes:${value.id}`} id={value.id} revision={value.version} /><DealHistory key={`history:${value.id}`} id={value.id} revision={value.version} /><FilePanel parentKind="deal" parentId={value.id} writable={writable && !busy} />
-    </DealFinanceTabs>
-    <Button action="back" asChild variant="outline" className="justify-self-start"><Link href="/deals">Toutes les affaires</Link></Button>
-    <ContactSearchDisclosure contactId={value.contact.id} writable={!value.contact.archived_at && !value.archived_at} />
-  </div>;
+  if (editing && editReview) return <div className="grid min-w-0 gap-4">{query.error ? <RecordError error={query.error} retry={query.refresh} /> : null}<DealForm key={`edit:${editReview.id}`} value={editReview} contact={editReview.contact} actorId={actorId} role={role} unavailable={Boolean(query.error || !remote || !writable || value.contact.id !== editReview.contact.id)} denied={(failure, acknowledged) => { setEntryNotice(acknowledged ? "L’affaire est enregistrée. Les droits d’accès ont changé." : ""); setError(failure); }} busyChanged={setBusy} cancel={endEdit} saved={async (_id, accepted) => { setFresh(accepted); endEdit(); setNotice("Affaire enregistrée."); }} /></div>;
+  return <>{query.error ? <RecordError error={query.error} retry={query.refresh} /> : null}<DealWorkspace recovery={command} key={`${id}:${resetRevision}`} contactChanged={query.refreshQuietly} denied={(failure, acknowledged) => { setEntryNotice(acknowledged ? "L’activité est enregistrée. Les droits d’accès ont changé." : ""); setError(failure); }} deal={value} role={role} writable={writable} canArchive={Boolean(canArchive) || lifecycle.holding} actorId={actorId} lifecycleHeldChanged={lifecycle.hold} lifecycleSaved={async (record, signal) => { if (signal.aborted) return; setFresh(record); setNotice("État de l’affaire enregistré."); query.refreshQuietly(); }} lifecycleDenied={(failure, acknowledged) => { setEntryNotice(acknowledged ? "L’opération est enregistrée. Les droits d’accès ont changé." : ""); setError(failure); }} busy={busy} busyChanged={setBusy} mutate={mutate} reload={reload} error={error} notice={notice} commandState={error || command.uncertain ? <section className="grid gap-4" aria-label="Échec de la modification">{error ? <RecordError error={error} /> : null}<p>{command.uncertain ? command.acknowledged ? "La modification est enregistrée. Actualisez son résultat sans l’enregistrer à nouveau." : "La réponse est interrompue. Réessayez la même opération pour retrouver son résultat." : "Votre saisie reste affichée. Comparez la version actuelle avant une nouvelle tentative."}</p>{command.uncertain ? <Button action="retry" type="button" variant="outline" className="justify-self-start" disabled={busy} onClick={() => void command.retry()}>{command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération"}</Button> : null}<Button action="compare" type="button" variant="outline" className="justify-self-start" disabled={busy || command.uncertain} onClick={() => void compare()}>Comparer la version actuelle</Button>{comparison ? <div className="grid gap-4 border-y py-4"><p className="wrap-anywhere">Version actuelle {comparison.version} : {comparison.title} · {stageLabels[comparison.stage]}</p><p className="whitespace-pre-wrap wrap-anywhere">Prochaine action actuelle : {comparison.next_action || "Non renseignée"}</p><p>Le chargement remplacera les formulaires affichés. Copiez votre brouillon si vous souhaitez le conserver.</p><Button action="refresh" type="button" variant="outline" disabled={busy || command.uncertain} className="h-auto min-h-control justify-self-start whitespace-normal" onClick={() => { if (command.accept(comparison)) { setComparison(undefined); setResetRevision(value => value + 1); } }}>Charger cette version et réinitialiser les formulaires</Button></div> : null}</section> : null} onEdit={() => { if (!writable || busy || command.protected || command.locked()) return; setEditReview(structuredClone(value)); setEditing(true); setNotice(""); setError(undefined); }} editRef={restoreFocus} initialTask={initialTask} initialTab={initialTab} /></>;
 }

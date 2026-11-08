@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import ts from "typescript";
+import { createHash } from "node:crypto";
 
 const root = path.resolve(import.meta.dirname, "..");
 async function walk(directory) {
@@ -10,7 +11,17 @@ async function walk(directory) {
 }
 const files = (await walk(path.join(root, "src"))).filter(file => /\.[cm]?[jt]sx?$/.test(file)).sort();
 const manifest = JSON.parse(await readFile(path.join(root, "../docs/reference/iconsax/assets.json"), "utf8"));
-const known = new Set(manifest.icons.map(icon => icon.export));
+const selected = JSON.parse(await readFile(path.join(root, "../branding/prototype/kay-glyphs.json"), "utf8"));
+const shapeTags = new Set(["path", "circle", "rect", "ellipse", "line", "polyline", "polygon"]);
+for (const icon of selected.icons) {
+  assert.equal(createHash("sha256").update(JSON.stringify(icon.nodes)).digest("hex"), icon.sha256, `Selected glyph source changed: ${icon.export}`);
+  assert.match(icon.export, /^[A-Z]\w+Icon$/);
+  for (const [tag, attributes] of icon.nodes) {
+    assert(shapeTags.has(tag), "Selected glyph contains a non-shape element");
+    for (const [name, value] of Object.entries(attributes)) assert(!/^on/i.test(name) && !/href|style/i.test(name) && typeof value === "string", "Selected glyph contains an unapproved attribute");
+  }
+}
+const known = new Set([...manifest.icons, ...selected.icons].map(icon => icon.export));
 const consumers = [], chartSvg = [], violations = [];
 for (const file of files) {
   const relative = path.relative(root, file).replaceAll("\\", "/");

@@ -1,0 +1,267 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "f6125cf682acfbb9db92d2fd6013191d490c49ea",
+  "scope": "Exact selected inventory directory range filters through UI/facade/routes/counts/facets/pages, shared frame and deep-link reset recovery",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 532,
+      "failed": 0,
+      "skipped": 0,
+      "newCases": 12
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "consumers": 105,
+      "iconSites": 348,
+      "buttonSites": 495,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true,
+      "compiledFunctions": [
+        {
+          "file": ".next/server/chunks/ssr/frontend_src_components_shared_unsaved-guard_tsx_1bn5-aixvkna7._.js",
+          "bytes": 2686,
+          "sha256": "95f540189a71100fd6516ab65544218b65390bf52e62dda6c2871a08f6440540"
+        },
+        {
+          "file": ".next/server/chunks/ssr/_0zkov84junom8._.js",
+          "bytes": 2684,
+          "sha256": "ef766e113bf8d733999a3610b97423921d544fecf925dd73ec464e6745d5b7f7"
+        }
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 476,
+      "deselected": 704,
+      "newCases": 13,
+      "boundary": "Connection-forbidden units; completely stubbed in-process ASGI, no DB or listener"
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m ruff check <nine changed Python paths>",
+      "exitCode": 0,
+      "paths": [
+        "backend/app/inventory/directory_filters.py",
+        "backend/app/inventory/hierarchy_queries.py",
+        "backend/app/inventory/hierarchy_router.py",
+        "backend/app/inventory/queries.py",
+        "backend/app/inventory/router.py",
+        "backend/app/inventory/selection.py",
+        "backend/tests/test_inventory_directory_filters_unit.py",
+        "backend/tests/test_inventory_directory_ranges.py",
+        "backend/tests/unit_selection.py"
+      ]
+    },
+    {
+      "command": "backend/.venv/Scripts/python.exe -m ruff format --check <same nine changed Python paths>",
+      "exitCode": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 219
+    },
+    {
+      "command": "Read-only frozen source hash check",
+      "exitCode": 0,
+      "frozenInputs": 254,
+      "drift": 0
+    },
+    {
+      "command": "node <installed Frontend Taste>/scripts/lint.mjs --app --json <five changed inventory UI paths>",
+      "exitCode": 0,
+      "files": 5,
+      "findings": []
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8830,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1260,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "corrections": [
+    "Positive comparison AfterValidator retains rejection of zero; corrected new test assumptions.",
+    "ES2017 remains; BigInt constructors replace unsupported newer literal syntax.",
+    "Initial root-cwd mypy used wrong configuration; correct backend-cwd command passes without unrelated settings/finance edits."
+  ],
+  "preparedNotExecuted": [
+    "Four real PostgreSQL directory/annual-rent/same-offer/physical-fact/exact-boundary cases.",
+    "One real browser journey for desktop filters, invalid draft retention, phone drawer/cards and desktop List preference recovery."
+  ],
+  "remainingReconciliation": [
+    "Programme preparation/marketing phase needs real persisted equivalent and truth for legacy records.",
+    "Programme desktop Cards/List parity.",
+    "Selected single-category radio presentation with retained multi-query/legacy category semantics.",
+    "Project-kind URL Back/Forward synchronization."
+  ],
+  "skills": {
+    "frontendTaste": "Current app-screen reference read; grouped label-above controls, consistent spacing, honest states and compact phone filter sheets. New draw/palette/shell replacement excluded by explicit frozen selected-design instruction.",
+    "selectedSystem": "Existing shadcn/Tailwind primitives and selected reference filter frame; no stylesheet/dependency/chart added.",
+    "originalMachineRequiredSkills": "Unavailable/not claimed.",
+    "antislopTiming": "AFTER unchanged; no audit-only fixes."
+  },
+  "noAppBrowserHttpWorkaround": true,
+  "noRealDatabaseServicePrivateConfigOrRecords": true,
+  "noSchemaMigrationOrBusinessWrite": true,
+  "noMainPushMergeOrDeploy": true,
+  "notVerified": [
+    "Real SQL results/current authority/performance/race",
+    "Native layout/focus/keyboard/touch/zoom/responsive behavior",
+    "Real CI/AFTER/product acceptance"
+  ],
+  "sourceHashMode": "Canonical staged Git blobs; working inputs match Git normalization",
+  "sourceHashes": [
+    {
+      "file": "backend/app/inventory/directory_filters.py",
+      "bytes": 2234,
+      "sha256": "eadba6a27c043645c212c64277b9a2bd6312b19f959afe3aa6968d07d8353bf4"
+    },
+    {
+      "file": "backend/app/inventory/hierarchy_queries.py",
+      "bytes": 13685,
+      "sha256": "63122d7458781c16c451a14959421df7bcc224d27dec04dd16688451fcecd52b"
+    },
+    {
+      "file": "backend/app/inventory/hierarchy_router.py",
+      "bytes": 6926,
+      "sha256": "6a34d46959df8fed15f08830a78f59868d1c762bd29778c3418140325532023f"
+    },
+    {
+      "file": "backend/app/inventory/queries.py",
+      "bytes": 14095,
+      "sha256": "3aa3bbef86a8c77bf0a587e9463a9e3e87d69224e6e1ee2236d22982f9b61fe4"
+    },
+    {
+      "file": "backend/app/inventory/router.py",
+      "bytes": 6206,
+      "sha256": "6f97588e785dfa9c33086e399934ddb5dcf304029b8791bcfaeca8e699507b54"
+    },
+    {
+      "file": "backend/app/inventory/selection.py",
+      "bytes": 7357,
+      "sha256": "e8268e1e2c210906cbf53b239a11d179e0e7dc1d3959c1a9af9a4004f0e5410b"
+    },
+    {
+      "file": "backend/tests/test_inventory_directory_filters_unit.py",
+      "bytes": 8769,
+      "sha256": "954a143b50f72f8fd85449f49a646a31c9477502b576cb781e1883e5244a60cd"
+    },
+    {
+      "file": "backend/tests/test_inventory_directory_ranges.py",
+      "bytes": 5044,
+      "sha256": "f04b5b67a6fc53517c6a1d2901d734ddceadbd24c060639192409c5d1251f893"
+    },
+    {
+      "file": "backend/tests/unit_selection.py",
+      "bytes": 1345,
+      "sha256": "0b52bb19f80d7601d2241f7f680fce7b17c01ead8b5bee1110cded025ca7dabe"
+    },
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4199,
+      "sha256": "31a7223521d697642a2d95822599fa6fc5176e91a4a4a3ac1171bc7e53d5477c"
+    },
+    {
+      "file": "frontend/src/features/contacts/use-directory-filters.ts",
+      "bytes": 1531,
+      "sha256": "f7bf35d92d403ec40fdb887e85ce801096d7de72d1d9e2c7e0b5c25cc22d490c"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-directory.tsx",
+      "bytes": 5587,
+      "sha256": "8b54d6ea2e36bb25bd493962227f1ccc8df01ff94dd07376febb381f52c6aa8d"
+    },
+    {
+      "file": "frontend/src/features/inventory/facade.ts",
+      "bytes": 7547,
+      "sha256": "974307be4181efbfe96a23f7f7d241d0ecb6a36e0c5580d11a7b73ecec38aac4"
+    },
+    {
+      "file": "frontend/src/features/inventory/inventory-range-fields.tsx",
+      "bytes": 1793,
+      "sha256": "768a51b72dbc6f7ba278778c686d8366bdb0de1ac2ca4af8b5c44f42226b5f03"
+    },
+    {
+      "file": "frontend/src/features/inventory/inventory-range.ts",
+      "bytes": 2667,
+      "sha256": "a68075a8e433f4dfd629718204df7ccdb7f76f9e71da2581b1668982ce500fda"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-directory-model.ts",
+      "bytes": 1220,
+      "sha256": "92b39fa74bea378f020a13afb96a223ddd4540e0b2ef3e3bc8a98cfcfa539176"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-directory.tsx",
+      "bytes": 5924,
+      "sha256": "88d94a2ef6b360d656b7a0b7e8023742a66ceca209bbd6b05e4d2b41f57260ba"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-filters.tsx",
+      "bytes": 4791,
+      "sha256": "876cfff884befed8e2ec3cf1b1142a9f5b21ead4398f8b437b3222975c3867fb"
+    },
+    {
+      "file": "frontend/src/features/inventory/unit-directory.tsx",
+      "bytes": 8503,
+      "sha256": "c68c46dd9444b58fe2f6adf97144dfa7c3bede277784687504437539e6443079"
+    },
+    {
+      "file": "frontend/tests/e2e/inventory-directory-ranges.spec.ts",
+      "bytes": 3926,
+      "sha256": "65cb8b03090414a36a109e202d5838518b9c80b2186dccd018106509598e8c23"
+    },
+    {
+      "file": "frontend/tests/unit/inventory-directory.test.mjs",
+      "bytes": 11481,
+      "sha256": "2b58df17b7cf8b5ec1dac6c0392de02470afe9fd07a6bcb39ed698da62e5a6b1"
+    },
+    {
+      "file": "frontend/tests/unit/projects.test.mjs",
+      "bytes": 13299,
+      "sha256": "8a08d4b5f84f58726907ff7baaf336a7d8338ffadf6c5108f6c7f345aabac294"
+    }
+  ]
+}

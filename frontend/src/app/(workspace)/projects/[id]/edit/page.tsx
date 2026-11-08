@@ -12,5 +12,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const route = `/projects/${id}/edit`;
   const identity = await requireIdentity(route);
   if (identity.state !== "authenticated") return <AuthUnavailable path={route} />;
-  return <><PageHeader title="Modifier le programme" description="Faits et présentation partagés ; identités privées sous droits Contacts." route={route} /><DevelopmentRecord id={id} role={identity.profile.user.role} edit /></>;
+  return <><PageHeader title="Modifier le programme" description="Faits et présentation partagés ; identités privées sous droits Contacts." route={route} /><DevelopmentRecord key={`${id}:${identity.profile.user.id}:${identity.profile.user.role}`} actorId={identity.profile.user.id} id={id} role={identity.profile.user.role} edit /></>;
 }

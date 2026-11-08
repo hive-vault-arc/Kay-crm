@@ -1,0 +1,196 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "27b04d3d05e33de1e4306a9e363ef0fa3decd4df",
+  "scope": "Selected owners, offering/availability and programme structure forms: strict scoped original request/key/callback, current actor proof, explicit current comparison and verified host handoff",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 804,
+      "additionalCases": 22,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Actual intents/controllers/forms/host callbacks in synthetic harnesses; no actual app or SQL"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 511,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <8 inventory UI sources>",
+      "exitCode": 0,
+      "files": 8,
+      "findings": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8955,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1281,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/inventory-record-recovery.spec.ts",
+      "cases": 3,
+      "scenarios": [
+        "phone legal owner lost acknowledgement",
+        "desktop edited offering acknowledged result-read outage",
+        "phone agent programme block lost acknowledgement"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedHomesFieldsTokensGlyphsTabsMotionUnchanged": true,
+    "strictScopedOriginalBodyPathMethodVersionsAndKey": true,
+    "currentOriginatingActorRoleAndParentProof": true,
+    "unknownInputDismissalAndRefreshProtected": true,
+    "acknowledgedCompletionOnlyAndAwaitedOriginalCallback": true,
+    "exactOfferedCurrentAcceptanceAfterKnownConflict": true,
+    "nullablePriceAndExactAmountPeriodRetained": true,
+    "verifiedMonotonicRecordHandoffThroughActualDrawers": true,
+    "currentDenialAndDisposalFenced": true,
+    "existingIndirectMembershipAndBackendAuthorityUnchanged": true,
+    "noPersistentBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Old generic owner in development-creation-wizard.tsx, development-editor.tsx and property-listing-wizard.tsx",
+    "Remaining exact domain field/action/context reconciliation",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/accounts/private configuration/records/services/workers/scanners/simulator/import/export/transfer access",
+    "Migrations0036/0037 or other migration execution",
+    "Actual SQL/concurrent stock/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4974,
+      "sha256": "68297881b778da9fb382ee28638b7e4599a93df452d5f318a24c5578cd1cb48b"
+    },
+    {
+      "file": "frontend/src/features/inventory/campaign.tsx",
+      "bytes": 3838,
+      "sha256": "e1d1a72bf2dd1cdd59e9700b6f982dc23cad86375b4a88abafd228a79d688f2e"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-record.tsx",
+      "bytes": 10900,
+      "sha256": "1b6121a31400f2e7e7a59efcedbd1b34068f81123c689e9def294a1de292d51f"
+    },
+    {
+      "file": "frontend/src/features/inventory/hierarchy-editor.tsx",
+      "bytes": 11627,
+      "sha256": "ff2896dd92115eab1508b42055a9377908da87cf5a960cd7c131460f773eb0eb"
+    },
+    {
+      "file": "frontend/src/features/inventory/hierarchy-panel.tsx",
+      "bytes": 5909,
+      "sha256": "19972d6eef3951943afdf66d8e5f6789ed2a9126d12da1917e93d65ec705db8a"
+    },
+    {
+      "file": "frontend/src/features/inventory/inventory-offer-section.tsx",
+      "bytes": 2354,
+      "sha256": "2bbfa05e5c8126875701aa32b059a4b7770c6384b93cd27443ba678648a1b37a"
+    },
+    {
+      "file": "frontend/src/features/inventory/offering-editor.tsx",
+      "bytes": 15249,
+      "sha256": "48e788c0607714d963454a79ec1361cdf10655f5f63b7b043b03a9c09880d748"
+    },
+    {
+      "file": "frontend/src/features/inventory/owner-editor.tsx",
+      "bytes": 12053,
+      "sha256": "b10e42355678c3f4352db92f7f8ed97bd506625a7fb39b90d320c0cb55c91049"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-record.tsx",
+      "bytes": 9764,
+      "sha256": "5abd1391bd1b1a85f27cce16ee268a724d463691882c20cd865279a3c075cbdf"
+    },
+    {
+      "file": "frontend/src/features/inventory/record-command-intent.ts",
+      "bytes": 4525,
+      "sha256": "4d018b44811a26e3970941a1aae67ceccb7301995d870b969c3bce21a3ce92cb"
+    },
+    {
+      "file": "frontend/src/features/inventory/use-record-command.ts",
+      "bytes": 11226,
+      "sha256": "5b5c8073016cf9c241e65087b2ef39873b3bfc32da879f4b3aa98b4186c7a0aa"
+    },
+    {
+      "file": "frontend/tests/e2e/inventory-record-recovery.spec.ts",
+      "bytes": 6290,
+      "sha256": "6e2ae0ac282dd0c328aea2bb599be004cb3837e0f918cae69cbecf5bd1ad0f13"
+    },
+    {
+      "file": "frontend/tests/unit/inventory-forms.test.mjs",
+      "bytes": 23625,
+      "sha256": "d68ad8f221eb1dacc2d64228506b0a81f66b7b1abf3e0eec0140c1815c053ad9"
+    },
+    {
+      "file": "frontend/tests/unit/offering-forms.test.mjs",
+      "bytes": 22619,
+      "sha256": "1a005b1cf942e1de652eb4dbdc1e423313b94e1df434d6e995d78f369609d77a"
+    },
+    {
+      "file": "frontend/tests/unit/record-command-fixtures.mjs",
+      "bytes": 5066,
+      "sha256": "4ecba9cef7ffabc7c90fa40ad5bd96e84162f84238b033d41e1fe7f4635849e1"
+    },
+    {
+      "file": "frontend/tests/unit/record-command-recovery.test.mjs",
+      "bytes": 15016,
+      "sha256": "64c017141d9953718cfc0a2ca1ddb3c4e8f4ecaaa7d36cf4c66706afd43b5756"
+    }
+  ]
+}

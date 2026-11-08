@@ -6,6 +6,14 @@ The actual website/technical owner remain Q01; no real site is connected.
 
 ## Authority and HTTP
 
+Selected migration2026-10-28 adds the existing optional property-reference
+contract to the selected public form. It retains exact-byte unknown retries,
+receipt-only projection and source-owned signing, adds local text/UTF-8 bounds
+and disposal guards, and extends the existing forbidden-control check to the
+reference. No inventory lookup, staff scope, processing or migration is added.
+See [form integration](intake-form-local.md); actual native/SQL acceptance remains
+pending.
+
 The separate Python-venv simulator binds127.0.0.1:8001 over local HTTPS.
 Its origin is **https://127.0.0.1:8001**, not localhost: staff host-only cookies
 therefore do not accompany form requests. Strict Host and exact Origin/JSON
@@ -113,3 +121,35 @@ public root. Real-site authentication/rotation ownership, production ACLs,
 retention and privacy notices require separate Q01/Q02/Q03 decisions.
 
 Executable verification and limitations: [SP-20 execution](../03-planning/sprints/sp-20-execution.md).
+
+## Selected public form migration — 2026-10-27
+
+The selected Demande web composition reuses the shared KAY atmospheric/auth-card
+geometry and source84px logo, with four labelled fields, one full-width primary
+action and semantic receipt states. The message remains optional under the real
+contract, despite the prototype's illustrative required-field handler. This is
+an integration proposal pending native/owner review, not a new intake rule.
+
+The read proxy now allows exactly `/images/workspace/kay-logo.svg` and
+`/images/workspace/kay-pearl-atmosphere.png` alongside its prior static routes.
+The selected background is1469089 bytes and fits the existing2000000-byte
+upstream cap. Other image/optimizer/private paths remain denied; query strings
+cannot choose an upstream destination, and cookies/authorization are not relayed.
+Host, fixed loopback HTTPS/CA, redirect/proxy restrictions and no-store remain.
+
+The public client omits cookies/referrer, rejects redirects and parses only the
+closed receipt ID/state shape. It does not call staff APIs or store data in URLs
+or browser storage. Unknown/rate-limited send retains the exact JSON bytes,
+submission ID and submitted_at. Duplicate sends synchronously lock, including
+after acknowledgement before a rerender.422/413 alone release the draft for a
+corrected new identity. Receipt acknowledgement clears hidden draft/payload data;
+refresh uses only the known receipt ID and rejects a foreign receipt response.
+Refresh never submits. Queued/failed receipt cannot start another request;
+processed state permits an explicit new request. Unmount aborts outstanding work.
+
+Thirteen connection-forbidden ASGI/public-proxy cases and seven frontend actual
+controller/client/composition cases are added. They do not certify actual signed
+delivery, worker/DB atomicity, native layout/accessibility or a connected website.
+Browser sources are updated, not executed. No source key, runtime configuration,
+real payload, source/worker CLI, database or service was read, changed or launched.
+[Current evidence](../03-planning/design-migration-evidence/intake-ui-2026-10-27.json).

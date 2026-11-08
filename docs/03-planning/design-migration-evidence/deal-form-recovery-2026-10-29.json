@@ -1,0 +1,174 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "bd2e7c8e782b853f11a17a3f357f1c62a0a0951f",
+  "scope": "Selected affair create/full atomic editor request recovery, current deal/contact completion and normalized baselines, exact prefill context, retained hosts and verified parent handoff",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 727,
+      "additionalCases": 20,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic actual route/controller/form/context/record-host tests and synthetic TLS; affair form suite registered, existing dossier coverage uses actual owner"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 504,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <affair form/create/record/context>",
+      "exitCode": 0,
+      "files": 4,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1277,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8926,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "validationNote": "Existing dossier fixtures supply complete receipts and current synthetic identity; the new suite covers coherent authoritative completion and stale same-ID reads. Atomic stale contact replies and lower independent canonical counters are explicitly covered; no suppression.",
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/deal-form-recovery.spec.ts",
+    "browserCases": 3,
+    "typechecked": true,
+    "scenarios": [
+      "Phone existing-contact manual create lost acknowledgement",
+      "Desktop atomic affair/contact edit lost acknowledgement",
+      "Phone acknowledged atomic edit contact-read outage without another PATCH"
+    ],
+    "syntheticIsolatedFixturesOnly": true,
+    "tracesVideosScreenshots": false
+  },
+  "preserved": {
+    "selectedThreeSectionsFullFieldsAndHeader": true,
+    "threeProjectsContextZeroAndCreationOnlyStage": true,
+    "originalBodyContextKeyAndBothVersions": true,
+    "originatingCurrentActorRole": true,
+    "acknowledgedCompletionWithoutAnotherWrite": true,
+    "atomicOriginalContactMinimumWithIndependentCanonicalCounters": true,
+    "explicitConflictAndReadOnlyReturn": true,
+    "exactPrefillTargetAndAnnouncedSearchUnlink": true,
+    "retainedHostsDisposalDenialAndParentBusyRelease": true,
+    "backendAuthorityAtomicityReceiptMergeHistory": true,
+    "noBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Other domain commands and exact field/action/context audit",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: no backend change this checkpoint",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/simulator/account/customer records/private configuration/import/export/transfer access",
+    "Executed migrations0036/0037 or another migration",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4735,
+      "sha256": "902b7e499b188fb58e92f7e024c18e7a9b5e0865e94808dd37705b5cabdf6972"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/deals/new/page.tsx",
+      "bytes": 1043,
+      "sha256": "c86844f3cb19f8425a76ca6d61753fab251d05b8fb408d3845a089ccc936a7cd"
+    },
+    {
+      "file": "frontend/src/features/deals/context-picker.tsx",
+      "bytes": 6124,
+      "sha256": "c5bffa2d50541c62593419a69c55690c1d1f20cb6f3fa3f35e330655ff34d01c"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-create.tsx",
+      "bytes": 5209,
+      "sha256": "a94e1cfe5ce8a3163a00dfe1ab15ca84c9e5808b25d91d581a6b14682e4b7956"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-form.tsx",
+      "bytes": 26793,
+      "sha256": "d5fcb2969e85c8f78527885521205e0994f3df403c7b2f942c5a54ea52697795"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-record.tsx",
+      "bytes": 5946,
+      "sha256": "0f5b31f3fabf85d1df3f1c77a216392e633309e3dbb4445d06c5420fc1bfbb2c"
+    },
+    {
+      "file": "frontend/src/features/deals/use-deal-form-command.ts",
+      "bytes": 10158,
+      "sha256": "e3b388221081ae064ee01b051f9dcf2fbf7cd9b5d9c832521e72a2125ddc6e9f"
+    },
+    {
+      "file": "frontend/tests/unit/conversion-fixtures.mjs",
+      "bytes": 8071,
+      "sha256": "f462b49bfdc1324892827e679b7f47a97cd577c06fcf81cce386c9f524ff1ac3"
+    },
+    {
+      "file": "frontend/tests/unit/dossier-forms.test.mjs",
+      "bytes": 24908,
+      "sha256": "6b1af4bf6ea2be52376bdad8f911e9479f7c537b432ec4f845aa29f75fc34548"
+    },
+    {
+      "file": "frontend/tests/unit/deal-form-fixtures.mjs",
+      "bytes": 7948,
+      "sha256": "4ff01067fc2f623b3614b6f6f3c9a4a207d2801eb4f66217a52fddb517a2f864"
+    },
+    {
+      "file": "frontend/tests/unit/deal-form-recovery.test.mjs",
+      "bytes": 21203,
+      "sha256": "6df038836a75687381118cd384bd20c783c37939039d24eda76e96c9414f38dd"
+    },
+    {
+      "file": "frontend/tests/e2e/deal-form-recovery.spec.ts",
+      "bytes": 7962,
+      "sha256": "e6d6124f58993de530963aa1e0f177d6f179e98e47e7cb220e3baf3486f5ebe0"
+    }
+  ]
+}

@@ -18,6 +18,13 @@ export async function clearActorContext(page: Page) {
   await page.context().clearCookies();
 }
 
+export async function openWorkspaceAccount(page: Page) {
+  await page.getByRole("banner").getByRole("button", { name: /^Compte de / }).click();
+  const menu = page.getByRole("dialog", { name: "Compte utilisateur", exact: true });
+  await expect(menu).toBeVisible();
+  return menu;
+}
+
 export async function signIn(page: Page, actor: TestActor, returnTo?: string) {
   const path = returnTo ? `/login?return_to=${encodeURIComponent(returnTo)}` : "/login";
   const origin = page.url().startsWith("https:") ? new URL(page.url()).origin : undefined;
@@ -38,7 +45,8 @@ export async function signIn(page: Page, actor: TestActor, returnTo?: string) {
   if (pathname === "/change-password") {
     await expect(page.getByRole("button", { name: "Se déconnecter", exact: true })).toBeEnabled();
   } else if (pathname === "/dashboard") {
-    await expect(page.getByRole("heading", { name: "Pipeline des prospects", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Tableau de bord", exact: true, level: 1 })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   } else {
     await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   }

@@ -1,0 +1,85 @@
+/* Selected drawer-cards.css / task-presentation.js; no demo clock or client authority. */
+.kay-work-list { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; min-width:0; }
+.kay-record-entry { display:grid; gap:12px; min-width:0; width:100%; padding:16px; border:1px solid var(--workspace-line); border-radius:var(--workspace-geometry-inset-radius); background:var(--workspace-field); }
+.kay-record-entry > header { display:flex; align-items:flex-start; gap:10px; min-width:0; }
+.kay-entry-symbol { display:grid; place-items:center; flex:none; width:28px; height:28px; color:var(--workspace-muted); }
+.kay-record-entry h3 { min-width:0; flex:1; margin:0; font-size:14px; line-height:1.5; font-weight:550; overflow-wrap:anywhere; }
+.kay-record-entry h3 > a { display:inline-flex; min-height:44px; align-items:center; }
+.kay-record-entry h3 > a:hover { text-decoration:underline; }
+.kay-entry-status { flex:none; max-width:45%; }
+:root .kay-entry-status .crm-status-badge { display:inline-flex; align-items:center; gap:5px; max-width:100%; white-space:normal; font-size:11px; line-height:1.4; }
+.kay-entry-meta { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 20px; min-width:0; }
+.kay-entry-meta > div { display:grid; align-content:start; gap:4px; min-width:0; }
+.kay-entry-meta > div:only-child { grid-column:1 / -1; }
+.kay-entry-meta dt { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--workspace-muted); }
+.kay-entry-meta dd { min-width:0; font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
+.kay-entry-body { display:grid; gap:8px; min-width:0; }
+.kay-record-entry > footer { display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:8px; padding-top:4px; }
+.kay-record-entry > footer [data-slot=button] { font-size:12px; }
+.kay-record-entry.kay-related-entry { padding:0; border:0; border-radius:0; background:transparent; }
+.kay-related-entry > footer { justify-content:flex-start; padding-top:0; }
+.kay-entry-open[data-slot=button] { display:flex; justify-content:flex-start; align-items:flex-start; gap:10px; min-width:0; width:100%; height:auto; padding:0; font-size:14px; font-weight:550; text-align:left; line-height:1.5; }
+.kay-entry-open [data-action-icon] { margin-top:3px; }
+.kay-entry-open > span { flex:1; }
+.kay-task-due { display:grid; gap:2px; font-variant-numeric:tabular-nums; }
+.kay-task-due small { font-size:11px; color:var(--workspace-muted); }
+.kay-task-due[data-overdue=true],.kay-task-due[data-overdue=true] small { color:var(--workspace-danger); }
+.kay-task-context { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px; min-width:0; font-size:12px; color:var(--workspace-muted); }
+.kay-task-context a { display:inline-flex; align-items:center; min-height:44px; overflow-wrap:anywhere; }
+.kay-task-context a:hover { text-decoration:underline; color:var(--workspace-ink); }
+.kay-entry-note summary { display:flex; align-items:center; min-height:44px; cursor:pointer; font-size:12px; color:var(--workspace-muted); }
+.kay-entry-note summary svg { margin-left:8px; transition:transform var(--motion-local); }
+.kay-entry-note[open] summary svg { transform:rotate(180deg); }
+.kay-entry-note p { margin:4px 0 0; font-size:13px; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere; }
+.kay-work-controls { display:flex; flex-wrap:wrap; align-items:flex-end; gap:12px; }
+.kay-work-controls > .grid { flex:1; max-width:280px; }
+.kay-work-controls label { font-size:12px; color:var(--workspace-muted); }
+.kay-work-count { font-size:12px; color:var(--workspace-muted); }
+.kay-notification-context { font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
+.kay-notification-time { font-size:11px; color:var(--workspace-muted); }
+.kay-notification-workspace,.kay-daily-work { padding:24px; }
+@media(max-width:830px) {
+  .kay-record-entry { padding:12px; gap:10px; }
+  .kay-entry-meta { gap:10px 12px; }
+  .kay-notification-workspace,.kay-daily-work { padding:16px; }
+  .kay-record-entry h3,.kay-entry-open[data-slot=button] { font-size:13px; }
+  .kay-task-context { gap:2px 8px; font-size:11px; }
+}
+@media(max-width:360px) { .kay-entry-meta { grid-template-columns:minmax(0,1fr); } }
+@media(forced-colors:active) { .kay-record-entry { border-color:CanvasText; background:Canvas; color:CanvasText; } }
+
+/* Frozen work-reports.js / app.css inbox; Radix owns placement and focus. */
+.kay-notification-bell { display:inline-flex; position:relative; }
+.kay-notification-dot { position:absolute; top:-2px; right:-1px; width:5px; height:5px; border-radius:50%; background:var(--riviera-color-stage-yellow-fill); box-shadow:0 0 0 2px var(--workspace-paper); }
+.kay-notification-popover[data-slot=popover-content] { display:flex; flex-direction:column; gap:0; width:min(360px,calc(100vw - 24px)); min-width:0; max-height:min(420px,var(--radix-popover-content-available-height,calc(100dvh - 24px))); overflow:hidden; padding:16px; border-radius:24px; transform-origin:var(--radix-popover-content-transform-origin); }
+.kay-notification-preview { display:flex; flex-direction:column; min-width:0; min-height:0; }
+.kay-notification-heading { display:flex; flex:none; justify-content:space-between; align-items:center; gap:12px; padding-bottom:14px; }
+.kay-notification-heading > div { display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:0; }
+.kay-notification-heading h2 { margin:0; font-size:16px; line-height:1.4; font-weight:600; }
+.kay-notification-heading > button { flex:none; }
+.kay-notification-filters { display:flex; flex:none; gap:6px; min-width:0; }
+.kay-notification-filters [data-slot=button] { flex:1; min-width:0; min-height:44px; padding:7px 10px; border:0; border-radius:999px; background:var(--workspace-field); color:var(--workspace-muted); font-size:13px; font-weight:550; }
+.kay-notification-filters [aria-pressed=true] { background:var(--workspace-selected); color:var(--workspace-ink); font-weight:600; }
+.kay-notification-filters [data-slot=button]:hover { background:var(--workspace-hover); }
+.kay-notification-preview > div:has(> .kay-notification-filters) { flex:none; padding-bottom:14px; }
+.kay-notification-preview-list { display:grid; gap:8px; min-width:0; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding-right:4px; }
+.kay-notification-preview-list > ul { display:grid; gap:4px; min-width:0; margin:0; padding:0; list-style:none; }
+.kay-notification-preview-entry { display:grid; grid-template-columns:minmax(0,1fr) 44px; align-items:center; gap:4px; min-width:0; padding:8px 8px 8px 12px; border-radius:12px; background:var(--workspace-field); }
+.kay-notification-copy { display:grid; align-content:center; gap:2px; min-height:44px; min-width:0; border-radius:8px; color:var(--workspace-ink); }
+.kay-notification-copy strong { overflow-wrap:anywhere; font-size:13px; line-height:18px; font-weight:600; }
+.kay-notification-copy small { overflow-wrap:anywhere; color:var(--workspace-muted); font-size:12px; line-height:16px; }
+.kay-notification-preview-entry[data-read=true] strong { font-weight:500; }
+.kay-notification-copy:hover { color:var(--workspace-ink); background:var(--workspace-hover); }
+.kay-notification-copy:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
+.kay-notification-read[data-slot=button] { width:44px; height:44px; padding:14px; border:0; border-radius:50%; background:transparent; color:var(--workspace-muted); }
+.kay-notification-read[data-slot=button]:hover { color:var(--workspace-ink); background:var(--workspace-hover); }
+.kay-notification-read-state { display:grid; place-items:center; width:44px; min-height:44px; color:var(--workspace-muted); font-size:11px; }
+.kay-notification-empty { display:grid; justify-items:center; gap:10px; padding:28px 12px; color:var(--workspace-muted); text-align:center; }
+.kay-notification-empty p { margin:0; font-size:13px; }
+.kay-notification-all[data-slot=button] { flex:none; width:100%; margin-top:8px; }
+@media(max-height:360px) {
+  .kay-notification-popover[data-slot=popover-content] { overflow-y:auto; }
+  .kay-notification-preview { flex:none; }
+  .kay-notification-preview-list { overflow:visible; }
+}
+@media(forced-colors:active) { .kay-notification-dot { background:Highlight; } .kay-notification-preview-entry { border:1px solid CanvasText; background:Canvas; color:CanvasText; } }

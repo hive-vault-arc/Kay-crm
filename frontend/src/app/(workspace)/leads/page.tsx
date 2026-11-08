@@ -12,7 +12,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ v
   const identity = await requireIdentity("/leads");
   if (identity.state !== "authenticated") return <AuthUnavailable path="/leads" />;
   const params = await searchParams;
-  if (params.view === "exports") return <><PageHeader title="Mes exports" description="État et téléchargement contrôlé des CSV demandés." route="/leads" /><ExportsPanel role={identity.profile.user.role} /></>;
+  if (params.view === "exports") return <><PageHeader title="Mes exports" description="État et téléchargement contrôlé des CSV demandés." route="/leads" /><ExportsPanel key={`${identity.profile.user.id}:${identity.profile.user.role}`} role={identity.profile.user.role} actorId={identity.profile.user.id} /></>;
   if (params.view === "import") return <><PageHeader title="Importer des contacts" description="Vérifier les lignes et leurs agents avant une création atomique." route="/leads" /><ImportPanel role={identity.profile.user.role} batchId={z.uuid().safeParse(params.batch).success ? params.batch : undefined} /></>;
   const contacts = params.view === "contacts";
   return contacts ? <ContactDirectory role={identity.profile.user.role} /> : <LeadList role={identity.profile.user.role} actorId={identity.profile.user.id} />;

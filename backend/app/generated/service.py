@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
 from zoneinfo import ZoneInfo
@@ -20,9 +21,12 @@ from app.files.contracts import MAX_FILE_BYTES
 from app.files.models import Document, DocumentVersion, FileReceipt
 from app.files.service import audit, authorize, locked_identity
 from app.files.storage import PrivateStorage
+from app.generated.appendix import AppendixUnavailable
 from app.generated.catalog import BY_CODE, TEMPLATES, Template
 from app.generated.contracts import GenerateRequest
-from app.generated.render import render_pdf
+from app.generated.render import PreparationContext, render_pdf
+from app.generated.visibility import visible_template_codes
+from app.identity.models import User
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
 from app.inventory.models import Offering, Property
@@ -80,7 +84,7 @@ def _defaults(
 
 
 def _visible(identity: CurrentIdentity, template: Template) -> bool:
-    return not template.restricted or identity.user.role in {"administrator", "manager"}
+    return template.code in visible_template_codes(identity.user.role)
 
 
 def context(database: Database, token: str, kind: str, pid: UUID) -> dict[str, object]:
@@ -132,30 +136,87 @@ def _row(session: Session, document: Document) -> dict[str, object]:
     }
 
 
-def history(database: Database, token: str, kind: str, pid: UUID, page: int) -> dict[str, object]:
+def history(
+    database: Database,
+    token: str,
+    kind: str,
+    pid: UUID,
+    page: int,
+    *,
+    include_actor: bool = False,
+) -> dict[str, object]:
     with database.session() as session:
         identity = current_identity(session, token)
         authorize(session, identity, kind, pid)
         column = Document.enquiry_id if kind == "enquiry" else Document.deal_id
         statement = select(Document).where(
-            column == pid, Document.purpose == "generated", Document.archived_at.is_(None)
+            column == pid,
+            Document.purpose == "generated",
+            Document.archived_at.is_(None),
+            Document.template_code.in_(visible_template_codes(identity.user.role)),
         )
-        if identity.user.role == "agent":
-            statement = statement.where(Document.template_code.not_in(("10", "11")))
         total = session.scalar(select(func.count()).select_from(statement.subquery())) or 0
         rows = session.scalars(
             statement.order_by(Document.created_at.desc(), Document.id.desc())
             .offset((page - 1) * 20)
             .limit(20)
         ).all()
+        actors = _history_actors(session, identity, rows) if include_actor else {}
         return {
-            "items": [_row(session, row) for row in rows],
+            "items": [
+                {
+                    **_row(session, row),
+                    **({"actor": actors[row.created_by_user_id]} if include_actor else {}),
+                }
+                for row in rows
+            ],
             "page": page,
             "page_size": 20,
             "total": total,
             "has_next": page * 20 < total,
             "has_previous": page > 1,
         }
+
+
+def _history_actors(
+    session: Session,
+    identity: CurrentIdentity,
+    rows: Sequence[Document],
+) -> dict[UUID, dict[str, str]]:
+    """Read true retained creators only after the authorized, filtered document page."""
+    ids = {row.created_by_user_id for row in rows}
+    if not ids:
+        return {}
+    users = session.scalars(
+        select(User).where(User.id.in_(ids), User.agency_id == identity.user.agency_id)
+    ).all()
+    actors = {user.id: {"id": str(user.id), "display_name": user.display_name} for user in users}
+    if actors.keys() != ids or any(not actor["display_name"] for actor in actors.values()):
+        raise IdentityError("DEPENDENCY_UNAVAILABLE", 503)
+    return actors
+
+
+def _receipt_result(
+    session: Session,
+    identity: CurrentIdentity,
+    key: UUID,
+    digest: bytes,
+    body: GenerateRequest,
+    template: Template,
+) -> dict[str, object] | None:
+    # Call only under locked_identity: a role/scope change must also apply to a replay.
+    if not _visible(identity, template):
+        raise IdentityError("FORBIDDEN", 403)
+    receipt = session.get(FileReceipt, (identity.user.id, key))
+    if receipt is None:
+        return None
+    if receipt.operation != "generate" or receipt.request_hash != digest:
+        raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
+    authorize(session, identity, body.parent_kind, body.parent_id, write=True)
+    previous = session.get(Document, receipt.document_id)
+    if previous is None or getattr(previous, f"{body.parent_kind}_id") != body.parent_id:
+        raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
+    return _row(session, previous)
 
 
 def generate(
@@ -177,28 +238,40 @@ def generate(
         if not _visible(identity, template):
             raise IdentityError("FORBIDDEN", 403)
         authorize(session, identity, body.parent_kind, body.parent_id, write=True)
+        prepared_by = identity.user.display_name
+        has_receipt = session.get(FileReceipt, (identity.user.id, key)) is not None
+
+    if has_receipt:
+        # Old versions must remain replayable even when new renderer assets change
+        # or are unavailable. Reauthorize under the same publication locks first.
+        with database.session() as session, session.begin():
+            identity = locked_identity(session, token)
+            previous = _receipt_result(session, identity, key, digest, body, template)
+            if previous is not None:
+                return previous
 
     now = datetime.now(ZoneInfo("Africa/Casablanca"))
     document_id, version_id, object_key = uuid4(), uuid4(), uuid4()
     reference = document_id.hex[:8]
-    payload = render_pdf(template, body.values, reference, now.strftime("%d/%m/%Y"))
+    try:
+        payload = render_pdf(
+            template,
+            body.values,
+            reference,
+            now.strftime("%d/%m/%Y"),
+            PreparationContext(body.parent_kind, body.parent_id, prepared_by),
+        )
+    except AppendixUnavailable:
+        raise IdentityError("DEPENDENCY_UNAVAILABLE", 503) from None
     if not payload or len(payload) > MAX_FILE_BYTES:
         raise IdentityError("FILE_TOO_LARGE", 413)
-    storage = PrivateStorage(settings)
     with database.session() as session, session.begin():
         identity = locked_identity(session, token)
-        receipt = session.get(FileReceipt, (identity.user.id, key))
-        if receipt:
-            if receipt.operation != "generate" or receipt.request_hash != digest:
-                raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
-            authorize(session, identity, body.parent_kind, body.parent_id, write=True)
-            previous = session.get(Document, receipt.document_id)
-            if previous is None or getattr(previous, f"{body.parent_kind}_id") != body.parent_id:
-                raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
-            return _row(session, previous)
-        if not _visible(identity, template):
-            raise IdentityError("FORBIDDEN", 403)
+        previous = _receipt_result(session, identity, key, digest, body, template)
+        if previous is not None:
+            return previous
         authorize(session, identity, body.parent_kind, body.parent_id, write=True)
+        storage = PrivateStorage(settings)
         filename = f"KAY-{template.code}-{reference}.pdf"
         document = Document(
             id=document_id,

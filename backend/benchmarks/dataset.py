@@ -102,6 +102,14 @@ def populate(connection, admin: UUID) -> None:
         common,
     )
     connection.execute(
+        text("""INSERT INTO inventory_event
+        (id,development_id,actor_user_id,actor_display_name,action,property_version,reason)
+        SELECT md5('sp22:development-history:'||n)::uuid,md5('sp22:development:'||n)::uuid,
+        :actor,'SP22 administrateur synthétique','developments.created',1,
+        'Fixture de charge synthétique' FROM generate_series(1,200) n"""),
+        common,
+    )
+    connection.execute(
         text("""INSERT INTO block(id,development_id,code,label)
         SELECT md5('sp22:block:'||n)::uuid,md5('sp22:development:'||n)::uuid,
         'B1','Bloc synthétique' FROM generate_series(1,200) n""")

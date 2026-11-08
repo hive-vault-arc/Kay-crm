@@ -1,0 +1,194 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "6b338cb254e06ece8bcabd19671a54fcd38bdeba",
+  "scope": "Selected property/programme archive and restore: per-confirmation original action/reason/key/callback, current M/A proof, conservative stock/current review, verified parent completion and removal of the generic inventory fingerprint writer",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 865,
+      "additionalCases": 17,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Actual intent/review/controller/panel/host/facade in synthetic harnesses; no actual app or SQL"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttonSites": 520,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <lifecycle panel/property/programme records>",
+      "exitCode": 0,
+      "files": 3,
+      "findings": 0
+    },
+    {
+      "command": "Repository source/test search for useInventoryCommand, zero matches required",
+      "exitCode": 0,
+      "searchExitCode": 1,
+      "matches": 0,
+      "paths": [
+        "frontend/src",
+        "frontend/tests"
+      ]
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8975,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1285,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/inventory-lifecycle-recovery.spec.ts",
+      "cases": 2,
+      "scenarios": [
+        "phone manager property archive lost acknowledgement",
+        "desktop manager programme restore acknowledged result-read outage"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedDrawerConfirmationReasonTokensGlyphStyleMotion": true,
+    "availableDrawerWidthAndExistingRecordEntries": true,
+    "openingActionDoesNotFlipOrRemountOnParentArchiveVersionUpdate": true,
+    "currentOriginatingManagerAdministratorProof": true,
+    "strictRootPathBodyReasonVersionOriginalKeyAndCallback": true,
+    "synchronousReasonOuterToggleCancelAndDeferredDiscardProtection": true,
+    "exactNewerRootNullOfferingReceiptAndFacadeBinding": true,
+    "receiptVersionStateProofAndLaterHistoricalCompletion": true,
+    "acknowledgedCompletionOnlyThroughPartialAsyncParentFailure": true,
+    "exactCurrentAcceptanceAndNoCampaignChildOverride": true,
+    "ordinaryRefreshSeparateFromSavedCallback": true,
+    "verifiedMonotonicHostInstallAndNewExplicitOpeningForNextAction": true,
+    "currentDenialSourceRetentionDisposalAndBusyRelease": true,
+    "genericInventoryWriterRemovedSharedBusyContextRetained": true,
+    "backendAuthorityStockHistoryFinanceRetentionUnchanged": true,
+    "noPersistentBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Separate enquiry/deal archive/restore controls in frontend/src/features/discovery/record-lifecycle-action.tsx",
+    "Remaining exact domain field/action/context reconciliation",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged; conservative guards and all-physical-child count inspected in source only",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "Actual archive/restore, DB/accounts/private configuration/records/services/workers/scanners/simulator/import/export/transfer/retention CLI access",
+    "Migrations0036/0037 or other migration execution",
+    "Actual SQL/concurrent stock/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5193,
+      "sha256": "7b7d6e173986eb520aa423b3175d17f284904c237e39ab45e61f7b64e4d04772"
+    },
+    {
+      "file": "frontend/src/features/discovery/lifecycle-panel.tsx",
+      "bytes": 12100,
+      "sha256": "17287249e844bc955460569d3325c4e488573ff61c882936a36b7775aebe373b"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-record.tsx",
+      "bytes": 11299,
+      "sha256": "8ceb98cf50550f537ac9dd8b861df361d754d6f3fb6e21b111468178367f2f80"
+    },
+    {
+      "file": "frontend/src/features/inventory/facade.ts",
+      "bytes": 9122,
+      "sha256": "8326500b79d8ef7a9ffe904732f5e612b61655798019bd3366675548d181d73b"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-record.tsx",
+      "bytes": 10160,
+      "sha256": "6f3a3da8a26a26588f486a159d94db9b62df8f46e9a6ba8b40b9b18695a93074"
+    },
+    {
+      "file": "frontend/src/features/inventory/record-command-intent.ts",
+      "bytes": 6154,
+      "sha256": "55673657bce2713ad7367f26a29e2b01c5efe3ab06febab421e6080a91014d3f"
+    },
+    {
+      "file": "frontend/src/features/inventory/use-command.ts",
+      "bytes": 140,
+      "sha256": "196cf9c61656cdb0628bfeeb99935453ac78bb3620d1dd1b626f697ff86c0c73"
+    },
+    {
+      "file": "frontend/src/features/inventory/use-record-command.ts",
+      "bytes": 11639,
+      "sha256": "553a457b5dd0369b4dbee81e7c9349d8f59eed40ffbfabff6df2387e3feedfe8"
+    },
+    {
+      "file": "frontend/tests/e2e/inventory-lifecycle-recovery.spec.ts",
+      "bytes": 5506,
+      "sha256": "c1f5f2c7249a512656b52b98ef5ab0a1b8b2300b317ce72b4c0d12a219d4a494"
+    },
+    {
+      "file": "frontend/tests/unit/development-phase.test.mjs",
+      "bytes": 13871,
+      "sha256": "4e4e17a08441ff784ffdfd174aa0ef0378e0fa02034c099e9e328d9165662178"
+    },
+    {
+      "file": "frontend/tests/unit/record-command-fixtures.mjs",
+      "bytes": 5780,
+      "sha256": "f93f187d5fcc636fbe2fa21447e35ac7f73b6feb5f4f4747a04ae86edb035cdd"
+    },
+    {
+      "file": "frontend/tests/unit/inventory-lifecycle-recovery.test.mjs",
+      "bytes": 19165,
+      "sha256": "57446e629551640f574c6bfc214e2653e903b33a586cad681461a76c2976d5cc"
+    }
+  ]
+}

@@ -9,12 +9,13 @@ const groups: Record<string, string[]> = {
   notifications: ["notifications", "tasks", "visits", "files", "contacts"],
   reports: ["reports"], commissions: ["finance"], documents: ["files"], files: ["files"],
   imports: ["imports"], exports: ["exports"], work: ["tasks", "visits", "contacts"],
-  users: ["identity"], requirements: ["requirements", "inventory"], search: ["contacts", "deals", "inventory"],
+  users: ["identity"], requirements: ["requirements", "inventory"], search: ["contacts", "enquiries", "deals", "inventory", "files"],
   "customer-offers": ["deals", "inventory"],
   "generated-documents": ["files", "contacts", "deals", "inventory"],
   audit: ["contacts", "deals", "inventory", "visits", "tasks", "files", "finance", "imports", "exports", "identity"],
 };
 export function matchesTopics(path: string, topics: string[]) {
+  if (/^\/api\/v1\/reports\/workspace(?:[/?]|$)/.test(path) && topics.some(topic => ["reports", "contacts", "enquiries", "deals", "inventory", "tasks", "visits"].includes(topic))) return true;
   const ownerPortfolio = /^\/api\/v1\/contacts\/[a-f0-9-]{36}\/portfolio(?:\?|$)/.test(path);
   const ownerDirectory = path.startsWith("/api/v1/contacts?") && new URLSearchParams(path.split("?")[1]).get("owner_directory") === "true";
   if ((ownerPortfolio || ownerDirectory) && topics.includes("inventory")) return true;

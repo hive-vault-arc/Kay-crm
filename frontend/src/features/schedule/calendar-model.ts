@@ -28,7 +28,7 @@ export function weekLabel(days: string[]) {
   return `${civilLabel(first, first.slice(0, 7) === last.slice(0, 7) ? { day: "numeric" } : { day: "numeric", month: "short" })} - ${civilLabel(last, { day: "numeric", month: "long", year: "numeric" })}`;
 }
 export const minuteOfDay = (value: string) => Number(value.slice(0, 2)) * 60 + Number(value.slice(3, 5));
-export function occursOn(visit: Visit, day: string) {
+export function occursOn(visit: Pick<Visit, "start_local" | "end_local">, day: string) {
   return visit.start_local.slice(0, 10) <= day && (visit.end_local.slice(0, 10) > day || (visit.end_local.slice(0, 10) === day && visit.end_local.slice(11, 16) !== "00:00"));
 }
 

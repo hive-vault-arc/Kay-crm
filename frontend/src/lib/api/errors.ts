@@ -61,9 +61,13 @@ export function frenchApiError(code: string): string {
     OFFERING_VERSION_CONFLICT: "Cette offre a changé depuis votre lecture. Actualisez ses prix et conditions avant de la sélectionner.",
     SHORTLIST_LIMIT: "Cette recherche contient déjà 100 offres. Retirez une offre avant d’en ajouter une autre.",
     FILE_TOO_LARGE: "Le fichier dépasse la limite de 20 Mo.",
+    FILE_BATCH_LIMIT: "Sélectionnez jusqu’à 10 fichiers par envoi.",
+    PROPERTY_PHOTO_SELECTION_LIMIT: "La sélection dépasse le nombre de places disponibles dans la galerie.",
     PROPERTY_PHOTO_LIMIT: "Ce bien a déjà 10 photos. Archivez une photo avant d’en ajouter une autre.",
     PROPERTY_PHOTO_WEBP_REQUIRED: "Ajoutez les images dans Photos : elles sont converties en WebP avant l’envoi.",
-    PHOTO_CONVERSION_FAILED: "Cette image ne peut pas être convertie en WebP. Choisissez un JPEG, PNG ou WebP valide de 20 Mo maximum.",
+    PHOTO_CONVERSION_FAILED: "Cette image ne peut pas être convertie en WebP. Choisissez un JPEG, PNG, WebP ou HEIC/HEIF valide de 20 Mo et 25 mégapixels maximum.",
+    PHOTO_SELECTION_LIMIT: "La sélection dépasse les places disponibles : 10 photos maximum par bien. Réduisez la sélection.",
+    FILE_SELECTION_LIMIT: "Choisissez au plus 10 fichiers par sélection, ou un seul fichier pour une reprise.",
     FILE_SIZE_MISMATCH: "Le transfert est incomplet ou sa taille a changé. Réessayez avec un nouveau permis.",
     UNSUPPORTED_MEDIA_TYPE: "Format non autorisé ou fichier invalide. Utilisez JPEG, PNG, WebP, PDF, DOCX ou XLSX sans macro.",
     FILE_VERSION_CONFLICT: "Les pièces jointes ont changé. Actualisez la liste avant de réessayer.",
@@ -136,6 +140,8 @@ export function frenchApiError(code: string): string {
     OVER_COLLECTION: "Ce versement dépasse le solde reconnu. Aucun encaissement n’a été ajouté.",
     RECEIPT_ALREADY_CORRECTED: "Ce versement a déjà été corrigé. Actualisez puis sélectionnez son remplacement actuel.",
     INVALID_FINANCIAL_EVIDENCE: "Choisissez une pièce propre et actuelle de cette affaire ou de son contact.",
+    FINANCE_CREATION_KEY_REQUIRED: "Actualisez le suivi financier avant de commencer une nouvelle commission.",
+    FINANCE_CREATION_KEY_EXPIRED: "Cette confirmation a expiré. Consultez le suivi financier avant de recommencer.",
   };
   return messages[code] ?? "Une erreur est survenue. Réessayez dans un instant.";
 }

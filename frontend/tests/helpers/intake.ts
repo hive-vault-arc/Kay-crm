@@ -2,8 +2,9 @@ import type { Page } from "@playwright/test";
 import { clearActorContext, createActor, expect, signIn, type TestActor } from "./auth";
 import { testControl } from "./api-process";
 import { createLead } from "./leads";
+import { testPorts } from "../../scripts/test-ports.mjs";
 
-export const simulatorOrigin = "https://127.0.0.1:8102";
+export const simulatorOrigin = `https://127.0.0.1:${testPorts().simulator}`;
 export async function intakeFixture(page: Page) {
   const agent = await createActor("agent", false, "SP06 agent réception synthétique");
   const other = await createActor("agent", false, "SP06 autre agent synthétique");
@@ -26,14 +27,14 @@ export async function intakeFixture(page: Page) {
 }
 export async function fillWebsite(page: Page, phone = "+212600000001") {
   await page.goto(simulatorOrigin, { timeout: 20000 });
-  await expect(page.getByRole("heading", { name: "Formulaire web local", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Demande web", exact: true })).toBeVisible();
   await expect(page.getByLabel("Nom complet", { exact: true })).toBeEnabled({ timeout: 10000 });
   await page.getByLabel("Nom complet", { exact: true }).fill("SP20 nom envoyé synthétique");
   await page.getByLabel("Téléphone international", { exact: true }).fill(phone);
-  await page.getByLabel("Message (facultatif)", { exact: true }).fill("SP20 nouvelle demande web synthétique");
+  await page.getByLabel("Votre demande (facultative)", { exact: true }).fill("SP20 nouvelle demande web synthétique");
   expect(await page.getByLabel("Nom complet", { exact: true }).inputValue() === "SP20 nom envoyé synthétique").toBe(true);
   expect(await page.getByLabel("Téléphone international", { exact: true }).inputValue() === phone).toBe(true);
-  expect(await page.getByLabel("Message (facultatif)", { exact: true }).inputValue() === "SP20 nouvelle demande web synthétique").toBe(true);
+  expect(await page.getByLabel("Votre demande (facultative)", { exact: true }).inputValue() === "SP20 nouvelle demande web synthétique").toBe(true);
 }
 export async function staffLogin(page: Page, actor: TestActor, baseURL: string) {
   await clearActorContext(page);

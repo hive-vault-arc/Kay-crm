@@ -16,18 +16,23 @@ async function capture(page: Page, name: string) {
 }
 
 async function factsGeometry(page: Page, width: number) {
-  const layout = page.locator(".crm-record-layout").first();
-  const left = (await layout.locator(":scope > [data-record-contact]").boundingBox())!;
-  const right = (await layout.locator(":scope > .crm-record-primary").boundingBox())!;
-  expect(Math.abs(left.x - right.x)).toBeLessThanOrEqual(1);
-  expect(Math.abs(left.width - right.width)).toBeLessThanOrEqual(1);
-  expect(right.y).toBeGreaterThanOrEqual(left.y + left.height + 15);
+  const layout = page.locator(".kay-record-workspace").first();
+  const left = (await layout.locator(":scope > .kay-record-dossier").boundingBox())!;
+  const right = (await layout.locator(":scope > .kay-record-aside").boundingBox())!;
+  if (width > 830) {
+    expect(right.x).toBeGreaterThanOrEqual(left.x + left.width + 11);
+    expect(Math.abs(left.y - right.y)).toBeLessThanOrEqual(1);
+  } else {
+    expect(Math.abs(left.x - right.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(left.width - right.width)).toBeLessThanOrEqual(1);
+    expect(right.y).toBeGreaterThanOrEqual(left.y + left.height + 11);
+  }
   const facts = page.locator(".record-facts:visible");
   for (const list of await facts.all()) {
-    const stackedLabels = await list.evaluate(element => Boolean(element.closest(".crm-detail-facts")));
     const pairs = list.locator(":scope > div");
+    if (await pairs.count() < 2) continue;
     const first = (await pairs.nth(0).boundingBox())!, second = (await pairs.nth(1).boundingBox())!;
-    if (width >= 1280 && await list.getAttribute("data-columns") !== "1") {
+    if (width > 830 && (await list.boundingBox())!.width >= 800 && await list.getAttribute("data-columns") !== "1") {
       expect(Math.abs(first.y - second.y)).toBeLessThanOrEqual(1);
       expect(second.x).toBeGreaterThan(first.x + first.width);
     } else {
@@ -36,14 +41,13 @@ async function factsGeometry(page: Page, width: number) {
     }
     for (const pair of await pairs.all()) {
       const term = pair.locator("dt"), value = pair.locator("dd");
-      await expect(term.locator('svg[data-icon-family="iconsax"][aria-hidden="true"]')).toHaveCount(1);
+      await expect(term.locator('svg[data-icon-family="lucide"][aria-hidden="true"]')).toHaveCount(1);
       await expect(term.locator("svg")).toHaveCSS("width", "16px");
       const labelBox = (await term.boundingBox())!, valueBox = (await value.boundingBox())!;
-      if (width >= 640 && !stackedLabels) expect(valueBox.x).toBeGreaterThan(labelBox.x + labelBox.width);
+      if (width > 830 && !await pair.evaluate(element => Boolean(element.closest(".kay-record-aside")))) expect(valueBox.x).toBeGreaterThan(labelBox.x + labelBox.width);
       else expect(valueBox.y).toBeGreaterThan(labelBox.y);
       expect(await value.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
       for (const link of await value.locator(":scope > a").all()) {
-        await expect(link).toHaveCSS("align-items", "flex-start");
         expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
       }
     }
@@ -51,7 +55,7 @@ async function factsGeometry(page: Page, width: number) {
   return geometry(page);
 }
 
-test("Lead/Deal facts: Iconsax, paired desktop details, mobile, keyboard, touch and safe failures", async ({ page, browser, baseURL, actor }) => {
+test("Lead/Deal facts: selected icons, intrinsic desktop details, mobile, keyboard, touch and safe failures", async ({ page, browser, baseURL, actor }) => {
   test.setTimeout(180_000);
   const owner = await createActor("agent", false, "SP06 responsable synthétique au nom particulièrement long pour la vérification responsive");
   const failures: string[] = [];
@@ -64,20 +68,21 @@ test("Lead/Deal facts: Iconsax, paired desktop details, mobile, keyboard, touch 
     await signIn(page, owner);
     const lead = await createLead(page, syntheticName);
     const detail = await (await page.request.get(`/api/v1/enquiries/${lead}`)).json();
-    const contact = page.getByRole("region", { name: "Contact", exact: true });
-    await expect(contact.locator("dd").nth(1)).toHaveText(detail.contact.primary_phone);
-    await expect(contact.locator("dd").nth(2)).toHaveText("Non renseigné");
-    await expect(page.getByRole("heading", { name: "Attribution de la demande", exact: true })).toHaveCount(0);
-    const editLead = page.getByRole("link", { name: "Modifier le prospect", exact: true });
+    const contact = page.locator(".kay-record-section").filter({ has: page.getByRole("heading", { name: "Contact", exact: true }) });
+    await expect(contact.locator(".kay-record-fact").filter({ has: page.getByText("Téléphone", { exact: true }) }).locator("dd")).toContainText(detail.contact.primary_phone);
+    await expect(contact.locator(".kay-record-fact").filter({ has: page.getByText("E-mail", { exact: true }) }).locator("dd")).toHaveText("Non renseigné");
+    await expect(page.getByRole("button", { name: "Attribuer le prospect", exact: true })).toHaveCount(0);
+    const editLead = page.getByRole("link", { name: "Modifier", exact: true });
     await editLead.focus(); await page.keyboard.press("Tab"); await page.keyboard.press("Shift+Tab");
     expect(await editLead.evaluate(element => element.matches(":focus-visible"))).toBe(true);
     await page.keyboard.press("Enter");
-    await expect(page.getByLabel("Description", { exact: true })).toBeEnabled();
-    await page.getByRole("link", { name: "Voir le prospect", exact: true }).click();
+    await expect(page.getByLabel("Message", { exact: true })).toBeEnabled();
+    await page.getByRole("link", { name: "Retour au prospect", exact: true }).click();
     const deal = await convertLead(page, "SP11 projet synthétique aux informations réparties");
-    const summary = page.getByRole("region", { name: "Contact et offre liée", exact: true });
-    await expect(summary.getByRole("link", { name: "Voir la demande d’origine conservée", exact: true })).toHaveAttribute("href", `/leads/${lead}`);
-    await expect(summary.locator("dd").filter({ hasText: "SP11 projet synthétique aux informations réparties" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Voir le prospect", exact: true })).toHaveAttribute("href", `/leads/${lead}`);
+    await page.getByRole("tab", { name: "Projets", exact: true }).click();
+    await expect(page.getByRole("tabpanel").filter({ visible: true }).locator("dd").filter({ hasText: "SP11 projet synthétique aux informations réparties" })).toBeVisible();
+    await page.getByRole("tab", { name: "Aperçu", exact: true }).click();
     const metrics = [];
     for (const [name, route] of [["lead", `/leads/${lead}`], ["deal", `/deals/${deal}`]]) {
       await page.goto(route); await expect(page.locator(".record-facts").first()).toBeVisible();
@@ -93,7 +98,7 @@ test("Lead/Deal facts: Iconsax, paired desktop details, mobile, keyboard, touch 
       await page.route(apiRoute, async route => { await hold.promise; await route.fulfill({ status: 503, json: { error: { code: "DEPENDENCY_UNAVAILABLE" } } }); });
       try {
         await page.reload();
-        await expect(page.getByRole("status").filter({ hasText: name === "lead" ? "Chargement de la demande…" : "Chargement de l’affaire…" })).toBeVisible();
+        await expect(page.getByRole("status").filter({ hasText: name === "lead" ? "Chargement du prospect…" : "Chargement de l’affaire…" })).toBeVisible();
         await capture(page, `${name}-loading`);
       } finally { hold.resolve(); }
       await expect(page.locator("main").getByRole("alert")).toBeVisible();
@@ -103,25 +108,25 @@ test("Lead/Deal facts: Iconsax, paired desktop details, mobile, keyboard, touch 
       await page.getByRole("button", { name: "Réessayer", exact: true }).click();
       await expect(page.locator(".record-facts").first()).toBeVisible();
     }
-    const editDeal = page.getByRole("button", { name: "Modifier l’affaire et la prochaine action", exact: true });
+    const editDeal = page.getByRole("button", { name: "Modifier", exact: true });
     await editDeal.click();
     await expect(page.getByRole("form", { name: "Modifier l’affaire", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Annuler les modifications", exact: true }).click();
+    await page.getByRole("button", { name: "Annuler", exact: true }).click();
     await expect(editDeal).toBeFocused();
     const touch = await browser.newContext({ baseURL, hasTouch: true, viewport: { width: 360, height: 900 }, ignoreHTTPSErrors: true });
     try {
       await touch.addCookies(await page.context().cookies());
       const mobile = await touch.newPage();
       await mobile.goto(`/deals/${deal}`);
-      await mobile.getByRole("link", { name: "Voir la demande d’origine conservée", exact: true }).tap();
+      await mobile.getByRole("link", { name: "Voir le prospect", exact: true }).tap();
       await expect(mobile.getByRole("heading", { level: 1, name: syntheticName, exact: true })).toBeVisible();
-      await mobile.getByRole("link", { name: syntheticName, exact: true }).tap();
-      await expect(mobile.getByRole("heading", { name: `Contact : ${syntheticName}`, exact: true })).toBeVisible();
+      await mobile.getByRole("link", { name: "Voir le contact", exact: true }).tap();
+      await expect(mobile.getByRole("heading", { level: 1, name: syntheticName, exact: true })).toBeVisible();
     } finally { await touch.close(); }
     await clearActorContext(page); await signIn(page, actor);
     await page.goto(`/leads/${lead}`);
-    await expect(page.getByRole("heading", { name: "Attribution de la demande", exact: true })).toBeVisible();
-    await expect(page.getByLabel("Attribuer à un agent du contact", { exact: true })).toBeEnabled();
+    await page.getByRole("button", { name: "Attribuer le prospect", exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "Attribuer le prospect", exact: true }).getByLabel("Attribuer à un agent du contact", { exact: true })).toBeEnabled();
     await capture(page, "lead-administrator");
     await clearActorContext(page);
     const outsider = await createActor("agent");
@@ -137,13 +142,14 @@ test("Lead/Deal facts: Iconsax, paired desktop details, mobile, keyboard, touch 
     } finally { await clearActorContext(page); await removeActor(outsider); }
     await writeFile(path.join(artifacts, "geometry.json"), JSON.stringify(metrics, null, 2));
     expect(failures).toEqual([]);
-  } finally { await clearActorContext(page); await removeActor(owner); }
+  } finally { try { await clearActorContext(page); } finally { await removeActor(owner); } }
 });
 
 test("Lead/Deal facts: native 200% Chrome zoom reflows both records", async ({ baseURL }, testInfo) => {
   test.setTimeout(120_000);
   const owner = await createActor("agent");
-  const profile = testInfo.outputPath("record-facts-zoom-profile");
+  // Keep Chrome's real profile below the Windows path limit, including Default/Preferences.
+  const profile = path.join(testInfo.project.outputDir, "record-facts-zoom", "record-facts-zoom-profile");
   const options = { channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, ignoreHTTPSErrors: true, args: ["--window-size=1440,1000"] };
   let context!: Awaited<ReturnType<typeof chromium.launchPersistentContext>>;
   let baseline: { ratio: number; width: number }, lead: string, deal: string;
@@ -176,7 +182,7 @@ test("Lead/Deal facts: native 200% Chrome zoom reflows both records", async ({ b
   } finally {
     await context?.close();
     expect(path.basename(profile)).toBe("record-facts-zoom-profile");
-    expect(path.dirname(path.dirname(path.resolve(profile)))).toBe(path.resolve("test-results"));
+    expect(path.dirname(path.dirname(path.resolve(profile)))).toBe(path.resolve(testInfo.project.outputDir));
     await rm(profile, { recursive: true, force: true });
     await removeActor(owner);
   }

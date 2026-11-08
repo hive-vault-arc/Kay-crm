@@ -126,6 +126,12 @@ def create_simulator(
     def favicon() -> Response:
         return upstream("/favicon.svg")
 
+    @application.get("/images/workspace/{asset}")
+    def workspace_asset(asset: str) -> Response:
+        if asset not in {"kay-logo.svg", "kay-pearl-atmosphere.png"}:
+            return Response(status_code=404)
+        return upstream("/images/workspace/" + asset)
+
     @application.get("/_next/static/{asset:path}")
     def assets(asset: str) -> Response:
         if (

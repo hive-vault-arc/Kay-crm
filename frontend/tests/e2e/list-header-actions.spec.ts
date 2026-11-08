@@ -14,8 +14,12 @@ async function capture(page: Page, name: string) {
 
 async function creationStyle(link: Locator) {
   await expect(link).toHaveAttribute("data-variant", "creation");
-  await expect(link).toHaveCSS("background-color", "rgb(216, 170, 69)");
-  await expect(link).toHaveCSS("color", "rgb(39, 39, 39)");
+  await link.page().mouse.move(0, 0);
+  await expect.poll(() => link.evaluate(element => {
+    const style = getComputedStyle(element), canvas = document.createElement("canvas"), context = canvas.getContext("2d")!;
+    const rgb = (value: string) => { context.fillStyle = value; context.fillRect(0, 0, 1, 1); return [...context.getImageData(0, 0, 1, 1).data]; };
+    return JSON.stringify([rgb(style.backgroundColor), rgb(style.color)]) === JSON.stringify([rgb(style.getPropertyValue("--workspace-primary")), rgb(style.getPropertyValue("--workspace-on-primary"))]);
+  })).toBe(true);
   await expect(link).toHaveCSS("font-weight", "600");
 }
 
@@ -24,22 +28,32 @@ async function geometry(page: Page) {
   const controls = header(page).locator('[data-slot="button"]');
   for (const control of await controls.all()) {
     const box = await control.boundingBox();
-    expect(box!.height).toBeGreaterThanOrEqual(44);
-    expect(box!.width).toBeGreaterThanOrEqual(44);
+    expect(Math.round(box!.height)).toBeGreaterThanOrEqual(44);
+    expect(Math.round(box!.width)).toBeGreaterThanOrEqual(44);
     expect(await control.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
-  }
-  for (const control of await header(page).getByRole("group", { name: "Actions secondaires", exact: true }).locator('[data-slot="button"]').all()) {
-    await expect(control).toHaveAttribute("data-variant", "quiet");
-    await expect(control).toHaveAttribute("data-size", "compact");
-    await expect(control).toHaveCSS("font-size", await page.locator(".crm-directory-toolbar").count() ? "13px" : "14px");
-    await expect(control).toHaveCSS("font-weight", "400");
-    await expect(control).toHaveCSS("padding-left", "8px");
-    await expect(control).toHaveCSS("border-top-width", "0px");
   }
 }
 
-test("list header actions: gold creation, quiet utilities, responsive states and working destinations", async ({ page, actor }) => {
+async function utilities(page: Page) {
+  const menu = page.getByRole("dialog", { name: "Actions de la liste", exact: true });
+  const trigger = header(page).getByRole("button", { name: "Autres actions de la liste", exact: true });
+  if (await trigger.getAttribute("aria-expanded") !== "true") {
+    await expect(menu).toBeHidden();
+    await trigger.click();
+  }
+  await expect(menu).toHaveAttribute("data-state", "open");
+  await expect(menu).toBeVisible();
+  for (const control of await menu.locator("button,a").all()) {
+    if (!await control.isVisible()) continue;
+    const bounds = (await control.boundingBox())!;
+    expect(Math.round(bounds.width)).toBeGreaterThanOrEqual(44); expect(Math.round(bounds.height)).toBeGreaterThanOrEqual(44);
+  }
+  return menu;
+}
+
+test("list header actions: selected creation, grouped utilities, responsive states and working destinations", async ({ page, actor }) => {
   test.setTimeout(150_000);
+  page.setDefaultTimeout(15_000);
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -67,31 +81,37 @@ test("list header actions: gold creation, quiet utilities, responsive states and
       await geometry(page);
       if (width === 360 || width === 1440) await capture(page, `${route.slice(1)}-${width}`);
     }
+    await page.mouse.move(0, 0);
+    const resting = await create.evaluate(element => getComputedStyle(element).backgroundColor);
     await create.hover();
-    await expect(create).toHaveCSS("background-color", "rgb(228, 188, 98)");
+    await expect.poll(() => create.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe(resting);
     await create.focus();
     await page.keyboard.press("Tab");
     await page.keyboard.press("Shift+Tab");
     expect(await create.evaluate(element => element.matches(":focus-visible"))).toBe(true);
     await create.press("Enter");
     await expect(page).toHaveURL(new RegExp(`${route}/new$`));
-    await expect(page.getByRole("heading", { level: 1, name: route === "/leads" ? "Créer un Lead" : "Créer une affaire", exact: true })).toBeVisible();
-    if (route === "/leads") await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toHaveAttribute("data-variant", "creation");
+    await expect(page.getByRole("heading", { level: 1, name: route === "/leads" ? "Nouveau prospect" : "Nouvelle affaire", exact: true })).toBeVisible();
+    if (route === "/leads") await expect(page.getByRole("button", { name: "Créer le prospect", exact: true })).toHaveAttribute("data-variant", "creation");
   }
   await page.goto("/leads");
-  await expect(page.getByRole("button", { name: "Exporter les résultats filtrés", exact: true })).toBeVisible();
-  await header(page).getByRole("link", { name: "Contacts", exact: true }).click();
+  let menu = await utilities(page);
+  await expect(menu.getByRole("button", { name: "Exporter les résultats filtrés", exact: true })).toBeVisible();
+  await menu.getByRole("link", { name: "Contacts", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Contacts", exact: true })).toBeVisible();
-  await creationStyle(header(page).getByRole("link", { name: "Créer un Lead et son contact", exact: true }));
-  await expect(page.getByText("0 contact(s) accessible(s).", { exact: true })).toBeVisible();
+  await creationStyle(header(page).getByRole("link", { name: "Nouveau prospect", exact: true }));
+  await expect(page.getByRole("status").filter({ hasText: /^0 contact\(s\) accessible\(s\)/ })).toBeVisible();
   await geometry(page);
   await capture(page, "contacts-1440");
-  await header(page).getByRole("link", { name: "Demandes", exact: true }).click();
-  await header(page).getByRole("link", { name: "Importer des contacts", exact: true }).click();
+  await (await utilities(page)).getByRole("link", { name: "Prospects", exact: true }).click();
+  await expect(page).toHaveURL(/\/leads$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Prospects", exact: true })).toBeVisible();
+  await (await utilities(page)).getByRole("link", { name: "Importer des contacts", exact: true }).click();
   await expect(page).toHaveURL(/\/leads\?view=import$/);
-  await expect(page.getByRole("button", { name: "Choisir un CSV", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Parcourir", exact: true })).toBeVisible();
   await page.goto("/leads");
-  const columns = header(page).getByRole("button", { name: "Colonnes", exact: true });
+  menu = await utilities(page);
+  const columns = menu.getByRole("button", { name: "Colonnes", exact: true });
   await columns.click();
   const drawer = page.getByRole("dialog", { name: "Colonnes des Leads", exact: true });
   await expect(drawer).toBeVisible();
@@ -103,16 +123,20 @@ test("list header actions: gold creation, quiet utilities, responsive states and
   for (const name of ["Pays", "Langues"]) await expect(drawer.getByRole("checkbox", { name, exact: true })).not.toBeChecked();
   await page.keyboard.press("Escape");
   await expect(columns).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
   await page.setViewportSize({ width: 360, height: 900 });
-  await header(page).getByRole("button", { name: "Exporter les résultats filtrés", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Confirmer l’export CSV", exact: true })).toBeEnabled();
+  await (await utilities(page)).getByRole("button", { name: "Exporter les résultats filtrés", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Créer l’export CSV", exact: true })).toBeDisabled();
+  await page.getByRole("checkbox", { name: "Confirmer ce périmètre", exact: true }).check();
+  await expect(page.getByRole("button", { name: "Créer l’export CSV", exact: true })).toBeEnabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await capture(page, "export-confirmation-360");
   await page.getByRole("button", { name: "Annuler", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Confirmer l’export CSV", exact: true })).toHaveCount(0);
-  await header(page).getByRole("link", { name: "Mes exports", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Créer l’export CSV", exact: true })).toHaveCount(0);
+  await (await utilities(page)).getByRole("link", { name: "Mes exports", exact: true }).click();
   await expect(page).toHaveURL(/\/leads\?view=exports$/);
-  await expect(page.getByRole("button", { name: "Actualiser les exports", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Mes exports", exact: true, level: 1 })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -131,8 +155,12 @@ test("list header actions: agent permissions and real touch controls on Leads an
       const create = header(phone).getByRole("link", { name: route === "/leads" ? "Nouveau prospect" : "Créer une affaire", exact: true });
       await creationStyle(create);
       await geometry(phone);
-      await header(phone).getByRole("button", { name: "Colonnes", exact: true }).tap();
+      const menu = await utilities(phone);
+      await expect(menu.getByRole("link", { name: "Importer des contacts", exact: true })).toHaveCount(0);
+      await expect(menu.getByRole("button", { name: "Exporter les résultats filtrés", exact: true })).toHaveCount(0);
+      await menu.getByRole("button", { name: "Colonnes", exact: true }).tap();
       await expect(phone.getByRole("dialog", { name: route === "/leads" ? "Colonnes des Leads" : "Colonnes des affaires", exact: true })).toBeVisible();
+      await phone.keyboard.press("Escape");
       await phone.keyboard.press("Escape");
       await create.tap();
       await expect(phone).toHaveURL(new RegExp(`${route}/new$`));

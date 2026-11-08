@@ -3,16 +3,24 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, Query, Request, Response
 
 from app.contacts.router import Proof, RetryKey, configuration, validate_query
 from app.finance.commands import command
 from app.finance.contracts import Correction, FinanceQuery, NewCommission, NewReceipt, Recognize
+from app.finance.creation_keys import issue_creation_key
 from app.finance.queries import read
 from app.identity.router import facade_authority
 from app.schedule.router import no_query
 
 router = APIRouter(prefix="/api/v1", dependencies=[Depends(facade_authority)], tags=["finance"])
+
+
+@router.get("/deals/{did}/commission-creation-key")
+def creation_key(request: Request, response: Response, token: Proof, did: UUID) -> dict[str, str]:
+    no_query(request)
+    response.headers["Cache-Control"] = "no-store"
+    return issue_creation_key(configuration(request)[0], token, did)
 
 
 @router.get("/deals/{did}/commissions")
@@ -21,6 +29,14 @@ def commissions(
 ) -> dict[str, object]:
     validate_query(request)
     return read(configuration(request)[0], token, did, query)
+
+
+@router.get("/deals/{did}/finance-history")
+def deal_history(
+    request: Request, token: Proof, did: UUID, query: Annotated[FinanceQuery, Query()]
+) -> dict[str, object]:
+    validate_query(request)
+    return read(configuration(request)[0], token, did, query, "deal_history")
 
 
 @router.post("/deals/{did}/commissions")

@@ -5,7 +5,8 @@ import { loadServer } from "./load-server.mjs";
 const vocabulary = loadServer("src/features/contacts/qualification-contracts.ts");
 const contacts = loadServer("src/features/contacts/contracts.ts", { modules: { "./qualification-contracts": vocabulary } });
 const contracts = loadServer("src/features/inventory/contracts.ts", { modules: { "@/features/contacts/contracts": contacts } });
-const model = loadServer("src/features/inventory/property-directory-model.ts", { modules: { "./contracts": contracts } });
+const ranges = loadServer("src/features/inventory/inventory-range.ts", { modules: { "./contracts": contracts } });
+const model = loadServer("src/features/inventory/property-directory-model.ts", { modules: { "./contracts": contracts, "./inventory-range": ranges } });
 const development = loadServer("src/features/inventory/development-contracts.ts", { modules: { "@/features/contacts/contracts": contacts, "./contracts": contracts } });
 const requirements = loadServer("src/features/requirements/contracts.ts", { modules: { "@/features/contacts/contracts": contacts, "@/features/inventory/contracts": contracts } });
 const outcomes = loadServer("src/features/inventory/outcome-contracts.ts", { modules: { "@/features/contacts/contracts": contacts, "@/features/requirements/contracts": requirements, "./contracts": contracts } });
@@ -47,12 +48,10 @@ test("property paths keep empty selection, encoded literal search and server num
   assert.equal(url.search.includes("+"), false);
   assert.match(url.pathname + url.search, /^\/api\/v1\/[a-zA-Z0-9/?=&_.%-]+$/);
 });
-test("unchecking every visible category sends none without an invisible empty-house selection", () => {
-  let selection = model.propertyDefaults.categories;
-  for (const category of ["land", "apartment", "villa", "commercial", "riad", "room", "office", "farm"]) selection = model.togglePropertyCategory(selection, category, true);
-  assert.equal(selection, "");
-  assert.equal(model.togglePropertyCategory("villa,house", "villa", false), "house");
-  assert.equal(model.togglePropertyCategory("", "house", false), "house");
+test("selected category choices distinguish all, one and retained legacy multiple/empty semantics", () => {
+ assert.equal(model.propertyCategoryChoice(model.propertyDefaults.categories),"all");assert.equal(model.propertyCategoryChoice([...contracts.propertyCategoryOrder].reverse().join(",")),"all");
+ for(const category of contracts.propertyCategoryOrder)assert.equal(model.propertyCategoryChoice(category),category);
+ for(const selection of ["","villa,house","villa,villa","castle",model.propertyDefaults.categories+",castle"])assert.equal(model.propertyCategoryChoice(selection),"");
 });
 function facade(response) {
   const calls = [];
@@ -61,7 +60,7 @@ function facade(response) {
     "@/lib/auth/facade": { boundedJson: request => request.json(), frontendOrigin: () => "https://synthetic.invalid" },
     "@/lib/auth/contracts": { SESSION_COOKIE: "synthetic-cookie" },
     "@/lib/api/facade": { facadeError: (status, code) => Response.json({ error: { code } }, { status }), upstreamRequest: async (...args) => { calls.push(args); return response; } },
-    "@/lib/api/errors": { frenchApiError: code => code }, "./contracts": contracts, "./development-contracts": development, "./outcome-contracts": outcomes,
+    "@/lib/api/errors": { frenchApiError: code => code }, "./contracts": contracts, "./development-contracts": development, "./outcome-contracts": outcomes, "./inventory-range": ranges,
   } });
   return { relay, calls };
 }
@@ -79,6 +78,35 @@ test("property facade rejects duplicate/ambiguous filters and category selection
   for (const route of ["offerings", "developments"]) assert.equal((await relay(route, new Request(`https://synthetic.invalid/api/v1/${route}?categories=land`), "request")).status, 422);
   assert.equal(calls.length, 0);
 });
+
+test("mixed programme filtering stays scoped to the development list and retains strict query guards", async () => {
+  const page = { items: [], total: 0, page: 2, page_size: 20, has_previous: true, has_next: false };
+  const { relay, calls } = facade({ status: 200, body: page });
+  const target = "/api/v1/developments?category=mixed&page=2&page_size=20&sort=reference";
+  assert.equal((await relay("developments", new Request("https://synthetic.invalid" + target), "request")).status, 200);
+  assert.equal(calls[0][0], target); assert.equal(calls[0][2].token, "synthetic-session");
+  for (const suffix of ["category=castle", "category=room", "category=mixed&category=land", "category=mixed&private_owner=1"]) assert.equal((await relay("developments", new Request("https://synthetic.invalid/api/v1/developments?" + suffix), "request")).status, 422);
+  for (const route of ["properties", "offerings", "developments/00000000-0000-4000-8000-000000000001/inventory"]) assert.equal((await relay(route, new Request(`https://synthetic.invalid/api/v1/${route}?category=mixed`), "request")).status, 422);
+  assert.equal(calls.length, 1);
+});
+
+test("property detail groups cover every listing field and preserve zero, empty and translated values", () => {
+  const formatter = loadServer("src/features/inventory/listing-field-format.ts", { modules: { "./contracts": contracts } });
+  const { listingDetailGroups } = loadServer("src/features/inventory/property-listing-details.tsx", { modules: {
+    "react/jsx-runtime": { jsx: () => null, jsxs: () => null }, "@/components/icons": {},
+    "@/components/shared/record-facts": {}, "@/components/shared/record-workspace": {},
+    "./contracts": contracts, "./listing-field-format": formatter,
+  } });
+  const displayed = [...Object.values(listingDetailGroups).flat(), "amenities", "description"];
+  assert.equal(new Set(displayed).size, displayed.length);
+  assert.deepEqual([...displayed].sort(), Object.keys(contracts.listingDetailsSchema.shape).sort());
+  const property = { listing_details: { unit_floor: 0, garage_spaces: 0, city: null, amenities: ["sea_view", "elevator"], condition: "good" } };
+  assert.equal(formatter.formatListingField(property, "unit_floor"), "0");
+  assert.equal(formatter.formatListingField(property, "garage_spaces"), "0");
+  assert.equal(formatter.formatListingField(property, "city"), null);
+  assert.equal(formatter.formatListingField(property, "condition"), "Bon état");
+  assert.equal(formatter.formatListingField(property, "amenities"), "Vue sur mer, Ascenseur");
+});
 test("property facade relays an initial holiday draft and rejects a foreign map host", async () => {
   const id = "00000000-0000-4000-8000-000000000001";
   const { relay, calls } = facade({ status: 200, body: { property_id: id, offering_id: id, version: 2, event_id: id } });
@@ -93,5 +121,21 @@ test("property facade relays an initial holiday draft and rejects a foreign map 
   assert.equal((await relay("properties", request(property), "request")).status, 200);
   assert.equal(JSON.parse(calls[0][2].body).initial_offering.kind, "holiday");
   assert.equal((await relay("properties", request({ ...property, listing_details: { ...property.listing_details, google_maps_url: "https://not-google.invalid/maps" } }), "request")).status, 422);
+  assert.equal(calls.length, 1);
+});
+
+for (const resource of ["properties", "developments", "developments/00000000-0000-4000-8000-000000000001/inventory"]) test(`inventory range facade forwards exact ${resource} queries and rejects malformed or copied filters`, async () => {
+  const id = "00000000-0000-4000-8000-000000000001", page = { items: [], total: 0, page: 1, page_size: 20, has_previous: false, has_next: false };
+  const developmentBody = { id, reference: "SYN-1", name: "Synthetic programme", category: "mixed", location: null, version: 1, created_at: "2030-01-01T10:00:00Z", updated_at: "2030-01-01T10:00:00Z", archived_at: null, unit_count: 0, available_unit_count: 0, offerings: [] };
+  const body = resource === "properties" ? empty : resource === "developments" ? page : { ...page, development: developmentBody };
+  const { relay, calls } = facade({ status: 200, body });
+  const suffix = "min_comparison_mad=9007199254740993.41&max_comparison_mad=9007199254740993.42" + (resource === "developments" ? "" : "&min_area_sqm=94.25&min_rooms=3");
+  const target = `/api/v1/${resource}?${suffix}`;
+  assert.equal((await relay(resource, new Request("https://synthetic.invalid" + target), "request")).status, 200);
+  assert.equal(calls[0][0], target); assert.equal(calls[0][2].token, "synthetic-session");
+  for (const invalid of ["min_comparison_mad=0", "min_comparison_mad=2&max_comparison_mad=1.99", "min_comparison_mad=-1", "min_comparison_mad=1.001", "min_rooms=1.5", "min_rooms=1001", "min_area_sqm=0", "min_comparison_mad=1&min_comparison_mad=2", "private_owner=1"])
+    assert.equal((await relay(resource, new Request(`https://synthetic.invalid/api/v1/${resource}?${invalid}`), "request")).status, 422);
+  if (resource === "developments") for (const copied of ["min_area_sqm=10", "min_rooms=2"])
+    assert.equal((await relay(resource, new Request(`https://synthetic.invalid/api/v1/developments?${copied}`), "request")).status, 422);
   assert.equal(calls.length, 1);
 });

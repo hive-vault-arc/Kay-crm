@@ -29,7 +29,7 @@ export async function relaySchedule(key: string, request: Request, requestId: st
   }
   try {
     const jar = await cookies();
-    const response = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: method as "GET" | "POST" | "PATCH" | "PUT", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0,128), origin: mutation ? frontendOrigin() : undefined, idempotencyKey: retryKey, maxResponseBytes: 2 * 1024 * 1024 });
+    const response = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: method as "GET" | "POST" | "PATCH" | "PUT", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0,128), origin: mutation ? frontendOrigin() : undefined, idempotencyKey: retryKey, visitNotes: true, maxResponseBytes: 2 * 1024 * 1024 });
     if (response.status !== 200) {
       const parsed = z.object({ error: z.object({ code: z.string() }) }).safeParse(response.body);
       const code = parsed.success && allowedErrors.has(parsed.data.error.code) ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE";

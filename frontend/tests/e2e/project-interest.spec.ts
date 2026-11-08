@@ -4,6 +4,7 @@ import { saveDeal } from "../helpers/deals";
 
 test("KAY catalogue interest: manual projects and lead conversion preserve exact parents without stock effects", async ({ page }) => {
   test.setTimeout(150_000);
+  page.setDefaultTimeout(20_000);
   const actor = await createActor("agent");
   try {
     await signIn(page, actor);
@@ -29,7 +30,7 @@ test("KAY catalogue interest: manual projects and lead conversion preserve exact
     const first = form.getByRole("region", { name: "Projet 1", exact: true });
     await expect(first.getByLabel("Programme *", { exact: true })).toBeEnabled();
     await first.getByLabel("Programme *", { exact: true }).selectOption(developmentId);
-    await form.getByRole("button", { name: "Ajouter un projet (maximum 3)", exact: true }).click();
+    await form.getByRole("button", { name: "Ajouter un projet", exact: true }).click();
     const second = form.getByRole("region", { name: "Projet 2", exact: true });
     await second.getByLabel("Type de projet", { exact: true }).selectOption("property");
     await expect(second.getByLabel("Bien indépendant *", { exact: true })).toBeEnabled();
@@ -44,6 +45,7 @@ test("KAY catalogue interest: manual projects and lead conversion preserve exact
     expect((await (await page.request.get(`/api/v1/enquiries/${eid}`)).json()).status).toBe("new");
 
     await page.goto(`/leads/${eid}`);
+    await page.getByRole("button", { name: "Actions", exact: true }).click();
     await page.getByRole("button", { name: "Convertir en affaire", exact: true }).click();
     const dialog = page.getByRole("alertdialog", { name: "Convertir le prospect en affaire", exact: true });
     await dialog.getByLabel("Type de projet", { exact: true }).selectOption("property");

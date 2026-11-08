@@ -62,8 +62,9 @@ export function LiveUpdates() {
     }
     function focused() { if (document.visibilityState === "visible") invalidate(); }
     function dirty(event: Event) {
-      const form = event.target instanceof Element ? event.target.closest<HTMLElement>("form, [role=dialog], [role=alertdialog]") : null;
-      if (form?.querySelector('[data-action="filter"], [data-action="search"]')) return;
+      if (!(event.target instanceof Element) || event.target.closest("[data-filter-panel]")) return;
+      const form = event.target.closest<HTMLElement>("form, [role=dialog], [role=alertdialog]");
+      if (form?.hasAttribute("data-draft-managed") || form?.querySelector('[data-action="filter"], [data-action="search"]')) return;
       if (form) form.dataset.liveDirty = "true";
     }
     function saved() { invalidate(); }
@@ -78,6 +79,7 @@ export function LiveUpdates() {
     document.addEventListener("input", dirty);
     document.addEventListener("change", dirty);
     window.addEventListener("kay:command-saved", saved);
+    window.addEventListener("kay:draft-cleared", saved);
     return () => {
       stopped = true; clearTimeout(reconnect); clearInterval(safety); clearInterval(watchdog); socket?.close();
       delete document.documentElement.dataset.liveRefresh;
@@ -85,14 +87,15 @@ export function LiveUpdates() {
       document.removeEventListener("visibilitychange", focused);
       document.removeEventListener("input", dirty); document.removeEventListener("change", dirty);
       window.removeEventListener("kay:command-saved", saved);
+      window.removeEventListener("kay:draft-cleared", saved);
     };
   }, []);
   useEffect(() => {
     const deferred = () => setPendingRoute(route);
     const saved = () => setPendingRoute(document.querySelector("[data-live-dirty]") ? route : undefined);
-    window.addEventListener("kay:live-deferred", deferred); window.addEventListener("kay:command-saved", saved);
+    window.addEventListener("kay:live-deferred", deferred); window.addEventListener("kay:command-saved", saved); window.addEventListener("kay:draft-cleared", saved);
     return () => {
-      window.removeEventListener("kay:live-deferred", deferred); window.removeEventListener("kay:command-saved", saved);
+      window.removeEventListener("kay:live-deferred", deferred); window.removeEventListener("kay:command-saved", saved); window.removeEventListener("kay:draft-cleared", saved);
     };
   }, [route]);
   if (status === "disabled") return null;

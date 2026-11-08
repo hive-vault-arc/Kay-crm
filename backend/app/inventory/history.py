@@ -24,6 +24,7 @@ def record(
         offering_id=offering.id if offering else None,
         actor_user_id=identity.user.id,
         actor_display_name=identity.user.display_name,
+        development_phase=item.phase if isinstance(item, Development) else None,
         action=action,
         property_version=item.version,
         offering_version=offering.version if offering else None,

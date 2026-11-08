@@ -8,7 +8,9 @@ export function csvRow(phone: string, email = "", name = "SP18 contact été, d�
 export async function importFixture(page: Page, actors: TestActor[]) {
   const agent = await createActor("agent", false, "SP06 SP18 agent responsable synthétique"), other = await createActor("agent", false, "SP06 SP18 autre agent au nom particulièrement long pour le contrôle mobile synthétique"), manager = await createActor("manager", false, "SP06 SP18 responsable import synthétique"); actors.push(agent, other, manager);
   await signIn(page, agent); await createLead(page, "SP18 contact existant synthétique"); await clearActorContext(page); await signIn(page, manager);
-  await page.goto("/leads"); await page.getByRole("link", { name: "Importer des contacts", exact: true }).click();
+  await page.goto("/leads");
+  await page.getByRole("button", { name: "Autres actions de la liste", exact: true }).click();
+  await page.getByRole("link", { name: "Importer des contacts", exact: true }).click();
   try { await expect(page.getByRole("heading", { name: "Importer des contacts", exact: true })).toBeVisible(); }
   catch (failure) {
     const diagnostic = await page.evaluate(() => ({ path: location.pathname, view: new URLSearchParams(location.search).get("view"), width: innerWidth, scrollWidth: document.documentElement.scrollWidth, desktopFilters: matchMedia("(min-width: 80rem)").matches, ready: document.readyState, dialogs: document.querySelectorAll('[role="dialog"]').length, headings: document.querySelectorAll("h1").length })).catch(() => ({ closed: true }));
@@ -19,7 +21,9 @@ export async function importFixture(page: Page, actors: TestActor[]) {
 }
 export async function selectCsv(page: Page, data: Buffer, name = "contacts-synthetiques.csv") {
   const previous = new URL(page.url()).searchParams.get("batch");
-  const choice = page.waitForEvent("filechooser"); await page.getByRole("button", { name: "Choisir un CSV", exact: true }).click();
+  const composer = page.getByRole("form", { name: "Fichier CSV de contacts", exact: true });
+  if (previous && !await composer.getByRole("button", { name: "Parcourir", exact: true }).isVisible()) await page.getByText("Envoyer un fichier corrigé", { exact: true }).click();
+  const choice = page.waitForEvent("filechooser"); await composer.getByRole("button", { name: "Parcourir", exact: true }).click();
   await (await choice).setFiles({ name, mimeType: "text/csv", buffer: data });
   const preview = page.waitForResponse(response => /\/api\/v1\/imports\/[a-f0-9-]+\/preview$/.test(new URL(response.url()).pathname) && response.request().method() === "POST");
   await page.getByRole("button", { name: /^(Envoyer et prévisualiser|Réessayer le fichier)$/ }).click();
@@ -29,16 +33,21 @@ export async function selectCsv(page: Page, data: Buffer, name = "contacts-synth
   await expect(page.getByText("Chargement du lot…", { exact: true })).toHaveCount(0);
   return new URL(page.url()).searchParams.get("batch")!;
 }
+export async function expectImportCounts(page: Page, eligible: number, skipped: number, invalid: number, committed: number) {
+  const counts = page.getByRole("group", { name: "Comptage du lot", exact: true });
+  for (const label of [`${eligible} à créer`, `${skipped} ignorée(s)`, `${invalid} à corriger`, `${committed} créée(s)`]) await expect(counts.getByText(label, { exact: true })).toBeVisible();
+}
 export async function prepareCorrected(page: Page, agent: TestActor, other: TestActor) {
   await selectCsv(page, csv([csvRow("+212600000001", "", "SP18 contact déjà connu synthétique"), csvRow("+212600111001", agent.email), csvRow("+33612345678", "", "SP18 second contact\n synthétique")]), "contacts-corriges-synthetiques.csv");
   await expect(page.getByRole("button", { name: "Approuver l’import", exact: true })).toBeDisabled();
   await page.getByLabel("Agent de remplacement des lignes sans agent_email", { exact: true }).selectOption(agent.id);
   await page.getByRole("button", { name: "Modifier l’agent de la ligne 3", exact: true }).click();
-  await page.getByLabel("Agent de la ligne 3", { exact: true }).selectOption(other.id);
-  await page.getByLabel("Agent de la ligne 3", { exact: true }).selectOption("");
-  await expect(page.getByLabel("Agent de la ligne 3", { exact: true })).toHaveValue("");
-  await page.getByLabel("Agent de la ligne 3", { exact: true }).selectOption(other.id);
-  await page.getByRole("button", { name: "Fermer le choix d’agent", exact: true }).click();
+  const line = page.getByRole("dialog", { name: "Agent de la ligne 3", exact: true });
+  await line.getByLabel("Agent de la ligne 3", { exact: true }).selectOption(other.id);
+  await line.getByLabel("Agent de la ligne 3", { exact: true }).selectOption("");
+  await expect(line.getByLabel("Agent de la ligne 3", { exact: true })).toHaveValue("");
+  await line.getByLabel("Agent de la ligne 3", { exact: true }).selectOption(other.id);
+  await line.locator("form").getByRole("button", { name: "Fermer le choix d’agent", exact: true }).click();
   await page.getByRole("button", { name: "Générer un nouvel aperçu", exact: true }).click();
   await expect(page.getByRole("button", { name: "Approuver l’import", exact: true })).toBeEnabled();
 }

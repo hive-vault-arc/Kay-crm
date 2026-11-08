@@ -1,5 +1,27 @@
 # Data model: dictionary, conceptual, logical, and physical views
 
+Selected unit rich drafts,2026-10-28: the existing property.listing_details
+JSON stores known partial unit facts; missing facts remain null/unknown. This
+preserves existing incomplete-unit drafts without dropping entered details.
+Templates never populate or propagate physical facts. No column/table/backfill/
+migration or ownership/stock model changes. Existing guarded floor/type links
+and original history remain.
+[Current source boundary](unit-listing-workflow-local.md).
+
+Selected programme phase,2026-10-28: prepared revision0037_development_phase adds
+nullable development.phase and inventory_event.development_phase with bounded
+preparation/marketing checks and a deferred same-version snapshot guard. No
+backfill or inference; current unknown and historical missing state stay unknown.
+Old phase-omitting edits/receipts preserve their value/identity. The field is
+descriptive, separate from offering/stock state. Migration is not applied.
+[Meaning, compatibility and proposed legacy policy](development-phase-local.md).
+
+Selected migration addendum,2026-10-26: prepared revision0036_visit_notes adds
+visit.notes, an empty-default bounded string separate from overlap_reason/outcome.
+New event snapshots include it and a deferred guard matches current row/event.
+Historical JSON is not rewritten; note-bearing downgrade is refused. This schema
+has not been applied. [Contract](visit-scheduling-local.md).
+
 Migration `0035_project_photos` widens `document_purpose` so a WebP photo may
 reference a development as well as a physical property. One-parent, generated
 PDF and template-code checks are preserved. No record/file rewrite occurs.

@@ -94,6 +94,7 @@ class VisitFields(Period):
     location: Text
     participant_ids: Annotated[list[UUID], Field(min_length=1, max_length=100)]
     overlap_reason: Reason = ""
+    notes: Reason = ""
     deal_id: UUID | None = None
     enquiry_id: UUID | None = None
     property_id: UUID | None = None
@@ -137,6 +138,14 @@ class CalendarQuery(Period):
     user_id: UUID | None = None
     types: Annotated[str, Field(max_length=80)] | None = None
     statuses: Annotated[str, Field(max_length=80)] | None = None
+
+    @model_validator(mode="after")
+    def period(self) -> Self:
+        # Contact dossiers use Casablanca month boundaries, including offset changes.
+        limit = timedelta(days=32 if self.contact_id is not None else 8)
+        if not timedelta(0) < self.end_at - self.start_at <= limit:
+            raise ValueError("INVALID_VISIT_PERIOD")
+        return self
 
     @field_validator("types", "statuses", mode="before")
     @classmethod

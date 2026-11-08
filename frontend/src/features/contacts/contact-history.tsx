@@ -1,75 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { useId, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { NativeSelect } from "@/components/ui/native-select";
-import { Textarea } from "@/components/ui/textarea";
-import { useHydrated } from "@/hooks/use-hydrated";
-import { ApiError } from "@/lib/api/client";
-import { apiCommand } from "@/lib/api/command";
+import { useState } from "react";
+import { DataTable } from "@/components/shared/data-table";
+import { RecordDrawer } from "@/components/shared/record-drawer";
+import type { ApiError } from "@/lib/api/client";
+import type { EntryDenied } from "@/features/activities/use-entry-command";
 import { formatInstant } from "@/lib/format";
-import { activityLabels, dealActivityLabels, assignmentsSchema, commandResultSchema, noteSchema, timelineSchema } from "./ownership-contracts";
+import { activityLabels, dealActivityLabels, assignmentsSchema, timelineSchema } from "./ownership-contracts";
+import { ContactNoteForm } from "./contact-note-form";
 import { NumberedPages } from "./numbered-pages";
 import { RecordError } from "./record-states";
 import { queryPath, useQuery } from "./use-query";
 
-const kinds = { note: "Note", call: "Appel", email: "E-mail", meeting: "Rendez-vous", other: "Autre interaction" } as const;
-function NoteForm({ id, saved }: { id: string; saved: () => void }) {
-  const hydrated = useHydrated();
-  const control = useId();
-  const [kind, setKind] = useState<keyof typeof kinds>("note");
-  const [body, setBody] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<ApiError>();
-  const [success, setSuccess] = useState(false);
-  const attempt = useRef({ body: "", key: "" });
-  async function submit(event: React.FormEvent) {
-    event.preventDefault(); setBusy(true); setError(undefined); setSuccess(false);
-    const values = noteSchema.safeParse({ kind, body });
-    if (!values.success) { setError(new ApiError("VALIDATION_ERROR", 422)); setBusy(false); return; }
-    const fingerprint = JSON.stringify(values.data);
-    if (attempt.current.body !== fingerprint) attempt.current = { body: fingerprint, key: crypto.randomUUID() };
-    try {
-      await apiCommand(`/api/v1/contacts/${id}/notes`, values.data, commandResultSchema, attempt.current.key);
-      setBody(""); attempt.current = { body: "", key: "" }; setSuccess(true); saved();
-    } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
-    finally { setBusy(false); }
-  }
-  return <form className="grid max-w-reading gap-4" onSubmit={event => void submit(event)} aria-busy={busy}>
-    <h3 className="font-medium">Ajouter une note ou consigner une interaction</h3>
-    <p className="text-sm text-muted-foreground">L’auteur et l’heure d’enregistrement sont conservés. Consigner un e-mail ne l’envoie pas ; consigner un rendez-vous ne le planifie pas.</p>
-    <fieldset disabled={!hydrated || busy} className="grid gap-4">
-      <div className="grid gap-2"><Label htmlFor={`${control}-kind`}>Type d’entrée</Label><NativeSelect id={`${control}-kind`} value={kind} onChange={event => setKind(event.target.value as keyof typeof kinds)}>{Object.entries(kinds).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
-      <div className="grid gap-2"><Label htmlFor={`${control}-body`}>Texte de l’entrée</Label><Textarea id={`${control}-body`} required maxLength={4000} rows={4} value={body} onChange={event => setBody(event.target.value)} /></div>
-      <Button action="save" className="justify-self-start" type="submit">{busy ? "Enregistrement…" : "Enregistrer l’entrée"}</Button>
-    </fieldset>
-    {error ? <RecordError error={error} /> : null}{success ? <p role="status" className="text-success">Entrée enregistrée, avec son auteur.</p> : null}
-  </form>;
-}
-
-export function ContactTimeline({ id, archived, revision }: { id: string; archived: boolean; revision?: number }) {
+export function ContactTimeline({ id, archived, revision, denied }: { id: string; archived: boolean; revision?: number; denied?: EntryDenied }) {
   const [page, setPage] = useState(1);
+  const [accessError, setAccessError] = useState<ApiError>(), [notice, setNotice] = useState("");
   const query = useQuery(queryPath(`contacts/${id}/timeline`, { page, page_size: 25 }), timelineSchema, revision);
-  return <div className="grid gap-8">
-    <section className="grid gap-4"><h2 className="text-section font-medium">Historique du contact</h2>
-      {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement de l’historique…</p> : <>
-        <p role="status">{query.value.total} événement(s), auteurs conservés.</p>
-        {query.value.items.length ? <ol className="grid gap-6">{query.value.items.map(item => <li className="grid min-w-0 gap-2 border-b pb-4" key={item.id}>
-          <h3 className="font-medium">{activityLabels[item.action] ?? (dealActivityLabels as Record<string, string>)[item.action] ?? "Événement"}</h3>
-          <p className="wrap-anywhere">Auteur : {item.actor.display_name}</p><time className="text-sm text-muted-foreground" dateTime={item.occurred_at}>{formatInstant(item.occurred_at)}</time>
-          {item.body ? <p className="whitespace-pre-wrap wrap-anywhere">{item.body}</p> : null}{item.reason ? <p className="whitespace-pre-wrap wrap-anywhere">Motif : {item.reason}</p> : null}
-          {item.contact_id !== id ? <p className="wrap-anywhere text-sm">Contact d’origine : {item.contact_id}</p> : null}
-          {item.related_contact_id ? <p className="wrap-anywhere text-sm">Contact lié à la fusion : {item.related_contact_id}</p> : null}
-          {item.enquiry_id ? <Link className="inline-flex min-h-control items-center justify-self-start text-link underline" href={`/leads/${item.enquiry_id}`}>Voir la demande liée</Link> : null}
-          {item.deal_id ? <Link className="inline-flex min-h-control items-center justify-self-start text-link underline" href={`/deals/${item.deal_id}`}>Voir l’affaire liée</Link> : null}
-        </li>)}</ol> : <p>Aucun événement enregistré.</p>}
-        <NumberedPages label="Pages de l’historique" page={page} total={query.value.total} size={query.value.page_size} change={setPage} />
-      </>}
-    </section>
-    {!archived ? <NoteForm id={id} saved={() => { setPage(1); query.refresh(); }} /> : <p>Restaurez ce contact pour ajouter une entrée.</p>}
-  </div>;
+  const title = (action: string) => (activityLabels as Record<string, string>)[action] ?? (dealActivityLabels as Record<string, string>)[action] ?? "Événement";
+  const failure = accessError ?? query.error;
+  if (failure && [401, 403, 404].includes(failure.status)) return <section className="grid gap-3">{notice ? <p role="status">{notice}</p> : null}<RecordError error={failure} retry={() => { setAccessError(undefined); setNotice(""); query.refresh(); }} /></section>;
+  return <section className="grid min-w-0 gap-4"><div className="kay-section-head"><h2>Historique du contact</h2>{!archived ? <RecordDrawer label="Ajouter une activité" action="add" description="Consigner une note ou une interaction avec son auteur.">{(_close, saved) => <ContactNoteForm id={id} denied={(failure, acknowledged) => { setAccessError(failure); setNotice(acknowledged ? "L’entrée est enregistrée. Les droits d’accès ont changé." : ""); denied?.(failure, acknowledged); }} saved={() => { setPage(1); query.refreshQuietly(); setNotice("Entrée enregistrée, avec son auteur."); saved(); }} />}</RecordDrawer> : null}</div>
+    {notice ? <p role="status" className="text-success">{notice}</p> : null}
+    {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement de l’historique…</p> : <>
+      <p role="status" className="text-sm text-muted-foreground">{query.value.total} événement(s), auteurs conservés.</p>
+      <DataTable rows={query.value.items} getRowId={item => item.id} columns={[
+        { id: "date", header: "Date", cell: ({ row }) => <time dateTime={row.original.occurred_at}>{formatInstant(row.original.occurred_at)}</time> },
+        { id: "event", header: "Événement", cell: ({ row }) => title(row.original.action) },
+        { id: "note", header: "Note", cell: ({ row: { original: item } }) => <div className="grid gap-2 text-sm">{item.body ? <p className="whitespace-pre-wrap wrap-anywhere">{item.body}</p> : null}{item.reason ? <p className="whitespace-pre-wrap wrap-anywhere">Motif : {item.reason}</p> : null}{item.contact_id !== id ? <p className="wrap-anywhere text-xs">Contact d’origine : {item.contact_id}</p> : null}{item.related_contact_id ? <p className="wrap-anywhere text-xs">Contact de la fusion : {item.related_contact_id}</p> : null}{item.enquiry_id ? <Link className="inline-flex min-h-control items-center hover:underline" href={`/leads/${item.enquiry_id}`}>Voir le prospect</Link> : null}{item.deal_id ? <Link className="inline-flex min-h-control items-center hover:underline" href={`/deals/${item.deal_id}`}>Voir l’affaire</Link> : null}{!item.body && !item.reason && !item.enquiry_id && !item.deal_id ? "—" : null}</div> },
+        { id: "author", header: "Auteur", cell: ({ row }) => row.original.actor.display_name },
+      ]} caption="Historique du contact et de ses dossiers" footerCaption emptyLabel="Aucun événement enregistré." mobileCard={item => <article className="grid gap-2"><div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-sm">{title(item.action)}</strong><time className="text-xs text-muted-foreground" dateTime={item.occurred_at}>{formatInstant(item.occurred_at)}</time></div><p className="text-xs text-muted-foreground">{item.actor.display_name}</p>{item.body ? <p className="whitespace-pre-wrap wrap-anywhere text-sm">{item.body}</p> : null}{item.reason ? <p className="whitespace-pre-wrap wrap-anywhere text-sm">Motif : {item.reason}</p> : null}{item.contact_id !== id ? <p className="wrap-anywhere text-xs">Contact d’origine : {item.contact_id}</p> : null}{item.related_contact_id ? <p className="wrap-anywhere text-xs">Contact de la fusion : {item.related_contact_id}</p> : null}{item.enquiry_id ? <Link className="inline-flex min-h-control items-center text-sm hover:underline" href={`/leads/${item.enquiry_id}`}>Voir le prospect</Link> : null}{item.deal_id ? <Link className="inline-flex min-h-control items-center text-sm hover:underline" href={`/deals/${item.deal_id}`}>Voir l’affaire</Link> : null}</article>} />
+      <NumberedPages compact label="Pages de l’historique" page={page} total={query.value.total} size={query.value.page_size} change={setPage} />
+    </>}
+  </section>;
 }
 
 export function ContactAssignments({ id, revision }: { id: string; revision?: number }) {

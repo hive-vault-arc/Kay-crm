@@ -1,0 +1,67 @@
+/* Selected documents-help.css geometry, with the later mobile-app.css overrides. */
+.kay-shell:has(.kay-document-page) { height:100dvh; min-height:0; overflow:hidden; }
+.kay-shell:has(.kay-document-page) .kay-main { display:flex; flex-direction:column; height:calc(100dvh - var(--workspace-geometry-header)); min-height:0; overflow:hidden; }
+.kay-shell:has(.kay-document-page) .kay-route-motion { display:flex; flex:1; flex-direction:column; min-height:0; }
+.kay-document-page { display:flex; flex:1; flex-direction:column; gap:20px; min-width:0; min-height:0; }
+.kay-document-page > .kay-page-header { flex:none; }
+.kay-document-workspace { display:flex; flex:1; flex-direction:column; gap:0; min-width:0; min-height:0; overflow:hidden; }
+.kay-document-top { display:flex; flex:none; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--workspace-line); }
+.kay-document-top [data-slot=tabs-list] { border:0; padding:12px 16px; }
+.kay-document-top [data-slot=tabs-trigger] { font-size:13px; font-weight:600; padding:8px 14px; }
+.kay-document-private { margin-right:24px; color:var(--workspace-muted); font-size:13px; }
+.kay-document-feedback { flex:none; margin:0; padding:12px 24px; border-bottom:1px solid var(--workspace-line); background:var(--workspace-field); font-size:13px; }
+.kay-document-prepare { display:flex; flex:1; min-width:0; min-height:0; }
+.kay-document-layout { display:grid; flex:1; grid-template-columns:clamp(24rem,30%,30rem) minmax(0,1fr); min-width:0; min-height:0; margin:0; overflow:hidden; }
+.kay-document-models { display:flex; flex-direction:column; min-width:0; min-height:0; padding:24px 16px; border-right:1px solid var(--workspace-line); }
+.kay-document-model-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 12px 16px; }
+.kay-document-model-heading h2 { font-size:15px; font-weight:600; }
+.kay-document-model-heading > span { color:var(--workspace-muted); font-size:12px; }
+.kay-document-model-list { display:grid; flex:1; align-content:start; gap:4px; min-height:0; overflow:auto; }
+.kay-document-model { display:grid; grid-template-columns:2ch minmax(0,1fr) 16px; align-items:center; gap:12px; width:100%; min-height:48px; padding:12px; border:0; border-radius:12px; color:var(--workspace-ink); text-align:left; font-size:13px; }
+.kay-document-model > span { color:var(--workspace-muted); font-variant-numeric:tabular-nums; }
+.kay-document-model strong { min-width:0; font-weight:500; line-height:1.5; overflow-wrap:anywhere; }
+.kay-document-model[aria-current=true] { background:var(--workspace-selected); }
+.kay-document-mobile-picker { display:none; }
+.kay-document-form { display:flex; flex-direction:column; min-width:0; min-height:0; }
+.kay-document-form-body { flex:1; min-height:0; overflow:auto; padding:24px 28px; container-type:inline-size; }
+.kay-document-form-body > h2 { margin-bottom:12px; font-size:18px; font-weight:600; line-height:1.5; }
+.kay-document-intro { margin:12px 0 24px; color:var(--workspace-muted); font-size:13px; line-height:1.6; }
+.kay-document-warning,.kay-document-recovery { display:flex; align-items:flex-start; gap:12px; margin:0 0 16px; padding:12px 16px; border-radius:12px; background:var(--workspace-field); font-size:13px; line-height:1.6; }
+.kay-document-warning > svg { flex:none; margin-top:2px; }
+.kay-document-recovery { display:grid; }
+.kay-document-field-group { min-width:0; margin:0; padding:24px 0; border:0; border-top:1px solid var(--workspace-line); }
+.kay-document-field-group legend { float:left; width:100%; margin-bottom:20px; padding:0; font-size:15px; font-weight:600; }
+.kay-document-fields { display:grid; clear:both; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 24px; }
+.kay-document-field { display:grid; align-content:start; gap:8px; min-width:0; }
+.kay-document-field[data-wide=true] { grid-column:1 / -1; }
+.kay-document-field :is(input,textarea) { width:100%; min-width:0; }
+.kay-document-form-footer { display:flex; flex:none; align-items:center; justify-content:space-between; gap:16px; padding:16px 28px; border-top:1px solid var(--workspace-line); }
+.kay-document-form-footer > div { display:grid; gap:4px; min-width:0; font-size:13px; }
+.kay-document-form-footer > div > span { display:flex; align-items:center; gap:8px; }
+.kay-document-form-footer small { color:var(--workspace-muted); font-size:12px; line-height:1.5; }
+.kay-document-history { display:flex; flex:1; flex-direction:column; min-height:0; padding:24px; }
+.kay-document-history > .kay-record-section,.kay-document-history .kay-section-body { display:flex; flex:1; flex-direction:column; min-height:0; }
+.kay-document-history .kay-section-head { flex:none; }
+.kay-document-history-scroll { flex:1; min-height:0; overflow:auto; }
+.kay-document-history table { min-width:700px; }
+.kay-document-state { grid-column:1 / -1; overflow:auto; padding:24px; }
+.kay-document-page :is(.kay-document-model-list,.kay-document-form-body,.kay-document-history-scroll) { overscroll-behavior:contain; scrollbar-gutter:stable; }
+.kay-document-page [hidden] { display:none!important; }
+@container(min-width:60rem) { .kay-document-field-group[data-short-fields="3"] .kay-document-fields { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@container(max-width:36rem) { .kay-document-fields { grid-template-columns:minmax(0,1fr); } }
+@media(max-width:1050px) {
+  .kay-document-layout { grid-template-columns:minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); }
+  .kay-document-models { padding:16px 24px; border-right:0; border-bottom:1px solid var(--workspace-line); }
+  .kay-document-model-heading,.kay-document-model-list { display:none; }
+  .kay-document-mobile-picker { display:grid; gap:8px; }
+}
+@media(max-width:830px) {
+  .kay-shell:has(.kay-document-page) .kay-main { height:calc(100dvh - 72px); }
+  .kay-document-page { gap:12px; }
+  .kay-document-private { display:none; }
+  .kay-document-models { padding:12px 16px; }
+  .kay-document-form-body,.kay-document-history { padding:16px; }
+  .kay-document-fields { grid-template-columns:minmax(0,1fr); gap:16px; }
+  .kay-document-form-footer { flex-wrap:wrap; gap:8px; padding:12px 16px max(12px,env(safe-area-inset-bottom)); }
+  .kay-document-form-footer > button { width:100%; min-height:44px; }
+}

@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "c09bc8e",
+  "scope": "Selected legal-owner editing and programme block/floor/reusable-type forms",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 334,
+      "failed": 0,
+      "newRegisteredCases": 14
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 62,
+      "iconConsumers": 90,
+      "iconSites": 319,
+      "buttonSites": 465,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .git/codex-inventory-forms-source-check.cjs",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0,
+      "compiledHiddenImportant": true,
+      "compiledSingleMetadataFullWidth": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8729,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1245,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "reference": "Frozen source-views.js owners/structure/hierarchy forms and selected RecordDrawer/RecordSection/RecordEntry composition",
+    "proposal": "Shared drawer inset/scroll, section separation without stacked gaps, one visible hierarchy editor instead of a stacked list/form, labels above paired inputs and single card fact across both columns",
+    "newKitChartDependencyThemeOrApi": false
+  },
+  "invariants": [
+    "Protected/null legal-owner identity blocks full-set PUT rather than dropping unseen links",
+    "Explicit shared labels never default from private identity; canonical Contacts scope/roles/provenance are unchanged",
+    "Last legal owner, availability, programme/unit separation and current backend authority remain decisive",
+    "Owner conflicts show the current full set and warn before explicit full replacement; guarded reload and no automatic overwrite",
+    "Hierarchy comparison finds the exact item in existing numbered routes and brackets reads with the development version",
+    "Foreign target/parent, malformed pages, missing items and changing parent versions cannot be adopted",
+    "Exact body/path/method retry identity, synchronous duplicate locks and managed draft/busy state",
+    "401/403/404 clears private editor context; read abort and late success suppression on unmount",
+    "Real hierarchy fields/categories/defaults remain distinct from illustrative prototype-only type order"
+  ],
+  "correctedAttempts": [
+    "Initial broad gate still had320 cases because the new test file was not registered in the explicit runner; registration was added and the334-case gate passed"
+  ],
+  "preparedBrowser": [
+    "frontend/tests/e2e/inventory-forms.spec.ts:1440/390 synthetic structure, owner selection, discard and preserved canonical responsibility; not executed"
+  ],
+  "remaining": [
+    "Owner directory/drawer entry and photo form parity",
+    "Older inventory native selectors and broader P0-P8 reconciliation",
+    "Legacy same-document history fallback",
+    "Browser/CUA/CDP/app HTTP under the existing automatic rejection",
+    "Native desktop/phone/focus/touch/zoom/accessibility/AFTER, actual permissions/merge/stock/races, real SQL/full-stack/CI and owner review"
+  ],
+  "preserved": [
+    "All254 frozen prototype inputs",
+    "Backend/API/schema/data/services/migrations/configuration",
+    "Unrelated35-line lesson change and motion plan",
+    "main, push, merge and production"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

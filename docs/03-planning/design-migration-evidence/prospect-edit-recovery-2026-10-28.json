@@ -1,0 +1,181 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "1b5112c706e50339f5694b9c061319d05198596c",
+  "scope": "Selected prospect status and inline PATCH request ownership, optional shared API lifecycle hooks, immutable unknown retries, saved-only completion, metadata/board host retention and enquiry/current identity coherence",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 666,
+      "additionalCases": 13,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic actual enquiry hook/API helper/status/inline/metadata/board/facade and synthetic TLS units; new suite registered. Existing inline/status retry tests retain actual-hook coverage and strict fixture identity."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 499,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <five changed UI files>",
+      "exitCode": 0,
+      "files": 5,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1273,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8905,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "validationCorrection": "Unused import warning removed without suppression. Owned conflict refresh closes through its private completion path rather than its own dismissal lock. Metadata transient failures retain the inline owner and disable new writes while recovery remains available.",
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/enquiry-recovery.spec.ts",
+    "browserCases": 2,
+    "typechecked": true,
+    "scenarios": [
+      "Status original PATCH retry, one version increment and unchanged other fields",
+      "Inline description original PATCH retry, one version increment and unchanged qualification"
+    ],
+    "syntheticIsolatedFixturesOnly": true,
+    "tracesVideosScreenshots": false
+  },
+  "preserved": {
+    "selectedStatusGroupsColorsIconsAndInlineGeometry": true,
+    "allFourInlineFieldsAndNineWritableStatuses": true,
+    "separateExplicitConversion": true,
+    "exactOriginalBodyVersionKey": true,
+    "backendAuthorityVersionReceiptAtomicEditHistory": true,
+    "canonicalContactReads": true,
+    "existingApiCommandCallers": true,
+    "noBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Full prospect create/editor/conversion recovery",
+    "Other domain commands and exact field/context audit",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: no backend change this checkpoint",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/simulator/account/customer records/private configuration/import/export/transfer access",
+    "Executed migrations0036/0037 or another migration",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4554,
+      "sha256": "bc06ff67d2ed1f4b6b31ed343b37d16391da537790eece0253643db1d4b340e6"
+    },
+    {
+      "file": "frontend/src/components/shared/inline-record-field.tsx",
+      "bytes": 4925,
+      "sha256": "0c56a6ff9e346f166f35f0483f18bf9f95ac7df5ea74ab93af776713f4863c9a"
+    },
+    {
+      "file": "frontend/src/features/contacts/facade.ts",
+      "bytes": 8870,
+      "sha256": "e175e141df99c445db15aa76a499d248f6825a329cd8abe19f8b4be3f9279f3b"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-inline-field.tsx",
+      "bytes": 8562,
+      "sha256": "159f1dbf98a03fbe9572c181ca8c552be7e91fd88d3b104656ac94d0a3671dec"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-kanban.tsx",
+      "bytes": 5715,
+      "sha256": "1f09fc1fdf335b61fd897dcf04e457790fddda3583513c1099075d7c1189e70d"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-record.tsx",
+      "bytes": 9814,
+      "sha256": "d09e39680524f7cf10276a87a70684b18a75b5c5a5ff5e09a3f32aace63baf8d"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-status-menu.tsx",
+      "bytes": 7397,
+      "sha256": "7efa2ec27c355ba4d4dacf636a31bd1f17fe40770299856e3618d5126a346e72"
+    },
+    {
+      "file": "frontend/src/features/contacts/use-enquiry-command.ts",
+      "bytes": 6508,
+      "sha256": "1795f2d50c6a2cbbef478d205546256204da402c825055262fb4e17b837c271a"
+    },
+    {
+      "file": "frontend/src/lib/api/command.ts",
+      "bytes": 1274,
+      "sha256": "c25cf8830c66e25dce758e010f73266c48ec4257acb010dc5db40147491d37b2"
+    },
+    {
+      "file": "frontend/tests/e2e/enquiry-recovery.spec.ts",
+      "bytes": 4889,
+      "sha256": "b6fc0b7bc8f997754de4d3ae1ebc912ed35d3166b53fdf02142790725a6ed526"
+    },
+    {
+      "file": "frontend/tests/unit/enquiry-fixtures.mjs",
+      "bytes": 1762,
+      "sha256": "f3f5f31c10d6c7854e9fa176ce8d890a102ead37b81ca5e17d1239f62523bacd"
+    },
+    {
+      "file": "frontend/tests/unit/enquiry-recovery.test.mjs",
+      "bytes": 22089,
+      "sha256": "b5324c745523615a93b823aacb77516722826c61e1670c39d09ec9ade2f2cfab"
+    },
+    {
+      "file": "frontend/tests/unit/inline-editing.test.mjs",
+      "bytes": 27124,
+      "sha256": "a0228356a999f78d062e94b075c5170e80ba2eea29bb8ad3844087e8b8ab2701"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 32287,
+      "sha256": "378e4b9d9e9a47236bee0f6102e6868d3c31d8f2c6d512d029561cf70597673f"
+    }
+  ]
+}

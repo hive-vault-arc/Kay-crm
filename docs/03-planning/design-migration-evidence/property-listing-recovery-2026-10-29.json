@@ -1,0 +1,186 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "3c9077129d7c13de0fd2f6e7b936363e2d9928e4",
+  "scope": "Selected shared property listing wizard: independent/unit creation and edits, strict original operation/key/callback, real actor/parent/record host, actual atomic counters, protected unknown work, current comparison and verified completion-only navigation",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 848,
+      "additionalCases": 20,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Actual intent/controller/wizard/host/route in synthetic harnesses; no actual app or SQL"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 348,
+      "buttonSites": 517,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <listing wizard/record/wrappers/route>",
+      "exitCode": 0,
+      "files": 5,
+      "findings": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8971,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1284,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": [
+    {
+      "file": "frontend/tests/e2e/property-listing-recovery.spec.ts",
+      "cases": 3,
+      "scenarios": [
+        "phone independent listing creation lost acknowledgement",
+        "phone programme unit drawer creation lost acknowledgement",
+        "desktop property edit acknowledged result-read outage"
+      ],
+      "trace": false,
+      "video": false,
+      "screenshots": false
+    }
+  ],
+  "invariants": {
+    "selectedSharedFiveStepsCompleteFieldsReviewLayoutTokensGlyphsMotion": true,
+    "realActorRoleAndExactParentRecordContext": true,
+    "strictOriginalBodyMethodPathVersionsKeyAndCallback": true,
+    "propertyWithInitialOfferCountersTwoAndOne": true,
+    "editsNeverOverwriteCommercialOffers": true,
+    "synchronousInputsMarketAmenitiesPlacementStepperPreviousCancelProtection": true,
+    "matchingReceiptCurrentHierarchyOfferingAndCurrentIdentityBeforeNavigation": true,
+    "acknowledgedCompletionOnlyAndMonotonicVerifiedEditHost": true,
+    "explicitCurrentAcceptanceAndGuardedReload": true,
+    "newerHostCannotBeLoweredByComparison": true,
+    "declaredLockedCategoryAndPlacementReconciliation": true,
+    "archivedOrReparentedUnitCannotRetarget": true,
+    "zeroNullExactAmountsInvalidNumericAndBlockIntentRetained": true,
+    "currentDenialSourceRetentionAndDisposalFenced": true,
+    "existingBackendScopeHierarchyStockAuthorityUnchanged": true,
+    "noPersistentBrowserStorage": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "remainingSourceWork": [
+    "Additional generic archive/restore consumer found in frontend/src/features/discovery/lifecycle-panel.tsx",
+    "Remaining exact domain field/action/context reconciliation",
+    "Broader legacy browser helpers/selectors"
+  ],
+  "notPerformed": [
+    "Backend tests: backend unchanged; initial property/offer counters and hierarchy authority inspected in source only",
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/accounts/private configuration/records/services/workers/scanners/simulator/import/export/transfer access",
+    "Migrations0036/0037 or other migration execution",
+    "Actual SQL/concurrent stock/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5137,
+      "sha256": "dc0cd0bcb2e8b8c17021aaf9a25ef541669ee9a9de1cbe3d363cca5041eea66b"
+    },
+    {
+      "file": "frontend/src/app/(workspace)/projects/properties/new/page.tsx",
+      "bytes": 882,
+      "sha256": "5956e66905b77ece10f0e456ec290a77e00c51ed3be748ec0c45eb2d23bd0ec8"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-creation-wizard.tsx",
+      "bytes": 574,
+      "sha256": "35c5f16d60203c8d491c43e3195dfdf3848ee26495b0d7ca1eb2594f51ef480a"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-editor.tsx",
+      "bytes": 872,
+      "sha256": "37531e21d62c64868d67985e1cf0293cfd96cb7c9d54d24209d2b42c1a61809e"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-listing-wizard.tsx",
+      "bytes": 38986,
+      "sha256": "cea8bc554e6d952992ec1436acde31d0057f92f11cb1f7a8e50327091636d371"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-record.tsx",
+      "bytes": 10144,
+      "sha256": "5376842a69aab14113ab14128514e3f8ec3b1e76d02572bdb3682711a7a85612"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-listing-intent.ts",
+      "bytes": 1551,
+      "sha256": "940fe999512d8ae0cd68eb146063790177e6f8735b64dee3aecae43d7041d77a"
+    },
+    {
+      "file": "frontend/src/features/inventory/use-property-listing-command.ts",
+      "bytes": 12055,
+      "sha256": "81f67ce3a5cd5c73d30e74fdc30344947043e8d2f69fd2b6f4400ae3d5df2af9"
+    },
+    {
+      "file": "frontend/tests/e2e/property-listing-recovery.spec.ts",
+      "bytes": 6889,
+      "sha256": "1e5d379e97a0edcc4c8d4d92ccb16b0a34b0cc0ad3f80dd4b6eafe3a2f71a6c3"
+    },
+    {
+      "file": "frontend/tests/unit/unit-listing-wizard.test.mjs",
+      "bytes": 15398,
+      "sha256": "52773a165a2d96140c5cbca09467792f6ecddbf3127951e15585f0e6a4598c5e"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 33182,
+      "sha256": "08f26744d1264fc8b78429e70f4cf227fc0b388c4e2c3b1aefe14643e089a333"
+    },
+    {
+      "file": "frontend/tests/unit/property-listing-fixtures.mjs",
+      "bytes": 8704,
+      "sha256": "41184a585f2003f3c0ef67df9ba0933884fa9caa5b17e7d0ebbe8c665b343c3a"
+    },
+    {
+      "file": "frontend/tests/unit/property-listing-recovery.test.mjs",
+      "bytes": 19482,
+      "sha256": "c95e6769a36f9d57abf2e4e8ce5a8f7546cac2e4e360b2d4b934a7b2f2c46ed8"
+    }
+  ]
+}

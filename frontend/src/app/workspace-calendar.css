@@ -1,0 +1,79 @@
+/* Selected pages.js/calendar-frame.css: day columns, compact agenda and drawer filters. */
+.kay-calendar { display:grid; gap:12px; min-width:0; }
+.kay-calendar-controls { display:grid; gap:16px; min-width:0; }
+.kay-calendar-toolbar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; min-width:0; }
+.kay-calendar .kay-calendar-views { display:flex; flex-wrap:wrap; padding:0; gap:8px; border:0; background:transparent; }
+.kay-calendar-views > [data-slot=tabs-trigger] { background:var(--workspace-field); font-size:13px; }
+.kay-calendar-views > [data-slot=tabs-trigger][data-state=active] { background:var(--workspace-primary); color:var(--workspace-on-primary); }
+.kay-calendar-tools { display:flex; align-items:center; flex-wrap:wrap; gap:8px; min-width:0; }
+.kay-calendar-tools > select { width:230px; min-width:0; max-width:100%; font-size:13px; }
+.kay-calendar-navigation { display:flex; align-items:center; flex-wrap:wrap; gap:12px; min-width:0; }
+.kay-calendar-range { display:flex; align-items:center; gap:8px; min-width:0; }
+.kay-calendar-range > span { min-width:0; font-size:13px; font-weight:600; text-align:center; }
+.kay-calendar-jump { min-width:0; max-width:180px; margin-left:auto; }
+.kay-calendar-frame { display:flex; flex-direction:column; gap:8px; min-width:0; min-height:260px; height:var(--kay-calendar-room,calc(100dvh - 320px)); padding:12px; border:1px solid var(--workspace-line); border-radius:24px; background:var(--workspace-panel); box-shadow:var(--workspace-shadow); }
+.kay-calendar-collection { flex:1; min-height:0; min-width:0; }
+.kay-calendar-collection > [data-slot=tabs-content] { height:100%; min-width:0; }
+.kay-calendar-collection > [data-slot=tabs-content][hidden] { display:none!important; }
+.kay-calendar-phone-fallback { display:none; }
+.kay-calendar-week { height:100%; min-height:0; min-width:0; overflow-x:auto; overflow-y:hidden; padding-bottom:4px; overscroll-behavior-x:contain; }
+.kay-calendar-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px; min-width:1120px; height:100%; align-items:stretch; }
+.kay-calendar-day { display:flex; flex-direction:column; min-width:0; min-height:0; padding:10px; border-radius:16px; background:var(--workspace-field); }
+.kay-calendar-day[data-today=true] { box-shadow:inset 0 3px 0 var(--kay-status-follow-up-dot); }
+.kay-calendar-day-create { position:relative; display:grid; flex:none; gap:4px; min-height:54px; padding:0 24px 8px 0; border-radius:8px; font-size:13px; text-transform:capitalize; }
+.kay-calendar-day-create > svg { position:absolute; top:2px; right:0; color:var(--workspace-muted); }
+.kay-calendar-day-create:hover { color:var(--workspace-primary); }
+.kay-calendar-day-events { display:flex; flex-direction:column; align-items:stretch; gap:8px; flex:1; min-height:0; min-width:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior-y:contain; scrollbar-gutter:stable; padding:2px 3px 2px 2px; }
+.kay-calendar-day-space { display:block; flex:1 0 44px; min-height:44px; border-radius:8px; }
+.kay-calendar-day:has(.kay-calendar-day-space:hover) { background:var(--workspace-selected); }
+.calendar-agenda-visit.kay-calendar-entry { display:flex; align-items:start; gap:8px; flex:none; min-width:0; padding:0; border:1px solid var(--crm-state-border,var(--workspace-line)); border-radius:14px; background:var(--crm-state-background,var(--workspace-field)); box-shadow:0 1px 6px #16200e06; }
+.kay-calendar-entry-link { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; flex:1; min-width:0; padding:12px; text-decoration:none; }
+.kay-calendar-entry-main { display:grid; gap:4px; min-width:0; overflow-wrap:anywhere; font-size:13px; }
+.kay-calendar-entry-main > strong { display:flex; align-items:start; gap:6px; min-width:0; line-height:1.5; }
+.kay-calendar-entry-main > strong > span { min-width:0; overflow-wrap:anywhere; }
+.kay-calendar-entry-main svg { flex:none; margin-top:2px; }
+.kay-calendar-entry-main > span { color:var(--workspace-muted); }
+.kay-calendar-entry-main .kay-calendar-entry-time { color:var(--workspace-ink); font-weight:500; font-size:12px; }
+.kay-calendar-entry-link:hover strong { text-decoration:underline; }
+.kay-calendar-entry > [data-slot=button] { flex:none; margin:4px 4px 0 0; }
+.kay-calendar-tile .kay-calendar-entry-link { display:grid; align-items:start; gap:8px; padding:10px; }
+.kay-calendar-tile .crm-status-badge { width:max-content; max-width:100%; white-space:normal; }
+.kay-calendar-agenda,.kay-calendar-by-type { display:grid; align-content:start; gap:8px; min-width:0; height:100%; overflow:auto; overscroll-behavior:contain; padding:2px; }
+.kay-calendar-by-type { gap:20px; }
+.kay-calendar-by-type > section { display:grid; gap:12px; min-width:0; }
+.kay-calendar-by-type > section > header { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; }
+.kay-calendar-by-type h2 { font-size:14px; font-weight:600; }
+.kay-calendar-by-type header > span { font-size:12px; color:var(--workspace-muted); }
+.kay-calendar-by-type .kay-calendar-agenda { height:auto; overflow:visible; }
+.kay-calendar-footer { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; flex:none; font-size:12px; line-height:1.5; color:var(--workspace-muted); }
+.kay-calendar-empty { padding:8px; font-size:13px; color:var(--workspace-muted); }
+.kay-calendar-busy-entry { display:grid; gap:4px; min-width:0; padding:12px; border:1px solid var(--workspace-line); border-radius:14px; background:var(--workspace-field); overflow-wrap:anywhere; font-size:13px; }
+.kay-calendar-busy-entry > span { font-size:12px; color:var(--workspace-muted); }
+.kay-calendar-policy { display:grid; gap:8px; min-width:0; border-top:1px solid var(--workspace-line); padding-top:16px; }
+.kay-calendar-policy h3 { font-size:14px; font-weight:600; }
+.kay-calendar-policy ul { display:grid; gap:8px; }
+.kay-calendar-policy li { display:flex; justify-content:space-between; gap:8px; padding:12px; border-radius:12px; background:var(--workspace-field); font-size:13px; }
+.kay-calendar-week:focus-visible,.kay-calendar-day-events:focus-visible,.kay-calendar-agenda:focus-visible,.kay-calendar-by-type:focus-visible,.kay-calendar-day-create:focus-visible,.kay-calendar-entry-link:focus-visible { outline:2px solid var(--workspace-focus); outline-offset:-2px; border-radius:12px; }
+.kay-calendar-jump:focus-within { outline:2px solid var(--workspace-focus); outline-offset:2px; border-radius:999px; }
+[data-filter-panel=calendar] .calendar-filter-group { display:grid; gap:4px; }
+[data-filter-panel=calendar] .calendar-filter-group legend { font-family:inherit; font-size:14px; font-weight:600; }
+@media (max-width:830px), (max-height:639px) {
+  .kay-calendar-frame { height:auto; min-height:0; }
+  .kay-calendar-collection > [data-slot=tabs-content] { height:auto; }
+  .kay-calendar-week { height:420px; }
+  .kay-calendar-agenda,.kay-calendar-by-type { height:auto; overflow:visible; }
+}
+@media (max-width:830px) {
+  .kay-calendar-week,.kay-calendar-views [data-calendar-view=week] { display:none; }
+  .kay-calendar-phone-fallback { display:block; }
+  .kay-calendar-tools { flex:1 0 100%; }
+  .kay-calendar-tools > select { flex:1 1 180px; width:auto; }
+  .kay-calendar-tool-label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+  .kay-calendar-tools [data-slot=button]:has(.kay-calendar-tool-label) { width:44px; padding-inline:0; }
+  .kay-calendar-navigation { gap:8px; }
+  .kay-calendar-range { flex:1 0 100%; justify-content:space-between; }
+  .kay-calendar-jump { flex:1; max-width:none; }
+  .kay-calendar-frame { padding:8px; border-radius:18px; }
+  .kay-calendar-entry-link { gap:8px; padding:10px; }
+  .kay-calendar-entry-main { font-size:12px; }
+}

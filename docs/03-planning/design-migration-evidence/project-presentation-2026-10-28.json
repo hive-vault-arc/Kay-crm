@@ -1,0 +1,161 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "8da316cabdaa8cfba069b1f8ae84fd0b18d0e0ef",
+  "scope": "Shared selected desktop project presentation, programme list with phone image-card fallback, current kind-route selection and retained preference/filters",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 536,
+      "failed": 0,
+      "skipped": 0,
+      "additionalCases": 4
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "consumers": 105,
+      "iconSites": 348,
+      "buttonSites": 496,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true,
+      "compiledFunctions": [
+        {
+          "file": ".next/server/chunks/ssr/frontend_src_components_shared_unsaved-guard_tsx_1bn5-aixvkna7._.js",
+          "bytes": 2686,
+          "sha256": "95f540189a71100fd6516ab65544218b65390bf52e62dda6c2871a08f6440540"
+        },
+        {
+          "file": ".next/server/chunks/ssr/_0zkov84junom8._.js",
+          "bytes": 2684,
+          "sha256": "ef766e113bf8d733999a3610b97423921d544fecf925dd73ec464e6745d5b7f7"
+        }
+      ]
+    },
+    {
+      "command": "npx eslint tests/e2e/project-presentation.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "node <installed Frontend Taste>/scripts/lint.mjs --app --json <four changed UI sources>",
+      "exitCode": 0,
+      "files": 4,
+      "findings": []
+    },
+    {
+      "command": "Read-only frozen source hash comparison",
+      "exitCode": 0,
+      "inputs": 254,
+      "drift": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8834,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1261,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "corrections": [
+    "Focused actual-component tests declare both imported directory hook modules explicitly; no permissive loader fallback.",
+    "JSX text-node whitespace assertion uses whitespace matching.",
+    "Prepared browser cleanup receives the existing TestActor object, not an ID; final type check passes."
+  ],
+  "preparedNotExecuted": [
+    "One synthetic real browser journey for kind push/Back/Forward, retained property search/shared List preference, programme table/card, phone image-card override and return to desktop."
+  ],
+  "skills": {
+    "frontendTaste": "App-screen reference and static app lint applied; shared quiet controls, one sort home, truthful loading/empty/error states and phone filter/card behavior. Frozen selected KAY design replaces any new draw/palette/shell.",
+    "reactReview": "Route kind derives from current props; no redundant state-mirroring effect. Shared desktop preference lives once in parent; no new data-fetching library.",
+    "originalMachineRequiredSkills": "Unavailable/not claimed.",
+    "antislopTiming": "AFTER unchanged."
+  },
+  "noBackendChangeOrRerun": true,
+  "retainedBackendCheckpoint": {
+    "commit": "8da316c",
+    "connectionForbiddenUnits": 476,
+    "integrationDeselected": 704
+  },
+  "noAppBrowserHttpWorkaround": true,
+  "noRealDatabaseServicePrivateConfigOrRecords": true,
+  "noMainPushMergeOrDeploy": true,
+  "remaining": [
+    "Programme preparation/marketing phase storage and honest legacy state.",
+    "Selected property category presentation.",
+    "Old browser-selector/per-domain reconciliation and native/full-stack/CI/AFTER/product acceptance."
+  ],
+  "sourceHashMode": "Canonical staged Git blobs; normalized working inputs match.",
+  "sourceHashes": [
+    {
+      "file": "frontend/src/features/inventory/development-card.tsx",
+      "bytes": 2921,
+      "sha256": "98c2948f0da8722d56db43576fa4ed39cd35efffd294f355e8c99f121d8df81a"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-contracts.ts",
+      "bytes": 4040,
+      "sha256": "cb430a216722f1cfac7ca240390b79da3f48348c38b992edc599b8c47e502392"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-directory.tsx",
+      "bytes": 6133,
+      "sha256": "42b28cec8f326cec7b4d366328420c88d7a695feeef0dae029ff3b713d2d409f"
+    },
+    {
+      "file": "frontend/src/features/inventory/project-results-view.tsx",
+      "bytes": 1722,
+      "sha256": "856c0d49e0053433667d991cc041275bb11aa18c6948b1f3c32af5730fae12e3"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-directory.tsx",
+      "bytes": 5239,
+      "sha256": "5bc5bd5724f27e9bb72808fae82b1524fb309734b726344a0314dd30e392a2f3"
+    },
+    {
+      "file": "frontend/tests/e2e/project-presentation.spec.ts",
+      "bytes": 3286,
+      "sha256": "60c16bf78045385f48ac7bd2cf3847da407e7b9461bef88bf71d0abe0d3c5080"
+    },
+    {
+      "file": "frontend/tests/unit/inventory-directory.test.mjs",
+      "bytes": 17021,
+      "sha256": "8e57c9bdc546ddd9a4fb5e4e13302ecf22d7f8c1c2d7927b36ebc24175b52e5e"
+    }
+  ]
+}

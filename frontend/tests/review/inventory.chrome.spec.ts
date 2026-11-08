@@ -3,10 +3,10 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { clearActorContext, test, expect, createActor, removeActor, signIn } from "../helpers/auth";
 import { createLead } from "../helpers/leads";
-import { addOwners, confirmCampaign, createCampaign, createProperty, openProperty } from "../helpers/inventory";
+import { addOwners, confirmCampaign, createCampaign, createProperty, inventorySection, openInventoryHistory, openOwnerEditor, openProperty, savePropertyEdit } from "../helpers/inventory";
 
 async function capture(page: Page, destination: string) {
-  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true, includeHidden: true })).toBeEnabled();
   const client = await page.evaluate(() => document.documentElement.clientWidth);
   const cdp = await page.context().newCDPSession(page);
   try {
@@ -42,24 +42,25 @@ test("SP07 visible Chrome: inventory, owner privacy, keyboard, touch, responsive
     await page.getByRole("tab", { name: "Biens indépendants", exact: true }).focus();
     await page.keyboard.press("ArrowRight");
     await expect(page.getByRole("tab", { name: "Programmes immobiliers", exact: true })).toBeFocused();
-    await expect(page.getByText("0 programme(s) correspondant(s).", { exact: true })).toBeVisible();
+    await expect(page.getByText("0 programme", { exact: true })).toBeVisible();
     const id = await createProperty(page);
     await addOwners(page, [`SP07 ${"Propriétaire".repeat(11)}`]);
+    await createCampaign(page, "sale", "900000,01");
     await createCampaign(page, "rental");
     await confirmCampaign(page, "sale"); await confirmCampaign(page, "rental");
     await capture(page, path.join(root, "sp07-detail-desktop.png"));
-    await page.getByRole("tab", { name: "Offres", exact: true }).click();
+    await inventorySection(page, "Offres").scrollIntoViewIfNeeded();
     await capture(page, path.join(root, "sp07-campaigns-desktop.png"));
     await clearActorContext(mobile); await signIn(mobile, manager); await openProperty(mobile, id, "Propriétaires");
-    await mobile.getByRole("button", { name: "Modifier les propriétaires", exact: true }).tap();
+    const owners = await openOwnerEditor(mobile);
     for (const width of [320, 360, 768, 1024, 1440]) {
       await mobile.setViewportSize({ width, height: 900 });
       expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      const remove = await mobile.getByRole("button", { name: /^Retirer SP07/ }).boundingBox();
+      const remove = await owners.getByRole("button", { name: /^Retirer SP07/ }).boundingBox();
       expect(remove !== null && remove.width <= width && remove.height >= 44).toBe(true);
-      const geometry = await mobile.getByLabel("Libellé commercial partagé 1 (facultatif)", { exact: true }).evaluate(element => {
+      const geometry = await owners.getByLabel("Libellé commercial partagé (facultatif)", { exact: true }).evaluate(element => {
         const box = element.getBoundingClientRect();
-        const main = document.querySelector("main")!; const bounds = main.getBoundingClientRect(); const style = getComputedStyle(main);
+        const surface = element.closest('[role="dialog"]')!; const bounds = surface.getBoundingClientRect(); const style = getComputedStyle(surface);
         return { clientWidth: document.documentElement.clientWidth, innerWidth, x: box.x, right: box.right, safeLeft: bounds.left + parseFloat(style.paddingLeft), safeRight: bounds.right - parseFloat(style.paddingRight) };
       });
       console.info("SP07 owner control geometry:", JSON.stringify(geometry));
@@ -67,21 +68,22 @@ test("SP07 visible Chrome: inventory, owner privacy, keyboard, touch, responsive
       expect(geometry.x).toBeGreaterThanOrEqual(geometry.safeLeft - 1);
     }
     await mobile.setViewportSize({ width: 360, height: 800 });
-    await mobile.getByLabel("Libellé commercial partagé 1 (facultatif)", { exact: true }).scrollIntoViewIfNeeded();
+    await owners.getByLabel("Libellé commercial partagé (facultatif)", { exact: true }).scrollIntoViewIfNeeded();
     await capture(mobile, path.join(root, "sp07-owner-editor-mobile.png"));
-    await mobile.getByRole("button", { name: "Enregistrer les propriétaires", exact: true }).scrollIntoViewIfNeeded();
+    await owners.getByRole("button", { name: "Enregistrer", exact: true }).scrollIntoViewIfNeeded();
     await capture(mobile, path.join(root, "sp07-owner-actions-mobile.png"));
-    await mobile.getByRole("button", { name: "Annuler les propriétaires", exact: true }).tap();
-    await mobile.getByRole("tab", { name: "Offres", exact: true }).tap();
+    await owners.getByRole("button", { name: "Annuler", exact: true }).tap(); await expect(owners).not.toBeVisible();
+    await inventorySection(mobile, "Offres").scrollIntoViewIfNeeded();
     await mobile.getByRole("button", { name: "Modifier la campagne location", exact: true }).tap();
-    await mobile.getByLabel("Prix de location en MAD (facultatif)", { exact: true }).scrollIntoViewIfNeeded();
+    const offering = mobile.getByRole("dialog", { name: "Modifier l’offre", exact: true });
+    await offering.getByLabel("Prix (MAD, facultatif)", { exact: true }).scrollIntoViewIfNeeded();
     await capture(mobile, path.join(root, "sp07-offering-editor-mobile.png"));
-    await mobile.getByRole("button", { name: "Enregistrer la campagne", exact: true }).scrollIntoViewIfNeeded();
+    await offering.getByRole("button", { name: "Enregistrer la campagne", exact: true }).scrollIntoViewIfNeeded();
     await capture(mobile, path.join(root, "sp07-offering-actions-mobile.png"));
-    await mobile.getByRole("button", { name: "Annuler la campagne", exact: true }).tap();
-    await mobile.getByRole("tab", { name: "Historique", exact: true }).tap();
-    await expect(mobile.getByRole("heading", { name: "Disponibilité confirmée", exact: true }).first()).toBeVisible();
-    await mobile.getByRole("heading", { name: "Disponibilité confirmée", exact: true }).first().scrollIntoViewIfNeeded();
+    await offering.getByRole("button", { name: "Annuler", exact: true }).tap(); await expect(offering).not.toBeVisible();
+    const history = await openInventoryHistory(mobile);
+    await expect(history.getByRole("heading", { name: "Disponibilité confirmée", exact: true }).first()).toBeVisible();
+    await history.getByRole("heading", { name: "Disponibilité confirmée", exact: true }).first().scrollIntoViewIfNeeded();
     await capture(mobile, path.join(root, "sp07-history-mobile.png"));
     await mobile.goto("/projects");
     const mobileCard = mobile.getByRole("article").filter({ has: mobile.locator(`a[href="/projects/properties/${id}"]`) });
@@ -105,7 +107,7 @@ test("SP07 visible Chrome: inventory, owner privacy, keyboard, touch, responsive
     await expect(page.getByText("Chargement du bien…", { exact: true })).toBeVisible();
     await capture(page, path.join(root, "sp07-loading-desktop.png"));
     release(); await opening;
-    await expect(page.getByRole("tab", { name: "Aperçu", exact: true })).toBeEnabled();
+    await expect(page.getByRole("region", { name: "Informations du bien", exact: true })).toBeVisible();
     await page.unroute(`**/api/v1/properties/${id}`, loading);
     const unavailable = (route: Route) => route.abort("failed");
     await page.route(`**/api/v1/properties/${id}`, unavailable);
@@ -113,7 +115,7 @@ test("SP07 visible Chrome: inventory, owner privacy, keyboard, touch, responsive
     await capture(page, path.join(root, "sp07-error-desktop.png"));
     await page.unroute(`**/api/v1/properties/${id}`, unavailable);
     await page.getByRole("button", { name: "Réessayer", exact: true }).click();
-    await expect(page.getByRole("tab", { name: "Aperçu", exact: true })).toBeEnabled();
+    await expect(page.getByRole("region", { name: "Informations du bien", exact: true })).toBeVisible();
 
     profile = await mkdtemp(path.resolve("test-results/sp07-zoom-"));
     const launch = { ignoreHTTPSErrors: true, channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, args: ["--window-size=1440,1000"] } as const;
@@ -130,9 +132,9 @@ test("SP07 visible Chrome: inventory, owner privacy, keyboard, touch, responsive
     zoom = zoomContext.pages()[0]; monitor(zoom);
     await zoom.goto(`${baseURL}/projects/properties/${id}`);
     await expect(zoom.getByText("Comparaison annuelle : 14 814,72 MAD / an", { exact: true })).toBeVisible();
-    await zoom.getByRole("link", { name: "Modifier le bien", exact: true }).click();
-    await zoom.getByLabel("Nom commercial (facultatif)", { exact: true }).fill("SP07 modification à 200 pour cent");
-    await zoom.getByRole("button", { name: "Enregistrer le bien", exact: true }).click();
+    await zoom.getByRole("link", { name: "Modifier", exact: true }).click();
+    await zoom.getByLabel("Titre de l’annonce (facultatif)", { exact: true }).fill("SP07 modification à 200 pour cent");
+    await savePropertyEdit(zoom);
     await expect(zoom.getByRole("heading", { name: /SP07 modification à 200 pour cent/ })).toBeVisible();
     const measurement = await zoom.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth }));
     expect(measurement.ratio / baseline.ratio).toBeCloseTo(2, 1); expect(measurement.width).toBeLessThan(baseline.width * 0.6); expect(measurement.overflow).toBe(false);

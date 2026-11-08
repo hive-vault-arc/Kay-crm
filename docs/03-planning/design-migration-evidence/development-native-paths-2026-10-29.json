@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "32ec3ee2b5cdb01ff8e837a5408bfe77a03b4d6f",
+  "scope": "Selected programme/unit hierarchy native paths and shared helper reconciliation",
+  "productionChanged": false,
+  "checks": [
+    {
+      "command": "npx eslint tests/helpers/developments.ts tests/e2e/developments.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript AST comparison against base development scenario",
+      "exitCode": 0,
+      "testsAndTitlesUnchanged": 5,
+      "exactBusinessCommandsUnchanged": 3,
+      "timeoutsUnchanged": 4,
+      "serviceControlCallsUnchanged": 3,
+      "obsoleteRootTabTargets": 0
+    },
+    {
+      "command": "Complete initial-save/fault/recovery source review",
+      "observed": "Broad replacement mismatch corrected before final source gates; native sequence remains unrun"
+    },
+    {
+      "command": "Frozen/main/protected review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9040,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1311,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "retainedPriorEvidence": {
+    "frontendUnits": 977,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "pathMap": [
+    "Name h1/reference context",
+    "Accessible creation stepper/current stage",
+    "Counted root Unit tab",
+    "Unit filter drawer/current labels",
+    "Structure drawer/internal structure and Types tabs",
+    "Scoped block/floor/type editor and explicit dirty return",
+    "Per-unit five-step workflow and first-step apartment placement validation",
+    "Overview presentation and whole-offer/availability drawers",
+    "Original unknown edit retry and explicit fresh conflict comparison",
+    "Exact canonical programme link in unit record"
+  ],
+  "invariants": [
+    "Unchanged fixture name/reference/category/price/surface and direct business command arguments",
+    "Existing per-unit values survive reusable-template edits",
+    "Private identity/403/404 and agent hierarchy authorization remain",
+    "Whole-programme stock and optional plain-text briefing assertions remain",
+    "Incomplete apartment draft and invalid type focus/no inventory row remain",
+    "Original command/counter/outage/recovery assertions remain"
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/developments.spec.ts",
+    "cases": 5,
+    "typechecked": true,
+    "listedOrImportedViaPlaywright": false,
+    "executed": false,
+    "sharedHelperDirectConsumerFiles": 8,
+    "allConsumersAccepted": false,
+    "otherConsumers": [
+      "files.spec.ts",
+      "photo-resume.spec.ts",
+      "project-permissions.spec.ts",
+      "property-photos.spec.ts",
+      "record-removal.spec.ts",
+      "acceptance.chrome.spec.ts",
+      "developments.chrome.spec.ts"
+    ]
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesOutageControlWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Other development/inventory helper consumers and selectors",
+    "Actual SQL/native/device/focus/zoom/session/role-loss/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Remaining exact field/job/alias reconciliation"
+  ],
+  "status": "Prepared native source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/helpers/developments.ts",
+      "bytes": 7506,
+      "sha256": "231ad9275167b6cd0fbfb02c618aaccd49e4a6d11ac4a8a5b18869b0e8e25204"
+    },
+    {
+      "file": "frontend/tests/e2e/developments.spec.ts",
+      "bytes": 21225,
+      "sha256": "8613607d919820f9d6e21c33319a131f10982382c7bc5c4b693d8e48822ad5c7"
+    }
+  ]
+}

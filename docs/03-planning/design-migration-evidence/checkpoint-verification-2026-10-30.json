@@ -1,0 +1,194 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "candidate": "befcaf6b46f7e13eb2e4d03a75d241f0a2eec1bc",
+  "request": "Current completion status and fresh permitted tests/build/security checks",
+  "goalStatusObserved": "paused; this request performed verification only",
+  "checks": [
+    {
+      "cwd": "frontend",
+      "command": "npm run test:unit",
+      "exitCode": 0,
+      "passed": 994,
+      "failed": 0,
+      "skipped": 0,
+      "log": ".git/codex-current-unit.log",
+      "logBytes": 116838,
+      "logSha256": "919e2f7b1879f3d022e081d0bafe012ca4b7a1ed0e5ed0992a91516de1c4af98"
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "exitCode": 0,
+      "passed": 573,
+      "deselected": 723,
+      "databaseConnections": "Forbidden by runner",
+      "log": ".git/codex-current-backend-unit.log",
+      "logBytes": 686,
+      "logSha256": "e8fa9b7dea5604ddc825a69fe9b6d29b0c16f00ff0f70245f78cc2994ec968cc"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "iconSites": 349,
+      "buttons": 526,
+      "violations": 0,
+      "log": ".git/codex-current-lint.log",
+      "logBytes": 456,
+      "logSha256": "a036f8d8dfc3b482994c38f63d6996a18a292ecdca56bcca98e2858224d66a66"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "log": ".git/codex-current-types.log",
+      "logBytes": 129,
+      "logSha256": "46afc4c3782e6f6dd5ba5262fc65135ab7f9a06047d554f32c4a8b103eabc601"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run build",
+      "exitCode": 0,
+      "next": "16.4.2",
+      "log": ".git/codex-current-build.log",
+      "logBytes": 1767,
+      "logSha256": "e3ec268f8ad8e6af2b964da5c1380c6dd17261cb7723fa371bfbcd40eea08b6a"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run history:check",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true,
+      "log": ".git/codex-current-history.log",
+      "logBytes": 535,
+      "logSha256": "58b42bc6130005eb14b6d4b5d8d0d8e26f3cdf341840e39c92420bde87d54c77"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run security:check",
+      "exitCode": 1,
+      "error": "NEW_VULNERABILITY_REFUSED",
+      "log": ".git/codex-current-dependencies.log",
+      "logBytes": 799,
+      "logSha256": "c31c144f665104a106d2ad9e70d7231674aab8303763bcc4d96793f66e6e73bc"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm audit --omit=dev --json",
+      "exitCode": 0,
+      "total": 0,
+      "log": ".git/codex-current-audit-production.json",
+      "logBytes": 387,
+      "logSha256": "2e59d0d6b9f7092e383382da98342fcb3d0c2b5af21951d700c9265cd5bf9657"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm audit --json",
+      "exitCode": 1,
+      "total": 3,
+      "severity": "low",
+      "runtimeTotal": 0,
+      "log": ".git/codex-current-audit-full.json",
+      "logBytes": 2260,
+      "logSha256": "0b5f5b199b36faf1caf274c586828c3d4f67b554fd64582f057a7fe0479185ff"
+    },
+    {
+      "cwd": ".",
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9060,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14,
+      "phase": "Checked application candidate before evidence-only additions"
+    },
+    {
+      "cwd": ".",
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1323,
+      "phase": "Checked application candidate before evidence-only additions"
+    },
+    {
+      "cwd": ".",
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9062,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14,
+      "phase": "Including evidence-only additions"
+    },
+    {
+      "cwd": ".",
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1325,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12,
+      "phase": "Including evidence-only additions"
+    },
+    {
+      "cwd": ".",
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "dependencyFinding": {
+    "advisory": "GHSA-gcqx-w48m-w2h4",
+    "url": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4",
+    "severity": "low",
+    "affectedDevelopmentPackages": [
+      {
+        "name": "shadcn",
+        "version": "4.22.1"
+      },
+      {
+        "name": "@shadcn/registry",
+        "version": "0.2.0"
+      },
+      {
+        "name": "deepmerge",
+        "version": "4.3.1"
+      }
+    ],
+    "lockedMatchesInstalled": true,
+    "productionAuditTotal": 0,
+    "fullAuditTotal": 3,
+    "advisoryPatchedVersions": "None at this check",
+    "policy": "Only prior braces advisory is excepted; new advisory correctly refused",
+    "dependenciesOrExceptionsChanged": false,
+    "automaticSuggestedShadcnDowngradeApplied": false
+  },
+  "frozen": {
+    "inputs": 254,
+    "drift": 0
+  },
+  "main": {
+    "sha": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "changed": false
+  },
+  "boundaries": {
+    "actualAppBrowserHttpDatabaseAccountsServicesWorkerScannerSimulatorPrivateTransfer": false,
+    "manualPrivateConfigurationReadsOrDisclosure": false,
+    "buildUsesExistingIgnoredEnvironment": true,
+    "backendOnlyConnectionForbiddenRunner": true,
+    "playwrightListedImportedOrExecuted": false,
+    "migrationsApplied": false,
+    "pushMergeDeploy": false,
+    "unrelatedWorkPreserved": true
+  },
+  "pending": [
+    "Resolve refused development-only dependency advisory without weakening policy or blindly downgrading the CLI",
+    "Remaining exact field/legacy selector reconciliation in coverage map",
+    "723 deselected backend cases and actual PostgreSQL integration verification",
+    "Actual browser, desktop/mobile, keyboard/touch/zoom, realtime, private files, AV and PDF workflows",
+    "Migrations0036/0037 and required actual-stack/security/CI/AFTER/product acceptance",
+    "Owner-approved final candidate before merge"
+  ],
+  "conclusion": "Not complete or merge-ready; permitted functional/source/build checks pass, dependency gate fails and actual-stack gates remain unverified"
+}

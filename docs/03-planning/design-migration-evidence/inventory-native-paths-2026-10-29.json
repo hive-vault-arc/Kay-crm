@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "98f77ab783a05b53a00e56baba02b89280301126",
+  "scope": "Selected standalone inventory native path/source reconciliation only",
+  "productionChanged": false,
+  "checks": [
+    {
+      "command": "npx eslint tests/helpers/inventory.ts tests/e2e/inventory.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript AST source comparison against HEAD inventory.spec.ts",
+      "exitCode": 0,
+      "tests": 7,
+      "purposeTitlesUpdated": 1,
+      "exactBusinessCommandsUnchanged": 3,
+      "timeoutsUnchanged": 6,
+      "serviceControlCallsUnchanged": 3,
+      "obsoleteStandaloneTabTargets": 0,
+      "executedNative": false
+    },
+    {
+      "command": "Frozen/main/protected review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9038,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1309,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "retainedPriorEvidence": {
+    "frontendUnits": 977,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "pathMap": [
+    "Single Informations du bien region",
+    "Offres prices/annual comparison and per-kind drawers",
+    "Right Propriétaires/legal-owner drawer/tonal entries",
+    "Actions/history drawer",
+    "Documents drawer/current empty copy",
+    "Category radios",
+    "Modifier header link",
+    "Clickable stepper/current-step attribute",
+    "Unknown write frozen review/original retry",
+    "Explicit fresh comparison/current version section"
+  ],
+  "invariants": [
+    "Original empty-property API fixture purpose preserved",
+    "Exact price/legal ownership/private scope/403/404/session/retry/history/outage/conflict/role-loss assertions remain",
+    "No timeout increase, mock write success or production change",
+    "Three business command calls and three service-control calls remain source only"
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/inventory.spec.ts",
+    "cases": 7,
+    "typechecked": true,
+    "listedOrImportedViaPlaywright": false,
+    "executed": false,
+    "sharedHelperDirectConsumerFiles": 8,
+    "allConsumersAccepted": false,
+    "otherConsumers": [
+      "developments.spec.ts",
+      "files.spec.ts",
+      "owners.spec.ts",
+      "project-permissions.spec.ts",
+      "property-edit-wizard.spec.ts",
+      "files.chrome.spec.ts",
+      "inventory.chrome.spec.ts"
+    ]
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesOutageControlWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Other helper consumers and development helper/legacy paths",
+    "Actual SQL/native/device/zoom/focus/session/role-loss/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Remaining exact field/job/alias reconciliation"
+  ],
+  "status": "Prepared native source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/helpers/inventory.ts",
+      "bytes": 6418,
+      "sha256": "afde8812700e0c6f139436bd2815a9a2519323e1f2db956e8e9d761be40876d8"
+    },
+    {
+      "file": "frontend/tests/e2e/inventory.spec.ts",
+      "bytes": 18809,
+      "sha256": "71dde8a903229771c499dd76adcf8eed95436b3ddfc7e34f93d868eab217da77"
+    }
+  ]
+}

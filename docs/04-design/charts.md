@@ -1,5 +1,17 @@
 # KAY charts with Bklit UI
 
+Selected dashboard override,2026-10-27: WorkspacePipeline composes the frozen
+Bklit pie source as a semicircle using current selected status tokens. Its five
+mutually exclusive active stages sum to the authoritative active-deal total;
+period outcomes are separate. A full keyboard-operated numeric legend provides
+exact values and scoped stage drills, including zero stages. The decorative empty
+arc does not become a one-deal value. Source square measurement is clipped to the
+selected220/136 viewport; reduced motion disables entry/hover movement. Legacy
+contributor charts retain all values and attribution; their numeric alternatives
+are now soft full-width rows in supporting drawers. See the
+[workspace contract](dashboard-workspace-local.md) and
+[source evidence](../03-planning/design-migration-evidence/dashboard-ui-2026-10-27.json).
+
 ## Riviera colors (2026-10-18)
 
 Use the [Riviera stage/category tokens](../../branding/riviera/README.md) through

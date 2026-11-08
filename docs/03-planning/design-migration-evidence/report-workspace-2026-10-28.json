@@ -1,0 +1,260 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "9743ab666d9194ffe6d7861bf1ac7caadb3a1e9f",
+  "scope": "Selected grouped supporting report cards/attribution tools/tonal drills/current alerts, coherent projections and retained page/focus recovery",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 520,
+      "failed": 0,
+      "skipped": 0,
+      "newCases": 15
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "consumers": 105,
+      "iconSites": 348,
+      "buttonSites": 495,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true,
+      "compiledFunctions": [
+        {
+          "file": ".next/server/chunks/ssr/frontend_src_components_shared_unsaved-guard_tsx_1bn5-aixvkna7._.js",
+          "bytes": 2686,
+          "sha256": "95f540189a71100fd6516ab65544218b65390bf52e62dda6c2871a08f6440540"
+        },
+        {
+          "file": ".next/server/chunks/ssr/_0zkov84junom8._.js",
+          "bytes": 2684,
+          "sha256": "ef766e113bf8d733999a3610b97423921d544fecf925dd73ec464e6745d5b7f7"
+        }
+      ]
+    },
+    {
+      "command": "PostCSS node --input-type=module - on emitted CSS",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "cssChunks": 2,
+      "checks": {
+        "grid": true,
+        "wrap": true,
+        "cardFloor": true,
+        "hidden": true,
+        "touch": true,
+        "phone": true,
+        "narrowDate": true,
+        "focus": true,
+        "reduced": true,
+        "forced": true
+      },
+      "nativeLayoutProof": false
+    },
+    {
+      "command": "Read-only frozen source hash checks",
+      "exitCode": 0,
+      "frozenInputs": 254,
+      "sourceDrift": 0
+    },
+    {
+      "command": "Frozen lucide1.59.0 source-node comparison",
+      "exitCode": 0,
+      "existingGlyphsMatch": 63,
+      "newGlyph": "ChartNoAxesCombined",
+      "newGlyphSha256": "f324ba4c312a692d786dea5754e230462b7d41e131a1ec72d9a2a2314f68d9d9",
+      "runtimeDependencyAdded": false
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8821,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1259,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "corrections": [
+    "Cross-VM expected array assertion normalized before equality.",
+    "React ref/dependency lint issues corrected with explicit destructuring, event callbacks and stable query-error dependencies; no suppression.",
+    "Existing contributor pagination moved outside the nonempty branch; live shrink retains escape and does not invent a zero total."
+  ],
+  "preparedNotExecuted": [
+    "Updated real report helpers/e2e and visible Chrome review for selected drawer/tools/tonal lists, complete Bklit/API/record parity, current scopes, date/loading/denied/retry, keyboard/touch, widths and actual200% zoom."
+  ],
+  "skills": {
+    "reactReview": "Conditional chart loading and ref-only DOM bookkeeping; incumbent useQuery retained under binding stack.",
+    "selectedSystem": "Shared shadcn/Tailwind primitives, exact frozen chart glyph, narrowly owned selected cascade CSS.",
+    "originalMachineRequiredSkills": "Unavailable/not claimed.",
+    "marketingDesignTaste": "Dense CRM reports excluded.",
+    "antislopTiming": "AFTER unchanged; no audit-only fixes claimed."
+  },
+  "noBackendChangeOrRerun": true,
+  "retainedBackendCheckpoint": {
+    "commit": "9743ab6",
+    "connectionForbiddenUnits": 463,
+    "integrationDeselected": 700
+  },
+  "sourceHashes": [
+    {
+      "file": "branding/prototype/README.md",
+      "bytes": 3311,
+      "sha256": "e3dbb104b54fe24179c203f47cfb44623f6f74e2808ae647702443785649e1ba",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "branding/prototype/kay-glyphs.json",
+      "bytes": 37360,
+      "sha256": "39868d5cd5e30784a0eb592c634f5bfa3aac032b245a622934b3a9c0533b7eaa",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4152,
+      "sha256": "f194673997149c4bccc899d5b6ab155b2c9c3683367625fefc7db4b031a75b50",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/app/globals.css",
+      "bytes": 55475,
+      "sha256": "97f683de1bb43396e7cf96bae8f36b715e6da36240f06d171840366672098934",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/app/workspace-reports.css",
+      "bytes": 5303,
+      "sha256": "65419752111254ae1c8549fbf6d25f9b6e1610e8920fca82c41767a8aae38414",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/components/icons/index.tsx",
+      "bytes": 5530,
+      "sha256": "5074b53a98990ff703b092eaebc799250f7502156b5e400f66bd04c520212ee3",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/reports/drill-down.tsx",
+      "bytes": 3285,
+      "sha256": "bca0e252869a9673ebad106f6ba393dcfed3b8d00c2953c4ff6e177f515c2c15",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/reports/exceptions.tsx",
+      "bytes": 3708,
+      "sha256": "b69f8e64c1e3e339632fd6fb2def371c81871a2f2043e5aed49e6ec69349875d",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/reports/metric-chart.tsx",
+      "bytes": 4833,
+      "sha256": "15eb311fadb17d0ad02f40bd138152c39410947f0188800bacfe326e3f687826",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/reports/report-dashboard.tsx",
+      "bytes": 6458,
+      "sha256": "bbda3c5eca1de37db08101de20081be812f8df0e8731357e2e92fc3e89032524",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/reports/report-model.ts",
+      "bytes": 5658,
+      "sha256": "1f7db2f9a5667d6ea2bc54813869a3a982e2828ad2db7fe91e038b9f1fc13c4c",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/reports/report-navigation.ts",
+      "bytes": 2127,
+      "sha256": "e1b44c5b1fd7a7b0cca4f65fc38ad2954615a19f99630b3d9dec0291a9be426f",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/reports/report-overview.tsx",
+      "bytes": 2872,
+      "sha256": "2faf2d6db60689ef7ce97fe8300fbab7f146c5adcd5171ca37338e55c77c884c",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/src/features/reports/workspace-dashboard.tsx",
+      "bytes": 8321,
+      "sha256": "6e875d671b91765f2c08af8aba3ab787cafe320c9354eeb1822eb7a99e3254bc",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/e2e/reports.spec.ts",
+      "bytes": 4814,
+      "sha256": "90c930c4d2f40e866937df0e7082378ed9c837763d439b6aed5dc233ae1a4db7",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/helpers/report-review.ts",
+      "bytes": 5086,
+      "sha256": "cafd53b80f52074decad02279b49b07f6dee14b055c231d918cd9e8c3bfdf0d8",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/helpers/reports.ts",
+      "bytes": 5694,
+      "sha256": "470810fadf89efca6078aa68355ae03517ecc97779d4d638bd0c73f1a8f3820b",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/review/reports.chrome.spec.ts",
+      "bytes": 11370,
+      "sha256": "a9c9891da354fdc3cd9b6803b22a42b60eb94d827acf72591bce4dec5d543dde",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/selected-reports.test.mjs",
+      "bytes": 17712,
+      "sha256": "bbddf271f22794a52116a3c87110df244d38c7a4e0ec7f3c6763b0d316610246",
+      "basis": "canonical staged Git blob"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-dashboard.test.mjs",
+      "bytes": 14162,
+      "sha256": "7f72313fac60b98c6e46c3944c14ab1feec1b5f93cea4222bdc8d736009da89d",
+      "basis": "canonical staged Git blob"
+    }
+  ],
+  "limits": [
+    "No app/browser/CUA/CDP/HTTP workaround or native execution.",
+    "No real database/service/private configuration/records/migration/main/push/merge/deploy.",
+    "Real current-authority/SQL/performance/concurrency/native/CI/AFTER/owner acceptance pending.",
+    "Full redesign goal remains active; other P0-P8 work remains."
+  ]
+}

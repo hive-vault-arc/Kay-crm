@@ -1,0 +1,242 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "90169c25ab69e88140e1f83291d048313e8261b3",
+  "scope": "Selected scoped enquiry assignee options and unassigned read/export filter; independent Affair creation/modification civil ranges; existing selected layouts; runtime-valid prepared browser fixtures",
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m tests.unit_runner",
+      "cwd": "backend",
+      "exitCode": 0,
+      "passed": 534,
+      "deselected": 716,
+      "additionalCases": 15,
+      "boundary": "Connections forbidden; compiled SQL, stubbed real read functions and in-process ASGI, no database/app/listener."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check <8 explicit changed Python paths> and ruff format --check <same paths>",
+      "cwd": "backend",
+      "exitCode": 0,
+      "paths": [
+        "backend/app/contacts/contracts.py",
+        "backend/app/contacts/queries.py",
+        "backend/app/contacts/router.py",
+        "backend/app/deals/contracts.py",
+        "backend/app/deals/queries.py",
+        "backend/tests/unit_selection.py",
+        "backend/tests/test_dossier_directory_unit.py",
+        "backend/tests/test_dossier_directory.py"
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m mypy app",
+      "cwd": "backend",
+      "exitCode": 0,
+      "sourceFiles": 220
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 564,
+      "failed": 0,
+      "skipped": 0,
+      "additionalCases": 8,
+      "boundary": "Synthetic Node/facade/TLS/actual components/hooks and runtime fixture contracts only."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 497,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2
+    },
+    {
+      "command": "node C:/Users/ali-a/.codex/skills/design-taste-frontend/scripts/lint.mjs --app --json <4 changed UI paths>",
+      "exitCode": 0,
+      "files": 4,
+      "findings": 0,
+      "boundary": "Static app lint, not native visual review."
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8858,
+      "refusedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1265,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    }
+  ],
+  "preparedNotRun": {
+    "postgresFile": "backend/tests/test_dossier_directory.py",
+    "postgresCases": 4,
+    "browserFile": "frontend/tests/e2e/dossier-directory.spec.ts",
+    "browserCases": 2,
+    "correctedEarlierBrowserFile": "frontend/tests/e2e/contact-directory.spec.ts",
+    "correctedEarlierCases": 2,
+    "typechecked": true,
+    "fixtureFactory": "frontend/tests/helpers/directory-fixtures.ts",
+    "runtimeFixtureSchemaTestPassed": true
+  },
+  "retainedCorrections": [
+    "First mypy caught reuse of a differently typed SQL column loop variable; date loop now uses its own name.",
+    "Prepared earlier Contacts browser payloads omitted facade-required emails/phone labels; shared runtime-parsed factory now supplies and checks them before any command.",
+    "Backend source confirms actual enquiry/assignment live invalidations already publish in contacts; no speculative topic change."
+  ],
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notPerformed": [
+    "Actual app/browser/CUA/CDP/HTTP or access workaround",
+    "Database/service/worker/scanner/private configuration/account/customer data/import/export/transfer",
+    "Executed migration0036 or0037",
+    "Actual SQL/native/device/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceHashes": [
+    {
+      "file": "backend/app/contacts/contracts.py",
+      "bytes": 8261,
+      "sha256": "85fe8dac1df8f7399d8eba1ebd6f9a8ab7463f89aacb78a7d2f1a0ebd067938b"
+    },
+    {
+      "file": "backend/app/contacts/queries.py",
+      "bytes": 14011,
+      "sha256": "5308978db3cf96490534c1de973aaaeaf47288d3da73b4bb2762e8b72e7803ff"
+    },
+    {
+      "file": "backend/app/contacts/router.py",
+      "bytes": 6315,
+      "sha256": "68f7c3e045a16f6d5ff8e22592f76639a40178a4cfd988bc99a8678938ed7d2b"
+    },
+    {
+      "file": "backend/app/deals/contracts.py",
+      "bytes": 8644,
+      "sha256": "863034aeea5100bedca3ef7ad5a4356d0c2b614e3bfe86babfd43ce16662bb6f"
+    },
+    {
+      "file": "backend/app/deals/queries.py",
+      "bytes": 7297,
+      "sha256": "9f479826371ab62a3641990211450fcd47c5319f9aa55652670c4a23abf35cac"
+    },
+    {
+      "file": "backend/tests/unit_selection.py",
+      "bytes": 1471,
+      "sha256": "2ec3c04b075004f36b8f100d11c7facc5d1a89f88a67674df58c7b35c0f5deea"
+    },
+    {
+      "file": "backend/tests/test_dossier_directory_unit.py",
+      "bytes": 8920,
+      "sha256": "35178a24a76bc87ab2038e967e7cbb71fad52edc88303779762569bcb21877fa"
+    },
+    {
+      "file": "backend/tests/test_dossier_directory.py",
+      "bytes": 6253,
+      "sha256": "208c39f162f468835cb661908a78d1516f876e5493340843acedaeb19311b81d"
+    },
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4334,
+      "sha256": "0ffe5403f63d907cbda0ff3fe67a798a9757c5fd89ab1e66e799603ab692631d"
+    },
+    {
+      "file": "frontend/src/features/contacts/agent-picker.tsx",
+      "bytes": 3476,
+      "sha256": "cdfa2c57a049df54c96df34a877fb88d910f24acbcff0d73d82ff6309d457649"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-directory.tsx",
+      "bytes": 9841,
+      "sha256": "0860808dcd7304e16bade827d2740ae66f85118529410435fcb7da149b7f9afa"
+    },
+    {
+      "file": "frontend/src/features/contacts/contracts.ts",
+      "bytes": 10974,
+      "sha256": "a32e7b03bb63edd3f4a18dc13a2ffcafbdc1c8f69fe870df1ac1e2a57aa46073"
+    },
+    {
+      "file": "frontend/src/features/contacts/facade.ts",
+      "bytes": 7267,
+      "sha256": "5e67a40362ecaef3ba87d4e34441e6f998c248cbcf3582b8631609429f48be2a"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-list.tsx",
+      "bytes": 16509,
+      "sha256": "2aaeb911ecb491b5e5475ea10f1945d5a12cc588075be4b2e04173df5fa88a73"
+    },
+    {
+      "file": "frontend/src/features/deals/contracts.ts",
+      "bytes": 8685,
+      "sha256": "e6d740007815379f1097d90c77d26bc13417034aa86a8cb2d05b7dc11a2e1bab"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-list.tsx",
+      "bytes": 17075,
+      "sha256": "1acd52930cf9b33422e86c20ec2430a9673ccf41cb4678d0c94c03814736bbe2"
+    },
+    {
+      "file": "frontend/src/features/discovery/export-review.ts",
+      "bytes": 2881,
+      "sha256": "22e8df5e7289ffd51bb03f9f8a76b926469eb47646202587c9844559db8e12dc"
+    },
+    {
+      "file": "frontend/tests/unit/contact-directory.test.mjs",
+      "bytes": 10478,
+      "sha256": "401c7c893af313ea9e0072f2acf2e659ccb72162d001fb1e77e10e4ae203c83b"
+    },
+    {
+      "file": "frontend/tests/unit/dossier-directory.test.mjs",
+      "bytes": 14746,
+      "sha256": "ac7f92d6b5abd17273f7df092fc637af848ba0df0126d7ad44c89cf00017944d"
+    },
+    {
+      "file": "frontend/tests/e2e/contact-directory.spec.ts",
+      "bytes": 2764,
+      "sha256": "7b27e0fe5c435c96732236b0c5b49c027c24a489dc810975e68feaa67f057587"
+    },
+    {
+      "file": "frontend/tests/e2e/dossier-directory.spec.ts",
+      "bytes": 3915,
+      "sha256": "76226d8655269bc4c10f8c39e5e78fd297983a2f00a44daf714ee264b86781b5"
+    },
+    {
+      "file": "frontend/tests/helpers/directory-fixtures.ts",
+      "bytes": 888,
+      "sha256": "1519199dae093531dcde236e148925d26d1db6b002939eb3b2fd77b4c830f0f6"
+    }
+  ]
+}

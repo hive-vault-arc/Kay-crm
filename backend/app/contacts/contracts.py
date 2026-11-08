@@ -169,11 +169,11 @@ class ResolvePhone(StrictBody):
 class ListQuery(StrictBody):
     page: int = Field(default=1, ge=1, le=1000000)
     page_size: int = Field(default=50, ge=1, le=100)
-    sort: Literal["-updated_at", "-received_at", "name"] = "-updated_at"
+    sort: Literal["-updated_at", "-received_at", "-created_at", "name"] = "-updated_at"
     q: str = Field(default="", max_length=160)
     status: EnquiryStatus | Literal["converted"] | None = None
     source: ManualSource | Literal["website"] | None = None
-    assigned_agent_id: UUID | None = None
+    assigned_agent_id: UUID | Literal["unassigned"] | None = None
     received_from: date | None = None
     received_to: date | None = None
     contact_id: UUID | None = None
@@ -184,6 +184,35 @@ class ListQuery(StrictBody):
     country: str | None = Field(default=None, min_length=2, max_length=2)
     language: str | None = Field(default=None, min_length=1, max_length=60)
     owner_directory: bool = False
+    primary_agent_id: UUID | None = None
+    linked: Literal["enquiries", "deals", "none"] | None = None
+    role: Literal["buyer", "seller", "owner", "tenant", "developer"] | None = None
+    created_from: date | None = None
+    created_to: date | None = None
+
+    def validate_kind(self, kind: str) -> None:
+        if kind == "contacts":
+            invalid = bool(
+                self.status
+                or self.source
+                or self.campaign_source
+                or self.rating
+                or self.assigned_agent_id
+                or self.received_from
+                or self.received_to
+                or self.sort == "-received_at"
+            )
+        else:
+            invalid = bool(
+                self.owner_directory
+                or bool(
+                    {"primary_agent_id", "linked", "role", "created_from", "created_to"}
+                    & self.model_fields_set
+                )
+                or self.sort == "-created_at"
+            )
+        if invalid:
+            raise ValueError("DIRECTORY_KIND_FILTER_MISMATCH")
 
     @field_validator("country")
     @classmethod
@@ -198,5 +227,7 @@ class ListQuery(StrictBody):
     @model_validator(mode="after")
     def date_range(self) -> Self:
         if self.received_from and self.received_to and self.received_from > self.received_to:
+            raise ValueError("INVALID_DATE_RANGE")
+        if self.created_from and self.created_to and self.created_from > self.created_to:
             raise ValueError("INVALID_DATE_RANGE")
         return self

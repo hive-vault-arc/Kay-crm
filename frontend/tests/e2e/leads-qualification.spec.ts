@@ -3,6 +3,7 @@ import { captureQualificationPair } from "../helpers/qualification-captures";
 
 test("KAY lead qualification: selected calling code, profile edit and real project conversion", async ({ page }) => {
   test.setTimeout(120_000);
+  page.setDefaultTimeout(15_000);
   const actor = await createActor("agent");
   const name = "Client synthétique qualification";
   const errors: string[] = [];
@@ -28,12 +29,12 @@ test("KAY lead qualification: selected calling code, profile edit and real proje
   try {
     await signIn(page, actor);
     await page.goto("/leads/new");
-    await expect(page.getByRole("button", { name: "Créer le Lead", exact: true })).toBeEnabled();
+    await expect(page.getByRole("button", { name: "Créer le prospect", exact: true })).toBeEnabled();
     await page.getByLabel("Nom du contact", { exact: true }).fill(name);
     await page.getByLabel("Indicatif Téléphone 1 *", { exact: true }).selectOption("FR");
     await page.getByLabel("Téléphone 1 *", { exact: true }).fill("0600000002");
     await page.getByLabel("Pays de résidence", { exact: true }).selectOption("FR");
-    await page.getByLabel("Nationalité (pays)", { exact: true }).selectOption("MA");
+    await page.getByLabel("Nationalité", { exact: true }).selectOption("MA");
     await page.getByLabel("Langues parlées *", { exact: true }).selectOption("french");
     await page.getByLabel("Langues parlées *", { exact: true }).selectOption("english");
     await page.getByLabel("Budget *", { exact: true }).selectOption("500.000 DH - 1.000.000 DH");
@@ -44,7 +45,7 @@ test("KAY lead qualification: selected calling code, profile edit and real proje
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
     await captureQualificationPair(page, "lead-create");
-    await page.getByRole("button", { name: "Créer le Lead", exact: true }).click();
+    await page.getByRole("button", { name: "Créer le prospect", exact: true }).click();
     await expect.poll(() => /^\/leads\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
     const eid = new URL(page.url()).pathname.split("/")[2];
     const first = await (await page.request.get(`/api/v1/enquiries/${eid}`)).json();
@@ -67,7 +68,7 @@ test("KAY lead qualification: selected calling code, profile edit and real proje
     await phone.fill("0600000004");
     await page.getByLabel("Qualification", { exact: true }).selectOption("hot");
     await captureQualificationPair(page, "lead-edit");
-    await page.getByRole("button", { name: "Enregistrer le prospect", exact: true }).click();
+    await page.getByRole("button", { name: "Enregistrer", exact: true }).click();
     await expect(page.getByText("Prospect enregistré.", { exact: true })).toBeVisible();
     await expect(page.locator("main").getByRole("status").filter({ hasText: /Chargement|Vérification/ })).toHaveCount(0);
     const edited = await (await page.request.get(`/api/v1/enquiries/${eid}`)).json();
@@ -75,6 +76,7 @@ test("KAY lead qualification: selected calling code, profile edit and real proje
     expect(edited.contact.primary_phone).toBe("+33600000004");
     expect(edited.version).toBe(2); expect(edited.contact.version).toBe(2);
     await page.goto(`/leads/${eid}`);
+    await page.getByRole("button", { name: "Actions", exact: true }).click();
     const trigger = page.getByRole("button", { name: "Convertir en affaire", exact: true });
     await trigger.focus(); await page.keyboard.press("Enter");
     const dialog = page.getByRole("alertdialog", { name: "Convertir le prospect en affaire", exact: true });
@@ -102,7 +104,7 @@ test("KAY lead qualification: selected calling code, profile edit and real proje
     await expect(page.getByRole("heading", { name: deal.title, exact: true })).toBeVisible();
     await expect(page.locator("main").getByRole("status").filter({ hasText: /Chargement|Vérification/ })).toHaveCount(0);
     await page.goto(`/leads/${eid}`);
-    await expect(page.getByRole("link", { name: "Ouvrir l’affaire", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Voir l’affaire", exact: true })).toHaveAttribute("href", `/deals/${did}`);
     expect((await (await page.request.get("/api/v1/enquiries")).json()).total).toBe(0);
     expect((await (await page.request.get("/api/v1/enquiries?status=converted")).json()).total).toBe(1);
     expect(errors, JSON.stringify({ failedRequests }, null, 2)).toEqual([]);

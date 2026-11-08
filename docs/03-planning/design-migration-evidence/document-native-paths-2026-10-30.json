@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "base": "ef4292c6562c1996cca017487e34d89c5f33d8e4",
+  "scope": "Two existing document E2E paths and shared selected uploader helpers",
+  "checks": [
+    {
+      "command": "npx eslint tests/helpers/files.ts tests/e2e/files.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript source AST invariants",
+      "exitCode": 0,
+      "protectedCalls": 32,
+      "scenarioTitles": 2,
+      "timeouts": 2,
+      "businessCommands": 2,
+      "workerControlCalls": 7,
+      "protectedReads": 6,
+      "responseWaits": 2,
+      "fixtures": 4,
+      "digestDownloads": 4,
+      "routeFaults": 2,
+      "unchangedFixtureAndDigestFunctions": 2
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9053,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1317,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "frozen": {
+    "inputs": 254,
+    "drift": 0,
+    "mainUnchanged": true
+  },
+  "retainedPriorEvidence": {
+    "frontendUnits": 994,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "preparedNative": {
+    "file": "frontend/tests/e2e/files.spec.ts",
+    "cases": 2,
+    "typechecked": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "captures": "Explicitly off",
+    "broaderConsumersAccepted": false
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Three wider direct helper consumers and recovery Contact path",
+    "Actual native/device/zoom/focus/SQL/AV/private transfer/security/CI/AFTER/product gates",
+    "Migrations0036/0037 and remaining field/job/alias/selectors"
+  ],
+  "status": "Prepared native source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/helpers/files.ts",
+      "bytes": 2929,
+      "sha256": "963b596aac37029f518dcb6712a3f1fd3c212ee7b445579b011beaf4f8e95b34"
+    },
+    {
+      "file": "frontend/tests/e2e/files.spec.ts",
+      "bytes": 8962,
+      "sha256": "2db0869d3133aaff119140a7f54b1b51ff8758ebb52154faa572914282186e89"
+    }
+  ]
+}

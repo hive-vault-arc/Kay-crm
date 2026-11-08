@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "base": "23673f568539e604e0e7d6f68f59dcfba26055b0",
+  "scope": "Selected inventory homes in existing outcome and standalone-listing native sources",
+  "checks": [
+    {
+      "command": "npx eslint tests/e2e/outcomes.spec.ts tests/e2e/property-listing-wizard.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript source AST invariants",
+      "exitCode": 0,
+      "titlesUnchanged": 7,
+      "protectedCalls": 22,
+      "unchangedCalls": 22,
+      "timeouts": 4,
+      "protectedReads": 13,
+      "businessCommands": 2,
+      "routeFaults": 1,
+      "routeRemovals": 1,
+      "screenshotCalls": 1
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9057,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1320,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "retainedPriorEvidence": {
+    "frontendUnits": 994,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "preparedNative": {
+    "outcomeCases": 3,
+    "listingWizardCases": 4,
+    "typechecked": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "screenshotRequestsExecuted": false,
+    "fullJourneysAccepted": false
+  },
+  "frozen": {
+    "inputs": 254,
+    "drift": 0,
+    "mainUnchanged": true
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Broader historical inventory/deal/ownership/recovery review paths",
+    "Actual native/device/zoom/focus/SQL/AV/private transfer/security/CI/AFTER/product gates",
+    "Migrations0036/0037 and remaining field/job/alias/selectors"
+  ],
+  "status": "Prepared native source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/e2e/outcomes.spec.ts",
+      "bytes": 9091,
+      "sha256": "dd9d75118a55f7f1b7b4543cf4f93c9feda20e060f0ae8841cef8a0f9f265e15"
+    },
+    {
+      "file": "frontend/tests/e2e/property-listing-wizard.spec.ts",
+      "bytes": 8050,
+      "sha256": "3dea7b1b172f1309522bae72d882c8081cad10e1b057c8af0178513664ec77b9"
+    }
+  ]
+}

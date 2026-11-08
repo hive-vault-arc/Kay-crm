@@ -11,5 +11,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const route = `/owners/${id}/edit`;
   const identity = await requireIdentity(route);
   if (identity.state !== "authenticated") return <AuthUnavailable path={route} />;
-  return <OwnerForm id={id} role={identity.profile.user.role} />;
+  return <OwnerForm key={`${id}:${identity.profile.user.id}:${identity.profile.user.role}`} actorId={identity.profile.user.id} id={id} role={identity.profile.user.role} />;
 }

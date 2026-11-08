@@ -1,0 +1,153 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "bcdb015df159e5d96f032e69c459e4f90c7f1061",
+  "scope": "Contact canonical saved projection through an old merged URL, consistent with existing Owner reconciliation",
+  "checks": [
+    {
+      "command": "node --test tests/unit/ownership-recovery.test.mjs",
+      "phase": "first test draft",
+      "exitCode": 1,
+      "observed": "Full edit stale heading reproduced; archive test initially failed to descend into Workspace tab content"
+    },
+    {
+      "command": "node --test tests/unit/ownership-recovery.test.mjs",
+      "phase": "corrected tests before fix",
+      "exitCode": 1,
+      "failed": 2,
+      "observed": "Actual helper/caller leaves old canonical name and null archive state through an alias"
+    },
+    {
+      "command": "node --test tests/unit/ownership-recovery.test.mjs tests/unit/owner-workspace.test.mjs tests/unit/realtime.test.mjs",
+      "phase": "after fix",
+      "exitCode": 0,
+      "passed": 46
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 951,
+      "additionalCases": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 523,
+      "buttonFiles": 160,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste lint.mjs --app --json frontend/src/features/contacts/contact-record.tsx",
+      "exitCode": 0,
+      "files": 1,
+      "findings": 0,
+      "boundary": "Static only"
+    },
+    {
+      "command": "Backend",
+      "executed": false,
+      "productionChanged": false,
+      "retainedPriorConnectionForbiddenUnits": 573
+    },
+    {
+      "command": "Frozen reference/main/protected review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9017,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1299,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/contact-edit-recovery.spec.ts",
+    "additionalCases": 1,
+    "width": 390,
+    "typechecked": true,
+    "executed": false,
+    "scenario": "Real isolated synthetic merge; retain first authorized alias response, edit canonical contact, assert immediate heading and actual current canonical counter/readback",
+    "artifactPolicy": {
+      "trace": false,
+      "video": false,
+      "screenshot": false
+    }
+  },
+  "behavior": [
+    "Current authorized canonical ID drives Contact local/remote reconciliation, matching existing Owner",
+    "Newer committed full/inline projections remain visible while alias reads are older",
+    "Authoritative same-counter read wins; current denial hides the record",
+    "Management installs only active canonical target/read; different survivor clears local projection and refreshes original scoped route",
+    "No shared helper/alias authority/URL/redirect/API/schema/style change"
+  ],
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Actual SQL/native/device/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Other exact settings/job/alias/legacy-selector reconciliation"
+  ],
+  "status": "Located source projection gap fixed; synthetic evidence only; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/src/features/contacts/contact-record.tsx",
+      "bytes": 8612,
+      "sha256": "af6bcb79d3d586d832ba3f0dac38c53d4b52492677273c61b527c3d3474b3c3a"
+    },
+    {
+      "file": "frontend/tests/unit/ownership-recovery.test.mjs",
+      "bytes": 33094,
+      "sha256": "64aa34c709536e53a5ca51114cdcd19caae574c8ef132f514db9ca2400920bdc"
+    },
+    {
+      "file": "frontend/tests/e2e/contact-edit-recovery.spec.ts",
+      "bytes": 9773,
+      "sha256": "092c02f46657fe9c8bdc2b322ab41ac18db7fbf949532ea7f730577de29b1a24"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "8826d2f",
+  "scope": "Selected export confirmation, reviewed whole-result snapshot, own-job desktop/mobile history and guarded existing private download protocol",
+  "checks": [
+    { "command": "npm run typecheck", "cwd": "frontend", "exitCode": 0 },
+    { "command": "npm run test:unit", "cwd": "frontend", "exitCode": 0, "passed": 259, "failed": 0, "newCases": 13 },
+    { "command": "npm run lint", "cwd": "frontend", "exitCode": 0, "semanticGlyphs": 62, "iconConsumers": 86, "iconSites": 307, "buttonSites": 444, "violations": 0 },
+    { "command": "npm run build", "cwd": "frontend", "exitCode": 0, "next": "16.4.2" },
+    { "command": "node .github/scripts/repository-check.mjs", "exitCode": 0, "indexedFiles": 8696, "forbiddenOrOversized": 0, "ignoreProbes": 14 },
+    { "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly", "exitCode": 0, "sprints": 22, "links": 1239, "acceptanceMappings": 42, "mermaidSources": 13, "apiJsonExamples": 12 },
+    { "command": "git diff --cached --check", "exitCode": 0 }
+  ],
+  "source": {
+    "reference": "Frozen src/data-operations.js dataPage exports and export-csv review",
+    "composition": "Date/Contenu/Etat/Fichier desktop columns, explicit checked review scope; phone/drawer shared tonal cards",
+    "pinnedInputs": 254,
+    "drift": 0,
+    "newCss": false,
+    "newDependencies": false
+  },
+  "boundaries": [
+    "Actual Contact and Lead directory owners hoist review outside transient Popover",
+    "Current validated filters/count are copied on open and cannot change through refreshed props",
+    "Reviewed body keeps same UUID retry identity through interruption/cancel/reopen until success",
+    "Unconfirmed/duplicate/invalid/page-scoped requests never dispatch",
+    "Pending command blocks dismissal and uses existing managed guarded-links/unload boundary; general history navigation remains open",
+    "Current denial hides old review and job metadata",
+    "Owned queued metadata polls only while visible, releasing after completion/unmount; five seconds is a UI proposal",
+    "Exact current-session/CSRF/job permit, no-store/cookies-omitted transfer, type/20MiB checks and cancellation before delivery",
+    "No raw filter/query values, credentials, real CSVs or private response bodies are recorded as evidence"
+  ],
+  "correctedAttempts": [
+    "A test-fixture brace parse error was corrected before the focused/full pass",
+    "Direct and callback ref arguments through a render callback both failed the React refs rule; replaced by event-time context focus handoff, no suppression",
+    "Patch validation failures made no source changes; corrected patches were applied"
+  ],
+  "skills": {
+    "react": "Read/applied installed React guidance for state ownership, refs, effects, cleanup and components",
+    "mandatoryOriginalMachinePaths": "Unavailable here; not claimed executed",
+    "designTaste": "Dense CRM/admin/form/table scope excluded from marketing workflow",
+    "antislop": "AFTER retained; no unselected audit-only fixes"
+  },
+  "notRun": [
+    "Native rendered desktop/phone/drawer focus, touch, zoom, responsiveness and accessibility",
+    "Actual PostgreSQL job generation/revocation/concurrency and private transfer",
+    "App HTTP/browser/CUA, full-stack and owner/AFTER acceptance"
+  ],
+  "unchanged": [
+    "Backend/worker/contracts for ownership, authority, CSV contents/limits, idempotency and delivery",
+    "Database/migrations, original models, dependencies and frozen design",
+    "Real records, imports/exports, credentials, production, main, push and merge"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

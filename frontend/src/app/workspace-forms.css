@@ -1,0 +1,89 @@
+/* Selected record-sheet form geometry; controls remain the shared shadcn inputs. */
+.kay-dossier-form { display:grid; min-width:0; gap:20px; }
+.kay-form-sheet { display:grid; min-width:0; gap:24px; container-type:inline-size; margin:0; padding:24px; }
+.kay-form-sheet > .kay-record-section { margin:0; padding:0; }
+.kay-form-sheet > .kay-record-section + .kay-record-section { border-top:1px solid var(--workspace-line); padding-top:24px; }
+.kay-form-columns { display:grid; min-width:0; align-items:start; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px 40px; }
+.kay-form-column { display:grid; min-width:0; align-content:start; gap:16px; }
+.kay-form-field { display:grid; min-width:0; align-items:start; grid-template-columns:132px minmax(0,1fr); gap:8px 16px; }
+.kay-form-field > :is(label,legend) { display:flex; min-height:44px; align-items:center; margin:0; color:var(--workspace-muted); font-size:13px; line-height:1.5; }
+.kay-form-field > :not(label,legend) { min-width:0; grid-column:2; }
+.kay-form-field > :is(label,legend) + * { grid-row:1; }
+.kay-form-methods { display:grid; min-width:0; gap:12px; }
+.kay-form-method { display:grid; min-width:0; gap:8px; }
+.kay-form-method + .kay-form-method { border-top:1px solid var(--workspace-line); padding-top:16px; }
+.kay-form-method-actions { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+.kay-form-method-actions > [data-action="remove"] { margin-inline-start:auto; }
+.kay-form-context { display:grid; min-width:0; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 40px; margin-bottom:24px; }
+.kay-form-feedback { display:grid; min-width:0; gap:16px; }
+.kay-form-disclosure > summary { display:flex; align-items:center; min-height:44px; cursor:pointer; font-size:13px; font-weight:550; }
+.kay-form-disclosure > summary:focus-visible { outline:2px solid var(--workspace-focus); outline-offset:2px; border-radius:8px; }
+.kay-form-projects { display:grid; min-width:0; gap:16px; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); }
+.kay-form-project { display:grid; min-width:0; align-content:start; gap:12px; border:1px solid var(--workspace-line); border-radius:18px; padding:16px; background:var(--workspace-field); }
+.kay-contact-choice { display:grid; min-width:0; gap:12px; border-radius:18px; padding:16px; background:var(--workspace-field); }
+.kay-contact-choice-meta { display:flex; flex-wrap:wrap; align-items:center; gap:8px 20px; color:var(--workspace-muted); font-size:13px; }
+@container(max-width:1100px) {
+  .kay-form-field { grid-template-columns:minmax(0,1fr); gap:8px; }
+  .kay-form-field > :is(label,legend) { min-height:0; }
+  .kay-form-field > :not(label,legend) { grid-column:1; }
+  .kay-form-field > :is(label,legend) + * { grid-row:auto; }
+}
+@media(max-width:830px) {
+  .kay-form-sheet { padding:20px; }
+  .kay-form-columns,.kay-form-context { grid-template-columns:minmax(0,1fr); gap:20px; }
+  .kay-dossier-form { gap:16px; }
+}
+@media(max-width:520px) {
+  .kay-form-sheet { padding:16px; }
+}
+
+@container(max-width:700px) {
+  .kay-form-columns,.kay-form-context { grid-template-columns:minmax(0,1fr); gap:20px; }
+}
+
+/* Table-free drawer forms share the overlay inset; no nested card or reading cap. */
+.kay-drawer-form { display:grid; min-width:0; gap:20px; container-type:inline-size; }
+.kay-owner-drawer-fields { display:grid; min-width:0; gap:20px; container-type:inline-size; }
+.kay-owner-drawer-fields > .kay-record-section { margin:0; padding:0; }
+.kay-owner-drawer-fields .kay-form-columns { grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 24px; }
+.kay-owner-preview { display:grid; min-width:0; gap:20px; container-type:inline-size; }
+:root .kay-owner-preview .record-facts { gap:16px 24px; }
+:root .kay-owner-preview .record-facts > .kay-record-fact { grid-template-columns:minmax(0,1fr); gap:6px; }
+.kay-owner-preview .kay-record-fact > dt { padding-top:0; }
+.kay-owner-preview .kay-support-entry { display:flex; align-items:center; min-height:60px; gap:12px; }
+.kay-owner-preview .kay-support-entry + .kay-support-entry { margin-top:0; }
+.kay-owner-record-page .kay-record-dossier { height:auto; max-height:100%; }
+.kay-owner-asset-list { display:grid; min-width:0; gap:12px; }
+.kay-owner-asset { min-width:0; padding:12px; border:1px solid var(--workspace-line); border-radius:var(--workspace-geometry-inset-radius); background:var(--workspace-field); }
+.kay-owner-asset-link { display:flex; align-items:center; gap:10px; min-width:0; min-height:44px; }
+.kay-owner-asset-link > svg { flex:none; color:var(--workspace-muted); }
+.kay-owner-asset-link > span { flex:1; min-width:0; }
+.kay-owner-asset-link strong { display:block; font-size:14px; line-height:1.5; font-weight:550; overflow-wrap:anywhere; }
+.kay-owner-asset-link small { display:block; margin-top:4px; font-size:12px; color:var(--workspace-muted); overflow-wrap:anywhere; }
+.kay-owner-asset-link:hover strong { text-decoration:underline; }
+.kay-owner-asset-status { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; margin-top:10px; font-size:12px; color:var(--workspace-muted); }
+.kay-owner-asset-dates { display:grid; gap:6px; margin-top:10px; font-size:12px; }
+.kay-owner-asset-dates > div { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px; }
+.kay-owner-asset-dates dt { color:var(--workspace-muted); }
+.kay-owner-asset-dates dd { min-width:0; overflow-wrap:anywhere; }
+@container(max-width:560px) { :root .kay-owner-preview .record-facts,.kay-owner-drawer-fields .kay-form-columns { grid-template-columns:minmax(0,1fr); } }
+@media(max-width:830px) { .kay-owner-record-page .kay-record-aside { max-height:40dvh; } }
+.kay-form-pair { display:grid; min-width:0; align-items:start; gap:16px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.kay-drawer-form-section { min-width:0; padding-top:20px; border-top:1px solid var(--workspace-line); }
+.kay-form-footer { display:flex; flex-wrap:wrap; justify-content:flex-end; min-width:0; gap:8px; padding-top:20px; border-top:1px solid var(--workspace-line); }
+@container(max-width:520px) { .kay-form-pair { grid-template-columns:minmax(0,1fr); } }
+
+/* Visit drawers keep one scroll owner, short facts and subordinate policy/history. */
+.kay-visit-record { display:grid; min-width:0; gap:20px; container-type:inline-size; }
+.kay-visit-meta,.kay-visit-related { display:flex; flex-wrap:wrap; align-items:center; min-width:0; gap:8px 12px; }
+.kay-visit-meta { font-size:13px; color:var(--workspace-muted); }
+.kay-visit-meta:focus { outline:none; }
+.kay-visit-meta:focus-visible { outline:2px solid var(--workspace-focus); outline-offset:4px; border-radius:8px; }
+.kay-visit-related:empty { display:none; }
+.kay-visit-facts { display:grid; min-width:0; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 24px; }
+.kay-visit-facts > div { display:grid; min-width:0; align-content:start; gap:6px; }
+.kay-visit-facts dt { font-size:13px; color:var(--workspace-muted); }
+.kay-visit-facts dd { font-size:14px; line-height:1.6; }
+.kay-visit-slot { padding-top:20px; border-top:1px solid var(--workspace-line); }
+.kay-visit-availability { min-width:0; padding:16px; border-radius:16px; background:var(--workspace-field); font-size:13px; line-height:1.6; }
+@container(max-width:520px) { .kay-visit-facts { grid-template-columns:minmax(0,1fr); } }

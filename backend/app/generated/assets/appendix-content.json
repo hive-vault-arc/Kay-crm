@@ -1,0 +1,2598 @@
+{
+  "01": {
+    "title": "Bon de visite immobilière",
+    "source": "01_Bon_de_visite.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "MODÈLE DE TRAVAIL - NON VALIDÉ JURIDIQUEMENT"
+      },
+      {
+        "type": "paragraph",
+        "text": "Ce bon atteste une visite. Il ne vaut ni offre d'achat, ni réservation, ni engagement de louer. Les honoraires éventuels relèvent d'une convention distincte et des conditions légales applicables."
+      },
+      {
+        "type": "heading",
+        "text": "1. Visite et intervenants"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Bon n° / dossier CRM",
+          "Date, heure et lieu de la visite"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Agence / représentant",
+          "Téléphone / e-mail de l'agence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Visiteur : nom complet",
+          "Téléphone ou e-mail du visiteur"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Bien présenté"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence du dossier / bien",
+          "Villa / maison / appartement / terrain / local"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse précise / localisation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Programme / bloc / étage / unité, si applicable",
+          "Titre foncier / réquisition / autre référence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Objet : [ ] vente [ ] location",
+          "Prix / loyer annoncé et période, en MAD"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "3. Constat et observations"
+      },
+      {
+        "type": "paragraph",
+        "text": "Le visiteur reconnaît avoir visité le bien désigné avec le représentant indiqué. Les informations, surfaces et prix communiqués restent soumis aux vérifications et à l'accord des parties. Le bon n'accorde aucun pouvoir de signer un acte ou de recevoir un prix de vente."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Observations / documents présentés / suite souhaitée"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Fait à",
+          "Le / heure"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Le visiteur : nom, qualité et signature",
+          "Le représentant de l'agence : nom, qualité et signature"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage."
+      },
+      {
+        "type": "paragraph",
+        "text": "Code de commerce, courtage : art. 405 et suivants https://adala.justice.gov.ma/api/uploads/2024/03/01/Code%20de%20commerce_compressed-1709282723074.pdf"
+      }
+    ],
+    "bodyWords": 243,
+    "repeatedPageNoticesRemoved": 0
+  },
+  "02": {
+    "title": "Mandat de vente immobilière",
+    "source": "02_Mandat_de_vente.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "MODÈLE DE TRAVAIL - NON VALIDÉ JURIDIQUEMENT"
+      },
+      {
+        "type": "paragraph",
+        "text": "Mission de recherche et de présentation d'acquéreurs. Le mandat n'est ni un acte de vente ni une procuration permettant de céder le bien. Tous les propriétaires ou représentants habilités doivent être identifiés."
+      },
+      {
+        "type": "heading",
+        "text": "1. Mandant / propriétaire(s)"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Mandataire / agence"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "3. Désignation du bien"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence du dossier / bien",
+          "Villa / maison / appartement / terrain / local"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse précise / localisation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Programme / bloc / étage / unité, si applicable",
+          "Titre foncier / réquisition / autre référence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Surface et source de la mesure",
+          "Dépendances / équipements / occupation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Copropriétaires / droits / pouvoirs : annexe n°",
+          "Situation d'occupation / bail existant"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "4. Mission confiée"
+      },
+      {
+        "type": "paragraph",
+        "text": "Le mandant confie à l'agence la recherche d'acquéreurs, la présentation du bien, l'organisation des visites et la transmission des propositions. Toute modification du prix et toute acceptation d'offre restent soumises à l'accord du propriétaire habilité."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nature : [ ] non exclusif [ ] exclusif",
+          "Date de début / date de fin"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Si exclusif : périmètre, exceptions et obligations particulières à valider"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Prix de présentation (MAD)",
+          "Seuil de négociation autorisé / validation écrite"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Renouvellement : accord écrit / conditions",
+          "Préavis et mode de notification convenus"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "5. Honoraires et frais"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Débiteur des honoraires",
+          "Référence de la convention d'honoraires"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Calcul : forfait HT ou taux + assiette exacte",
+          "TVA / régime fiscal à confirmer"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Événement ouvrant droit / exigibilité",
+          "Échéance et mode de règlement"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Frais distincts autorisés, plafond et justificatifs (sinon : aucun)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Aucun taux ni montant n'est présélectionné. La rémunération relève de l'accord applicable et du droit du courtage ; la seule signature d'un bon de visite ne remplace pas cet accord."
+      },
+      {
+        "type": "heading",
+        "text": "6. Publicité et accès"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Supports / diffusion autorisés",
+          "Visites / préavis / remise de clés"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Les supports publics ne diffusent pas les pièces d'identité, coordonnées privées des propriétaires ou documents confidentiels sans base appropriée. Les photos et informations publiées sont autorisées et vérifiées."
+      },
+      {
+        "type": "heading",
+        "text": "7. Engagements et limites"
+      },
+      {
+        "type": "paragraph",
+        "text": "Le mandant remet des informations exactes et les pièces établissant ses droits et pouvoirs ; il informe l'agence des offres, changements d'occupation, engagements et indisponibilités. L'agence rend compte des démarches et transmet fidèlement les offres, sans certifier un titre ni garantir la conclusion d'une vente. Sauf acte distinct valable et pouvoir exprès, l'agence ne signe pas la vente au nom du mandant, ne consent pas de garantie en son nom et ne reçoit pas le prix, un acompte ou un séquestre de vente. Les fonds sont traités dans un cadre professionnel approprié."
+      },
+      {
+        "type": "heading",
+        "text": "8. Fin du mandat et dossier"
+      },
+      {
+        "type": "paragraph",
+        "text": "La fin du mandat est notifiée selon les conditions validées. Les clés et originaux confiés sont restitués contre reçu. Toute clause d'exclusivité, indemnité ou période de protection après le terme doit être expressément rédigée et validée ; aucune pénalité automatique n'est préremplie."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Conditions particulières / compte rendu / traitement des offres en cours"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 2
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Pièces et annexes remises",
+          "Droit applicable / juridiction compétente à vérifier"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Après validation du projet et complément de tous les champs : signature de chaque propriétaire ou représentant habilité et de l'agence ; un exemplaire complet à chaque partie."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Fait à",
+          "Le / heure"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Le(s) mandant(s) : nom, qualité et signature",
+          "Le mandataire : nom, qualité et signature"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage. Code de commerce, courtage : art. 405 et suivants https://adala.justice.gov.ma/api/uploads/2024/03/01/Code%20de%20commerce_compressed-1709282723074.pdf CNDP : finalité, proportionnalité, formalités et données personnelles https://www.cndp.ma/conditions/"
+      }
+    ],
+    "bodyWords": 628,
+    "repeatedPageNoticesRemoved": 2
+  },
+  "03": {
+    "title": "Mandat de mise en location",
+    "source": "03_Mandat_de_location.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "MODÈLE DE TRAVAIL - NON VALIDÉ JURIDIQUEMENT"
+      },
+      {
+        "type": "paragraph",
+        "text": "Mandat de mise en location uniquement. La gestion courante, l'encaissement des loyers et la signature du bail pour le propriétaire ne sont pas inclus sans pouvoirs distincts et validation adaptée."
+      },
+      {
+        "type": "heading",
+        "text": "1. Mandant / bailleur(s)"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Mandataire / agence"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "3. Bien et location envisagée"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence du dossier / bien",
+          "Villa / maison / appartement / terrain / local"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse précise / localisation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Programme / bloc / étage / unité, si applicable",
+          "Titre foncier / réquisition / autre référence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Surface et source de la mesure",
+          "Dépendances / équipements / occupation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "[ ] habitation [ ] commercial [ ] séjour",
+          "[ ] meublé [ ] non meublé / annexes"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "4. Mission et durée"
+      },
+      {
+        "type": "paragraph",
+        "text": "L'agence prépare la présentation du bien, recherche des candidats, organise les visites et transmet les candidatures et propositions au mandant. Le propriétaire conserve le choix du locataire et l'accord final sur les conditions du bail."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Mandat : [ ] non exclusif [ ] exclusif",
+          "Du / au"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Renouvellement / résiliation / préavis",
+          "Rapport d'activité : fréquence et canal"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "5. Conditions à proposer"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Loyer : montant MAD + période exacte",
+          "Charges : incluses / séparées et détail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Dépôt : montant envisagé, dans la limite légale",
+          "Durée / prise d'effet souhaitée"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Occupation / équipements / restrictions licites",
+          "Visites / clés / modalités d'accès"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "6. Honoraires de mise en location"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Débiteur / convention de référence",
+          "Forfait HT ou taux + assiette"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "TVA / statut fiscal à confirmer",
+          "Déclenchement / échéance / paiement"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Frais autorisés et plafond ; exclusivité éventuelle et exceptions"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "................................................................................................................................................... La commission n'est pas le loyer ni le dépôt de garantie. Les montants et conditions sont convenus séparément et aucun mois de loyer ou pourcentage n'est imposé par ce modèle."
+      },
+      {
+        "type": "heading",
+        "text": "7. Informations, pouvoirs et confidentialité"
+      },
+      {
+        "type": "paragraph",
+        "text": "Le mandant justifie ses droits et les pouvoirs des représentants ou copropriétaires. Il signale les contraintes d'occupation, de copropriété et d'exploitation. Les conditions proposées doivent être compatibles avec le régime réellement applicable au logement ou au local. L'agence ne promet pas l'acceptation d'un candidat, ne consent pas de bail ni de sous-location sans pouvoir valable, et ne reçoit pas de fonds pour compte du bailleur sans habilitation appropriée. Les contrôles de candidature restent proportionnés à la finalité et protégés."
+      },
+      {
+        "type": "heading",
+        "text": "8. Dossier et clôture de mission"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Annexes / état du bien / inventaire",
+          "Compte rendu et restitution des clés"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Autres conditions à faire valider"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "................................................................................................................................................... ................................................................................................................................................... Le projet doit être adapté au type de location. Une mission de gestion locative récurrente nécessite un contrat distinct ; ce mandat ne l'instaure pas implicitement."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Fait à",
+          "Le / heure"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Le(s) mandant(s) : nom, qualité et signature",
+          "Le mandataire : nom, qualité et signature"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage."
+      },
+      {
+        "type": "paragraph",
+        "text": "Code de commerce, courtage : art. 405 et suivants https://adala.justice.gov.ma/api/uploads/2024/03/01/Code%20de%20commerce_compressed-1709282723074.pdf Loi 67-12 : texte arabe du B.O. 6208, copie publique ; art. 3, 7-8 et 20 notamment https://cabinetlahfaia.com/lois/loi-67-12-baux-habitation.ar.pdf"
+      }
+    ],
+    "bodyWords": 540,
+    "repeatedPageNoticesRemoved": 2
+  },
+  "04": {
+    "title": "Location longue durée - habitation",
+    "source": "04_Contrat_location_longue_duree.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "MODÈLE DE TRAVAIL - NON VALIDÉ JURIDIQUEMENT"
+      },
+      {
+        "type": "paragraph",
+        "text": "Projet de bail d'habitation de longue durée, meublé ou non. Faire confirmer l'application de la loi 67-12 et les formalités d'écrit à date certaine. Ne convient pas tel quel à un bail commercial, une VEFA ou une exploitation touristique."
+      },
+      {
+        "type": "heading",
+        "text": "1. Bailleur et représentant éventuel"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Locataire(s)"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "3. Logement et annexes"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence du dossier / bien",
+          "Villa / maison / appartement / terrain / local"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse précise / localisation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Programme / bloc / étage / unité, si applicable",
+          "Titre foncier / réquisition / autre référence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Surface et source de la mesure",
+          "Dépendances / équipements / occupation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Usage : habitation / occupants convenus",
+          "Meublé / non meublé ; inventaire annexe n°"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "4. Durée et prise d'effet"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Date de prise d'effet / remise des clés",
+          "Durée convenue / terme prévu"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Renouvellement et préavis : dispositions à valider sans écarter les règles impératives"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "................................................................................................................................................... Le logement est loué à usage d'habitation. L'arrivée au terme indiqué ne permet pas de méconnaître les droits du locataire ou les procédures applicables."
+      },
+      {
+        "type": "heading",
+        "text": "5. Loyer, charges et paiement"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Loyer mensuel en MAD, chiffres",
+          "Loyer mensuel en toutes lettres"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Charges incluses / provisions / justification",
+          "Total à chaque échéance / date d'exigibilité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Périodicité / premier prorata éventuel",
+          "Bénéficiaire / mode / référence de paiement"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Le locataire paie le loyer et les charges convenus au bailleur ou à son mandataire habilité. Un reçu indique les sommes et la période réellement acquittées. Un paiement partiel ne vaut pas règlement du solde."
+      },
+      {
+        "type": "heading",
+        "text": "6. Dépôt de garantie"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Dépôt convenu (MAD)",
+          "Date / justificatif de versement"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Dans le régime de la loi 67-12, l'article 20 prévoit au plus deux mois de loyer et une restitution au plus tard un mois après restitution du logement, sous déduction des sommes légalement justifiées. Vérifier la version applicable et ne pas confondre ce dépôt avec une commission ou un cautionnement personnel."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Détenteur habilité du dépôt",
+          "Modalités de restitution / coordonnées à confirmer"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "7. Délivrance et jouissance"
+      },
+      {
+        "type": "paragraph",
+        "text": "Le bailleur met le logement et ses équipements à disposition selon la description et les annexes, permet la jouissance paisible et accomplit les obligations et réparations qui lui incombent légalement. Les défauts connus sont indiqués, sans décharge générale de responsabilité."
+      },
+      {
+        "type": "heading",
+        "text": "8. Usage et entretien"
+      },
+      {
+        "type": "paragraph",
+        "text": "Le locataire utilise les lieux conformément à la destination convenue, paie les sommes dues, assure l'entretien et les réparations à sa charge et signale les désordres. Les travaux importants et la sous-location suivent les autorisations et conditions prévues par le droit applicable."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Assurance / référence si applicable",
+          "Règlement de copropriété communiqué le"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Travaux convenus : responsable, délai, prise en charge"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 2
+      },
+      {
+        "type": "heading",
+        "text": "9. État des lieux et mobilier"
+      },
+      {
+        "type": "paragraph",
+        "text": "Un état descriptif contradictoire est établi à l'entrée et à la sortie, avec les relevés des compteurs, clés, photographies et réserves utiles. Le mobilier fait l'objet d'un inventaire séparé. Ne pas précocher un bon état si un défaut existe."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "État d'entrée / photos : références",
+          "Inventaire / clés : références"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "10. Révision du loyer"
+      },
+      {
+        "type": "paragraph",
+        "text": "Toute révision suit la loi et les conditions validées au bail. Aucune hausse automatique annuelle, pénalité forfaitaire ou modification unilatérale n'est créée par ce modèle."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Clause de révision à valider"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "heading",
+        "text": "11. Fin du bail, notifications et litiges"
+      },
+      {
+        "type": "paragraph",
+        "text": "La résiliation, le congé et l'éventuelle reprise des lieux respectent les motifs, délais, notifications et procédures du régime applicable. Aucune clause n'autorise une expulsion privée, un changement de serrure ou une coupure des services pour obtenir le départ."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresses retenues pour les notifications",
+          "Mode de notification juridiquement validé"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Conditions particulières, sans contradiction avec les règles impératives"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 2
+      },
+      {
+        "type": "heading",
+        "text": "12. Annexes et formalisation"
+      },
+      {
+        "type": "paragraph",
+        "text": "Joindre l'état des lieux, l'inventaire si meublé, les pouvoirs utiles, le détail des charges et les autres annexes convenues. Compléter puis faire contrôler l'écrit, la date certaine et les formalités fiscales/enregistrement applicables. Chaque partie conserve un exemplaire complet."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Annexes numérotées / nombre de pages",
+          "Formalités et frais : répartition validée"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Fait à",
+          "Le / heure"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Le bailleur : nom, qualité et signature",
+          "Le(s) locataire(s) : nom, qualité et signature"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage."
+      },
+      {
+        "type": "paragraph",
+        "text": "Loi 67-12 : texte arabe du B.O. 6208, copie publique ; art. 3, 7-8 et 20 notamment https://cabinetlahfaia.com/lois/loi-67-12-baux-habitation.ar.pdf"
+      }
+    ],
+    "bodyWords": 759,
+    "repeatedPageNoticesRemoved": 3
+  },
+  "05": {
+    "title": "Contrat de location courte durée",
+    "source": "05_Contrat_location_courte_duree.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "MODÈLE DE TRAVAIL - NON VALIDÉ JURIDIQUEMENT"
+      },
+      {
+        "type": "paragraph",
+        "text": "Projet de séjour meublé à durée déterminée. Le seul titre « courte durée » ne fixe pas le régime juridique. Faire vérifier l'usage réel, la durée, la copropriété et les autorisations touristiques/locales nécessaires avant commercialisation."
+      },
+      {
+        "type": "heading",
+        "text": "1. Bailleur / exploitant et représentant"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Locataire / voyageur principal"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "3. Hébergement et capacité"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence du dossier / bien",
+          "Villa / maison / appartement / terrain / local"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse précise / localisation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Programme / bloc / étage / unité, si applicable",
+          "Titre foncier / réquisition / autre référence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Capacité autorisée / personnes convenues",
+          "Autorisation / déclaration applicable : référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "4. Séjour"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Arrivée : date et heure",
+          "Départ : date et heure"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nombre de nuitées convenu",
+          "Voyageurs / occupants : annexe si nécessaire"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Le bien est mis à disposition pour le séjour et les occupants convenus. Une prolongation ou un changement d'usage fait l'objet d'un accord et d'une nouvelle vérification du régime applicable ; il ne résulte pas d'une simple modification de titre."
+      },
+      {
+        "type": "heading",
+        "text": "5. Prix et versements"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Prix du séjour en MAD / base de calcul",
+          "Charges / ménage / prestations incluses"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Taxes applicables : nature, base et montant",
+          "Prix total et ventilation convenus"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Premier versement : montant / date / nature",
+          "Solde : montant / échéance / bénéficiaire"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Dépôt de garantie séparé (MAD)",
+          "Restitution : délai et preuves des retenues"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Préciser la qualification du premier versement et ses conséquences. Aucun versement n'est présenté d'office comme non remboursable. Le dépôt ne devient pas automatiquement acquis au bailleur."
+      },
+      {
+        "type": "heading",
+        "text": "6. Annulation, non-présentation et interruption"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Délais, remboursements et frais proportionnés convenus, sous réserve du droit applicable"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 3
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Indisponibilité du logement / recours prévu",
+          "Canal et destinataire des notifications"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "7. Usage, remise et retour"
+      },
+      {
+        "type": "paragraph",
+        "text": "Le locataire utilise le logement avec soin, respecte la capacité, la tranquillité et les règles licites communiquées. La remise et la restitution des clés, compteurs, équipements et mobilier sont constatées contradictoirement. Les dommages sont décrits et justifiés ; aucune retenue forfaitaire automatique n'est préremplie."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Tabac / animaux / visiteurs : règles convenues",
+          "Contact d'assistance réellement disponible"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Inventaire / état des lieux annexés",
+          "Clés / badges / accès remis"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "8. Réglementation et responsabilité"
+      },
+      {
+        "type": "paragraph",
+        "text": "Le bailleur/exploitant vérifie son habilitation et les obligations applicables à l'hébergement touristique, à la sécurité, aux déclarations de voyageurs et à la fiscalité. Le contrat privé ne remplace pas une autorisation administrative. Les données personnelles sont limitées aux besoins justifiés et protégées."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Autres conditions validées / annexes / formalités"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Fait à",
+          "Le / heure"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Le bailleur / exploitant : nom, qualité et signature",
+          "Le locataire : nom, qualité et signature"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage. Ministère du Tourisme : cadre de l'hébergement touristique et loi 80-14 https://mtaess.gov.ma/fr/tourisme/metiers-tourisme/hebergement-touristique/ Exemple public de générateur marocain de contrat de courte durée, non reproduit https://locosuite.ma/contrat-location-courte-duree-gratuit"
+      }
+    ],
+    "bodyWords": 520,
+    "repeatedPageNoticesRemoved": 2
+  },
+  "06": {
+    "title": "Projet de bail commercial",
+    "source": "06_Contrat_bail_commercial.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "MODÈLE DE TRAVAIL - NON VALIDÉ JURIDIQUEMENT"
+      },
+      {
+        "type": "paragraph",
+        "text": "Projet de bail commercial, industriel ou artisanal. Faire confirmer le champ de la loi 49-16, les exclusions et la qualification réelle. Ce modèle n'est ni un bail professionnel d'habitation ni une location-gérance d'un fonds de commerce."
+      },
+      {
+        "type": "heading",
+        "text": "1. Bailleur et pouvoirs"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Preneur / exploitant et pouvoirs"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "3. Local et destination"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence du dossier / bien",
+          "Villa / maison / appartement / terrain / local"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse précise / localisation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Programme / bloc / étage / unité, si applicable",
+          "Titre foncier / réquisition / autre référence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Activité précise autorisée",
+          "Fonds de commerce / RC / autorisations"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "4. Durée et délivrance"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Prise d'effet / remise des clés",
+          "Durée et terme convenus"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Le bail est formalisé par écrit à date certaine et un état descriptif des lieux est établi à la remise du local. Le terme convenu ne supprime pas les droits au renouvellement ou à indemnisation prévus par la loi."
+      },
+      {
+        "type": "heading",
+        "text": "5. Loyer, charges et fiscalité"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Loyer en MAD / périodicité",
+          "Échéance / premier prorata"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Charges : nature et débiteur explicites",
+          "TVA / autres traitements fiscaux à confirmer"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Bénéficiaire et mode de règlement",
+          "Dépôt : montant, détenteur et restitution"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Les charges sont ventilées et leur répartition est écrite. La révision du loyer respecte le régime légal applicable ; ne pas importer une clause française de bail 3/6/9 ni une hausse automatique non vérifiée."
+      },
+      {
+        "type": "heading",
+        "text": "6. Droit au bail / pas-de-porte éventuel"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "[ ] aucun [ ] convenu : montant MAD",
+          "Nature juridique et acte de preuve"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Si une somme est versée au titre du droit au bail, préciser son régime et la constater dans l'écrit approprié. Ne pas la confondre avec le dépôt de garantie, la commission de l'agence ou le prix d'un fonds de commerce."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Modalités complémentaires validées"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "heading",
+        "text": "7. Travaux, exploitation et entretien"
+      },
+      {
+        "type": "paragraph",
+        "text": "Le bailleur et le preneur définissent les travaux, leur autorisation, leur calendrier et leur prise en charge, dans les limites légales. Les contraintes de sécurité, d'urbanisme, de copropriété et d'exploitation sont vérifiées. Le preneur exerce l'activité autorisée et entretient les éléments à sa charge."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Travaux initiaux et délai",
+          "Autorisations / assurances / responsables"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Répartition des réparations et installations en fin de bail"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 2
+      },
+      {
+        "type": "heading",
+        "text": "8. Cession et sous-location"
+      },
+      {
+        "type": "paragraph",
+        "text": "La cession du bail, la cession du fonds et la sous-location suivent les droits, notifications, oppositions et formalités du régime applicable. Aucune interdiction générale ou renonciation aux protections légales n'est préremplie."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Clause à rédiger / vérifier par le professionnel"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "heading",
+        "text": "9. Renouvellement et éviction"
+      },
+      {
+        "type": "paragraph",
+        "text": "Les conditions de renouvellement, le congé et les conséquences d'une éviction sont appréciés selon la loi 49-16. Le présent projet n'emporte aucune renonciation anticipée du preneur à un droit impératif."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Dispositions complémentaires validées"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "heading",
+        "text": "10. Notifications, différends et annexes"
+      },
+      {
+        "type": "paragraph",
+        "text": "Toute fin de bail, mise en demeure ou demande d'éviction suit les motifs, délais et procédures légalement requis. Les parties ne procèdent pas elles-mêmes à une expulsion, une fermeture ou une coupure des services."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Domiciles et destinataires des notifications",
+          "Formalités de date certaine / enregistrement"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Frais et répartition validés",
+          "Conseil chargé de la validation / référence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Annexes : état descriptif, plans, autorisations, travaux, assurances, pouvoirs"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "................................................................................................................................................... ................................................................................................................................................... Compléter le projet, faire vérifier la qualification du bail et chaque clause, puis établir les exemplaires et formalités nécessaires. La signature d'un modèle générique ne certifie pas la conformité de l'activité."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Fait à",
+          "Le / heure"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Le bailleur : nom, qualité et signature",
+          "Le preneur : nom, qualité et signature"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage."
+      },
+      {
+        "type": "paragraph",
+        "text": "Loi 49-16 : texte du ministère de la Justice ; écrit/date certaine, état descriptif, droits impératifs https://adala.justice.gov.ma/api/uploads/2024/03/05/Baux%20des%20immeubles%20ou%20des%20locaux%20lou%C3%A9s%20%C3%A0%20usage%20comm ercial-1709645781229.pdf"
+      }
+    ],
+    "bodyWords": 680,
+    "repeatedPageNoticesRemoved": 3
+  },
+  "07": {
+    "title": "Compromis de vente - préparation",
+    "source": "07_Compromis_de_vente_PROJET_NOTAIRE.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "PROJET NON CONTRACTUEL - À REMETTRE AU NOTAIRE / AUX ADOULS"
+      },
+      {
+        "type": "paragraph",
+        "text": "FICHE DE CONDITIONS POUR PRÉPARER LE COMPROMIS. Ne pas signer ce PDF comme un avant-contrat et ne pas y verser un acompte. Confier l'établissement de l'acte au notaire/aux adouls compétents, qui contrôlent la forme et la loi en vigueur."
+      },
+      {
+        "type": "heading",
+        "text": "1. Vendeur(s) envisagé(s)"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Acquéreur(s) envisagé(s)"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Profession / activité"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse / siège social",
+          "Téléphone et e-mail"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence d'identité ou RC, si nécessaire",
+          "Représentant / pouvoir et référence"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "3. Bien et droits à vérifier"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence du dossier / bien",
+          "Villa / maison / appartement / terrain / local"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse précise / localisation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Programme / bloc / étage / unité, si applicable",
+          "Titre foncier / réquisition / autre référence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Droits vendus / quotités / indivision",
+          "Professionnel saisi / coordonnées"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "PROJET NON CONTRACTUEL - À REMETTRE AU NOTAIRE / AUX ADOULS"
+      },
+      {
+        "type": "heading",
+        "text": "4. Conditions économiques proposées"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Prix envisagé en MAD, chiffres",
+          "Prix envisagé en lettres"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Financement personnel / bancaire",
+          "Délai envisagé pour l'acte définitif"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Remise des clés / occupation convenue",
+          "Honoraires d'agence : convention distincte"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Frais / taxes : répartition à valider",
+          "Somme envisagée au séquestre professionnel"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Le montant, le détenteur habilité, les conditions de libération et de restitution d'une éventuelle avance seront rédigés par le professionnel. Aucun paiement n'est demandé ni reconnu par cette fiche."
+      },
+      {
+        "type": "heading",
+        "text": "5. Conditions à faire rédiger dans l'acte"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Crédit : montant, délai, démarches et justificatifs du refus"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "................................................................................................................................................... Propriété, charges, mainlevées, urbanisme, autorisations et autres vérifications ................................................................................................................................................... ................................................................................................................................................... Conséquences de non-réalisation, prorogation, annulation et restitution des fonds ................................................................................................................................................... ................................................................................................................................................... Ces rubriques ne valent pas conditions suspensives exécutoires tant que l'acte approprié ne les reprend pas valablement. Ne pas déduire un accord définitif de leur seul remplissage."
+      },
+      {
+        "type": "paragraph",
+        "text": "PROJET NON CONTRACTUEL - À REMETTRE AU NOTAIRE / AUX ADOULS"
+      },
+      {
+        "type": "heading",
+        "text": "6. Pièces et points de contrôle du professionnel"
+      },
+      {
+        "type": "paragraph",
+        "text": "Contrôle Pièce / référence / observation"
+      },
+      {
+        "type": "paragraph",
+        "text": "Identité, capacité, représentation de toutes les parties"
+      },
+      {
+        "type": "paragraph",
+        "text": "Titre / origine de propriété / quotités"
+      },
+      {
+        "type": "paragraph",
+        "text": "Hypothèques, saisies, charges et mainlevées"
+      },
+      {
+        "type": "paragraph",
+        "text": "Plans, surfaces, urbanisme et autorisations"
+      },
+      {
+        "type": "paragraph",
+        "text": "Baux / occupants / copropriété / charges"
+      },
+      {
+        "type": "paragraph",
+        "text": "Financement et origine des fonds"
+      },
+      {
+        "type": "paragraph",
+        "text": "Fiscalité, forme de l'acte et formalités"
+      },
+      {
+        "type": "heading",
+        "text": "7. Transmission, sans engagement de vente"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Préparé par / dossier / version",
+          "Remis au professionnel le"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Instructions complémentaires / points non résolus"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "................................................................................................................................................... Aucun emplacement de signature d'engagement vendeur/acquéreur n'est prévu. Le professionnel établira le compromis ou l'acte approprié après ses contrôles, avec les mentions, signatures et formalités requises. Veille 2026 : une réforme de l'article 4 est signalée. La source SGG listée est un projet ; sa présence ne prouve pas la promulgation. Faire vérifier le Bulletin officiel et la version applicable avant toute promesse ou procuration."
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage. Code des droits réels et actualisations : contrôler la rédaction en vigueur de l'art. 4 https://adala.justice.gov.ma/resources/12 SGG : projet 041.25, source de veille seulement, pas preuve de promulgation https://www.sgg.gov.ma/Portals/1/PL/projet_loi_041.25.pdf"
+      }
+    ],
+    "bodyWords": 523,
+    "repeatedPageNoticesRemoved": 0
+  },
+  "08": {
+    "title": "Fiche descriptive du bien",
+    "source": "08_Fiche_descriptive_bien_immobilier.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "FICHE VIERGE - INFORMATIONS À VÉRIFIER AVANT DIFFUSION"
+      },
+      {
+        "type": "paragraph",
+        "text": "Fiche descriptive commerciale à compléter avec des informations vérifiées. Les coordonnées et pièces privées du propriétaire restent dans son dossier protégé, pas sur cette fiche partageable."
+      },
+      {
+        "type": "heading",
+        "text": "1. Identification et offre"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence du dossier / bien",
+          "Villa / maison / appartement / terrain / local"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Adresse précise / localisation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Programme / bloc / étage / unité, si applicable",
+          "Titre foncier / réquisition / autre référence"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Surface et source de la mesure",
+          "Dépendances / équipements / occupation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Offre : [ ] vente [ ] location",
+          "Prix MAD / mois / an / autre période exacte"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Disponibilité vérifiée le / par",
+          "Honoraires : inclus / distincts / débiteur"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Visuel autorisé"
+      },
+      {
+        "type": "paragraph",
+        "text": "Photographie / plan autorisé à joindre - aucune image fournie"
+      },
+      {
+        "type": "heading",
+        "text": "3. Présentation"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Description factuelle / atouts vérifiés / limites connues"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 2
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Agent / contact public de l'agence",
+          "Version / date / référence de l'annonce"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "4. Caractéristiques et sources"
+      },
+      {
+        "type": "table",
+        "columns": [
+          "Information",
+          "Valeur / unité",
+          "Source / à confirmer"
+        ],
+        "rows": [
+          [
+            "Surface terrain / bâtie / habitable"
+          ],
+          [
+            "Pièces / chambres / salles d'eau"
+          ],
+          [
+            "Étage / ascenseur / accessibilité"
+          ],
+          [
+            "Parking / terrasse / jardin"
+          ],
+          [
+            "Équipements / mobilier"
+          ],
+          [
+            "État / travaux / raccordements"
+          ],
+          [
+            "Charges / copropriété / occupation"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "5. Programme ou unité, si applicable"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Programme / bloc / étage",
+          "Unité physique / type de plan réutilisable"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Le type de plan n'est pas un stock vendable. Distinguer l'offre du programme entier et celle de l'unité ; indiquer seulement la disponibilité réellement vérifiée. Ne pas additionner les deux comme des biens physiques distincts."
+      },
+      {
+        "type": "heading",
+        "text": "6. Documents communicables et réserves"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Plans / photos / pièces partageables : références, date et droits de diffusion"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "................................................................................................................................................... Les surfaces, prix et descriptifs ne remplacent ni le titre, ni les plans approuvés, ni les vérifications du professionnel. Écrire « à confirmer » plutôt que renseigner une valeur inconnue. Écarter les données privées des propriétaires de toutes les pages partagées."
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage. CNDP : finalité, proportionnalité, formalités et données personnelles https://www.cndp.ma/conditions/"
+      }
+    ],
+    "bodyWords": 311,
+    "repeatedPageNoticesRemoved": 1
+  },
+  "09": {
+    "title": "Fiches clients - trois profils",
+    "source": "09_Fiches_clients_proprietaire_acquereur_locataire.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "CONFIDENTIEL - MODÈLES VIERGES / COLLECTE PROPORTIONNÉE"
+      },
+      {
+        "type": "paragraph",
+        "text": "Fiche 1/3 - Propriétaire"
+      },
+      {
+        "type": "paragraph",
+        "text": "Dossier interne confidentiel. Ne collecter que les informations nécessaires au stade du dossier. Une pièce d'identité ou un numéro CIN ne doit pas être demandé systématiquement à la première prise de contact."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence client / dossier",
+          "Date / responsable / collaborateurs autorisés"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Téléphone principal normalisé"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Autre téléphone, si utile",
+          "E-mail principal, si fourni"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Canal / langue / moment de contact préférés",
+          "Autres rôles : propriétaire / acquéreur / locataire"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Besoin et contexte"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Bien(s) / programme(s) proposé(s)",
+          "Qualité : propriétaire / indivisaire / représentant"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Droits et pouvoirs : référence du dossier protégé",
+          "Mandat et convention d'honoraires : références"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Objectif / prix ou loyer / calendrier",
+          "Disponibilités pour visites / clés"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Notes factuelles utiles, sans appréciation excessive ni donnée sensible inutile"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "paragraph",
+        "text": "Information et protection des données"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Responsable du traitement / contact droits",
+          "Finalité / destinataires / conservation définis"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Remettre une notice adaptée : finalités, destinataires, droits, contact et formalités CNDP applicables. La prospection marketing éventuelle est distincte et facultative ; aucun accord n'est précoché. Une simple signature de fiche ne régularise pas un traitement de CIN ou un transfert international."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Notice remise : version / date / preuve",
+          "Préférence marketing facultative / retrait"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage. CNDP : finalité, proportionnalité, formalités et données personnelles https://www.cndp.ma/conditions/"
+      },
+      {
+        "type": "paragraph",
+        "text": "CONFIDENTIEL - MODÈLES VIERGES / COLLECTE PROPORTIONNÉE"
+      },
+      {
+        "type": "paragraph",
+        "text": "Fiche 2/3 - Acquéreur"
+      },
+      {
+        "type": "paragraph",
+        "text": "Dossier interne confidentiel. Ne collecter que les informations nécessaires au stade du dossier. Une pièce d'identité ou un numéro CIN ne doit pas être demandé systématiquement à la première prise de contact."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence client / dossier",
+          "Date / responsable / collaborateurs autorisés"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Téléphone principal normalisé"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Autre téléphone, si utile",
+          "E-mail principal, si fourni"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Canal / langue / moment de contact préférés",
+          "Autres rôles : propriétaire / acquéreur / locataire"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Besoin et contexte"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Catégorie / secteur / programme souhaité",
+          "Budget achat MAD / financement envisagé"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Critères indispensables / préférences",
+          "Échéance / disponibilités pour visites"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Offres / biens présentés : références",
+          "Prochaine action / responsable"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Notes factuelles utiles, sans appréciation excessive ni donnée sensible inutile"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "paragraph",
+        "text": "Information et protection des données"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Responsable du traitement / contact droits",
+          "Finalité / destinataires / conservation définis"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Remettre une notice adaptée : finalités, destinataires, droits, contact et formalités CNDP applicables. La prospection marketing éventuelle est distincte et facultative ; aucun accord n'est précoché. Une simple signature de fiche ne régularise pas un traitement de CIN ou un transfert international."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Notice remise : version / date / preuve",
+          "Préférence marketing facultative / retrait"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage. CNDP : finalité, proportionnalité, formalités et données personnelles https://www.cndp.ma/conditions/"
+      },
+      {
+        "type": "paragraph",
+        "text": "CONFIDENTIEL - MODÈLES VIERGES / COLLECTE PROPORTIONNÉE"
+      },
+      {
+        "type": "paragraph",
+        "text": "Fiche 3/3 - Locataire"
+      },
+      {
+        "type": "paragraph",
+        "text": "Dossier interne confidentiel. Ne collecter que les informations nécessaires au stade du dossier. Une pièce d'identité ou un numéro CIN ne doit pas être demandé systématiquement à la première prise de contact."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence client / dossier",
+          "Date / responsable / collaborateurs autorisés"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nom complet / raison sociale",
+          "Téléphone principal normalisé"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Autre téléphone, si utile",
+          "E-mail principal, si fourni"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Canal / langue / moment de contact préférés",
+          "Autres rôles : propriétaire / acquéreur / locataire"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Besoin et contexte"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Usage recherché / localisation",
+          "Budget MAD et période : mois / an / séjour"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Durée souhaitée / date d'entrée",
+          "Meublé / non meublé / occupants"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Critères / justificatifs strictement nécessaires",
+          "Prochaine action / responsable"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Notes factuelles utiles, sans appréciation excessive ni donnée sensible inutile"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "paragraph",
+        "text": "Information et protection des données"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Responsable du traitement / contact droits",
+          "Finalité / destinataires / conservation définis"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Remettre une notice adaptée : finalités, destinataires, droits, contact et formalités CNDP applicables. La prospection marketing éventuelle est distincte et facultative ; aucun accord n'est précoché. Une simple signature de fiche ne régularise pas un traitement de CIN ou un transfert international."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Notice remise : version / date / preuve",
+          "Préférence marketing facultative / retrait"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage. CNDP : finalité, proportionnalité, formalités et données personnelles https://www.cndp.ma/conditions/"
+      }
+    ],
+    "bodyWords": 702,
+    "repeatedPageNoticesRemoved": 0
+  },
+  "10": {
+    "title": "Reçu de paiement",
+    "source": "10_Recu_de_paiement.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "MODÈLE VIERGE - N'ÉMETTRE QU'APRÈS ENCAISSEMENT VÉRIFIÉ"
+      },
+      {
+        "type": "paragraph",
+        "text": "À établir uniquement pour une somme effectivement reçue et vérifiée. Un chèque remis mais non encaissé ne vaut pas encaissement confirmé. Un paiement partiel ne vaut pas solde de tout compte."
+      },
+      {
+        "type": "heading",
+        "text": "1. Références et parties"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Reçu n° / date d'émission",
+          "Facture / bail / dossier / bien lié"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Bénéficiaire / émetteur du reçu",
+          "Payeur : nom / raison sociale"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Mandataire éventuel / pouvoir de recevoir",
+          "Contact et adresse utiles"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Encaissement"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Montant réellement reçu en MAD",
+          "Montant reçu en toutes lettres"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Date effective de réception / valeur",
+          "Mode : virement / espèces / chèque encaissé"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence bancaire / pièce probante",
+          "Objet précis / période couverte"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Montant dû avant paiement (MAD)",
+          "Solde restant après paiement (MAD)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Je soussigné(e), bénéficiaire ou représentant habilité identifié ci-dessus, atteste avoir effectivement reçu le montant indiqué, pour l'objet et la période précisés. Le reçu ne vaut quittance intégrale que pour les sommes expressément acquittées."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Ventilation : loyer, charges, dépôt ou commission ; conditions / réserves utiles"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Fait à",
+          "Le / heure"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Le bénéficiaire / représentant habilité : nom, qualité et signature"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage. Exemple public marocain de quittance/reçu, non reproduit https://locosuite.ma/quittance-loyer-gratuite"
+      }
+    ],
+    "bodyWords": 223,
+    "repeatedPageNoticesRemoved": 0
+  },
+  "11": {
+    "title": "Facture de commission - gabarit",
+    "source": "11_Facture_de_commission.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "MODÈLE À PARAMÉTRER ET VALIDER PAR LE COMPTABLE"
+      },
+      {
+        "type": "paragraph",
+        "text": "Gabarit de facture de commission. Faire valider les mentions et le régime fiscal de l'agence par le comptable avant émission. La facture n'atteste pas le paiement ; les encaissements font l'objet de reçus distincts."
+      },
+      {
+        "type": "heading",
+        "text": "1. Émetteur et client"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Agence : dénomination / forme juridique",
+          "Adresse / contact"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "ICE / IF / taxe professionnelle",
+          "RC / ville / autres mentions applicables"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Client : nom ou raison sociale / adresse",
+          "ICE client et identification si applicables"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Facture n° séquentiel / date",
+          "Mandat / affaire / bien / prestation liée"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Prestation et calcul"
+      },
+      {
+        "type": "table",
+        "columns": [
+          "Désignation / référence",
+          "Qté",
+          "PU HT MAD",
+          "Total HT MAD"
+        ],
+        "rows": [
+          [
+            "Commission / honoraires : ................................"
+          ],
+          [
+            "Autre prestation autorisée : .............................."
+          ]
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Assiette / taux de commission, ou forfait",
+          "Date de réalisation de la prestation"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Total HT MAD / remise justifiée",
+          "TVA : taux et montant / motif légal si non applicable"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Total TTC MAD",
+          "Retenue éventuelle : base / preuve / net à payer"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Total TTC en toutes lettres"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Échéance / conditions / mode de paiement",
+          "Bénéficiaire / coordonnées bancaires vérifiées"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Ne pas préremplir un taux fiscal ou une exonération sans validation. Toute correction d'une facture émise se rattache à l'original par un avoir ou document approprié ; ne pas effacer l'historique."
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage. DGI / ministère des Finances : Code général des impôts 2026, art. 145 à vérifier avec le comptable https://www.finances.gov.ma/Publication/dgi/2025/CGI-2026-FR.pdf Exemple de facture d'agence immobilière au Maroc, non reproduit https://fawatirai.com/fr/modele-facture-maroc/agence-immobiliere"
+      }
+    ],
+    "bodyWords": 274,
+    "repeatedPageNoticesRemoved": 0
+  },
+  "12": {
+    "title": "État des lieux - entrée / sortie",
+    "source": "12_Etat_des_lieux_entree_et_sortie.pdf",
+    "sourceDate": "16/10/2026",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "MODÈLE DE TRAVAIL - NON VALIDÉ JURIDIQUEMENT"
+      },
+      {
+        "type": "paragraph",
+        "text": "Modèle commun pour l'entrée et la sortie : cocher la visite réalisée et rapprocher les deux constats. Décrire les faits contradictoirement ; ne pas attribuer automatiquement toute usure au locataire."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "[ ] Entrée [ ] Sortie [ ] Comparatif",
+          "Référence bail / bien / constat"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Date et heure du constat",
+          "Adresse exacte / unité / étage"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Bailleur / mandataire habilité",
+          "Locataire(s) / personnes présentes"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Référence du constat d'entrée, si sortie",
+          "Logement vide / meublé / local"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "1. Compteurs et accès"
+      },
+      {
+        "type": "table",
+        "columns": [
+          "Équipement",
+          "N° / référence",
+          "Entrée / date",
+          "Sortie / date"
+        ],
+        "rows": [
+          [
+            "Eau"
+          ],
+          [
+            "Électricité"
+          ],
+          [
+            "Gaz / autre"
+          ],
+          [
+            "Clés logement / immeuble"
+          ],
+          [
+            "Badges / télécommandes"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "2. Conditions du constat"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Éclairage, raccordements, équipements non testés, limites de l'inspection"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 2
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Photos : nombre et référence du lot daté",
+          "Annexes mobilier / plans / autres"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "3. Description pièce par pièce"
+      },
+      {
+        "type": "paragraph",
+        "text": "Pour chaque ligne, préciser l'état observé, le défaut et sa localisation. Noter « non testé », « inaccessible » ou « non applicable » plutôt que conclure à un bon état sans vérification."
+      },
+      {
+        "type": "table",
+        "columns": [
+          "Pièce / élément",
+          "État à l'entrée / défauts",
+          "État à la sortie / évolution"
+        ],
+        "rows": [
+          [
+            "Entrée / séjour : sols, murs, plafond"
+          ],
+          [
+            "Séjour : portes, fenêtres, prises"
+          ],
+          [
+            "Cuisine : revêtements / menuiseries"
+          ],
+          [
+            "Cuisine : évier, robinetterie, appareils"
+          ],
+          [
+            "Chambre 1 : revêtements / équipements"
+          ],
+          [
+            "Chambre 2 : revêtements / équipements"
+          ],
+          [
+            "Chambre 3 / autre pièce"
+          ],
+          [
+            "Salle d'eau / bain : étanchéité, sanitaires"
+          ],
+          [
+            "WC / ventilation / plomberie"
+          ],
+          [
+            "Terrasse / jardin / garage / dépendances"
+          ],
+          [
+            "Chauffage / climatisation / sécurité"
+          ]
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Pièces supplémentaires : références des feuilles annexées"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 1
+      },
+      {
+        "type": "heading",
+        "text": "4. Mobilier et équipements, si applicable"
+      },
+      {
+        "type": "table",
+        "columns": [
+          "Objet / quantité / référence",
+          "État entrée",
+          "État sortie / réserve"
+        ],
+        "rows": []
+      },
+      {
+        "type": "heading",
+        "text": "5. Réserves, suites et preuve"
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Réserves de chaque partie / éléments à tester / rendez-vous complémentaire"
+        ]
+      },
+      {
+        "type": "writing",
+        "lines": 2
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Travaux envisagés / responsable / délai",
+          "Devis / photos / justificatifs à produire"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Une différence d'état ne fixe pas à elle seule une dette. Distinguer vétusté, entretien, défaut initial et dégradation ; justifier toute retenue. Le dépôt de garantie et son décompte se traitent séparément selon le bail et la loi."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Nombre de pages / photos / annexes",
+          "Remise des clés : date / nombre / réserves"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Les parties déclarent avoir pu formuler leurs observations. La signature constate le contenu du relevé, sans valoir renonciation générale à des droits. Tout complément est daté, identifié et approuvé selon le cadre applicable."
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Fait à",
+          "Le / heure"
+        ]
+      },
+      {
+        "type": "fields",
+        "labels": [
+          "Le bailleur / mandataire : nom, qualité et signature",
+          "Le(s) locataire(s) : nom, qualité et signature"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sources et statut du modèle"
+      },
+      {
+        "type": "paragraph",
+        "text": "Rédaction originale de travail, fondée sur les références ci-dessous. Ce PDF n'est ni un formulaire officiel ni la reproduction d'un modèle téléchargé. Vérifier le texte en vigueur et faire valider les clauses avant usage."
+      },
+      {
+        "type": "paragraph",
+        "text": "Loi 67-12 : texte arabe du B.O. 6208, copie publique ; art. 3, 7-8 et 20 notamment https://cabinetlahfaia.com/lois/loi-67-12-baux-habitation.ar.pdf Loi 49-16 : texte du ministère de la Justice ; écrit/date certaine, état descriptif, droits impératifs https://adala.justice.gov.ma/api/uploads/2024/03/05/Baux%20des%20immeubles%20ou%20des%20locaux%20lou%C3%A9s%20%C3%A0%20usage%20comm ercial-1709645781229.pdf"
+      }
+    ],
+    "bodyWords": 461,
+    "repeatedPageNoticesRemoved": 2
+  }
+}

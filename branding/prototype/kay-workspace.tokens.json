@@ -1,0 +1,33 @@
+{
+  "name": "KAY selected pearl workspace",
+  "version": "2026-10-26",
+  "source": "Frozen designs/kay, migration inventory e7b57344443d; later owner instructions supersede Riviera appearance",
+  "light": {
+    "canvas": "#f6f7f9", "paper": "#ffffff", "ink": "#181918", "muted": "#4c5562",
+    "field": "#e7ecf2", "hover": "#d7dfe9", "selected": "#c7d2e1", "line": "#c9d1dc",
+    "focus": "#64748b", "menu": "#eef2f7", "header": "#dfe5ed",
+    "primary": "#20221e", "primaryHover": "#383b32", "primaryPressed": "#181a16", "onPrimary": "#ffffff",
+    "panel": "rgb(246 247 249 / 75%)", "panelOpaque": "#f6f7f9", "sidebar": "rgb(246 247 249 / 36%)",
+    "success": "#2d7653", "successBackground": "#ecfdf5", "warning": "#73570c", "warningBackground": "#fff7d6",
+    "danger": "#b24b55", "dangerBackground": "#fff1f2", "info": "#2563eb", "infoBackground": "#eff6ff",
+    "purple": "#7c3aed", "purpleBackground": "#f5f3ff", "teal": "#0f766e", "tealBackground": "#f0fdfa",
+    "neutral": "#616975", "neutralBackground": "#eef2f7", "accent": "#ffc300",
+    "shadow": "inset 0 0 0 1px rgb(111 127 149 / 20%),0 4px 18px rgb(26 36 49 / 2%)",
+    "menuShadow": "0 12px 36px #16191318,0 2px 6px #16191306"
+  },
+  "dark": {
+    "canvas": "#151719", "paper": "#23262a", "ink": "#e8e9eb", "muted": "#b7bdc6",
+    "field": "#303944", "hover": "#424e5d", "selected": "#536278", "line": "#4b5666",
+    "focus": "#b8c2d0", "menu": "#28323e", "header": "#303c4b",
+    "primary": "#e5e7eb", "primaryHover": "#f3f4f6", "primaryPressed": "#cbd5e1", "onPrimary": "#1d2024",
+    "panel": "rgb(25 28 32 / 80%)", "panelOpaque": "#191c20", "sidebar": "rgb(21 23 25 / 36%)",
+    "success": "#a6dfbf", "successBackground": "#19382d", "warning": "#f5d58e", "warningBackground": "#3d3220",
+    "danger": "#f3b6c0", "dangerBackground": "#43272f", "info": "#93c5fd", "infoBackground": "#24344c",
+    "purple": "#c4b5fd", "purpleBackground": "#352b4b", "teal": "#99f6e4", "tealBackground": "#1f3c39",
+    "neutral": "#cbd5e1", "neutralBackground": "#303944", "accent": "#ffd04a",
+    "shadow": "inset 0 0 0 1px rgb(184 196 214 / 20%),0 4px 18px rgb(0 0 0 / 4%)",
+    "menuShadow": "0 16px 44px #0005,0 2px 8px #0003"
+  },
+  "geometry": { "panelRadius": "24px", "insetRadius": "18px", "pillRadius": "999px", "touch": "44px", "railWidth": "96px", "header": "80px", "pageInset": "20px", "phoneBreakpoint": "830px", "factColumnMinWidth": "380px", "factColumnGap": "40px" },
+  "motion": { "press": "120ms", "fast": "260ms", "base": "280ms", "local": "320ms", "panel": "420ms", "page": "460ms", "exit": "200ms", "panelExit": "300ms", "ease": "cubic-bezier(.22,1,.36,1)" }
+}

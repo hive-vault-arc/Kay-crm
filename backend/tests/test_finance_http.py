@@ -1,6 +1,6 @@
 """The real FastAPI facade/session/CSRF boundary denies finance to every agent."""
 
-from uuid import uuid4
+from uuid import UUID, uuid4, uuid7
 
 import pytest
 
@@ -23,7 +23,7 @@ async def test_finance_transport_roles_strict_money_pages_csrf_and_no_store(sett
             "X-Kay-Session": token,
             "Origin": settings.frontend_origin,
             "X-CSRF-Token": csrf_token(secret, token),
-            "Idempotency-Key": str(uuid4()),
+            "Idempotency-Key": str(uuid7()),
         }
 
     request = NewCommission(expected_deal_version=1, **terms()).model_dump(mode="json")
@@ -37,6 +37,21 @@ async def test_finance_transport_roles_strict_money_pages_csrf_and_no_store(sett
             ).status_code == 403
         assert (await client.post(route, headers=headers(agent), json=request)).status_code == 403
         assert (await client.get(route, headers=headers(agent))).status_code == 403
+        creation_key_route = f"/api/v1/deals/{did}/commission-creation-key"
+        assert (await client.get(creation_key_route)).status_code == 403
+        assert (await client.get(creation_key_route, headers=headers(agent))).status_code == 403
+        issued = await client.get(creation_key_route, headers=proof)
+        assert issued.status_code == 200 and issued.headers["cache-control"] == "no-store"
+        assert issued.json()["deal_id"] == str(did)
+        assert UUID(issued.json()["key"]).version == 7
+        assert (await client.get(creation_key_route + "?page=1", headers=proof)).status_code == 422
+        proof["Idempotency-Key"] = issued.json()["key"]
+        history_route = f"/api/v1/deals/{did}/finance-history"
+        assert (await client.get(history_route, headers=headers(agent))).status_code == 403
+        assert (await client.get(history_route, headers=proof)).headers[
+            "cache-control"
+        ] == "no-store"
+        assert (await client.post(history_route, headers=proof, json={})).status_code == 405
         for patch in (
             {"balance_mad": "0"},
             {"amount_mad": 1.5},
@@ -82,6 +97,7 @@ async def test_finance_transport_roles_strict_money_pages_csrf_and_no_store(sett
             ).status_code == 403
         for query in ("page=1&page=2", "page_size=101", "secret=1"):
             assert (await client.get(f"{route}?{query}", headers=proof)).status_code == 422
+            assert (await client.get(f"{history_route}?{query}", headers=proof)).status_code == 422
         assert (
             await client.get(f"/api/v1/commissions/{uuid4()}", headers=proof)
         ).status_code == 404

@@ -17,7 +17,15 @@ from app.contacts.contracts import (
     ResolvePhone,
 )
 from app.contacts.owner_portfolio import OwnerPortfolioQuery, read_owner_portfolio
-from app.contacts.queries import assignment_options, metadata, read_detail, read_list, resolve_phone
+from app.contacts.queries import (
+    assignment_options,
+    enquiry_assignee_options,
+    metadata,
+    read_detail,
+    read_list,
+    resolve_phone,
+    responsible_options,
+)
 from app.db.session import Database
 from app.identity.router import facade_authority, session_proof
 from app.identity.security import IdentityError
@@ -55,6 +63,16 @@ def resolve(body: ResolvePhone, request: Request, token: Proof) -> dict[str, boo
     return resolve_phone(configuration(request)[0], token, body.phone)
 
 
+@router.get("/contacts/responsible-options")
+def directory_agents(
+    request: Request, token: Proof, query: Annotated[ListQuery, Query()]
+) -> dict[str, object]:
+    validate_query(request)
+    if set(request.query_params) - {"q", "page", "page_size"}:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    return responsible_options(configuration(request)[0], token, query)
+
+
 @router.get("/contacts/metadata")
 def qualification_options(request: Request, token: Proof) -> dict[str, object]:
     if request.query_params:
@@ -62,12 +80,28 @@ def qualification_options(request: Request, token: Proof) -> dict[str, object]:
     return metadata(configuration(request)[0], token)
 
 
+@router.get("/enquiries/assigned-options")
+def directory_assignees(
+    request: Request, token: Proof, query: Annotated[ListQuery, Query()]
+) -> dict[str, object]:
+    validate_query(request)
+    if set(request.query_params) - {"q", "page", "page_size"}:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    return enquiry_assignee_options(configuration(request)[0], token, query)
+
+
 @router.get("/contacts")
 def contacts(
     request: Request, token: Proof, query: Annotated[ListQuery, Query()]
 ) -> dict[str, object]:
     validate_query(request)
-    return read_list(configuration(request)[0], token, "contacts", query)
+    return read_list(
+        configuration(request)[0],
+        token,
+        "contacts",
+        query,
+        directory_enabled=request.headers.get("X-Kay-Contact-Directory") == "1",
+    )
 
 
 @router.get("/enquiries")

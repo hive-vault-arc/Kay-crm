@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "base": "d7a62f9d3690bbd6e6e729fac24c3e7b08338ba1",
+  "scope": "Two existing visible inventory/programme native paths, no production changes",
+  "checks": [
+    {
+      "command": "npx eslint tests/review/inventory.chrome.spec.ts tests/review/developments.chrome.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript source AST invariants",
+      "exitCode": 0,
+      "titlesUnchanged": 2,
+      "originalProtectedCalls": 30,
+      "unchangedCalls": 30,
+      "intentionalAdditionalCall": "createCampaign(page, sale, 900000,01) before confirming the empty property fixture sale",
+      "files": [
+        {
+          "file": "frontend/tests/review/inventory.chrome.spec.ts",
+          "titles": 1,
+          "originalCalls": 13,
+          "unchangedCalls": 13,
+          "addedSaleFixture": 1
+        },
+        {
+          "file": "frontend/tests/review/developments.chrome.spec.ts",
+          "titles": 1,
+          "originalCalls": 17,
+          "unchangedCalls": 17,
+          "addedSaleFixture": 0
+        }
+      ]
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9058,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1321,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "retainedPriorEvidence": {
+    "frontendUnits": 994,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "preparedNative": {
+    "cases": 2,
+    "typechecked": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "capturesAndZoomExecuted": false,
+    "fullJourneysAccepted": false
+  },
+  "frozen": {
+    "inputs": 254,
+    "drift": 0,
+    "mainUnchanged": true
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Broader historical inventory design/deal/ownership/recovery review paths",
+    "Actual native/device/zoom/focus/SQL/AV/private transfer/security/CI/AFTER/product gates",
+    "Migrations0036/0037 and remaining field/job/alias/selectors"
+  ],
+  "status": "Prepared native source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/review/inventory.chrome.spec.ts",
+      "bytes": 11940,
+      "sha256": "e7ec83d1cbe7fa2e7cf113f0429f16007290835724fca7f65d03f469fcb510ad"
+    },
+    {
+      "file": "frontend/tests/review/developments.chrome.spec.ts",
+      "bytes": 13362,
+      "sha256": "108cc4665ca1bfdff42ee7d0687c60466b35838df796730e1e240c410a417552"
+    }
+  ]
+}

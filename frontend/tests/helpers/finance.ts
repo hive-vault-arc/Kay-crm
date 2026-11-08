@@ -1,11 +1,15 @@
+import { randomUUID } from "node:crypto";
 import type { Page } from "@playwright/test";
 import { createActor, clearActorContext, expect, signIn, type TestActor } from "./auth";
-import { createLead, staffCommand } from "./leads";
+import { staffCommand } from "./leads";
 import { dealBody } from "./deals";
 
 export async function financeFixture(page: Page, actors: TestActor[]) {
   const agent = await createActor("agent", false, "SP06 SP16 agent synthétique"); actors.push(agent);
-  await signIn(page, agent); const leadId = await createLead(page, "SP16 contact synthétique");
+  await signIn(page, agent);
+  const suffix = randomUUID().slice(0, 8), digits = String(Math.floor(Math.random() * 1_000_000)).padStart(6, "0");
+  const created = await staffCommand(page, "enquiries", { new_contact: { name: `SP16 contact synthétique ${suffix}`, type: "person", phones: [{ number: `+212615${digits}`, label: "Principal", is_primary: true }], emails: [], roles: ["buyer"], country: "MA", languages: ["french"] }, initial_budget: "1000000", message: "SP16 demande synthétique", source: "manual" });
+  expect(created.status()).toBe(200); const leadId = (await created.json()).id as string;
   const lead = await (await page.request.get(`/api/v1/enquiries/${leadId}`)).json();
   const response = await staffCommand(page, "deals", dealBody(lead.contact.id, "SP16 affaire synthétique")); expect(response.status()).toBe(200);
   const dealId = (await response.json()).id as string;
@@ -15,8 +19,10 @@ export async function financeFixture(page: Page, actors: TestActor[]) {
 }
 export async function openFinance(page: Page, did: string) {
   await page.goto(`/deals/${did}?tab=finance`);
-  await expect(page.getByRole("tab", { name: "Finance", exact: true })).toHaveAttribute("data-state", "active");
-  await expect(page.getByText("Chargement des commissions…", { exact: true })).toHaveCount(0);
+  const drawer = page.getByRole("dialog", { name: "Commissions et encaissements", exact: true });
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByText("Chargement des commissions…", { exact: true })).toHaveCount(0);
+  await expect(drawer.getByRole("heading", { name: /^Commissions(?:\s*\d+)?$/ })).toBeVisible();
 }
 export async function fillCommission(page: Page, percentage = false) {
   await page.getByRole("button", { name: "Prévoir une commission", exact: true }).click();
@@ -28,7 +34,8 @@ export async function fillCommission(page: Page, percentage = false) {
 }
 export async function saveCommission(page: Page) {
   await page.getByRole("button", { name: "Enregistrer la commission prévue", exact: true }).click();
-  await expect(page.getByRole("region", { name: "Commission sélectionnée", exact: true })).toBeVisible();
+  await expect(page.getByRole("form", { name: "Nouvelle commission", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Reconnaître la commission", exact: true })).toBeVisible();
 }
 export async function confirmFinance(page: Page, title: string) {
   const dialog = page.getByRole("alertdialog", { name: title, exact: true });

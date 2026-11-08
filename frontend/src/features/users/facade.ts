@@ -41,6 +41,11 @@ export async function relayUsers(key: string, request: Request, requestId: strin
     }
     const schema = mutation ? commandSchema : key === "users" ? usersSchema : userSchema;
     const result = schema.parse(upstream.body);
+    const targetId = key.split("/")[1];
+    if (targetId) {
+      const returned = mutation ? commandSchema.parse(result).user : userSchema.parse(result);
+      if (returned.id !== targetId) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    }
     return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

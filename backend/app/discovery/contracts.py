@@ -15,7 +15,16 @@ class PageQuery(StrictBody):
 class SearchQuery(PageQuery):
     q: str = Field(min_length=2, max_length=160)
     kind: (
-        Literal["contact", "enquiry", "deal", "development", "property", "unit_type", "document"]
+        Literal[
+            "contact",
+            "enquiry",
+            "deal",
+            "development",
+            "property",
+            "unit_type",
+            "document",
+            "generated_document",
+        ]
         | None
     ) = None
 
@@ -28,15 +37,7 @@ class NewExport(StrictBody):
     def complete_result(self) -> NewExport:
         if self.filters.page != 1 or self.filters.page_size != 50:
             raise ValueError("EXPORT_ALL_FILTERED_ROWS_NOT_A_PAGE")
-        if self.kind == "contacts" and (
-            self.filters.status
-            or self.filters.source
-            or self.filters.assigned_agent_id
-            or self.filters.received_from
-            or self.filters.received_to
-            or self.filters.sort == "-received_at"
-        ):
-            raise ValueError("CONTACT_FILTERS_REQUIRED")
+        self.filters.validate_kind(self.kind)
         return self
 
 
@@ -60,6 +61,8 @@ class AuditQuery(PageQuery):
         | None
     ) = None
     actor_id: UUID | None = None
+    website_source_id: UUID | None = None
+    unattributed_actor: Literal["true"] | None = None
     start_on: date | None = None
     end_on: date | None = None
 
@@ -67,4 +70,16 @@ class AuditQuery(PageQuery):
     def ordered(self) -> AuditQuery:
         if self.start_on and self.end_on and self.start_on > self.end_on:
             raise ValueError("INVALID_DATE_RANGE")
+        if (
+            sum(
+                value is not None
+                for value in (self.actor_id, self.website_source_id, self.unattributed_actor)
+            )
+            > 1
+        ):
+            raise ValueError("ONE_AUDIT_ACTOR_REQUIRED")
         return self
+
+
+class AuditActorsQuery(PageQuery):
+    q: str = Field(default="", max_length=160)

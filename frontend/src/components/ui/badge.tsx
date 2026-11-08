@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Slot } from "radix-ui";
 
-export const badgeVariants = cva("inline-flex max-w-full items-center rounded-sm border border-current/15 px-2 py-1 text-xs font-medium leading-4", {
+export const badgeVariants = cva("inline-flex max-w-full items-center rounded-full border border-current/10 px-2 py-0.5 text-xs font-medium leading-4", {
   variants: { variant: {
     neutral: "bg-neutral-background text-neutral",
     info: "bg-info-background text-info",

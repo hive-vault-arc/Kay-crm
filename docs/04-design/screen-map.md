@@ -1,5 +1,185 @@
 # KAY screen map and navigation contract
 
+Selected programme phase,2026-10-28: the existing identity/review forms, compact
+overview, image cards, desktop list, directory filters and original history now
+use real nullable programme phase. Overview retains four facts; category remains
+in header context. Legacy backends show no pretend phase support, current unknown
+is À renseigner and historical unknown is Non renseigné. No tab or side table.
+Migration/native acceptance remain pending. [Contract](development-phase-local.md).
+
+Selected property categories,2026-10-28: the filter rail/sheet uses one category
+or Toutes with real facet counts, without inherited checkbox/colour markers.
+Choosing Toutes retains other criteria; selected legacy Maison remains available
+at zero. Multi/empty API selections retain their semantics and are described
+truthfully if presented. Source checks pass; native acceptance remains pending.
+[Contract](inventory-directory-local.md).
+
+Selected project browsing,2026-10-28: property/programme results share a desktop
+Cards/List preference and sort home; phones retain image cards. Programme lists
+retain real unit availability and own offerings. Current kind route props select
+the tab/create action, and kind changes push a history entry while both filters
+stay mounted. Source checks pass; native history and layout are still pending.
+[Contract](inventory-directory-local.md).
+
+Selected inventory filters,2026-10-28: properties, programmes and unit drawers
+share labelled price/rent ranges; physical filters add surface/rooms. Invalid
+drafts retain applied results/page, explicit valid Apply closes, and reset clears
+deep-linked unit hierarchy. Properties use the common reference frame; desktop
+view preference survives cards-only phones. Native acceptance remains pending.
+[Contract](inventory-directory-local.md).
+
+Selected header inbox,2026-10-28: compact Popover with ten server-backed entries,
+quick filters and read icons replaces the first-click large Sheet. Tout voir
+opens the shared full drawer with the active filter; `/notifications` remains.
+Read recovery, current denial, discreet full-count accessible bell indicator and
+fallback local invalidation use existing scoped APIs. Native review is pending.
+[Contract](notification-inbox-local.md).
+
+Selected Recherches workspace,2026-10-27: Contact overview and Lead/Deal
+qualification retain their supporting drawer. Twenty-row tonal requirement cards
+show criteria and inline exact-offer selections, followed by contact-wide history.
+One focused managed editor/picker replaces the collection; guarded cancel and
+acknowledged completion return to its retained page/action. Current canonical
+contact/denial and exact method/body/key recovery remain authoritative. No new
+main tab, route or backend capability. Native acceptance remains pending.
+[Contract](requirements-workspace-local.md).
+
+Classic navigation follow-up,2026-10-27: the root layout installs a closed local
+beforeInteractive history adapter only when native Navigation API entry keys
+are unavailable. The protected workspace uses the same draft/busy confirmation
+controller in both paths. Setup adds no session entry, carries no form values
+in its own metadata and preserves Next-owned fields. Unknown/failed returns keep
+the editor open with recovery guidance. Native/cache/gesture/frame verification
+remains pending. [Contract](draft-navigation-local.md).
+
+Selected Finance collection follow-up,2026-10-27: Deal keeps four main tabs and
+the supporting M/A-only drawer. Receipts now appear beneath commission actions;
+history follows the collection through the scoped financial-history read.
+Focused forms return to the retained collection/page, without the old detail
+detour. Delayed receipt focus respects a user's intervening focus change.
+Native/real-stack review and older Chrome selectors remain pending.
+[Contract](finance-workspace-local.md).
+
+Earlier Finance forms checkpoint,2026-10-27: Deal keeps four main tabs and the M/A-only
+supporting Finance drawer. Full-width tonal commission/receipt/audit cards and
+one focused managed form replace the old parallel editors. Return follows its
+entry point; numbered20-row reads remain. Current denial unmounts private
+controller state before fresh retry. Exact unknown retries and acknowledged
+completion reads remain distinct. Inline collection-receipt/history fidelity,
+older native selectors and real-stack review remain open.
+[Contract](finance-workspace-local.md).
+
+Selected PDF workspace,2026-10-27: `/leads/{id}/documents` and
+`/deals/{id}/documents` share Préparer un PDF/Historique, the actual role-scoped
+model rail or compact phone select, retained grouped fields and fixed action
+footer. History has the selected four desktop columns and phone/drawer cards.
+Retained true creators use explicit history opt-in; drafts/unknown attempts stay
+per model under the common navigation guard. Return opens the existing parent
+Documents tab. PDF bytes/provenance and native/real-stack acceptance remain open.
+[Contract](document-workspace-local.md).
+
+Selected owner identity forms,2026-10-27: `/owners/new` and `/owners/{id}/edit`
+use the shared dossier header/actions and Coordonnées/Gestion du contact groups.
+Existing mode reads the chosen canonical Contact and explicitly adds its owner
+role without copying the new draft, changing its agent or creating property links.
+Literal-role-present choices open without a write. Managed drafts, expected
+versions, same-body retry and denied-context clearing remain. Directory/drawer/
+legal-link/hierarchy/photo and native work are not declared complete.
+[Contract](owner-forms-local.md).
+
+Earlier Navigation API checkpoint,2026-10-27: managed shell forms retain edits on cancel
+and recheck outstanding commands at final discard. Available Navigation API
+history uses the same confirmation, returning to the existing editor entry before
+uncancelable same-document restoration reaches Next. No history/state rewrite.
+Reload protection includes clean busy forms. Older-browser same-document fallback
+and native verification remain open. [Contract](draft-navigation-local.md).
+
+Selected public-intake migration,2026-10-27: `/website-simulator` renders the
+Demande web card used by the existing separate127.0.0.1 simulator. It shares the
+selected KAY logo/background and labelled form/receipt states, without staff
+navigation or APIs. Only two exact public images join the fixed read proxy;
+source signing and public receipt-only responses remain unchanged. The real
+message stays optional. Unknown send retries exact bytes; receipt refresh binds
+the known ID. Native/real-stack review is pending. [Contract](website-intake-local.md).
+
+Selected contact-import migration,2026-10-27: `/leads?view=import&batch=UUID`
+keeps current M/A authority and the same protected batch. Shared file picker,
+initial fallback, collapsed corrected-file composer and top report actions fit
+the selected layout. Desktop has four report columns; phone/drawers have compact
+record cards and one independent row-agent drawer. Pending assignments require
+preview. Confirmation snapshots the reviewed batch; unknown approval locks new
+uploads and retries the same request. Denial removes cached names/file/report
+before fresh reads. No import-history directory or route is invented. Native
+verification is pending. [Contract](contact-import-local.md).
+
+Selected audit migration,2026-10-27: `/dashboard?view=audit` retains authenticated
+M/A access. Four automatic filters match the selected family/user/date grouping;
+the lazy author picker reads real typed history attribution across numbered pages.
+Staff, web sources and missing authors stay distinct without a fake user ID.
+Desktop keeps Date/Utilisateur/Action/Objet; phone/drawers use shared cards.
+Existing typed record routes are linked with no prefetch. Staff-account links
+remain admin-only; offering IDs do not invent a route. Current denial removes
+previous names/counts and clears author filters before retry. Native/real-stack
+verification is pending. [Execution](../03-planning/design-prototype-migration-execution.md).
+
+Selected search migration,2026-10-27: desktop header suggestions now open an anchored
+eight-row preview and the authenticated `/search?q=...&kind=...&page=...` view.
+Phone keeps its search icon/Sheet. The full page has the common labelled form,
+selected Tabs, scoped totals, short icon rows and numbered pages. The server checks
+identity before strict URL params; invalid values are not echoed and only bare
+`/search` is an allowed login return. The original seven kinds retain their parent/
+unit-context routes. The explicit version2 opt-in now adds real prepared-PDF
+metadata and Lead/Deal Documents destinations. Both record routes accept validated
+scalar Documents selection, separating attachments and scoped prepared history.
+The preparation page returns there. Native/private-byte/SQL verification is pending.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
+Selected dashboard composition,2026-10-27: existing `/dashboard` identity checks
+remain. New prospect stays in its page header; the shared shell owns account and
+notifications. Four scoped headline cards, five current stages and period outcomes
+open guarded numbered record drawers. Catalogue cards use `/projects/{uuid}` for
+programmes and `/projects/properties/{uuid}` for physical properties; appointments
+and tasks keep their concrete contextual routes. Work/visit follow-up and all
+authorized detailed report/alert tools remain in supporting drawers. The existing
+manager/administrator audit destination is retained and hidden from agents.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
+Selected staff/detail-policy migration,2026-10-27: existing user create/edit pages
+keep exact admin/UUID checks; their client forms now own a single settings frame,
+header actions and identity/security columns. Loading/denied editors use a generic
+safe frame. Working-hours summary opens one detailed policy drawer, keeping all
+original windows and preview-before-save commands. No route/API/permission change.
+[Execution](../03-planning/design-prototype-migration-execution.md).
+
+Selected settings migration,2026-10-26: existing /settings, /settings/users,
+/settings/users/new, /settings/users/{uuid}/edit and /settings/working-hours retain
+their admin/identity guards and concrete routes while sharing the selected local
+navigation. Overview summaries now read current staff totals and schedule policy;
+no reference sample value is shipped. Detailed form/native verification remains
+open. [Execution](../03-planning/design-prototype-migration-execution.md).
+
+2026-10-26 S09 selected routed drawers: the persistent /visits layout owns the
+calendar, with the existing protected new/UUID pages presenting guarded visit
+panels. One primary command and Actions replace scattered detail buttons;
+history uses lazy bounded cards. All existing identity/context/UUID/command rules
+remain, with native route/focus acceptance pending. General visit Notes remain an
+unmapped persistence requirement. [Execution](../03-planning/design-prototype-migration-execution.md).
+
+2026-10-26 selected dossier editing: Contacts keeps Aperçu/Activités with linked
+dossiers below Responsabilité; Lead/Deal keeps Aperçu/Projets/Activités/Documents.
+Quiet value editors use current canonical/versioned commands. Assignment, source
+provenance, stage/stock and relance retain their existing dedicated workflows.
+Primary method rows remain stable; additional contact methods load on disclosure.
+[Current execution](../03-planning/design-prototype-migration-execution.md).
+
+2026-10-26 selected-design migration: S09 retains its protected routes and real
+scheduling controllers, now presenting seven day columns, compact visit cards,
+drawer filters and phone agenda instead of the historical D38 hourly rail. Day
+creation links carry a validated date-only hint through contact selection; they
+do not choose a default hour or bypass the backend local-time resolver. Applied
+filters, server facets/numbered pages, guarded cancellation and private colleague
+busy intervals remain. [Current execution](../03-planning/design-prototype-migration-execution.md).
+
 2026-10-23 owner-requested help: `/help` is an authenticated searchable,
 role-filtered French guide directory; `/help/{slug}` provides steps, explanations,
 contents anchors and related reading. Aide sits above the identity in the footer,
@@ -12,8 +192,10 @@ without a scrollable desktop rail. [Scope and evidence](../03-planning/help-cent
 `/deals/{id}/documents` open from a visible record-header action. A responsive
 model list sits beside the editable prefilled preparation form; a separate
 numbered history exposes private permit-bound PDF downloads. There is no new
-global sidebar destination. Owner-supplied originals remain blank appendices;
-working-draft and finance/notary cautions are visible. See
+global sidebar destination. Since the2026-10-28 M01 decision, approved selected
+KAY layouts of the owner models are the blank appendices; original assets and
+stored versions retain their provenance. See [M01](pdf-appendix-reconciliation.md).
+Working-draft and finance/notary cautions are visible. See
 [generated documents](generated-documents.md).
 
 2026-10-19 inventory creation refinement: `/projects/new`,
@@ -310,6 +492,13 @@ Task deep links select the existing record context using ?task=UUID, with
 current-scope denial before private facts. Create/edit is inline; complete/cancel
 uses the existing explicit confirmation. Failure drafts and retry identity are
 retained; stale versions require deliberate comparison.
+
+The selected workspace opens tasks in contextual drawers. Contact, Lead and
+Deal routes accept a UUID-only `?task=` link and select that existing task after
+the current record's access check; task detail also checks its contact/Deal
+context. Dashboard task-period filters are read-only controls, excluded from
+both navigation and live-update dirty-form tracking. Real task forms keep their
+own draft, pending-command and confirmation protection.
 
 S09 reschedule/cancel/complete changes invalidate old reminders; follow-up opens
 the same visit, never an implicit duplicate. Existing French shadcn/Tailwind

@@ -1,7 +1,7 @@
 import path from "node:path";
 import { mkdir, readFile, writeFile, rm } from "node:fs/promises";
 import { chromium } from "@playwright/test";
-import { test, expect, createActor, removeActor, signIn, clearActorContext, changeActor } from "../helpers/auth";
+import { test, expect, createActor, removeActor, signIn, clearActorContext, changeActor, openWorkspaceAccount } from "../helpers/auth";
 import { geometry } from "../helpers/report-review";
 
 test("help: agents search guides, read steps and cannot open privileged articles", async ({ page }) => {
@@ -17,38 +17,48 @@ test("help: agents search guides, read steps and cannot open privileged articles
     await page.setViewportSize({ width: 1440, height: 960 });
     const aid = page.locator("aside[data-sidebar]").getByRole("link", { name: "Aide", exact: true });
     await aid.focus(); await page.keyboard.press("Enter");
-    await expect(page.getByRole("heading", { level: 1, name: "Aide KAY", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Centre d’aide", exact: true })).toBeVisible();
     await expect(aid).toHaveAttribute("aria-current", "page");
-    const placement = await page.locator("aside[data-sidebar] [data-sidebar-footer]").evaluate(el => ({ aid: el.querySelector("a")!.getBoundingClientRect().bottom, user: el.querySelector(":scope > div")!.getBoundingClientRect().top }));
-    expect(placement.aid).toBeLessThanOrEqual(placement.user);
+    await expect(page.locator("aside[data-sidebar] .kay-rail-utilities").getByRole("link", { name: "Aide", exact: true })).toBeInViewport();
     await expect(page.getByRole("link", { name: /Créer un compte et gérer/ })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Gestion de l’équipe", exact: true })).toHaveCount(0);
-    await page.getByLabel("Que souhaitez-vous faire ?", { exact: true }).fill("PROPRIETAIRE");
+    await page.getByLabel("Rechercher dans l’aide", { exact: true }).fill("PROPRIETAIRE");
+    await page.getByRole("search").getByRole("button", { name: "Rechercher", exact: true }).click();
     await expect(page.locator("[data-live-dirty]")).toHaveCount(0);
     await expect(page.getByRole("link", { name: /Gérer les propriétaires et leurs biens/ })).toBeVisible();
-    await page.getByLabel("Que souhaitez-vous faire ?", { exact: true }).fill("xyz-no-result-987");
+    await page.getByLabel("Rechercher dans l’aide", { exact: true }).fill("xyz-no-result-987");
+    await page.getByRole("search").getByRole("button", { name: "Rechercher", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Aucun guide ne correspond", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Voir tous les guides", exact: true }).click();
-    await page.getByRole("navigation", { name: "Rubriques de l’aide" }).getByRole("button", { name: /^Biens et propriétaires/ }).click();
+    await page.getByRole("link", { name: "Tous les sujets", exact: true }).last().click();
+    await expect(page.getByRole("heading", { name: "Comment peut-on vous aider ?", exact: true })).toBeVisible();
+    const topics = await page.locator('main a[href^="/help?topic="]').evaluateAll(links => links.map(link => link.getAttribute("href")!));
+    const guides = new Set<string>();
+    for (const href of topics) {
+      await page.goto(href);
+      await expect(page.locator(".kay-help-guide-card").first()).toBeVisible();
+      for (const guide of await page.locator('main a[href^="/help/"]').evaluateAll(links => links.map(link => link.getAttribute("href")!))) guides.add(guide);
+    }
+    expect(guides.size).toBeGreaterThanOrEqual(25);
+    for (const href of guides) expect((await page.request.get(href)).status(), href).toBe(200);
+    await page.goto("/help?topic=inventory");
     await expect(page.getByRole("link", { name: /Ajouter un prospect/ })).toHaveCount(0);
     await expect(page.getByRole("link", { name: /Ajouter un bien indépendant/ })).toBeVisible();
-    await page.getByRole("button", { name: "Réinitialiser", exact: true }).click();
+    await page.getByRole("link", { name: "Tous les sujets", exact: true }).click();
     await geometry(page);
     await mkdir("output/playwright/help", { recursive: true });
     await page.screenshot({ path: "output/playwright/help/desktop-index.png", fullPage: true });
-    const guides = await page.locator('main a[href^="/help/"]').evaluateAll(links => links.map(link => link.getAttribute("href")!));
-    expect(guides.length).toBeGreaterThanOrEqual(25);
-    for (const href of guides) expect((await page.request.get(href)).status(), href).toBe(200);
     await page.getByRole("link", { name: /^Ajouter un prospect/ }).click();
-    await expect(page.getByRole("heading", { level: 1, name: "Ajouter un prospect", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Ajouter un prospect", exact: true })).toBeVisible();
     await expect(page.getByRole("article")).toContainText("Nouveau prospect");
     await expect(page.getByRole("article")).toContainText("indicatif");
     await expect(page.getByRole("link", { name: "Ajouter un prospect", exact: true })).toHaveAttribute("href", "/leads/new");
-    await page.getByRole("navigation", { name: "Sommaire du guide" }).getByRole("link", { name: "Si le contact existe déjà", exact: true }).click();
-    await expect(page.locator("#section-2")).toBeFocused();
+    const reader = page.getByRole("region", { name: "Lecture du guide", exact: true });
+    await reader.focus(); await page.keyboard.press("End");
+    await expect(reader).toBeFocused();
+    await expect(page.getByRole("heading", { name: "Si le contact existe déjà", exact: true })).toBeVisible();
     await geometry(page);
     await page.screenshot({ path: "output/playwright/help/desktop-guide.png", fullPage: true });
-    await page.getByRole("link", { name: "Tous les guides", exact: true }).click();
+    await page.getByRole("link", { name: "Retour aux guides", exact: true }).click();
     for (const href of ["/help/comptes-utilisateurs", "/help/not-a-guide"]) {
       await page.goto(href);
       await expect(page.getByRole("heading", { name: "Page introuvable", exact: true })).toBeVisible();
@@ -99,9 +109,9 @@ test("help: guides remain usable at native 200 percent browser zoom", async ({ p
     await expect(current.getByRole("article")).toBeVisible();
     expect(await current.evaluate(() => devicePixelRatio) / baseline).toBeCloseTo(2, 1);
     await geometry(current);
-    await current.getByRole("link", { name: "Tous les guides", exact: true }).focus();
+    await current.getByRole("link", { name: "Retour aux guides", exact: true }).focus();
     await current.keyboard.press("Enter");
-    await expect(current.getByLabel("Que souhaitez-vous faire ?", { exact: true })).toBeVisible();
+    await expect(current.getByLabel("Rechercher dans l’aide", { exact: true })).toBeVisible();
     await geometry(current);
     await mkdir("output/playwright/help", { recursive: true });
     const cdp = await zoom.newCDPSession(current);
@@ -118,36 +128,38 @@ test("help: guides remain usable at native 200 percent browser zoom", async ({ p
   }
 });
 
-test("help: the footer stays reachable in expanded, collapsed and short-height navigation", async ({ page }) => {
+test("help: utility navigation and account stay reachable at short heights", async ({ page }) => {
   test.setTimeout(120_000);
   const actor = await createActor("administrator", false, "SP06 Administrateur synthétique de l’aide");
   try {
     await signIn(page, actor);
     await page.goto("/help");
+    await page.goto("/help?topic=manage");
     await expect(page.getByRole("link", { name: /Créer un compte et gérer/ })).toBeVisible();
     for (const height of [960, 832, 800, 768, 720, 680, 600]) {
       await page.setViewportSize({ width: 1440, height });
       const sidebar = page.locator("aside[data-sidebar]");
       if (await sidebar.isVisible()) {
-        const fit = await sidebar.locator(".sidebar-scroll").evaluate(el => ({ height: el.clientHeight, content: el.scrollHeight, logout: el.querySelector('[data-action="logout"]')?.getBoundingClientRect().bottom ?? el.querySelector("section button")!.getBoundingClientRect().bottom, bottom: el.getBoundingClientRect().bottom }));
+        const fit = await sidebar.evaluate(el => ({ height: el.clientHeight, content: el.scrollHeight }));
         expect(fit.content, `sidebar at ${height}px`).toBeLessThanOrEqual(fit.height + 1);
-        expect(fit.logout).toBeLessThanOrEqual(fit.bottom);
         await expect(sidebar.getByRole("link", { name: "Aide", exact: true })).toBeInViewport();
-        await expect(sidebar.getByRole("button", { name: "Se déconnecter", exact: true })).toBeInViewport();
+        const account = await openWorkspaceAccount(page);
+        await expect(account.getByRole("button", { name: "Se déconnecter", exact: true })).toBeInViewport();
+        await page.keyboard.press("Escape");
       } else {
         await page.getByRole("button", { name: "Ouvrir la navigation", exact: true }).click();
         const sheet = page.getByRole("dialog", { name: "Navigation KAY", exact: true });
         await sheet.getByRole("link", { name: "Aide", exact: true }).click();
         await expect(sheet).toHaveCount(0);
-        await expect(page.getByRole("heading", { level: 1, name: "Aide KAY", exact: true })).toBeFocused();
+        await expect(page.getByRole("heading", { level: 1, name: "Centre d’aide", exact: true })).toBeFocused();
       }
     }
     await page.setViewportSize({ width: 1440, height: 960 });
-    await page.getByRole("button", { name: "Réduire la navigation", exact: true }).click();
     const compact = page.locator("aside[data-sidebar]").getByRole("link", { name: "Aide", exact: true });
     await expect(compact).toHaveAttribute("title", "Aide");
     await compact.focus(); await page.keyboard.press("Enter");
     await expect(compact).toHaveAttribute("aria-current", "page");
+    await page.goto("/help?topic=manage");
     await page.getByRole("link", { name: /Créer un compte et gérer/ }).click();
     await expect(page.getByRole("article")).toContainText("mot de passe initial");
     await expect(page.getByRole("link", { name: "Gérer les utilisateurs", exact: true })).toHaveAttribute("href", "/settings/users");
@@ -163,9 +175,9 @@ test("help: mobile touch, search and long articles work without page overflow", 
     await signIn(page, actor);
     await page.getByRole("button", { name: "Ouvrir la navigation", exact: true }).tap();
     await page.getByRole("dialog", { name: "Navigation KAY", exact: true }).getByRole("link", { name: "Aide", exact: true }).tap();
-    await expect(page.getByRole("heading", { level: 1, name: "Aide KAY", exact: true })).toBeFocused();
-    await page.getByLabel("Rubrique", { exact: true }).selectOption("work");
-    await page.getByLabel("Que souhaitez-vous faire ?", { exact: true }).fill("notifications 24");
+    await expect(page.getByRole("heading", { level: 1, name: "Centre d’aide", exact: true })).toBeFocused();
+    await page.getByLabel("Rechercher dans l’aide", { exact: true }).fill("notifications 24");
+    await page.getByRole("search").getByRole("button", { name: "Rechercher", exact: true }).tap();
     await page.getByRole("link", { name: /^Lire les notifications et les rappels/ }).tap();
     await expect(page.getByRole("article")).toContainText("Aucun e-mail, SMS");
     for (const width of [320, 360, 390, 768, 1024]) {
@@ -175,9 +187,9 @@ test("help: mobile touch, search and long articles work without page overflow", 
     await page.setViewportSize({ width: 390, height: 844 });
     await mkdir("output/playwright/help", { recursive: true });
     await page.screenshot({ path: "output/playwright/help/mobile-guide.png", fullPage: true });
-    await page.getByRole("link", { name: "Tous les guides", exact: true }).tap();
-    await expect(page.getByRole("heading", { level: 1, name: "Aide KAY", exact: true })).toBeVisible();
-    await expect(page.getByLabel("Que souhaitez-vous faire ?", { exact: true })).toBeVisible();
+    await page.getByRole("link", { name: "Retour aux guides", exact: true }).tap();
+    await expect(page.getByRole("heading", { level: 1, name: "Centre d’aide", exact: true })).toBeVisible();
+    await expect(page.getByLabel("Rechercher dans l’aide", { exact: true })).toBeVisible();
     await geometry(page);
     await page.screenshot({ path: "output/playwright/help/mobile-index.png" });
   } finally { await context.close(); await removeActor(actor); }

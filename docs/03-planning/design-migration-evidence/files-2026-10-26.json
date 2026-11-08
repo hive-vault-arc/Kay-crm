@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "previous": "a171a29",
+  "scope": "Selected file picker/upload-only Sheet, bounded existing-document version entry, automatic photo picker, semantic file states and card-only narrow/Sheet collections; full migration still in progress",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "result": "passed; 59 icons / 393 Button sites / zero violations"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:unit",
+      "result": "122 passed"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed; pinned Next 16.4.2 including fresh TypeScript"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "0d89fdf206ada912ae7e8b5e697d4e21fbec6ff94a2c4e4c44691da5ee6c07b0"
+    },
+    {
+      "path": "frontend/src/app/workspace-collections.css",
+      "sha256": "072fc9b6f5b9d80754a1609f47f3f53b474d5cbf12f995d523813479bc35de83"
+    },
+    {
+      "path": "frontend/src/app/workspace-files.css",
+      "sha256": "54ac08bcc2b199db0a4ae300fe0134cf198f00168b8995e81a10c7fd682e8592"
+    },
+    {
+      "path": "frontend/src/components/shared/data-table.tsx",
+      "sha256": "edc04e9bc94736278790d793fb9cd709a009c264fc4ed7bd328b9460f5faa04a"
+    },
+    {
+      "path": "frontend/src/components/shared/file-picker.tsx",
+      "sha256": "a37f951aed83fc541290f739269c85d0f1428df7c0f9db46128fb582d6a9e359"
+    },
+    {
+      "path": "frontend/src/components/shared/protected-file-state.tsx",
+      "sha256": "8187c027d4438ac91664e6209443a4ad009b0089f4da122e3354a2ea979e0e3c"
+    },
+    {
+      "path": "frontend/src/components/shared/scrollable-results-table.tsx",
+      "sha256": "d4dc9dd4b118af9f4d6c1a7285fe918aa8d987272a8c7ad8d78c804fe52b5af6"
+    },
+    {
+      "path": "frontend/src/components/ui/sheet.tsx",
+      "sha256": "f997282c033aeadc5fec93182067f09aa9f19a779bbbc82c2d87ebab559bf99e"
+    },
+    {
+      "path": "frontend/src/features/files/file-panel.tsx",
+      "sha256": "f0f0e8b2c687de60917793512d7d62894e63e88a0ddff62afab71c5448965a3f"
+    },
+    {
+      "path": "frontend/src/features/files/property-photos.tsx",
+      "sha256": "efcb1cd16bc2f204f15bdead186218f22f26a85f75601c4a7eb1525e66d65cd9"
+    },
+    {
+      "path": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "sha256": "60ba8dacf0a37dc1219bc34fbf17ec8d7aae515a30980c6698af34e2545d9724"
+    },
+    {
+      "path": "frontend/tests/unit/workspace.test.mjs",
+      "sha256": "414066819567462e907d15ce748577676f4971ebfea06aa83f4d9c32c8e04cd4"
+    }
+  ],
+  "security": "Scoped source/controller review in docs/SECURITY_CHECK.md; existing metadata/permit/AV/capability and role contracts retained",
+  "limitations": [
+    "No app HTTP or native browser access",
+    "No real private-byte, database, scanner or release security acceptance",
+    "Native focus/resize/touch/zoom and final product review pending",
+    "Remaining module, form and PDF implementation incomplete",
+    "No push/main change/merge"
+  ]
+}

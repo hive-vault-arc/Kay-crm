@@ -2,10 +2,10 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Slot } from "radix-ui";
-import { actionIconColors, buttonActions, type ActionDefinition, type ButtonAction } from "./button-actions";
+import { buttonActions, type ActionDefinition, type ButtonAction } from "./button-actions";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-normal transition-colors outline-none focus-visible:border-ring disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-full text-sm font-medium whitespace-normal transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -14,13 +14,13 @@ const buttonVariants = cva(
         creation:
           "bg-creation font-semibold text-creation-foreground hover:bg-creation-hover active:bg-creation-pressed",
         success:
-          "bg-success text-white hover:bg-success/95 active:bg-success/90",
+          "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-pressed",
         quiet:
           "font-normal text-muted-foreground hover:bg-muted hover:text-foreground active:bg-accent",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
         outline:
-          "border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground",
+          "border border-transparent bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
@@ -66,9 +66,8 @@ function Button({
   const Icon = definition?.icon;
   const resolvedVariant = action === "create" ? "creation"
     : !variant || variant === "default" ? definition?.variant ?? "default" : variant;
-  const filled = ["default", "creation", "success", "destructive"].includes(resolvedVariant);
   const content = Icon && definition ? [
-    <Icon key="icon" aria-hidden="true" data-action-icon className={cn("size-4", !filled && actionIconColors[definition.tone], definition.iconClassName)} />,
+    <Icon key="icon" aria-hidden="true" data-action-icon className={cn("size-4 text-current", definition.iconClassName)} />,
     asChild ? <Slot.Slottable key="label">{children}</Slot.Slottable> : <span key="label" className="min-w-0">{children}</span>,
   ] : children;
 

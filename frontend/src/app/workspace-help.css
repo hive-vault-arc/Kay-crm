@@ -1,0 +1,105 @@
+/* Frozen help-hub.css: approved topic grid, parallel guide cards and balanced reader. */
+.kay-help-page { display:flex; flex-direction:column; gap:20px; flex:1; min-width:0; min-height:0; }
+.kay-help-page > .kay-page-header { flex:none; }
+.kay-help-home { min-width:0; min-height:0; overflow:auto; scrollbar-gutter:auto; padding-top:4px; }
+.kay-help-welcome { display:flex; align-items:center; justify-content:space-between; gap:24px 32px; margin-bottom:24px; padding:8px 4px 0; }
+.kay-help-welcome h2 { margin:0; font-size:24px; line-height:1.35; font-weight:600; letter-spacing:-.035em; }
+.kay-help-welcome p { margin-top:8px; color:var(--workspace-muted); font-size:14px; line-height:1.6; }
+.kay-help-search { display:flex; align-items:center; gap:12px; width:520px; max-width:52%; min-width:0; flex:none; }
+.kay-help-search-field { display:flex; flex:1; align-items:center; gap:8px; min-width:0; padding-left:14px; border-radius:var(--workspace-geometry-pill-radius); color:var(--workspace-muted); background:var(--workspace-field); }
+.kay-help-search-field > svg { flex:none; }
+.kay-help-search-field input { min-width:0; border:0; padding-left:0; background:transparent; }
+.kay-help-topic-grid,.kay-help-guide-grid { display:flex; flex-wrap:wrap; gap:16px; min-width:0; align-content:flex-start; }
+.kay-help-topic,.kay-help-guide-grid > li { flex:1 1 calc((100% - 32px)/3); min-width:min(100%,280px); }
+.kay-help-topic { display:flex; flex-direction:column; padding:24px; }
+.kay-help-topic header { display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
+.kay-help-topic header > div { min-width:0; }
+.kay-help-topic-icon { display:grid; place-items:center; flex:none; width:40px; height:40px; border-radius:14px; background:var(--workspace-field); color:var(--workspace-muted); }
+.kay-help-topic h3,.kay-help-guide-card h3 { margin:0; font-size:16px; font-weight:600; line-height:1.5; letter-spacing:-.015em; }
+.kay-help-topic header p { margin-top:4px; font-size:13px; line-height:1.6; color:var(--workspace-muted); }
+.kay-help-topic-links { display:grid; margin-inline:-8px; }
+.kay-help-topic-links a,.kay-help-topic-more,.kay-help-related a { display:flex; align-items:center; gap:12px; min-height:44px; padding:10px 8px; border-radius:12px; font-size:14px; line-height:1.6; text-decoration:none; }
+.kay-help-topic-links a > span,.kay-help-topic-more > span,.kay-help-related a > span { flex:1; min-width:0; }
+.kay-help-topic-links a > svg,.kay-help-topic-more > svg { flex:none; color:var(--workspace-muted); }
+.kay-help-topic-links a > svg { opacity:0; }
+.kay-help-topic-more { margin:12px -8px -4px; margin-top:auto; padding-top:20px; color:var(--workspace-muted); font-size:13px; }
+.kay-help-topic-links a:is(:hover,:focus-visible),.kay-help-topic-more:is(:hover,:focus-visible),.kay-help-related a:is(:hover,:focus-visible) { background:var(--workspace-hover); color:var(--workspace-ink); }
+.kay-help-topic-links a:is(:hover,:focus-visible) > svg { opacity:1; }
+.kay-help-catalog { display:flex; flex-direction:column; flex:1; min-width:0; min-height:0; padding:24px; }
+.kay-help-catalog-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px 32px; padding-bottom:20px; flex:none; }
+.kay-help-catalog-head > div { min-width:0; }
+.kay-help-catalog-head [data-action=back] { margin-bottom:8px; padding-left:0; }
+.kay-help-catalog-head h2 { margin:0; font-size:18px; line-height:1.5; font-weight:600; }
+.kay-help-catalog-head p { margin-top:6px; font-size:13px; line-height:1.6; color:var(--workspace-muted); }
+.kay-help-results { flex:1; min-width:0; min-height:0; overflow:auto; padding-bottom:16px; }
+.kay-help-guide-grid > li { display:flex; }
+.kay-help-guide-card { display:flex; flex-direction:column; gap:16px; width:100%; padding:24px; color:var(--workspace-ink); text-decoration:none; transition:background-color var(--motion-panel),box-shadow var(--motion-panel),transform var(--motion-page); }
+.kay-help-guide-card > header { display:flex; align-items:center; gap:12px; min-width:0; }
+.kay-help-guide-card > p { margin:0; color:var(--workspace-muted); font-size:14px; line-height:1.7; }
+.kay-help-guide-open { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; margin-top:auto; padding-top:8px; color:var(--workspace-muted); font-size:13px; }
+.kay-help-empty { display:grid; justify-items:center; gap:12px; padding:32px 16px; text-align:center; color:var(--workspace-muted); font-size:14px; }
+.kay-help-reader { display:flex; flex-direction:column; flex:1; min-width:0; min-height:0; overflow:hidden; }
+.kay-help-reading-scroll { flex:1; min-width:0; min-height:0; overflow:auto; padding:20px 32px 28px; overscroll-behavior:contain; }
+.kay-help-back { padding-left:0; margin-bottom:20px; }
+.kay-help-guide-heading { display:flex; align-items:flex-start; gap:12px 16px; margin-bottom:24px; }
+.kay-help-guide-heading > div { flex:1; min-width:0; }
+.kay-help-category { display:block; margin-bottom:4px; color:var(--workspace-muted); font-size:12px; }
+.kay-help-guide-heading h2 { margin:0; font-size:20px; line-height:1.4; font-weight:600; letter-spacing:-.025em; }
+.kay-help-guide-heading p { margin-top:6px; font-size:14px; line-height:1.65; color:var(--workspace-muted); }
+.kay-help-location { display:flex; flex-wrap:wrap; gap:8px 20px; margin-bottom:24px; font-size:13px; line-height:1.6; }
+.kay-help-location > span { color:var(--workspace-muted); }
+.kay-help-location > strong { font-weight:550; }
+.kay-help-reader-columns { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:32px; align-items:start; }
+.kay-help-reader-columns > div { min-width:0; }
+.kay-help-guide-section + .kay-help-guide-section { margin-top:24px; }
+.kay-help-guide-section h3,.kay-help-related h3 { margin-bottom:12px; font-size:15px; line-height:1.5; font-weight:600; scroll-margin-top:24px; }
+.kay-help-guide-section p,.kay-help-guide-section li { font-size:15px; line-height:1.75; overflow-wrap:anywhere; }
+.kay-help-guide-section p { margin-bottom:12px; max-width:86ch; }
+.kay-help-instructions { display:grid; gap:16px; list-style:none; padding:0; margin:0; counter-reset:help-step; }
+.kay-help-instructions > li { display:flex; align-items:flex-start; gap:16px; counter-increment:help-step; }
+.kay-help-instructions > li::before { content:counter(help-step); display:grid; place-items:center; flex:none; width:28px; height:28px; border-radius:50%; background:var(--workspace-field); color:var(--workspace-muted); font-size:13px; font-weight:550; }
+.kay-help-instructions > li > span { min-width:0; max-width:86ch; }
+.kay-help-note { display:flex; align-items:flex-start; gap:12px; margin-top:20px; padding:16px 20px; border-radius:var(--workspace-geometry-inset-radius); background:var(--workspace-field); color:var(--workspace-muted); }
+.kay-help-note > svg { flex:none; margin-top:3px; }
+.kay-help-note p { margin:0; font-size:13px; line-height:1.7; }
+.kay-help-related { margin-top:24px; padding-top:20px; border-top:1px solid var(--workspace-line); }
+.kay-help-related ul { display:flex; flex-wrap:wrap; gap:8px 16px; }
+.kay-help-related a { font-size:13px; }
+.kay-help-related svg { flex:none; }
+@media(min-width:831px) {
+  .kay-shell:has(.kay-help-page) { height:100dvh; min-height:0; overflow:hidden; }
+  .kay-shell:has(.kay-help-page) .kay-main { display:flex; flex-direction:column; height:calc(100dvh - 80px); min-height:0; overflow:hidden; }
+  .kay-shell:has(.kay-help-page) .kay-route-motion { display:flex; flex:1; flex-direction:column; min-height:0; }
+}
+@media(hover:hover) and (pointer:fine) {
+  .kay-help-guide-card:hover { transform:translateY(-2px); background:var(--workspace-panel-opaque); }
+}
+@media(max-width:1180px) {
+  .kay-help-topic,.kay-help-guide-grid > li { flex-basis:calc((100% - 16px)/2); }
+  .kay-help-welcome { align-items:flex-start; flex-direction:column; gap:16px; }
+  .kay-help-search { width:100%; max-width:none; }
+  .kay-help-catalog-head { flex-wrap:wrap; }
+}
+@media(max-width:1100px) { .kay-help-reader-columns { grid-template-columns:minmax(0,1fr); gap:24px; } }
+@media(min-width:1400px) and (min-height:800px) and (max-height:850px) { .kay-help-topic { padding:20px; } .kay-help-topic header { margin-bottom:8px; } }
+@media(max-width:830px) {
+  .kay-help-page { gap:12px; }
+  .kay-help-home,.kay-help-results,.kay-help-reading-scroll { overflow:visible; }
+  .kay-help-welcome { padding:0; margin-bottom:16px; }
+  .kay-help-welcome h2 { font-size:20px; }
+  .kay-help-welcome p { font-size:13px; }
+  .kay-help-search { gap:8px; }
+  .kay-help-search [data-action=search] { width:44px; padding:0; }
+  .kay-help-search [data-action=search] > span { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+  .kay-help-topic,.kay-help-guide-grid > li { flex-basis:100%; }
+  .kay-help-topic,.kay-help-guide-card,.kay-help-catalog { padding:20px; }
+  .kay-help-topic-grid,.kay-help-guide-grid { gap:12px; }
+  .kay-help-topic-links a > svg { opacity:1; }
+  .kay-help-reader { overflow:visible; }
+  .kay-help-reading-scroll { padding:16px; }
+  .kay-help-guide-heading { flex-wrap:wrap; gap:12px; }
+  .kay-help-guide-heading > div { flex-basis:calc(100% - 56px); }
+  .kay-help-guide-heading > [data-slot=button] { margin-left:auto; font-size:12px; }
+}
+@media(prefers-reduced-motion:reduce) { .kay-help-guide-card { transition:none; } .kay-help-guide-card:hover { transform:none; } }
+@media(forced-colors:active) { .kay-help-topic,.kay-help-guide-card,.kay-help-instructions > li::before { border:1px solid CanvasText; } }

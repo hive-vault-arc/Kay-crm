@@ -19,6 +19,7 @@ from app.deals.access import authorized as authorized_deal
 from app.deals.access import writable as writable_deal
 from app.files.contracts import FORMATS, ArchiveDocument, NewDocument, PermitRequest
 from app.files.models import Document, DocumentVersion, FilePermit, FileReceipt, Job, OutboxEvent
+from app.generated.visibility import visible_template_codes
 from app.identity.models import AGENCY_ID, Agency, AuditEvent, User
 from app.identity.security import IdentityError, token_hash
 from app.identity.sessions import (
@@ -104,10 +105,8 @@ def authorized_document(
     document = session.get(Document, did)
     if document is None:
         raise IdentityError("NOT_FOUND", 404)
-    if (
-        document.purpose == "generated"
-        and document.template_code in {"10", "11"}
-        and identity.user.role == "agent"
+    if document.purpose == "generated" and document.template_code not in visible_template_codes(
+        identity.user.role
     ):
         raise IdentityError("NOT_FOUND", 404)
     photo_upload = document.purpose == "photo" and document.created_by_user_id == identity.user.id
@@ -204,13 +203,12 @@ def list_documents(
             "property": Document.property_id,
             "enquiry": Document.enquiry_id,
         }[kind]
-        statement = select(Document).where(column == pid, Document.archived_at.is_(None))
-        if identity.user.role == "agent":
-            statement = statement.where(
-                (Document.purpose != "generated")
-                | (Document.template_code.is_(None))
-                | (Document.template_code.not_in(("10", "11")))
-            )
+        statement = select(Document).where(
+            column == pid,
+            Document.archived_at.is_(None),
+            (Document.purpose != "generated")
+            | Document.template_code.in_(visible_template_codes(identity.user.role)),
+        )
         if purpose is not None:
             if kind in {"property", "development"}:
                 statement = statement.where(

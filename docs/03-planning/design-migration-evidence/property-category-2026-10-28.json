@@ -1,0 +1,155 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "35875539ef7b9c8423e31af9a12afb63ec126100",
+  "scope": "Selected single-category radio list/All with exact current facets, retained legacy house and multi/empty query truth, criterion-preserving page recovery",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 539,
+      "failed": 0,
+      "skipped": 0,
+      "additionalCases": 3,
+      "revisedCategoryModelCase": true
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "consumers": 105,
+      "iconSites": 348,
+      "buttonSites": 496,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2",
+      "boundary": "Application sources unchanged after build; final test-only navigation-heading assertion covered by typecheck/targeted ESLint."
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true,
+      "compiledFunctions": [
+        {
+          "file": ".next/server/chunks/ssr/frontend_src_components_shared_unsaved-guard_tsx_1bn5-aixvkna7._.js",
+          "bytes": 2686,
+          "sha256": "95f540189a71100fd6516ab65544218b65390bf52e62dda6c2871a08f6440540"
+        },
+        {
+          "file": ".next/server/chunks/ssr/_0zkov84junom8._.js",
+          "bytes": 2684,
+          "sha256": "ef766e113bf8d733999a3610b97423921d544fecf925dd73ec464e6745d5b7f7"
+        }
+      ]
+    },
+    {
+      "command": "npx eslint tests/e2e/projects-reference.spec.ts tests/e2e/filter-rail.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "node <installed Frontend Taste>/scripts/lint.mjs --app --json frontend/src/features/inventory/property-filters.tsx",
+      "exitCode": 0,
+      "files": 1,
+      "findings": []
+    },
+    {
+      "command": "Read-only frozen source hash comparison",
+      "exitCode": 0,
+      "inputs": 254,
+      "drift": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8835,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1262,
+      "acceptanceMappings": 42,
+      "mermaidPairs": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "preparedNotExecuted": [
+    "Updated real synthetic photo/campaign browser journeys for selected radios/counts/legacy house/empty category/touch/zoom/current card navigation and programme labels.",
+    "Exact annual-rent bounds replace obsolete annual-value text on compact image cards.",
+    "Shared filter-rail geometry measures real associated radio labels with unchanged44px targets."
+  ],
+  "skills": {
+    "frontendTaste": "App-screen guidance and static lint; quiet single-choice rows, actual counts, explicit unknown/custom states and compact existing filter sheet. Selected KAY identity retained; no new draw/palette.",
+    "reactReview": "Category choice derives from existing criteria; no mirrored state/effect or additional fetch library.",
+    "originalMachineRequiredSkills": "Unavailable/not claimed.",
+    "antislopTiming": "AFTER unchanged."
+  },
+  "noBackendChangeOrRerun": true,
+  "retainedBackendCheckpoint": {
+    "commit": "8da316c",
+    "connectionForbiddenUnits": 476,
+    "integrationDeselected": 704
+  },
+  "noAppBrowserHttpWorkaround": true,
+  "noRealDatabaseServicePrivateConfigOrRecords": true,
+  "noMainPushMergeOrDeploy": true,
+  "remaining": [
+    "Programme preparation/marketing phase persistence and truthful legacy state.",
+    "Complete per-domain field/capability and historical browser-selector reconciliation.",
+    "Native/full-stack/current authority/CI/AFTER/product acceptance."
+  ],
+  "sourceHashMode": "Canonical staged Git blobs; normalized working inputs match.",
+  "sourceHashes": [
+    {
+      "file": "frontend/src/features/inventory/property-directory-model.ts",
+      "bytes": 1168,
+      "sha256": "d95a4a5ba353c980cf34a2a7bbc45aebcde5f1f93635c8e910094881267bb9e4"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-filters.tsx",
+      "bytes": 5748,
+      "sha256": "53e4be2f24fae19cd754505caf98e4cdf16582109ec09db4e14a3c0b58cfbe88"
+    },
+    {
+      "file": "frontend/tests/e2e/filter-rail.spec.ts",
+      "bytes": 19111,
+      "sha256": "4545d657af0bd95c1864c7b21866857184c85b1b78255bbe2229b436dec6f8c5"
+    },
+    {
+      "file": "frontend/tests/e2e/projects-reference.spec.ts",
+      "bytes": 18448,
+      "sha256": "b36fe81dcdb041d2095be254d447bf2811047465acc5c20e44daed074267e0c0"
+    },
+    {
+      "file": "frontend/tests/unit/inventory-directory.test.mjs",
+      "bytes": 21121,
+      "sha256": "58465e34213dbede3e8f3fd243cae34c50c38f3cf18f4c405fc19320c113a79e"
+    },
+    {
+      "file": "frontend/tests/unit/projects.test.mjs",
+      "bytes": 13363,
+      "sha256": "cafd8d6286fec647d2f4b12eb6f4d7e931a75d7d960afa43901cf193ad5dd2e7"
+    }
+  ]
+}

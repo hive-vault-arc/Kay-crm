@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "b4abe53",
+  "scope": "Selected contact-import composer, protected batch review, compact responsive rows and frozen atomic approval retry",
+  "checks": [
+    { "command": "npm run test:unit", "cwd": "frontend", "exitCode": 0, "passed": 283, "failed": 0, "newCases": 15 },
+    { "command": "npm run lint", "cwd": "frontend", "exitCode": 0, "semanticGlyphs": 62, "iconConsumers": 88, "iconSites": 309, "buttonSites": 449, "violations": 0 },
+    { "command": "npm run typecheck", "cwd": "frontend", "exitCode": 0 },
+    { "command": "npm run build", "cwd": "frontend", "exitCode": 0, "next": "16.4.2" },
+    { "command": "node .github/scripts/repository-check.mjs", "exitCode": 0, "indexedFiles": 8707, "forbiddenOrOversized": 0, "ignoreProbes": 14 },
+    { "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly", "exitCode": 0, "sprints": 22, "links": 1241, "acceptanceMappings": 42, "mermaidSources": 13, "apiJsonExamples": 12 },
+    { "command": "git diff --cached --check", "exitCode": 0 }
+  ],
+  "source": {
+    "reference": "Frozen data-operations.js import composer, initial fallback and four-column protected row preview",
+    "prototypeInputs": 254,
+    "drift": 0,
+    "sharedPrimitives": ["FilePicker", "RecordSection", "DataTable", "RecordEntry", "AgentPicker", "Sheet", "AlertDialog", "Badge", "NumberedPages", "DossierDraft", "UnsavedGuard"],
+    "newCssDependenciesChartsOrRoutes": false,
+    "proposal": "Existing shared responsive collection and single row-agent drawer adapt the selected desktop preview; native and owner review pending"
+  },
+  "invariants": [
+    "Current M/A authority before protected metadata and command/replay",
+    "Exact eight-column CSV and pipe multi-value separator; 20 MiB/50000 logical rows",
+    "Only contacts; existing-phone whole-row skip; no partial approval or provenance rewrite",
+    "Confirmation snapshots batch/file/hash/version/fallback/counts and blocks silently changed scope",
+    "Unknown approval preserves exact same key/body even when the current hash changes or disappears",
+    "Unknown result hides nonfinal rows/counts and blocks replacement/preview/mapping/page operations",
+    "Same-batch interrupted upload/preview explicitly refreshes the report; corrected file creates another batch",
+    "Current denial clears cached file/report/options before retry",
+    "Abort/current-session proof and exact batch/permit/result identity; private cookies-omitted byte transfer",
+    "True logical row identities, original eight values/truncation and created-contact links survive responsive presentation"
+  ],
+  "correctedAttempts": ["VM arrays needed cross-realm value normalization in a synthetic assertion", "Next lint reserves module as a test variable; renamed loaded", "One documentation patch with mismatched context failed without changing the file"],
+  "notRun": ["Browser/CUA/CDP/app HTTP under the existing automatic app-access rejection", "Native desktop/phone/zoom/touch/focus/accessibility and AFTER audit", "Real PostgreSQL/worker/session revocation/atomicity/race/load cases", "Real CSV or external data operation", "Owner product review and main CI/promotion"],
+  "preserved": ["Backend transaction/permissions/CSV/provenance/private transport", "Frozen prototype and approved stack", "Unrelated 35-line lesson change and untracked motion plan", "main, push, merge and production"],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

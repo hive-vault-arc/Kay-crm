@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.contacts.access import check_phones, contact_scope, readable_contact
 from app.contacts.contracts import EnquiryStatus, ListQuery
+from app.contacts.directory import filter_contacts, page_dossier_counts
 from app.contacts.models import Contact, ContactEmail, ContactPhone, ContactRole, Enquiry
 from app.contacts.projections import contact_views, enquiry_views
 from app.contacts.qualification import qualification_catalogue
@@ -58,15 +59,32 @@ def metadata(database: Database, token: str) -> dict[str, object]:
         return qualification_catalogue()
 
 
-def read_list(database: Database, token: str, kind: str, query: ListQuery) -> dict[str, object]:
+def read_list(
+    database: Database, token: str, kind: str, query: ListQuery, *, directory_enabled: bool = False
+) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
-        return list_in_session(session, current_identity(session, token), kind, query)
+        return list_in_session(
+            session,
+            current_identity(session, token),
+            kind,
+            query,
+            directory_enabled=directory_enabled,
+        )
 
 
 def list_in_session(
-    session: Session, identity: CurrentIdentity, kind: str, query: ListQuery
+    session: Session,
+    identity: CurrentIdentity,
+    kind: str,
+    query: ListQuery,
+    *,
+    directory_enabled: bool = False,
 ) -> dict[str, object]:
+    try:
+        query.validate_kind(kind)
+    except ValueError as exc:
+        raise IdentityError("VALIDATION_ERROR", 422) from exc
     if query.archive != "active" and identity.user.role == "agent":
         raise IdentityError("FORBIDDEN", 403)
     contacts = select(Contact).where(
@@ -125,22 +143,17 @@ def list_in_session(
             )
         )
     if kind == "contacts":
-        if (
-            query.status
-            or query.campaign_source
-            or query.rating
-            or query.source
-            or query.assigned_agent_id
-            or query.received_from
-            or query.received_to
-            or query.sort == "-received_at"
-        ):
-            raise IdentityError("VALIDATION_ERROR", 422)
+        contacts = filter_contacts(contacts, identity, query)
         count = session.scalar(select(func.count()).select_from(contacts.subquery())) or 0
         ordering = (
             (Contact.name.asc(), Contact.id)
             if query.sort == "name"
-            else (Contact.updated_at.desc(), Contact.id)
+            else (
+                Contact.created_at.desc()
+                if query.sort == "-created_at"
+                else Contact.updated_at.desc(),
+                Contact.id,
+            )
         )
         records = session.scalars(
             contacts.order_by(*ordering)
@@ -148,6 +161,10 @@ def list_in_session(
             .limit(query.page_size)
         ).all()
         items = list(contact_views(session, records).values())
+        if directory_enabled:
+            counts_by_id = page_dossier_counts(session, identity, [row.id for row in records])
+            for item in items:
+                item["dossier_counts"] = counts_by_id[UUID(str(item["id"]))]
     else:
         enquiries = select(Enquiry).where(
             Enquiry.contact_id.in_(contacts.with_only_columns(Contact.id))
@@ -170,10 +187,12 @@ def list_in_session(
             enquiries = enquiries.where(Enquiry.rating == query.rating)
         if query.source:
             enquiries = enquiries.where(Enquiry.source == query.source)
-        if query.assigned_agent_id:
+        if query.assigned_agent_id == "unassigned":
+            enquiries = enquiries.where(Enquiry.assigned_agent_id.is_(None))
+        elif query.assigned_agent_id:
             enquiries = enquiries.where(Enquiry.assigned_agent_id == query.assigned_agent_id)
         for value, end in ((query.received_from, False), (query.received_to, True)):
-            if value:
+            if value and not (end and value == datetime.max.date()):
                 bound = datetime.combine(
                     value + timedelta(days=1) if end else value,
                     time.min,
@@ -217,6 +236,7 @@ def list_in_session(
         "total": count,
         "has_next": query.page * query.page_size < count,
         "has_previous": query.page > 1,
+        **({"directory_supported": True} if kind == "contacts" and directory_enabled else {}),
         **(
             {
                 "status_counts": {
@@ -251,6 +271,54 @@ def assignment_options(database: Database, token: str, query: ListQuery) -> dict
                 Credential.temporary_expires_at.is_(None),
             )
         )
+        if query.q:
+            users = users.where(User.display_name.contains(query.q, autoescape=True))
+        total = session.scalar(select(func.count()).select_from(users.subquery())) or 0
+        rows = session.scalars(
+            users.order_by(User.display_name, User.id)
+            .offset((query.page - 1) * query.page_size)
+            .limit(query.page_size)
+        ).all()
+        return {
+            "items": [{"id": str(user.id), "display_name": user.display_name} for user in rows],
+            "page": query.page,
+            "page_size": query.page_size,
+            "total": total,
+            "has_next": query.page * query.page_size < total,
+            "has_previous": query.page > 1,
+        }
+
+
+def responsible_options(database: Database, token: str, query: ListQuery) -> dict[str, object]:
+    """Filter choices are readable responsibility, not active assignability."""
+    return filter_agent_options(database, token, query)
+
+
+def enquiry_assignee_options(database: Database, token: str, query: ListQuery) -> dict[str, object]:
+    """Assignment labels only from currently readable enquiries, including inactive staff."""
+    return filter_agent_options(database, token, query, enquiries=True)
+
+
+def filter_agent_options(
+    database: Database, token: str, query: ListQuery, *, enquiries: bool = False
+) -> dict[str, object]:
+    with database.session() as session:
+        session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
+        identity = current_identity(session, token)
+        contacts = select(Contact.primary_agent_id).where(
+            Contact.merged_into_contact_id.is_(None), contact_scope(identity)
+        )
+        if identity.user.role == "agent":
+            contacts = contacts.where(Contact.archived_at.is_(None))
+        selected = (
+            select(Enquiry.assigned_agent_id).where(
+                Enquiry.contact_id.in_(contacts.with_only_columns(Contact.id)),
+                Enquiry.assigned_agent_id.is_not(None),
+            )
+            if enquiries
+            else contacts
+        )
+        users = select(User).where(User.id.in_(selected))
         if query.q:
             users = users.where(User.display_name.contains(query.q, autoescape=True))
         total = session.scalar(select(func.count()).select_from(users.subquery())) or 0

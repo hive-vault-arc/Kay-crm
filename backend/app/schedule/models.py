@@ -112,6 +112,7 @@ class Visit(Base):
     end_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     location: Mapped[str] = mapped_column(String(1000))
     overlap_reason: Mapped[str] = mapped_column(String(1000), server_default="")
+    notes: Mapped[str] = mapped_column(String(1000), server_default="")
     outcome: Mapped[str] = mapped_column(String(1000), server_default="")
     version: Mapped[int] = mapped_column(BigInteger, server_default="1")
     policy_version: Mapped[int] = mapped_column(BigInteger)

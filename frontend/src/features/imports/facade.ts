@@ -28,6 +28,8 @@ export async function relayImports(key: string, request: Request, requestId: str
     const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: method as "GET" | "POST", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: read ? undefined : frontendOrigin(), idempotencyKey: retryKey, maxResponseBytes: 4 * 1024 * 1024, timeoutMs: 60_000 });
     if (upstream.status !== 200) { const parsed = z.object({ error: z.object({ code: z.string() }) }).safeParse(upstream.body); const code = parsed.success && errors.has(parsed.data.error.code) ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE"; return facadeError(code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, code, requestId); }
     const result = (read ? batchPageSchema : action === "upload-permit" ? permitSchema : batchSchema).parse(upstream.body);
+    if ("batch_id" in result && result.batch_id !== id || "id" in result && id && result.id !== id) throw new Error("IMPORT_PARENT_MISMATCH");
+    if ("result" in result && result.result && result.result.batch_id !== result.id) throw new Error("IMPORT_RESULT_MISMATCH");
     if ("transfer_url" in result) { const transfer = new URL(result.transfer_url), expected = new URL(process.env.API_BASE_URL ?? ""); if (transfer.origin !== expected.origin || transfer.pathname !== `/api/v1/transfers/imports/${id}` || transfer.search || transfer.hash || transfer.username || transfer.password) throw new Error("INVALID_TRANSFER_TARGET"); }
     return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }

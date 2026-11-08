@@ -9,6 +9,13 @@ not new commercial or real-data retention decisions.
 
 ## CSV and row meaning
 
+Selected migration2026-10-28: reopened awaiting/uploading batches now have an
+explicit same-batch resume action. Route-keyed composition, pinned unknown
+metadata recovery, synchronous upload/review ownership and current actor/proof
+checks preserve this contract without changing CSV or approval semantics. See
+[resume workflow](import-resume-local.md); actual native/SQL acceptance remains
+pending.
+
 UTF-8 (optional BOM), comma separator, standard CSV quoting, exact ordered header:
 `name,primary_phone,other_phones,primary_email,other_emails,roles,agent_email,notes`.
 `|` separates multiple phones/emails/roles. International phones reuse the
@@ -110,15 +117,30 @@ explicitly registers import_row as historical, rather than reparents originals.
 
 S03 M/A import action opens `/leads?view=import`; optional `batch=UUID` restores
 that same protected batch/report. No sidebar addition or private data in browser
-storage. Standard shadcn controls and Tailwind roles, flat numbered row groups,
-progress and named format details reuse the incumbent KAY world. Assignment
-changes require a new preview before approval/page change. A new corrected-file
-upload creates a new batch; original batch evidence remains. Same-batch
-cancellation/retry completion refreshes the authoritative preview; the batch ID
-alone does not invalidate a mounted review query. Final confirmation shows
-whole-batch counts/effects. Unknown response preserves approval key/body;
-retry/current result cannot create duplicates. Denial removes private report data.
-No chart, new theme/token/font/dependency/custom CSS/shipping raster.
+storage. The selected-design migration uses shared file choice/drop controls,
+an optional initial fallback agent and format details before preview. A corrected
+file composer collapses after success, remains available after interruption and
+creates a new batch without changing original evidence. The current batch has
+its own fallback control, top section actions and semantic authoritative counts.
+Desktop retains Ligne/Contact/Agent/État; phone/drawers use compact record cards.
+One agent drawer remains outside the responsive collection. All eight original
+CSV values, true logical row numbers, truncation notices and original created
+contact links remain available. Row/fallback edits require a new preview before
+approval/page change; picker search is disposable UI, not a business draft.
+
+Final confirmation freezes reviewed file/hash/version/fallback/counts when it
+opens. A changed live preview requires a new review rather than silently changing
+the command. An unknown approval retains its exact body/key, hides nonfinal
+counts/rows and blocks another file/preview/mapping/page operation. Same-key retry
+does not depend on a later read retaining the old hash. Current committed read or
+definitive response resolves uncertainty; timeout alone does not prove rollback.
+Same-batch upload/preview interruption refreshes the mounted report explicitly;
+the batch ID alone cannot invalidate that query. Current denial removes cached
+file/report/agent details before retry. Ordinary managed link/unload guards remain;
+general Back/Forward business-draft handling is still separate migration work.
+No chart, new theme/token/font/dependency/custom CSS/shipping raster or API route.
+The [2026-10-27 source evidence](../03-planning/design-migration-evidence/import-ui-2026-10-27.json)
+does not supersede the pending native/full-stack acceptance boundary.
 
 ## Verification boundary
 

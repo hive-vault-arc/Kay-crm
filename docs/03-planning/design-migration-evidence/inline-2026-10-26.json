@@ -1,0 +1,122 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "previous": "492b182",
+  "scope": "Selected inline contact/prospect/affair fields and safe dirty-draft read deferral; full migration remains in progress",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "result": "passed; 62 semantic glyphs / 418 Button sites / zero violations"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:unit",
+      "result": "162 passed; 11 inline component/controller/SSR and 4 actual query-hook cases added"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed; pinned Next16.4.2 including fresh TypeScript"
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "result": "8620 indexed; zero forbidden/oversized; 14 ignore probes"
+    },
+    {
+      "command": "& ./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "result": "passed; 1228 links / 22 sprints / 42 acceptance mappings / 12 API JSON examples"
+    }
+  ],
+  "structuralChecks": {
+    "kind": "Executed inline Node/PostCSS parser and var-reference lookup against workspace.css/globals.css",
+    "rules": 27,
+    "roleReferences": 6,
+    "missingRoles": 0
+  },
+  "sourceHashes": [
+    {
+      "path": "frontend/scripts/test-facade.mjs",
+      "sha256": "70ca63c1032c36ecb2a82683b166c931911264b54559b8b7cdc0df315c395340"
+    },
+    {
+      "path": "frontend/src/app/globals.css",
+      "sha256": "3daa72d37268098aa68363ee0736d43f72773eb84acc5a76b646dda2b040d793"
+    },
+    {
+      "path": "frontend/src/app/workspace-inline.css",
+      "sha256": "3d964a10e2ebcd8e9e655db3f1782eb0307a90774b7d21a19d294956f2476b5f"
+    },
+    {
+      "path": "frontend/src/components/shared/inline-record-field.tsx",
+      "sha256": "1bc7cc010e5775f46bf32633148e12d9ba1ad59dcf1233cba9093d7ef7e8b7ff"
+    },
+    {
+      "path": "frontend/src/features/contacts/contact-fields.tsx",
+      "sha256": "830c6f9dae59323fca854a45c7fa381d809f2a55412c6be6bdb9b5ce5ed6597b"
+    },
+    {
+      "path": "frontend/src/features/contacts/contact-inline-field.tsx",
+      "sha256": "7d577107e7a8eba5a180487cbde11401c0b701b722fdc619d559ae18db7f53c1"
+    },
+    {
+      "path": "frontend/src/features/contacts/contact-profile-panel.tsx",
+      "sha256": "005c27faa8b8cb5b74dc7fdfa1fa9874fafd1d4860c3a6ae40b6c5f4ddf609cc"
+    },
+    {
+      "path": "frontend/src/features/contacts/contact-record.tsx",
+      "sha256": "f33540cf5e1d963cb3f46bbaa3cb7600a270e08bd0f5d97b0af915f5e7dd2865"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-inline-field.tsx",
+      "sha256": "a55c6f11a09a9397f4aee0fdfce427f16cf8e2e59dfd378d45ed7d3408a4401e"
+    },
+    {
+      "path": "frontend/src/features/contacts/lead-record.tsx",
+      "sha256": "c11df2faa369ae4ec69799b00171ea29c3c97cfb470bdf1d19eea753ec8d8915"
+    },
+    {
+      "path": "frontend/src/features/contacts/qualification-inputs.tsx",
+      "sha256": "5b171b010afee0c1f9b078f00f8f4e4e2597015874337ee23e04cf006f8f29e6"
+    },
+    {
+      "path": "frontend/src/features/contacts/use-query.ts",
+      "sha256": "1ccbb00d97612ab91a2ded3925140ac00e8d484bb6a3b9cdb700f3fa885db553"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-inline-field.tsx",
+      "sha256": "95b01251691d61e490c464d03caf33973555f16e4e084d2c277091e6b8724538"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-record.tsx",
+      "sha256": "6952ba05637de025ff62537a99560cd359ebfad0647e9a98448209e9cb35b144"
+    },
+    {
+      "path": "frontend/src/features/deals/deal-workspace.tsx",
+      "sha256": "2f855e1dd63f517409077d886407af36b0e0b768508d7c1e1a4883889085483f"
+    },
+    {
+      "path": "frontend/tests/unit/inline-editing.test.mjs",
+      "sha256": "d20326f2d6c29bbf617e98220646462797d109c6e4c2ecfc5819fd9e2932d53a"
+    },
+    {
+      "path": "frontend/tests/unit/query-drafts.test.mjs",
+      "sha256": "dd0404019b82c04d22a8eb7874319fc8b4f09c8c375f0aa65ca38170f7b3c2c8"
+    }
+  ],
+  "security": "Strict existing full edit DTOs; reviewed id/version/body and stable retry identity; field-only explicit conflict rebase; complete phone/email arrays and primary selection; real deal edit path with no stock writes; current authority loss clears data; same-path validated transient read deferral only",
+  "limitations": [
+    "No app HTTP/native browser access",
+    "No native focus/keyboard/viewport/zoom/visual or real database/security race acceptance",
+    "Remaining full-form layouts/Back-Forward/PDF/report/admin/search migration and final verification incomplete",
+    "No backend/facade/dependency/storage/worker contract change",
+    "No push/main change/merge"
+  ],
+  "adaptations": [
+    "Existing APIs require complete versioned bodies for local field saves; unrelated reviewed values are retained",
+    "Real phone/email editing preserves collections and explicit primary selection rather than prototype textareas",
+    "Prototype relance remains the real task workflow; no unsupported date mutation is invented",
+    "44px targets and API-failure/partial-legacy editor presentations remain implementation proposals pending final native/product review"
+  ]
+}

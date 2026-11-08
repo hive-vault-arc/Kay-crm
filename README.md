@@ -1,5 +1,11 @@
 # KEPVY for KAY: specification index
 
+The owner-selected [workspace redesign migration](docs/03-planning/design-prototype-migration-2026-10-25.md)
+is now active on `codex/redesign`. Its [execution record](docs/03-planning/design-prototype-migration-execution.md)
+separates implementation from final verification/owner approval. Current
+prototype appearance and intentional UX organization supersede older visual
+defaults; real business/security contracts remain. Main is unchanged.
+
 The local [KAY help centre](docs/03-planning/help-centre.md) adds authenticated
 French usage guides and the footer Aide entry. It is not published; current
 verification is recorded separately from the historical release evidence below.

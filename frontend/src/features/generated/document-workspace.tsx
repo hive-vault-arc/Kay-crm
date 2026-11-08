@@ -1,114 +1,85 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { EnquiryIcon, EmptyFolderIcon } from "@/components/icons";
+import { useEffect, useId, useRef, useState } from "react";
+import { AlertIcon, CheckIcon, FileIcon } from "@/components/icons";
 import { PageHeader } from "@/components/shared/page-header";
-import { SectionHeading } from "@/components/shared/section-heading";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { NativeSelect } from "@/components/ui/native-select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { NumberedPages } from "@/features/contacts/numbered-pages";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { RecordError } from "@/features/contacts/record-states";
-import { useQuery } from "@/features/contacts/use-query";
-import { downloadBytes, requestFilePermit } from "@/features/files/transfers";
-import { useHydrated } from "@/hooks/use-hydrated";
-import { apiCommand } from "@/lib/api/command";
-import { ApiError } from "@/lib/api/client";
-import { formatInstant } from "@/lib/format";
-import { generateBodySchema, generatedContextSchema, generatedHistorySchema, generatedItemSchema, type GeneratedItem } from "./contracts";
+import { PreparedDocumentHistory, usePreparedDocuments } from "./prepared-documents";
+import { usePreparation } from "./use-preparation";
 
-type ParentKind = "enquiry" | "deal";
+type Parent = { parentKind: "enquiry" | "deal"; id: string };
 
-export function DocumentWorkspace({ parentKind, id }: { parentKind: ParentKind; id: string }) {
-  const [page, setPage] = useState(1);
-  const [selectedCode, setSelectedCode] = useState("01");
-  const [drafts, setDrafts] = useState<Record<string, Record<string, string>>>({});
-  const [busy, setBusy] = useState(false);
-  const [downloading, setDownloading] = useState<string>();
-  const [error, setError] = useState<ApiError>();
-  const [notice, setNotice] = useState("");
-  const lock = useRef(false);
-  const attempt = useRef({ fingerprint: "", key: "" });
-  const hydrated = useHydrated();
-  const parent = `parent_kind=${parentKind}&parent_id=${id}`;
-  const context = useQuery(`/api/v1/generated-documents/context?${parent}`, generatedContextSchema);
-  const history = useQuery(`/api/v1/generated-documents?${parent}&page=${page}`, generatedHistorySchema);
-  const back = parentKind === "enquiry" ? `/leads/${id}` : `/deals/${id}`;
-  const template = context.value?.templates.find(item => item.code === selectedCode) ?? context.value?.templates[0];
-  const values = template ? (drafts[template.code] ?? context.value?.defaults ?? {}) : {};
+// Changing the dossier discards the old controller's lifetime, never its response into a new parent.
+export function DocumentWorkspace(props: Parent) { return <PreparationWorkspace key={`${props.parentKind}:${props.id}`} {...props} />; }
+
+export function PreparationWorkspace({ parentKind, id }: Parent) {
+  const documents = usePreparedDocuments({ parentKind, id }), preparation = usePreparation({ parentKind, id, documents });
+  const fieldId = useId(), body = useRef<HTMLDivElement>(null), heading = useRef<HTMLHeadingElement>(null);
+  const positions = useRef<Record<string, number>>({}), focusModel = useRef<string | undefined>(undefined);
+  const [restartCode, setRestartCode] = useState<string>();
+  const { template, context, selectedCode, busy, hydrated, uncertain, changedTemplate } = preparation;
+  const back = `/${parentKind === "enquiry" ? "leads" : "deals"}/${id}`;
   const groups = template ? [...new Set(template.fields.map(field => field.group))] : [];
-
-  function changeField(key: string, value: string) {
-    if (!template) return;
-    setDrafts(previous => ({ ...previous, [template.code]: { ...values, [key]: value } }));
-    setError(undefined);
-    setNotice("");
+  const unavailable = !hydrated || busy || uncertain || !context?.can_generate;
+  const historyCount = context && !documents.history.error ? documents.history.value?.total : undefined;
+  useEffect(() => {
+    if (!selectedCode || !body.current) return;
+    body.current.scrollTop = positions.current[selectedCode] ?? 0;
+    if (focusModel.current === selectedCode) { heading.current?.focus({ preventScroll: true }); focusModel.current = undefined; }
+  }, [selectedCode]);
+  function choose(code: string) {
+    if (busy) return;
+    if (selectedCode === code) heading.current?.focus({ preventScroll: true });
+    else focusModel.current = code;
+    preparation.choose(code);
   }
-
-  async function generate() {
-    if (!template || !context.value?.can_generate || lock.current) return;
-    const body = {
-      parent_kind: parentKind, parent_id: id, template_code: template.code,
-      values: Object.fromEntries(template.fields.map(field => [field.key, values[field.key] ?? ""])),
-    };
-    if (!generateBodySchema.safeParse(body).success) { setError(new ApiError("VALIDATION_ERROR", 422)); return; }
-    const fingerprint = JSON.stringify(body);
-    if (attempt.current.fingerprint !== fingerprint) attempt.current = { fingerprint, key: crypto.randomUUID() };
-    lock.current = true; setBusy(true); setError(undefined); setNotice("");
-    try {
-      await apiCommand("/api/v1/generated-documents", body, generatedItemSchema, attempt.current.key, "POST", 40_000);
-      attempt.current = { fingerprint: "", key: "" };
-      setNotice("PDF créé et conservé dans l’historique privé. Vous pouvez le télécharger ci-dessous.");
-      setPage(1);
-      history.refreshQuietly();
-    } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503)); }
-    finally { lock.current = false; setBusy(false); }
-  }
-
-  async function download(item: GeneratedItem) {
-    if (downloading) return;
-    setDownloading(item.id); setError(undefined);
-    try {
-      const permit = await requestFilePermit({ action: "download", document_id: item.id, expected_version: item.version, version_id: item.version_id });
-      const blob = await downloadBytes(permit);
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = item.filename;
-      document.body.append(anchor);
-      anchor.click();
-      anchor.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    } catch (reason) { setError(reason instanceof ApiError ? reason : new ApiError("FILE_TRANSFER_INTERRUPTED", 503)); }
-    finally { setDownloading(undefined); }
-  }
-
-  return <main className="record-stack grid min-w-0 gap-5">
-    <Button action="back" asChild variant="quiet" size="compact" className="justify-self-start"><Link href={back}>Retour à {parentKind === "enquiry" ? "la demande" : "l’affaire"}</Link></Button>
-    <PageHeader icon={EnquiryIcon} title="Documents du dossier" description="Choisissez un modèle, vérifiez les informations préremplies et conservez chaque PDF généré." route={`${back}/documents`} />
-    {context.error ? <RecordError error={context.error} retry={context.refresh} /> : !context.value ? <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(15rem,0.32fr)_minmax(0,1fr)]" role="status" aria-label="Chargement des modèles"><div className="crm-panel grid content-start gap-3"><Skeleton className="h-7 w-2/3" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></div><div className="crm-panel grid content-start gap-4"><Skeleton className="h-9 w-1/2" /><Skeleton className="h-16 w-full" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></div></div> : <>
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(15rem,0.32fr)_minmax(0,1fr)]">
-        <nav aria-label="Modèles de documents" className="crm-panel grid min-w-0 content-start gap-2">
-          <SectionHeading compact icon={EmptyFolderIcon}>Modèles disponibles</SectionHeading>
-          <p className="mb-2 text-sm text-muted-foreground">12 modèles de travail fournis par KAY. Les documents financiers sont réservés aux responsables.</p>
-          {context.value.templates.map(item => <Button key={item.code} action="file" type="button" variant="outline" aria-current={template?.code === item.code ? "true" : undefined} onClick={() => { setSelectedCode(item.code); setError(undefined); setNotice(""); }} className={`min-h-control w-full items-start justify-start gap-3 px-3 py-3 text-left ${template?.code === item.code ? "border-primary bg-primary/15" : ""}`}><span aria-hidden="true" className="shrink-0 tabular-nums text-muted-foreground">{item.code}</span><span>{item.title}</span></Button>)}
-        </nav>
-        {template ? <section className="crm-panel min-w-0" aria-labelledby="template-heading">
-          <div className="mb-5 grid gap-2 border-b pb-4"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Modèle {template.code} / 12</p><h2 id="template-heading" className="text-section font-medium">{template.title}</h2><p className="max-w-reading text-sm text-muted-foreground">Les champs proposés proviennent du dossier actuel. Corrigez-les avant de créer le PDF.</p></div>
-          <p className="mb-5 rounded-md border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-foreground" role="note">{template.warning}</p>
-          {groups.map(group => <fieldset key={group} className="mb-6 min-w-0 border-0 p-0"><legend className="mb-3 text-base font-semibold">{group}</legend><div className="grid min-w-0 gap-4 md:grid-cols-2">{template.fields.filter(field => field.group === group).map(field => <div key={field.key} className={`grid min-w-0 gap-1.5 ${field.multiline ? "md:col-span-2" : ""}`}><Label htmlFor={`generated-${field.key}`}>{field.label}</Label>{field.multiline ? <Textarea id={`generated-${field.key}`} value={values[field.key] ?? ""} onChange={event => changeField(field.key, event.target.value)} maxLength={1000} disabled={!hydrated || busy || !context.value?.can_generate} /> : <Input id={`generated-${field.key}`} value={values[field.key] ?? ""} onChange={event => changeField(field.key, event.target.value)} maxLength={300} disabled={!hydrated || busy || !context.value?.can_generate} />}</div>)}</div></fieldset>)}
-          {!context.value.can_generate ? <p role="status" className="mb-3 text-sm text-muted-foreground">Dossier archivé : l’historique reste consultable, mais la génération est désactivée.</p> : null}
-          <div className="flex flex-wrap items-center gap-3 border-t pt-5"><Button action="create" type="button" disabled={!hydrated || busy || !context.value.can_generate} onClick={() => void generate()}>{busy ? "Création du PDF…" : "Générer le PDF"}</Button><p className="text-xs text-muted-foreground">Le PDF reste privé et peut être téléchargé depuis l’historique.</p></div>
-        </section> : null}
-      </div>
-    </>}
-    {notice ? <p role="status" className="text-success">{notice}</p> : null}
-    {error ? <RecordError error={error} retry={() => setError(undefined)} /> : null}
-    {context.value ? <section aria-label="Historique des PDF générés" className="crm-panel grid min-w-0 gap-4"><SectionHeading compact icon={EmptyFolderIcon}>Historique des PDF</SectionHeading>
-      {history.error ? <RecordError error={history.error} retry={history.refresh} /> : !history.value ? <div role="status" aria-label="Chargement de l’historique" className="grid gap-3"><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></div> : history.value.items.length ? <><ul className="grid min-w-0 divide-y border-y">{history.value.items.map(item => <li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3"><div className="min-w-0"><p className="font-medium">{context.value?.templates.find(model => model.code === item.template_code)?.title ?? `Modèle ${item.template_code}`}</p><p className="wrap-anywhere text-xs text-muted-foreground">{formatInstant(item.created_at)} · {item.filename}</p></div><Button action="download" type="button" variant="outline" disabled={!hydrated || Boolean(downloading)} onClick={() => void download(item)}>{downloading === item.id ? "Téléchargement…" : "Télécharger"}</Button></li>)}</ul><NumberedPages label="Pages des PDF générés" page={page} total={history.value.total} size={20} change={setPage} /></> : <p>Aucun PDF généré pour ce dossier.</p>}
-    </section> : null}
-  </main>;
+  const historyDocuments = preparation.contextError ? { ...documents, context: { ...documents.context, value: undefined, error: preparation.contextError } } : documents;
+  return <div className="kay-document-page">
+    <PageHeader title="Documents du dossier" description={context?.defaults.client_name || "Choisissez un modèle et vérifiez les informations du dossier."} route={`${back}/documents`} actions={<Button action="back" asChild variant="outline"><Link href={`${back}?tab=documents`} prefetch={false}>Retour au dossier</Link></Button>} />
+    <Tabs value={preparation.tab} onValueChange={preparation.selectTab} className="kay-document-workspace kay-surface">
+      <div className="kay-document-top"><TabsList aria-label="Documents du dossier"><TabsTrigger value="prepare" disabled={!hydrated || busy}>Préparer un PDF</TabsTrigger><TabsTrigger value="history" disabled={!hydrated || busy}>Historique{historyCount !== undefined ? <span className="kay-tab-count">{historyCount}</span> : null}</TabsTrigger></TabsList><span className="kay-document-private">PDF privés</span></div>
+      {preparation.notice ? <p className="kay-document-feedback" role="status">{preparation.notice}</p> : null}
+      <TabsContent value="prepare" forceMount hidden={preparation.tab !== "prepare"} className="kay-document-prepare">
+        <form className="kay-document-layout" data-draft-managed data-live-dirty={preparation.dirty} aria-busy={busy} onSubmit={event => { event.preventDefault(); void preparation.generate(); }}>
+          {preparation.contextError ? <div className="kay-document-state"><RecordError error={preparation.contextError} retry={preparation.retryContext} /></div> : !context ? <div className="kay-document-state grid gap-4" role="status" aria-label="Chargement des modèles"><Skeleton className="h-7 w-2/3" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></div> : <>
+            <aside className="kay-document-models" aria-label="Modèles disponibles">
+              <header className="kay-document-model-heading"><h2>Modèles disponibles</h2><span>{context.templates.length}</span></header>
+              <nav className="kay-document-model-list" aria-label="Choisir un modèle" tabIndex={0}>{context.templates.map(item => <Button key={item.code} type="button" variant="quiet" disabled={!hydrated || busy} className="kay-document-model" aria-current={selectedCode === item.code ? "true" : undefined} onClick={() => choose(item.code)}><span>{item.code}</span><strong>{item.title}</strong>{selectedCode === item.code ? <CheckIcon size={16} aria-hidden="true" /> : <span />}</Button>)}</nav>
+              <div className="kay-document-mobile-picker"><Label htmlFor={`${fieldId}-model`}>Modèle de document</Label><NativeSelect id={`${fieldId}-model`} value={selectedCode ?? ""} disabled={!hydrated || busy} onChange={event => choose(event.target.value)}>{context.templates.map(item => <option key={item.code} value={item.code}>{item.code} · {item.title}</option>)}</NativeSelect></div>
+            </aside>
+            <div className="kay-document-form">
+              <div className="kay-document-form-body" ref={body} tabIndex={0} role="region" aria-label="Informations de préparation" onScroll={event => { if (selectedCode) positions.current[selectedCode] = event.currentTarget.scrollTop; }}>
+                {template ? <>
+                  <h2 ref={heading} tabIndex={-1}>{template.title}</h2><p className="kay-document-intro">Vérifiez les informations préremplies. Les champs manquants peuvent rester vides.</p>
+                  <p className="kay-document-warning" role="note"><AlertIcon size={20} aria-hidden="true" /><span>{template.warning}</span></p>
+                  {uncertain ? <div className="kay-document-recovery" role="status"><p>{changedTemplate ? "Le modèle disponible a changé. Vérifiez l’historique avant de commencer une nouvelle préparation." : "La réponse a été interrompue. Le PDF peut déjà exister : réessayez la même préparation pour récupérer son résultat."}</p><div className="flex flex-wrap gap-2"><Button action="file" variant="outline" type="button" onClick={() => preparation.selectTab("history")}>Voir l’historique</Button><Button action="reset" variant="quiet" type="button" onClick={() => setRestartCode(selectedCode)}>Nouvelle préparation</Button></div></div> : null}
+                  {preparation.attempt?.error ? <RecordError error={preparation.attempt.error} /> : null}
+                  <fieldset disabled={unavailable} className="min-w-0 border-0 p-0"><legend className="sr-only">Champs du modèle {template.code}</legend>{groups.map(group => {
+                    const fields = template.fields.filter(field => field.group === group);
+                    return <fieldset key={`${template.code}:${group}`} className="kay-document-field-group" data-short-fields={fields.every(field => !field.multiline) ? fields.length : undefined}><legend>{group}</legend><div className="kay-document-fields">{fields.map(field => <div key={field.key} className="kay-document-field" data-wide={field.multiline}>
+                      <Label htmlFor={`${fieldId}-${field.key}`}>{field.label}</Label>{field.multiline ? <Textarea id={`${fieldId}-${field.key}`} name={field.key} value={preparation.values[field.key] ?? ""} onChange={event => preparation.change(field.key, event.target.value)} maxLength={2000} aria-invalid={preparation.validation?.fields.includes(field.key)} aria-describedby={preparation.validation ? `${fieldId}-validation` : undefined} /> : <Input id={`${fieldId}-${field.key}`} name={field.key} value={preparation.values[field.key] ?? ""} onChange={event => preparation.change(field.key, event.target.value)} maxLength={600} aria-invalid={preparation.validation?.fields.includes(field.key)} aria-describedby={preparation.validation ? `${fieldId}-validation` : undefined} />}
+                    </div>)}</div></fieldset>;
+                  })}</fieldset>
+                  {preparation.validation ? <p id={`${fieldId}-validation`} role="alert" className="text-sm text-danger">{preparation.validation.message}</p> : null}
+                  {!context.can_generate ? <p role="status" className="text-sm text-muted-foreground">Dossier archivé : l’historique reste consultable, la génération est désactivée.</p> : null}
+                </> : null}
+              </div>
+              <footer className="kay-document-form-footer"><div><span><FileIcon size={16} aria-hidden="true" />Fiche de préparation + modèle vierge</span><small>PDF privé, conservé dans l’historique du dossier.</small></div><Button action={uncertain ? "retry" : "file"} variant="creation" type="submit" disabled={!hydrated || busy || !template || !context.can_generate || changedTemplate}>{busy ? "Préparation du PDF…" : uncertain ? "Récupérer le résultat" : "Générer le PDF"}</Button></footer>
+            </div>
+          </>}
+        </form>
+      </TabsContent>
+      {preparation.historyVisited ? <TabsContent value="history" forceMount hidden={preparation.tab !== "history"} className="kay-document-history"><PreparedDocumentHistory documents={historyDocuments} presentation="table" /></TabsContent> : null}
+    </Tabs>
+    <AlertDialog open={Boolean(restartCode)} onOpenChange={open => { if (!open) setRestartCode(undefined); }}><AlertDialogContent><AlertDialogTitle>Commencer une nouvelle préparation ?</AlertDialogTitle><AlertDialogDescription>Le PDF précédent peut déjà être dans l’historique. Cette action abandonne sa récupération ; une prochaine génération pourra créer un autre PDF. Les champs saisis restent disponibles.</AlertDialogDescription><div className="flex flex-wrap justify-end gap-2"><AlertDialogCancel asChild><Button action="cancel" variant="outline">Annuler</Button></AlertDialogCancel><Button action="confirm" onClick={() => { if (restartCode === selectedCode) preparation.restart(); setRestartCode(undefined); }}>Commencer</Button></div></AlertDialogContent></AlertDialog>
+  </div>;
 }

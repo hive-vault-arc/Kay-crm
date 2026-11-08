@@ -13,5 +13,5 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   if (identity.state !== "authenticated") return <AuthUnavailable path={route} />;
   const typeId = z.uuid().safeParse(query.unit_type_id);
   const blockId = z.uuid().safeParse(query.block_id); const floorId = z.uuid().safeParse(query.floor_id);
-  return <DevelopmentRecord id={id} role={identity.profile.user.role} initialTab={typeof query.tab === "string" ? query.tab : undefined} blockId={blockId.success ? blockId.data : undefined} floorId={floorId.success ? floorId.data : undefined} unitTypeId={typeId.success ? typeId.data : undefined} />;
+  return <DevelopmentRecord key={`${id}:${identity.profile.user.id}:${identity.profile.user.role}`} actorId={identity.profile.user.id} id={id} role={identity.profile.user.role} initialTab={typeof query.tab === "string" ? query.tab : undefined} blockId={blockId.success ? blockId.data : undefined} floorId={floorId.success ? floorId.data : undefined} unitTypeId={typeId.success ? typeId.data : undefined} />;
 }

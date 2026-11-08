@@ -6,5 +6,5 @@ export const metadata = { title: "Propriétaires" };
 export default async function Page() {
   const identity = await requireIdentity("/owners");
   if (identity.state !== "authenticated") return <AuthUnavailable path="/owners" />;
-  return <OwnerDirectory role={identity.profile.user.role} />;
+  return <OwnerDirectory key={`${identity.profile.user.id}:${identity.profile.user.role}`} actorId={identity.profile.user.id} role={identity.profile.user.role} />;
 }

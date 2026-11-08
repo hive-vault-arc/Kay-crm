@@ -2,7 +2,7 @@
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
-from uuid import UUID, uuid4
+from uuid import UUID, uuid4, uuid7
 
 import pytest
 from sqlalchemy import func, select, text, update
@@ -86,7 +86,7 @@ def test_interrupted_transaction_rolls_back_all_financial_facts_and_same_key_can
     settings, database, monkeypatch
 ):
     _, _, _, manager, did = fixture(settings, database)
-    key = uuid4()
+    key = uuid7()
     request = NewCommission(expected_deal_version=1, **terms())
     original = Session.add
 

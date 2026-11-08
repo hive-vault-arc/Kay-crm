@@ -1,5 +1,12 @@
 # Executable local API catalogue
 
+2026-10-27 source addendum: the selected Finance collection adds protected
+`GET /api/v1/deals/{did}/finance-history` with the existing bounded FinanceQuery.
+Its source route/closed query are covered in a stubbed in-process ASGI test;
+real-stack acceptance and regeneration of the historical full-app catalogue
+below remain pending. Do not read the older126-path snapshot as the current
+migration route count. [Current contract](finance-workspace-local.md#dossier-financial-history-read).
+
 Generated from `create_app().openapi()` on2026-10-18, not a proposed route list.
 OpenAPI3.1.0: **126 paths / 159 operations**. Schema SHA256:
 `b1cab90854453267473593c9524f9d3409a797c380da3a80fecdb102905fbd89`.

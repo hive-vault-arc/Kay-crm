@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "base": "6f37da261a3fa114b8c0df0ba73f96391329cf4b",
+  "scope": "Four existing inventory design-review native paths; selected layout preserved",
+  "checks": [
+    {
+      "command": "npx eslint tests/review/inventory-design.chrome.spec.ts --max-warnings=0",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "TypeScript source AST invariants",
+      "exitCode": 0,
+      "titlesUnchanged": 4,
+      "protectedCalls": 21,
+      "unchangedCalls": 21
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9059,
+      "forbiddenFiles": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1322,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "retainedPriorEvidence": {
+    "frontendUnits": 994,
+    "backendConnectionForbiddenUnits": 573,
+    "productionLintBuildHistory": true,
+    "rerun": false
+  },
+  "preparedNative": {
+    "cases": 4,
+    "typechecked": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "capturesExecuted": false,
+    "fullJourneysAccepted": false
+  },
+  "frozen": {
+    "inputs": 254,
+    "drift": 0,
+    "mainUnchanged": true
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Broader historical Deal/ownership/recovery review paths",
+    "Actual native/device/zoom/focus/SQL/AV/private transfer/security/CI/AFTER/product gates",
+    "Migrations0036/0037 and remaining field/job/alias/selectors"
+  ],
+  "status": "Prepared native source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/tests/review/inventory-design.chrome.spec.ts",
+      "bytes": 19355,
+      "sha256": "a858f31d51f316f1aa6d7e8ca2d821ae383ad004de00b8b822b44f47142cdc21"
+    }
+  ]
+}

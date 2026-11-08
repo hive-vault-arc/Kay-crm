@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "b45f366",
+  "scope": "Selected public intake card, exact-byte receipt controller and two fixed public simulator assets",
+  "checks": [
+    { "command": "./.venv/Scripts/python.exe -m ruff check app/intake/simulator.py tests/test_intake_workspace_unit.py tests/unit_selection.py", "cwd": "backend", "exitCode": 0 },
+    { "command": "./.venv/Scripts/python.exe -m ruff format --check app/intake/simulator.py tests/test_intake_workspace_unit.py tests/unit_selection.py", "cwd": "backend", "exitCode": 0 },
+    { "command": "./.venv/Scripts/python.exe -m mypy app/intake/simulator.py", "cwd": "backend", "exitCode": 0, "appModules": 1 },
+    { "command": "./.venv/Scripts/python.exe -m tests.unit_runner", "cwd": "backend", "exitCode": 0, "passed": 376, "deselectedIntegration": 696, "newCases": 13 },
+    { "command": "npm run test:unit", "cwd": "frontend", "exitCode": 0, "passed": 290, "failed": 0, "newCases": 7 },
+    { "command": "npm run lint", "cwd": "frontend", "exitCode": 0, "semanticGlyphs": 62, "iconConsumers": 88, "iconSites": 309, "buttonSites": 449, "violations": 0 },
+    { "command": "npm run typecheck", "cwd": "frontend", "exitCode": 0 },
+    { "command": "npm run build", "cwd": "frontend", "exitCode": 0, "next": "16.4.2" },
+    { "command": "node .github/scripts/repository-check.mjs", "exitCode": 0, "indexedFiles": 8712, "forbiddenOrOversized": 0, "ignoreProbes": 14 },
+    { "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly", "exitCode": 0, "sprints": 22, "links": 1242, "acceptanceMappings": 42, "mermaidSources": 13, "apiJsonExamples": 12 },
+    { "command": "git diff --cached --check", "exitCode": 0 }
+  ],
+  "source": {
+    "reference": "Frozen data-operations.js websitePage login-card composition,84px logo and public receipt-only flow",
+    "prototypeInputs": 254,
+    "drift": 0,
+    "backgroundBytes": 1469089,
+    "proxyResponseCap": 2000000,
+    "compiledLogoWidthUtility": true,
+    "newCssDependenciesChartsOrPublicApiGrants": false,
+    "proposal": "Shared selected auth-card geometry without staff controls; real message remains optional; native/owner review pending"
+  },
+  "publicAssetAllowlist": ["/images/workspace/kay-logo.svg", "/images/workspace/kay-pearl-atmosphere.png"],
+  "invariants": ["Fixed verified loopback proxy; exact Host, no redirect/environment proxy or forwarded identity", "No staff APIs, raw payload storage/URLs or public CRM details", "Exact unknown/rate-limited retry body/submission/time", "Definitive422/413 alone release an editable corrected send", "Known receipt-ID binding and status-only refresh", "Queued/failed cannot restart; processed permits explicit new request", "Unmount abort and synchronous late duplicate protection", "HMAC/source/routing/outbox/atomic receipt contracts unchanged"],
+  "correctedAttempts": ["Scoped Ruff format check required formatting the new synthetic test", "A documentation patch with mismatched context failed without a file change"],
+  "notRun": ["Browser/CUA/CDP/app HTTP under the existing automatic app-access rejection", "Actual signed public submission/worker/DB/revocation/race/load", "Native desktop/phone/zoom/touch/focus/accessibility and AFTER", "Real source configuration/key/CLI/service/data", "Owner review and main CI/promotion"],
+  "preserved": ["Source signing/private configuration and PostgreSQL worker flow", "Frozen prototype, approved stack and dependencies", "Unrelated35-line lesson change and motion plan", "main, push, merge and production"],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

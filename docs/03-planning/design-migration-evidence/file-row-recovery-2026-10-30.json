@@ -1,0 +1,244 @@
+{
+  "date": "2026-10-30",
+  "branch": "codex/redesign",
+  "base": "afad3c17a259306ae79a40513dbe98bdfb2930a9",
+  "scope": "Selected document row command ownership, retained recovery and current private blob handoff",
+  "checks": [
+    {
+      "command": "node --test tests/unit/file-row.test.mjs",
+      "cwd": "frontend",
+      "phase": "before fix",
+      "exitCode": 1,
+      "failed": 2,
+      "observed": [
+        "Disposed delivery has no owned cancellation/live handoff guard",
+        "New optimistic-version key discards archive recovery"
+      ]
+    },
+    {
+      "command": "Scoped file row tests",
+      "phase": "hydration integration",
+      "exitCode": 1,
+      "observed": "Stale hydration fixture must render changed state; owner checks now use live hydration binding"
+    },
+    {
+      "command": "npx --prefix frontend eslint <sources> --max-warnings=0",
+      "phase": "root-cwd invocation",
+      "exitCode": 2,
+      "observed": "No root ESLint config; not an application gate"
+    },
+    {
+      "command": "Frontend-scoped ESLint on row sources/tests",
+      "phase": "initial",
+      "exitCode": 1,
+      "observed": "One state-in-effect/cache reset error and one delivery predicate dependency warning; corrected with render-state reset/stable ref-based callback"
+    },
+    {
+      "command": "node --test tests/unit/file-row.test.mjs tests/unit/document-upload.test.mjs tests/unit/workspace-interactions.test.mjs",
+      "cwd": "frontend",
+      "phase": "before final worker-result case",
+      "exitCode": 0,
+      "passed": 29
+    },
+    {
+      "command": "node --test tests/unit/file-row.test.mjs",
+      "cwd": "frontend",
+      "phase": "before stale analysis-error correction",
+      "exitCode": 1,
+      "tests": 10,
+      "failed": 1,
+      "observed": "Fresh clean AV state at unchanged document counter leaves old in-progress error visible"
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "phase": "final",
+      "exitCode": 0,
+      "passed": 994,
+      "additionalCases": 10,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "phase": "final",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 106,
+      "iconSites": 349,
+      "buttons": 526,
+      "buttonFiles": 161,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true
+    },
+    {
+      "command": "Frontend Taste lint.mjs <3 row/panel sources> --app --json",
+      "exitCode": 0,
+      "files": 3,
+      "findings": 0,
+      "boundary": "Static only"
+    },
+    {
+      "command": "Backend",
+      "executed": false,
+      "productionChanged": false,
+      "retainedPriorConnectionForbiddenUnits": 573
+    },
+    {
+      "command": "Frozen/main/protected review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9051,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1316,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "phase": "initial",
+      "exitCode": 2,
+      "observed": "Extracted panel retained an extra blank EOF line; trimmed with identical TypeScript output"
+    },
+    {
+      "command": "TypeScript output before/after EOF-only trim",
+      "exitCode": 0,
+      "identical": true
+    },
+    {
+      "command": "git diff --cached --check",
+      "phase": "final",
+      "exitCode": 0
+    }
+  ],
+  "fieldMap": {
+    "archive": "Original reviewed document/body/expected counter/key, explicit confirmation",
+    "analysis": "Original pending scan action/counter/key; current AV result supplies actual state",
+    "receipt": "Existing FileReceipt current scoped view; exact metadata/ID and minimum counter beyond original",
+    "completion": "Fresh same-actor proof/protected current read and original awaited callback",
+    "collection": "Identity key, retained same-page rows and protected missing rows; guarded paging, server totals retained",
+    "delivery": "Exact original clean version, validated permit/counter, MIME/size, fresh actor/current document and live browser handoff"
+  },
+  "behavior": [
+    "Original commands survive newer or missing list rows, unknown results and later409",
+    "Acknowledged recovery reads/hands off without another write",
+    "Known denial masks cached private context and gives generic recorded notice when appropriate",
+    "Disposable grant/bytes/read lifetime rejects stale/aborted/disposed/changed-actor handoff",
+    "Read-only delivery remains; preview URLs revoke on close/unreadability/disposal",
+    "Current worker result retires obsolete in-progress error without fabricated counter or AV verdict",
+    "Selected list/phone tonal rows/classes/glyphs/confirmation and backend API/AV/grant rules preserved"
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/file-row-recovery.spec.ts",
+    "cases": 2,
+    "widths": [
+      390,
+      1440
+    ],
+    "typechecked": true,
+    "listedOrImportedViaPlaywright": false,
+    "executed": false,
+    "requiredRealFlow": "Actual isolated upload, AV, archive and current empty-page read; response interruption only",
+    "artifactPolicy": {
+      "trace": false,
+      "video": false,
+      "screenshot": false
+    },
+    "actualTransferScannerRevocationAcceptance": false
+  },
+  "skills": {
+    "frontendTaste": "Relevant app-screen truthful statuses/action grouping within selected rows",
+    "staticAudit": true,
+    "nativeInspection": false,
+    "unavailableOriginalMachineSkillsNotClaimed": true,
+    "afterTimingUnchanged": true
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Older file native helpers/Contact tab paths and wider consumers",
+    "Actual SQL/native/device/focus/zoom/worker/AV/private-transfer/session/race/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Remaining exact field/job/alias reconciliation"
+  ],
+  "status": "File-row source checkpoint; full redesign goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5614,
+      "sha256": "dc43e6f6544a4110dda3a55606467faf004ea353cae61a0ad1bb92423f504a3b"
+    },
+    {
+      "file": "frontend/src/features/files/file-panel.tsx",
+      "bytes": 17681,
+      "sha256": "defe9d841112a2a9e77061a78b61fd5551a58a9b5211925050a35ef4a5c6a151"
+    },
+    {
+      "file": "frontend/src/features/files/file-row.tsx",
+      "bytes": 7194,
+      "sha256": "76be1c881f6e504ccf4a2345f75f9581c2a004a5f3a67c0c373d3a7cbeb15d85"
+    },
+    {
+      "file": "frontend/src/features/files/use-file-row-actions.ts",
+      "bytes": 12797,
+      "sha256": "3ab77cd4c9a6c0453d5671ce832b255775c4a2fdfbb07845fa042b16df061630"
+    },
+    {
+      "file": "frontend/tests/unit/file-row.test.mjs",
+      "bytes": 16297,
+      "sha256": "2b2c38e3faff814410f8cc17444b2dcccc9a515fe26c954268d1edf216d40f5e"
+    },
+    {
+      "file": "frontend/tests/unit/document-upload.test.mjs",
+      "bytes": 11876,
+      "sha256": "7ec69869492497dee328103e323cd7c9fba9e58e4f34be92ff6da88eb6704e73"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 33599,
+      "sha256": "5592c499f7c1f38651fef25cd41ffdadb9dfb6cf325521db5c87fe2edce324d1"
+    },
+    {
+      "file": "frontend/tests/e2e/file-row-recovery.spec.ts",
+      "bytes": 4332,
+      "sha256": "3287fa66fc3d69077a7ab8838e5419ea7a29a22f8d9bd970cf6dca3ba89e7413"
+    }
+  ]
+}

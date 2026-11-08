@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-26",
+  "branch": "codex/redesign",
+  "previous": "ac2001e",
+  "scope": "Deal workspace/status/stock dialog composition and existing-role Finance drawer; full migration in progress",
+  "checks": [
+    {
+      "command": "npm run lint",
+      "result": "passed; 59 icons / 394 Button sites / zero violations"
+    },
+    {
+      "command": "npm run test:unit",
+      "result": "112 passed"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed; Next 16.4.2 including fresh TypeScript"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "sha256": "cd54ac6f1730d0aee60b5034194759528c82446e4efada76023bbfc770c369c5",
+      "path": "branding/prototype/kay-glyphs.json"
+    },
+    {
+      "sha256": "6a0640b2495d4cd2fcb6f65aff20d917b5f04108c8d39dc3c8ae0a5706dcc924",
+      "path": "frontend/src/components/icons/index.tsx"
+    },
+    {
+      "sha256": "84ce8c4d9837aef168ba018e2b3c24cc50817f49ab255674789f5fb796d68c19",
+      "path": "frontend/src/components/ui/button-actions.ts"
+    },
+    {
+      "sha256": "abfb03073c394bceca66d067297638f11e9f6440c7c729926f56ab2bad9dde31",
+      "path": "frontend/src/components/shared/record-status-menu.tsx"
+    },
+    {
+      "sha256": "d1b4530e9f46cf96a03b60e38ac69a01c4670e3a074e92a8e50110065116d5d2",
+      "path": "frontend/src/features/deals/deal-record.tsx"
+    },
+    {
+      "sha256": "3204dc60e274f314f915ac6942fe6261de129e596f48dfd64b09fa79d104c2ad",
+      "path": "frontend/src/features/deals/deal-workspace.tsx"
+    },
+    {
+      "sha256": "0ecc95d70912619c8dd34f0327fe944533bcbea029e5b34401816875f35cf69b",
+      "path": "frontend/src/features/deals/deal-stage-menu.tsx"
+    },
+    {
+      "sha256": "cccee76933527985ca8df8e8a3ff3bce8d43d2aa001173f90e03f8bbf2de97be",
+      "path": "frontend/src/features/deals/reservation-panel.tsx"
+    },
+    {
+      "sha256": "e6a3c5907e1be6584cfea4fe4952a9070d4440fe220d38851ceaeb29345ead85",
+      "path": "frontend/src/features/deals/outcome-panel.tsx"
+    },
+    {
+      "sha256": "19cc8c073111ed5db13cb5e19ade1c6faa29abea86a9bd6893bbec26d6df4576",
+      "path": "frontend/src/features/finance/finance-panel.tsx"
+    },
+    {
+      "sha256": "4badd911974f1e90aced6bb0ba4b8843f93f20ace7097e45c433c94e667f8c64",
+      "path": "frontend/tests/unit/workspace-interactions.test.mjs"
+    }
+  ],
+  "security": "Scoped source/contract review in docs/SECURITY_CHECK.md; existing versioned and reviewed commands retained; no backend/facade change",
+  "limitations": [
+    "No app HTTP/native browser access",
+    "No new database/worker/scanner/private-byte/real stock-race or release security acceptance",
+    "Final copied-ID, keyboard/focus/touch/zoom and native fidelity verification pending",
+    "Exact remaining inline/forms/PDF parity and other modules incomplete",
+    "No push/main change/merge"
+  ]
+}

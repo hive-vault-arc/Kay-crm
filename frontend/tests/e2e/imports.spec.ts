@@ -1,5 +1,5 @@
 import { test, expect, clearActorContext, removeActor, signIn, type TestActor } from "../helpers/auth";
-import { confirmImport, csv, csvRow, importFixture, prepareCorrected, selectCsv } from "../helpers/imports";
+import { confirmImport, csv, csvRow, expectImportCounts, importFixture, prepareCorrected, selectCsv } from "../helpers/imports";
 import { staffCommand } from "../helpers/leads";
 
 test("SP18 AT-20/23: mixed CSV, corrected file, row/fallback agents, atomic result and role denial", async ({ page }) => {
@@ -8,10 +8,10 @@ test("SP18 AT-20/23: mixed CSV, corrected file, row/fallback agents, atomic resu
     const data = await importFixture(page, actors);
     await expect(page.getByRole("button", { name: "Envoyer et prévisualiser", exact: true })).toBeDisabled();
     await selectCsv(page, csv([csvRow("+212600000001", "", ""), csvRow("+212600111001", data.agent.email), csvRow("bad-phone", data.agent.email)]));
-    await expect(page.getByText("1 à créer ; 1 ignorée(s) ; 1 à corriger ; 0 créée(s).", { exact: true })).toBeVisible();
+    await expectImportCounts(page, 1, 1, 1, 0);
     await expect(page.getByRole("button", { name: "Approuver l’import", exact: true })).toBeDisabled();
     await prepareCorrected(page, data.agent, data.other); const bid = new URL(page.url()).searchParams.get("batch")!;
-    await expect(page.getByText("2 à créer ; 1 ignorée(s) ; 0 à corriger ; 0 créée(s).", { exact: true })).toBeVisible();
+    await expectImportCounts(page, 2, 1, 0, 0);
     const approve = page.getByRole("button", { name: "Approuver l’import", exact: true });
     await approve.click();
     const back = page.getByRole("alertdialog").getByRole("button", { name: "Revenir à l’aperçu", exact: true });
@@ -26,7 +26,7 @@ test("SP18 AT-20/23: mixed CSV, corrected file, row/fallback agents, atomic resu
     await clearActorContext(page); await signIn(page, data.agent); await page.goto("/leads"); await expect(page.getByRole("link", { name: "Importer des contacts", exact: true })).toHaveCount(0);
     expect((await page.request.get(`/api/v1/imports/${bid}`)).status()).toBe(403);
     await page.goto(`/leads?view=import&batch=${bid}`); await expect(page.getByRole("alert").filter({ hasText: "opération n’est pas autorisée" })).toContainText("opération n’est pas autorisée"); await expect(page.getByText("SP18 second contact", { exact: false })).toHaveCount(0);
-  } finally { await clearActorContext(page); for (const actor of actors) await removeActor(actor); }
+  } finally { try { await clearActorContext(page); } finally { for (const actor of actors) await removeActor(actor); } }
 });
 
 test("SP18 AT-21: committed-response loss replays same key and a concurrent phone claim requires repreview", async ({ page }) => {
@@ -44,7 +44,7 @@ test("SP18 AT-21: committed-response loss replays same key and a concurrent phon
     const claim = await staffCommand(page, "contacts", { name: "SP18 numéro revendiqué séparément synthétique", type: "person", phones: [{ number: "+212600111003", label: "", is_primary: true }], emails: [], roles: ["buyer"], primary_agent_id: data.agent.id }); expect(claim.status()).toBe(200);
     await confirmImport(page); await expect(page.getByText(/Import annulé intégralement/)).toBeVisible();
     const before = await (await page.request.get(`/api/v1/imports/${raceBatch}`)).json(); expect(before.items.every((row: { contact_id: string | null }) => row.contact_id === null)).toBe(true);
-    await page.getByRole("button", { name: "Générer un nouvel aperçu", exact: true }).click(); await expect(page.getByText("0 à créer ; 1 ignorée(s) ; 0 à corriger ; 0 créée(s).", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Générer un nouvel aperçu", exact: true }).click(); await expectImportCounts(page, 0, 1, 0, 0);
     await confirmImport(page); await expect(page.getByText("Import approuvé : 0 contact(s) créé(s), 1 ligne(s) ignorée(s).", { exact: true })).toBeVisible();
-  } finally { await clearActorContext(page); for (const actor of actors) await removeActor(actor); }
+  } finally { try { await clearActorContext(page); } finally { for (const actor of actors) await removeActor(actor); } }
 });

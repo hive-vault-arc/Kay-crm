@@ -23,6 +23,7 @@ from app.schedule.contracts import (
     VisitAction,
 )
 from app.schedule.local_time import resolve_local
+from app.schedule.presentation import notes_projection
 from app.schedule.queries import availability, colleagues, detail, read_policy, read_visits
 from app.schedule.rules import ZONE
 
@@ -38,6 +39,7 @@ def calendar_context(request: Request, token: Proof) -> dict[str, object]:
         "today": datetime.now(UTC).astimezone(ZONE).date().isoformat(),
         "time_zone": "Africa/Casablanca",
         "tzdata_version": version("tzdata"),
+        **({"notes_supported": True} if notes_enabled(request) else {}),
     }
 
 
@@ -54,6 +56,10 @@ def local_time(request: Request, token: Proof, local: str) -> dict[str, object]:
 def no_query(request: Request) -> None:
     if request.query_params:
         raise IdentityError("VALIDATION_ERROR", 422)
+
+
+def notes_enabled(request: Request) -> bool:
+    return request.headers.get("X-Kay-Visit-Notes") == "1"
 
 
 def mutate(
@@ -94,7 +100,9 @@ def visits(
     request: Request, token: Proof, query: Annotated[CalendarQuery, Query()]
 ) -> dict[str, object]:
     validate_query(request)
-    return read_visits(configuration(request)[0], token, query)
+    return notes_projection(
+        read_visits(configuration(request)[0], token, query), enabled=notes_enabled(request)
+    )
 
 
 @router.post("/visits")
@@ -105,13 +113,17 @@ def create(request: Request, token: Proof, key: RetryKey, body: NewVisit) -> dic
 @router.get("/visits/{vid}")
 def visit(request: Request, token: Proof, vid: UUID) -> dict[str, object]:
     no_query(request)
-    return detail(configuration(request)[0], token, vid)
+    return notes_projection(
+        detail(configuration(request)[0], token, vid), enabled=notes_enabled(request)
+    )
 
 
 @router.get("/visits/{vid}/history")
 def history(request: Request, token: Proof, vid: UUID) -> dict[str, object]:
     no_query(request)
-    return detail(configuration(request)[0], token, vid, history=True)
+    return notes_projection(
+        detail(configuration(request)[0], token, vid, history=True), enabled=notes_enabled(request)
+    )
 
 
 @router.patch("/visits/{vid}")

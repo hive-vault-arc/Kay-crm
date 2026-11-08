@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-27",
+  "branch": "codex/redesign",
+  "base": "083e394",
+  "scope": "Selected Projects home for project/linked inventory context and customer proposals, compact collection and focused managed proposal editor",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 403,
+      "failed": 0,
+      "newRegisteredCases": 18
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticGlyphs": 63,
+      "iconConsumers": 96,
+      "iconSites": 332,
+      "buttonSites": 474,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "node .git/codex-customer-proposals-source-check.cjs",
+      "exitCode": 0,
+      "prototypeInputs": 254,
+      "prototypeDrift": 0,
+      "compiledManagedFormGrid": true,
+      "compiledSharedFooter": true,
+      "compiledPhonePair": true,
+      "compiledDisclosureTouchTarget": true,
+      "compiledHiddenImportant": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8757,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "links": 1249,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiJsonExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "source": {
+    "reference": "Frozen record-tabs-ui.js, records.js, record-groups.js and parity-ui.js",
+    "proposal": "Selected Projets tab holds project/linked inventory context, discussed/visited projects and proposals; desktop table/phone cards, neutral badges, conditional disclosure and one focused editor keyed by original proposal identity",
+    "runtimeKitDependencyChartThemeCssOrBackendChange": false
+  },
+  "invariants": [
+    "Exactly four main Deal tabs; project editor, linked inventory summary and proposals are not duplicated in overview; existing Finance entry remains",
+    "Scoped server totals/numbered pages; desktop table and phone/drawer cards; empty later pages retain an escape without unnecessary one-page footer",
+    "Existing positive exact MAD strings, original sale/month/year periods, dates/conditions/status and current context-coherence rules",
+    "Acceptance does not close/reserve/change stock, expire automatically or enforce one accepted proposal; backend/current Contact scope remains authoritative",
+    "Existing MutateDeal/useDealCommand locks and unchanged path/method/body key; edit retains both proposal and Deal versions",
+    "Selection lives outside table refreshes; original identity key and captured baseline survive incoming rows/revisions without switching edit to creation",
+    "Unknown acknowledgement or reload loss retains exact retry; defensive thrown mutation failure cannot offer an ambiguous-result version rebase",
+    "Current comparison reads only existing Deal and scoped paged proposal routes, brackets Deal revision and rejects foreign/malformed/nonprogressing/missing data",
+    "Explicit keep adopts both current versions; reload is discard-guarded; closed/archived contexts cannot authorize keep",
+    "Current denial clears private lists/fields before fresh retry; comparison abort/busy release and late-success suppression preserve departure",
+    "No private fields/retry proofs enter storage/logs/URL payloads; optional shared heading ref provides a surviving focus fallback without changing other sections"
+  ],
+  "correctedAttempts": [
+    "The first ContactSummary fixture included full Contact provenance fields; strict rejection was retained and the synthetic summary corrected",
+    "A synthetic JSX text walker inserted an extra inter-node space; its amount assertion normalized whitespace rather than altering money formatting",
+    "A multi-file documentation patch guessed an old heading and was rejected without writes; the actual heading was read before reapplying",
+    "Source recovery review separated thrown command failure from current-read failure so uncertain creation cannot be rebased into a duplicate",
+    "Fidelity review retained the frozen neutral proposal badges and moved the existing project/linked stock context alongside proposals",
+    "Cached diff check found a redundant blank line at the extracted facts file EOF; trimmed and restaged before the successful final check"
+  ],
+  "preparedBrowser": [
+    "frontend/tests/e2e/customer-proposals.spec.ts:1440/390, Projects deep link/four tabs, create/discard retention, accepted proposal with no Deal outcome/reservation, concurrent edit/current comparison, exact amount/period/date and phone/table presentation; not executed"
+  ],
+  "remaining": [
+    "PDF layout/original-styled provenance, finance and per-field context work plus all remaining P0-P8 reconciliation",
+    "Older Deal/Contact/pipeline browser helpers and legacy same-document history fallback",
+    "Existing automatic app-access rejection: no browser/CUA/CDP/app HTTP attempt",
+    "Native desktop/phone/focus/touch/zoom/accessibility/AFTER, real current-role/stock/merge/race/SQL/full-stack/CI and owner review"
+  ],
+  "preserved": [
+    "All254 frozen prototype inputs",
+    "Backend/API/schema/services/data/migrations/private configuration",
+    "Unrelated35-line lesson change and motion plan",
+    "main, push, merge and production"
+  ],
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1"
+}

@@ -1,5 +1,168 @@
 # HTTP contracts for `/api/v1`
 
+Inventory detail correction, 2026-11-07: property and development detail GETs
+include the existing exact-offering `target` projection on their current offers.
+Its shared inventory identity, level and target/development versions match the
+external stock-review response. Owner identities and private contact fields are
+not copied into this projection. List/summary reads retain their existing bounded
+shape and query cost. Mutation DTOs, server authority and stock fingerprints stay
+unchanged; no migration is added for this response correction.
+
+Selected affair forms,2026-10-29: existing manual creation and atomic affair/
+optional-contact PATCH DTOs, separate versions and result remain unchanged.
+Client recovery owns original body/context/key, same originating actor/role,
+acknowledged current affair/contact reads and explicit known-conflict reload.
+Canonical/closed reads are read-only; prefill search/offering IDs must match.
+No endpoint, backend permission, receipt retention, atomicity or history change.
+[Integration](deal-form-recovery-local.md).
+
+Selected prospect conversion,2026-10-28: existing versioned enquiry conversion
+POST and result DTO remain unchanged. Original body/key survive unknown outcome;
+acknowledged completion uses fresh identity plus existing scoped enquiry/affair
+GETs to prove the destination relationship before navigation. Invalid proposal
+result fields/foreign receipts cannot redirect. Known conflicts require explicit
+current source reload; canonical/archived/converted results are read-only.
+No new endpoint, backend permission, receipt retention, atomicity or history rule.
+[Integration](prospect-conversion-recovery-local.md).
+
+Selected prospect creation,2026-10-28: existing atomic enquiry POST, contact-mode
+XOR, source-submission UUID and bounded replay/authority contracts are unchanged.
+The client retains original body/key after unknown dispatch, binds current
+originating actor/role and verifies source/submission/creator/explicit contact
+before navigation. Acknowledged completion cannot POST again; known duplicate
+reuse reads the currently accessible canonical contact explicitly. No endpoint,
+backend permission, receipt retention, merge or history change.
+[Integration](prospect-creation-recovery-local.md).
+
+Selected full prospect editor,2026-10-28: existing atomic enquiry PATCH and
+optional complete `contact_fields`/contact version remain unchanged. The client
+retains original request identity after unknown dispatch and retries only reads
+after acknowledgement. Same-ID completion reads must meet the acknowledged
+contact version. Canonical Contact GET is preserved through current enquiry
+relationship proof and a read-only return path, without mutation retargeting.
+No endpoint, backend permission, receipt, transaction or merge-policy change.
+[Integration](prospect-editor-recovery-local.md).
+
+Selected prospect status/inline recovery,2026-10-28: existing enquiry PATCH DTO,
+atomic contact-field contract and endpoints remain. Current identity proof can
+be observed before dispatch through optional shared-command callbacks; original
+body/key ownership and saved-only completion are client responsibilities.
+Enquiry record GET/PATCH successes and VERSION_CONFLICT snapshots must echo the
+route enquiry ID. Contextual status/inline clients also bind contact identity;
+canonical Contact GET is retained. No backend permission/receipt/version change.
+[Integration](prospect-edit-recovery-local.md).
+
+Selected note/activity/assignment recovery,2026-10-28: existing POST routes and
+strict fields remain. Client ownership now pins original target/body/key and
+fresh same-actor/role proof after unknown dispatch; completion of a known saved
+receipt does not write again. Facade note receipts match route contact/action;
+enquiry-assignment receipts match their operation, with original contact checked
+in the contextual client. Activity responses remain ID-only. No backend endpoint,
+DTO, role, transaction, receipt-retention or messaging change.
+[Client/facade integration](entry-recovery-local.md).
+
+Selected contact/owner management recovery,2026-10-28: existing preview and
+assign/collaborators/archive/restore/merge routes retain their bodies, methods
+and backend policies. Facade/client reject incoherent impact IDs/versions/owner
+and confirmed target/operation. Canonical Contact GET remains valid; it cannot
+silently replace an editable mutation target. Exact unknown retry and saved-only
+completion preserve ordinary24-hour receipts; no endpoint/schema/backend change.
+[Client/facade integration](ownership-recovery-local.md).
+
+Selected unit/property listing workflow,2026-10-28: shared five-step
+creation/edit/review now covers rich unit facts, supported categories and real
+placement. BR-26 incomplete units can include known partial listing_details
+atomically; standalone rich-listing completeness and legacy bare-draft shapes
+remain. Supplied fields, holiday exclusion, apartment floor/type, same-programme/
+category, current authority, stock and exact draft-offer checks still apply. No
+new endpoint, migration, grant or stock transition.
+[Integration proposal and contract](unit-listing-workflow-local.md).
+
+Selected dossier directory filters,2026-10-28: enquiry list/export
+`assigned_agent_id=unassigned` is read-only and preserves Agent exclusion of
+unassigned enquiries. New `GET /enquiries/assigned-options` returns only current
+scoped assignee id/name pages, including inactive assignees; write assignment
+remains UUID-only. Affairs add independent inclusive creation-date bounds while
+retaining modification dates and unchanged response shapes.
+[Contract](dossier-directory-local.md).
+
+Selected Contacts directory,2026-10-28: exact GET Contacts opt-in
+`X-Kay-Contact-Directory:1` adds coherent page-bounded dossier counts.
+Responsibility/linked-dossier/role/creation filters and creation sort precede
+scoped count/page and flow unchanged through private filtered exports.
+`/contacts/responsible-options` reads only currently readable responsibility,
+including inactive staff; active assignment eligibility is unchanged. Legacy
+summary/list shapes and pre-extension export receipt hashes are preserved.
+[Contract](contact-directory-local.md).
+
+Selected programme phase,2026-10-28: optional nullable `phase` on existing
+programme create/edit preserves omission, stored values and old receipt identity;
+explicit null clears. Programme list alone accepts its bounded phase filter.
+Facade-owned `X-Kay-Development-Phase:1` negotiates complete nullable phase/
+support metadata and original history snapshots on exact programme GET paths;
+legacy strict shapes remain unchanged. No new endpoint, grant or stock transition.
+Migration0037 is prepared, not applied. [Contract](development-phase-local.md).
+
+Selected inventory ranges,2026-10-28: existing property/development/unit query
+fields now reach route/facade allowlists and real list predicates before
+counts/facets/pages. Exact same-offering sale/annual ordinary rent bounds retain
+BR-08; physical bounds apply only to properties/units, and whole-development
+bounds do not borrow child prices. No new endpoint, grant, migration or write.
+[Current contract](inventory-directory-local.md).
+
+Selected Recherches presentation,2026-10-27: the existing SP-10 endpoints,
+scoped Contact detail and contact timeline now supply a twenty-row card workspace
+with inline selections and one focused editor. Commands retain strict versioned
+POST/PATCH/DELETE, method/body/key replay and current scope. A new-offer comparison
+uses only its originally selected inventory page; retained entries use current
+requirement detail. No new endpoint, grant, schema, migration or backend rule.
+[Workspace and recovery contract](requirements-workspace-local.md).
+
+Selected Finance collection extension,2026-10-27: M/A-only
+`GET /deals/{id}/finance-history` returns numbered immutable revisions across
+that scoped Deal's commissions. The existing revision projection adds only
+`commission_id`/`deal_id` on this new route, retaining original actor/reason,
+exact decimal strings and authoritative server civil time. Count/page share a
+scoped join and stable timestamp/ID ordering; no write, new grant or migration.
+Legacy per-commission reads remain unchanged. Backend support precedes the new
+client; real SQL/HTTP/race acceptance remains pending.
+[Concrete workspace/transport contract](finance-workspace-local.md#dossier-financial-history-read).
+
+## Audit attribution choices, 2026-10-27
+
+The selected audit page adds M/A-only `GET /audit/actors` with bounded literal
+name search and numbered pages. It returns only typed user/source/unknown-author
+identity and display metadata represented in existing permitted history, not a
+staff/source directory. `GET /audit/events` additionally accepts exactly one of
+legacy `actor_id`, `website_source_id` or `unattributed_actor=true`. Its existing
+response fields, Casablanca bounds and role checks remain; missing attribution
+is labelled explicitly and never called a system actor without evidence.
+No business values, configuration/keys, retention command, migration or write.
+[Complete contract and rollout](discovery-contract.md#typed-attribution-lookup-2026-10-27).
+
+Selected prepared-PDF search extension,2026-10-27: exact GET `/search` accepts an
+optional bounded `X-Kay-Search-Version:2`. That mode adds generated_document hits
+with a catalogue title and a Lead/Deal Documents-tab destination. Legacy requests
+retain seven-kind/four-field shapes, with the same current template/parent
+visibility correction applied before all counts. The facade owns the opt-in;
+role/scope/version query overrides remain invalid. No byte URL, snapshot, write
+or migration is added. [Concrete transport/scope contract](discovery-contract.md#prepared-pdf-search-extension-2026-10-27).
+
+Selected dashboard data extension,2026-10-27: new facade-only GET
+/reports/workspace, /reports/workspace/records and /reports/workspace/agents
+provide bounded typed summaries, identical-source numbered headline records and
+scoped responsible choices. Existing reporting/finance endpoints are unchanged;
+current identity/contact scope precedes all filtering/counting. No write or schema
+migration. [Concrete definitions and limits](dashboard-workspace-local.md).
+
+Selected migration addendum,2026-10-26: visit create/edit accepts optional notes;
+omitted notes preserves the saved value and old receipt digest, while explicit
+empty clears. The server-facade opt-in X-Kay-Visit-Notes:1 exposes optional
+notes_supported:true on calendar/context and notes in visit metadata/original
+history snapshots. Legacy projections keep their existing strict shape; free/busy
+is unchanged. Existing current scope, versions, CSRF and terminal commands prevail.
+[Concrete compatibility/storage contract](visit-scheduling-local.md).
+
 ## Agent inventory photo uploads (2026-10-23)
 
 Local correction2026-10-24: photo document reads/create acknowledgements add an
@@ -62,7 +225,9 @@ requires complete canonical facets and preserves explicit empty selection.
 D38 extends `GET /visits` with exact unique CSV `types`/`statuses`, explicit-empty
 selection, pre-page filtering and scoped full-range counts. Busy intervals never
 return those counts and reject all type/status filters. Existing current-session,
-range, page bounds and authorization apply. The
+range, page bounds and authorization apply. A single authorized `contact_id`
+allows a range of up to 32 days for the dossier's Casablanca month view.
+Unscoped visit lists and free/busy remain bounded to eight days. The
 [scheduling contract](visit-scheduling-local.md) defines exact vocabulary and
 snapshot semantics; [evidence](../03-planning/calendar-reference-refresh.md)
 separates this local extension from full-product acceptance.
@@ -158,6 +323,13 @@ window, 8,192-byte and persistent rate bounds, strict role-free input, durable
 202, identical-byte replay and only receipt_id/state public output. No staff
 session is impersonated. Read projections allow null staff author only for a
 true source actor; manual source choices still exclude website.
+
+Selected form integration2026-10-28 exposes optional property_reference as
+enquiry text only. Its existing100-character and combined normalized4000-
+codepoint text bounds remain; the forbidden-control check now includes the
+reference. Local preparation additionally checks the existing raw UTF-8 cap,
+preserves exact unknown-retry bytes and adds no inventory/staff/source lookup.
+[Form boundary and pending native evidence](intake-form-local.md).
 
 SP-19's implemented scoped search, own-job CSV export/status, private single-use
 delivery, inventory archive/restore and M/A audit shapes are defined in
@@ -286,7 +458,8 @@ applicable. A development command receipt returns
 compatible. Replays recheck current authority and return no cached contact data.
 
 - `GET /developments`: numbered page/page_size (default50/max100), escaped `q`
-  over reference/name/location, category, offering_kind, state and stable sort
+  over reference/name/location, category=mixed|villa|house|apartment|land|commercial,
+  offering_kind, state and stable sort
   reference|-updated_at. Active summaries include separate `unit_count` and
   `available_unit_count` (each physical unit counted once), plus at most two
   current whole-development campaigns. Types and developments are not unit rows.
@@ -878,12 +1051,29 @@ Property photos are limited to 10 active image documents per physical property,
 whether standalone or a programme unit. The server counts legacy image
 attachments too, under the existing serialized create transaction, so concurrent
 requests cannot exceed the limit. A pending upload or rejected scan still uses
-one slot until archived. The UI accepts JPEG/PNG/WebP source images up to 20 MiB,
+one slot until archived. The UI accepts JPEG/PNG/WebP/HEIC/HEIF source images up to 20 MiB,
 re-encodes to WebP at quality0.82 with a 2560-pixel maximum side before sending
 any bytes, and publishes only WebP through the existing private transfer. The
 server validates actual WebP structure; scanning still gates all reads. Source
 metadata/EXIF are not copied by canvas re-encoding. Existing stored JPEG/PNG
 files are preserved and remain readable, not silently recompressed.
+
+The browser can select several photos without camera-only capture. Uploads are
+sequential, with selection progress and retry of only the failed/remainder queue.
+Selection cannot exceed remaining active slots; the server remains authoritative
+under concurrency. Native image decoding is preferred; a locally served HEIF
+decoder runs in a disposable worker only when needed. Cancellation, timeout and
+record navigation terminate fallback decoding; no original HEIF bytes reach the
+API. Private contact/Deal attachments accept bounded multi-file selection and
+convert HEIC/HEIF only; existing image and PDF/DOCX/XLSX bytes remain unchanged.
+The REST schema, permissions, scanner and one-use transfer contracts do not change.
+Within one mounted inventory gallery, thumbnails and the viewer share the bytes
+already downloaded for an immutable clean version. This avoids spending a new
+permit merely to enlarge or revisit the same image after a ten-photo batch.
+The cache is memory-only, pruned with the current gallery and cleared on leaving
+it; each object URL retains its component cleanup. An explicit failed-preview
+retry requests current authority and a fresh private transfer. No global cache,
+persistent browser storage, public file URL or replayed permit is introduced.
 
 Permit output: `permit_id`, transient `token`, `expires_at`, `version_id`,
 `document_version`, and exact configured FastAPI `transfer_url`. Two-minute,
@@ -1010,3 +1200,158 @@ the browser uses `noopener noreferrer` for opening them. New categories are
 standalone-only; holiday offerings are distinct from ordinary rental and do
 not enter existing Lead/Deal reservation or outcome flows. See the
 [field and scope contract](../03-planning/property-listing-fields-2026-10-22.md).
+
+
+## Affair action client recovery,2026-10-29
+
+The selected ordinary-transition, inline qualification and client-proposal
+controllers now retain an unknown command's original method/path/body/versions/
+key, with originating account/role proof. Acknowledged completion retries current
+identity/affair reads and UI handoff without another mutation. Result identity,
+proposal fields and newer submitted versions must agree; known conflicts require
+explicit accepted current comparison. The facade rejects a response for another
+requested record, parent mutation or edited proposal. Endpoints, backend grants,
+atomicity, history and bounded receipt retention are unchanged. See the
+[action contract](deal-action-recovery-local.md); stock/outcome reconciliation
+and actual SQL/native acceptance remain pending.
+
+
+## Dedicated stock action client recovery,2026-10-29
+
+Reserve/release/close/reopen retain their strict existing endpoints, reviewed
+versions, target/fingerprint and exact outcome fields. Their selected panels now
+share immutable original request/key and originating-account/role result recovery.
+Acknowledged completion passes the verified current affair into the prerequisite
+queue without another mutation or unowned reload. Outcome effects are bracketed
+by same-parent/version/offering reads; an incompatible current target or direction
+requires returning to the current fiche. No new stock or outcome rule, endpoint,
+grant, receipt retention or financial effect is introduced. See the
+[stock recovery contract](deal-stock-recovery-local.md). Actual SQL/concurrent
+stock/native acceptance remains pending.
+
+
+## External-stock client ownership and projection,2026-10-29
+
+The existing property/development external-result endpoints retain their reviewed
+versions/fingerprint, selected offering, date and shared explanation. The selected
+controller now pins original body/key/account/role; current M/A proof, exact
+target-kind/ID/offering receipt and newer target version precede current record/
+awaited UI handoff. Acknowledged failures retry completion without POST. Review
+facts are bracketed by coherent parent/offering reads; replaced/retired targets
+end read-only. Facade parent, stock-review and external-result identities must
+match the requested route/query/body. No new endpoint, backend permission, stock
+effect, receipt retention or financial effect. See the
+[external-result contract](external-stock-recovery-local.md); actual SQL/native
+acceptance remains pending.
+
+
+## Inventory record-form command ownership,2026-10-29
+
+Existing owners PUT, offering POST/PATCH, availability POST and block/floor/type
+POST/PATCH retain their exact payloads, parent/offering counters and role grants.
+The selected client now binds opening parent/item/actor, parses strict intent and
+retains original key/body/callback across unknown results. Matching newer receipts
+and scoped current records precede completion; acknowledged failures retry only
+completion. Known conflicts require explicit current comparison acceptance.
+Indirect offering/floor membership remains an existing UI/backend responsibility,
+without invented request fields. No new endpoint or backend effect.
+[Contract](inventory-record-command-recovery-local.md); actual SQL/native
+acceptance remains pending.
+
+
+## Programme editor client recovery,2026-10-29
+
+The existing development PATCH and strict expected-version/phase/promoter contract
+remain. A development-facts scoped intent now retains original request/key and
+awaited navigation callback. Current identity and exact receipt/current programme
+precede completion; acknowledged failure never repeats PATCH. Explicit comparison
+acceptance cannot downgrade a newly received parent version. Unchanged protected
+association omission, explicit dissociation null and selected promoter ID remain
+distinct; existing backend scoped-contact/version/marketability rules prevail.
+No new endpoint or grant. [Contract](development-edit-recovery-local.md); actual
+SQL/native acceptance pending.
+
+
+## Programme creation client ownership,2026-10-29
+
+The fixed development POST and strict creation fields retain existing nullable
+phase and promoter contracts. Original parsed body/key/callback are frozen after
+unknown dispatch; current originating identity, development/no-offering/initial
+counter receipt and matching current programme precede navigation. Acknowledged
+reads/UI failures retry completion only; known noncommitted reference/validation
+errors permit explicit correction. Existing scoped promoter and active-contact
+checks prevail. No new endpoint, grant or backend effect.
+[Contract](development-creation-recovery-local.md); actual SQL/native acceptance
+remains pending.
+
+
+## Property listing client recovery,2026-10-29
+
+Existing property POST/PATCH and unit placement contracts remain strict. The
+selected owner retains original body/key/callback across unknown outcomes, binds
+opening parent/edit ID and current originating identity, then verifies receipt/
+current record before navigation. Creation with an initial draft offer returns
+property counter2/offer counter1; without an offer the existing API returns1. Edit
+receipts have no offering and advance the selected property. Acknowledged failures
+retry completion only. Hierarchy/offering references must cohere; explicit current
+comparison/reload cannot lower a newer host counter or retarget a moved unit.
+No new endpoint/grant/backend effect. [Contract](property-listing-recovery-local.md);
+actual SQL/native acceptance pending.
+
+
+## Inventory lifecycle client completion,2026-10-29
+
+Existing property/development archive/restore POSTs retain strict expected_version
+and nonblank reason, current M/A authority and conservative stock/history rules.
+The selected client pins the opening operation and original key/body/callback;
+current identity and exact newer root/null-offering receipt/current record precede
+completion. The facade binds that receipt to the requested root/ID/counter. Exact
+receipt-version state is checked; later inverse actions do not erase history.
+Known conflicts require explicit current acceptance; blocked stock/state change
+ends read-only. No release/override, endpoint, grant or retention change.
+[Contract](inventory-lifecycle-recovery-local.md); actual SQL/native acceptance
+remains pending.
+
+
+## Prospect/affair lifecycle client completion,2026-10-29
+
+Existing enquiries/deals archive/restore POSTs keep strict expected_version/reason
+and their distinct assigned-agent/primary-agent authority. The selected client
+pins original operation/body/key/callback, requires current identity and binds
+receipt ID/newer counter in both facades. Matching current dossier and state at
+the exact receipt counter precede completion; later inverse actions retain
+historical completion. Acknowledged retry reads/completes only. Unknown replay
+does not require the obsolete pre-state; a conflict after ambiguous dispatch
+cannot prove noncommit after24-hour receipt pruning. Backend30-day restoration,
+contact state, reservation/visit/task blockers and immutable history remain.
+[Contract](record-lifecycle-recovery-local.md). No endpoint, grant, retention or
+backend change; actual SQL/native acceptance pending.
+
+
+## Financial client intent and completion proof,2026-10-29
+
+Existing create/recognize/commission correction/receipt/receipt correction POSTs
+retain their strict decimal-string schemas, nullable values and version targets.
+The selected owner binds exact routes/context/current originating M/A and freezes
+body/key/callback after unknown dispatch. Creation receipt version1 is distinct
+from expected_deal_version; other receipts bind exact commission ID/newer counter
+in the facade and owner. Current matching dossier/head/creator/action/actor/terms/
+reason/receipt proof precedes completion. Acknowledged retry only reads/completes;
+later historical revisions do not trigger another write. Explicit current
+acceptance cannot rebase unknown work, including409 after24-hour receipt pruning.
+No endpoint/grant/calculation/ledger/history/backend change.
+[Contract](finance-command-recovery-local.md); actual SQL/native acceptance pending.
+
+
+## Redesign commission creation start window,2026-10-29
+
+GET /deals/{id}/commission-creation-key adds a strict no-query/no-store M/A read
+for a writable dossier: exact deal_id/key/expires_at metadata, no stored fact or
+authority token. POST /deals/{id}/commissions checks retained actor/route/body
+receipts first, then requires a v7 key within a proposed five-minute start window
+for uncached creation. Missing legacy keys return FINANCE_CREATION_KEY_REQUIRED;
+expired/far-future keys return FINANCE_CREATION_KEY_EXPIRED, both409. Original
+24-hour replay/pruning, ordinary Deal counters/history and existing financial
+operations remain. Backend/frontend must roll out together; retained legacy
+receipts still replay. [Contract](finance-creation-keys-local.md). Real-stack
+acceptance remains pending.

@@ -1,0 +1,164 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/redesign",
+  "base": "0caa86114fa18b5580d16cd4aec312a436275d18",
+  "scope": "Selected Settings staff operation ownership, exact unknown-result recovery, acknowledged completion, actor/target-bound editor and facade replies; D37 and selected layout preserved",
+  "checks": [
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "passed": 585,
+      "additionalCases": 12,
+      "failed": 0,
+      "skipped": 0,
+      "boundary": "Synthetic in-memory hooks/facade and synthetic TLS units only; new staff-command suite explicitly registered."
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 104,
+      "iconSites": 345,
+      "buttonSites": 494,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "next": "16.4.2"
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0
+    },
+    {
+      "command": "Frontend Taste scripts/lint.mjs --app --json <5 changed UI sources>",
+      "exitCode": 0,
+      "files": 5,
+      "findings": 0
+    },
+    {
+      "command": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1267,
+      "acceptanceMappings": 42,
+      "mermaidSources": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 8871,
+      "forbiddenOrOversizedFiles": 0,
+      "ignoreProbes": 14
+    }
+  ],
+  "preparedNotRun": {
+    "browserFile": "frontend/tests/e2e/staff-recovery.spec.ts",
+    "browserCases": 2,
+    "typechecked": true,
+    "migratedBrowserSelectors": "frontend/tests/e2e/users.spec.ts"
+  },
+  "preserved": {
+    "selectedSettingsLayout": true,
+    "D37": true,
+    "initialPassword24Hours": true,
+    "firstOwnPasswordAndFreshLogin": true,
+    "backendAuthorityVersionLastAdminReceiptsHistory": true,
+    "privateCredentialsTransientOnly": true,
+    "noInventedStaffFilters": true
+  },
+  "protected": {
+    "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+    "mainChanged": false,
+    "frozenReferenceInputs": 254,
+    "referenceChanged": false,
+    "unrelatedLessonsAdditions": 35,
+    "motionNoteUnstaged": true
+  },
+  "notPerformed": [
+    "Actual app/browser/CUA/CDP/HTTP access or workaround",
+    "DB/service/worker/scanner/account/customer records/private configuration/import/export/transfer",
+    "Backend test rerun or behavior/schema change",
+    "Executed migrations0036/0037",
+    "Actual SQL/native/device/focus/zoom/visual/performance/CI/AFTER/product acceptance",
+    "Main/push/merge/deployment"
+  ],
+  "sourceFiles": [
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 4422,
+      "sha256": "edd3c386b021a8b0755cc81ea4ff68534f6cec1682f857db4f2b20fac8b1e92a"
+    },
+    {
+      "file": "frontend/src/features/users/api.ts",
+      "bytes": 806,
+      "sha256": "99d5d4c433f9dd4e76c3c00135e21648032c659fca0e255dd9f0b9c34a3ab660"
+    },
+    {
+      "file": "frontend/src/features/users/facade.ts",
+      "bytes": 3599,
+      "sha256": "53f3969cc8d1b7a4a42a0c13fb7f818143ccb9d6d0cb5241b21d88737763ba84"
+    },
+    {
+      "file": "frontend/src/features/users/staff-operation-scope.tsx",
+      "bytes": 1271,
+      "sha256": "f730398f819ce6e53b402aa8ef6fb355b1a1e2d22a47e4bd6f0907c1f8b9c0f1"
+    },
+    {
+      "file": "frontend/src/features/users/use-staff-command.tsx",
+      "bytes": 6388,
+      "sha256": "52c898e63f109d47d1c07001b22be7b2b9089ac265dfe81c473027f5fc027b8e"
+    },
+    {
+      "file": "frontend/src/features/users/user-actions.tsx",
+      "bytes": 7458,
+      "sha256": "b365ece0e919550afe8af58e6c973195f495555ba4959ac3d67dc02957bce376"
+    },
+    {
+      "file": "frontend/src/features/users/user-editor.tsx",
+      "bytes": 2381,
+      "sha256": "df01d2909e9d10d457a70d1d8615cf8ab51dbbdf1eb224a4fae875073057a879"
+    },
+    {
+      "file": "frontend/src/features/users/user-form.tsx",
+      "bytes": 9487,
+      "sha256": "1bba495df2a7ba4d9e1fa14f84e8700dc3648236a34179dac0427d40c83f6632"
+    },
+    {
+      "file": "frontend/tests/e2e/staff-recovery.spec.ts",
+      "bytes": 3870,
+      "sha256": "ce97de2322506e41ec66551f5fe15890bd374a72385dd68940c6e71fe9d27f76"
+    },
+    {
+      "file": "frontend/tests/e2e/users.spec.ts",
+      "bytes": 12441,
+      "sha256": "b13c00e868a1233d437a1cf0ad38149349dca54e0e98483ce5042afea3a830ab"
+    },
+    {
+      "file": "frontend/tests/unit/staff-command.test.mjs",
+      "bytes": 14764,
+      "sha256": "472d1dd6a272a16a9a4fe826020e7d94a09d411414acfaafc17b19552d249844"
+    },
+    {
+      "file": "frontend/tests/unit/settings-forms.test.mjs",
+      "bytes": 20266,
+      "sha256": "a302da1d33f341109ffa4dfbbfcb5500add7bafc4d76c2e503057fd4feb8b77d"
+    },
+    {
+      "file": "frontend/tests/unit/users.test.mjs",
+      "bytes": 5167,
+      "sha256": "89bb57f5527afd51251949fdfda0798c695c3a5f5704fb35773dcee743e7f7bb"
+    }
+  ]
+}

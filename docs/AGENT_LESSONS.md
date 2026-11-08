@@ -1,5 +1,31 @@
 # KAY agent lessons
 
+## Avoid size containment on interactive dossiers (2026-11-07)
+
+Inline-size containment on the dossier gave Chromium zero-sized tab/offer
+descendants despite nonzero outer geometry. Moving containment to a nested
+pane only moved the symptom. Use intrinsic fact-grid sizing for this layout;
+verify the original complete workflow after removing diagnostic style changes.
+Retain the successful creation drawer through close and return focus to a
+connected heading when its trigger becomes hidden. A style-mutated diagnostic
+pass, workstation-suspended run or build replaced under a running server is
+not release evidence.
+
+Use a short test-specific directory under the project output root for persistent
+Chrome profiles on Windows. Long generated per-test names can put the browser's
+Default/Preferences file beyond its supported path length even when navigation
+works. Keep the path containment checks and actual devicePixelRatio/viewport
+assertions; changing device scale alone is not a substitute for native zoom.
+
+## Recheck domain permissions before reusing a presentation flag (2026-10-26)
+
+D34 permits active agents to edit shared programme facts and create units. Keep
+that flag separate from M/A offering, legal-owner, attachment and archive rights;
+photo upload/resume also has its own current capability. A programme view test
+now exercises those distinctions and archived read-only behavior. A response
+enum does not establish a list filter: inspect the actual query model and route
+before exposing a choice such as mixed programmes in both UI and facade.
+
 ## Recovery controls must match the backend capability (2026-10-24)
 
 - Do not reuse an archive/manager flag for resuming an agent-owned upload.
@@ -1445,3 +1471,905 @@ for natural exit, assert the intended exit code, then close the terminal; retain
 forced cleanup for genuine failure. Never solve this by ignoring all cleanup
 errors or weakening hidden-password checks.
 
+## Resolve route-source paths before reading (2026-10-26)
+
+During the redesign migration, guessed feature folders and PowerShell bracket
+globbing caused repeated missing-file reads. Locate actual files with `rg --files`
+first, use the matching repository as the working directory, and pass Next route
+paths containing `[id]` to `Get-Content -LiteralPath`. Keep source inspections
+bounded so minified or long JSX lines do not hide the relevant output.
+
+## Preserve native-command failure boundaries (2026-10-26)
+
+PowerShell can continue into a passing check after a failed Node codemod, masking
+the earlier failure in the final exit code. Keep mutations and dependent checks
+in separate tool calls, inspect each result, or explicitly exit on a nonzero
+native status before proceeding. Keep single-file codemods scoped; use let only
+for intentionally reassigned task variables. A later green check does not prove
+that every earlier edit in a combined command ran.
+
+
+## Typed query contracts must remain real in controller tests (2026-10-26)
+
+A permissive mock accepted an undefined query path that the real useQuery API
+rejects. Read the actual hook signature before composing an optional read. Mount
+a small loader only when its real scoped path exists; keep parent search/form
+state mounted and never send a dummy path or UUID. Component-controller fixtures
+are useful behavioral evidence, but TypeScript/build checks are still required.
+
+
+## Controlled drafts need one owner across all live listeners (2026-10-26)
+
+When a form owns data-live-dirty, both the navigation listener and the optional
+live-update listener must respect it. Protect an in-flight managed command even
+when its values are unchanged, then release held reads after the busy/dirty
+lifetime ends or unmounts. Keep current authorization failures fail-closed and
+test the actual listeners/lifecycle; a disabled-live fixture alone misses this.
+
+
+## 2026-10-27 — Port the full CSS cascade and keep report-filter meanings distinct
+
+A frozen dashboard leaf stylesheet was insufficient evidence for the final target:
+a later mobile import overrides KPI columns, while a wide-screen rule changes
+card distribution. Inspect actual import order and all relevant media rules before
+porting geometry; preserve Bklit's square measuring canvas inside its cropped
+semicircle viewport. Current portfolio and immutable closing attribution also use
+different API parameters. Copy only declared keys when initializing a legacy
+report from a new context, normalize empty optional UUIDs before strict parsing,
+and exercise the actual component/controller boundary. Source checks do not replace
+rendered/real-stack verification.
+
+
+## 2026-10-27 — Keep search focus and query lifetimes explicit
+
+A preview can reopen itself when Escape returns focus to a field whose focus
+handler opens it. Suppress that return event, then clear the suppression. Before
+linked-result navigation opens an unsaved confirmation, keep or return focus to
+the surviving search field rather than a popup link that will unmount. Mount a
+preview read only for the open current query, and discard old results immediately
+while the replacement query debounces. Source/controller tests do not prove native
+focus, touch or viewport behavior.
+
+
+## 2026-10-27 — Apply file visibility to discovery, not only byte delivery
+
+A restricted PDF can leak through its filename or count even when download is
+correctly denied. Reuse the catalogue policy in search, histories, generic metadata
+and direct file authorization, before counting or paging. Keep a permission fix
+unconditional for legacy requests; version only the new response shape. Search
+known catalogue metadata, never generated field snapshots or PDF contents. SQL
+compilation/units do not prove real database scope or concurrency behavior.
+
+
+## 2026-10-27 — Freeze reviewed commands outside transient menus
+
+Do not rebuild an export body from live list props after confirmation opens.
+Snapshot the validated whole-result filters and displayed count, keep one retry
+key for that body after interruption, and require a new review for another body.
+Keep the confirmation owner outside a disposable utilities popup; its trigger
+can disappear on focus transfer. Provide the surviving menu's event-time focus
+callback through context; do not pass refs into render callbacks. Block navigation
+only while the command is outstanding. Tests must
+exercise changed props, duplicate events, interrupted retries and unmounts.
+Controller checks do not certify native popup/focus behavior or worker delivery.
+
+
+## 2026-10-27 — Filter audit attribution without inventing authors
+
+Build attribution options from the complete permitted audit history before
+counting or paging, not a staff directory or the current event page. Retained
+users and web sources keep separate typed IDs; missing attribution has no fake
+user ID. Null staff/source references do not prove that the system performed
+an action: display « Auteur non renseigné ». Preserve current role checks and
+immutable event fields. A denied lookup must hide the parent projection too;
+retry must not redisplay cached names before a fresh authorized response.
+Mark read-only filter/picker inputs as disposable UI so they do not create
+business drafts. SQL/controller checks do not certify real scope/race or UI gates.
+
+
+## 2026-10-27 — Keep an unknown import approval attached to its reviewed batch
+
+Freeze the import file/version/hash/fallback/counts when confirmation opens.
+A newer live projection cannot replace that command. After an interrupted
+approval, retain its original key/body even if a later read lacks that hash;
+block another file or mapping/preview/page action until a definitive result.
+Do not label timeout as rollback or display stale counts as a final outcome.
+A same-ID upload/preview retry needs an explicit report revision, and lookup
+denial must hide cached choices and the parent file/report before retry.
+Test changed projections, duplicate events, absent hashes and retained row IDs;
+synthetic controllers do not certify real atomicity or native focus/layout.
+
+
+## 2026-10-27 — Preserve the public simulator boundary when sharing design assets
+
+A shared form background or Brand component also needs its actual assets on the
+separate simulator origin. Allow only the exact required public filenames on
+the fixed frontend proxy; never add a general image/optimizer/private API relay.
+Test Host, query destinations, discarded identity headers and response limits
+without real source keys or app/database connections. Keep uncertain submission
+bytes stable, bind refresh to the known receipt ID and block late duplicate
+handlers after acknowledgement. Shared styling must not add staff controls or
+turn illustrative prototype validation into a different intake business rule.
+
+
+## 2026-10-27 — Treat browser traversal as a separate draft boundary
+
+Click/unload guards do not establish Back/Forward protection. Inspect the pinned
+router's restore listener and respect navigation cancelability; do not add fake
+history entries or copy framework-private state to obtain a passing fixture.
+Recheck busy commands at confirmation/resume, restore surviving markers after
+failed approved navigation and emit release only on success. Preserve hash-only
+movement without confusing identical-URL cached entries. Pin integration
+assumptions in meaningful tests, update explicit test-loader imports when shared
+helpers change and keep unsupported browsers/native gestures as open work.
+Synthetic event/state-machine checks are not native browser or cache evidence.
+
+
+## 2026-10-27 — Reuse an owner contact without replacing its identity
+
+Existing-owner/contact choice must read current canonical fields before a
+versioned role update. Never reuse a new-contact draft or its agent as the
+replacement body. Preserve methods, labels, primary flags, profile, other roles
+and provenance; a literal owner role is separate from legal-property links or
+owner-directory membership through current/former links. Require explicit
+conflict choices and reject a foreign current snapshot. Retain inactive drafts
+across mode changes without making empty mode/search into an edit. Test stale
+lookup abort, validation races, role no-op, denial and full field preservation;
+synthetic form checks do not certify backend scope or native drawer behavior.
+
+
+## 2026-10-27 — Keep complete owner sets and register new verification cases
+
+A full-list replacement must never be built from a projection that omitted
+protected/null identities. Keep that projection read-only until a fresh authorized
+read is complete; do not invent hidden link/contact IDs. Conflict review must
+show the actual current set/item before a deliberate rebase, with a warning for
+concurrent links that a replacement would remove. A parent version alone does
+not display an edited hierarchy item's current values: use its existing paged
+collection and reject a changing parent snapshot.
+
+This frontend unit command has an explicit file list in scripts/test-facade.mjs.
+A new passing standalone test file is not part of the broad gate until registered.
+Check the final case count and rerun that real gate after registration; never
+report the unchanged old total as coverage of the new cases. Prepared native
+journeys and compiled CSS checks remain distinct from executed browser evidence.
+
+
+## 2026-10-27 — Metadata acknowledgement is not a completed file workflow
+
+A managed upload must keep its dirty marker until the full transfer is accepted;
+shared command helpers cannot clear it after metadata reservation alone. Keep
+exact parent/resume/source/converted bytes/key across an unknown response and
+freeze file replacement until success or explicit discard. Read current matching
+metadata/capability before a new permit; a lost transfer acknowledgement may
+already be pending, clean or rejected and must not create a duplicate version.
+Existing-row upload capability is distinct from this form's own accepted creation.
+
+Cancellation must cover body consumption as well as response headers, release
+its timer/listeners, and not assume AbortSignal.any exists. Tests need stable
+attempt context and the runtime globals used by actual modules. Prepared browser
+cases, compiled geometry and private-URL lifecycle units are not native transfer,
+current-permission, scanner, slot-concurrency or human visual evidence.
+
+
+## 2026-10-27 — Owner membership and preview authority are separate from role badges
+
+A linked owner need not have the literal owner role. Keep the backend role OR
+current/former legal-link directory predicate, and reuse the complete canonical
+Contact controller for preview, routed and drawer identity edits. A compact
+primary display must not replace the full methods collection during a save.
+Use the current authorized read for private drawer titles, and propagate current
+denial from portfolio and management reads/commands to that same boundary.
+
+Portfolio counts describe actual link lifetimes, not deduplicated asset names.
+Keep link dates and an empty-page escape while showing the portfolio once.
+Static JSX harnesses also see closed portal slots: test actual failure/state and
+denial propagation without treating every inactive slot as visible browser UI.
+Use absolute paths for scripted edits after changing cwd. Registered units,
+compiled CSS and frozen hashes remain distinct from native visual/focus evidence.
+
+
+## 2026-10-27 — A stock conflict cannot switch an edit to another campaign
+
+Keep the original campaign ID fixed while comparing the current parent record.
+Adopt both reviewed versions only after an explicit choice, and reject replaced,
+foreign, archived or engaged stock as an editable baseline. Missing old stock is
+not permission to create a new campaign. Preserve the original rent period and
+exact decimal strings; a current draft cannot inherit stale available state
+without the separate confirmation command. Use focused managed forms rather
+than stacking several mutation controllers inside a generic Actions drawer.
+
+Reuse container-aware full-grid spans: viewport sm:col-span-2 can create an
+implicit second column inside a narrow desktop drawer. Locate paths with rg
+before reading them; a plausible old filename is not evidence that it exists.
+Compiled geometry and prepared native cases never establish rendered acceptance.
+
+
+## 2026-10-27 — Proposal editor identity must survive its collection refresh
+
+Keep a selected editor outside table rows and key it by original proposal ID,
+not the changing parent revision. Capture reviewed fields/versions until success
+or an explicit current-version choice. A row disappearing or moving off-page
+must not discard the draft or turn an edit into creation. Port its actual home
+from the selected tab composition instead of copying an older overview layout.
+
+Unknown mutation acknowledgement or follow-up reload failure remains an exact
+retry path. Do not offer a context/version rebase that could duplicate a committed
+creation. Separate command failure from current-read failure; bracket paged child
+comparison with parent revision and reject foreign/malformed rows. Keep/reload
+are deliberate, with discard protection and current terminal/archive checks.
+
+Synthetic summaries must use their actual strict DTO, not extra full-record
+fields. JSX walkers may insert whitespace absent from real rendering; fix that
+assertion without altering exact money. Read the actual Markdown heading before
+a multi-file patch: a guessed heading rejects the whole patch without writes.
+
+
+## PDF model changes must not replace an uncertain generation,2026-10-27
+
+Keep an uncertain PDF attempt’s exact body and idempotency key per model, even
+when another model is selected. Accepting one successful model must not accept
+other models’ drafts. Abandon recovery only after explicit confirmation that
+the prior PDF may exist. Hide/clear retained private drafts on current denial
+from either context or history; do not infer continued access from an older read.
+
+
+## Static font instances can still share a variable-face name,2026-10-27
+
+A regular/bold filename pair does not prove distinct embedded PDF faces. The
+selected Manrope instances share an internal face name, and ReportLab aliases
+later registrations to the first. Verify actual embedded font streams and render
+the result; use distinct scoped descriptor identities without rewriting frozen
+font bytes. A green text/layout test alone did not catch the lost bold weight.
+
+
+## Finance acknowledgement, current authority and acceptance selection (2026-10-27)
+
+Separate an acknowledged command from its completion read: retain its result and
+retry only the read, refusing a projection older than the acknowledged revision.
+An unknown write instead retains exact path/body/key and cannot rebase. Current
+authority loss must remove the private controller, not just hide it: otherwise
+retry can resurrect the prior draft while fresh reads are pending. Test an active
+editor through denial/retry and unmount. When renaming browser journeys, retain
+their required acceptance-profile identity and coverage; never lower the required
+case count to make discovery pass. Source and synthetic checks remain distinct
+from native/real-scope acceptance.
+
+
+## Inline collection reads and deferred focus (2026-10-27)
+
+Match the selected collection organization while keeping real server pagination.
+Cross-commission history needs one scoped bounded server read, not concatenated
+client pages presented as a complete history. Keep legacy projections unchanged.
+Restore an inline receipt action only after its selected page settles, and stop
+restoration if the user has already moved focus. Validation focus must wait for
+invalid controls to commit. Never assume a fixed Casablanca offset in a fixture;
+verify retained instants and test projection with an explicit deterministic zone
+without changing authoritative civil-time policy to satisfy the assertion.
+
+
+## Serialized navigation code and production closure checks (2026-10-27)
+
+A page.evaluate callback cannot capture the test loop variable; pass arguments
+explicitly even when TypeScript accepts the callback. Source inspection caught
+one such browser-only failure after an unused-argument lint warning. Likewise,
+a before-hydration function serialized with .toString must stay closed after
+production compilation, not merely in TypeScript tests. Extract and execute only
+that emitted function with synthetic globals, without loading the app/server.
+History metadata is UI bookkeeping, never authorization; preserve opaque router
+fields, never invent a direction for untracked entries or call go(0). VM/source
+checks do not prove native cache, CSP, frame, gesture or real-form behavior.
+
+
+## Exact manual selection recovery after a changed offering page,2026-10-27
+
+A manual inventory selection must retain its actual offering UUID and the bounded
+page where it was chosen. On a definite version conflict, reread that exact page
+and current canonical parent; require re-selection when the row moved or vanished.
+Do not invent a GET-by-ID route or scan every page merely to keep an old editor
+open. Retained shortlist entries instead compare their current requirement detail;
+an already-removed original must not silently become a new add. Keep unknown
+method/body/key retry separate from acknowledged completion reads, and test both
+with actual controllers. This migration also retains null versus false/zero,
+original rental periods and the selected card/one-form workflow. Source tests and
+emitted layout declarations do not establish native mobile/focus acceptance.
+
+
+## PDF provenance comparison must separate page furniture from body text,2026-10-28
+
+A raw extracted token diff between original and restyled blank models can report
+removed repeated headers, notices and writing rules as missing body words. Pair a
+whole-body comparison with punctuation-preserving literal paragraph/field/cell
+checks, and record each explicit normalization and original/styled hash. Negative
+controls must reject actual added/deleted/changed text and punctuation. Extraction
+cannot establish visual placement or legal equivalence; preserve provenance and
+obtain a document-contract choice where the current generation promises unchanged
+original bytes. A read-only comparison utility must refuse output into its source
+PDF/JSON tree. Keep native/real-stack/owner gates separate from this evidence.
+
+
+## Compact notification previews must share current authority and read recovery,2026-10-28
+
+A header preview cannot use a different read-state controller from the full inbox.
+Keep bounded server filters/totals, exact uncertain ID/body/method/key retry and
+abort/late suppression in one controller. Current read/query denial must mask
+previous entries and counts before a fresh read can expose them. Publish only the
+existing scoped invalidation topic after acknowledged read-state changes so the
+bell and other inbox views refresh even with socket delivery off. Preserve access
+to the complete inbox and its existing configured controls when the preview is
+small or empty. Test interrupted acknowledgement, scope loss during a pending
+read and delayed focus/scroll; compiled CSS is not native touch/focus acceptance.
+
+
+## Replay existing PDFs before new renderer dependencies (2026-10-28)
+
+When changing a generated artifact layout, resolve an existing exact-body receipt
+under locked current authority before rendering or opening storage. Otherwise an
+old immutable result becomes unavailable when new assets fail. Recheck template
+visibility before a racing receipt returns, including finance-only models. Keep
+the legacy digest and parent binding; prove these paths with a renderer/storage
+that raises, then prepare actual byte-integrity replay cases without claiming
+unexecuted database/native gates.
+
+For byte-pinned frozen JSON, preserve upstream line endings with a narrow
+-text attribute and explicitly renormalize an already-staged path after changing
+attributes. A source-hash-checked upstream snapshot may also need a narrow
+-whitespace exception for those CRLF bytes. Validate canonical staged blobs
+against manifest hashes as well as working-tree and wheel bytes; local renderer
+tests alone miss Git normalization.
+
+
+## Keep attribution-page recovery when a live list shrinks (2026-10-28)
+
+A retained chart/list page can become empty while its authoritative total remains
+positive. Render the pagination escape outside the nonempty branch and distinguish
+that state from a genuine zero total. Keep logical period identity separate from
+the response timestamp so a quiet refresh does not reset the retained page. When
+its original trigger disappears, back navigation must focus the returned heading.
+
+
+## Follow a declared filter through every read boundary (2026-10-28)
+
+A query field existing in Pydantic/Zod does not prove it reaches route/facade
+allowlists or actual count/facet/page SQL. Trace all three, including same-offer
+correlation and inherited positive/decimal validators. Keep price/rent comparisons
+exact, and distinguish compiled SQL/stubbed ASGI from real PostgreSQL evidence.
+Filter deep-link initialization is separate from reset defaults; invalid drafts
+retain applied page/results until corrected. A correct backend-configured mypy
+command runs from backend, rather than changing unrelated code to satisfy a
+root-cwd invocation with different settings.
+
+
+## Add a nullable shared field without rewriting its past (2026-10-28)
+
+A selected programme label needs real storage, current commands, count/page
+filters and original history, not an inference from current stock. Keep legacy
+omission distinct from explicit null in both update loops and canonical receipt
+payloads. Negotiate additive fields for strict old clients and reject half-attested
+projections; freeze reviewed capability choices before a create retry. Unknown
+current values can invite completion, but unknown immutable history must not.
+Inventory paths with rg --files before reading them, and assert edit-script
+anchors changed before launching gates; an unmatched replacement is not a fix.
+
+
+## Contacts directory and canonical export compatibility,2026-10-28
+
+A selected filter is complete only when current scope precedes its SQL predicate,
+total and numbered page, and the applied criteria survive export review, saved
+job identity and worker execution. Responsibility filters need readable existing
+responsibility, including inactive staff, not assignment eligibility. Reuse
+existing child-list semantics for counts and state them explicitly. Adding
+defaulted filter fields to model_dump changes old export receipt hashes: omit
+only new, unsupplied keys from canonical payloads and test the real replay path.
+Casablanca offsets in a future/current month are not a test constant; use the
+pinned known civil-day fixture and retain authoritative backend tzdata.
+
+
+## Dossier directory filter identity and prepared fixtures,2026-10-28
+
+Enquiry assignment and canonical Contact responsibility are different fields:
+filter options must derive the actual readable relation, not active assignable
+accounts or the other relation. A managerial unassigned queue is a read sentinel,
+never a UUID substitute in writes; retain Agent non-null scope before counts.
+Match date controls to the selected predicate (creation versus modification),
+label each meaning, and intersect both ranges explicitly. Prepared browser bodies
+can typecheck as generic objects while violating a strict facade (for example
+missing email arrays/phone labels); validate shared synthetic payload factories
+against the real runtime schema before issuing commands.
+
+
+## Shared listing workflows and partial unit facts,2026-10-28
+
+Do not retain a smaller legacy unit form when the selected design shares the
+full listing workflow. Preserve BR-26 incomplete units while storing their known
+details atomically; do not force callers to omit rich JSON or weaken standalone
+rich-listing requirements. A final review must show the submitted values, names
+and zero quantities, not only counts/placeholders. Unit template choices retain
+complete server paging, disable category mismatches and never copy defaults.
+Derived block selection must resolve to a real floor or be cleared, not silently
+disappear from the wire contract. Keep guarded drawer cancel contextual and
+migrate affected browser helpers without claiming they were executed.
+
+## Staff operation recovery and explicit test registration,2026-10-28
+
+A staff retry must retain its original body/path/method/key/version after an
+unknown dispatched result; edited passwords must not create a second operation.
+Use a shared profile/security owner, distinguish failed preflight from dispatch,
+and retain acknowledged results only for completion. Keep credentials out of
+serialized fingerprints/draft baselines and bind editor/reply identity to actor
+and target. Register a new frontend unit file in scripts/test-facade.mjs: a
+targeted node --test pass does not mean npm run test:unit actually includes it.
+Compare the full-run case count before recording coverage. Native/SQL cases
+remain prepared until executed; do not generalize source checks into acceptance.
+
+## Export owners and returned-tree inspection,2026-10-28
+
+Creating a JSX expression does not prove that it is mounted. Trace its returned
+branch before claiming duplicate controls: the contextual prospect list already
+rendered one export action. Check the opposite lifetime failure too: conditionally
+removing an export owner on query loading/error loses its original unknown-result
+operation. Retain the owner, disable new requests when reads are unavailable, mask
+denial during render and use effects only to cancel external transport. Preserve
+kind/filters/key/actor through uncertainty; completion after acknowledgement must
+not create another job. Do not suppress hook rules to synchronize derived state.
+
+## Resumed imports and retry-owned child guards,2026-10-28
+
+A reopened awaiting/uploading batch must resume its existing UUID; choosing a
+file in the new-lot form is not a resume. Bind the workspace to the route and
+check expected file metadata without claiming original-byte identity. Preserve
+unknown sent metadata with its original File/fallback/key. A retry must not call
+an unsaved guard on the child region that the same operation has marked busy: it
+would deadlock itself. Only that original owned retry can cross its child lock;
+a new upload still guards review drafts. Check the real guard implementation,
+not merely a permissive test double, and prepare a native recovery case. Use a
+synchronous upload-owner getter so stale review handlers cannot overlap writes.
+
+## Public reference fields, text budgets and immutable source bytes,2026-10-28
+
+When exposing a real optional intake field, inspect the backend text formatter:
+a reference consumes its own prefix and part of the message budget. Preserve
+the server normalization/codepoint boundary and independently check raw UTF-8
+wire bytes. Do not shrink a native maxlength and silently strand/truncate an
+existing message when a reference is added; show the budget and preserve an
+editable draft on local rejection. Explicitly whitelist public payload fields,
+keep an unknown send byte-for-byte, and guard stale callbacks after disposal.
+Extend the existing forbidden-control validator to every newly exposed text
+field instead of allowing it to fail later during queued processing.
+
+## Reviewed ownership commands and ID-based impact,2026-10-28
+
+Keep one operation owner across background version updates; key its lifetime by
+record/role, not version. A lost response must retain original reviewed intent,
+versions, proof and key; a known saved result retries completion only. Explicit
+alias reads must not silently retarget a mutation. Validate preview contact IDs,
+versions and resulting owner, then label merge source/survivor by ID rather than
+array order. Share cancellation with parent completion reads and mask current
+denial while retaining only the current operation's generic acknowledgement.
+Replace immutable attempt snapshots instead of mutating effect-owned objects,
+and explicitly narrow optional receipts before completion. Keep real denial
+phase tests, register new suites, and distinguish prepared browser cases from
+actual native/SQL acceptance.
+
+## Contextual entries and retained assignment recovery,2026-10-28
+
+A changed editable fingerprint must not replace an unknown note/activity/
+assignment request. Snapshot its strict payload and target before dispatch,
+lock synchronously and retry only that operation with fresh same-actor proof.
+Keep acknowledgement separate from completion and refuse finished stale handlers.
+Version-keyed drawers can discard that owner; use record/contact identity and
+explicit version refresh instead. Retain the owner across transient option-read
+failures, derive denial projection before effect cancellation, and clear an old
+query error after a successful explicit refresh. Preserve every optional activity
+field and the real ID-only result rather than inventing a parent echo. Existing
+form tests should retain denial coverage in a fresh instance after verifying a
+completed stale submit cannot write again.
+
+## Prospect reviews, metadata hosts and owned refresh,2026-10-28
+
+A reviewed PATCH needs its own synchronous immutable request and actor binding,
+not a new fingerprint after each failure. Keep known saved DTO completion apart
+from dispatch and require explicit rebase after conflict. Status/inline owners
+must survive newer board reads and metadata loading/transient failure; disabling
+new writes is insufficient if the editor itself is unmounted. Preserve current
+denial projection and cancellation separately. Shared inline recovery can lock
+inputs/cancel/Escape while keeping its retry action usable. An owned conflict
+refresh must close through its private completion path; calling its public
+dismiss guard while holding its own lock deadlocks. Optional proof/dispatched
+callbacks on the shared API helper preserve existing callers while distinguishing
+preflight from unknown write. Validate route/current/result identity before UI
+projection and keep canonical read exceptions explicit.
+
+## Atomic prospect editor completion and canonical reads,2026-10-28
+
+Retain the complete atomic request and both versions after a lost response; a
+known saved DTO must retry only its completion read. Reset full form baselines
+from authoritative normalized contact values, not a fresh local raw draft.
+Require current IDs and same-contact minimum version. Different canonical IDs
+have unrelated versions: verify the current enquiry/contact relationship and
+finish read-only with an explicit updated-record link instead of retargeting
+the editor or trapping a legitimate merge in permanent recovery. Keep host
+component state distinct in source tests, retain form owners across transient
+reads, and cancel late validation/completion on disposal. Begin a later save
+only for a real new draft; an unchanged repeated Save is not a new operation.
+
+
+## Prospect creation command ownership,2026-10-28
+
+A creation form must retain its original parsed body, submission UUID and key
+after an unknown dispatched outcome; a changed draft cannot replace that request.
+Bind first/retry proof to the originating account and role, verify creation
+provenance before navigation, and retain acknowledgement so completion failure
+never sends another create. Known duplicate rejection permits explicit scoped
+canonical contact reuse; metadata outages retain the owner while blocking new
+saves. Commit availability before pending validation resumes, avoid ref access
+during render, and abort/discard late validation/reuse on disposal. Tests must
+await void event handlers and traverse component slots; creation success fixtures
+need coherent source-submission and creator fields rather than a generic DTO.
+
+
+## Conversion receipt and destination proof,2026-10-28
+
+A conversion receipt creates a different record: retain it across current-read
+or navigation failure so completion cannot repeat the POST. Prove the current
+source, destination ID/minimum version, creator and canonical contact relationship
+before opening the affair; a foreign receipt is not proof of this conversion.
+Unknown recovery still uses its original body/key. Keep the opening review alive
+through newer converted props and metadata outages, and communicate current board
+availability separately. Guard dismissal synchronously before a busy render.
+Composite workflow test owners must include parent/key identity and enter a
+component through the renderer; directly calling a hook-using component bypasses
+its test owner and gives misleading failures.
+
+
+## Atomic affair completion and parent handoff,2026-10-29
+
+A receipt is not permission to reset a full editor from raw local fields. Retain
+the original POST/PATCH/key through unknown outcome, prove current affair/full
+contact and reset all authoritative baselines before completion. For an atomic
+contact edit require expected version plus one only while that original contact
+ID remains; a verified canonical contact has a different counter. After receipt,
+read/parent failure retries completion without another write. Pass the verified
+affair into its detail owner instead of starting a second unowned reload, release
+parent busy state when closing, and retain verified output beside a transient
+old read error. Exact prefill IDs and removal/announcement of a previous contact
+search prevent silently saving another linked context.
+
+
+## Affair action result ownership,2026-10-29
+
+A shared command must pin the strict original intent/key and the initiating UI
+completion callback after an unknown write. A confirmed receipt followed by a
+failed refresh retries identity/current reads and completion only. Carry the
+originating account/role through board actions as well as detail forms; require
+an exact offered current snapshot before conflict rebase, preserving unrelated
+current fields. Guard stale field/open/cancel handlers with the synchronous
+owner lock, not only a previous render’s busy flag. Synthetic fixtures must
+model real dispatch identity, receipts and newer follow-up records.
+
+
+## Dedicated stock review and completion,2026-10-29
+
+Keep reservation/outcome review UI separate while sharing strict original
+request ownership. Bracket effect facts with the same parent/version/offering
+and match stock target/version fields; a changed target/contact/reservation or
+action direction must not silently retarget an opening confirmation. Await the
+original UI completion callback, pass its verified current record into any
+prerequisite queue, and retry acknowledged completion without another write.
+Synthetic replay fixtures must not apply stock effects again for a cached key.
+
+
+## External stock results and retained offering hosts,2026-10-29
+
+An action-level retry owner is insufficient if a background target refresh can
+remove its offering component. Keep the last authorized record/offer stable
+while an operation owns record busy, including unknown outcomes; install only
+the verified current result monotonically, with current denial still masking
+private work. Bind view and dialog lifetimes to the originating actor/role and
+target/offering. Bracket stock facts with coherent parent/offering reads, and
+await UI handoff before accepting the verified target. Another generic form
+using an older command hook is not covered merely by sharing the record host.
+
+
+## Inventory form recovery and verified host handoff,2026-10-29
+
+A generic fingerprint retry must not replace an unknown owner/offering/structure
+request or repeat an acknowledged write after callback failure. Bind the strict
+intent to its opening parent/item/account/role, freeze original body/key/callback,
+require exact current comparison acceptance after known conflict, then await a
+matching current record and install it through the real drawer-to-host callback.
+Model nullable clears with field presence in synthetic persistence fixtures; null
+is an explicit value, not a missing prior value. Keep existing role/backend
+membership checks authoritative and mark prepared native cases as not run.
+
+
+## Explicit current comparison cannot move a record backwards,2026-10-29
+
+Check the offered comparison against the latest known parent counter when the
+user accepts it, not only when it was read. A background current response can
+advance the parent between those events. Programme route editors must share the
+record/account/busy owner, preserve omission versus null for hidden promoter
+links, mask newly hidden names and navigate only after a matching receipt/current
+record. Synthetic host tests should locate the editor inside that provider and
+assert its role/identity rather than require an unowned root element.
+
+
+## Programme creation retry owns the original result destination,2026-10-29
+
+A creation form has no opening record ID. Keep its original strict POST/body/key
+and callback, validate the development/no-offering/initial-counter receipt, then
+read that same current programme under the originating account before navigation.
+After acknowledgement retry only completion. Capability/source refresh must not
+replace unknown phase/promoter intent; current denial masks private input and
+retains only a generic saved fact. Carry the real route actor/role through wrapper
+keys, and protect stale stepper/Previous/Cancel handlers as well as inputs.
+
+
+## Listing recovery uses actual atomic counters and repository-wide ownership search,2026-10-29
+
+Inspect the service before guessing creation counters: a property plus its first
+draft offering is one command with property counter2 and offer counter1; it is
+not programme counter1 or the parent development counter. Pin the original
+listing parent/body/key/callback, verify current identities before navigation and
+require explicit current review after conflicts. A newly locked category needs a
+declared reconciliation that preserves other input and restores current placement.
+Search every frontend feature for shared handler consumers, not only inventory;
+archive/restore in discovery was an additional consumer. Validate retained draft
+and final verified completion in tests, rather than only asserting a sent body.
+
+
+## Lifecycle confirmation outlives parent archive-state changes,2026-10-29
+
+Pin archive/restore per explicit confirmation, not to mutable parent props. A
+partially completed saved callback can already update archived/version while its
+supplementary work fails; keep the original reason/key/action and retry completion
+only. Guard stale outer toggles and deferred discard callbacks, and keep ordinary
+read refresh separate from saved handoff. Exact receipt-version state must match
+the action, while later inverse operations remain historical completion. Inspect
+stock counts: programme unit_count includes all physical children, so archive
+review cannot treat archived children as an override. Remove the generic writer
+only after repository-wide caller search; other direct domain lifecycle controls
+remain a separate audit even when the inventory symbol has zero references.
+
+
+## Lifecycle selected-page and denial lifetime,2026-10-29
+
+An archive can remove its own selected row before a lost response is recovered.
+Hold the selected page and lock selection for the confirmation lifetime; keep
+the original action/body/key/callback. Refresh and release the held page before
+clearing selection, which can immediately unmount its owner.
+A current access refusal must also clear the held projection, so retry cannot
+briefly revive private data before a fresh authorized read. Preserve the distinct
+prospect assigned-agent and affair primary-agent rules; inventory authority is
+not interchangeable. Receipt pruning means a conflict after an unknown outcome
+does not prove noncommit. Cover owner, real hosts, disposal and denial retry.
+
+
+## Financial command counters and retention boundary,2026-10-29
+
+Commission creation returns version1 independently of expected_deal_version;
+existing financial commands append one commission revision. Keep original
+intent/key/callback and accept draft baselines after parent completion. Preserve
+the selected explicit recovery-departure warning. Audit late replay separately:
+FinanceReceipt pruning after24 hours plus an unchanged parent Deal version can
+allow duplicate creation. Immediate retry tests do not prove expiry safety.
+This source-inferred gap requires authoritative reconciliation before readiness;
+do not claim a durable financial creation result from green frontend units.
+
+
+## 2026-10-29 — Creation expiry and literal source replacement
+
+- A creation that leaves its parent version unchanged cannot rely on that counter
+  after a24-hour receipt is pruned. Preserve confirmed retention and ordinary
+  history; fence first application separately, check retained replay first and
+  keep an unknown original body/key. Timestamped request IDs are not authority
+  capabilities. Record clock/legacy compatibility and real SQL acceptance limits.
+- JavaScript replacement strings interpret dollar/backtick replacement tokens.
+  Literal code/regex edits must use a replacement callback; inspect the complete
+  resulting boundary before running checks. A mistaken facade replacement was
+  restored from the clean checkpoint before applying the scoped edit correctly.
+- Unit collection does not execute prepared database branches: a removed UUID
+  import can survive that gate. Review changed prepared helpers/imports and leave
+  Ruff/mypy/real-stack checks pending when they cannot run.
+
+
+## 2026-10-29 — Native checks must follow portalled selected surfaces
+
+- A drawer rendered outside main can leave old geometry checks measuring the
+  inert page. Prefer the active nested confirmation, then the visible drawer;
+  assert its expected role and nonempty samples. Keep actual native evidence
+  pending until execution and inspection, rather than equating source with UX.
+- Prepared migration captures need fresh names. Do not overwrite incumbent or
+  canonical review frames while replacing old selectors and recovery steps.
+- Scope ready-state headings to their actual drawer and numeric counter; an
+  exact uncounted name can race before data arrives or fail after it loads.
+
+
+## 2026-10-29 — Retain accepted facts hidden by selected forms
+
+- A full detail replacement built only from visible-category fields can silently
+  clear a legal saved fact. Reproduce an unrelated edit through the actual owner;
+  preserve the accepted hidden fact and use the fresh baseline after explicit
+  comparison. Keep new/category-change/visible-clear semantics distinct.
+- Compare schema/label/payload maps by meaning: selected amenities use their own
+  vocabulary. A missing key in one label object is not proof of a missing widget.
+
+
+## 2026-10-29 — Hierarchy shape is not parent context
+
+- Strict row shapes still need their requested programme/block binding. Refuse a
+  mixed-parent page as a whole rather than filtering its rows and misreporting
+  counts; retain caller state for a deliberate healthy retry.
+- Recheck existing guards before changing workflow: block-without-floor saving
+  was already refused. Verify that actual owner path rather than adding a new
+  block field or making every unit require a floor.
+- Anchor scripted edits to their explicit cwd and stop dependent checks if an
+  edit fails. Update fixtures to real parent metadata instead of weakening guards.
+
+
+## Canonical Contact editor recovery,2026-10-29
+
+A legacy draft fingerprint can accidentally replace an unknown confirmed edit.
+Freeze body/key/counter/actor and original completion callback together; separate
+exact acknowledgement from fresh scoped read and awaited parent completion.
+Retain mounted forms across metadata/version refreshes, and hide private fields
+on current denial. A same-version parent projection may contain newer canonical
+Contact data; inspect its existing reconciliation before adding a new rule.
+
+
+## Canonical identity at the Contact projection caller,2026-10-29
+
+A merged route ID can differ from its currently readable Contact. Reconcile
+committed local fields against the scoped canonical ID, as Owner already does,
+while refreshing the original route for another survivor. Keep the actual
+currentRecord helper in workspace regressions: an edited-or-remote stub hid the
+stale saved name/archive bug. URL aliases grant no additional authority.
+
+
+## Working-hours preview versus confirmed write,2026-10-29
+
+A valid policy preview does not make a lost save response safe to replace. Pin
+its body/hash/counter/key/actor/callback; keep unknown409 unresolved and complete
+a known receipt with current identity/read instead of PUT again. Derive form
+fixture previews from their actual proposed fields and next counter: old fixed
+responses hid mismatched proposal acknowledgements. Retain drafts across parent
+read outages and require a new impact preview after explicit current acceptance.
+
+
+## Prepared Contact browser paths,2026-10-29
+
+Migrate native helpers to selected Aperçu/Activités, disclosures and portal
+drawers; do not restore removed product tabs to satisfy old selectors. Preserve
+HTTP denial/command/true-author/provenance assertions and original timeouts.
+Typechecking/source agreement prepares a scenario; it does not execute it or
+certify its helper consumers’ other paths.
+
+
+## Current export delivery owner,2026-10-29
+
+Cancel pending private delivery on known list denial or explicit job withdrawal;
+a discarded component is not the only way authority changes. Gate stale row
+handlers with current hydrated/read/ready state, bind fresh identity to the SSR
+owner, and check a live handoff guard before making a blob URL. Absence from an
+unrelated result page is not permission loss. A simulated list/permit browser
+case prepares UI cancellation evidence, not real worker or transfer acceptance.
+
+
+## Owner purpose-specific full forms and current completion,2026-10-29
+
+A shared canonical inline editor does not protect a separate full owner form.
+Inspect every full routed/drawer consumer for mutable retry fingerprints, version
+keys and metadata remounts. Freeze original actor/target/body/key/counter/callback,
+require fresh protected completion and separate acknowledged recovery from writes.
+Conflict tests must use an independent current read, strict next-version receipts
+and value equality; exception snapshots and convenient invalid success fixtures
+can hide the missing boundary. Record native preparation separately from runs.
+
+
+## Native path rewrites require operation-order review,2026-10-29
+
+A broad replacement can change the initial save into a retry even when types and
+lint pass. Review the complete initial-save, fault, recovery and completion
+sequence after selector edits. Pin command arguments, test titles/timeouts and
+service-control calls with source AST comparison, but do not mistake that check
+for native execution. Scope current drawer forms and preserve explicit dirty
+leave choices instead of restoring removed global tabs.
+
+
+## Metadata acknowledgement is not file completion,2026-10-30
+
+A managed document uploader must retain original metadata/key/File and dirty
+state through metadata, grant and byte publication. Pass its signal to metadata
+as well as bytes, check lifetime between awaits, and bind the actual page actor
+inside the fresh permit proof. Unknown replacement is a different operation and
+requires explicit guarded discard. When the exact issued version is already
+published, recover its current state without another byte send; do not turn that
+client check into a claim of exactly-once concurrent publication or a clean AV
+verdict. Generic row commands and download handoff are separate audit boundaries.
+
+
+## File rows need command identity separate from list versions,2026-10-30
+
+Version-keyed rows can discard an unknown operation when polling changes a
+document. Keep identity keys stable and retain pending original rows until their
+receipt/current handoff or explicit guarded leave. FileReceipt returns the
+current scoped view, so validate a minimum counter and exact metadata rather
+than pretending it is a frozen next-version receipt. Separate disposable blob
+lifetimes from writes; check current actor/document/clean version and live owner
+before browser handoff. AV state can change without a document counter increment,
+so retire an obsolete in-progress message from fresh state without inventing
+worker success. Synthetic client checks do not prove actual transfer/revocation.
+
+
+## Inspect nonzero tool results before dependent mutations,2026-10-30
+
+An exec_command result with exit_code1 does not reject its surrounding JavaScript
+promise. Do not place a dependent mutation after a validation call without first
+checking its returned exit code. During CLI removal, prune ran before the model
+reviewed a conservative graph assertion failure. Its5 devOptional removals were
+then inspected and all retained versions/required runtime/source invariants
+proved unchanged. Prefer separate tool boundaries or throw on nonzero status.
+
+
+## Redesign branch integration (2026-11-06)
+
+Authenticate browser fixtures against the workspace heading and live shell.
+Report-specific readiness belongs in report tests. This keeps a dashboard
+section redesign from blocking unrelated protected-route checks. When merging
+parallel upload work, preserve the current drawer's permit ownership and
+recovery contract while integrating the new picker and decoder.
+
+## Keep compiled browser builds immutable during a run (2026-11-07)
+
+Do not rebuild `.next` while a production-mode Playwright supervisor is serving
+it. Replacing its chunks mid-run can prevent hydration and produce disabled-login
+failures unrelated to the feature under test. Stop the owned suite, finish the
+build, then launch a fresh supervisor. Discard runs affected by workstation
+suspension or a changed build. Diagnostic DOM/style mutations are investigation,
+not product verification; remove them and rerun the original interaction.
+
+## Verify settled controls and current workflow boundaries (2026-11-07)
+
+When a redesign changes tabs, drawers, field labels or grouped menus, keep the
+original permission, atomicity and retry assertions but navigate through the
+current controls. Wait for a closing popover to finish before reopening it.
+Measure contrast after CSS color transitions finish and recognize native
+`:disabled`, including controls disabled by an ancestor fieldset. Keep the
+contrast/touch thresholds unchanged; do not replace failures with snapshots or
+raise timeouts to hide a missing control. Add bounded action timeouts to expose
+the failing step instead of waiting for a long workflow timeout.
+
+## Regression checks for retained inventory tabs (2026-11-07)
+
+Mounted hidden inventory tabs can contain the same labels as the active tab.
+Use the active accessible region/control or a deliberately visible card selector;
+do not count every article on the page. Wait for the requested filter/sort read
+before measuring its replacement cards. A shared offering target is a current
+projection: after a property edit, compare persisted offering terms unchanged
+and assert the target's new property version separately. Confirm the unsaved
+navigation dialog before expecting cancellation to have left the form.
+
+## Compare unordered coordinates by their canonical value (2026-11-08)
+
+Contact edits replace coordinate rows. Rows sharing a creation timestamp can
+change their UUID tie order even when every phone/email, label and primary flag
+is unchanged. Where the API has no editable position contract, compare complete
+coordinate objects by canonical number/email; retain exact checks for identity,
+provenance, assignment and membership. A single passing random order is not
+evidence that an order-sensitive assertion is deterministic.
+
+## Restore test infrastructure independently of browser teardown (2026-11-08)
+
+When a recovery test switches the shared API supervisor to a restored target,
+always restore that routing in a `finally` independent of page/cookie cleanup.
+A timed-out page may already be closed; allowing its cleanup error to skip the
+supervisor switch makes later synthetic actors sign in against the wrong
+database and obscures the first actionable failure.
+
+## Verify focus on an available trigger after nested menus (2026-11-08)
+
+After a confirmation dialog closes, its nonmodal parent menu may also have
+closed. Verify keyboard focus on the still-visible action item when that menu
+remains open, or on its Actions trigger when it has closed. Reopen a closed
+menu before using its item again. Keep the real focus assertion; do not require
+an unmounted child to receive focus or accept focus on the page body.

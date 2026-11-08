@@ -29,12 +29,12 @@ export function InventoryThumbnail({ kind, id, compact = false }: { kind: "prope
         const blob = await downloadBytes(permit);
         if (!active) return;
         objectUrl = URL.createObjectURL(blob); setPreview(objectUrl);
-      } catch { if (active) setState("Aperçu indisponible. Consultez les pièces jointes de la fiche."); }
+      } catch { if (active) setState("Aperçu indisponible. Ouvrez la galerie."); }
     }
     void load();
     return () => { active = false; controller.abort(); if (objectUrl) URL.revokeObjectURL(objectUrl); };
   }, [visible, kind, id]);
   return <div ref={anchor} className={`relative flex shrink-0 items-center justify-center gap-3 overflow-hidden bg-muted text-muted-foreground ${compact ? "size-20 rounded-sm" : "h-40 border-b px-4"}`}>
-    {preview ? <Image src={preview} fill unoptimized alt="" sizes="(min-width: 1536px) 30vw, (min-width: 640px) 45vw, 100vw" className="object-cover" onError={() => { setPreview(undefined); setState("Aperçu indisponible. Consultez les pièces jointes de la fiche."); }} /> : <><DevelopmentIcon aria-hidden="true" className="size-8 shrink-0 stroke-1" /><span className={compact ? "sr-only" : "text-xs"}>{state}</span></>}
+    {preview ? <Image src={preview} fill unoptimized alt="" sizes="(min-width: 1536px) 30vw, (min-width: 640px) 45vw, 100vw" className="object-cover" onError={() => { setPreview(undefined); setState("Aperçu indisponible. Ouvrez la galerie."); }} /> : <><DevelopmentIcon aria-hidden="true" className="size-8 shrink-0 stroke-1" /><span className={compact ? "sr-only" : "text-xs"}>{state}</span></>}
   </div>;
 }

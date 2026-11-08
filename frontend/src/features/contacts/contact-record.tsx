@@ -1,76 +1,81 @@
 "use client";
-import { PageHeader } from "@/components/shared/page-header";
-import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+
 import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { apiGet } from "@/lib/api/client";
-import { useHydrated } from "@/hooks/use-hydrated";
-import { contactSchema, roleLabels, contactSourceLabels as sourceLabels, type Contact, type StaffRole } from "./contracts";
-import { useQuery } from "./use-query";
+import { useState } from "react";
+import { PageHeader } from "@/components/shared/page-header";
+import { CrmRecordHeader, CrmStatusBadge } from "@/components/shared/crm-presentation";
+import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
+import { RecordDrawer } from "@/components/shared/record-drawer";
+import { RecordSection, RecordWorkspace } from "@/components/shared/record-workspace";
+import { CalendarIcon, ContactIcon, ContactsIcon, EmailIcon, InboxIcon, LocationIcon, PhoneIcon } from "@/components/icons";
+import { InlineEditScope } from "@/components/shared/inline-record-field";
+import { ContactInlineField } from "./contact-inline-field";
+import { apiGet, type ApiError } from "@/lib/api/client";
+import { formatInstant } from "@/lib/format";
+import { FilePanel } from "@/features/files/file-panel";
+import { TaskPanel } from "@/features/work/task-panel";
+import { ContactVisits } from "@/features/schedule/contact-visits";
 import { currentRecord } from "@/features/realtime/current-record";
+import { contactSchema, contactSourceLabels as sourceLabels, type Contact, type StaffRole } from "./contracts";
+import { useQuery } from "./use-query";
 import { RecordError } from "./record-states";
 import { ContactEditor } from "./contact-editor";
-import { LeadList } from "./lead-list";
 import { ContactAssignments, ContactTimeline } from "./contact-history";
 import { OwnershipControls } from "./ownership-controls";
 import { operationLabels, type Operation } from "./ownership-contracts";
-import { FilePanel } from "@/features/files/file-panel";
-import { RequirementPanel } from "@/features/requirements/requirement-panel";
-import { DealList } from "@/features/deals/deal-list";
-import { TaskPanel } from "@/features/work/task-panel";
+import { ContactDossiers } from "./contact-dossiers";
 
 export function ContactRecord({ id, role, actorId, initialTask }: { id: string; role: StaffRole; actorId?: string; initialTask?: string }) {
-  const hydrated = useHydrated();
   const query = useQuery(`/api/v1/contacts/${id}`, contactSchema);
   const [edited, setEdited] = useState<Contact>();
-  const [editing, setEditing] = useState(false);
-  const [tab, setTab] = useState(initialTask ? "tasks" : "identity");
-  const [saved, setSaved] = useState(false);
+  const [scopeError, setScopeError] = useState<ApiError>();
   const [notice, setNotice] = useState("");
-  const contact = currentRecord(query.value, edited, id);
-  async function changed(target: string, operation: Operation) {
-    const fresh = await apiGet(`/api/v1/contacts/${target}`, contactSchema);
-    if (target === id) setEdited(fresh);
-    else { setEdited(undefined); query.refreshQuietly(); }
-    setSaved(false); setNotice(`${operationLabels[operation]} : opération enregistrée.`);
+  const canonicalId = query.value?.id ?? id;
+  const contact = currentRecord(query.value, edited, canonicalId);
+  async function changed(target: string, operation: Operation, signal: AbortSignal) {
+    const fresh = await apiGet(`/api/v1/contacts/${target}`, contactSchema, signal);
+    if (signal.aborted) return;
+    if (target === canonicalId && fresh.id === canonicalId) setEdited(fresh); else { setEdited(undefined); query.refreshQuietly(); }
+    setNotice(`${operationLabels[operation]} : opération enregistrée.`);
   }
-  const heading = <PageHeader title="Fiche contact" description="Identité, coordonnées et demandes dans votre périmètre." route={`/contacts/${id}`} />;
+  const heading = <PageHeader title="Fiche contact" description="Coordonnées et dossiers accessibles." route={`/contacts/${id}`} />;
   if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
+  if (scopeError) return <>{heading}{notice ? <p role="status">{notice}</p> : null}<RecordError error={scopeError} retry={() => { setScopeError(undefined); setEdited(undefined); setNotice(""); query.refresh(); }} /></>;
   if (!contact) return <>{heading}<p role="status">Chargement du contact…</p></>;
-  return <div className="record-stack grid min-w-0 gap-5">
-    <PageHeader title={<><span className="sr-only">Contact : </span>{contact.name}</>} description="Fiche contact · Identité, coordonnées et demandes dans votre périmètre." route={`/contacts/${id}`} actions={!contact.archived_at && !editing ? <Button action="edit" disabled={!hydrated} onClick={() => { setTab("identity"); setEditing(true); setSaved(false); }}>Modifier le contact</Button> : undefined} />
-    <div><Badge variant={contact.archived_at ? "neutral" : "success"}>{contact.archived_at ? "Contact archivé" : "Contact actif"}</Badge></div>
-    {contact.id !== id ? <p>Cette ancienne fiche a été fusionnée. Vous consultez la <Link className="inline-flex min-h-control items-center text-link underline" href={`/contacts/${contact.id}`}>fiche conservée</Link>.</p> : null}
-    {contact.archived_at ? <p role="status" className="text-muted-foreground">Contact archivé. Les liens et les auteurs sont conservés. Restaurez-le pour reprendre les modifications.</p> : null}
-    {notice ? <p role="status" className="text-success">{notice}</p> : null}
-    <Tabs value={tab} onValueChange={setTab}>
-      <TabsList aria-label="Rubriques du contact">
-        <TabsTrigger value="identity" disabled={!hydrated}>Identité</TabsTrigger>
-        <TabsTrigger value="enquiries" disabled={!hydrated}>Demandes</TabsTrigger>
-        <TabsTrigger value="timeline" disabled={!hydrated}>Historique</TabsTrigger>
-        <TabsTrigger value="assignments" disabled={!hydrated}>Attributions</TabsTrigger>
-        <TabsTrigger value="documents" disabled={!hydrated}>Documents</TabsTrigger>
-        <TabsTrigger value="requirements" disabled={!hydrated}>Recherches</TabsTrigger>
-        <TabsTrigger value="deals" disabled={!hydrated}>Affaires</TabsTrigger>
-        <TabsTrigger value="tasks" disabled={!hydrated}>Tâches</TabsTrigger>
-      </TabsList>
-      <TabsContent value="identity" className="grid gap-8">
-    {editing ? <section className="grid gap-6"><h2 className="text-section font-medium">Modifier l’identité</h2><ContactEditor contact={contact} saved={value => { setEdited(value); setEditing(false); setSaved(true); }} cancel={() => setEditing(false)} /></section> : <section className="grid max-w-reading gap-6"><h2 className="wrap-anywhere text-section font-medium">{contact.name}</h2>{saved ? <p role="status" className="text-success">Contact enregistré.</p> : null}<dl className="grid gap-4 sm:grid-cols-2"><div><dt className="text-sm text-muted-foreground">Type</dt><dd>{contact.type === "person" ? "Personne" : "Organisation"}</dd></div><div><dt className="text-sm text-muted-foreground">Agent responsable</dt><dd className="wrap-anywhere">{contact.primary_agent.display_name}</dd></div><div><dt className="text-sm text-muted-foreground">Rôles du contact</dt><dd>{contact.roles.map(value => roleLabels[value]).join(", ") || "Non renseignés"}</dd></div><div><dt className="text-sm text-muted-foreground">Source initiale</dt><dd>{sourceLabels[contact.source]}</dd></div></dl>
-      <section className="grid gap-2"><h3 className="font-medium">Téléphones</h3>{contact.phones.map(phone => <p key={phone.number} className="wrap-anywhere">{phone.number}{phone.label ? `, ${phone.label}` : ""}{phone.is_primary ? " (principal)" : ""}</p>)}</section>
-      <section className="grid gap-2"><h3 className="font-medium">E-mails</h3>{contact.emails.length ? contact.emails.map(email => <p key={email.email} className="wrap-anywhere">{email.email}{email.label ? `, ${email.label}` : ""}{email.is_primary ? " (principal)" : ""}</p>) : <p>Non renseignés.</p>}</section>
-      <section className="grid gap-2"><h3 className="font-medium">Collaborateurs actuels</h3><p className="wrap-anywhere">{contact.collaborators.map(value => value.display_name).join(", ") || "Aucun"}</p></section>
-    </section>}
-        {!editing && (!contact.archived_at || role !== "agent") ? <OwnershipControls key={`${contact.id}:${contact.version}`} contact={contact} role={role} changed={changed} /> : null}
-      </TabsContent>
-      <TabsContent value="enquiries"><LeadList key={contact.id} role={role} actorId={actorId} contactId={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
-      <TabsContent value="timeline"><ContactTimeline key={contact.id} id={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
-      <TabsContent value="assignments"><ContactAssignments key={contact.id} id={contact.id} revision={contact.version} /></TabsContent>
-      <TabsContent value="documents"><FilePanel key={contact.id} parentKind="contact" parentId={contact.id} writable={!contact.archived_at} /></TabsContent>
-      <TabsContent value="requirements"><RequirementPanel key={contact.id} contactId={contact.id} writable={!contact.archived_at} /></TabsContent>
-      <TabsContent value="deals"><DealList key={contact.id} role={role} actorId={actorId} contactId={contact.id} archived={Boolean(contact.archived_at)} revision={contact.version} /></TabsContent>
-      <TabsContent value="tasks"><TaskPanel key={contact.id} contactId={contact.id} writable={!contact.archived_at} initialTask={initialTask} /></TabsContent>
-    </Tabs>
-  </div>;
+  const writable = !contact.archived_at;
+  const editAction = <RecordDrawer hideTrigger={!writable} label="Modifier" action="edit" title="Coordonnées du contact" description="Les coordonnées sont partagées par les dossiers de ce contact.">{(close, saved) => <ContactEditor key={`${contact.id}:${actorId ?? ""}:${role}`} actorId={actorId} role={role} denied={(error, acknowledged) => { setNotice(acknowledged ? "Les coordonnées sont enregistrées. Les droits d’accès ont changé." : ""); setScopeError(error); }} contact={contact} saved={value => { setEdited(value); setNotice("Contact enregistré."); saved(); }} cancel={close} />}</RecordDrawer>;
+  const inline = { contact, writable, actorId, role, saved: (value: Contact) => { setEdited(value); setNotice("Contact enregistré."); }, denied: setScopeError };
+  return <InlineEditScope><div className="kay-record-page">
+    <CrmRecordHeader contact={contact} title={contact.name} route={`/contacts/${id}`} backHref="/contacts" showContact={false} reference="Contact" badges={<CrmStatusBadge state={contact.archived_at ? "archived" : "active"}>{contact.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge>} actions={editAction} />
+    {contact.id !== id ? <p>Cette fiche a été fusionnée. Vous consultez la <Link className="inline-flex min-h-control items-center text-link underline" href={`/contacts/${contact.id}`}>fiche conservée</Link>.</p> : null}
+    {contact.archived_at ? <p role="status" className="mb-3 text-sm text-muted-foreground">Contact archivé. Restaurez-le pour reprendre les modifications.</p> : null}
+    {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}
+    <RecordWorkspace label="Rubriques du contact" tabs={[
+      { id: "overview", label: "Aperçu", content: <>
+        <RecordSection title="Coordonnées"><RecordFacts>
+          <ContactInlineField {...inline} icon={ContactIcon} field="name" label="Nom" />
+          <ContactInlineField {...inline} icon={ContactIcon} field="type" label="Type" />
+          <ContactInlineField {...inline} icon={ContactIcon} field="roles" label="Rôles" />
+          <ContactInlineField {...inline} icon={PhoneIcon} field="phones" label="Téléphones" />
+          <ContactInlineField {...inline} icon={EmailIcon} field="emails" label="E-mails" />
+          <ContactInlineField {...inline} icon={LocationIcon} field="country" label="Pays de résidence" />
+          <ContactInlineField {...inline} icon={LocationIcon} field="nationality" label="Nationalité" />
+          <ContactInlineField {...inline} icon={ContactIcon} field="languages" label="Langues" />
+          <RecordFact icon={InboxIcon} label="Source initiale">{sourceLabels[contact.source]}</RecordFact>
+        </RecordFacts></RecordSection>
+        <RecordSection title="Responsabilité" action={writable || role !== "agent" ? <RecordDrawer label="Gérer le contact" action="settings" description="Attribution, collaboration et conservation avec aperçu de l’impact.">{(_close, saved) => <OwnershipControls embedded key={contact.id} contact={contact} role={role} denied={(failure, acknowledged) => { setNotice(acknowledged ? "L’opération est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} changed={async (target, operation, signal) => { await changed(target, operation, signal); if (!signal.aborted) saved(); }} />}</RecordDrawer> : undefined}><RecordFacts>
+          <RecordFact icon={ContactsIcon} label="Agent responsable">{contact.primary_agent.display_name}</RecordFact>
+          <RecordFact icon={ContactsIcon} label="Collaborateurs">{contact.collaborators.map(value => value.display_name).join(", ") || "Aucun"}</RecordFact>
+          <RecordFact icon={CalendarIcon} label="Contact créé le">{formatInstant(contact.created_at)}</RecordFact>
+          <RecordFact icon={CalendarIcon} label="Modifié le">{formatInstant(contact.updated_at)}</RecordFact>
+        </RecordFacts></RecordSection>
+        <ContactDossiers key={contact.id} contact={contact} role={role} />
+      </> },
+      { id: "activity", label: "Activités", content: <><ContactTimeline key={contact.id} id={contact.id} archived={!writable} revision={contact.version} denied={(failure, acknowledged) => { setNotice(acknowledged ? "L’entrée est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} /><details className="mt-6 border-t pt-3"><summary className="flex min-h-control cursor-pointer items-center font-medium">Historique des attributions</summary><div className="pt-4"><ContactAssignments id={contact.id} revision={contact.version} /></div></details></> },
+    ]} aside={<>
+      <ContactVisits contactId={contact.id} writable={writable} />
+      <RecordSection title="Tâches" action={<RecordDrawer label="Voir les tâches" title="Tâches du contact" action="task" description="Tâches, échéances et responsables de ce contact." initialOpen={Boolean(initialTask)}><TaskPanel contactId={contact.id} writable={writable} initialTask={initialTask} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Retrouvez les tâches et leurs échéances.</p></RecordSection>
+      <RecordSection title="Documents" action={<RecordDrawer label="Voir les documents" title="Documents du contact" action="file" description="Documents privés accessibles sur ce contact."><FilePanel actorId={actorId} role={role} parentKind="contact" parentId={contact.id} writable={writable} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Pièces jointes partagées avec les personnes autorisées.</p></RecordSection>
+    </>} />
+  </div></InlineEditScope>;
 }

@@ -9,6 +9,7 @@ export const ownerAssetSchema = z.object({
   asset_archived_at: instant.nullable(), linked_at: instant, unlinked_at: instant.nullable(),
 }).strict();
 export const ownerPortfolioSchema = numberedPage(ownerAssetSchema);
+export const ownerPortfolioPreviewSchema = ownerPortfolioSchema.refine(value => value.page === 1 && value.page_size === 3 && value.items.length <= 3 && value.items.every(item => item.unlinked_at === null));
 export const ownerPortfolioQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(1000000).optional(),
   page_size: z.coerce.number().int().min(1).max(50).optional(),

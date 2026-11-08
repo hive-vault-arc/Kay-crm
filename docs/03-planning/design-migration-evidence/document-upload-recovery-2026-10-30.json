@@ -1,0 +1,242 @@
+{
+  "date": "2026-10-30",
+  "startedDate": "2026-10-29",
+  "branch": "codex/redesign",
+  "base": "46612a0bf7072d2244a92b03aa61ac936335ffa8",
+  "scope": "Original document upload metadata/File ownership, scoped cancellation, guarded grant and observed publication recovery",
+  "checks": [
+    {
+      "command": "node --test tests/unit/document-upload.test.mjs",
+      "cwd": "frontend",
+      "phase": "before fix",
+      "exitCode": 1,
+      "failed": 2,
+      "observed": [
+        "Replacement remains enabled after unknown metadata",
+        "Disposed metadata request has no abort signal"
+      ]
+    },
+    {
+      "command": "Focused new upload tests",
+      "phase": "integration",
+      "exitCode": 1,
+      "observed": "Strict comparison exposed raw/validated metadata object realms; metadata dispatch now uses owned validated body"
+    },
+    {
+      "command": "node --test frontend/tests/unit/document-upload.test.mjs frontend/tests/unit/files.test.mjs frontend/tests/unit/workspace-interactions.test.mjs",
+      "exitCode": 0,
+      "passed": 23,
+      "phase": "focused before final SSR call-site propagation; final full suite covers opening-actor assertion"
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "phase": "initial",
+      "exitCode": 1,
+      "observed": "Two reset-helper dependency warnings; helper moved to module scope"
+    },
+    {
+      "command": "npm run test:unit",
+      "cwd": "frontend",
+      "phase": "final after actual SSR binding",
+      "exitCode": 0,
+      "passed": 984,
+      "additionalCases": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "phase": "final",
+      "exitCode": 0,
+      "semanticIcons": 64,
+      "iconConsumers": 105,
+      "iconSites": 349,
+      "buttons": 525,
+      "buttonFiles": 160,
+      "violations": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "frontend",
+      "phase": "final",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "phase": "final after binding/types",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run history:check",
+      "cwd": "frontend",
+      "exitCode": 0,
+      "compiledCandidates": 4,
+      "compiledClosedBootstraps": 2,
+      "compiledStandaloneStampPushPop": true
+    },
+    {
+      "command": "Frontend Taste lint.mjs <6 changed UI files> --app --json",
+      "exitCode": 0,
+      "files": 6,
+      "findings": 0,
+      "boundary": "Static only"
+    },
+    {
+      "command": "Backend",
+      "executed": false,
+      "productionChanged": false,
+      "retainedPriorConnectionForbiddenUnits": 573
+    },
+    {
+      "command": "Frozen/main/protected review",
+      "exitCode": 0,
+      "inputs": 254,
+      "changed": 0,
+      "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+      "protectedUnstagedLessonLines": 35,
+      "protectedMotionPlanUnstaged": true
+    },
+    {
+      "command": "node .github/scripts/repository-check.mjs",
+      "exitCode": 0,
+      "indexedFiles": 9045,
+      "forbiddenOrOversized": 0,
+      "ignoreProbes": 14
+    },
+    {
+      "command": "pwsh -NoProfile -File docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+      "exitCode": 0,
+      "sprints": 22,
+      "localLinks": 1314,
+      "acceptanceMappings": 42,
+      "mermaid": 13,
+      "apiExamples": 12
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    }
+  ],
+  "fieldMap": {
+    "parent": "Original typed dossier",
+    "file": "Original validated name/MIME/size and File bytes",
+    "metadata": "Same original body/key until acknowledged; exact known document/counter thereafter",
+    "actor": "Actual SSR actor/role from all5 production record homes plus fresh proof at dispatch/current read/permit",
+    "permit": "Existing fresh single-use version grant; exact next counter/version ID",
+    "completion": "Observe exact issued published version or await original upload receipt; never invent clean AV",
+    "discard": "Existing explicit guard returns uploader to current document list"
+  },
+  "behavior": [
+    "Metadata/read/grant/bytes share lifetime/cancellation and original operation",
+    "Unknown metadata cannot replace file or key through picker/alternate actions",
+    "Current denial/writability/disposal suppress late transfer/progress/private state",
+    "Wrong metadata/canonical ID/opening or later actor refused",
+    "Original current actor guard runs before grant issue with own session proof",
+    "Already observed published version recovery does not send another grant/byte request",
+    "Selected picker/list/drawer/theme/icons/motion and server transfer/AV contracts preserved"
+  ],
+  "preparedNative": {
+    "file": "frontend/tests/e2e/document-upload-recovery.spec.ts",
+    "cases": 2,
+    "widths": [
+      390,
+      1440
+    ],
+    "typechecked": true,
+    "executed": false,
+    "listedOrImportedViaPlaywright": false,
+    "fault": "Interrupt actual isolated metadata response before retry; no canned write/clean result",
+    "artifactPolicy": {
+      "trace": false,
+      "video": false,
+      "screenshot": false
+    },
+    "actualTransferOrScannerAcceptance": false
+  },
+  "skills": {
+    "frontendTaste": "App-screen truthful state/disabled controls within frozen picker",
+    "staticAudit": true,
+    "nativeInspection": false,
+    "unavailableOriginalMachineSkillsNotClaimed": true,
+    "afterTimingUnchanged": true
+  },
+  "access": {
+    "actualAppBrowserHttpDatabaseAccountsPrivateConfigurationServicesWorkerScannerSimulatorTransfer": false,
+    "workaround": false,
+    "migration": false,
+    "pushMergeDeploy": false
+  },
+  "pending": [
+    "Generic FileRow archive/retry-scan command ownership and late download/preview handoff",
+    "Older file native helpers/Contact tab paths and other helper consumers",
+    "Actual SQL/native/device/worker/AV/private transfer/session/race/security/CI/AFTER/product gates",
+    "Migrations0036/0037",
+    "Remaining exact field/job/alias/selector reconciliation"
+  ],
+  "status": "Uploader source checkpoint; full goal active",
+  "sourceHashes": [
+    {
+      "file": "frontend/src/features/files/file-panel.tsx",
+      "bytes": 21860,
+      "sha256": "6c2cefb095af79819bdeaafc4db162e161e582a190beed7f97b7b57ef5fd644d"
+    },
+    {
+      "file": "frontend/src/features/files/transfers.ts",
+      "bytes": 3466,
+      "sha256": "089af812636bfbb65af21a120a6cec08a34aa4e76160dd6374e94cd92f1d43d4"
+    },
+    {
+      "file": "frontend/src/features/contacts/contact-record.tsx",
+      "bytes": 8642,
+      "sha256": "a864adef5b15c806ea17e2029913a1c079442e4aec706b1d429ee392efe60c52"
+    },
+    {
+      "file": "frontend/src/features/contacts/lead-record.tsx",
+      "bytes": 11034,
+      "sha256": "055a3549ce236ac069058659297afa36cf3259d351fadc413becec59e0337b7e"
+    },
+    {
+      "file": "frontend/src/features/deals/deal-workspace.tsx",
+      "bytes": 10305,
+      "sha256": "69be9c5c7a02defb34a631e0e7b4d4e2a1af31a9e385e8066f2f0fa286644bfc"
+    },
+    {
+      "file": "frontend/src/features/inventory/property-record.tsx",
+      "bytes": 10190,
+      "sha256": "517a8ea9c7d9bd7b189cd819572bcb3d5197c574916749d4758745a0d808f00c"
+    },
+    {
+      "file": "frontend/src/features/inventory/development-record.tsx",
+      "bytes": 11329,
+      "sha256": "511bbd3064ec4b90b27dcfd29b9d0b8838bd953609e9d8229f52c04de5eb09dd"
+    },
+    {
+      "file": "frontend/scripts/test-facade.mjs",
+      "bytes": 5578,
+      "sha256": "36bb1c9f091dba5e562493002e090ebea5643ef3d6b5521bbeb67a791e4e646b"
+    },
+    {
+      "file": "frontend/tests/unit/document-upload.test.mjs",
+      "bytes": 11838,
+      "sha256": "3c99a3039b4184d212857585f0585d260da8c188e1810ce8805d93e00d18de9e"
+    },
+    {
+      "file": "frontend/tests/unit/files.test.mjs",
+      "bytes": 4767,
+      "sha256": "152fc284b78a00455598972ddb02ed85eca55ca010e1c9cce5191bd68ef93be0"
+    },
+    {
+      "file": "frontend/tests/unit/workspace-interactions.test.mjs",
+      "bytes": 33514,
+      "sha256": "2f60c4675453289f2e41446a9b01f6443a9499ff7c8d2d78c444459ca8c4081f"
+    },
+    {
+      "file": "frontend/tests/e2e/document-upload-recovery.spec.ts",
+      "bytes": 2992,
+      "sha256": "1b66950a6ac314f164f7d06db3845c5bcf9e63ebbdf922237d906b3c5552fdcc"
+    }
+  ]
+}

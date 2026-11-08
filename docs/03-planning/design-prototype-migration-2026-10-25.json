@@ -1,0 +1,1957 @@
+{
+  "date": "2026-10-25",
+  "status": "planning baseline; implementation and acceptance pending",
+  "branch": "codex/redesign",
+  "head": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+  "main": "e0bdc09feed0c3920b63cda635e5cf4cf42e08b1",
+  "ownerDecisions": [
+    "Selected prototype governs appearance and intentional UX changes",
+    "Add missing CRM functions in the selected design, not old repository layouts",
+    "Work on codex/redesign; final merge only after verification and explicit owner confirmation"
+  ],
+  "prototype": {
+    "root": "C:/Users/ali-a/Documents/the vault/designs/kay",
+    "manifest": "C:/Users/ali-a/Documents/the vault/Projects/KAY CRM/gallery/2026-10-23/compact-shell/verification/feature-completion-2026-10-25.json",
+    "manifestSha256": "e7b57344443dd590ed517e9da67315cff9277009e7ed23c2b17ef87a4e72d78b",
+    "recordedChecks": 30,
+    "recordedBuildExitCode": 0,
+    "inputs": [
+      {
+        "file": "index.html",
+        "bytes": 455,
+        "sha256": "1719c1f66038be17867b3ded14bd869d7dde9f7f7bff88d304a1be18f0025439"
+      },
+      {
+        "file": "package-lock.json",
+        "bytes": 58090,
+        "sha256": "ba8a7fcafa2a8e67152f186742f16edbc3af3f97836ac7f4f71af9ef4473dc46"
+      },
+      {
+        "file": "package.json",
+        "bytes": 7171,
+        "sha256": "cc1a1ff05a28bcf9414df66ae8473ebe8a20d38e2718e2455b34332c9917a9ea"
+      },
+      {
+        "file": "public/assets/Inter-LICENSE.txt",
+        "bytes": 4380,
+        "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a"
+      },
+      {
+        "file": "public/assets/InterVariable.woff2",
+        "bytes": 352240,
+        "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3"
+      },
+      {
+        "file": "public/assets/crm-coast.png",
+        "bytes": 2813802,
+        "sha256": "8f868fa9516b4728384ca8bb85e1085929fb295f5469eb849526134c5086405c"
+      },
+      {
+        "file": "public/assets/dashboard-city.png",
+        "bytes": 2327443,
+        "sha256": "a7705403d068cb928e4d62496bd3e80a778aed168162e2e70fd459c9aaf8587d"
+      },
+      {
+        "file": "public/assets/document-models-kay/01_Bon_de_visite.pdf",
+        "bytes": 14254,
+        "sha256": "6fa9a77368f5000514af6fb274ba69373b2d2b7c54b07b077c461d01019c5386"
+      },
+      {
+        "file": "public/assets/document-models-kay/02_Mandat_de_vente.pdf",
+        "bytes": 20976,
+        "sha256": "a4a37fc923af2fc87e4ab6f19459bb6e4e6b7163a3e40a8abae542a5af9c018d"
+      },
+      {
+        "file": "public/assets/document-models-kay/03_Mandat_de_location.pdf",
+        "bytes": 20492,
+        "sha256": "f81077bc42b216a50fef1970d4ce74405c0901628b6e27ad4c3660c37418e8c6"
+      },
+      {
+        "file": "public/assets/document-models-kay/04_Contrat_location_longue_duree.pdf",
+        "bytes": 24442,
+        "sha256": "e992d017697a515ba3ed085fcb1e76c1858dc0dc90e99aa6c138d2ba76045d85"
+      },
+      {
+        "file": "public/assets/document-models-kay/05_Contrat_location_courte_duree.pdf",
+        "bytes": 19858,
+        "sha256": "bde79e9012ea338373b7a30dbe9e813a0e16d12b9ee77230cd3a90ff06f77f14"
+      },
+      {
+        "file": "public/assets/document-models-kay/06_Contrat_bail_commercial.pdf",
+        "bytes": 23462,
+        "sha256": "3a6ba35d28a5864427124004481178457f449c046c9f9f9bc3f4d728fad2260e"
+      },
+      {
+        "file": "public/assets/document-models-kay/07_Compromis_de_vente_PROJET_NOTAIRE.pdf",
+        "bytes": 19587,
+        "sha256": "7467f0b0ce0359c183d56a649d8d89d2d00e0597ad6067587777886aaf991aa7"
+      },
+      {
+        "file": "public/assets/document-models-kay/08_Fiche_descriptive_bien_immobilier.pdf",
+        "bytes": 18247,
+        "sha256": "3c05fb4da924d82c17407bfeb0bd369f699cc76b18ca3414cee42555cea16e43"
+      },
+      {
+        "file": "public/assets/document-models-kay/09_Fiches_clients_proprietaire_acquereur_locataire.pdf",
+        "bytes": 21558,
+        "sha256": "aff8026d6d0217582d80b14db65d81741847f96441c3b210124e4e0242b0380f"
+      },
+      {
+        "file": "public/assets/document-models-kay/10_Recu_de_paiement.pdf",
+        "bytes": 13813,
+        "sha256": "59934beba3cd80e707addf6d97b748b3946652e540185220dfde4ae2df1d23c9"
+      },
+      {
+        "file": "public/assets/document-models-kay/11_Facture_de_commission.pdf",
+        "bytes": 14643,
+        "sha256": "a81bcedb832366e63b64b0534d516124056dab0912ba66074c9ac768cd2f9ef4"
+      },
+      {
+        "file": "public/assets/document-models-kay/12_Etat_des_lieux_entree_et_sortie.pdf",
+        "bytes": 23180,
+        "sha256": "da3b359705f7716732d64650121af6c53552a691f80de861981e1af7cccb4d3b"
+      },
+      {
+        "file": "public/assets/document-models/01_Bon_de_visite.pdf",
+        "bytes": 76687,
+        "sha256": "2ff5cbeea00bb5e83753cceaae90e450489c01a30a521531034135a069d66176"
+      },
+      {
+        "file": "public/assets/document-models/02_Mandat_de_vente.pdf",
+        "bytes": 81376,
+        "sha256": "b4f6ce17d62fdedd436ba49b1f086ac0cf5495db52b2cf5d86c3b59bc8fa4331"
+      },
+      {
+        "file": "public/assets/document-models/03_Mandat_de_location.pdf",
+        "bytes": 80974,
+        "sha256": "f333bf20bffa5def00aac2eec370dda6e20411cb2faccbc38f8468e39681f9a1"
+      },
+      {
+        "file": "public/assets/document-models/04_Contrat_location_longue_duree.pdf",
+        "bytes": 83220,
+        "sha256": "bded4e8baeeebbb08a38ede7a80e17dcc1fb6e55744d31d746c94c90d829f03a"
+      },
+      {
+        "file": "public/assets/document-models/05_Contrat_location_courte_duree.pdf",
+        "bytes": 80848,
+        "sha256": "89f8e8564ce2722712248abd99d23d0ae1e6b0e2e92fd2ce9996b8d0bc20ecac"
+      },
+      {
+        "file": "public/assets/document-models/06_Contrat_bail_commercial.pdf",
+        "bytes": 82808,
+        "sha256": "599889dee93c79b9ac88fcc8543bdc7f2a29d89adaaaae3ce31ee72cdfca4562"
+      },
+      {
+        "file": "public/assets/document-models/07_Compromis_de_vente_PROJET_NOTAIRE.pdf",
+        "bytes": 80802,
+        "sha256": "71f074aeb208e3877fdcfdf0eb486e20664344c8ee8027500ca5f4b0f01683c5"
+      },
+      {
+        "file": "public/assets/document-models/08_Fiche_descriptive_bien_immobilier.pdf",
+        "bytes": 78921,
+        "sha256": "fd552087f5ed468f311b0cec9f19bb0e3f60393bed04bc3d859a896be0d210fe"
+      },
+      {
+        "file": "public/assets/document-models/09_Fiches_clients_proprietaire_acquereur_locataire.pdf",
+        "bytes": 82574,
+        "sha256": "be5b5acbf5fc3ab979347ebd3adb6ffad141ca416ccd2fd862814c227583ebbe"
+      },
+      {
+        "file": "public/assets/document-models/10_Recu_de_paiement.pdf",
+        "bytes": 77015,
+        "sha256": "6b57f8128ebfc82705b9786b3764eab062a17f0eb7326f07d07c4357779cafd9"
+      },
+      {
+        "file": "public/assets/document-models/11_Facture_de_commission.pdf",
+        "bytes": 77445,
+        "sha256": "0620280b660a5b4a7011fbed301b944b24ee21339fde888eec8d07817cd124a4"
+      },
+      {
+        "file": "public/assets/document-models/12_Etat_des_lieux_entree_et_sortie.pdf",
+        "bytes": 82124,
+        "sha256": "04ea5926d8e5d94bfb3f15c73013d57482a1751d5bcaec7c5f80e97f451b36ab"
+      },
+      {
+        "file": "public/assets/document-models/manrope-OFL.txt",
+        "bytes": 4386,
+        "sha256": "d6a309fcfb963d329a93baf9df66fa5f3c23a4be2b5f67edf24d6cafecde12ac"
+      },
+      {
+        "file": "public/assets/document-models/manrope-bold.ttf",
+        "bytes": 97520,
+        "sha256": "5ae5c99a522733b5dfaf9064c2a68818ca32bcec5400c794bcdbd573b9518b90"
+      },
+      {
+        "file": "public/assets/document-models/manrope-regular.ttf",
+        "bytes": 97500,
+        "sha256": "e9e1400397ddf980ac722fa3963cbc649be0607c20800e183b20812eb9d27692"
+      },
+      {
+        "file": "public/assets/document-models/manrope-variable.ttf",
+        "bytes": 164700,
+        "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+      },
+      {
+        "file": "public/assets/kay-dashboard-villa.png",
+        "bytes": 1945251,
+        "sha256": "a083d42374dcba72771d409ea5bd646058bd48d6f1076ad773deefa3af8229f0"
+      },
+      {
+        "file": "public/assets/kay-key-only-black-transparent.png",
+        "bytes": 123310,
+        "sha256": "9fb66e3fd27cd03de125c5b9e9f2798e508d37333a83cc27afc687688334b82b"
+      },
+      {
+        "file": "public/assets/kay-key-only-white-transparent.png",
+        "bytes": 77595,
+        "sha256": "d928ff6b6a5616acb8ccd5fc131042a516c22062b278747498d550603e9c2c5a"
+      },
+      {
+        "file": "public/assets/kay-logo.svg",
+        "bytes": 2108,
+        "sha256": "53f3d214c0246d9c127b6225d35ba385e1b60ed6f7f284a1db36605fd5282327"
+      },
+      {
+        "file": "public/assets/kay-pearl-atmosphere.png",
+        "bytes": 1469089,
+        "sha256": "7c443fad9a68adb73d4b740e49b634f014ab2c72f9fb85da82b90a7eeb482c88"
+      },
+      {
+        "file": "public/assets/login-villa.png",
+        "bytes": 2741469,
+        "sha256": "21c5d8a335221664e4c795770d18488c563d61214c2dc3503ded189558b68b16"
+      },
+      {
+        "file": "public/assets/projects/azur.png",
+        "bytes": 3011005,
+        "sha256": "499f129c428651415f0adef04aef54c7d4519dc8459b1f52d86ef7ddccae12a5"
+      },
+      {
+        "file": "public/assets/projects/cap.png",
+        "bytes": 3099947,
+        "sha256": "7c00f15b353c40a8e7fbcd93536b16f15f0b09400f7d282a8c18254437914a55"
+      },
+      {
+        "file": "public/assets/projects/horizon.png",
+        "bytes": 3559896,
+        "sha256": "0b5da65baf122fcb08ed0bdc5bbb99027574c063fb08c50612e5347cf7aec46a"
+      },
+      {
+        "file": "public/assets/projects/lumiere.png",
+        "bytes": 2512389,
+        "sha256": "c817c3320d4525070e603b8074e23363d068ea371c20fbf7357c976add200b72"
+      },
+      {
+        "file": "public/assets/projects/oliviers.png",
+        "bytes": 3720644,
+        "sha256": "768ac68351605169e62f1f5d1a030ad8232dc6a64f8509a34e695a2b92f685d8"
+      },
+      {
+        "file": "public/assets/projects/patio.png",
+        "bytes": 3362233,
+        "sha256": "6c49a8e38f25f6157c5ea2500c03df43d47b6a5fefda882c3cff51290778310d"
+      },
+      {
+        "file": "public/assets/projects/sable.png",
+        "bytes": 3322895,
+        "sha256": "500122fa3923be9a3fa6200fe682eafdcbde411e4824938d199441ad692837ad"
+      },
+      {
+        "file": "public/assets/projects/solea.png",
+        "bytes": 3645263,
+        "sha256": "a1645b88f3779823fd189ae3a7bd1283684c7ab98762e25cd4f6b8ea0a19a0e3"
+      },
+      {
+        "file": "public/theme-init.js",
+        "bytes": 693,
+        "sha256": "f61aedd5bde0b4f6400a471124755987ca2c17e22435af53cb59a3b61fad73ae"
+      },
+      {
+        "file": "qa/compact-fixture.js",
+        "bytes": 197,
+        "sha256": "92cb5417f7b7a5aea81f572abb498192259ad7ad1ef11beb72586bd7e6701832"
+      },
+      {
+        "file": "qa/contact-workspace.test.js",
+        "bytes": 9172,
+        "sha256": "8172eb38a1aa0d7df455abf2d3c953da68876084af0a993c0c171a5f902bac27"
+      },
+      {
+        "file": "qa/document-upload.test.js",
+        "bytes": 11062,
+        "sha256": "aec49ec84b8134a7e749df444fa6e93fc743d923ac477afa6c66aaf058a53907"
+      },
+      {
+        "file": "qa/documents-help-layout.test.js",
+        "bytes": 8664,
+        "sha256": "79fef5ef4c3ec37c51a27a54b7c97eb54f9d99c96ef4b0a666f9219158eb64de"
+      },
+      {
+        "file": "qa/documents-help-templates.test.js",
+        "bytes": 3700,
+        "sha256": "8639ccd41cdbe368beb8fbb9df08a7e26d451b46221e1f0191c9eed8e6c9108b"
+      },
+      {
+        "file": "qa/documents-help.test.js",
+        "bytes": 6562,
+        "sha256": "f4d054d7cebffbf9ad0615dce6f34c0b917e28882f3026e08479f538f7b35340"
+      },
+      {
+        "file": "qa/domain.test.js",
+        "bytes": 1154,
+        "sha256": "5cfee68851088e7ce0dfe2ff325ed5533898c1915e2313c7d4cd09b578e1e99d"
+      },
+      {
+        "file": "qa/dossier-cleanup.test.js",
+        "bytes": 11311,
+        "sha256": "331b4137c303c9b35e01b33a431404b20f656b5a07e63ae9b661be3fd2ce2434"
+      },
+      {
+        "file": "qa/drawer-cards.test.js",
+        "bytes": 10419,
+        "sha256": "8a25432531413f35aca286730aa2c070e5748467d9cbe016fa318e4489d2df7f"
+      },
+      {
+        "file": "qa/feature-completion.test.js",
+        "bytes": 31966,
+        "sha256": "5faccb006b067fddb255ab0599a4f58218067f5d8a2f2339a64800ce1e21fa9d"
+      },
+      {
+        "file": "qa/help-hub.test.js",
+        "bytes": 8060,
+        "sha256": "33ed6cd89692c686974e719c8dd79abd3af8db5ce6445a2e54b304f47dbfe568"
+      },
+      {
+        "file": "qa/help-workspace.test.js",
+        "bytes": 6677,
+        "sha256": "39afd79a42c8d10c861cdfa94d701c04fa343f4f80fc8b8f507571d8a2c19d52"
+      },
+      {
+        "file": "qa/interactions-domain.test.js",
+        "bytes": 10141,
+        "sha256": "ec4dbda31cfd6406d15bd0ab7f5163833db863faa264c22ea50cb9a3d5969de5"
+      },
+      {
+        "file": "qa/inventory-detail-tabs.test.js",
+        "bytes": 17896,
+        "sha256": "6196925c7757d93248d37b6f8129ce71b81b40bdb3c9ead0c5c87df241167a18"
+      },
+      {
+        "file": "qa/inventory-parity.test.js",
+        "bytes": 9887,
+        "sha256": "e71e1993d96edb9c9759319cdd556327d45b9d90c87359d75993083866d7d583"
+      },
+      {
+        "file": "qa/inventory-stepper.test.js",
+        "bytes": 11665,
+        "sha256": "1ed5df42dadd39f27296827e5187c921bbb72eeaf7b18d478e7dbff71b00b02e"
+      },
+      {
+        "file": "qa/inventory-templates.test.js",
+        "bytes": 3934,
+        "sha256": "6b29f43b24e332488aa8f3a00535b1a155696d68990eca688d22760b3dd02edb"
+      },
+      {
+        "file": "qa/inventory-unit-filters.test.js",
+        "bytes": 9815,
+        "sha256": "c3548211db2d2668c5e88e2e56853686a42d38a6c3541954b483f4fbec3b0522"
+      },
+      {
+        "file": "qa/mobile-app.test.js",
+        "bytes": 27827,
+        "sha256": "c70389eebe4b42286d9f023ccd7ff3c967e64d25c2f437b5327675a1a81d412c"
+      },
+      {
+        "file": "qa/mobile-card-density.test.js",
+        "bytes": 8300,
+        "sha256": "7294ccfb124bcd04acdb77e746758355f75c562b21ddcd60f17c5e0e70493b13"
+      },
+      {
+        "file": "qa/mobile-core.test.js",
+        "bytes": 12730,
+        "sha256": "29fe7312dccd9bfac05896f648460d3a99461727cf6ca5e4d495185cb3c81af6"
+      },
+      {
+        "file": "qa/owner-inline.test.js",
+        "bytes": 13130,
+        "sha256": "936e73b4e925e5282d93f21e8f26f0a301ef183d6b2cb560100754aa576ea661"
+      },
+      {
+        "file": "qa/owner-workspace.test.js",
+        "bytes": 15554,
+        "sha256": "c3b0ac834a90f94636a0cb8d08326b53ccbbdd4418ed5fb2649fdd20b84697be"
+      },
+      {
+        "file": "qa/parity-domain.test.js",
+        "bytes": 4233,
+        "sha256": "b1bbf1d107860b4dd09ead7d7b2e6991900fedf107e149418c5eec1130e04314"
+      },
+      {
+        "file": "qa/photo-recovery.test.js",
+        "bytes": 21141,
+        "sha256": "c539db82ebb9e0425646ab42f8e6e6b8578068b1dadd63923d12976f846140bf"
+      },
+      {
+        "file": "qa/preparation-pdf.test.js",
+        "bytes": 3391,
+        "sha256": "f1f019ed6a9ca148cde66e1b5172e44cdf5098911c386193cc2d11555a15dbea"
+      },
+      {
+        "file": "qa/project-work-templates.test.js",
+        "bytes": 6091,
+        "sha256": "2c6e137352b2a8c60d253a428529793011cb1da09f80da4bc1a704c1a1e92bef"
+      },
+      {
+        "file": "qa/project-work.test.js",
+        "bytes": 13622,
+        "sha256": "3f620822e8042f7b3147910da18f5f12b45f0568c388d09d215895c4434180fc"
+      },
+      {
+        "file": "qa/record-detail-tables.test.js",
+        "bytes": 9828,
+        "sha256": "cbd3edbfbff33da3c31091f6a6556fcd5b855b108f36992a140a7234d9f06d69"
+      },
+      {
+        "file": "qa/record-status-menu.test.js",
+        "bytes": 13908,
+        "sha256": "22b420cb1fe05b8a7a4c736b83e4187a02766cf7a6a8ca51d4bf52ade8a039de"
+      },
+      {
+        "file": "qa/record-tabs.test.js",
+        "bytes": 12972,
+        "sha256": "952ad5ccf0096d951b2d69007f9c33f9efd2362bdabd589512836ca97c5820d9"
+      },
+      {
+        "file": "qa/verify-feature-completion.mjs",
+        "bytes": 21746,
+        "sha256": "6c5f05c29c72a0caca6f7a0d88e7effdebf652b2178e63f9ab697537917166d2"
+      },
+      {
+        "file": "src/activity-model.js",
+        "bytes": 3894,
+        "sha256": "e411ea2fc0bac8fbc633fff456f6dabc7354f984616bf79edf95e402f2f0ed6c"
+      },
+      {
+        "file": "src/activity-ui.js",
+        "bytes": 6249,
+        "sha256": "0c8b1367660546dbcb7754ea7383ee70b9f4b8a3d47b3f3adfb2f114fb0df653"
+      },
+      {
+        "file": "src/app.css",
+        "bytes": 97219,
+        "sha256": "e678b849f9c8773a397d6a978d14954620ffecaa8fedd8fef0cde19a4777d82b"
+      },
+      {
+        "file": "src/atmosphere.css",
+        "bytes": 5696,
+        "sha256": "15e738ec2e662ebc3dbaefe488649920567001e560ca35bee34f416689df1088"
+      },
+      {
+        "file": "src/atmosphere.js",
+        "bytes": 1961,
+        "sha256": "721fcd869662834204d5c4c65d61dd1342695258712d2187a37a00fdeccff4ab"
+      },
+      {
+        "file": "src/audit-model.js",
+        "bytes": 2110,
+        "sha256": "e84706129e8d3197d6aa2230382f71016da934a5a9de36892905940de8dd38fd"
+      },
+      {
+        "file": "src/calendar-frame.css",
+        "bytes": 2760,
+        "sha256": "0b4212e7c061ef528242507b378dd1772c91977f16e07f2f1e87d072f73f31ec"
+      },
+      {
+        "file": "src/calendar-operations.js",
+        "bytes": 3729,
+        "sha256": "c7fa7aeb98ea5506c1f2a9abfa9066f9721f9a4b55eec454bf2b0e22f05c6ee9"
+      },
+      {
+        "file": "src/change-table.js",
+        "bytes": 3930,
+        "sha256": "303c6c5ff167c27efc8f5a238e315c8b5465684ab65188d4435abcc3612c69d0"
+      },
+      {
+        "file": "src/civil-time.js",
+        "bytes": 695,
+        "sha256": "5fce24a4a3e7abcffae6152506c1d486d40bdfc2c8c5216f208efce185176eef"
+      },
+      {
+        "file": "src/completion-ui.js",
+        "bytes": 4332,
+        "sha256": "14003e31bb3b15c67aa2b2382ba6484a656fb8c7e89603dc5fbac5b77baf2183"
+      },
+      {
+        "file": "src/component-cohesion.css",
+        "bytes": 5735,
+        "sha256": "6ee55004955e5ce7e64b20d1b2985894b8dd5f1123200d93dfc2b84d14c0ca90"
+      },
+      {
+        "file": "src/contact-drawer.js",
+        "bytes": 7586,
+        "sha256": "06a1df178926bfd9a79706edc11327776d5204444f3e89fc6e119f8ba523276e"
+      },
+      {
+        "file": "src/contact-methods.js",
+        "bytes": 8685,
+        "sha256": "ec77651e9b5c5d45a8c38099b56b5bc354a53cc14a44fa8c7f73ec4899f8c013"
+      },
+      {
+        "file": "src/contact-workspace.css",
+        "bytes": 2549,
+        "sha256": "40124351e2f0687bbb1852670f848b982e8b23f3d36fb83043c458f5a5df9d10"
+      },
+      {
+        "file": "src/controls.js",
+        "bytes": 439,
+        "sha256": "d0040d88e5fc53d815af1acf1b719c6f36379b8b6e65d16da1bda929e04eda3f"
+      },
+      {
+        "file": "src/crm-status-palette.js",
+        "bytes": 2808,
+        "sha256": "b143846d460b8c79522238b200c2da575e7d39f29a0fd3a7ca03136201c64bf8"
+      },
+      {
+        "file": "src/csv.js",
+        "bytes": 1748,
+        "sha256": "2cd00e8f4609b6e35791348401d80cae736bc34fd743bdf27aa19a96ca75ac5b"
+      },
+      {
+        "file": "src/dashboard-chart-react.jsx",
+        "bytes": 2598,
+        "sha256": "bad90c40eff6a3eaa2054a2051bd0f46633cf92dd71861c60b81a1f41ac47a20"
+      },
+      {
+        "file": "src/dashboard-chart.js",
+        "bytes": 600,
+        "sha256": "23833077cca0dd861045eea8e3f3d160f5c44ffb8a1ff7fe4328569bf8c001a0"
+      },
+      {
+        "file": "src/dashboard-insights.js",
+        "bytes": 1815,
+        "sha256": "7cf355ddc900a9f01437712ac11e761d7f2558bb1ca3f5b88a04624e49fc9930"
+      },
+      {
+        "file": "src/dashboard-kpis.js",
+        "bytes": 3319,
+        "sha256": "171901a1b8cee3e91acfdc28b45f9e3ea75f7d29da5e6ef5f8afb2b933dc899a"
+      },
+      {
+        "file": "src/dashboard.css",
+        "bytes": 18506,
+        "sha256": "83e3e344e01efd0952a923b56a43e14c69e471fb6b78b32b0c683fc55c249dc3"
+      },
+      {
+        "file": "src/dashboard.js",
+        "bytes": 15333,
+        "sha256": "b606ce2dad09b88907970c8f01c8cdb4ab22fe49006b619f8f046f49af80c5a3"
+      },
+      {
+        "file": "src/data-operations.js",
+        "bytes": 18603,
+        "sha256": "96938092013c42213e4688ce5385cd358331df91883e06a666c75f1fc3cc4b85"
+      },
+      {
+        "file": "src/data.js",
+        "bytes": 8425,
+        "sha256": "dbf83e9bc91b5c2d29b0499c97bce8385c5e58909d9f01e616299aa080ef2455"
+      },
+      {
+        "file": "src/date-picker.js",
+        "bytes": 11244,
+        "sha256": "f82ea9103a40c0553a78d717e18f6f6b5f4d30d30ab6171398b851609b2f1639"
+      },
+      {
+        "file": "src/dates.js",
+        "bytes": 803,
+        "sha256": "5d65755636743a0e3219fbfb7f10564a4a174106d4b74b9014c3793f212b96de"
+      },
+      {
+        "file": "src/deal-contract.js",
+        "bytes": 1519,
+        "sha256": "88a507cb2b070ca9b3f409983cf23adbde4b69a59c7737e529867e6bf908f050"
+      },
+      {
+        "file": "src/deal-dossier.js",
+        "bytes": 10535,
+        "sha256": "30b2b7bd08ce1912d66a6186e31a0909c2cccdd661b05610e00bee0e7a3459f8"
+      },
+      {
+        "file": "src/deal-identity.js",
+        "bytes": 397,
+        "sha256": "cfc84c052fca07fe0c88c45edff03cb76202df4ea80dedbf1d1ec39eaf754d77"
+      },
+      {
+        "file": "src/demo-data.js",
+        "bytes": 22330,
+        "sha256": "e6cca2d09915542bf1bf2d3077a23c3d02fccf9047e5ca4d3abc0031f48c55c5"
+      },
+      {
+        "file": "src/directories.js",
+        "bytes": 5426,
+        "sha256": "ae526eb1066c13e87d26634f59ceb770d142dfd2a34be55735337f2d5f2f1864"
+      },
+      {
+        "file": "src/directory-filters.js",
+        "bytes": 4015,
+        "sha256": "7c13b7ce5082b4952aed6baa1a9e37d08b93bd713ad333ea8cf1c4130c1305c3"
+      },
+      {
+        "file": "src/document-model-content.json",
+        "bytes": 85391,
+        "sha256": "4b909e682843ab06b47ee0723d876aef2a324593355ff272f73f0cafdddff0c3"
+      },
+      {
+        "file": "src/document-stationery.js",
+        "bytes": 9474,
+        "sha256": "b9d3fc2b6c196af83d96fda8fd6aa60ffb566c101950b9f80bc0a1510d017c50"
+      },
+      {
+        "file": "src/document-upload.js",
+        "bytes": 5255,
+        "sha256": "54280806ca60c4461af14b973fba4ce9c0765c47db5ce67e369a151fd5e9ca94"
+      },
+      {
+        "file": "src/documents-help.css",
+        "bytes": 20881,
+        "sha256": "dee26fdb648c425ebcf988d8871720f1cd4edc35c2acb99c54b9654b36b81931"
+      },
+      {
+        "file": "src/dossier-events.js",
+        "bytes": 1282,
+        "sha256": "c69a14715c561d35cc4f11a6e0e1aed350a878046b788031387549bd3f881d69"
+      },
+      {
+        "file": "src/dossier-lifecycle-model.js",
+        "bytes": 4532,
+        "sha256": "f15099fa1fc873662620bd721968e70f766b435e232e22e2682ef72c15d49173"
+      },
+      {
+        "file": "src/drawer-cards.css",
+        "bytes": 4350,
+        "sha256": "d7465b2d7562140efde57272950ff22fc61dd0f1130fd6becf8d60501d80e5da"
+      },
+      {
+        "file": "src/drawer-cards.js",
+        "bytes": 1198,
+        "sha256": "0b54a5179526d25dfd7bdfe4f9a42a99981f387fba15f21f67079dae70153da4"
+      },
+      {
+        "file": "src/dropdowns.css",
+        "bytes": 5003,
+        "sha256": "4e45fd5cc0c17f53971c063ffd9ad66bf74e17bad2f32aa8e0437c07485dc917"
+      },
+      {
+        "file": "src/feature-completion-demo.js",
+        "bytes": 2931,
+        "sha256": "9bf784ffcecd1f4278d30bd33447b63db34aca63c9a1cc84a6a30a0f20ded4fc"
+      },
+      {
+        "file": "src/feature-completion.css",
+        "bytes": 2543,
+        "sha256": "b8a8cf569ef76a39a366491be116547d4029a87497a6c151a6e24655b0639350"
+      },
+      {
+        "file": "src/fidelity.css",
+        "bytes": 11700,
+        "sha256": "5911bc54bb8b1adf51e35560ad0a6fae35a9ad1750184fd834864ea3952a1caf"
+      },
+      {
+        "file": "src/file-model.js",
+        "bytes": 7940,
+        "sha256": "e07989e5706ae52dfeef001f38474d29e2a06304a8bc1f82031daf7132a962f8"
+      },
+      {
+        "file": "src/file-operations.js",
+        "bytes": 5591,
+        "sha256": "484b37b391253d99be0b57b80dd56a1389c0cce9ea9f9d367035fb39c54ecf39"
+      },
+      {
+        "file": "src/form-stepper.css",
+        "bytes": 1938,
+        "sha256": "fddf12ef8470f680d2b445e61f8fe20b4ebd6b86ac525913dee305592ef3e179"
+      },
+      {
+        "file": "src/form-stepper.js",
+        "bytes": 746,
+        "sha256": "bbb485c31491d5d38f3526e9a3c9bf68a724e682a61b7808f4b7fa9a42baea58"
+      },
+      {
+        "file": "src/forms.js",
+        "bytes": 2552,
+        "sha256": "f42a08ae77f8e18afe7dfcade3598dd0ce4319c8ab3f7703581dbc1f643d3ab8"
+      },
+      {
+        "file": "src/generated-catalog.json",
+        "bytes": 22411,
+        "sha256": "f1c12259913c3dccdb309eb75bce7cdcd650ba4547f3ec601328c864a5920b48"
+      },
+      {
+        "file": "src/generated-model.js",
+        "bytes": 6284,
+        "sha256": "925a74222c53b8af20b200f89418c95d9d53fb15da67b5ebfaae3aa09517419e"
+      },
+      {
+        "file": "src/generated-pdf.js",
+        "bytes": 2488,
+        "sha256": "4201df4a50424ecc2f18b83036f40ac5dccc490151ddd3595b280bf584a18a67"
+      },
+      {
+        "file": "src/generated-ui.js",
+        "bytes": 13020,
+        "sha256": "a80d722cba5e90b648f4830e43d14b9b62a81431944bb207b0546d0b6140b977"
+      },
+      {
+        "file": "src/global-search.js",
+        "bytes": 10919,
+        "sha256": "abc9da51fb2fc4ef953364b0014653f52bea4ac669dd566bccc63fafee45d380"
+      },
+      {
+        "file": "src/help-catalog.json",
+        "bytes": 73924,
+        "sha256": "5c045339cacf3ea4a965f7eafdc9ba12d4dd605614d50f760ef78d0fd86739a6"
+      },
+      {
+        "file": "src/help-hub.css",
+        "bytes": 10563,
+        "sha256": "0bd67307f695332287d2cf5f4434c21e4752d88f2796f7100b4f7865c40d8fa6"
+      },
+      {
+        "file": "src/help-learning.js",
+        "bytes": 1782,
+        "sha256": "49640c6d0cbb633907408e2014a55b885fc499ef242265ac74fcb55835aa3c49"
+      },
+      {
+        "file": "src/help-model.js",
+        "bytes": 3723,
+        "sha256": "152cc04ed555c50dec82a9586da9689031e73a0476f46f8490372f3b5f65e22f"
+      },
+      {
+        "file": "src/help-navigation.js",
+        "bytes": 2100,
+        "sha256": "4ebd1d6744b50b35b8ecbec4381fefa137c70255ec9f6723e65790b1f76c5a8f"
+      },
+      {
+        "file": "src/help-workspace.js",
+        "bytes": 2004,
+        "sha256": "1276459a069900f90428db8b15f89e05b36309a1facb5bcd5d0de6cbaa93062c"
+      },
+      {
+        "file": "src/help.js",
+        "bytes": 12479,
+        "sha256": "f6d7ad827f5cf0cc9a8e5a3159a4eaf200066207f09669276c8c799148b8c962"
+      },
+      {
+        "file": "src/inline-fields.js",
+        "bytes": 11483,
+        "sha256": "d044b7412916ff44fa7f66dce507299e5bb51e23a0697459324da9ccdf92ce56"
+      },
+      {
+        "file": "src/interactions.css",
+        "bytes": 10801,
+        "sha256": "013e90e3983514d49cb6d34bd975d8f09f22389e0988f96a77e675929536d2e1"
+      },
+      {
+        "file": "src/interactive-surfaces.css",
+        "bytes": 2279,
+        "sha256": "3bf322634c6de4f77a9151ccecf5191065b6359483b9bc27091ddb9a0129f379"
+      },
+      {
+        "file": "src/inventory-detail-state.js",
+        "bytes": 4567,
+        "sha256": "ed3965fae2fa59b73382bfc36c992e63380fcf32cfb2d886d648b31466c0fee6"
+      },
+      {
+        "file": "src/inventory-detail.css",
+        "bytes": 15730,
+        "sha256": "43ecffeb1388263c1deed93b0656e9fe44c29b8fa680c60ae3daaa08e0f9e536"
+      },
+      {
+        "file": "src/inventory-detail.js",
+        "bytes": 26670,
+        "sha256": "d062d21588c946e6c63051e884a3b7636d0d118291d88a3b6ca81a3197be43f4"
+      },
+      {
+        "file": "src/inventory-parity-demo.js",
+        "bytes": 2703,
+        "sha256": "68a338af3f399133999ca02116edece20fc6b4d1428b74adf9148a670ef8bea4"
+      },
+      {
+        "file": "src/inventory-parity.css",
+        "bytes": 4182,
+        "sha256": "17e8e4d34f95f3de3d6ba524814dd7cbb14bd3727d44ed9f7b2bbf775c98c9de"
+      },
+      {
+        "file": "src/inventory-ui.js",
+        "bytes": 12808,
+        "sha256": "de7d9f3556d8be26430f2bfbba17d4db08523f2f3a0b81a72ca185f39a253d20"
+      },
+      {
+        "file": "src/inventory-unit-filters.js",
+        "bytes": 5510,
+        "sha256": "6435555e90bddd6b2baf464bd19b9a36ad843eb0ddfe28d8cfa939d072a2b1bc"
+      },
+      {
+        "file": "src/kanban-drag.js",
+        "bytes": 9868,
+        "sha256": "91cfebe6e83adc346759cb50104c0e164136023076e20d1e2c67056b540b000c"
+      },
+      {
+        "file": "src/main.js",
+        "bytes": 60915,
+        "sha256": "75aa3991fd714ddd275536710b0ce5e6fab2106b46b4b5378a60daa351b1c62a"
+      },
+      {
+        "file": "src/mobile-app.css",
+        "bytes": 21372,
+        "sha256": "29c3b09c5f10d5d3358580294e2b79f2552262ea9cda3b1c424834984ecef5e8"
+      },
+      {
+        "file": "src/mobile-collections.js",
+        "bytes": 10387,
+        "sha256": "aa5cac66ee6b93a8f3bbfffac6c242a7a9cb55ff13da31721b31498fb0523d5b"
+      },
+      {
+        "file": "src/mobile-core.css",
+        "bytes": 8270,
+        "sha256": "3b463a593d85bb518fbcf92fb7b6f3208179882281eeb6a19fb2ffe7f991517d"
+      },
+      {
+        "file": "src/mobile-core.js",
+        "bytes": 7619,
+        "sha256": "7e9b0bd3fca4a5a4ab9d0db411947003fa3a42642b02bf19994b177617f1c9b2"
+      },
+      {
+        "file": "src/mobile-search.js",
+        "bytes": 2018,
+        "sha256": "6cb1139b460a1f5f003f289c872d01d6ee2818707e0e63d59dd8854abfe6fde1"
+      },
+      {
+        "file": "src/motion.css",
+        "bytes": 10602,
+        "sha256": "c3633c7867db3768c7f06ded27207183557fc0fca117b6d2d962744c5baae4b6"
+      },
+      {
+        "file": "src/motion.js",
+        "bytes": 5205,
+        "sha256": "1e9abd6c510cd4cbaa3bb43b81d3e47ef4b2e1f0f7896936801a39fafeb94572"
+      },
+      {
+        "file": "src/neutral.css",
+        "bytes": 11620,
+        "sha256": "eaf78ae64ec09423b89ee26299c45dc5d288bb186e2b6e946b97add5bcf8746d"
+      },
+      {
+        "file": "src/numbered-lists.js",
+        "bytes": 2327,
+        "sha256": "d122038ee5a6b1fb87895f5517ead19d8d54bf23824e4fe6cf294fcbce464359"
+      },
+      {
+        "file": "src/offering-search-model.js",
+        "bytes": 4157,
+        "sha256": "7d84f124dab8ac062cd9e3debf339dc19389c4a9ae652eef81e465493ab9510c"
+      },
+      {
+        "file": "src/offering-search-ui.js",
+        "bytes": 7485,
+        "sha256": "f163bcbf6786fc07f80ca63a2ea3e4f5ccbcdbce925ec4de5085cfb0b28430a0"
+      },
+      {
+        "file": "src/overlays.js",
+        "bytes": 6176,
+        "sha256": "35dabba72ecfa779130284745a0f08d73af2063cbb6100d4375ea27e5005b9ea"
+      },
+      {
+        "file": "src/owner-inline-model.js",
+        "bytes": 2608,
+        "sha256": "a6053b718faf12ae5777eb452eef6aec47824f0054513932702001cbf0dd6fc0"
+      },
+      {
+        "file": "src/owner-inline-ui.js",
+        "bytes": 7423,
+        "sha256": "19d1f1319ecc1b5ead7670c0a2b6c105214fb8ceee5c7aa5b851cd3c28aa46fd"
+      },
+      {
+        "file": "src/owner-workspace.css",
+        "bytes": 9688,
+        "sha256": "0fb230ea03298caff6c441e0ddf3bd38c8251f1797e0f00e4aec9e36af1add7f"
+      },
+      {
+        "file": "src/owners-model.js",
+        "bytes": 6220,
+        "sha256": "9ba3a9205f7685aece114c7bf75aa44ba844647c77c5495eb0ae828b9eba92c3"
+      },
+      {
+        "file": "src/owners.js",
+        "bytes": 21436,
+        "sha256": "cac90714fd159c0d1b61486b18228f10643f0a89f3393248f04033545ac2ec74"
+      },
+      {
+        "file": "src/pages.js",
+        "bytes": 43480,
+        "sha256": "2890b66fee79761a79812dcd79c2e2bd801e3987e2426774607c1e490fc71811"
+      },
+      {
+        "file": "src/parity-model.js",
+        "bytes": 15330,
+        "sha256": "d718591d3f95ec26f7b3ca1491cbe02e200709fd7f8facacc496c600bba972f8"
+      },
+      {
+        "file": "src/parity-ui.js",
+        "bytes": 28657,
+        "sha256": "1ed2fd6ea8e206548daa27c02264d2c31cb19f035351cb3a86247d27cef8b014"
+      },
+      {
+        "file": "src/phone-countries.json",
+        "bytes": 13720,
+        "sha256": "64df3966cdbaf28eb28411cf8d076721ef36c902baa35b69c49f6ba2646e412b"
+      },
+      {
+        "file": "src/phone-model.js",
+        "bytes": 1113,
+        "sha256": "fd9639cb41c005d70f1e5cf76f57bb158fe5bc6bd6100595bab8a09a5e41925d"
+      },
+      {
+        "file": "src/photo-gallery.js",
+        "bytes": 3097,
+        "sha256": "0065ff38f015e2226d2d7004a8e273319a16c48d5acf67851efe29308e80691a"
+      },
+      {
+        "file": "src/photo-recovery.css",
+        "bytes": 2115,
+        "sha256": "f273c07bf8865e7aa58a5d942d97d549f113890c07ab38147c682e866e06b0bb"
+      },
+      {
+        "file": "src/photo-state.js",
+        "bytes": 661,
+        "sha256": "3364a7cb8d800e53e988d5cc42f384499be4e972181e2b0f4f64748a7aa6abe5"
+      },
+      {
+        "file": "src/photo-upload.js",
+        "bytes": 8177,
+        "sha256": "f4986b8643008273d590fcdaa3484ab77834621167b3929395de9e564b11a82a"
+      },
+      {
+        "file": "src/policy-windows.js",
+        "bytes": 5550,
+        "sha256": "01d822d38ebf880045a1ca3e3caf956551db11bd08278c43213091b9246f4764"
+      },
+      {
+        "file": "src/popovers.js",
+        "bytes": 4806,
+        "sha256": "5714e3a1d2a0c32330d3eb9208e8caf3c3b18e6ddcc89f73aec3d2944788aec3"
+      },
+      {
+        "file": "src/priced-unit-model.js",
+        "bytes": 1921,
+        "sha256": "affb63e8b70368fb9c053a148c3a93b4b145886e6e07372d208503d1251b7f79"
+      },
+      {
+        "file": "src/project-links-model.js",
+        "bytes": 4441,
+        "sha256": "2751be5a79015bdb76772679f7ab24daa80d59b135aaab0391d62b72b6171506"
+      },
+      {
+        "file": "src/project-links-ui.js",
+        "bytes": 9038,
+        "sha256": "95b66af4c41c056da91051f3ca976410b0451d9af1b730b0cfb9e1d682d66031"
+      },
+      {
+        "file": "src/project-work-demo.js",
+        "bytes": 2838,
+        "sha256": "ca1a2d65fd271282de97c4221d1514fbbd927208416432dafa127d8a44f7b456"
+      },
+      {
+        "file": "src/project-work.css",
+        "bytes": 2753,
+        "sha256": "24a6fb35414d5dc6d2aadcc0dccd47d8392b0c6e4ea56d06ca9a6f123d0ec280"
+      },
+      {
+        "file": "src/property-listing-model.js",
+        "bytes": 11804,
+        "sha256": "6264fe067e4d37b9e1f1ebc7bedbffc7261f1b436d386a44cbe72b00cb4ce3ab"
+      },
+      {
+        "file": "src/property-listing.js",
+        "bytes": 9710,
+        "sha256": "7f1403578bf824b2cd04699a1d26b4d013c100b189850e5519d53c39db295a4b"
+      },
+      {
+        "file": "src/prospects.js",
+        "bytes": 809,
+        "sha256": "c0662f5cce2e74677deec9a605fb00e1782a3e6974510389d4369f391786af72"
+      },
+      {
+        "file": "src/readability.css",
+        "bytes": 10951,
+        "sha256": "1cee1b0a20df5cfcc55deff4218b85ad7d647713a86e5865c10f29faf2e9c1aa"
+      },
+      {
+        "file": "src/record-changes.js",
+        "bytes": 2336,
+        "sha256": "16f64fdb13db86b4a87a4df305a21dc4670ed0b6eacb89b599c51bcc0d9aadc6"
+      },
+      {
+        "file": "src/record-cleanup.css",
+        "bytes": 5102,
+        "sha256": "fe45f01e7eb99c3d5ecf8df774e1723e2f5f50663966d465c00c5afe8f550237"
+      },
+      {
+        "file": "src/record-detail-tables.js",
+        "bytes": 4129,
+        "sha256": "2d29e330b28183940dd713c74d2121aa902da89638a5805468bd75351b5a24b9"
+      },
+      {
+        "file": "src/record-groups.css",
+        "bytes": 13589,
+        "sha256": "37300bd917117044a88625b2f499f4bd2da12b704eea2fad61b59e640e2c826d"
+      },
+      {
+        "file": "src/record-groups.js",
+        "bytes": 1066,
+        "sha256": "bb1d958a9afb7b3cc3e345e37247e6f3da2816d1528403af77e9fae27d4e3fe1"
+      },
+      {
+        "file": "src/record-insights.js",
+        "bytes": 11380,
+        "sha256": "56e90ab42f882b0be6b47a2439ac460b02eb4e691d92dd06026db50630e13d99"
+      },
+      {
+        "file": "src/record-model.js",
+        "bytes": 23254,
+        "sha256": "7b250fd90d82bbdb92bdd3b608e6984208be04c83832d217bfa47f25fd9eab57"
+      },
+      {
+        "file": "src/record-status-menu.css",
+        "bytes": 2809,
+        "sha256": "f9075f88f258487cad0f70953da1cd3650e56ff83e3f1a24381e996a4c318c13"
+      },
+      {
+        "file": "src/record-status-menu.js",
+        "bytes": 3089,
+        "sha256": "d8b5f61baa7bf3d7f8aa42e96b77f227ee067b96f1c5480f460bc98e1b78959d"
+      },
+      {
+        "file": "src/record-tabs-state.js",
+        "bytes": 1556,
+        "sha256": "3cba6e66aeba72ce97d4b8d53eabfc8f05620e03415fbd378c35d925c8eecbca"
+      },
+      {
+        "file": "src/record-tabs-ui.js",
+        "bytes": 7038,
+        "sha256": "54e36d9a477d58c7c013292a559cdf8dddcbf747af49e6a76a7a1e3e6ff6e0a2"
+      },
+      {
+        "file": "src/record-tabs.css",
+        "bytes": 9629,
+        "sha256": "8d63cf424f86d8d083f1fb32c9cb7baa5aee36827d9c7e8697cb90140ba104d7"
+      },
+      {
+        "file": "src/record-timeline-model.js",
+        "bytes": 3426,
+        "sha256": "e83021f7f39d3ec18cc0e842daf39b8dec36c7845c2cc2a3be55eb8eb19bdbec"
+      },
+      {
+        "file": "src/record-timeline-ui.js",
+        "bytes": 4431,
+        "sha256": "05dfe73d1ec1caf2d5df0416f7081b2708c92df69a11ff75d23dd56770523108"
+      },
+      {
+        "file": "src/record-visit-groups.js",
+        "bytes": 1480,
+        "sha256": "65eaeefee7f4ba2980b221873157e8c93f0f6aec2241ae1e6f9e977e9f9bc42d"
+      },
+      {
+        "file": "src/records.js",
+        "bytes": 56026,
+        "sha256": "2b3d6d86234bee3edd4be18689d61ea933e77b50f8482c020c862f9eaf78e3b5"
+      },
+      {
+        "file": "src/refinements.css",
+        "bytes": 10255,
+        "sha256": "f5afad427b77ff074ad0b9042aea6635dc4a2d3386d1c929e1f6a458a3299791"
+      },
+      {
+        "file": "src/reminder-model.js",
+        "bytes": 3978,
+        "sha256": "bb176f8076ec284cdb9426aa36ed2bb3f987734d0e37502b93c79273068669e7"
+      },
+      {
+        "file": "src/report-model.js",
+        "bytes": 9272,
+        "sha256": "1b7248e6d25291e531f5b05b7290f95bfa45f1403ecf74dabdba4dafaf8d1420"
+      },
+      {
+        "file": "src/selects.js",
+        "bytes": 15331,
+        "sha256": "05e0646eaa034f82215be680feeb3578a12417fb0a9b5362d8fc29707c143e5e"
+      },
+      {
+        "file": "src/settings-operations.js",
+        "bytes": 8703,
+        "sha256": "fa9ea52cb8152fc9c2ec268359bea9e7aec02728e942256865e7b4cebe3649ce"
+      },
+      {
+        "file": "src/settings-pages.js",
+        "bytes": 12545,
+        "sha256": "e865e95d875e6aad93a2df11c5d02cb39f0e202b5fb8a78e38551ed64e6bf5b4"
+      },
+      {
+        "file": "src/settings.css",
+        "bytes": 12175,
+        "sha256": "373462585f1c30be406bed3f404a424c5cc7bfadf2421c437c726917f315d319"
+      },
+      {
+        "file": "src/sidebar.css",
+        "bytes": 2456,
+        "sha256": "074bd25de94fb5c6070c357fed4e7abdbcf68dbbc93f6d1bde7c2c4266c92264"
+      },
+      {
+        "file": "src/sidebar.js",
+        "bytes": 2289,
+        "sha256": "f3bb00e4aeb73b40fdb298ea9213bdd9346a7a52eeb6daa72001ddaa91a7dd9f"
+      },
+      {
+        "file": "src/smooth-scroll.js",
+        "bytes": 5193,
+        "sha256": "396cc79b86432601c344450dcbb0db5aa62ba98bd04e1362e923a00aec3e3f68"
+      },
+      {
+        "file": "src/source-commands.js",
+        "bytes": 16986,
+        "sha256": "797639c13c4cd795adb091813c53f406dbc5d691413cd7bdc6ba050da4464cd3"
+      },
+      {
+        "file": "src/source-views.js",
+        "bytes": 14829,
+        "sha256": "7275fc075bcb9a0d8cd9eaed879f8a0f18e8ffcf1dbb39865d58e70a07f2f5b8"
+      },
+      {
+        "file": "src/status.js",
+        "bytes": 2927,
+        "sha256": "6d04c81b12d5cc8a7849acbe7d5368f8ba81dc592b42b599298c080a79afb8c3"
+      },
+      {
+        "file": "src/stock-review.js",
+        "bytes": 3806,
+        "sha256": "aa265160beac74ae1949a2002120cde556aca08cf308307c41fcf308bcd3a31e"
+      },
+      {
+        "file": "src/style.css",
+        "bytes": 17265,
+        "sha256": "de88a4bae6a79401246ded66644fffc6b8b9d37f5f1d9522fd8f0ef49b58fb34"
+      },
+      {
+        "file": "src/surfaces.css",
+        "bytes": 12136,
+        "sha256": "e5427e995e0ac268f1cb68430b98a1004b6034d29d2eea565f5af4e2a9839a65"
+      },
+      {
+        "file": "src/task-presentation.js",
+        "bytes": 3828,
+        "sha256": "4ac4c429c14f96aba0bf587392b2192a3ae228f0acf6d1ae271a3a7dddf0b474"
+      },
+      {
+        "file": "src/theme.js",
+        "bytes": 3589,
+        "sha256": "ad724bf79fb923b486d2bee62ff5c1b85fcfa4ee7003fd16c1b7514fa5a07cb2"
+      },
+      {
+        "file": "src/themes.css",
+        "bytes": 12771,
+        "sha256": "9d5fb23a6a3c1d16841d208b460fe33494992b25ccbd69023dd84bb081090b40"
+      },
+      {
+        "file": "src/time-picker.css",
+        "bytes": 2320,
+        "sha256": "07dd5c64cfcab92f55b7f032bce665d6b01ff3f48221d7bc1aa2658f57ec41b4"
+      },
+      {
+        "file": "src/time-picker.js",
+        "bytes": 11555,
+        "sha256": "7d537b16196f55f7ddc9faf6d5b9800fa6b02791295980b0ba9d80a6e1e35968"
+      },
+      {
+        "file": "src/ui.js",
+        "bytes": 6298,
+        "sha256": "28f8bf1e1c0a3b76d2c58e308970bdd8faa2bdb0fa3125cd733dba95fb4748e9"
+      },
+      {
+        "file": "src/vendor/bklit/LICENSE-Bklit",
+        "bytes": 1063,
+        "sha256": "16be6cbd42d38503150a67e508a94aacf5a216ec91074cac82513b0cb0bab259"
+      },
+      {
+        "file": "src/vendor/bklit/PROVENANCE.txt",
+        "bytes": 863,
+        "sha256": "8fea9b82d0cdd19c9cff504bf912c956a27c78209aa4b2a9a28a274a74783923"
+      },
+      {
+        "file": "src/vendor/bklit/animation.ts",
+        "bytes": 1095,
+        "sha256": "1e7108d3487b7d3f2a48b42a7026e52e97119a5368ac46d214939cec208e6180"
+      },
+      {
+        "file": "src/vendor/bklit/chart-parent-size.tsx",
+        "bytes": 952,
+        "sha256": "033e4fd0c3b91afff5ca3d2d1e216a60edcef318cd0d9d7415c3f4dd1f2fe1de"
+      },
+      {
+        "file": "src/vendor/bklit/pie-chart.tsx",
+        "bytes": 14768,
+        "sha256": "4d6a7a119c991acbc3995a663f308f1ce00c31985c7339586cfe3d51f89da050"
+      },
+      {
+        "file": "src/vendor/bklit/pie-context.tsx",
+        "bytes": 5292,
+        "sha256": "dcdafa437446a9c9f17f1b46ac089ac733eb619bf41466ff7774d6f09567a836"
+      },
+      {
+        "file": "src/vendor/bklit/pie-slice.tsx",
+        "bytes": 13433,
+        "sha256": "a8413d8745ac4c36c83d0de3f2bfa825cc8d0ab0bf9073d0abd3ab230d0a0d11"
+      },
+      {
+        "file": "src/vendor/bklit/sparkline-geometry.ts",
+        "bytes": 8794,
+        "sha256": "847285ce1b37f268cfcccb4e97471e6ed18aa4505acd5741f3d4547131a0412b"
+      },
+      {
+        "file": "src/vendor/bklit/sparkline-tokens.ts",
+        "bytes": 206,
+        "sha256": "c349e780c5d3e8492d93f8138324b89167b7fc8edc3a6051ac5fca3edb650402"
+      },
+      {
+        "file": "src/vendor/bklit/sparkline.tsx",
+        "bytes": 32341,
+        "sha256": "9b728705948ec9312a1c31887abaefdb7e0da5d7ec1bacd310d3359b515a3f32"
+      },
+      {
+        "file": "src/vendor/bklit/use-enter-complete.ts",
+        "bytes": 773,
+        "sha256": "8e9228e1776f929510cb79b58fe1535dc88a9f9d044334df0bebea30736c8b80"
+      },
+      {
+        "file": "src/vendor/bklit/use-mount-progress.ts",
+        "bytes": 1010,
+        "sha256": "9705b6063b3927aebf5c932e4e9f680231e8788a1e0a36d98bdad06a23a346ae"
+      },
+      {
+        "file": "src/vendor/bklit/utils.ts",
+        "bytes": 157,
+        "sha256": "3c0ad01b6b40762d686625035bb98825cd50163501a432e10c5af9466eb8228a"
+      },
+      {
+        "file": "src/visit-model.js",
+        "bytes": 10871,
+        "sha256": "4e5015d86184880f0178597bc76121bdc51de2cccbeb602872800869fa48163f"
+      },
+      {
+        "file": "src/visit-ui.js",
+        "bytes": 15946,
+        "sha256": "2f0afcd812c4c779aa92d61598878e11c147bb35fa9d1af4722e50400c168538"
+      },
+      {
+        "file": "src/work-context-ui.js",
+        "bytes": 3534,
+        "sha256": "3e89ad27b113d2b6196261cfe7b251a907616e214f86485d59692934b4cd3f5d"
+      },
+      {
+        "file": "src/work-context.js",
+        "bytes": 3422,
+        "sha256": "387e88a4dd6d8c668d035eea7aed47bb05828ac1dc029f29fcec960e48243044"
+      },
+      {
+        "file": "src/work-reports.js",
+        "bytes": 17002,
+        "sha256": "03249f6e41b0aefb91dfb0391a2ee60b66a32ffa4d43432c99946ae7da99e55c"
+      },
+      {
+        "file": "src/workspace-shell.css",
+        "bytes": 19303,
+        "sha256": "b1147cff62cdbbea8b92d0e2f6d5a7548845655e9cc11b8bd96004516ca17d27"
+      },
+      {
+        "file": "src/workspace-shell.js",
+        "bytes": 3877,
+        "sha256": "bf3f5382b10304827b17d5c1141787fdad8da1dbff5b20e54d0de46444fb55e5"
+      },
+      {
+        "file": "src/workspace.js",
+        "bytes": 17003,
+        "sha256": "f1636ec7449e820a584ff246d1f59f39d53e18074984ceced1c1127f1725e427"
+      },
+      {
+        "file": "vite.config.js",
+        "bytes": 451,
+        "sha256": "b8d8296a48f689a5db4444d7a7ae689da28ecba00b9825766a3cc1c8702cb510"
+      }
+    ],
+    "sourceDrift": [],
+    "snapshot": "C:\\Users\\ali-a\\Desktop\\workspace\\Kay-crm\\.git\\codex-backups\\redesign-2026-10-25\\prototype-e7b57344443d.zip",
+    "snapshotSha256": "3d181d06f8494849a696e4985d03cb2b28a114ce3f7d6d84ad682a52955fe113",
+    "nativeAcceptance": "Pending under prior binding browser restriction; no bypass"
+  },
+  "frontend": {
+    "path": "frontend",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "typescript": "5.9.3",
+    "tailwind": "4.3.3",
+    "scripts": {
+      "dev": "node scripts/dev.mjs",
+      "build": "next build",
+      "start": "node scripts/start.mjs",
+      "lint": "node scripts/icon-inventory.mjs --check && node scripts/button-inventory.mjs && eslint src tests scripts next.config.ts playwright*.ts *.mjs --max-warnings=0",
+      "buttons:check": "node scripts/button-inventory.mjs",
+      "icons:check": "node scripts/icon-inventory.mjs --check",
+      "typecheck": "next typegen && tsc --noEmit",
+      "security:check": "node ../.github/scripts/dependency-audit.mjs",
+      "test:unit": "node scripts/test-facade.mjs",
+      "test:e2e": "playwright test",
+      "test:chrome": "playwright test --config=playwright.chrome.config.ts --headed --workers=1",
+      "test:realtime": "playwright test --config=playwright.realtime.config.ts --headed --workers=1"
+    },
+    "routeCount": 38,
+    "routes": [
+      {
+        "file": "frontend/src/app/(workspace)/[section]/page.tsx",
+        "pattern": "[section]",
+        "imports": [
+          "@/features/discovery/audit-panel",
+          "next",
+          "next/navigation",
+          "@/components/shared/page-header",
+          "@/lib/auth/server",
+          "@/features/auth/auth-frame",
+          "@/features/work/work-dashboard",
+          "@/features/reports/dashboard-header-actions"
+        ],
+        "sha256": "16f465e99540574740024844545b5f77bdfcd3b7e98eb76a5240e1661e864e30",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/contacts/[id]/page.tsx",
+        "pattern": "contacts/[id]",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/features/auth/auth-frame",
+          "@/features/contacts/contact-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "9853b1ad5fd8e96af548cd15f9123659b6e987c92a5b16f59559d3edd3c60bc2",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/deals/[id]/documents/page.tsx",
+        "pattern": "deals/[id]/documents",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/features/auth/auth-frame",
+          "@/features/generated/document-workspace",
+          "@/lib/auth/server"
+        ],
+        "sha256": "babccbe8777ba0f54079d8e9394f588f160adec7e85aee96f077baf104131c67",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/deals/[id]/page.tsx",
+        "pattern": "deals/[id]",
+        "imports": [
+          "zod",
+          "next/navigation",
+          "@/features/auth/auth-frame",
+          "@/features/deals/deal-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "31c6a8b49e41bdddba1f90cd744b37f5b327472d556b5075853f3e6c7eb83817",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/deals/new/page.tsx",
+        "pattern": "deals/new",
+        "imports": [
+          "@/components/shared/page-header",
+          "@/components/icons",
+          "@/features/auth/auth-frame",
+          "@/features/deals/deal-create",
+          "@/features/deals/contracts",
+          "@/lib/auth/server"
+        ],
+        "sha256": "e9a45baa09eaed41b7b4d0589c344894ba6e0c8f839ef89061de6328428c7d59",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/deals/page.tsx",
+        "pattern": "deals",
+        "imports": [
+          "@/features/auth/auth-frame",
+          "@/features/deals/deal-list",
+          "@/lib/auth/server"
+        ],
+        "sha256": "800b8676c0a187ede34826704c133576d7d1e3a16e2434f789b3ce771b176141",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/help/[slug]/page.tsx",
+        "pattern": "help/[slug]",
+        "imports": [
+          "next/navigation",
+          "@/features/auth/auth-frame",
+          "@/features/help/catalog",
+          "@/features/help/help-article",
+          "@/lib/auth/server"
+        ],
+        "sha256": "39eae67512de96c2c2e8a1e8044a74cb828cb9827bf8bb2c192710bac4549aeb",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/help/page.tsx",
+        "pattern": "help",
+        "imports": [
+          "@/components/icons",
+          "@/components/shared/page-header",
+          "@/features/auth/auth-frame",
+          "@/features/help/catalog",
+          "@/features/help/help-directory",
+          "@/lib/auth/server"
+        ],
+        "sha256": "9dc93b295a812cf8a85d79c02733d7e53a7d95d1d7b2eb8077c989a5a759b24e",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/leads/[id]/documents/page.tsx",
+        "pattern": "leads/[id]/documents",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/features/auth/auth-frame",
+          "@/features/generated/document-workspace",
+          "@/lib/auth/server"
+        ],
+        "sha256": "02ca6c3299594751a8f9e3c8ea585d7debf0d8e6e3babb7110204ec2daf02743",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/leads/[id]/edit/page.tsx",
+        "pattern": "leads/[id]/edit",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/components/shared/page-header",
+          "@/components/icons",
+          "@/features/auth/auth-frame",
+          "@/features/contacts/lead-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "6196d9552098c2b18c0cf54519587367c707a00c51c01f063d3624db118f836c",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/leads/[id]/page.tsx",
+        "pattern": "leads/[id]",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/features/auth/auth-frame",
+          "@/features/contacts/lead-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "33ccd2e92e2d8088aaeb53f71512a94bb66371f3483739837b245d9a993e735f",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/leads/new/page.tsx",
+        "pattern": "leads/new",
+        "imports": [
+          "@/components/shared/page-header",
+          "@/components/icons",
+          "@/features/auth/auth-frame",
+          "@/features/contacts/lead-create",
+          "@/lib/auth/server"
+        ],
+        "sha256": "68103febad3e1a312041831d354b577f7ca5d06dbc386b00dcb5fec322a2541a",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/leads/page.tsx",
+        "pattern": "leads",
+        "imports": [
+          "@/features/discovery/exports-panel",
+          "@/components/shared/page-header",
+          "@/features/auth/auth-frame",
+          "@/features/contacts/lead-list",
+          "@/features/contacts/contact-directory",
+          "@/lib/auth/server",
+          "@/features/imports/import-panel",
+          "zod"
+        ],
+        "sha256": "a1ff235db84a96690ec0a0dc669d91fce1e69540e064285a2b118ae65f6368ab",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/notifications/page.tsx",
+        "pattern": "notifications",
+        "imports": [
+          "@/features/work/notification-panel"
+        ],
+        "sha256": "28d6fb0166caffd04010ab49a9a1c8310096c7841583d8a34a263cb5e649a024",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/owners/[id]/edit/page.tsx",
+        "pattern": "owners/[id]/edit",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/features/auth/auth-frame",
+          "@/features/owners/owner-form",
+          "@/lib/auth/server"
+        ],
+        "sha256": "4cc5724cdcb4dccc1b1e161c0f41183ea6bbd29c0a762a072b7565c7d46cd133",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/owners/[id]/page.tsx",
+        "pattern": "owners/[id]",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/features/auth/auth-frame",
+          "@/features/owners/owner-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "a06f38613f176ee4a61c4beca309032510f9e686398299aa903cd2d6bd36742c",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/owners/new/page.tsx",
+        "pattern": "owners/new",
+        "imports": [
+          "@/features/auth/auth-frame",
+          "@/features/owners/owner-form",
+          "@/lib/auth/server"
+        ],
+        "sha256": "14f162bb5da69037ddabb560c3a407922924858eb448093602b7f8fef6402fc5",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/owners/page.tsx",
+        "pattern": "owners",
+        "imports": [
+          "@/features/auth/auth-frame",
+          "@/features/owners/owner-directory",
+          "@/lib/auth/server"
+        ],
+        "sha256": "3109f0a2a62e7528b571a4a55529007ab3dbf0c50557a2dacd2a7dd9c788f4f0",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/projects/[id]/edit/page.tsx",
+        "pattern": "projects/[id]/edit",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/components/shared/page-header",
+          "@/features/auth/auth-frame",
+          "@/features/inventory/development-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "b9221047091252cc9eb4c08d16d336321c5f26101c2c64e923cff822dbb1088d",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/projects/[id]/page.tsx",
+        "pattern": "projects/[id]",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/features/auth/auth-frame",
+          "@/features/inventory/development-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "c0c113f09baec8fa9c142e7171c23fcb94dd8307802620f6680b3d782855b71d",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/projects/new/page.tsx",
+        "pattern": "projects/new",
+        "imports": [
+          "@/components/shared/page-header",
+          "@/features/auth/auth-frame",
+          "@/features/inventory/development-editor",
+          "@/lib/auth/server"
+        ],
+        "sha256": "4b39acbdeb9472e21298e1791fdadc89e01ea09445da735678c1787d5803e78d",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/projects/page.tsx",
+        "pattern": "projects",
+        "imports": [
+          "@/features/auth/auth-frame",
+          "@/features/inventory/property-directory",
+          "@/lib/auth/server"
+        ],
+        "sha256": "ffbe97450ee56196108331dc0f9f429fff49f7288961f3889bf9196afb3406dc",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/projects/properties/[id]/edit/page.tsx",
+        "pattern": "projects/properties/[id]/edit",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/components/shared/page-header",
+          "@/features/auth/auth-frame",
+          "@/features/inventory/property-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "f14de4a7cad20eb34e12982445c588e92e5d5f02ba0a34f8d9b4c0dc79c3bf04",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/projects/properties/[id]/page.tsx",
+        "pattern": "projects/properties/[id]",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/features/auth/auth-frame",
+          "@/features/inventory/property-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "38f0de90b58865c7e710683dea1a2612ac90a943b1e009357537dd1186d263a1",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/projects/properties/new/page.tsx",
+        "pattern": "projects/properties/new",
+        "imports": [
+          "@/components/shared/page-header",
+          "@/features/auth/auth-frame",
+          "@/features/inventory/property-editor",
+          "@/lib/auth/server"
+        ],
+        "sha256": "c69fcde1a96ef6bc43bfd9f9fdb41221649358a73639b31cd24121aa3ee7f687",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/settings/page.tsx",
+        "pattern": "settings",
+        "imports": [
+          "next/link",
+          "@/components/shared/page-header",
+          "@/components/ui/button",
+          "@/features/users/access"
+        ],
+        "sha256": "a3f0ce41e56f558fb7be426cdff09d66810b7e81fb8e3ef547b464cb3fe28275",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/settings/users/[id]/edit/page.tsx",
+        "pattern": "settings/users/[id]/edit",
+        "imports": [
+          "next/navigation",
+          "zod",
+          "@/components/shared/page-header",
+          "@/features/users/access",
+          "@/features/users/user-editor"
+        ],
+        "sha256": "5e4199a48cac21bc1874ec6d5706a42b3b2a4f43c3ebf8422cf3cc08d4583203",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/settings/users/new/page.tsx",
+        "pattern": "settings/users/new",
+        "imports": [
+          "@/components/shared/page-header",
+          "@/features/users/access",
+          "@/features/users/user-form"
+        ],
+        "sha256": "92285bad9b74cb89cd4d69aa336aec99b5f7bc1c84ebbb7ef5d3377e3bde6866",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/settings/users/page.tsx",
+        "pattern": "settings/users",
+        "imports": [
+          "@/features/users/access",
+          "@/features/users/user-list"
+        ],
+        "sha256": "680f07c3b234d5df0d07afb20e6b470ad6920158eb3a3a3a19ceb3ac5d5c4444",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/settings/working-hours/page.tsx",
+        "pattern": "settings/working-hours",
+        "imports": [
+          "@/components/shared/page-header",
+          "@/features/users/access",
+          "@/features/schedule/working-hours"
+        ],
+        "sha256": "6ca24f285afa3dcfedd8532b85930fef6570ab7933c210b5dc8ccef4ff0beeab",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/ui-checks/page.tsx",
+        "pattern": "ui-checks",
+        "imports": [
+          "next/navigation",
+          "@/features/checks/foundation-check",
+          "@/lib/auth/server",
+          "@/features/auth/auth-frame"
+        ],
+        "sha256": "9741ff75c30c667abded873afa71336a75e282e7ac6d0a59bb2d39d1c371d840",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/visits/[id]/page.tsx",
+        "pattern": "visits/[id]",
+        "imports": [
+          "zod",
+          "next/navigation",
+          "@/components/shared/page-header",
+          "@/features/auth/auth-frame",
+          "@/features/schedule/visit-record",
+          "@/lib/auth/server"
+        ],
+        "sha256": "f927fe1fdc6655267d73dfc873a65a698e15c84fcafe82fe13caf78c5978c41d",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/visits/new/page.tsx",
+        "pattern": "visits/new",
+        "imports": [
+          "zod",
+          "@/components/shared/page-header",
+          "@/features/auth/auth-frame",
+          "@/features/schedule/visit-create",
+          "@/lib/auth/server"
+        ],
+        "sha256": "8d09d67c78b842e287d6ed0709cb5da484eebe4d2487fadcfac7d1b8fae96a2f",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/(workspace)/visits/page.tsx",
+        "pattern": "visits",
+        "imports": [
+          "next/link",
+          "@/components/shared/page-header",
+          "@/components/ui/button",
+          "@/features/auth/auth-frame",
+          "@/features/schedule/visit-calendar",
+          "@/lib/auth/server"
+        ],
+        "sha256": "7afab6736fe2b6a67ba17a727f5b92153f8a114a087458b470369ad4be0b4d0e",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/change-password/page.tsx",
+        "pattern": "change-password",
+        "imports": [
+          "next",
+          "@/features/auth/auth-frame",
+          "@/features/auth/change-password-form",
+          "@/features/auth/session-controls",
+          "@/lib/auth/server"
+        ],
+        "sha256": "6da9bb323f80b1b54142df6b84f273ae512b10426e34ec2b4b9f23d90f6a9e42",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/login/page.tsx",
+        "pattern": "login",
+        "imports": [
+          "next",
+          "next/navigation",
+          "@/features/auth/auth-frame",
+          "@/features/auth/login-form",
+          "@/lib/auth/server",
+          "@/lib/auth/contracts",
+          "@/components/icons"
+        ],
+        "sha256": "67d739388ff5fd8ae89f7ba46946a571f20a26f3927156c6a38f1784b70a393a",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/page.tsx",
+        "pattern": "",
+        "imports": [
+          "next/navigation"
+        ],
+        "sha256": "a252d5273541231f86fbf2da76034a265b663d3dc7b6a7514e725053f0f363ef",
+        "review": "source inventory, not functional/native acceptance"
+      },
+      {
+        "file": "frontend/src/app/website-simulator/page.tsx",
+        "pattern": "website-simulator",
+        "imports": [
+          "next",
+          "@/features/intake/website-form"
+        ],
+        "sha256": "7041b2e41ee1d7d5b796c51bb6bdc503a797f3a48debb8bd199a6ce6ec029291",
+        "review": "source inventory, not functional/native acceptance"
+      }
+    ],
+    "featureModuleCount": 22,
+    "features": [
+      {
+        "name": "activities",
+        "files": 4,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "auth",
+        "files": 4,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "checks",
+        "files": 1,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "contacts",
+        "files": 28,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "deals",
+        "files": 18,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "discovery",
+        "files": 10,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "files",
+        "files": 6,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "finance",
+        "files": 8,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "generated",
+        "files": 3,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "help",
+        "files": 9,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "imports",
+        "files": 6,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "intake",
+        "files": 1,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "inventory",
+        "files": 34,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "owners",
+        "files": 6,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "project-links",
+        "files": 3,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "realtime",
+        "files": 8,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "reports",
+        "files": 9,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "requirements",
+        "files": 9,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "schedule",
+        "files": 13,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "shell",
+        "files": 3,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "users",
+        "files": 9,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      },
+      {
+        "name": "work",
+        "files": 8,
+        "role": "Reuse contracts/services and port selected presentation; detailed field/command audit pending"
+      }
+    ]
+  },
+  "preservedLocalWork": {
+    "stageAutomatically": false,
+    "trackedLessonsAddedLines": 35,
+    "untrackedMotionPlan": "docs/03-planning/prototype-motion-plan-2026-10-23.md"
+  },
+  "knownIntegrationBoundaries": [
+    "I01 current refresh/concurrency/retry",
+    "I02 real identity/authorization",
+    "I03 private transfers/scan/capabilities",
+    "I04 durable jobs/intake",
+    "I05 authoritative Casablanca clock/availability",
+    "M01 generated-PDF provenance/content",
+    "M02 native React/DTO/route/icon mapping"
+  ],
+  "requiredReconciliation": [
+    "Prototype Inter/pearl/graphite overrides old visual tokens",
+    "D33 Iconsax versus selected prototype glyphs",
+    "Original blank model appendix versus restyled prototype generated-document content",
+    "Dedicated authenticated Contacts directory and legacy contact-view links"
+  ],
+  "notPerformed": [
+    "No frontend/backend application code edits",
+    "No dependency installation or actual CRM test/build",
+    "No browser/HTTP/CUA/CDP/Playwright app access",
+    "No credentials/session/database/worker/storage/AV changes",
+    "No commit/push/PR/merge/deployment"
+  ],
+  "next": "Finish capability/field/command and token/asset mapping, then foundation and first complete Lead/Contact slice on codex/redesign",
+  "planningVerification": {
+    "date": "2026-10-25",
+    "documentationCommand": "./docs/03-planning/validate-sprints.ps1 -RepositoryOnly",
+    "documentationExitCode": 0,
+    "existingSprintSpecifications": 22,
+    "existingLinkAnchorChecks": 1216,
+    "newPlanLocalLinks": 3,
+    "newInventoryJsonValid": true,
+    "branch": "codex/redesign",
+    "mainUnchanged": true,
+    "applicationDiffEmpty": true,
+    "snapshotChecksumMatches": true,
+    "prototypeSourceDrift": 0,
+    "applicationTestsRun": false,
+    "nativeAcceptance": "pending",
+    "note": "The existing validator does not establish app/visual acceptance; new local plan links separately checked."
+  }
+}
