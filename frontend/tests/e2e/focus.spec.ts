@@ -4,6 +4,7 @@ import { test, expect } from "../helpers/auth";
 test("SP22: approved visible focus survives shadcn outline utilities", async ({ page }, info) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/login");
+  await expect(page.getByRole("button", { name: "Se connecter", exact: true })).toBeEnabled();
   await page.keyboard.press("Tab");
   const contrasts: number[] = [];
   for (const target of [page.getByLabel("Adresse e-mail", { exact: true }), page.getByRole("button", { name: "Se connecter", exact: true })]) {
@@ -26,7 +27,10 @@ test("SP22: approved visible focus survives shadcn outline utilities", async ({ 
       const outline = luminance(style.outlineColor), adjacent = luminance(background(element.parentElement!));
       return { tag: element.tagName, token: style.getPropertyValue("--action-focus-ring"), sidebar: Boolean(element.closest("[data-sidebar]")), color: style.outlineColor, background: background(element.parentElement!), visible: element.matches(":focus-visible"), style: style.outlineStyle, width: parseFloat(style.outlineWidth), offset: parseFloat(style.outlineOffset), contrast: (Math.max(outline, adjacent) + .05) / (Math.min(outline, adjacent) + .05) };
     });
-    await expect.poll(async () => (await readFocus()).contrast).toBeGreaterThanOrEqual(3);
+    await expect.poll(async () => {
+      const state = await readFocus();
+      return state.visible && state.style === "solid" && state.width >= 2 && state.offset >= 2 && state.contrast >= 3;
+    }).toBe(true);
     const state = await readFocus();
     expect(state.visible).toBe(true);
     expect(state.style).toBe("solid");

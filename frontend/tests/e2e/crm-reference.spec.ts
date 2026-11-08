@@ -10,9 +10,9 @@ const output = path.resolve("output/playwright/crm-reference");
 async function capture(page: Page, name: string) {
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
   await expect(page.getByRole("status").filter({ hasText: /Chargement|Vérification/ })).toHaveCount(0);
-  await page.evaluate(() => document.fonts.ready);
+  await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe("loaded");
   await mkdir(output, { recursive: true });
-  await page.screenshot({ path: path.join(output, `${name}.png`) });
+  await page.screenshot({ path: path.join(output, `${name}.png`), timeout: 15_000 });
 }
 
 test("CRM references: populated directories, real filters, row selection, lead follow-up and responsive records", async ({ page, actor }) => {
@@ -20,6 +20,7 @@ test("CRM references: populated directories, real filters, row selection, lead f
   page.setDefaultTimeout(15_000);
   const owner = await createActor("agent", false, "SP06 Agent démo A");
   const failures: string[] = [];
+  let initialFailure = false;
   page.on("pageerror", () => failures.push("PAGE_ERROR"));
   try {
     await page.setViewportSize({ width: 1600, height: 1000 });
@@ -102,5 +103,11 @@ test("CRM references: populated directories, real filters, row selection, lead f
     expect((await created).status()).toBe(200);
     await expect(page.getByRole("status").filter({ hasText: "Relance planifiée." })).toBeVisible();
     expect(failures).toEqual([]);
-  } finally { await clearActorContext(page); await removeActor(owner); }
+  } catch (failure) { initialFailure = true; throw failure; }
+  finally {
+    try {
+      try { await clearActorContext(page); }
+      finally { await removeActor(owner); }
+    } catch (failure) { if (!initialFailure) throw failure; console.warn("CRM_REFERENCE_CLEANUP_FAILED"); }
+  }
 });

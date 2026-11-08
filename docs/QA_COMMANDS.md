@@ -3676,3 +3676,13 @@ is available on a separate hosted disposable target and cannot emit the release
 check name. The full-scope matrix, real scanner and recovery guards remain.
 All3 corrected local CRM-reference repeats pass in2.2m; focused ESLint, types,
 workflow YAML parsing and all8 aggregate policy checks pass.
+
+The hosted CRM-reference diagnostic42438451524 on35f6c6fb passes. The bounded
+font-status/screenshot version also passes3 local repeats in2.2m; cleanup now
+retains the original error and still removes the synthetic owner if its page
+was closed by timeout. The cancelled4e run additionally exposed a focus-offset
+sample taken before the complete focus style settled. The check now waits for
+hydration and all existing conditions (focus-visible, solid2px outline,
+offset>=2px, contrast>=3), retaining every threshold. Three local repeats pass
+19.5s; ESLint and TypeScript pass. These are harness corrections, not a full
+release result, and no product styling or authorization was changed.
