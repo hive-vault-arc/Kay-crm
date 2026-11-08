@@ -3657,3 +3657,22 @@ policy tests verify the full default, both full-suite matrix entries, required
 prerequisites and full-scope-only release aggregate. The recovery-only selector
 lists exactly one restored-stack test; it is diagnostic, not a release pass.
 Frontend lint and types pass after these harness changes.
+
+On4e4893db, the restored-stack diagnostic42436268721 passed42.3s with
+unexpectedErrors=[]; synthetic RPO3.442s, restore2.922s and incident-to-verified
+18.219s. These are isolated measurements, not a production restore drill.
+The exact-head load gate also passed7032 requests/0 errors/100 users and sockets,
+60.253s steady/4 API processes. Ordinary p95max310.977ms/dashboard447.872ms,
+sampled process-lifetime lag205.275ms,35 database/4 LISTEN connections and0
+unexpected disconnects or observed listener reconnects. All limits unchanged.
+
+The subsequent full run exposed an intermittent four-minute broad CRM-reference
+timeout that did not reproduce in a fresh local54.4s run. Its directory flow
+could select existing12 rows before the350ms search debounce remounted them.
+It now awaits the actual q-filtered200 response and exact12 count before row
+selection; per-action timeout is reduced to15s to expose missing controls while
+the overall240s allowance remains. A fixed `crm-reference-only` diagnostic scope
+is available on a separate hosted disposable target and cannot emit the release
+check name. The full-scope matrix, real scanner and recovery guards remain.
+All3 corrected local CRM-reference repeats pass in2.2m; focused ESLint, types,
+workflow YAML parsing and all8 aggregate policy checks pass.

@@ -45,12 +45,12 @@ test("only manual workflow contains database services, migrations and integratio
   for (const pattern of [/windows-services/, /tests\.ci_setup/, /alembic upgrade head/, /pytest -q/, /test:e2e/, /Stop only this disposable/])
     assert.match(manual, pattern);
   assert.doesNotMatch(manual, /continue-on-error|\$\{\{\s*secrets\.|pull_request_target/);
-  assert.match(manual, /suite: \$\{\{ fromJSON\(inputs\.browser_scope == 'recovery-only' && '\["browser"\]' \|\| '\["backend","browser"\]'\) \}\}/);
+  assert.match(manual, /suite: \$\{\{ fromJSON\(inputs\.browser_scope == 'full' && '\["backend","browser"\]' \|\| '\["browser"\]'\) \}\}/);
   assert.match(triggers, /browser_scope:[\s\S]*default: full/);
   const releaseGate = manual.split("  release-integration:")[1];
   // A skipped required-name job is treated as success by branch protection.
   // Diagnostic runs must emit a different check name instead of skipping it.
-  assert.match(releaseGate, /name: \$\{\{ inputs\.browser_scope == 'full' && 'Release integration required' \|\| 'Recovery diagnostic only' \}\}/);
+  assert.match(releaseGate, /name: \$\{\{ inputs\.browser_scope == 'full' && 'Release integration required' \|\| 'Browser diagnostic only' \}\}/);
   assert.match(releaseGate, /if: \$\{\{ always\(\) \}\}/);
   assert.match(releaseGate, /needs: \[integration\]/);
   assert.match(releaseGate, /test "\$RESULT" = success/);

@@ -9,19 +9,20 @@ on:
         default: false
         type: boolean
       browser_scope:
-        description: 'Recovery-only is diagnostic and cannot satisfy the release gate'
+        description: 'Only full scope can satisfy the release gate'
         required: true
         default: full
         type: choice
         options:
           - full
           - recovery-only
+          - crm-reference-only
 
 permissions:
   contents: read
 
 concurrency:
-  group: kay-manual-integration-${{ github.ref }}
+  group: kay-manual-integration-${{ github.ref }}-${{ inputs.browser_scope }}
   cancel-in-progress: false
 
 env:
@@ -37,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: ${{ fromJSON(inputs.browser_scope == 'recovery-only' && '["browser"]' || '["backend","browser"]') }}
+        suite: ${{ fromJSON(inputs.browser_scope == 'full' && '["backend","browser"]' || '["browser"]') }}
     defaults:
       run:
         shell: pwsh
@@ -102,12 +103,12 @@ jobs:
         working-directory: frontend
         run: node scripts/scan-client-secrets.mjs
       - name: Real WSS and opt-in Web Push browser regression (serial)
-        if: matrix.suite == 'browser' && inputs.browser_scope != 'recovery-only'
+        if: matrix.suite == 'browser' && inputs.browser_scope == 'full'
         working-directory: frontend
         env:
           KAY_E2E_PRODUCTION: '1'
         run: npm run test:realtime -- --max-failures=1
-      - name: ${{ inputs.browser_scope == 'recovery-only' && 'Diagnostic restored-stack journey (not a release gate)' || 'Full compiled Chromium end-to-end regression (serial)' }}
+      - name: ${{ inputs.browser_scope == 'full' && 'Full compiled Chromium end-to-end regression (serial)' || 'Diagnostic browser journey (not a release gate)' }}
         if: matrix.suite == 'browser'
         working-directory: frontend
         env:
@@ -116,6 +117,8 @@ jobs:
         run: |
           if ($env:BROWSER_SCOPE -eq 'recovery-only') {
             npx playwright test --config=playwright.ci.config.ts '[\\/](recovery)[.]spec[.]ts$' --max-failures=1
+          } elseif ($env:BROWSER_SCOPE -eq 'crm-reference-only') {
+            npx playwright test --config=playwright.ci.config.ts '[\\/](crm-reference)[.]spec[.]ts$' --max-failures=1
           } else {
             npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=12
           }
@@ -144,7 +147,7 @@ jobs:
           }
 
   release-integration:
-    name: ${{ inputs.browser_scope == 'full' && 'Release integration required' || 'Recovery diagnostic only' }}
+    name: ${{ inputs.browser_scope == 'full' && 'Release integration required' || 'Browser diagnostic only' }}
     if: ${{ always() }}
     needs: [integration]
     runs-on: ubuntu-24.04

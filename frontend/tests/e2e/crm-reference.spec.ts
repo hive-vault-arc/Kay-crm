@@ -17,6 +17,7 @@ async function capture(page: Page, name: string) {
 
 test("CRM references: populated directories, real filters, row selection, lead follow-up and responsive records", async ({ page, actor }) => {
   test.setTimeout(240_000);
+  page.setDefaultTimeout(15_000);
   const owner = await createActor("agent", false, "SP06 Agent démo A");
   const failures: string[] = [];
   page.on("pageerror", () => failures.push("PAGE_ERROR"));
@@ -43,7 +44,9 @@ test("CRM references: populated directories, real filters, row selection, lead f
       await page.goto(`/${route}`);
       const panel = page.locator('[data-filter-panel="desktop"]');
       const search = panel.getByRole("textbox", { name: /^Rechercher/ });
+      const filtered = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === `/api/v1/${route === "leads" ? "enquiries" : "deals"}` && url.searchParams.get("q") === runLabel && response.request().method() === "GET"; });
       await search.fill(runLabel);
+      const filteredResponse = await filtered; expect(filteredResponse.status()).toBe(200); expect((await filteredResponse.json()).total).toBe(12);
       const rows = page.locator("tbody tr");
       await expect(rows).toHaveCount(12);
       await expect(page.getByRole("heading", { name: route === "leads" ? "Prospects" : "Affaires", level: 1 })).toBeVisible();
