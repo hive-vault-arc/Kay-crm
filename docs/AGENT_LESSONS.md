@@ -1,5 +1,28 @@
 # KAY agent lessons
 
+## Bound production inspection before opening an editor (2026-11-08)
+
+An environment editor can render every credential as a plain textbox even when
+the summary masked them. Never export a full snapshot, all textbox contents, or
+broadly filtered editor output. Inspect only the specific non-secret field and
+return a boolean comparison; close without saving after a read-only check.
+If credentials enter a tool result, do not repeat or publish them. Tell the
+owner privately and require coordinated credential rotation through the normal
+operator workflow; a screenshot or public issue must never contain the values.
+
+Before adding a temporary production verifier, inspect the actual runtime and
+conversion pipeline. KAY decodes HEIC/HEIF in the browser; the backend receives
+WebP. Check backend Pillow WebP support rather than importing an uninstalled
+Python HEIF package. Preserve the existing logging command, use source/revision
+guards, keep maintenance active through schema/code cutover, and remove the
+temporary command after verified startup.
+
+Squash merges change commit-specific Gitleaks fingerprints. Recheck the merged
+commit's full history and compare each finding with the original reviewed line.
+Reattribute only an identical known non-secret finding with its exact new
+commit/path/rule/line fingerprint. Never add a broad path/rule exception or hide
+an unreviewed finding to make CI green.
+
 ## Avoid size containment on interactive dossiers (2026-11-07)
 
 Inline-size containment on the dossier gave Chromium zero-sized tab/offer
