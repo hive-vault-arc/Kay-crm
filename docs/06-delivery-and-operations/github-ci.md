@@ -89,6 +89,13 @@ automatic CI. Read-only Actions permissions/supply-chain rules apply to both.
 
 ## Main branch policy
 
+The manual workflow defaults to `browser_scope=full`, which retains both matrix
+jobs and the full backend, WSS and compiled-browser suites. An explicit
+`recovery-only` choice provisions a fresh isolated browser target for diagnosis;
+it never runs or satisfies `Release integration required`. A diagnostic pass
+cannot authorize a merge. Require the successful full-scope run on the release
+head in addition to the automatic aggregate.
+
 Initial publication uses a setup branch first. Main is created only after a real
 successful CI run on the intended commit. Server-side protection is then configured
 and read back; a workflow file alone does not enforce merge policy.

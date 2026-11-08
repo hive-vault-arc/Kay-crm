@@ -11,13 +11,22 @@ test("D44: owner archives and restores a Lead and a deal from their pages", asyn
     await signIn(page, agent);
     const leadId = await createLead(page, "D44 prospect synthétique");
     const lead = await (await page.request.get(`/api/v1/enquiries/${leadId}`)).json();
-    await page.getByRole("button", { name: "Actions", exact: true }).click();
-    const archiveLead = page.getByRole("button", { name: "Archiver le prospect" });
+    const actions = page.getByRole("button", { name: "Actions", exact: true });
+    await actions.click();
+    const archiveLead = page.getByRole("button", { name: "Archiver le prospect", exact: true });
     await archiveLead.focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("alertdialog", { name: "Archiver le prospect" })).toBeVisible();
+    const firstArchiveDialog = page.getByRole("alertdialog", { name: "Archiver le prospect" });
+    await expect(firstArchiveDialog).toBeVisible();
+    await expect(firstArchiveDialog.getByRole("button", { name: "Conserver la fiche", exact: true })).toBeFocused();
     await page.keyboard.press("Escape");
-    await expect(archiveLead).toBeFocused();
+    await expect(firstArchiveDialog).not.toBeVisible();
+    // A dismissed parent menu returns focus to Actions; an open menu retains its item.
+    await expect.poll(async () => {
+      const availableTrigger = await archiveLead.isVisible() ? archiveLead : actions;
+      return availableTrigger.evaluate(element => element === document.activeElement);
+    }).toBe(true);
+    if (!await archiveLead.isVisible()) await actions.click();
     await archiveLead.click();
     const leadDialog = page.getByRole("alertdialog", { name: "Archiver le prospect" });
     await leadDialog.getByLabel("Motif obligatoire").fill("Contrôle synthétique du retrait");

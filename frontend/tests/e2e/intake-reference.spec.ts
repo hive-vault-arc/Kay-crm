@@ -61,7 +61,9 @@ for (const limit of ["combined", "utf8"] as const) {
       await message.fill(limit === "combined" ? "x".repeat(4000) : "漢".repeat(3000));
       if (limit === "combined") await page.getByLabel("Référence du bien (facultative)", { exact: true }).fill("SYN-REF-42");
       await page.getByRole("button", { name: "Envoyer la demande", exact: true }).click();
-      await expect.poll(() => page.getByRole("alert").count()).toBe(1);
+      // Next also renders its route announcer with role=alert.
+      const validation = page.getByRole("alert").filter({ hasText: limit === "combined" ? "dépassent ensemble" : "trop volumineuse" });
+      await expect(validation).toBeVisible();
       expect(sent.length).toBe(0);
       await expect.poll(() => message.isEnabled()).toBe(true);
       expect(await message.inputValue() === (limit === "combined" ? "x".repeat(4000) : "漢".repeat(3000))).toBe(true);

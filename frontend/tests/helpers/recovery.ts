@@ -17,8 +17,20 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
   const errors: string[] = [], measurements: unknown[] = [];
   let initialFailure = false;
   let denied = false;
+  let checkingRevokedSession = false;
   page.on("pageerror", () => errors.push("PAGE_ERROR"));
-  page.on("console", msg => { if (msg.type() === "error" && !(denied && msg.text().includes("status of 404"))) errors.push("CONSOLE_ERROR"); });
+  page.on("console", msg => {
+    if (msg.type() !== "error") return;
+    const status = /status of (\d{3})/.exec(msg.text())?.[1];
+    let path = "";
+    let sameOrigin = false;
+    try { const resource = new URL(msg.location().url); path = resource.pathname; sameOrigin = resource.origin === new URL(baseURL).origin; } catch { /* No resource location. */ }
+    if (denied && status === "404") return;
+    if (checkingRevokedSession && sameOrigin && status === "401" && path === "/api/v1/auth/me") return;
+    // Report only a fixed category/status, never raw console text, URLs or credentials.
+    const phase = checkingRevokedSession ? "REVOKED_CHECK" : "RESTORED";
+    errors.push(status ? `CONSOLE_HTTP_${status}_${path === "/api/v1/auth/me" ? "SESSION" : "RESOURCE"}_${phase}` : `CONSOLE_${msg.text().startsWith("WebSocket connection") ? "WEBSOCKET" : "ERROR"}_${phase}`);
+  });
   async function capture(name: string) {
     if (!visible) return;
     await expect(page.getByRole("status").filter({ hasText: /Chargement|Vérification/ })).toHaveCount(0);
@@ -34,6 +46,7 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
   }
   try {
     await testControl("recovery-start");
+    checkingRevokedSession = true;
     await page.context().addCookies([{ name: "__Host-kay_session", value: data.active_token, url: baseURL, secure: true, httpOnly: true, sameSite: "Lax" }]);
     await page.goto("/dashboard");
     await expect(page.getByRole("button", { name: "Se connecter", exact: true })).toBeVisible();
@@ -41,7 +54,7 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
     await capture("invalidated-login-desktop");
     const old = await page.request.get(`https://localhost:${process.env.KAY_E2E_API_PORT ?? "8100"}/api/v1/transfers/${data.old_permit.permit_id}`, { headers: { Origin: baseURL, "X-File-Permit": data.old_permit.token, "X-File-Session": data.old_permit.binding } });
     expect(old.status()).toBe(403);
-    await clearActorContext(page); await signIn(page, data.agent);
+    await clearActorContext(page); checkingRevokedSession = false; await signIn(page, data.agent);
     await expect(page.getByRole("heading", { name: "Tableau de bord", exact: true })).toBeVisible();
     await expect(page.getByText(/Dossiers attribués ou partagés/)).toBeVisible();
     const dashboard = await page.request.get("/api/v1/reports/dashboard");

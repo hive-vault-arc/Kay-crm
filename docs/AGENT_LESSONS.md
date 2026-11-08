@@ -2365,3 +2365,11 @@ always restore that routing in a `finally` independent of page/cookie cleanup.
 A timed-out page may already be closed; allowing its cleanup error to skip the
 supervisor switch makes later synthetic actors sign in against the wrong
 database and obscures the first actionable failure.
+
+## Verify focus on an available trigger after nested menus (2026-11-08)
+
+After a confirmation dialog closes, its nonmodal parent menu may also have
+closed. Verify keyboard focus on the still-visible action item when that menu
+remains open, or on its Actions trigger when it has closed. Reopen a closed
+menu before using its item again. Keep the real focus assertion; do not require
+an unmounted child to receive focus or accept focus on the page body.

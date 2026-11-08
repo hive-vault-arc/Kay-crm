@@ -3392,3 +3392,15 @@ only UUIDs and reuse current Lead authority plus the TaskRecord contact-context
 check. Read-only task filters are excluded from both dirty observers, while
 managed form and pending-command protections remain unchanged. No task write is
 performed by following a link.
+
+PR37 test-harness follow-up (2026-11-08): modal-background checks explicitly
+include accessibility-hidden nodes only while confirming retained DOM ownership;
+business replay keys, current scope and private transfer assertions remain.
+Public-limit tests target their real validation message and still require no
+invalid submission. Restoration ignores only auth/me401 during its deliberate
+revoked-cookie phase; other console failures are reported as fixed categories,
+never raw credential-bearing diagnostics. The optional recovery-only hosted
+scope retains disposable target guards and read-only workflow permissions and
+cannot run the release aggregate. Full scope still requires both real matrix
+jobs. The eight aggregate policy checks pass. No real-account or production
+data operation is introduced by this harness change.

@@ -185,7 +185,12 @@ test("projects campaigns, house category, numbered pages and real outage/retry",
     await apiProcess("stop"); await page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true }).filter({ visible: true }).fill("indisponible");
     await expect(page.getByRole("alert").filter({ hasText: "service local est indisponible" })).toBeVisible(); await apiProcess("start"); await page.getByRole("button", { name: "Réessayer", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Aucun bien correspondant", exact: true })).toBeVisible();
-    await clearActorContext(page); await signIn(page, agent); await page.goto("/projects"); await expect(page.locator("article.kay-project-card:visible")).toHaveCount(12);
+    await clearActorContext(page); await signIn(page, agent);
+    const agentRead = page.waitForResponse(response => { const url = new URL(response.url()); return url.pathname === "/api/v1/properties" && !url.searchParams.get("q") && response.request().method() === "GET"; });
+    await page.goto("/projects");
+    const agentResponse = await agentRead; expect(agentResponse.status()).toBe(200);
+    const agentList = await agentResponse.json(); expect(agentList.total).toBe(12); expect(agentList.items).toHaveLength(12);
+    await expect(page.locator("article.kay-project-card:visible")).toHaveCount(12);
     await page.getByLabel("Type d’offre", { exact: true }).filter({ visible: true }).selectOption("rental"); await expect(page.locator("article.kay-project-card:visible")).toHaveCount(1);
     const denial = await staffCommand(page, "offerings", { property_id: house, expected_property_version: 1, kind: "sale", price_mad: "1000", currency: "MAD", price_period: null, conditions: "Tentative synthétique interdite" }); expect(denial.status()).toBe(403);
     await page.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click(); await expect(page.getByText("0 programme", { exact: true })).toBeVisible(); await expect(page.getByRole("link", { name: "Nouveau programme", exact: true })).toBeVisible();

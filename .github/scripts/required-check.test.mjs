@@ -45,6 +45,11 @@ test("only manual workflow contains database services, migrations and integratio
   for (const pattern of [/windows-services/, /tests\.ci_setup/, /alembic upgrade head/, /pytest -q/, /test:e2e/, /Stop only this disposable/])
     assert.match(manual, pattern);
   assert.doesNotMatch(manual, /continue-on-error|\$\{\{\s*secrets\.|pull_request_target/);
-  assert.match(manual, /suite: \[backend, browser\]/);
+  assert.match(manual, /suite: \$\{\{ fromJSON\(inputs\.browser_scope == 'recovery-only' && '\["browser"\]' \|\| '\["backend","browser"\]'\) \}\}/);
   assert.match(manual, /name: Release integration required/);
+  assert.match(triggers, /browser_scope:[\s\S]*default: full/);
+  const releaseGate = manual.split("  release-integration:")[1];
+  assert.match(releaseGate, /if: \$\{\{ always\(\) && inputs\.browser_scope == 'full' \}\}/);
+  assert.match(releaseGate, /needs: \[integration\]/);
+  assert.match(releaseGate, /test "\$RESULT" = success/);
 });

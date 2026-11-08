@@ -8,6 +8,14 @@ on:
         required: true
         default: false
         type: boolean
+      browser_scope:
+        description: 'Recovery-only is diagnostic and cannot satisfy the release gate'
+        required: true
+        default: full
+        type: choice
+        options:
+          - full
+          - recovery-only
 
 permissions:
   contents: read
@@ -29,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [backend, browser]
+        suite: ${{ fromJSON(inputs.browser_scope == 'recovery-only' && '["browser"]' || '["backend","browser"]') }}
     defaults:
       run:
         shell: pwsh
@@ -94,17 +102,23 @@ jobs:
         working-directory: frontend
         run: node scripts/scan-client-secrets.mjs
       - name: Real WSS and opt-in Web Push browser regression (serial)
-        if: matrix.suite == 'browser'
+        if: matrix.suite == 'browser' && inputs.browser_scope != 'recovery-only'
         working-directory: frontend
         env:
           KAY_E2E_PRODUCTION: '1'
         run: npm run test:realtime -- --max-failures=1
-      - name: Full compiled Chromium end-to-end regression (serial)
+      - name: ${{ inputs.browser_scope == 'recovery-only' && 'Diagnostic restored-stack journey (not a release gate)' || 'Full compiled Chromium end-to-end regression (serial)' }}
         if: matrix.suite == 'browser'
         working-directory: frontend
         env:
           KAY_E2E_PRODUCTION: '1'
-        run: npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=12
+          BROWSER_SCOPE: ${{ inputs.browser_scope }}
+        run: |
+          if ($env:BROWSER_SCOPE -eq 'recovery-only') {
+            npx playwright test --config=playwright.ci.config.ts '[\\/](recovery)[.]spec[.]ts$' --max-failures=1
+          } else {
+            npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=12
+          }
       - name: Safe scanner diagnostics on failure
         if: failure()
         run: |
@@ -131,7 +145,7 @@ jobs:
 
   release-integration:
     name: Release integration required
-    if: ${{ always() }}
+    if: ${{ always() && inputs.browser_scope == 'full' }}
     needs: [integration]
     runs-on: ubuntu-24.04
     timeout-minutes: 2

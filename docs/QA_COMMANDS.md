@@ -3612,3 +3612,48 @@ fixture, even if Playwright has closed its page after timeout. The original
 failure previously prevented that switch and caused ten later401 login failures.
 The complete restoration and remaining browser cases still require a fresh
 hosted run; the local recovery identity guard remains unchanged.
+
+At6479bd55, the isolated15546 benchmark target was empty. The unchanged
+`APP_ENVIRONMENT=benchmark` project-venv `-m benchmarks.dataset` prepared100
+synthetic accounts,200000 contacts/enquiries,20000 properties/deals and200
+programmes at migration0037. With `REALTIME_ENABLED=true` and
+`KAY_BENCHMARK_REALTIME=1`, two uncontested `-m benchmarks.run` executions
+passed the unchanged100-user/socket and ordinary1000ms/dashboard2000ms gates
+with4 API processes. They completed6833/6435 requests with0 errors or unexpected
+disconnects over60.293/60.224s steady windows. Ordinary p95 maxima were315.044/
+789.324ms; dashboard442.457/1195.914ms. Both had4 LISTEN connections; total
+database connections34/37. The first process-lifetime sampled lag peak was
+10770.966ms; the repeat's476.460ms, with0 observed listener reconnects in both.
+Keep that first setup-inclusive spike in evidence; do not represent either
+local result as production capacity or exhaustive per-process lag telemetry.
+
+All39 compiled cases after the recovery journey and the3 icon/login cases pass
+locally. The hosted run found an archive-test focus assumption: after Escape,
+the parent action menu can close and correctly return focus to Actions. The
+test now checks the available trigger, retains real keyboard focus assertions
+and reopens the closed menu. Its complete archive/restore journey passed3
+consecutive runs in1.3m. No product focus behavior or lifecycle rule changed.
+
+Hosted full run42431081146 on6479bd55 passed1308 PostgreSQL cases in874.11s
+and5 WSS cases in3.6m. Its ordinary browser result was235/242: both file-row
+recovery checks queried an accessibility-hidden background drawer; both public
+limit checks also counted Next's route announcer; archive keyboard return expected
+an unmounted child; one directory assertion ran after switching actor during an
+outage journey; and restoration completed all data checks but collected one
+console error. These are failures, not a release pass. The background-row and
+specific-validation selectors now retain their original DOM/retry/no-submit
+assertions and pass4/4 local repeats each. Agent directory verification now
+awaits and validates the actual unfiltered200 read and all12 records before
+checking rendered cards. The unmodified directory journey separately passed3
+consecutive local runs. Restoration permits only the expected auth/me401 during
+the explicit revoked-cookie check and reports fixed categories for other console
+errors; no raw console text, URL or token is logged. Its isolated diagnostic and
+the final full-scope hosted gate remain required.
+
+The complete two-case project-directory file passes1.5m with the explicit agent
+read check, including its preceding eight scanned-image/zoom/filter case. The
+workflow YAML parses with the installed js-yaml dependency; eight aggregate
+policy tests verify the full default, both full-suite matrix entries, required
+prerequisites and full-scope-only release aggregate. The recovery-only selector
+lists exactly one restored-stack test; it is diagnostic, not a release pass.
+Frontend lint and types pass after these harness changes.
