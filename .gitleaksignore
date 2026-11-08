@@ -2,3 +2,7 @@
 50b4b263cc5bf5eeb5d59ea490adeff86df95c93:frontend/tests/unit/finance-creation-keys.test.mjs:generic-api-key:14
 # Design-note prose about authentication and duplicate query parameter rejection.
 2e3a7dbd8de618c8c8d16002bd3a2f8b1994b940:docs/03-planning/design-prototype-migration-execution.md:generic-api-key:917
+# Same two reviewed non-secret lines, reattributed by PR37's squash merge.
+# Both lines were compared byte-for-byte with the original reviewed findings.
+19d78a0d7e2e99052d60c2ce483fdbe82779182b:frontend/tests/unit/finance-creation-keys.test.mjs:generic-api-key:14
+19d78a0d7e2e99052d60c2ce483fdbe82779182b:docs/03-planning/design-prototype-migration-execution.md:generic-api-key:920
