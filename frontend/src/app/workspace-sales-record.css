@@ -110,6 +110,9 @@
 .kay-record-error > button { grid-column:2; justify-self:start; }
 
 .kay-party-record :is(.kay-record-dossier,.kay-record-aside) { align-self:start; height:auto; }
+@media(min-width:831px) {
+  .kay-party-record .kay-record-dossier { max-height:100%; }
+}
 .kay-party-record .kay-record-panel { padding:20px; }
 .kay-party-record .kay-record-aside .kay-record-section + .kay-record-section { margin-top:16px; padding-top:16px; }
 .kay-party-record .kay-record-section + .kay-record-section { margin-top:20px; padding-top:16px; }
