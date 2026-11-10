@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
 import type { RefObject } from "react";
+import { AlertIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { ApiError } from "@/lib/api/client";
 
 export function RecordError({ error, retry }: { error: ApiError; retry?: () => void }) {
-  return <div className="grid gap-3 rounded-md border border-danger/25 bg-danger-background p-4"><p role="alert" className="text-danger">{error.code === "NOT_FOUND" ? "Cette fiche est introuvable ou vous n’y avez plus accès." : error.message}</p>{retry ? <Button action="retry" variant="outline" className="justify-self-start" onClick={retry}>Réessayer</Button> : null}</div>;
+  return <div data-motion-feedback className="kay-record-error"><AlertIcon aria-hidden="true" size={20} /><p role="alert">{error.code === "NOT_FOUND" ? "Cette fiche est introuvable ou vous n’y avez plus accès." : error.message}</p>{retry ? <Button action="retry" variant="outline" onClick={retry}>Réessayer</Button> : null}</div>;
 }
 export function CommandError({ error, reuse, dismiss, returnFocus, record = "demande" }: { error?: ApiError; reuse?: (id: string) => void; dismiss: () => void; returnFocus?: RefObject<HTMLButtonElement | null>; record?: "demande" | "affaire" | "propriétaire" }) {
   if (!error) return null;

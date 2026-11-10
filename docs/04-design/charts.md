@@ -12,25 +12,11 @@ are now soft full-width rows in supporting drawers. See the
 [workspace contract](dashboard-workspace-local.md) and
 [source evidence](../03-planning/design-migration-evidence/dashboard-ui-2026-10-27.json).
 
-## Riviera colors (2026-10-18)
+## Reference colors
 
-Use the [Riviera stage/category tokens](../../branding/riviera/README.md) through
-`--riviera-color-stage-*-fill`. Prospects: blue new, cyan contacted/in-progress,
-yellow follow-up, purple analysis, green qualified, orange not-qualified, red
-lost, pink junk and slate closed. Deals: blue new, cyan visit, orange negotiation,
-yellow reserved, purple documents, green won, red lost and slate cancelled.
-Contributor bars retain stable agent-index colors, not invented stage/period
-allocations. Semantic feedback colors are distinct from these categorical fills.
-Keep Bklit geometry, live scoped counts, zero legends, exact data alternatives,
-MAD and Casablanca handling. The guide's agent allocations are illustrative only.
-
-Status: SP-17 local Bklit bar source installed; scoped verification in execution ledger  
-Date: 2026-10-14  
-Confirmed decision: use Bklit UI for every KAY frontend chart; no substitute chart library without a new KAY decision.  
-Technical proposals: chart choices, data contracts, and validation below.  
-References: [KAY component guide](ui-components.md), [KAY design system](design-system.md), [Tailwind styling guide](styling.md), [KPI rules](../02-requirements/business-rules.md), [API contracts](api-contracts.md), [acceptance tests](../05-quality/acceptance-tests.md), [offline Bklit reference](../reference/bklit-ui/2026-10-14-b9302b14/REFERENCE.md), [official Bklit installation](https://bklit.com/docs/installation).
-
-Bklit UI is a shadcn registry for React chart components. It is the sole KAY chart-component source: do not create a parallel chart layer with shadcn/ui Charts, Recharts, Chart.js, ApexCharts, or another library. Bklit's own implementation dependencies are not a separate KAY chart choice. Use Bklit for visual presentation of approved KAY metrics. When a required view is missing, first compose or extend Bklit components; if that cannot satisfy the requirement, ask KAY to decide before changing libraries. FastAPI still defines and scopes every KPI; browser chart code must not calculate privileged totals from unrestricted records. Shadcn/ui remains the source for ordinary controls, layout, and forms.
+Use the shared reference status families through the `--chart-*` variables
+and preserve the selected Bklit geometry. Document the role and meaning of each
+series and verify it in both themes. [Workspace tokens](../../branding/prototype/kay-workspace.tokens.json)
 
 ## Registry installation
 
@@ -83,6 +69,6 @@ geometry roles use existing spacing/breakpoint scales, not new global tokens.
 
 The chart API response should carry its metric definition, period, bucket timezone (`Africa/Casablanca`), unit (`MAD` for money), and authorized series. Keep money calculations exact in the backend; format values for display in the frontend. Handle empty, loading, error, and denied responses. Provide a textual value or accessible table alongside charts so color or hover is not the only way to read a result. On mobile, verify labels, legend, tooltips, and touch behavior without horizontal overflow.
 
-Bklit uses its own `--chart-*` CSS variables. See the [theming reference](../reference/bklit-ui/2026-10-14-b9302b14/apps/web/content/docs/theming.mdx). Map them to the [proposed chart tokens](../../branding/kay-ui-tokens.json) using the approved local light-token/Radix-New York baseline; do not adopt demo colors as a final palette. Test both themes only if KAY ships a theme switch. Chart animation must not obstruct the data and should respect reduced-motion preferences.
+Bklit uses its own `--chart-*` CSS variables. See the [theming reference](../reference/bklit-ui/2026-10-14-b9302b14/apps/web/content/docs/theming.mdx). Map them to the [reference chart tokens](../../branding/prototype/kay-workspace.tokens.json); do not adopt demo colors as a final palette. Test both themes only if KAY ships a theme switch. Chart animation must not obstruct the data and should respect reduced-motion preferences.
 
 For acceptance, compare every plotted value with the API response and a tabular rendering using synthetic data. Test agent and manager scopes, date boundaries, empty series, zero totals, large labels, French formatting, keyboard access, touch, zoom, and responsive behavior. SP-17 implements the first local Bklit bar wrappers; actual scoped checks and remaining review are recorded in [execution](../03-planning/sprints/sp-17-execution.md) and the [local reporting contract](dashboard-local.md). This does not approve every catalogue chart or the final visual system.

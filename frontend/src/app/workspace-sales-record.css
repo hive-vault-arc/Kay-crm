@@ -1,0 +1,156 @@
+/* Sales dossier presentation on the shared record and dialog primitives. */
+.kay-sales-record .kay-record-heading { gap:8px 12px; padding:8px 0 14px; }
+.kay-sales-record .kay-record-heading > a { border-color:transparent; background:var(--workspace-field); }
+.kay-sales-record .kay-record-heading > a:hover { background:var(--workspace-hover); }
+.kay-sales-record .kay-record-heading-copy { gap:2px; }
+.kay-sales-record .kay-record-meta { gap:2px 8px; }
+.kay-sales-record .kay-record-meta > a { min-height:36px; }
+.kay-sales-record .kay-record-heading-actions button[data-variant=outline] { border-color:transparent; background:var(--workspace-field); }
+.kay-lead-origin { display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px 16px; min-width:0; }
+.kay-lead-origin > span { display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px 6px; min-width:0; }
+.kay-lead-origin :is(time,strong) { color:var(--workspace-ink); font-weight:500; overflow-wrap:anywhere; }
+.kay-sales-record :is(.kay-record-dossier,.kay-record-aside) { align-self:stretch; background:var(--workspace-floating); }
+.kay-sales-record .kay-record-aside { scrollbar-gutter:stable; }
+.kay-sales-record .kay-record-panel { padding:24px 32px; }
+.kay-sales-record .record-facts { column-gap:36px; row-gap:4px; }
+.kay-sales-record .record-facts > .kay-record-fact {
+  grid-template-columns:minmax(114px,34%) minmax(0,1fr);
+  gap:8px 12px;
+  padding:4px 0;
+  align-items:center;
+}
+.kay-sales-record .record-facts > .kay-record-fact[data-editing=true] { align-items:start; }
+.kay-sales-record .record-facts .kay-inline-fact:not([data-editing=true]) > dt { padding-top:0; }
+.kay-sales-record .record-facts .kay-inline-value > svg { opacity:.72; }
+.kay-sales-record .record-facts .kay-inline-value:is(:hover,:focus-visible) > svg { opacity:1; }
+.kay-sales-record .kay-contact-more { margin-top:14px; }
+.kay-sales-record .kay-contact-more > summary { gap:8px; }
+.kay-sales-record .kay-contact-more[open] > summary > svg { transform:rotate(180deg); }
+.kay-sales-secondary { margin-top:16px; padding-top:8px; border-top:1px solid var(--workspace-line); }
+.kay-sales-secondary > button { border-color:transparent; background:transparent; color:var(--workspace-muted); }
+.kay-sales-secondary > button:hover { background:var(--workspace-field); color:var(--workspace-ink); }
+.kay-sales-history > section { border-top:0; padding-top:0; }
+.kay-sales-history [data-slot=table] { min-width:720px; }
+.kay-sales-history [data-slot=table-caption] { border:0; padding-inline:0; }
+.kay-sales-record .kay-linked-project-columns > section { border-top:0; padding-top:0; }
+.kay-sales-record .kay-linked-project-list > li { background:transparent; }
+.kay-sales-record .kay-file-panel { gap:12px; }
+.kay-record-upcoming,.kay-record-support-actions { display:grid; gap:10px; min-width:0; }
+.kay-record-upcoming > p { color:var(--workspace-muted); font-size:13px; }
+.kay-record-support-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 8px; }
+.kay-record-support-head h3 { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; }
+.kay-record-support-head h3 > span { display:inline-grid; min-width:22px; height:22px; place-items:center; padding-inline:5px; border-radius:999px; background:var(--workspace-field); color:var(--workspace-muted); font-variant-numeric:tabular-nums; }
+.kay-record-support-head > button,.kay-record-upcoming > button { border-color:transparent; background:transparent; color:var(--workspace-muted); font-size:12px; }
+.kay-record-upcoming > button { justify-self:start; }
+.kay-record-upcoming > ul { display:grid; gap:4px; }
+.kay-record-task-preview[data-slot=button] { width:100%; justify-content:flex-start; gap:8px; border-radius:12px; padding-inline:4px; text-align:start; }
+.kay-record-task-copy { display:grid; gap:2px; white-space:normal; }
+.kay-record-task-preview strong { color:var(--workspace-ink); font-weight:550; overflow-wrap:anywhere; }
+.kay-record-task-preview small { color:var(--workspace-muted); font-size:12px; overflow-wrap:anywhere; }
+.kay-record-support-actions { margin-top:16px; padding-top:16px; border-top:1px solid var(--workspace-line); }
+.kay-record-support-actions > button { border-color:transparent; background:var(--workspace-field); }
+.kay-record-support-actions > button:hover { background:var(--workspace-hover); }
+.kay-sales-loading-record { display:grid; grid-template-columns:minmax(0,1fr) clamp(250px,25vw,380px); gap:16px; }
+.kay-sales-loading-record > [data-slot=skeleton] { min-height:280px; border-radius:var(--workspace-geometry-panel-radius); }
+
+@container kay-dossier (max-width:800px) {
+  .kay-sales-record .record-facts > .kay-record-fact { grid-template-columns:minmax(110px,30%) minmax(0,1fr); }
+}
+@media(max-width:830px) {
+  .kay-sales-record .kay-record-heading-actions { justify-content:flex-start; }
+  .kay-sales-record .kay-record-heading-actions > button[data-action=create] { flex:1; }
+  .kay-sales-record .kay-record-meta > a { min-height:44px; }
+  .kay-sales-record .kay-record-panel { padding:16px; }
+  .kay-sales-record .record-facts { row-gap:12px; }
+  .kay-sales-record .record-facts > .kay-record-fact { grid-template-columns:minmax(0,1fr); gap:2px; }
+  .kay-sales-record .record-facts .kay-inline-value[data-slot=button] { padding-inline:8px; }
+  .kay-sales-record .kay-record-aside { margin-top:12px; }
+  .kay-sales-record .kay-record-tabs { top:var(--workspace-geometry-mobile-header); }
+  .kay-sales-loading-record { grid-template-columns:minmax(0,1fr); }
+}
+@media(prefers-reduced-transparency:reduce) {
+  .kay-sales-record :is(.kay-record-dossier,.kay-record-aside) { background:var(--workspace-panel-opaque); }
+}
+@media(forced-colors:active) {
+  .kay-sales-record :is(.kay-record-dossier,.kay-record-aside) { background:Canvas; border-color:CanvasText; }
+}
+
+/* Contacts and owners use the shared directory grid and record workspace. */
+.kay-party-directory .kay-directory-coordinate {
+  display:inline-flex;
+  align-items:center;
+  min-height:var(--control-touch-target);
+  overflow-wrap:anywhere;
+}
+.kay-party-directory .kay-directory-coordinate:hover { text-decoration:underline; }
+.kay-party-directory .crm-directory-table { min-width:810px; }
+.kay-party-directory .crm-directory-table .crm-contact-cell strong { white-space:normal; overflow-wrap:anywhere; }
+.kay-party-directory .kay-list-results > .kay-record-error { flex:none; }
+.kay-party-directory .kay-filter-rail form details > summary {
+  cursor:pointer;
+  color:var(--workspace-muted);
+  font-weight:550;
+}
+.kay-party-directory .kay-filter-rail form details[open] > summary { margin-bottom:8px; }
+
+.kay-record-error {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:start;
+  gap:8px 12px;
+  padding:14px 16px;
+  border:1px solid color-mix(in srgb,var(--status-danger-foreground),transparent 72%);
+  border-radius:var(--workspace-geometry-inset-radius);
+  background:var(--status-danger-background);
+  color:var(--status-danger-foreground);
+  font-size:14px;
+}
+.kay-record-error > svg { margin-top:1px; }
+.kay-record-error > p { overflow-wrap:anywhere; }
+.kay-record-error > button { grid-column:2; justify-self:start; }
+
+.kay-party-record :is(.kay-record-dossier,.kay-record-aside) { align-self:start; height:auto; }
+.kay-party-record .kay-record-panel { padding:20px; }
+.kay-party-record .kay-record-aside .kay-record-section + .kay-record-section { margin-top:16px; padding-top:16px; }
+.kay-party-record .kay-record-section + .kay-record-section { margin-top:20px; padding-top:16px; }
+.kay-party-record .kay-record-heading-actions [data-variant=outline] { background:var(--workspace-field); }
+.kay-party-record .kay-record-heading-actions [data-variant=outline]:hover { background:var(--workspace-hover); }
+.kay-party-section-loading { display:grid; gap:8px; min-width:0; }
+.kay-party-section-empty {
+  display:flex;
+  align-items:start;
+  gap:10px;
+  padding:12px;
+  border-radius:var(--workspace-geometry-inset-radius);
+  background:var(--workspace-field);
+  color:var(--workspace-muted);
+  font-size:13px;
+}
+.kay-party-section-empty > svg { flex:none; }
+.kay-party-section-empty div > p:first-child { color:var(--workspace-ink); font-weight:550; }
+.kay-party-section-empty div > p + p { margin-top:4px; }
+
+.kay-owner-record-page .kay-owner-portfolio > [data-slot=tabs-list] {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+}
+.kay-owner-record-page .kay-owner-portfolio > [data-slot=tabs-list] > [data-state=inactive] { background:var(--workspace-field); }
+.kay-owner-record-page .kay-owner-portfolio > [data-slot=tabs-list] > [data-state=inactive]:hover { background:var(--workspace-hover); }
+.kay-owner-record-page .kay-owner-portfolio > [data-slot=tabs-content] { margin-top:10px; }
+.kay-owner-preview .kay-form-footer { padding-top:12px; }
+.kay-party-drawer .kay-drawer-body { scroll-padding-bottom:84px; }
+.kay-party-drawer :is(.kay-drawer-form,.kay-owner-preview) > .kay-form-footer {
+  position:sticky;
+  bottom:0;
+  z-index:1;
+  padding-block:10px max(10px,env(safe-area-inset-bottom));
+  background:var(--workspace-panel-opaque);
+}
+@media(max-width:830px) {
+  .kay-party-record .kay-record-panel { padding:16px; }
+  .kay-owner-record-page .kay-record-aside { max-height:none; }
+}
+@media(forced-colors:active) {
+  .kay-record-error,.kay-party-section-empty { border:1px solid CanvasText; }
+}

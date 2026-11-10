@@ -82,9 +82,11 @@ test("Owner details reuse shared one-field controllers and preserve primary/seco
 
 function directorySetup(role = "manager") {
   const h = harness(), contact = client(), paths = [], navigation = []; let error, refreshes = 0;
+  h.react.useCallback = callback => callback;
+  h.react.useMemo = factory => factory();
   const state = { draft: { q: "", archive: "all" }, filters: { q: "", archive: "all" }, page: 2, setDraft() {}, setPage() {}, apply() {}, reset() {} };
   const result = { get value() { return { items: [contact], total: 21, page: 2, page_size: 20 }; }, get error() { return error; }, refresh: () => refreshes++, refreshQuietly() {} };
-  const loaded = loadServer("src/features/owners/owner-directory.tsx", { modules: { ...common, react: h.react, "next/navigation": { useRouter: () => ({ push: path => navigation.push(path) }) }, "@/components/shared/data-table": { DataTable: "Table" }, "@/components/shared/directory-record-card": { DirectoryRecordCard: "Card" }, "@/components/shared/filter-results-layout": { FilterResultsLayout: "Filters" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/contacts/use-directory-filters": { useDirectoryFilters: () => state }, "@/features/contacts/use-query": { useQuery: path => { paths.push(path); return result; } }, "./owner-form": { OwnerForm: "Form" }, "./owner-directory-model": model, "./owner-loading": { OwnerLoading: "Loading" }, "./owner-preview": { OwnerPreviewDrawer: "Preview" } } });
+  const loaded = loadServer("src/features/owners/owner-directory.tsx", { modules: { ...common, react: h.react, "next/navigation": { useRouter: () => ({ push: path => navigation.push(path) }) }, "@/components/shared/data-table": { DataTable: "Table" }, "@/components/shared/directory-record-card": { DirectoryRecordCard: "Card" }, "@/components/shared/filter-results-layout": { FilterResultsLayout: "Filters" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/contacts/use-directory-filters": { useDirectoryFilters: () => state }, "@/features/contacts/use-query": { useQuery: path => { paths.push(path); return result; } }, "./owner-form": { OwnerForm: "Form" }, "./owner-directory-model": model, "@/components/shared/directory-presentation": { useDirectoryRail: () => ({ rail: {} }), DirectoryEmpty: "Empty", DirectoryLoading: "Loading" }, "@/components/shared/scrollable-results-table": { ScrollableResultsTable: "Scroll" }, "./owner-preview": { OwnerPreviewDrawer: "Preview" } } });
   const render = () => h.render(() => loaded.OwnerDirectory({ role })); render();
   return { ...h, render, contact, paths, navigation, state, error: value => { error = value; }, refreshes: () => refreshes };
 }
@@ -175,11 +177,23 @@ test("Owner title links retain native destinations and disable prefetch only for
   const card = h.render(() => cards.DirectoryRecordCard({ title: contact.name, href: `/owners/${contact.id}`, agent: "Synthetic", phone: contact.primary_phone, status: "Actif", onOpen: open })); assert.equal(find(card, "Link")[0].props.onClick, open); assert.equal(find(card, "Link")[0].props.prefetch, false);
 });
 
-test("Owner drawers use a connected row focus target or the surviving directory action after it disappears", () => {
+test("Owner drawers finish their exit before notifying the parent and restore surviving focus", () => {
   const h = harness(), focused = [], returned = { current: { isConnected: false, focus: () => focused.push("row") } }, fallback = { current: { focus: () => focused.push("create") } };
-  const loaded = loadServer("src/components/shared/record-drawer.tsx", { modules: { ...common, react: h.react, "@/components/ui/sheet": Object.fromEntries(["Sheet", "SheetContent", "SheetDescription", "SheetHeader", "SheetTitle", "SheetTrigger"].map(name => [name, name])), "./unsaved-guard": { useUnsavedGuard: () => ({ request() {} }) } } });
-  const render = () => h.render(() => loaded.RecordDrawer({ label: "Owner", description: "Synthetic", initialOpen: true, hideTrigger: true, returnFocus: returned, fallbackFocus: fallback }));
-  find(render(), "SheetContent")[0].props.onCloseAutoFocus({ preventDefault() {} }); assert.deepEqual(focused, ["create"]); returned.current.isConnected = true; find(render(), "SheetContent")[0].props.onCloseAutoFocus({ preventDefault() {} }); assert.deepEqual(focused, ["create", "row"]);
+  let notifications = 0;
+  const loaded = loadServer("src/components/shared/record-drawer.tsx", {
+    modules: { ...common, react: { ...h.react, useLayoutEffect: h.react.useEffect }, "@/components/ui/sheet": Object.fromEntries(["Sheet", "SheetContent", "SheetDescription", "SheetHeader", "SheetTitle", "SheetTrigger"].map(name => [name, name])), "./unsaved-guard": { useUnsavedGuard: () => ({ request: run => run() }) } },
+    globals: { document: { getElementById: () => null } },
+  });
+  const render = () => h.render(() => loaded.RecordDrawer({ label: "Owner", description: "Synthetic", initialOpen: true, hideTrigger: true, returnFocus: returned, fallbackFocus: fallback, onClosed: () => { notifications++; } }));
+  find(render(), "Sheet")[0].props.onOpenChange(false);
+  assert.equal(find(render(), "Sheet")[0].props.open, false);
+  assert.equal(notifications, 0);
+  find(render(), "SheetContent")[0].props.onCloseAutoFocus({ preventDefault() {} });
+  assert.deepEqual(focused, ["create"]);
+  returned.current.isConnected = true;
+  find(render(), "SheetContent")[0].props.onCloseAutoFocus({ preventDefault() {} });
+  assert.deepEqual(focused, ["create", "row"]);
+  assert.equal(notifications, 1);
 });
 
 test("Owner route passes the current authenticated role and only supported left/right deep-link selections", async () => {

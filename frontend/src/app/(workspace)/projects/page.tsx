@@ -7,5 +7,5 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const identity = await requireIdentity("/projects");
   if (identity.state !== "authenticated") return <AuthUnavailable path="/projects" />;
   const { kind } = await searchParams;
-  return <PropertyDirectory role={identity.profile.user.role} initialKind={kind === "programmes" || kind === "developments" ? "developments" : "standalone"} />;
+  return <PropertyDirectory role={identity.profile.user.role} actorId={identity.profile.user.id} initialKind={kind === "programmes" || kind === "developments" ? "developments" : "standalone"} />;
 }

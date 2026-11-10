@@ -5,7 +5,7 @@ import { Slot } from "radix-ui";
 import { buttonActions, type ActionDefinition, type ButtonAction } from "./button-actions";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-full text-sm font-medium whitespace-normal transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-full text-sm font-medium whitespace-normal transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([data-icon-sized],[class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -67,7 +67,7 @@ function Button({
   const resolvedVariant = action === "create" ? "creation"
     : !variant || variant === "default" ? definition?.variant ?? "default" : variant;
   const content = Icon && definition ? [
-    <Icon key="icon" aria-hidden="true" data-action-icon className={cn("size-4 text-current", definition.iconClassName)} />,
+    <Icon key="icon" size={16} aria-hidden="true" data-action-icon className={cn("text-current", definition.iconClassName)} />,
     asChild ? <Slot.Slottable key="label">{children}</Slot.Slottable> : <span key="label" className="min-w-0">{children}</span>,
   ] : children;
 

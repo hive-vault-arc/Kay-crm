@@ -29,7 +29,7 @@ export function MetricChart({ metric, open }: { metric: Metric; open: (id?: stri
   const data = useMemo(() => [{ label: metric.label, value: total, ...Object.fromEntries(points.map((point, index) => [`agent${index}`, point.value])) }], [metric.label, total, points]);
   const domain = useMemo<[number, number]>(() => [0, total || 1], [total]);
   return <section className={`surface grid min-w-0 content-start gap-4 ${metric.key === "activities" ? "xl:col-span-2" : ""}`} aria-label={metric.label} onKeyDown={e => { if (e.key === "Escape") setSelected(null); }}>
-    <h3 className="text-section font-medium">{metric.label}</h3>
+    <h3 className="text-section">{metric.label}</h3>
     <p className="text-sm text-muted-foreground">{metric.basis === "current" ? "Situation actuelle. Attribution au responsable actuel." : metric.key === "won" ? "Période sélectionnée. Attribution au responsable lors de la clôture. Réouvertures exclues." : "Période sélectionnée. Attribution à l’auteur réel des actions enregistrées."} Nombre absolu, sans taux ni dénominateur.</p>
     {points.length ? <>
       <div aria-label={`Graphique : ${metric.label}`} role="group" className="min-w-0">

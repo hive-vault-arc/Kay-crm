@@ -20,7 +20,6 @@ for (const failure of ["acknowledgement", "destination-read"] as const) {
       const enquiry = enquirySchema.parse(await response.json());
       await page.setViewportSize({ width: failure === "acknowledgement" ? 1440 : 390, height: 900 });
       await page.goto(`/leads/${enquiry.id}`);
-      await page.getByRole("button", { name: "Actions", exact: true }).click();
       await page.getByRole("button", { name: "Convertir en affaire", exact: true }).click();
       const dialog = page.getByRole("alertdialog", { name: "Convertir le prospect en affaire", exact: true });
       const project = `Synthetic conversion project ${randomUUID().slice(0, 8)}`;

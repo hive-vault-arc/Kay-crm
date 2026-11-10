@@ -1,12 +1,11 @@
 # KAY frontend working rules
 
 Read and follow the root `../AGENTS.md`, current sprint and KAY design contracts.
-The framework guidance below complements those rules. The current selected-design
-migration uses `../DESIGN.md`, the frozen KAY reference and the current design
-system/screen map. Use Radix/New York shadcn/ui, Tailwind 4.3.3 and Bklit charts.
-The selected workspace uses self-hosted Inter and the 64 source-pinned semantic
-glyphs. Earlier Riviera font/icon descriptions are historical provenance, not
-instructions to redraw this selected design. Retain the original font/icon notices.
+The framework guidance below complements those rules. The owner-supplied KAY prototype and
+`../DESIGN.md` govern the active design system. Use the installed
+Radix/New York shadcn/ui, Tailwind and Bklit components with shared reference
+tokens. The workspace uses self-hosted Inter and the pinned semantic Lucide
+glyphs. Retain the original font and icon notices.
 Use only the typed semantic exports from `@/components/icons`; the official
 browser-only loader is not imported. Keep `THIRD_PARTY_NOTICES.md` and the
 existing public icon notices with distributions. After shadcn/Bklit updates, migrate

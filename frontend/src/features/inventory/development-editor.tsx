@@ -23,6 +23,7 @@ import { categoryLabels } from "./contracts";
 import { developmentFieldsSchema, developmentSchema, developmentPhaseLabels, programmePhaseLabel, type Development } from "./development-contracts";
 import { InventoryError } from "./states";
 import { useInventoryRecordCommand } from "./use-record-command";
+import type { InventoryRecord } from "./record-scope";
 import { InventoryDraftSummary } from "./inventory-draft-summary";
 import { DevelopmentCreationWizard } from "./development-creation-wizard";
 
@@ -33,10 +34,10 @@ function currentValues(development: Development): Values {
 function draftValues(values: Partial<Values>, developerId?: string | null, phaseSupported = true) {
   return { reference: values.reference?.trim() ?? "", name: values.name?.trim() ?? "", category: values.category ?? "mixed", phase: phaseSupported ? values.phase ?? "" : "", location: values.location?.trim() ?? "", briefing_text: values.briefing_text?.trim() ?? "", developer_marketing_display: values.developer_marketing_display?.trim() ?? "", developerId };
 }
-export function DevelopmentEditor({ development, actorId, role }: { development?: Development; actorId?: string; role?: StaffRole }) {
-  return development ? <DevelopmentEditForm development={development} /> : <DevelopmentCreationWizard key={`${actorId ?? ""}:${role ?? ""}`} actorId={actorId} role={role} />;
+export function DevelopmentEditor({ development, actorId, role, cancel, onSaved }: { development?: Development; actorId?: string; role?: StaffRole; cancel?: () => void; onSaved?: (record: InventoryRecord) => void }) {
+  return development ? <DevelopmentEditForm development={development} cancel={cancel} onSaved={onSaved} /> : <DevelopmentCreationWizard key={`${actorId ?? ""}:${role ?? ""}`} actorId={actorId} role={role} />;
 }
-function DevelopmentEditForm({ development }: { development: Development }) {
+function DevelopmentEditForm({ development, cancel, onSaved }: { development: Development; cancel?: () => void; onSaved?: (record: InventoryRecord) => void }) {
   const router = useRouter(); const hydrated = useHydrated(); const command = useInventoryRecordCommand({ kind: "development-facts", root: "developments", id: development.id, version: development.version });
   const guard = useUnsavedGuard(), scope = useRef<HTMLFormElement>(null), alive = useRef(true), lock = useRef(false), reading = useRef<AbortController | null>(null), reported = useRef(false);
   const [version, setVersion] = useState(development?.version ?? 1);
@@ -75,11 +76,11 @@ function DevelopmentEditForm({ development }: { development: Development }) {
     if (!parsed.success) { setNotice("Vérifiez les champs : référence et nom obligatoires, présentation de 10 000 caractères maximum."); const fields = parsed.error.issues.map(issue => issue.path[0]).filter((key): key is keyof Values => typeof key === "string" && ["reference", "name", "category", "phase", "location", "briefing_text", "developer_marketing_display"].includes(key)); fields.forEach(key => form.setError(key, { type: "validate" })); form.setFocus(fields[0] ?? "reference"); return; }
     const { developer_contact_id, ...fields } = parsed.data;
     setNotice(""); lock.current = true; reported.current = false;
-    try { const error = await command.submit(`/api/v1/developments/${development.id}`, { ...fields, ...(developerChanged ? { developer_contact_id } : {}), expected_version: version }, "PATCH", (record, signal) => { if (!alive.current || signal.aborted || reported.current) return; router.push(`/projects/${record.id}`); if (alive.current && !signal.aborted) { reported.current = true; changes.accept(); } }); if (error && alive.current) failure(error); }
+    try { const error = await command.submit(`/api/v1/developments/${development.id}`, { ...fields, ...(developerChanged ? { developer_contact_id } : {}), expected_version: version }, "PATCH", (record, signal) => { if (!alive.current || signal.aborted || reported.current) return; if (!onSaved) router.push(`/projects/${record.id}`); if (alive.current && !signal.aborted) { reported.current = true; changes.accept(); onSaved?.(record); } }); if (error && alive.current) failure(error); }
     finally { lock.current = false; }
   }
   if (denied) return <RecordError error={denied} />;
-  return <>{guard.dialog}<form ref={scope} data-managed-draft="true" data-live-dirty={changes.dirty ? "true" : undefined} data-write-recovery={command.uncertain ? "true" : undefined} className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1.7fr)_minmax(19rem,1fr)]" noValidate aria-label="Modifier le programme" aria-busy={busy || command.uncertain} onSubmit={event => void form.handleSubmit(save)(event)}>
+  return <>{guard.dialog}<form ref={scope} data-draft-managed data-live-dirty={changes.dirty ? "true" : undefined} data-write-recovery={command.uncertain ? "true" : undefined} className="kay-development-edit grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1.7fr)_minmax(19rem,1fr)]" noValidate aria-label="Modifier le programme" aria-busy={busy || command.uncertain} onSubmit={event => void form.handleSubmit(save)(event)}>
     <div className="form-surface grid min-w-0 gap-5">
     <SectionHeading icon={DevelopmentIcon}>Identité du programme</SectionHeading>
     <p className="text-sm text-muted-foreground">Un brouillon peut rester incomplet. La présentation est partagée avec toute l’équipe et ne remplace pas les propriétaires légaux.</p>
@@ -97,7 +98,7 @@ function DevelopmentEditForm({ development }: { development: Development }) {
     <p id="development-validation" role={notice ? "alert" : undefined} className="text-danger">{notice}</p>
     <InventoryError level="development" error={command.error} />
     {command.uncertain ? <p role="status">{command.acknowledged ? "La modification est enregistrée. Actualisez son résultat sans l’enregistrer à nouveau." : "La réponse est interrompue. Réessayez la même opération pour retrouver son résultat."}</p> : null}
-    <div className="flex flex-wrap gap-2 border-t pt-4"><Button action="save" type="submit" disabled={!hydrated || busy || !command.uncertain && (blocked || Boolean(comparison) || !command.canEdit())}>{command.pending ? "Enregistrement…" : command.uncertain ? command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération" : "Enregistrer le programme"}</Button><Button action="cancel" variant="outline" disabled={busy || command.uncertain} asChild><Link href={`/projects/${development.id}`} aria-disabled={busy || command.uncertain} tabIndex={busy || command.uncertain ? -1 : undefined} onClick={event => { if (lock.current || command.locked()) event.preventDefault(); }}>Annuler</Link></Button></div>
+    <div className="kay-inventory-form-actions flex flex-wrap gap-2 border-t pt-4"><Button action="save" type="submit" disabled={!hydrated || busy || !command.uncertain && (blocked || Boolean(comparison) || !command.canEdit())}>{command.pending ? "Enregistrement…" : command.uncertain ? command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération" : "Enregistrer le programme"}</Button>{cancel ? <Button action="cancel" type="button" variant="outline" disabled={busy || command.uncertain} onClick={() => { if (!lock.current && !command.locked()) cancel(); }}>Annuler</Button> : <Button action="cancel" variant="outline" disabled={busy || command.uncertain} asChild><Link href={`/projects/${development.id}`} aria-disabled={busy || command.uncertain} tabIndex={busy || command.uncertain ? -1 : undefined} onClick={event => { if (lock.current || command.locked()) event.preventDefault(); }}>Annuler</Link></Button>}</div>
     </div>
     <InventoryDraftSummary icon={DevelopmentIcon} title="Programme en préparation" facts={[
       { label: "Référence", value: draft.reference?.trim() },

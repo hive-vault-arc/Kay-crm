@@ -14,15 +14,16 @@ import { calendarContextSchema, statusLabels, visitsSchema } from "./contracts";
 import { monthShift } from "./calendar-model";
 import { localLabel, resolveLocal } from "./time";
 
-export function ContactVisits({ contactId, writable }: { contactId: string; writable: boolean }) {
+export function ContactVisits({ contactId, writable, showCalendar = false }: { contactId: string; writable: boolean; showCalendar?: boolean }) {
   const clock = useQuery("/api/v1/calendar/context", calendarContextSchema);
-  return <RecordSection title="Visites" action={writable ? <Button action="visit" asChild variant="outline"><Link href={`/visits/new?contact_id=${contactId}`}>Planifier</Link></Button> : undefined}>
+  return <RecordSection title="Visites" action={writable ? <Button action="visit" asChild variant="outline"><Link href={`/visits/new?contact_id=${contactId}`}>{showCalendar ? "Planifier une visite" : "Planifier"}</Link></Button> : undefined}>
     {clock.error ? <RecordError error={clock.error} retry={clock.refresh} /> : clock.value ? <VisitMonth contactId={contactId} initial={clock.value.today.slice(0, 7)} /> : <p role="status">Chargement du calendrier…</p>}
+    {showCalendar ? <Button action="visit" asChild variant="quiet" className="justify-self-end"><Link href="/visits">Calendrier</Link></Button> : null}
   </RecordSection>;
 }
 function VisitMonth({ contactId, initial }: { contactId: string; initial: string }) {
   const [month, setMonth] = useState(initial);
-  return <><Input type="month" aria-label="Mois des visites" min="2000-01" max="2100-12" value={month} onChange={event => { if (/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(event.target.value)) setMonth(event.target.value); }} /><ResolvedMonth key={`${contactId}:${month}`} contactId={contactId} month={month} /></>;
+  return <><Input data-filter-panel type="month" aria-label="Mois des visites" min="2000-01" max="2100-12" value={month} onChange={event => { if (/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(event.target.value)) setMonth(event.target.value); }} /><ResolvedMonth key={`${contactId}:${month}`} contactId={contactId} month={month} /></>;
 }
 function ResolvedMonth({ contactId, month }: { contactId: string; month: string }) {
   const [period, setPeriod] = useState<{ start_at: string; end_at: string }>();

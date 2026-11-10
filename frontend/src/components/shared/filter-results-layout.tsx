@@ -9,7 +9,7 @@ const desktopQuery = "(min-width: 831px)";
 const desktopSnapshot = () => window.matchMedia(desktopQuery).matches;
 const serverSnapshot = () => true;
 
-export function FilterResultsLayout({ title, filters, children, active = false, inline = false, widePanel = false, reference = false, activeCount = 0, reset, className, panelHeading, mode = "rail", searchControl, surface = true, leadingControl }: {
+export function FilterResultsLayout({ title, filters, children, active = false, inline = false, widePanel = false, reference = false, activeCount = 0, reset, className, panelHeading, mode = "rail", searchControl, surface = true, leadingControl, railHidden = false, railId }: {
   title: string;
   filters: (close: () => void) => ReactNode;
   children: ReactNode;
@@ -25,6 +25,8 @@ export function FilterResultsLayout({ title, filters, children, active = false, 
   searchControl?: ReactNode;
   surface?: boolean;
   leadingControl?: ReactNode;
+  railHidden?: boolean;
+  railId?: string;
 }) {
   const hydrated = useHydrated();
   const [open, setOpen] = useState(false);
@@ -62,9 +64,9 @@ export function FilterResultsLayout({ title, filters, children, active = false, 
   const close = () => setOpen(false);
   if (inline) return <div className="grid min-w-0 gap-3"><div data-filter-panel="inline">{filters(close)}</div>{children}</div>;
   return (
-    <div data-filter-mode={mode} className={`kay-filter-layout${widePanel ? " kay-filter-wide" : ""}${reference ? " kay-filter-reference" : ""} ${className ?? ""}`}>
+    <div data-filter-mode={mode} data-rail-hidden={railHidden || undefined} className={`kay-filter-layout${widePanel ? " kay-filter-wide" : ""}${reference ? " kay-filter-reference" : ""} ${className ?? ""}`}>
       {desktop && mode === "rail" ? (
-        <aside ref={panel} data-filter-panel="desktop" aria-label={title} className="kay-filter-rail kay-surface">
+        <aside ref={panel} id={railId} hidden={railHidden} data-filter-panel="desktop" aria-label={title} className="kay-filter-rail kay-surface">
           {panelHeading !== undefined ? panelHeading : reference ? <div className="crm-filter-heading"><h2>Filtres</h2><span>{activeCount} filtre{activeCount > 1 ? "s" : ""} actif{activeCount > 1 ? "s" : ""}</span><Button action="reset" variant="quiet" size="compact" type="button" onClick={reset}>Effacer</Button></div> : <h2 className="mb-4 text-sm font-semibold">{title}</h2>}
           {filters(close)}
         </aside>

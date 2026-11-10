@@ -39,7 +39,7 @@ export function FoundationCheck() {
   if (crashed) throw new Error("SP01_SYNTHETIC_ERROR");
   return (
     <div className="grid max-w-reading gap-8">
-      <h1 className="text-page font-bold">Vérification des composants</h1>
+      <h1 className="text-page">Vérification des composants</h1>
       <p>
         Fixture technique synthétique, disponible uniquement sur le serveur de
         test.

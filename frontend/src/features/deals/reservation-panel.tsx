@@ -48,7 +48,7 @@ export function ReservationPanel({ deal, writable, busy, saved, mutate, recovery
     finally { submitting.current = false; }
   }
   return <section hidden={dialogOnly} className={dialogOnly ? "hidden" : "grid min-w-0 gap-4 border-y py-6"} aria-label="Réservation de l’affaire">
-    <h2 className="text-section font-medium">Réservation</h2>
+    <h2 className="text-section">Réservation</h2>
     {deal.active_reservation ? <p>Réservation active depuis le {formatInstant(deal.active_reservation.created_at)}. Aucune expiration automatique.</p> : <p>Aucune réservation active pour cette affaire.</p>}
     {deal.reservation_conflict ? <p role="status" className="text-warning">{deal.reservation_conflict === "DEVELOPMENT_OVERLAP" ? "Une réservation du même type couvre déjà le programme entier ou une de ses unités." : "Cette offre est déjà réservée par une autre affaire."} Faites vérifier le stock par un responsable. Aucun autre dossier privé n’est affiché.</p> : null}
     {!deal.offering ? <p>Liez une offre d’inventaire précise avant de réserver.</p> : !writable && !open ? <p>Réservation en lecture seule.</p> : <AlertDialog open={open} onOpenChange={next => { if (!submitting.current && !reviewed.locked() && !recovery?.locked()) { setOpen(next); if (!next) closed?.(); if (next) { setInvalid(""); void reviewed.refresh(); } } }}>

@@ -1,6 +1,8 @@
 "use client";
 
-import { CalendarIcon, DealIcon, ContactsIcon, ClockIcon, MoreIcon } from "@/components/icons";
+import { animate } from "motion/mini";
+import { useLayoutEffect, useRef, useState } from "react";
+import { CalendarIcon, DealIcon, ContactsIcon, ClockIcon, MoreIcon, CircleCheckIcon, TrendDownIcon, TrendSteadyIcon, TrendUpIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Workspace, WorkspaceMetric } from "./workspace-contracts";
@@ -21,14 +23,54 @@ export function countComparison(current: number, previous: number | null) {
   return { label, direction: difference > 0 ? "up" : difference < 0 ? "down" : "same", text: `${current} sur la période, contre ${previous} sur la période précédente de même durée, dans le périmètre actuel.` };
 }
 
-export function WorkspaceKpis({ value, open }: { value: Workspace; open: (metric: WorkspaceMetric) => void }) {
-  return <div className="kay-dash-kpis">{(Object.keys(workspaceLabels) as WorkspaceMetric[]).map(key => {
+export function WorkspaceKpis({ value, open }: { value: Workspace; open: (metric: WorkspaceMetric, focus?: HTMLElement) => void }) {
+  const group = useRef<HTMLDivElement>(null);
+  const [info, setInfo] = useState<WorkspaceMetric>();
+  const openingRecords = useRef(false);
+  useLayoutEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const cards = group.current?.querySelectorAll<HTMLElement>(".kay-dash-kpi");
+    if (preference.matches || !cards?.length) return;
+
+    const entrance = animate(cards, { opacity: [.25, 1], transform: ["translateY(4px)", "none"] }, {
+      duration: .32, delay: index => index * .04, ease: [.22, 1, .36, 1],
+    });
+    const cancel = () => entrance.cancel();
+    preference.addEventListener("change", cancel, { once: true });
+    return () => { preference.removeEventListener("change", cancel); cancel(); };
+  }, []);
+
+  return <div ref={group} className="kay-dash-kpis" role="group" aria-label="Indicateurs de l’activité">{(Object.keys(workspaceLabels) as WorkspaceMetric[]).map(key => {
     const metric = value.kpis[key];
     const comparison = "previous_total" in metric ? countComparison(metric.total, metric.previous_total) : null;
     const good = comparison?.direction === "same" ? "same" : (key === "follow_ups" ? comparison?.direction === "down" : comparison?.direction === "up") ? "good" : "bad";
+    const Trend = comparison?.direction === "up" ? TrendUpIcon : comparison?.direction === "down" ? TrendDownIcon : comparison ? TrendSteadyIcon : CircleCheckIcon;
     return <article className="kay-dash-kpi" key={key}>
-      <Button variant="ghost" className="kay-dash-kpi-content" onClick={() => open(key)} aria-label={`${workspaceLabels[key]} : ${metric.total}. Voir les dossiers.`}><span className="kay-dash-kpi-heading"><span className="kay-dash-symbol">{key === "enquiries" ? <ContactsIcon size={20} aria-hidden="true" /> : key === "active_deals" ? <DealIcon size={20} aria-hidden="true" /> : key === "upcoming_visits" ? <CalendarIcon size={20} aria-hidden="true" /> : <ClockIcon size={20} aria-hidden="true" />}</span><span><span>{workspaceLabels[key]}</span><small>{comparison ? "Période sélectionnée" : key === "active_deals" ? "Portefeuille actuel" : "Période sélectionnée"}</small></span></span><span className="kay-dash-kpi-metric"><strong>{metric.total.toLocaleString("fr-MA")}</strong><span className="kay-dash-change" data-tone={comparison ? good : "same"}>{comparison?.label ?? "En cours"}</span></span></Button>
-      <Popover><PopoverTrigger asChild><Button variant="quiet" size="icon" className="kay-dash-kpi-menu" aria-label={`À propos : ${workspaceLabels[key]}`}><MoreIcon size={16} aria-hidden="true" /></Button></PopoverTrigger><PopoverContent align="end" className="grid gap-3 text-sm"><p>{descriptions[key]}</p><p className="text-muted-foreground">{comparison?.text ?? "Aucune comparaison historique."}</p><Button action="forward" variant="outline" onClick={() => open(key)}>Voir les dossiers</Button></PopoverContent></Popover>
+      <Button variant="ghost" className="kay-dash-kpi-content" onClick={() => open(key)} aria-label={`${workspaceLabels[key]} : ${metric.total}. Voir les dossiers.`}>
+        <span className="kay-dash-kpi-heading">
+          <span className="kay-dash-symbol">
+            {key === "enquiries" ? <ContactsIcon size={18} aria-hidden="true" /> : key === "active_deals" ? <DealIcon size={18} aria-hidden="true" /> : key === "upcoming_visits" ? <CalendarIcon size={18} aria-hidden="true" /> : <ClockIcon size={18} aria-hidden="true" />}
+          </span>
+          <span><span>{workspaceLabels[key]}</span><small>{comparison && comparison.label !== "Sans comparaison" ? "Vs période précédente" : key === "active_deals" ? "Portefeuille actuel" : "Période sélectionnée"}</small></span>
+        </span>
+        <span className="kay-dash-kpi-metric">
+          <strong>{metric.total.toLocaleString("fr-MA")}</strong>
+          {comparison || key === "active_deals" ? <span className="kay-dash-change" data-tone={comparison ? good : "current"}><Trend size={16} aria-hidden="true" />{comparison?.label ?? "En cours"}</span> : null}
+        </span>
+      </Button>
+      <Popover open={info === key} onOpenChange={next => setInfo(next ? key : undefined)}>
+        <PopoverTrigger asChild><Button variant="quiet" size="icon" className="kay-dash-kpi-menu" data-metric-info={key} aria-label={`À propos : ${workspaceLabels[key]}`}><MoreIcon className="size-[17px]" aria-hidden="true" /></Button></PopoverTrigger>
+        <PopoverContent align="end" className="grid w-60 max-w-[calc(100vw-24px)] gap-3 text-sm" onCloseAutoFocus={event => {
+          if (openingRecords.current) { event.preventDefault(); openingRecords.current = false; }
+        }}>
+          <p>{descriptions[key]}</p><p className="text-muted-foreground">{comparison?.text ?? "Aucune comparaison historique."}</p>
+          <Button action="forward" variant="outline" onClick={() => {
+            openingRecords.current = true;
+            setInfo(undefined);
+            open(key, group.current?.querySelector<HTMLButtonElement>(`[data-metric-info="${key}"]`) ?? undefined);
+          }}>Voir les dossiers</Button>
+        </PopoverContent>
+      </Popover>
     </article>;
   })}</div>;
 }

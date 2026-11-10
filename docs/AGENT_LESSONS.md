@@ -40,6 +40,23 @@ Default/Preferences file beyond its supported path length even when navigation
 works. Keep the path containment checks and actual devicePixelRatio/viewport
 assertions; changing device scale alone is not a substitute for native zoom.
 
+## Route drawers and exact budget assertions (2026-11-10)
+
+Keep the workspace animation key stable across `/visits` and its drawer
+routes. A pathname key outside the persistent Next.js layout remounts the
+calendar and resets the selected week and view. Verify keyboard focus and
+calendar state after closing the drawer.
+
+Lead and deal write tests should assert exact amounts in the API's
+normalized form, such as `1500000.00 MAD` for the input `1500000`.
+Configured budget bands retain their original strings.
+
+## Read-only dashboard filters and draft protection (2026-11-10)
+
+Mark filter controls with `data-filter-panel` so the navigation guard and live
+update input listener distinguish view changes from unsaved record edits. Verify
+that changing a filter allows ordinary navigation and background reads.
+
 ## Recheck domain permissions before reusing a presentation flag (2026-10-26)
 
 D34 permits active agents to edit shared programme facts and create units. Keep
@@ -2396,3 +2413,26 @@ closed. Verify keyboard focus on the still-visible action item when that menu
 remains open, or on its Actions trigger when it has closed. Reopen a closed
 menu before using its item again. Keep the real focus assertion; do not require
 an unmounted child to receive focus or accept focus on the page body.
+
+## Row-trigger focus after a preview (2026-11-10)
+
+When a table cell opens a drawer, keep its column definitions and cell renderers
+stable across drawer state updates. TanStack otherwise remounts the link that
+opened the drawer before Radix can restore focus. Check Escape with the real
+table row on desktop and with the equivalent card on phone.
+
+## Capability responses must update rendered controls (2026-11-10)
+
+Read render-time capability props directly when enabling form controls. A ref
+updated after commit does not cause a rerender and can leave an enabled form
+visibly disabled after its first capability response. Keep the committed
+capability check at the command boundary as well. Exercise the transition in
+both directions and open the form through its normal entry point in Chrome.
+
+## Reference controls and browser geometry (2026-11-10)
+
+Check feature control dimensions after the shared primitives load. A selector
+that styles a bare button can lose to the shared data-slot and data-size rules.
+Test the intended desktop control height separately from the 44 px phone hit
+area. Native zoom can report a 44 px control as 43.999985 px. Round measurement
+noise at thousandths of a CSS pixel before comparing bounds.

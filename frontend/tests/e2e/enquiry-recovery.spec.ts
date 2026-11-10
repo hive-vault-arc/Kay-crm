@@ -38,15 +38,15 @@ for (const operation of ["status", "message"] as const) {
         await page.keyboard.press("Escape"); await expect.poll(() => dialog.isVisible()).toBe(true);
         await retry.click(); await expect.poll(() => dialog.count()).toBe(0);
       } else {
-        await page.getByRole("button", { name: "Modifier description", exact: true }).click();
-        const form = page.getByRole("form", { name: "Modifier description", exact: true });
-        try { await form.getByLabel("Description", { exact: true }).fill(text); }
+        await page.getByRole("button", { name: "Modifier message", exact: true }).click();
+        const form = page.getByRole("form", { name: "Modifier message", exact: true });
+        try { await form.getByLabel("Message", { exact: true }).fill(text); }
         catch { throw new Error("SYNTHETIC_ENQUIRY_INPUT_FAILED"); }
-        await form.getByRole("button", { name: "Enregistrer description", exact: true }).click();
-        const retry = form.getByRole("button", { name: "Réessayer description", exact: true });
+        await form.getByRole("button", { name: "Enregistrer message", exact: true }).click();
+        const retry = form.getByRole("button", { name: "Réessayer message", exact: true });
         await expect.poll(() => retry.isVisible()).toBe(true);
-        await expect.poll(() => form.getByLabel("Description", { exact: true }).isDisabled()).toBe(true);
-        await expect.poll(() => form.getByRole("button", { name: "Annuler description", exact: true }).isDisabled()).toBe(true);
+        await expect.poll(() => form.getByLabel("Message", { exact: true }).isDisabled()).toBe(true);
+        await expect.poll(() => form.getByRole("button", { name: "Annuler message", exact: true }).isDisabled()).toBe(true);
         await page.keyboard.press("Escape"); await expect.poll(() => form.isVisible()).toBe(true);
         await retry.click(); await expect.poll(() => form.count()).toBe(0);
       }

@@ -53,7 +53,7 @@ the local HTTPS workflow still requires its private local CA file.
 The former nine-image visual reference and its supporting notes were removed at
 the owner's request (D41). The implemented frontend remains unchanged by that
 documentation cleanup. Use [DESIGN.md](DESIGN.md), the
-[design system](docs/04-design/design-system.md), Riviera branding and later
+[design system](docs/04-design/design-system.md), the owner-supplied KAY prototype and later
 owner-supplied references for current UI direction. Historical technical checks
 do not imply human product acceptance or deployment.
 
@@ -199,7 +199,7 @@ For every frontend feature, the mandatory stack is **shadcn/ui for standard UI c
 | Which screens and routes are currently named? | [Screen map and navigation contract](docs/04-design/screen-map.md) |
 | Which mandatory UI component source does KAY use, and how is it installed? | [shadcn/ui working guide](docs/04-design/ui-components.md) |
 | How should the interface be styled? | [Tailwind CSS styling guide](docs/04-design/styling.md) |
-| What visual system should the KAY workspace follow? | [Design system](docs/04-design/design-system.md), [design entry point](DESIGN.md), [Riviera branding](branding/riviera/README.md), [screen map](docs/04-design/screen-map.md), and later owner-supplied screen references |
+| What visual system should the KAY workspace follow? | [Design system](docs/04-design/design-system.md), [design entry point](DESIGN.md), [reference tokens](branding/prototype/kay-workspace.tokens.json), [screen map](docs/04-design/screen-map.md), and later owner-supplied screen references |
 | Which mandatory chart library and chart types does the dashboard use? | [Bklit UI chart guide](docs/04-design/charts.md) |
 | How are data protected and retained? | [Security and privacy](docs/04-design/security-and-privacy.md) |
 | How will the requirements be verified? | [Acceptance scenarios](docs/05-quality/acceptance-tests.md), [traceability](docs/05-quality/traceability.md) |

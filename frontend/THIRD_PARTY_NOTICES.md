@@ -1,5 +1,10 @@
 # Third-party notices
 
+## Workspace wheel motion
+
+The prototype's `lenis@1.3.27` smooth-wheel library is distributed under the MIT
+license. Its original notice is retained in `public/licenses/workspace/Lenis-MIT.txt`.
+
 ## Selected Bklit pie components
 
 `src/components/charts/pie-chart.tsx`, `pie-context.tsx` and `pie-slice.tsx` are

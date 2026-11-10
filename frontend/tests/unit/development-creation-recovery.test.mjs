@@ -98,3 +98,23 @@ test("The creation owner itself rejects copied server identity, counters, capabi
   const options = { actorId: randomUUID(), role: "agent", available: true }, render = () => h.render(() => loaded.useDevelopmentCreation(options)), fields = { reference: "SYN-STRICT", name: "Synthetic strict creation", category: "mixed", location: null, briefing_text: null, developer_contact_id: null, developer_marketing_display: null };
   for (const extra of [{ id: randomUUID() }, { expected_version: 1 }, { phase_supported: true }, { agent_id: randomUUID() }, { actor_user_id: randomUUID() }]) { const failure = await render().submit({ ...fields, ...extra }, () => {}); assert.equal(failure.code, "VALIDATION_ERROR"); assert.equal(render().canEdit(), true); } assert.equal(dispatched, 0);
 });
+
+test("Programme creation enables its fields on the render that receives capabilities", () => {
+  const h = entryHarness();
+  const { useDevelopmentCreation } = loadServer("src/features/inventory/use-development-creation.ts", {
+    modules: {
+      react: { ...h.react, useLayoutEffect: h.react.useEffect },
+      "@/hooks/use-hydrated": { useHydrated: () => true },
+      "@/lib/auth/contracts": { meSchema: {} },
+      "@/lib/api/client": { ApiError },
+      "@/lib/api/command": {},
+      "./contracts": inventory,
+      "./development-contracts": development,
+    },
+  });
+  const actorId = randomUUID();
+  const canEdit = available => h.render(() => useDevelopmentCreation({ actorId, role: "agent", available }).canEdit());
+  assert.equal(canEdit(false), false);
+  assert.equal(canEdit(true), true);
+  assert.equal(canEdit(false), false);
+});

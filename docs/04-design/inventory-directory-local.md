@@ -3,6 +3,16 @@
 Date: 2026-10-28. Branch: `codex/redesign`. This extends the selected inventory
 directories without replacing their cards, hierarchy, permissions or stock rules.
 
+## Active prototype presentation (2026-11-10)
+
+The Projets header groups the inventory tabs, desktop Cards/List selector, filter
+toggle and creation action. The rail and results scroll independently. Sorting
+lives in the filters. Phones use compact photo cards and the existing filter
+sheet. Card photos come from authorized inventory uploads. The card footer is a
+full-width entry to the record, and current offer prices retain their periods and
+statuses. Creation and editing open guarded drawers from the inventory, with
+direct URLs available for deep links. The query and comparison rules below apply.
+
 ## Query and comparison contract
 
 The inherited query models already declare price, surface and room bounds. The

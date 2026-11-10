@@ -167,7 +167,7 @@ test("directory filters: left rails, mobile sheets and real scoped requests", as
       await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
     }
     if (screen.name === "leads" || screen.name === "deals") {
-      const scroller = page.getByRole("region", { name: screen.name === "leads" ? "Tableau des Leads, défilement horizontal" : "Tableau des affaires, défilement horizontal", exact: true });
+      const scroller = page.getByRole("region", { name: screen.name === "leads" ? "Tableau des prospects, défilement vertical et horizontal" : "Tableau des affaires, défilement horizontal", exact: true });
       await page.setViewportSize({ width: 1280, height: 900 });
       await expect(page.getByText("Faites défiler le tableau horizontalement pour lire les colonnes choisies.", { exact: true })).toBeVisible();
       await scroller.focus();

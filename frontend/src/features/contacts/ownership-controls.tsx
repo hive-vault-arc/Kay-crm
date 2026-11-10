@@ -60,7 +60,7 @@ function OwnershipLifetime({ contact, role, changed, embedded = false, denied }:
   return <section className="grid max-w-reading gap-4" aria-label="Gestion du contact" data-live-dirty={draft.dirty || command.uncertain || undefined} data-write-recovery={command.uncertain || undefined}>
     {!embedded ? <Button action={role === "agent" ? "compare" : "settings"} className="justify-self-start" variant="outline" disabled={!hydrated || protectedOperation || Boolean(prepared)} aria-expanded={open} aria-controls={`${control}-panel`} onClick={() => { if (command.canEdit()) setOpen(!open); }}>{role === "agent" ? "Fusionner ce contact" : "Gérer le contact"}</Button> : null}
     {open ? <form id={`${control}-panel`} className="grid min-w-0 gap-6 border-t pt-6" method="post" data-draft-managed aria-busy={protectedOperation} onSubmit={event => void prepare(event)}>
-      <h3 className="text-section font-medium">Attribution et conservation</h3>
+      <h3 className="text-section">Attribution et conservation</h3>
       <p className="wrap-anywhere text-sm">Version utilisée : {current.version} · Responsable : {current.primary_agent.display_name}</p>
       <fieldset className="grid min-w-0 gap-4" disabled={!hydrated || protectedOperation || Boolean(prepared)}>
         <div className="grid gap-2"><Label htmlFor={`${control}-operation`}>Opération</Label><NativeSelect id={`${control}-operation`} value={operation} onChange={event => edit(() => setOperation(event.target.value as Operation))}>{operations.map(value => <option key={value} value={value}>{operationLabels[value]}</option>)}</NativeSelect></div>

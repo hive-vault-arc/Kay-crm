@@ -106,10 +106,10 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
     "@/components/shared/record-header": { RecordHeader: "Header" }, "@/components/shared/record-facts": { RecordFact: "Fact", RecordFacts: "Facts" },
     "@/components/shared/record-workspace": { RecordSection: "Section", RecordWorkspace: "Workspace" }, "@/components/shared/record-drawer": { RecordDrawer: "Drawer" },
     "@/components/shared/record-actions": { RecordActions: "Actions" }, "@/components/shared/crm-presentation": { CrmStatusBadge: "Badge" },
-    "@/components/shared/page-header": { PageHeader: "PageHeader" }, "@/components/icons": {},
+    "@/components/shared/page-header": { PageHeader: "PageHeader" }, "@/components/ui/skeleton": { Skeleton: "Skeleton" }, "@/components/icons": {},
     "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": { useQuery: () => ({ value: development, refreshQuietly() {} }) },
     "@/features/discovery/lifecycle-panel": { LifecyclePanel: "Lifecycle" }, "@/features/files/file-panel": { FilePanel: "Files" },
-    "./development-contracts": {}, "./development-phase": { DevelopmentPhaseBadge: "Phase" }, "./development-editor": { DevelopmentEditor: "Editor" }, "./hierarchy-panel": { HierarchyPanel: "Hierarchy" },
+    "./project-edit-link": { ProjectEditLink: "EditLink" }, "./development-contracts": {}, "./development-phase": { DevelopmentPhaseBadge: "Phase" }, "./development-editor": { DevelopmentEditor: "Editor" }, "./hierarchy-panel": { HierarchyPanel: "Hierarchy" },
     "./unit-directory": { UnitDirectory: "Units" }, "./owner-editor": { OwnerEditor: "OwnerEditor" }, "./inventory-history": { InventoryHistory: "History" },
     "./use-command": { InventoryBusyContext: { Provider: "Provider" } }, "./record-scope": { InventoryRecordContext: { Provider: "RecordScope" } }, "./contracts": { categoryLabels: {} },
     "./inventory-support": { InventoryPhotoRail: "Photos", InventoryParty: "Party" }, "./inventory-offer-section": { InventoryOfferSection: "Offers" },
@@ -270,7 +270,8 @@ test("Task urgency uses the supplied instant and civil day, including a differen
 test("Numbered pages keep an escape from a reduced last page and omit disabled single-page controls", () => {
   const { NumberedPages } = loadServer("src/features/contacts/numbered-pages.tsx", { modules: { "react/jsx-runtime": runtime, "@/components/ui/button": { Button: "Button" } } });
   const changes = [], props = { page: 2, total: 1, size: 20, compact: true, change: value => changes.push(value) };
-  const reduced = NumberedPages(props), back = find(reduced, "Button").find(button => button.props.action === "back");
+  const reduced = NumberedPages(props), back = find(reduced, "Button").find(button => button.props["aria-label"] === "Précédent");
+  assert.equal(back.props.action, "previous");
   assert.equal(back.props.disabled, false); back.props.onClick(); assert.deepEqual(changes, [1]);
   assert.ok(find(reduced, "span").some(span => span.props.children === "Aucun résultat sur cette page · 1 au total"));
   const single = NumberedPages({ ...props, page: 1 }); assert.equal(find(single, "Button").length, 0); assert.equal(single.props.children, "1–1 sur 1");

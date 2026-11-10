@@ -1,0 +1,276 @@
+/* Reference control geometry and feedback for the installed UI primitives. */
+:where([data-slot="button"], .kay-nav-link) {
+  transition:
+    background-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease),
+    border-color var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease),
+    transform var(--motion-fast) var(--motion-ease),
+    opacity var(--motion-fast) var(--motion-ease);
+}
+
+[data-slot="button"]:is([data-size="default"], [data-size="sm"], [data-size="compact"]) {
+  min-height: var(--workspace-geometry-button-height);
+  padding-inline: var(--workspace-geometry-button-padding);
+  gap: var(--workspace-geometry-space-icon);
+}
+
+[data-slot="button"]:is([data-size="default"], [data-size="sm"], [data-size="compact"], [data-size="lg"]) {
+  font-size: var(--workspace-type-button);
+  line-height: var(--workspace-type-button-line);
+  font-weight: var(--workspace-type-button-weight);
+}
+
+[data-slot="button"]:is([data-variant="default"], [data-variant="creation"], [data-variant="success"]) {
+  border: 0;
+  box-shadow: none;
+}
+
+[data-slot="button"]:is([data-size="icon"], [data-size="icon-sm"]) > [data-action-icon] {
+  width: var(--workspace-geometry-action-icon);
+  height: var(--workspace-geometry-action-icon);
+}
+
+[data-slot="button"][data-variant="outline"] {
+  background-color: transparent;
+}
+
+[data-slot="button"][data-variant="outline"]:hover {
+  background-color: var(--workspace-field);
+}
+
+[data-slot="button"]:focus-visible {
+  box-shadow: none;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-slot="button"]:is([data-variant="default"], [data-variant="creation"], [data-variant="secondary"], [data-variant="outline"]):hover:not(:disabled, [aria-disabled="true"]) {
+    transform: translateY(var(--motion-hover-lift)) scale(var(--motion-hover-scale));
+    box-shadow: var(--workspace-motion-shadow);
+  }
+  [data-slot="button"]:is([data-variant="default"], [data-variant="creation"], [data-variant="secondary"], [data-variant="outline"]):active:not(:disabled, [aria-disabled="true"]) {
+    transform: scale(var(--motion-press-scale));
+    transition-duration: var(--motion-press);
+  }
+
+  :is(.kay-dash-kpi, .kay-project-card, .kay-kanban-card) {
+    transition: translate var(--motion-local) var(--motion-ease), box-shadow var(--motion-local) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease);
+  }
+
+  :is(.kay-dash-kpi, .kay-project-card):hover {
+    translate: 0 -3px;
+    box-shadow: var(--workspace-motion-shadow);
+  }
+
+  .kay-project-media img {
+    transition: transform var(--motion-page) var(--motion-ease);
+  }
+
+  .kay-project-card:hover .kay-project-media img { transform: scale(1.02); }
+
+  .kay-kanban:not(:has([data-dragging="true"])) .kay-kanban-card:hover {
+    translate: 0 -2px;
+    box-shadow: var(--workspace-motion-shadow);
+  }
+}
+
+@media (max-width: 830px), (pointer: coarse) {
+  [data-slot="button"]:is([data-size="default"], [data-size="sm"], [data-size="compact"]) {
+    min-height: var(--workspace-geometry-touch);
+  }
+}
+
+:is([data-slot="input"]:not([type="checkbox"], [type="radio"], [type="file"]), [data-slot="native-select"], [data-slot="select-trigger"]) {
+  border-radius: var(--workspace-geometry-control-radius);
+}
+
+@media (min-width: 831px) and (pointer: fine) {
+  :is([data-slot="input"]:not([type="checkbox"], [type="radio"], [type="file"]), [data-slot="native-select"]).h-field {
+    height: var(--workspace-geometry-field-height);
+  }
+}
+
+[data-slot="textarea"] {
+  border-radius: var(--workspace-geometry-textarea-radius);
+}
+
+[data-slot="input"]:not([type="checkbox"], [type="radio"], [type="file"]),
+[data-slot="textarea"] {
+  border-color: transparent;
+}
+
+:is([data-slot="input"], [data-slot="textarea"]):focus-visible:not([aria-invalid="true"]) {
+  border-color: var(--workspace-focus);
+}
+
+:is([data-slot="input"], [data-slot="textarea"])[aria-invalid="true"] {
+  border-color: var(--action-destructive-background);
+}
+
+[data-slot="input"]:not([type="checkbox"], [type="radio"]),
+:is([data-slot="textarea"], [data-slot="native-select"], [data-slot="select-trigger"]) {
+  background-color: var(--workspace-field);
+  font-weight: 500;
+  transition:
+    background-color var(--motion-fast) var(--motion-ease),
+    border-color var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease);
+}
+
+:is(section, article, fieldset).bg-card,
+:is([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+  border: 1px solid var(--workspace-floating-edge);
+  border-radius: var(--workspace-geometry-panel-radius);
+  box-shadow: var(--workspace-floating-shadow);
+  backdrop-filter: blur(var(--workspace-geometry-panel-blur));
+}
+
+:is([data-slot="sheet-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+  --kay-panel-entry: translateY(var(--motion-modal-offset));
+  --kay-panel-exit: translateY(var(--motion-modal-exit-offset));
+}
+
+[data-slot="sheet-content"][data-side="right"] {
+  --kay-panel-entry: translateX(var(--motion-drawer-offset));
+  --kay-panel-exit: translateX(var(--motion-drawer-exit-offset));
+}
+
+[data-slot="sheet-content"][data-side="left"] {
+  --kay-panel-entry: translateX(calc(-1 * var(--motion-drawer-offset)));
+  --kay-panel-exit: translateX(calc(-1 * var(--motion-drawer-exit-offset)));
+}
+
+[data-slot="sheet-content"][data-side="top"] {
+  --kay-panel-entry: translateY(calc(-1 * var(--motion-drawer-offset)));
+  --kay-panel-exit: translateY(calc(-1 * var(--motion-drawer-exit-offset)));
+}
+
+[data-slot="sheet-content"][data-side="bottom"] {
+  --kay-panel-entry: translateY(var(--motion-drawer-offset));
+  --kay-panel-exit: translateY(var(--motion-drawer-exit-offset));
+}
+
+/* Distinct exit keyframes let Radix retain the portal and its focus lifecycle. */
+:is([data-slot="sheet-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"])[data-state="open"] {
+  animation: kay-panel-in var(--motion-panel) var(--motion-ease);
+}
+
+:is([data-slot="sheet-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"])[data-state="closed"] {
+  animation: kay-panel-out var(--motion-panel-exit) var(--motion-ease);
+  pointer-events: none;
+}
+
+:is([data-slot="sheet-overlay"], [data-slot="dialog-overlay"], [data-slot="alert-dialog-overlay"])[data-state="open"] {
+  animation: kay-backdrop-in var(--motion-panel-exit) var(--motion-ease);
+}
+
+:is([data-slot="sheet-overlay"], [data-slot="dialog-overlay"], [data-slot="alert-dialog-overlay"])[data-state="closed"] {
+  animation: kay-backdrop-out var(--motion-panel-exit) var(--motion-ease);
+}
+
+@keyframes kay-panel-in {
+  from { opacity: .25; transform: var(--kay-panel-entry); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes kay-panel-out {
+  to { opacity: 0; transform: var(--kay-panel-exit); }
+}
+
+@keyframes kay-backdrop-in { from { opacity: 0; } }
+@keyframes kay-backdrop-out { to { opacity: 0; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.kay-shell, [data-slot$="-content"]) :is(.kay-inline-actions, [data-slot="form-message"]:not(:empty)) {
+    animation: kay-feedback-in var(--motion-local) var(--motion-ease);
+  }
+
+  :is(.kay-shell, [data-slot$="-content"]) [data-motion-feedback] {
+    animation: kay-feedback-in var(--motion-feedback) var(--motion-ease);
+  }
+
+  :is(.kay-shell, [data-slot$="-content"]) :is([data-slot="table-container"], .kay-project-grid, .kay-kanban) {
+    animation: kay-results-in var(--motion-base) var(--motion-ease);
+  }
+
+  :is(.kay-shell, [data-slot$="-content"]) :is([data-slot="table-row"], [data-slot="table-cell"], [data-slot="dropdown-menu-item"], [data-slot="tabs-trigger"], .kay-status-trigger) {
+    transition: background-color var(--motion-local) var(--motion-ease), color var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease);
+  }
+
+  :is(.kay-shell, [data-slot$="-content"]) details::details-content {
+    opacity: 0;
+    transition: opacity var(--motion-exit) var(--motion-ease), content-visibility var(--motion-exit) allow-discrete;
+  }
+
+  :is(.kay-shell, [data-slot$="-content"]) details[open]::details-content {
+    opacity: 1;
+    transition-duration: var(--motion-local);
+  }
+
+  @starting-style {
+    :is(.kay-shell, [data-slot$="-content"]) details[open]::details-content { opacity: 0; }
+  }
+}
+
+@keyframes kay-feedback-in {
+  from { opacity: .25; transform: translateY(var(--motion-feedback-offset)); }
+}
+
+@keyframes kay-results-in {
+  from { opacity: .25; }
+}
+
+* { scrollbar-width: thin; scrollbar-color: var(--workspace-scrollbar-thumb) transparent; }
+@supports selector(::-webkit-scrollbar) {
+  * { scrollbar-width: auto; scrollbar-color: auto; }
+  *::-webkit-scrollbar { width: var(--workspace-geometry-scrollbar); height: var(--workspace-geometry-scrollbar); }
+  *::-webkit-scrollbar-track, *::-webkit-scrollbar-corner { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    min-height: 32px;
+    min-width: 32px;
+    border: 2px solid transparent;
+    border-radius: var(--workspace-geometry-pill-radius);
+    background: var(--workspace-scrollbar-thumb);
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover { background-color: var(--workspace-scrollbar-hover); }
+  *::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is([data-slot$="-content"], [data-slot$="-overlay"], .kay-route-motion, .kay-auth-card, .kay-menu) {
+    animation: none !important;
+  }
+
+  :is([data-slot="button"], [data-slot="input"], [data-slot="textarea"], [data-slot="native-select"], [data-slot="select-trigger"], .kay-menu) {
+    transition: none !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :is(.kay-shell, .kay-auth)::before { display: none; }
+  .kay-nav-link[data-compact="true"], :is(section, article, fieldset).bg-card,
+  :is([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+    background: var(--workspace-paper);
+    border-color: var(--workspace-line);
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  .kay-nav-link[data-compact="true"][aria-current="page"] { background: var(--workspace-primary); }
+}
+
+@media (forced-colors: active) {
+  * { scrollbar-color: auto; }
+  *::-webkit-scrollbar-thumb { background-color: CanvasText; }
+  :is(section, article, fieldset).bg-card,
+  :is([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+    background: Canvas;
+    color: CanvasText;
+    border-color: CanvasText;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  :is([data-slot="input"], [data-slot="textarea"], [data-slot="native-select"]) {
+    border-color: ButtonText;
+  }
+}

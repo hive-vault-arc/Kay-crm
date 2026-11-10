@@ -14,13 +14,17 @@ test("SP04 visible Chrome: users, long French form, mobile touch, confirmation a
   page.on("console", message => { if (message.type() === "error") errors.push("CONSOLE_ERROR"); });
   try {
     await page.setViewportSize({ width: 1440, height: 900 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.getByRole("link", { name: "Paramètres", exact: true }).click();
-    await page.getByRole("link", { name: "Tous les utilisateurs", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Équipe et accès", exact: true })).toBeVisible();
+    await expect(page.locator(".kay-settings-summary")).toHaveCount(2);
+    await page.screenshot({ path: path.join(directory, "settings-overview-desktop.png") });
+    await page.getByRole("link", { name: "Gérer les utilisateurs", exact: true }).click();
     await expect(page.getByRole("table")).toBeVisible();
     await page.screenshot({ path: path.join(directory, "sp04-users-desktop.png"), fullPage: true });
     await page.goto(`/settings/users/${target.id}/edit`);
-    await expect(page.getByLabel("Nom complet", { exact: true })).toBeEnabled();
-    await page.getByLabel("Nom complet", { exact: true }).fill("Personnel synthétique, responsable des contrôles et de la coordination immobilière de Casablanca");
+    await expect(page.getByLabel("Nom complet *", { exact: true })).toBeEnabled();
+    await page.getByLabel("Nom complet *", { exact: true }).fill("Personnel synthétique, responsable des contrôles et de la coordination immobilière de Casablanca");
     await page.getByRole("button", { name: "Enregistrer", exact: true }).focus();
     await page.keyboard.press("Enter");
     await expect(page.getByRole("status").filter({ hasText: "Compte enregistré" })).toBeVisible();
@@ -33,7 +37,7 @@ test("SP04 visible Chrome: users, long French form, mobile touch, confirmation a
     for (const width of [320, 360, 768, 1024, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      for (const name of ["Nom complet", "Adresse e-mail", "Rôle"]) {
+      for (const name of ["Nom complet *", "Adresse e-mail *", "Rôle"]) {
         const bounds = await page.getByLabel(name, { exact: true }).boundingBox();
         expect(bounds?.height).toBeGreaterThanOrEqual(44);
       }
@@ -43,9 +47,9 @@ test("SP04 visible Chrome: users, long French form, mobile touch, confirmation a
       await page.keyboard.press("Escape");
     }
     await page.goto("/settings/users/new");
-    await expect(page.getByLabel("Mot de passe initial", { exact: true })).toBeEnabled();
+    await expect(page.getByLabel("Mot de passe initial *", { exact: true })).toBeEnabled();
     for (const width of [320, 360, 768, 1440]) {
-      await page.setViewportSize({ width, height: 900 }); await geometry(page);
+      await page.setViewportSize({ width, height: 900 }); await geometry(page, width > 830 ? 40 : 44);
     }
     const reveal = page.getByRole("button", { name: "Afficher le mot de passe", exact: true });
     await reveal.focus(); await page.keyboard.press("Space");
@@ -59,12 +63,25 @@ test("SP04 visible Chrome: users, long French form, mobile touch, confirmation a
       await mobile.getByRole("button", { name: "Ouvrir la navigation", exact: true }).tap();
       await mobile.getByRole("dialog").getByRole("link", { name: "Paramètres", exact: true }).tap();
       await expect(mobile.getByRole("heading", { level: 1 })).toHaveText("Paramètres");
-      await mobile.getByRole("link", { name: "Tous les utilisateurs", exact: true }).tap();
-      await expect(mobile.getByRole("table")).toBeVisible();
+      await mobile.getByLabel("Section", { exact: true }).selectOption("hours");
+      await expect(mobile.getByRole("heading", { name: "Semaine de travail", exact: true })).toBeVisible();
+      await mobile.screenshot({ path: path.join(directory, "settings-hours-mobile.png") });
+      await mobile.getByLabel("Section", { exact: true }).selectOption("users");
+      await expect(mobile.getByRole("heading", { name: "Utilisateurs", exact: true })).toBeVisible();
+      await expect(mobile.locator(".kay-settings-user-card").first()).toBeVisible();
+      await mobile.getByText("Détails", { exact: true }).first().tap();
+      await expect(mobile.locator(".kay-settings-user-card").first().locator("details")).toHaveAttribute("open", "");
       expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await mobile.screenshot({ path: path.join(directory, "sp04-users-mobile.png"), fullPage: true });
       await mobile.goto(`${baseURL}/settings/users/${target.id}/edit`);
       await expect(mobile.getByRole("button", { name: "Supprimer l’utilisateur", exact: true })).toBeEnabled();
+      const name = mobile.getByLabel("Nom complet *", { exact: true });
+      const original = await name.inputValue();
+      await name.fill("Brouillon synthétique");
+      await mobile.getByLabel("Section", { exact: true }).selectOption("overview");
+      await mobile.getByRole("alertdialog").getByRole("button", { name: "Continuer la modification", exact: true }).tap();
+      await expect(name).toHaveValue("Brouillon synthétique");
+      await name.fill(original);
       await mobile.screenshot({ path: path.join(directory, "sp04-edit-mobile.png"), fullPage: true });
       await mobile.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).tap();
       await expect(mobile.getByRole("alertdialog")).toBeVisible();
@@ -76,7 +93,7 @@ test("SP04 visible Chrome: users, long French form, mobile touch, confirmation a
       await mobile.getByRole("button", { name: "Supprimer l’utilisateur", exact: true }).tap();
       await mobile.getByRole("alertdialog").getByRole("button", { name: "Supprimer l’utilisateur", exact: true }).tap();
       await expect.poll(() => new URL(mobile.url()).pathname).toBe("/settings/users");
-      await expect(mobile.getByRole("table")).toBeVisible();
+      await expect(mobile.locator(".kay-settings-user-card").first()).toBeVisible();
       await mobile.screenshot({ path: path.join(directory, "staff-deleted-mobile.png"), fullPage: true });
     } finally { await touch.close(); }
     expect(errors).toEqual([]);
@@ -99,8 +116,9 @@ test("Staff: native 200% Chrome zoom keeps creation and reset keyboard-accessibl
     await writeFile(prefsPath, JSON.stringify(prefs));
     context = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] });
     page = context.pages()[0];
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/settings/users/new");
-    await expect(page.getByLabel("Mot de passe initial", { exact: true })).toBeEnabled();
+    await expect(page.getByLabel("Mot de passe initial *", { exact: true })).toBeEnabled();
     expect(await page.evaluate(() => devicePixelRatio) / baseline).toBeCloseTo(2, 1);
     await geometry(page);
     await page.getByRole("button", { name: "Afficher le mot de passe", exact: true }).focus(); await page.keyboard.press("Space");

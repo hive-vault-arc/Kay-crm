@@ -1,21 +1,13 @@
 # KAY styling with Tailwind CSS
 
-## Riviera implementation (2026-10-18)
+## Reference foundation
 
-[Riviera tokens](../../branding/riviera/kay-riviera.tokens.json) are the current
-color/type authority. `branding/kay-ui-tokens.json` maps incumbent roles to token
-references; `theme.ts` resolves aliases and exports all191 namespaced variables.
-Shared Tailwind/shadcn and Bklit roles consume them. `next/font/local` self-hosts
-the verified Fraunces1.000, Manrope4.505 and DM Sans4.004 OFL files. No remote font
-CSS or raw handoff component stylesheet is loaded. Existing geometry and behavior
-remain; quiet panels, focus/disabled states, sidebar tiles and KPI badges use
-documented shared recipes. This supersedes older palette/font statements below.
-
-Status: SP-01 Tailwind 4.3.3 and light token mapping implemented; later feature checks pending  
-Date: 2026-10-14  
-Confirmed decision: Tailwind CSS is KAY's mandatory primary styling system. Custom CSS is allowed only for a specific, justified need that utilities do not cover well; no substitute CSS framework or parallel default styling system.  
-Accepted local default: existing light tokens, Radix/New York and system sans-serif; final brand/font approval is later validation. Dark mode is outside the local roadmap.  
-References: [decision register](../../decisions.md), [KAY design system](design-system.md), [token file](../../branding/kay-ui-tokens.json), [shadcn/ui guide](ui-components.md), [Bklit chart guide](charts.md), [Tailwind reference](../reference/tailwindcss/4.3.3/README.md), [official Next.js installation](https://tailwindcss.com/docs/installation/framework-guides/nextjs).
+Use [DESIGN.md](../../DESIGN.md) and the [workspace tokens](../../branding/prototype/kay-workspace.tokens.json)
+for color, type, geometry and motion. Shared Tailwind roles use the reference
+values through `src/lib/theme.ts`. Add shared CSS to `workspace.css` or
+`workspace-primitives.css` according to its ownership. Use feature stylesheets
+for verified page-specific exceptions. Keep geometry and appearance out of
+business handlers.
 
 ## Working rule
 

@@ -3404,3 +3404,36 @@ scope retains disposable target guards and read-only workflow permissions and
 cannot run the release aggregate. Full scope still requires both real matrix
 jobs. The eight aggregate policy checks pass. No real-account or production
 data operation is introduced by this harness change.
+
+## Projects reference presentation (2026-11-10)
+
+Create/edit sheets reuse the existing property and programme command owners.
+The authenticated route supplies its original actor/role, and the record
+context supplies the current available/version boundary. The programme render
+uses current capability props to enable controls, with its committed check
+still applied at submission. Dirty dismissal is guarded. Direct form routes
+remain supported, and current denial removes the private projection.
+
+All 996 frontend units and eight selected real-stack Chrome cases passed.
+The latter include real scanned private WebP delivery, agent offer denial,
+interrupted save/current comparison, modal draft retention and exact Maps/
+price persistence on disposable PostgreSQL. Dependency checking refuses an
+existing moderate minimatch advisory through the ESLint development chain
+(seven affected entries). Production dependencies audit clean. The existing
+private-photo request throttling remains effective under rapid repeated filter
+and view changes. See the current QA register for scope and measurements.
+
+## Help and Settings reference presentation (2026-11-10)
+
+Help search works on the role-scoped guide catalog returned by the server.
+Only validated guide slugs and bounded search parameters enter links. Copied
+privileged guide routes remain denied. Settings navigation, tables, forms and
+the schedule drawer reuse the current administrator gate, identity proof,
+version checks, guarded drafts and existing command recovery.
+
+Isolated Chrome coverage passed the staff onboarding, password reset,
+session revocation, account deletion and last-administrator checks, copied
+Settings URL and origin/CSRF denial, and both schedule receipt/completion
+recovery paths. Production dependencies audit clean. The full dependency
+gate still refuses the inherited moderate minimatch advisory in the
+development tooling chain. See the current QA register for browser scope.

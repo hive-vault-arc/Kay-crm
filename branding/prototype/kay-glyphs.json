@@ -1495,98 +1495,110 @@
     {
       "export": "NewLeadIcon",
       "name": "new-lead",
-      "source": "UserRoundPlus",
+      "source": "UserPlus",
       "nodes": [
         [
           "path",
           {
-            "d": "M2 21a8 8 0 0 1 13.292-6"
+            "d": "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
           }
         ],
         [
           "circle",
           {
-            "cx": "10",
-            "cy": "8",
-            "r": "5"
+            "cx": "9",
+            "cy": "7",
+            "r": "4"
           }
         ],
         [
-          "path",
+          "line",
           {
-            "d": "M19 16v6"
+            "x1": "19",
+            "x2": "19",
+            "y1": "8",
+            "y2": "14"
           }
         ],
         [
-          "path",
+          "line",
           {
-            "d": "M22 19h-6"
+            "x1": "22",
+            "x2": "16",
+            "y1": "11",
+            "y2": "11"
           }
         ]
       ],
-      "sha256": "3ee5b82117e5fb68101f875bbe83880b4d50409c9a61d271cb378bdccb644ebb"
+      "sha256": "23844bb4b55272edc942a70cf3c66abfd4b578807f26bc31c5d83bd61532dab0"
     },
     {
       "export": "QualifiedLeadIcon",
       "name": "qualified-lead",
-      "source": "UserRoundCheck",
+      "source": "UserCheck",
       "nodes": [
         [
           "path",
           {
-            "d": "M2 21a8 8 0 0 1 13.292-6"
+            "d": "m16 11 2 2 4-4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
           }
         ],
         [
           "circle",
           {
-            "cx": "10",
-            "cy": "8",
-            "r": "5"
-          }
-        ],
-        [
-          "path",
-          {
-            "d": "m16 19 2 2 4-4"
+            "cx": "9",
+            "cy": "7",
+            "r": "4"
           }
         ]
       ],
-      "sha256": "2868de47665ec63442bc6278186031d2fb247374e2df3688ac05a47657147a06"
+      "sha256": "68845cd76add59b8639fb8acfcc5afa1d57fc54f2862c4fa2157b2dce697d569"
     },
     {
       "export": "RejectedLeadIcon",
       "name": "rejected-lead",
-      "source": "UserRoundX",
+      "source": "UserX",
       "nodes": [
         [
           "path",
           {
-            "d": "m16.5 16.5 5 5"
-          }
-        ],
-        [
-          "path",
-          {
-            "d": "M2 21a8 8 0 0 1 11.531-7.18"
-          }
-        ],
-        [
-          "path",
-          {
-            "d": "m21.5 16.5-5 5"
+            "d": "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
           }
         ],
         [
           "circle",
           {
-            "cx": "10",
-            "cy": "8",
-            "r": "5"
+            "cx": "9",
+            "cy": "7",
+            "r": "4"
+          }
+        ],
+        [
+          "line",
+          {
+            "x1": "17",
+            "x2": "22",
+            "y1": "8",
+            "y2": "13"
+          }
+        ],
+        [
+          "line",
+          {
+            "x1": "22",
+            "x2": "17",
+            "y1": "8",
+            "y2": "13"
           }
         ]
       ],
-      "sha256": "0842fbfa8b219faa0126054d20abb2b19962ac8421a346fcf84e3f1160aa5a26"
+      "sha256": "7a6ec918f6106730c775bf16490a7401f072c62c0ee31296dd6e07d1395d719b"
     },
     {
       "export": "NegotiationIcon",
@@ -1831,6 +1843,134 @@
         ]
       ],
       "sha256": "f324ba4c312a692d786dea5754e230462b7d41e131a1ec72d9a2a2314f68d9d9"
+    },
+    {
+      "export": "ChevronLeftIcon",
+      "name": "chevron-left",
+      "source": "ChevronLeft",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m15 18-6-6 6-6"
+          }
+        ]
+      ],
+      "sha256": "94794b73e9d642ed29676ec1f3e4f2b43824f1ed14be22a9c7e2cf68eb369ffc"
+    },
+    {
+      "export": "ChevronRightIcon",
+      "name": "chevron-right",
+      "source": "ChevronRight",
+      "nodes": [
+        [
+          "path",
+          {
+            "d": "m9 18 6-6-6-6"
+          }
+        ]
+      ],
+      "sha256": "b387ceba6a952091d1f508996535301fdd96182f419295e1de03a83ff3ab1ed5"
+    },
+    {
+      "export": "CircleCheckIcon",
+      "name": "circle-check",
+      "source": "CircleCheck",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m16 9-5.5 5.5L8 12"
+          }
+        ]
+      ],
+      "sha256": "7e35d1c84a45cc4baa12fdc9d35419a9d74ee74cf47d1ccb76a565c3e860562d"
+    },
+    {
+      "export": "TrendUpIcon",
+      "name": "trend-up",
+      "source": "CircleArrowUp",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m16 12-4-4-4 4"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 16V8"
+          }
+        ]
+      ],
+      "sha256": "4eceb32fe7df17f50d450499a6dfe8310e730b5e7122542bdb5d604a2ac8f61b"
+    },
+    {
+      "export": "TrendDownIcon",
+      "name": "trend-down",
+      "source": "CircleArrowDown",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M12 8v8"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "m8 12 4 4 4-4"
+          }
+        ]
+      ],
+      "sha256": "3a20bb39ee8c92081f6c68344722fa4b853e962fd8fd2df42714dc19a314f998"
+    },
+    {
+      "export": "TrendSteadyIcon",
+      "name": "trend-steady",
+      "source": "CircleMinus",
+      "nodes": [
+        [
+          "circle",
+          {
+            "cx": "12",
+            "cy": "12",
+            "r": "10"
+          }
+        ],
+        [
+          "path",
+          {
+            "d": "M8 12h8"
+          }
+        ]
+      ],
+      "sha256": "392ead0cd143e0cc131f5598ea5d8e6bd05d256541a2186e4ab52725df7fc906"
     }
   ]
 }

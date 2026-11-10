@@ -1,4 +1,10 @@
-# KAY interface components: shadcn/ui working guide
+# KAY interface components
+
+The [reference foundation](design-system.md) supplies control geometry,
+material and motion for the installed shadcn/Radix components. Review each
+component's rendered reference states before changing markup or placement.
+Use the pinned Lucide glyphs through the typed semantic icon registry.
+
 
 Current authoring-tool boundary, 2026-10-30: the unused shadcn generation CLI has
 been removed from the application development dependency tree because its current
@@ -103,25 +109,7 @@ editing, chart or new component kit. See
 [contract](visit-scheduling-local.md) and
 [verification](../03-planning/calendar-reference-refresh.md).
 
-## Current Riviera system (2026-10-18)
-
-Shared controls retain shadcn/Radix behavior and semantic Iconsax actions while
-consuming [Riviera](../../branding/riviera/README.md): honey primary actions,
-warm-white surfaces,10px control corners,12px quiet panels, dark-gold focus and
-explicit disabled colors. Labels use Manrope; titles Fraunces; metadata DM Sans.
-The selected sidebar link has a gold icon tile, white text and trailing Iconsax
-chevron. KPI cards keep live drill-down actions and distinct category badges.
-Existing responsive layouts, forms, dialogs, focus order and permissions remain.
-
-Status: shadcn foundation and SP-03–SP-08 feature compositions implemented; later compositions remain planned  
-Date: 2026-10-15  
-Confirmed decision: shadcn/ui is the mandatory source for standard UI components in KAY's Next.js web interface; no substitute component kit.  
-Accepted local choices: Radix/New York, Iconsax under D33, npm, existing light tokens and system sans-serif. Final real-use visual/font approval remains separate; see the local roadmap.  
-References: [KAY architecture](architecture.md), [core scope](../../core-scope.md), [screen map](screen-map.md), [API contracts](api-contracts.md), [acceptance tests](../05-quality/acceptance-tests.md), [shared-component rules](../01-working-agreements/coding-standards.md), [KAY design system](design-system.md), [Tailwind styling guide](styling.md), [offline shadcn/ui snapshot](../reference/shadcn-ui/2026-10-14-954ce953/README.md), [official shadcn/ui docs](https://ui.shadcn.com/docs).
-
-shadcn/ui distributes component source into the application. It is not a single imported component package. KAY can edit the copied components, but the team then owns their changes and must review upstream updates. Use a shadcn/ui component for each standard control it covers. Custom KAY-specific components are allowed where a control or domain composition is missing; build on shadcn/ui primitives where applicable, instead of importing another general-purpose UI kit. Tailwind CSS is KAY's styling system; see the [styling guide](styling.md) for custom-CSS limits. The offline snapshot is a reference only. Keep the eventual app's `components/ui/` code, `components.json`, design tokens, and feature components separate from `docs/reference/`.
-
-## Current icon contract: Iconsax (D33)
+## Historical icon contract: Iconsax (D33)
 
 The subsequent app-wide action-button refinement
 adds a typed `action` prop to the existing shadcn Button and a shared

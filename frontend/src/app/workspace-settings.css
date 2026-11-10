@@ -1,28 +1,42 @@
-/* Selected settings composition; the shared semantic surfaces and controls own styling. */
+/* Settings uses the reference rail, section picker and compact administration surfaces. */
+.kay-settings-page { display:grid; gap:12px; min-width:0; }
+.kay-settings-page .kay-surface { background-color:var(--workspace-panel); }
+:is(.kay-settings-page,.kay-settings-policy-drawer) :is(input:not([type=checkbox],[type=hidden]),[data-slot=native-select]) { min-height:44px; }
 .kay-settings-layout { display:grid; grid-template-columns:288px minmax(0,1fr); gap:20px; align-items:start; min-width:0; }
-.kay-settings-navigation { position:sticky; top:100px; display:grid; gap:16px; min-width:0; }
+.kay-settings-navigation { position:sticky; top:calc(var(--workspace-geometry-header) + 20px); display:grid; gap:16px; min-width:0; }
 .kay-settings-nav { display:grid; gap:6px; padding:12px; }
-.kay-settings-nav > p { margin:4px 12px 8px; color:var(--workspace-muted); font-size:13px; }
-.kay-settings-nav-link { display:flex; align-items:center; gap:12px; min-height:68px; padding:12px; border-radius:16px; color:var(--workspace-muted); }
+.kay-settings-nav > p { margin:4px 12px 8px; color:var(--workspace-muted); font-size:13px; font-weight:550; }
+.kay-settings-nav-link { display:flex; align-items:center; gap:12px; min-height:68px; padding:12px; border-radius:16px; color:var(--workspace-muted); transition:background-color var(--motion-panel),color var(--motion-panel); }
 .kay-settings-nav-link > svg { flex:none; }
 .kay-settings-nav-link > span { flex:1; min-width:0; }
 .kay-settings-nav-link strong { display:block; font-size:14px; color:var(--workspace-ink); font-weight:550; }
 .kay-settings-nav-link small { display:block; margin-top:4px; font-size:13px; line-height:18px; }
 .kay-settings-nav-link > svg:last-child { margin-left:auto; opacity:0; }
-.kay-settings-nav-link:hover,.kay-settings-nav-link[aria-current=page] { background:var(--workspace-field); color:var(--workspace-ink); }
+.kay-settings-nav-link:hover { background:var(--workspace-hover); color:var(--workspace-ink); }
+.kay-settings-nav-link[aria-current=page] { background:var(--workspace-field); color:var(--workspace-ink); }
 .kay-settings-nav-link[aria-current=page] > svg:last-child { opacity:1; }
 .kay-settings-access-note { display:flex; align-items:flex-start; gap:10px; padding:0 12px; color:var(--workspace-muted); font-size:13px; line-height:20px; }
 .kay-settings-access-note > svg { flex:none; margin-top:2px; }
-.kay-settings-content { display:grid; align-content:start; gap:20px; min-width:0; }
+.kay-settings-picker { display:none; }
+.kay-settings-content { display:grid; align-content:start; gap:16px; min-width:0; }
 .kay-settings-users-card { display:grid; min-width:0; gap:16px; padding:20px; }
+.kay-settings-users-card table { min-width:720px; }
+.kay-settings-users-card td:last-child { text-align:end; }
+.kay-settings-users-card td { white-space:normal; }
 .kay-settings-content-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; min-height:58px; }
-.kay-settings-content-head h2 { font-size:20px; font-weight:600; letter-spacing:-.035em; }
+.kay-settings-content-head > div { min-width:0; flex:1 1 210px; }
+.kay-settings-content-head h2 { font-size:18px; font-weight:600; letter-spacing:-.035em; }
 .kay-settings-content-head p,.kay-settings-panel-head p { font-size:13px; color:var(--workspace-muted); margin-top:4px; }
+.kay-settings-content-head > div > p { font-size:14px; line-height:21px; }
+.kay-settings-content-head .kay-settings-meta { display:inline-flex; align-items:center; gap:7px; flex:none; margin:0; padding:9px 12px; border-radius:var(--workspace-geometry-pill-radius); background:var(--workspace-panel-opaque); }
+.kay-settings-footnote { display:flex; align-items:flex-start; gap:8px; color:var(--workspace-muted); font-size:13px; line-height:20px; }
+.kay-settings-footnote > svg { flex:none; margin-top:2px; }
 .kay-settings-overview { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
 .kay-settings-overview-card { display:flex; flex-direction:column; min-width:0; padding:24px; }
 .kay-settings-panel-head { display:flex; align-items:flex-start; gap:12px; margin-bottom:24px; }
-.kay-settings-panel-head > svg { flex:none; margin-top:2px; color:var(--workspace-muted); }
-.kay-settings-panel-head h3 { font-size:16px; font-weight:550; }
+.kay-settings-panel-head > svg { flex:none; width:40px; height:40px; padding:10px; border-radius:14px; background:var(--workspace-field); color:var(--workspace-muted); }
+.kay-settings-panel-head h3 { font-size:16px; line-height:22px; font-weight:600; letter-spacing:-.025em; }
+.kay-settings-panel-head > h3 { align-self:center; }
 .kay-settings-summary { display:flex; flex-wrap:wrap; align-items:baseline; gap:10px; margin-bottom:24px; }
 .kay-settings-summary strong { font-size:32px; line-height:1.1; font-weight:600; letter-spacing:-.05em; }
 .kay-settings-summary > span { color:var(--workspace-muted); font-size:14px; }
@@ -32,17 +46,18 @@
 .kay-settings-members strong { display:block; font-size:14px; font-weight:550; }
 .kay-settings-members div > span { display:block; font-size:13px; color:var(--workspace-muted); margin-top:3px; }
 .kay-settings-overview-card > footer { margin-top:auto; padding-top:20px; border-top:1px solid var(--workspace-line); }
-.kay-settings-overview-card > footer > a { width:100%; justify-content:space-between; flex-direction:row-reverse; min-height:44px; }
+.kay-settings-overview-card > footer > a[data-slot=button] { width:100%; justify-content:space-between; flex-direction:row-reverse; min-height:44px; }
 .kay-settings-week { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; margin-bottom:24px; }
 .kay-settings-week > span { display:grid; place-items:center; min-height:40px; border-radius:12px; color:var(--workspace-muted); font-size:13px; }
 .kay-settings-week > [data-open] { background:var(--workspace-field); color:var(--workspace-ink); box-shadow:inset 0 -2px 0 var(--workspace-line); }
 .kay-settings-facts { display:grid; gap:14px; margin-bottom:24px; font-size:13px; }
 .kay-settings-facts > div { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 16px; }
-.kay-settings-facts dt { color:var(--workspace-muted); }
+.kay-settings-facts dt { display:flex; align-items:center; gap:8px; color:var(--workspace-muted); }
 .kay-settings-facts dd { font-weight:550; overflow-wrap:anywhere; }
 .kay-settings-user-layout,.kay-settings-hours-layout { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr); gap:20px; align-items:start; min-width:0; }
 .kay-settings-form-card { min-width:0; padding:24px; }
 .kay-settings-support { display:grid; gap:20px; align-content:start; min-width:0; }
+.kay-settings-support .kay-settings-form-card [data-slot=button] { min-height:var(--workspace-geometry-touch); }
 .kay-settings-user-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; min-width:0; }
 .kay-settings-form-section { display:grid; gap:20px; padding-top:24px; border-top:1px solid var(--workspace-line); }
 .kay-settings-form-section .kay-settings-panel-head { margin:0; }
@@ -57,24 +72,50 @@
 .kay-settings-policy-day > h3 { display:flex; gap:9px; align-items:center; font-size:16px; font-weight:550; }
 .kay-settings-policy-groups { display:grid; min-width:0; gap:20px; }
 .kay-settings-window-row { display:grid; min-width:0; grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px; gap:12px; align-items:end; }
+.kay-settings-window-row input { width:100%; min-width:0; background:var(--workspace-panel-opaque); }
+.kay-settings-users-card .kay-directory-cards > li { padding:0; border:0; background:transparent; }
+.kay-settings-user-card { display:grid; justify-items:start; gap:6px; padding:12px; min-width:0; border:1px solid var(--workspace-line); border-radius:var(--workspace-geometry-inset-radius); background:var(--workspace-paper); }
+.kay-settings-user-card > header { display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; min-height:36px; }
+.kay-settings-user-card h3 { font-size:14px; font-weight:600; overflow-wrap:anywhere; }
+.kay-settings-user-card dt,.kay-settings-user-card details { font-size:12px; color:var(--workspace-muted); }
+.kay-settings-user-card dt { margin-bottom:4px; }
+.kay-settings-user-card a[data-action=edit] { background:var(--workspace-field); }
+.kay-settings-user-card a[data-action=edit]:hover { background:var(--workspace-hover); }
+.kay-settings-user-card details { width:100%; border-top:1px solid var(--workspace-line); }
+.kay-settings-user-card summary { min-height:44px; padding-block:12px; cursor:pointer; }
+.kay-settings-user-card details p { padding-bottom:8px; }
 @media(max-width:1279px) {
   .kay-settings-layout { grid-template-columns:minmax(0,1fr); }
   .kay-settings-navigation { position:static; }
-  .kay-settings-nav { display:flex; gap:6px; padding:0; border:0; border-radius:0; background:transparent; overflow-x:auto; }
-  .kay-settings-nav > p,.kay-settings-access-note,.kay-settings-nav-link small,.kay-settings-nav-link > svg:last-child { display:none; }
+  .kay-settings-page .kay-settings-nav { display:flex; gap:6px; padding:0; border:0; border-radius:0; background:transparent; overflow-x:auto; }
+  .kay-settings-nav > p,.kay-settings-navigation > .kay-settings-access-note,.kay-settings-nav-link small,.kay-settings-nav-link > svg:last-child { display:none; }
   .kay-settings-nav-link { flex:none; min-height:44px; padding:10px 16px; border-radius:999px; gap:8px; }
   .kay-settings-nav-link strong { font-size:14px; font-weight:500; white-space:nowrap; }
+}
+@media(max-width:830px) {
+  .kay-settings-page,.kay-settings-layout,.kay-settings-content { gap:16px; }
+  .kay-settings-navigation .kay-settings-nav { display:none; }
+  .kay-settings-picker { display:grid; gap:4px; }
+  .kay-settings-picker [data-slot=native-select] { min-height:44px; border-color:transparent; }
+  .kay-settings-content-head { align-items:flex-start; gap:8px; min-height:0; }
+  .kay-settings-content-head > div { flex-basis:160px; }
+  .kay-settings-content-head > div > p { font-size:13px; }
+  .kay-settings-content-head .kay-settings-meta { padding:8px 10px; }
+  .kay-settings-content-head .kay-settings-meta > svg { display:none; }
+  .kay-settings-users-card { padding:16px; }
+  .kay-settings-overview-card,.kay-settings-form-card { padding:16px; }
 }
 @media(max-width:999px) {
   .kay-settings-user-layout,.kay-settings-hours-layout { grid-template-columns:minmax(0,1fr); }
 }
 @media(max-width:640px) {
   .kay-settings-overview { grid-template-columns:minmax(0,1fr); }
-  .kay-settings-overview-card { padding:16px; }
-  .kay-settings-nav-link { padding-inline:12px; }
-  .kay-settings-nav-link strong { font-size:13px; }
-  .kay-settings-form-card { padding:16px; }
   .kay-settings-user-fields { grid-template-columns:minmax(0,1fr); }
   .kay-settings-policy-day { padding:16px; }
-  .kay-settings-window-row { gap:8px; }
+  .kay-settings-week { gap:4px; }
+  .kay-settings-window-row { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .kay-settings-window-row > [data-action=remove] { grid-column:1/-1; justify-self:end; }
 }
+@media(prefers-reduced-motion:reduce) { .kay-settings-nav-link { transition:none; } }
+@media(prefers-reduced-transparency:reduce) { .kay-settings-content .kay-surface { background-color:var(--workspace-panel-opaque); } }
+@media(forced-colors:active) { .kay-settings-user-card { border-color:CanvasText; } }

@@ -32,7 +32,7 @@ function leadValues(enquiry: Enquiry): Values {
 }
 
 export function LeadEditor({ enquiry }: { enquiry: Enquiry }) {
-  if (enquiry.status === "converted") return <><RecordHeader title="Modifier le prospect" route={`/leads/${enquiry.id}/edit`} backHref={`/leads/${enquiry.id}`} /><section className="surface grid gap-4"><h2 className="text-section font-semibold">Prospect déjà converti</h2><p>Son historique est conservé. Poursuivez le suivi depuis l’affaire.</p><Button action="show" asChild><Link href={enquiry.converted_deal_id ? `/deals/${enquiry.converted_deal_id}` : `/leads/${enquiry.id}`}>Ouvrir l’affaire</Link></Button></section></>;
+  if (enquiry.status === "converted") return <><RecordHeader title="Modifier le prospect" route={`/leads/${enquiry.id}/edit`} backHref={`/leads/${enquiry.id}`} /><section className="surface grid gap-4"><h2 className="text-section">Prospect déjà converti</h2><p>Son historique est conservé. Poursuivez le suivi depuis l’affaire.</p><Button action="show" asChild><Link href={enquiry.converted_deal_id ? `/deals/${enquiry.converted_deal_id}` : `/leads/${enquiry.id}`}>Ouvrir l’affaire</Link></Button></section></>;
   return <LoadEditor key={enquiry.id + ":" + enquiry.contact.id} enquiry={enquiry} />;
 }
 function LoadEditor({ enquiry }: { enquiry: Enquiry }) {

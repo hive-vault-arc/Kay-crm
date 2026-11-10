@@ -133,11 +133,11 @@ test("Staff transport abort during identity refresh never dispatches the mutatio
 
 test("Staff editor uses private actor/target lifetimes and refuses a foreign detail response", async () => {
   const h = hooks(), requests = [];
-  const loaded = loadServer("src/features/users/user-editor.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "@/components/ui/button": { Button: "Button" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/lib/api/client": { ApiError, apiGet: (...args) => { const response = deferred(); requests.push({ args, ...response }); return response.promise; } }, "./contracts": contracts, "./user-form": { UserForm: "Form" }, "./user-actions": { UserActions: "Actions" }, "./settings-workspace": { SettingsWorkspace: "Workspace" } }, globals: { AbortController } });
+  const loaded = loadServer("src/features/users/user-editor.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "@/components/ui/skeleton": { Skeleton: "Skeleton" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/lib/api/client": { ApiError, apiGet: (...args) => { const response = deferred(); requests.push({ args, ...response }); return response.promise; } }, "./contracts": contracts, "./user-form": { UserForm: "Form" }, "./user-actions": { UserActions: "Actions" }, "./settings-workspace": { SettingsWorkspace: "Workspace" } }, globals: { AbortController } });
   const first = loaded.UserEditor({ id: targetId, actorId }), second = loaded.UserEditor({ id: randomUUID(), actorId }), third = loaded.UserEditor({ id: targetId, actorId: randomUUID() });
   assert.notEqual(first.key, second.key); assert.notEqual(first.key, third.key);
   const render = element => { const value = h.render(element.key, () => element.type(element.props)); h.flush(); return value; };
   render(first); h.unmount(first.key); render(second); assert.equal(requests[0].args[2].aborted, true);
   requests[0].resolve(staff(targetId)); requests[1].resolve(staff(targetId)); await delay(0);
-  const failed = render(second); assert.equal(failed.type, "Workspace"); assert.equal(failed.props.children.props.children[0].type, "Error"); assert.equal(failed.props.children.props.children[0].props.error.code, "INVALID_RESPONSE"); assert.equal(h.scopes.get(first.key).lateUpdates, 0);
+  const failed = render(second); assert.equal(failed.type, "Workspace"); assert.equal(failed.props.children.type, "Error"); assert.equal(failed.props.children.props.error.code, "INVALID_RESPONSE"); assert.equal(h.scopes.get(first.key).lateUpdates, 0);
 });

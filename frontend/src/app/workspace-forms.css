@@ -6,7 +6,7 @@
 .kay-form-columns { display:grid; min-width:0; align-items:start; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px 40px; }
 .kay-form-column { display:grid; min-width:0; align-content:start; gap:16px; }
 .kay-form-field { display:grid; min-width:0; align-items:start; grid-template-columns:132px minmax(0,1fr); gap:8px 16px; }
-.kay-form-field > :is(label,legend) { display:flex; min-height:44px; align-items:center; margin:0; color:var(--workspace-muted); font-size:13px; line-height:1.5; }
+.kay-form-field > :is(label,legend) { display:flex; min-height:44px; align-items:center; margin:0; color:var(--workspace-muted); font-size:var(--workspace-type-label); font-weight:var(--workspace-type-label-weight); line-height:var(--workspace-type-label-line); }
 .kay-form-field > :not(label,legend) { min-width:0; grid-column:2; }
 .kay-form-field > :is(label,legend) + * { grid-row:1; }
 .kay-form-methods { display:grid; min-width:0; gap:12px; }

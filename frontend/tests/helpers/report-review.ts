@@ -17,7 +17,7 @@ export async function capture(page: Page, name: string, full = false) {
   } finally { await cdp.detach(); }
 }
 
-export async function geometry(page: Page) {
+export async function geometry(page: Page, minimumTarget = 44) {
   // Let responsive SVGs finish their ResizeObserver debounce after a viewport change.
   await page.evaluate(async () => {
     await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
@@ -47,6 +47,6 @@ export async function geometry(page: Page) {
     const overflowElements = [...document.body.querySelectorAll<HTMLElement>("*")].filter(el => { const r = el.getBoundingClientRect(); return r.width && r.right > innerWidth + 1 && getComputedStyle(el).position !== "fixed"; }).slice(0, 8).map(el => ({ tag: el.tagName, className: typeof el.className === "string" ? el.className : "svg", width: el.getBoundingClientRect().width }));
     return { width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth, overflowElements, dialogOverflow: root.scrollWidth > root.clientWidth, minimumContrast: Math.min(...contrast.map(item => item.ratio)), contrastFailures: contrast.filter(item => item.ratio < 4.5), normalizedColors: [...normalizedColors], controls, dialogPadding: document.querySelector('[role="alertdialog"]') ? getComputedStyle(root).padding : null };
   });
-  expect(result.overflow, JSON.stringify({ width: result.width, elements: result.overflowElements })).toBe(false); expect(result.dialogOverflow).toBe(false); expect(result.minimumContrast, JSON.stringify({ route: new URL(page.url()).pathname, failures: result.contrastFailures })).toBeGreaterThanOrEqual(4.5); expect(result.controls.filter(v => v.width < 43.999 || v.height < 43.999)).toEqual([]);
+  expect(result.overflow, JSON.stringify({ width: result.width, elements: result.overflowElements })).toBe(false); expect(result.dialogOverflow).toBe(false); expect(result.minimumContrast, JSON.stringify({ route: new URL(page.url()).pathname, failures: result.contrastFailures })).toBeGreaterThanOrEqual(4.5); expect(result.controls.filter(v => v.width < minimumTarget - .001 || v.height < minimumTarget - .001)).toEqual([]);
   return result;
 }

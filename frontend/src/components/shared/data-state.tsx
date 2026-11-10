@@ -40,11 +40,11 @@ export function DataState({
       </Alert>
     );
   return (
-    <section className="grid justify-items-start gap-4 rounded-md border border-dashed bg-card p-6 md:p-8">
-      <EmptyFolderIcon aria-hidden="true" className="size-8 text-muted-foreground" />
+    <section className="grid justify-items-start gap-4 rounded-md bg-muted p-6 md:p-8">
+      <EmptyFolderIcon aria-hidden="true" className="size-[22px] text-muted-foreground" />
       <div className="grid gap-2">
-        <h2 className="text-section font-semibold">{title}</h2>
-        <p className="max-w-reading text-base text-muted-foreground">
+        <h2 className="text-section">{title}</h2>
+        <p className="max-w-reading text-sm text-muted-foreground">
           {description}
         </p>
       </div>

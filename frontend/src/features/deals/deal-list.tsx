@@ -7,6 +7,7 @@ import { DirectoryViewSwitch, useDirectoryView } from "@/components/shared/direc
 import type { ApiError } from "@/lib/api/client";
 import { DealKanban } from "./deal-kanban";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -15,7 +16,7 @@ import { FilterResultsLayout } from "@/components/shared/filter-results-layout";
 import { ScrollableResultsTable } from "@/components/shared/scrollable-results-table";
 import { CrmAgent, CrmContactCell, CrmDirectoryHeader, CrmDirectoryToolbar, CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { CrmStatusFilter } from "@/components/shared/crm-status-filter";
-import { SearchIcon } from "@/components/icons";
+import { DealIcon, SearchIcon } from "@/components/icons";
 import { AgentPicker } from "@/features/contacts/agent-picker";
 import type { StaffRole } from "@/features/contacts/contracts";
 import { campaignLabels, languageLabels, ratingLabels } from "@/features/contacts/qualification-contracts";
@@ -35,7 +36,7 @@ import { DirectoryRecordCard } from "@/components/shared/directory-record-card";
 
 const columns: Record<ColumnId, ColumnDef<Deal>> = {
   name: { id: "name", header: "Contact", cell: ({ row: { original: deal } }) => <CrmContactCell contact={deal.contact} href={`/deals/${deal.id}`} describedBy={`deal-phone-${deal.id}`} /> },
-  status: { id: "status", header: "Étape", cell: ({ row }) => <CrmStatusBadge kind="deal" state={row.original.stage}>{stageLabels[row.original.stage]}</CrmStatusBadge> },
+  status: { id: "status", header: "Étape", cell: ({ row }) => <CrmStatusBadge kind="deal" dot={false} state={row.original.stage}>{stageLabels[row.original.stage]}</CrmStatusBadge> },
   responsibleAgent: { id: "responsibleAgent", header: "Agent", cell: ({ row }) => <CrmAgent name={row.original.contact.primary_agent.display_name} /> },
   nextAction: { id: "nextAction", header: "Prochaine action", cell: ({ row }) => <span className="whitespace-pre-wrap wrap-anywhere">{row.original.next_action || "Non renseignée"}</span> },
   updatedAt: { id: "updatedAt", header: "Modifié le", cell: ({ row }) => <span className="crm-date-cell">{formatInstant(row.original.updated_at)}</span> },
@@ -47,6 +48,8 @@ const columns: Record<ColumnId, ColumnDef<Deal>> = {
   languages: { id: "languages", header: "Langues", cell: ({ row }) => row.original.contact.languages.map(code => languageLabels[code] ?? code).join(", ") || "Non renseignées" },
   email: { id: "email", header: "E-mail", cell: ({ row }) => <span className="wrap-anywhere">{row.original.contact.primary_email || "Non renseigné"}</span> },
 };
+const dealWidths: Record<ColumnId, number> = { name: 186, status: 120, projects: 176, budget: 146, rating: 108, source: 130, country: 108, languages: 130, email: 188, responsibleAgent: 112, nextAction: 170, updatedAt: 126 };
+const localDay = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeZone: "Africa/Casablanca" });
 const defaults = { q: "", stage: "", assigned_agent_id: "", offering_kind: "", campaign_source: "", rating: "", country: "", language: "", created_from: "", created_to: "", updated_from: "", updated_to: "", archive: "active", sort: "-updated_at", page_size: 50 };
 
 type Props = { role: StaffRole; actorId?: string; contactId?: string; archived?: boolean; revision?: number };
@@ -54,6 +57,8 @@ export function DealList(props: Props) { return <DealListLifetime key={`${props.
 function DealListLifetime({ role, actorId, contactId, archived = false, revision }: Props) {
   const { draft, setDraft, filters, page, setPage, invalid, apply, reset, activeCount } = useDirectoryFilters(defaults, "created_from", "created_to", value => value.updated_from && value.updated_to && value.updated_from > value.updated_to ? "La date de début doit précéder la date de fin." : "");
   const [agentLabel, setAgentLabel] = useState("");
+  const [railOpen, setRailOpen] = useState(true);
+  const railTrigger = useRef<HTMLButtonElement>(null);
   const [recordArchive, setRecordArchive] = useState<"active" | "archived">("active");
   const hydrated = useHydrated();
   const { visible, change, notice } = useDealColumns();
@@ -69,15 +74,35 @@ function DealListLifetime({ role, actorId, contactId, archived = false, revision
   const scopeDenied = query.error && ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED"].includes(query.error.code);
   const viewControl = <DirectoryViewSwitch value={preference.value} phone={phone} listRef={listRef} change={value => { if (value === "list") { setBoardEpoch(epoch => epoch + 1); setBoardFailure(undefined); } preference.change(value); }} />;
   function clearFilters() { reset(); setAgentLabel(""); }
-  const toolbar = <CrmDirectoryToolbar primary={!archived ? <Button action="create" asChild variant="creation"><Link href={`/deals/new${contactId ? `?contact_id=${contactId}` : ""}`}>Créer une affaire</Link></Button> : null}>
-    <Button action="contact" asChild variant="quiet" size="compact"><Link href="/contacts">Contacts</Link></Button><Button action={recordArchive === "active" ? "archive" : "back"} variant="quiet" size="compact" aria-pressed={recordArchive === "archived"} onClick={() => { setRecordArchive(value => value === "active" ? "archived" : "active"); setPage(1); }}>{recordArchive === "active" ? "Archives des affaires" : "Affaires actives"}</Button><DealColumns compact visible={visible} change={change} />
+  const tableColumns = visible.map<ColumnDef<Deal>>(id => {
+    const column = { ...columns[id], id };
+    if (!contactId) {
+      column.size = dealWidths[id];
+      if (id === "updatedAt") column.cell = ({ row }) => <time dateTime={row.original.updated_at} title={formatInstant(row.original.updated_at)}>{localDay.format(new Date(row.original.updated_at))}</time>;
+    }
+    if (id === "name" || id === "updatedAt") {
+      const sort = id === "name" ? "contact_name" : "-updated_at";
+      column.header = () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" aria-pressed={filters.sort === sort} onClick={() => setDraft({ ...draft, sort })}>{id === "name" ? "Contact" : "Modifié le"}</Button>;
+    }
+    return column;
+  });
+  const toolbar = <CrmDirectoryToolbar controls={!contactId ? <>
+    {!phone ? <Button action="filter" type="button" ref={railTrigger} variant={railOpen ? "secondary" : "outline"} disabled={!hydrated} aria-expanded={railOpen} aria-controls="deal-filter-rail" onClick={() => setRailOpen(open => !open)}>Filtres{activeCount ? ` · ${activeCount}` : ""}</Button> : null}
+    {!phone && !board ? <DealColumns visible={visible} change={change} /> : null}
+  </> : undefined} primary={!archived ? <Button action="create" asChild variant="creation"><Link href={`/deals/new${contactId ? `?contact_id=${contactId}` : ""}`}>Créer une affaire</Link></Button> : null}>
+    <Button action="contact" asChild variant="quiet" size="compact"><Link href="/contacts">Contacts</Link></Button><Button action={recordArchive === "active" ? "archive" : "back"} variant="quiet" size="compact" aria-pressed={recordArchive === "archived"} onClick={() => { setRecordArchive(value => value === "active" ? "archived" : "active"); setPage(1); }}>{recordArchive === "active" ? "Archives des affaires" : "Affaires actives"}</Button>{(phone || contactId) && !board ? <DealColumns compact visible={visible} change={change} /> : null}
   </CrmDirectoryToolbar>;
-  return <div className={!contactId ? "crm-directory" : "grid min-w-0 gap-3"}>
-    {!contactId ? <CrmDirectoryHeader title="Affaires" count={query.value?.total} noun="affaires" description="Suivez vos projets et préparez les prochaines étapes de vos affaires." route="/deals" actions={toolbar} /> : null}
-    <FilterResultsLayout leadingControl={!contactId && phone ? viewControl : undefined} title="Filtres des affaires" inline={Boolean(contactId)} reference={!contactId} active={activeCount > 0} activeCount={activeCount} reset={clearFilters} filters={close => <form className="crm-directory-filter-form" aria-label="Recherche et filtres des affaires" onSubmit={event => { event.preventDefault(); apply(close); }}>
+  return <div className={!contactId ? "crm-directory kay-sales-directory" : "grid min-w-0 gap-3"} data-sales-view={!contactId ? board ? "board" : "list" : undefined}>
+    {!contactId ? <CrmDirectoryHeader title="Affaires" count={query.error ? undefined : query.value?.total} unavailable={Boolean(query.error)} noun="affaires" description="Suivez vos projets et préparez les prochaines étapes de vos affaires." route="/deals" navigation={!phone ? viewControl : undefined} actions={toolbar} /> : null}
+    <FilterResultsLayout leadingControl={!contactId && phone ? viewControl : undefined} title="Filtres des affaires" inline={Boolean(contactId)} reference={!contactId} active={activeCount > 0} activeCount={activeCount} reset={clearFilters} railId={!contactId ? "deal-filter-rail" : undefined} railHidden={!contactId && !railOpen} panelHeading={!contactId ? <div className="kay-sales-filter-heading">
+      <h2>Filtres</h2>
+      <Button action="reset" type="button" size="compact" variant="quiet" onClick={clearFilters}>Réinitialiser</Button>
+      <Button action="close" type="button" size="icon" variant="outline" aria-label="Masquer le panneau de filtres" onClick={() => { setRailOpen(false); railTrigger.current?.focus(); }} />
+      {activeCount ? <small>{activeCount} filtre{activeCount > 1 ? "s" : ""} actif{activeCount > 1 ? "s" : ""}</small> : null}
+    </div> : undefined} filters={close => <form className={contactId ? "crm-directory-filter-form" : "crm-directory-filter-form kay-sales-filters"} aria-label="Recherche et filtres des affaires" onSubmit={event => { event.preventDefault(); apply(close); }}>
       <fieldset disabled={!hydrated} className="grid min-w-0 gap-5">
         <div className="grid gap-2"><Label htmlFor="deal-search">Rechercher</Label><div className="crm-search-input"><SearchIcon aria-hidden="true" /><Input placeholder="Affaire, contact ou action" aria-label="Rechercher une affaire, un contact ou une action" id="deal-search" maxLength={160} value={draft.q} onChange={event => setDraft({ ...draft, q: event.target.value })} /></div></div>
-        <CrmStatusFilter label="Étape" labels={stageLabels} counts={query.value?.stage_counts} value={draft.stage} change={stage => setDraft({ ...draft, stage })} />
+        {contactId ? <CrmStatusFilter label="Étape" labels={stageLabels} counts={query.value?.stage_counts} value={draft.stage} change={stage => setDraft({ ...draft, stage })} /> : <div className="grid gap-2"><Label htmlFor="deal-stage-filter">Étape</Label><NativeSelect id="deal-stage-filter" value={draft.stage} onChange={event => setDraft({ ...draft, stage: event.target.value })}><option value="">Toutes les étapes</option>{Object.entries(stageLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</NativeSelect></div>}
         <div className="grid gap-2"><Label htmlFor="deal-source">Source</Label><NativeSelect id="deal-source" value={draft.campaign_source} onChange={event => setDraft({ ...draft, campaign_source: event.target.value })}><option value="">Toutes les sources</option>{Object.entries(campaignLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</NativeSelect></div>
         <div className="grid gap-2"><Label htmlFor="deal-rating">Qualification</Label><NativeSelect id="deal-rating" value={draft.rating} onChange={event => setDraft({ ...draft, rating: event.target.value })}><option value="">Toutes les qualifications</option>{Object.entries(ratingLabels).map(([code, label]) => <option key={code} value={code}>{label}</option>)}</NativeSelect></div>
         <details className="crm-filter-advanced"><summary>Filtres avancés</summary>
@@ -88,17 +113,18 @@ function DealListLifetime({ role, actorId, contactId, archived = false, revision
           <details><summary>Dernière modification</summary><div className="grid gap-3"><Label htmlFor="deal-from">Modifiée à partir du</Label><Input id="deal-from" type="date" value={draft.updated_from} onChange={event => setDraft({ ...draft, updated_from: event.target.value })} /><Label htmlFor="deal-to">Modifiée jusqu’au</Label><Input id="deal-to" type="date" value={draft.updated_to} onChange={event => setDraft({ ...draft, updated_to: event.target.value })} /></div></details>
           <details><summary>Affichage et archivage</summary><div className="grid gap-3"><Label htmlFor="deal-sort">Trier par</Label><NativeSelect id="deal-sort" value={draft.sort} onChange={event => setDraft({ ...draft, sort: event.target.value })}><option value="-updated_at">Modification récente</option><option value="-created_at">Création récente</option><option value="title">Titre de l’affaire</option><option value="contact_name">Nom du contact</option></NativeSelect>{role !== "agent" && !contactId ? <><Label htmlFor="deal-archive">Contacts</Label><NativeSelect id="deal-archive" value={draft.archive} onChange={event => setDraft({ ...draft, archive: event.target.value })}><option value="active">Actifs</option><option value="archived">Archivés</option><option value="all">Tous</option></NativeSelect></> : null}<Label htmlFor="deal-size">Lignes par page</Label><NativeSelect id="deal-size" value={draft.page_size} onChange={event => setDraft({ ...draft, page_size: Number(event.target.value) })}>{[10, 20, 25, 50, 100].map(size => <option key={size}>{size}</option>)}</NativeSelect></div></details>
         </details>
-        {invalid ? <p role="alert" className="text-danger">{invalid}</p> : null}<div className="crm-filter-submit"><Button action="filter" type="submit" variant="outline">Appliquer</Button><Button action="reset" type="button" variant="quiet" onClick={clearFilters}>Réinitialiser</Button></div>
-      </fieldset><p className="crm-filter-note">Les filtres sont appliqués automatiquement.</p>
+        {invalid ? <p role="alert" className="text-danger">{invalid}</p> : null}
+      </fieldset>
+      <div className="crm-filter-submit"><Button action="filter" type="submit" variant="outline" disabled={!hydrated}>Appliquer</Button><Button action="reset" type="button" variant="quiet" disabled={!hydrated} onClick={clearFilters}>Réinitialiser</Button></div>
+      {contactId ? <p className="crm-filter-note">Les filtres sont appliqués automatiquement.</p> : null}
     </form>}>
-      {!contactId && !phone ? viewControl : null}
       {contactId ? toolbar : null}{notice ? <p role="status">{notice}</p> : null}
       {boardFailure && board ? <RecordError error={boardFailure} retry={() => { setBoardFailure(undefined); setBoardEpoch(epoch => epoch + 1); query.refresh(); }} /> : null}
-      {query.error ? <RecordError error={query.error} retry={() => { setLifecycleError(undefined); query.refresh(); }} /> : !query.value ? <p role="status">Chargement des affaires…</p> : <>
-        <h2 className="crm-results-title" role="status">{recordArchive === "archived" ? "Archives · " : ""}{query.value.total} affaire{query.value.total > 1 ? "s" : ""}</h2>
-        <div hidden={board}>
-        {query.value.items.length ? <ScrollableResultsTable><DataTable mobileCard={(deal, selection) => <DirectoryRecordCard title={deal.title} href={`/deals/${deal.id}`} agent={deal.contact.primary_agent.display_name} status={<CrmStatusBadge kind="deal" state={deal.stage}>{stageLabels[deal.stage]}</CrmStatusBadge>} phone={deal.contact.primary_phone} selection={selection} metadata={<><CrmStatusBadge dot={false} state={deal.rating}>{ratingLabels[deal.rating]}</CrmStatusBadge><strong>{deal.initial_budget || "À qualifier"}</strong></>} details={[{ label: "Contact", value: deal.contact.name }, { label: "E-mail", value: deal.contact.primary_email ?? "Non renseigné" }, { label: "Projets", value: deal.projects.map(project => project.name).join(" · ") || "Non renseignés" }, { label: "Source", value: campaignLabels[deal.campaign_source] }, { label: "Pays", value: countryLabel(deal.contact.country) }, { label: "Langues", value: deal.contact.languages.map(code => languageLabels[code] ?? code).join(", ") || "Non renseignées" }, { label: "Prochaine action", value: deal.next_action || "Non renseignée" }, { label: "Modifié le", value: formatInstant(deal.updated_at) }]} />} className="crm-directory-table min-w-table" scrollLabel="Tableau des affaires, défilement horizontal" rows={query.value.items} selectionLocked={projection.holding} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} selectionAction={(selected, clear) => selected.length === 1 && (role !== "agent" || selected[0].contact.primary_agent.id === actorId) ? <RecordLifecycleAction key={selected[0].id} role={role} actorId={actorId} heldChanged={projection.hold} denied={setLifecycleError} kind="deals" id={selected[0].id} version={selected[0].version} archivedAt={selected[0].archived_at} label={selected[0].title} onChanged={() => { query.refreshQuietly(); projection.hold(false); clear(); }} /> : <span className="text-xs text-muted-foreground">{selected.length > 1 ? "Archivez une fiche à la fois." : "Seul l’agent responsable peut archiver cette fiche."}</span>} footerCaption columns={visible.map(id => ({ ...columns[id], id, ...(id === "name" || id === "updatedAt" ? { header: () => <Button variant="quiet" size="compact" action={id === "name" ? "up" : "down"} className="crm-sort-heading" onClick={() => setDraft({ ...draft, sort: id === "name" ? "contact_name" : "-updated_at" })}>{id === "name" ? "Contact" : "Modifié le"}</Button> } : {}) }))} caption="Une affaire explicite par ligne. Le responsable suit la fiche contact." emptyLabel="Aucune affaire." /></ScrollableResultsTable> : <p>{recordArchive === "archived" ? "Aucune affaire archivée dans cette sélection." : "Aucune affaire sur cette page ou dans ces filtres. Créez une affaire, réinitialisez les filtres ou revenez à la première page."}</p>}
-        <NumberedPages compact={!contactId} label="Pages des affaires" page={page} total={query.value.total} size={query.value.page_size} change={setPage} />
+      {query.error ? <RecordError error={query.error} retry={() => { setLifecycleError(undefined); query.refresh(); }} /> : !query.value ? <div className="kay-sales-loading" role="status"><span className="sr-only">Chargement des affaires…</span>{[0, 1, 2, 3, 4, 5].map(index => <Skeleton key={index} aria-hidden="true" className="motion-reduce:animate-none" />)}</div> : <>
+        <h2 className={!contactId && recordArchive === "active" ? "sr-only" : "crm-results-title"} role="status">{recordArchive === "archived" ? "Archives · " : ""}{query.value.total} affaire{query.value.total > 1 ? "s" : ""}</h2>
+        <div hidden={board} className={!contactId ? "kay-sales-list" : undefined}>
+        {query.value.items.length ? <ScrollableResultsTable><DataTable mobileCard={(deal, selection) => <DirectoryRecordCard title={deal.title} href={`/deals/${deal.id}`} agent={deal.contact.primary_agent.display_name} status={<CrmStatusBadge kind="deal" state={deal.stage}>{stageLabels[deal.stage]}</CrmStatusBadge>} phone={deal.contact.primary_phone} selection={selection} metadata={<><CrmStatusBadge dot={false} state={deal.rating}>{ratingLabels[deal.rating]}</CrmStatusBadge><strong>{deal.initial_budget || "À qualifier"}</strong></>} details={[{ label: "Contact", value: deal.contact.name }, { label: "E-mail", value: deal.contact.primary_email ?? "Non renseigné" }, { label: "Projets", value: deal.projects.map(project => project.name).join(" · ") || "Non renseignés" }, { label: "Source", value: campaignLabels[deal.campaign_source] }, { label: "Pays", value: countryLabel(deal.contact.country) }, { label: "Langues", value: deal.contact.languages.map(code => languageLabels[code] ?? code).join(", ") || "Non renseignées" }, { label: "Prochaine action", value: deal.next_action || "Non renseignée" }, { label: "Modifié le", value: formatInstant(deal.updated_at) }]} />} className="crm-directory-table min-w-table" scrollLabel="Tableau des affaires, défilement vertical et horizontal" rows={query.value.items} selectionLocked={projection.holding} getRowId={row => row.id} rowSelectionLabel={row => row.contact.name} selectionAction={(selected, clear) => selected.length === 1 && (role !== "agent" || selected[0].contact.primary_agent.id === actorId) ? <RecordLifecycleAction key={selected[0].id} role={role} actorId={actorId} heldChanged={projection.hold} denied={setLifecycleError} kind="deals" id={selected[0].id} version={selected[0].version} archivedAt={selected[0].archived_at} label={selected[0].title} onChanged={() => { query.refreshQuietly(); projection.hold(false); clear(); }} /> : <span className="text-xs text-muted-foreground">{selected.length > 1 ? "Archivez une fiche à la fois." : "Seul l’agent responsable peut archiver cette fiche."}</span>} footerCaption={Boolean(contactId)} columns={tableColumns} caption="Une affaire explicite par ligne. Le responsable suit la fiche contact." emptyLabel="Aucune affaire." /></ScrollableResultsTable> : <div className="kay-sales-empty"><DealIcon size={24} aria-hidden="true" /><h2>{recordArchive === "archived" ? "Aucune affaire archivée" : "Aucune affaire"}</h2><p>{activeCount ? "Aucune affaire ne correspond à vos filtres." : query.value.total ? "Revenez à la première page pour retrouver vos affaires." : "Les affaires apparaîtront ici."}</p>{activeCount ? <Button action="reset" variant="outline" onClick={clearFilters}>Réinitialiser les filtres</Button> : null}</div>}
+        <div className={!contactId ? "kay-sales-pagination" : undefined}><NumberedPages compact={!contactId} showPageSize={!contactId} label="Pages des affaires" page={page} total={query.value.total} size={query.value.page_size} change={setPage} /></div>
         </div>
       </>}
       {boardVisited && !contactId && !scopeDenied && !boardFailure ? <DealKanban key={`${boardEpoch}:${actorId ?? ""}:${role}`} actorId={actorId} role={role} active={board && Boolean(query.value) && !query.error} filters={{ ...filters, contact_id: contactId, archive: archived ? "archived" : filters.archive, record_archive: recordArchive }} revision={revision} changed={query.refreshQuietly} denied={boardDenied} returnFocus={listRef} /> : null}

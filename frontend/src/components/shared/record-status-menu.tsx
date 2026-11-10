@@ -1,12 +1,12 @@
 "use client";
 
-import { AddIcon, ArchiveIcon, BlockIcon, CalendarIcon, CheckIcon, ChevronDownIcon, ClockIcon, FileIcon, FailureIcon, FlagIcon, ForwardIcon, NewLeadIcon, NegotiationIcon, PasswordIcon, PhoneIcon, QualifiedLeadIcon, RejectedLeadIcon, RestoreIcon, SearchIcon } from "@/components/icons";
+import { AddIcon, ArchiveIcon, BlockIcon, CalendarIcon, CheckIcon, ChevronDownIcon, CircleCheckIcon, ClockIcon, FileIcon, FailureIcon, FlagIcon, ForwardIcon, NewLeadIcon, NegotiationIcon, PasswordIcon, PhoneIcon, QualifiedLeadIcon, RejectedLeadIcon, RestoreIcon, SearchIcon } from "@/components/icons";
 import { useRef, type Ref } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export function RecordStatusGlyph({ state, kind = "enquiry" }: { state: string; kind?: "enquiry" | "deal" }) {
-  const Icon = state === "new" ? kind === "deal" ? AddIcon : NewLeadIcon : state === "in_progress" ? PhoneIcon : state === "follow_up" ? ClockIcon : state === "analysis" ? SearchIcon : state === "qualified" ? QualifiedLeadIcon : state === "not_qualified" ? RejectedLeadIcon : state === "won" ? CheckIcon : state === "visit" ? CalendarIcon : state === "negotiation" ? NegotiationIcon : state === "closed" ? ArchiveIcon : state === "lost" ? FailureIcon : state === "junk_lead" || state === "cancelled" ? BlockIcon : state === "converted" ? ForwardIcon : state === "documents" ? FileIcon : state === "reserved" ? PasswordIcon : state === "reopen" ? RestoreIcon : FlagIcon;
+  const Icon = state === "new" ? kind === "deal" ? AddIcon : NewLeadIcon : state === "in_progress" ? PhoneIcon : state === "follow_up" ? ClockIcon : state === "analysis" ? SearchIcon : state === "qualified" ? QualifiedLeadIcon : state === "not_qualified" ? RejectedLeadIcon : state === "won" ? CircleCheckIcon : state === "visit" ? CalendarIcon : state === "negotiation" ? NegotiationIcon : state === "closed" ? ArchiveIcon : state === "lost" ? FailureIcon : state === "junk_lead" || state === "cancelled" ? BlockIcon : state === "converted" ? ForwardIcon : state === "documents" ? FileIcon : state === "reserved" ? PasswordIcon : state === "reopen" ? RestoreIcon : FlagIcon;
   return <Icon aria-hidden="true" size={16} />;
 }
 

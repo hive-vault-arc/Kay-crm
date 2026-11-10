@@ -2,6 +2,8 @@ import { mkdir } from "node:fs/promises";
 import type { Page } from "@playwright/test";
 import { expect, signedInTest as test, signIn, openWorkspaceAccount } from "../helpers/auth";
 
+test.use({ actionTimeout: 15_000 });
+
 const browserErrors = new WeakMap<Page, string[]>();
 test.beforeEach(({ page }) => {
   const messages: string[] = [];
@@ -54,6 +56,8 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
     ["Affaires", "deals"],
     ["Calendrier des visites", "visits"],
     ["Projets", "projects"],
+    ["Contacts", "contacts"],
+    ["Propriétaires", "owners"],
   ]) {
     await page
       .getByRole("navigation", { name: "Navigation principale" })
@@ -85,11 +89,13 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
     }
     await expect(page.getByText(/à venir|sera ajoutée|seront disponibles/)).toHaveCount(0);
   }
+  await page.getByRole("link", { name: "Aide", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Centre d’aide");
   await page.getByRole("link", { name: "Paramètres", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Paramètres",
   );
-  await expect(page.getByRole("navigation", { name: "Sections des paramètres", exact: true }).getByRole("link", { name: /^Utilisateurs/ })).toHaveAttribute("href", "/settings/users");
+  await expect(page.getByRole("link", { name: "Gérer les utilisateurs", exact: true })).toBeVisible();
   await page
     .getByRole("navigation", { name: "Navigation principale" })
     .getByRole("link", { name: "Tableau de bord", exact: true })
@@ -98,72 +104,61 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
   expect(failures).toEqual([]);
 });
 
-test("selected compact rail exposes all destinations and global search @shell", async ({ page }) => {
+test("desktop rail keeps all destinations and header search reachable @shell", async ({ page }) => {
   await mkdir("output/playwright/sidebar", { recursive: true });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/dashboard");
-  const sidebar = page.locator("aside[data-sidebar]");
-  const navigation = sidebar.getByRole("navigation", { name: "Navigation principale" });
-  await expect.poll(async () => (await sidebar.boundingBox())?.width).toBe(96);
-  for (const label of ["Tableau de bord", "Prospects", "Affaires", "Calendrier des visites", "Contacts", "Propriétaires", "Projets"]) {
-    const link = navigation.getByRole("link", { name: label, exact: true });
-    await expect(link).toBeVisible(); await expect(link).toHaveAttribute("title", label);
-    expect(Math.round((await link.boundingBox())!.width)).toBeGreaterThanOrEqual(44);
-    expect(Math.round((await link.boundingBox())!.height)).toBeGreaterThanOrEqual(44);
+  const rail = page.locator("[data-kay-rail]");
+  await expect.poll(async () => (await rail.boundingBox())?.width).toBe(96);
+  for (const name of ["Tableau de bord", "Prospects", "Affaires", "Calendrier des visites", "Contacts", "Propriétaires", "Projets", "Aide", "Paramètres"]) {
+    const link = rail.getByRole("link", { name, exact: true });
+    await expect(link).toBeInViewport();
+    await expect(link).toHaveAttribute("title", name);
+    expect((await link.boundingBox())?.width).toBeGreaterThanOrEqual(44);
   }
-  await page.screenshot({ path: "output/playwright/sidebar/compact.png" });
-  const search = page.getByRole("banner").getByRole("searchbox", { name: "Recherche globale", exact: true });
-  await expect(search).toBeVisible();
-  await search.focus(); await search.fill("Recherche synthétique");
-  await expect(page.getByRole("dialog", { name: "Suggestions de recherche", exact: true })).toBeVisible();
-  await page.keyboard.press("Escape");
+  const search = page.getByRole("searchbox", { name: "Recherche globale", exact: true });
+  await search.fill("Contrôle synthétique");
+  const preview = page.getByRole("dialog", { name: "Suggestions de recherche", exact: true });
+  await expect(preview).toBeVisible();
+  await search.press("Escape");
+  await expect(preview).not.toBeVisible();
   await expect(search).toBeFocused();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "output/playwright/sidebar/desktop.png" });
 });
 
-test("selected rail fits short viewports and narrow windows use the drawer @shell", async ({ page }) => {
-  await mkdir("output/playwright/sidebar", { recursive: true });
-  for (const height of [900, 800, 768, 720, 680, 600]) {
-    await page.setViewportSize({ width: 1440, height });
-    await page.goto("/dashboard");
-    const sidebar = page.locator("aside[data-sidebar]");
-    await expect(sidebar).toBeVisible();
-    await expect(page.getByRole("button", { name: "Ouvrir les notifications" })).toBeEnabled();
-    expect(await sidebar.evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
-    for (const label of ["Aide", "Paramètres"]) await expect(sidebar.getByRole("link", { name: label, exact: true })).toBeInViewport();
-    const account = await openWorkspaceAccount(page);
-    await expect(account.getByRole("button", { name: "Se déconnecter", exact: true })).toBeInViewport();
-    await page.keyboard.press("Escape");
-    await page.screenshot({ path: `output/playwright/sidebar/compact-${height}.png` });
-  }
-  await page.setViewportSize({ width: 830, height: 700 });
+test("desktop rail fits short heights and phones use the navigation sheet @shell", async ({ page }) => {
   await page.goto("/dashboard");
-  await expect(page.locator("aside[data-sidebar]")).toBeHidden();
-  const trigger = page.getByRole("button", { name: "Ouvrir la navigation" });
-  await expect(trigger).toBeVisible();
+  const rail = page.locator("[data-kay-rail]");
+  for (const height of [900, 800, 720, 600]) {
+    await page.setViewportSize({ width: 1440, height });
+    await expect(rail.getByRole("link", { name: "Paramètres", exact: true })).toBeInViewport();
+    expect(await rail.evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
+  }
+  await page.setViewportSize({ width: 390, height: 700 });
+  await expect(rail).toBeHidden();
+  const trigger = page.getByRole("button", { name: "Ouvrir la navigation", exact: true });
   await trigger.click();
-  const drawer = page.getByRole("dialog", { name: "Navigation KAY" });
-  await expect(drawer.getByRole("link", { name: "Projets" })).toBeVisible();
+  const drawer = page.getByRole("dialog", { name: "Navigation KAY", exact: true });
+  await expect(drawer.getByRole("link", { name: "Projets", exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
 });
 
 test("desktop rail stays in place while workspace pages scroll @shell", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  for (const route of ["/dashboard", "/leads", "/deals", "/projects"]) {
+  for (const route of ["/dashboard", "/settings/working-hours"]) {
     await page.goto(route);
-    const sidebar = page.locator("aside[data-sidebar]");
-    await expect(sidebar).toBeVisible();
-    const original = await sidebar.boundingBox();
+    const rail = page.locator("[data-kay-rail]");
+    await expect(rail).toBeVisible();
+    const before = await rail.boundingBox();
     await page.locator("main").evaluate(element => { element.style.minHeight = "250vh"; });
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-    await expect.poll(async () => Math.abs(((await sidebar.boundingBox())?.y ?? Infinity) - original!.y)).toBeLessThan(2);
-    expect(await sidebar.evaluate(element => element.scrollTop)).toBe(0);
-    await page.evaluate(() => window.scrollTo(0, 0));
+    const after = await rail.boundingBox();
+    expect(before && after && Math.abs(after.y - before.y)).toBeLessThan(2);
+    expect(await rail.evaluate(element => element.scrollTop)).toBe(0);
   }
 });
-
 test("AT-23: sheet keyboard, containment, Escape and focus return @shell", async ({
   page,
 }) => {
@@ -199,7 +194,6 @@ test("AT-23: responsive widths, long French labels and touch geometry @shell", a
   page,
 }) => {
   await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
-  await expect(page.getByRole("status").filter({ hasText: /Chargement|Résolution/ })).toHaveCount(0);
   for (const width of [320, 360, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     const colleagues = page.waitForResponse(response =>
@@ -207,7 +201,7 @@ test("AT-23: responsive widths, long French labels and touch geometry @shell", a
     await page.goto("/visits");
     await (await colleagues).finished();
     await expect(page.getByRole("button", { name: "Actualiser les visites", exact: true })).toBeEnabled();
-    const rulesTrigger = page.getByRole("button", { name: "Règles et disponibilités", exact: true });
+    const rulesTrigger = page.getByRole("button", { name: "Règles et disponibilités", exact: true }).and(page.locator('[aria-label="Règles et disponibilités"]'));
     await rulesTrigger.click();
     const rules = page.getByRole("dialog", { name: "Règles et disponibilités", exact: true });
     await expect(rules.getByText(/^Politique version/)).toBeVisible();

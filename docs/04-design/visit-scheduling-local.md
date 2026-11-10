@@ -214,6 +214,6 @@ local strings determine event position; the browser does only Gregorian date
 arithmetic. Overlap clusters get distinct lanes, short visits retain44px targets,
 and overnight visits continue on the next day. Dynamic hours and local scrolling
 retain early/late events; server pagination remains explicit. Calendar geometry
-is centralized in `branding/kay-ui-tokens.json`, not a new library or chart.
+is centralized in `branding/prototype/kay-workspace.tokens.json`, not a new library or chart.
 No schema migration or development-data seed. See the
 [implementation and verification](../03-planning/calendar-reference-refresh.md).

@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { test, expect, createActor, removeActor, signIn, clearActorContext } from "../helpers/auth";
 import { staffCommand } from "../helpers/leads";
 
-// Prepared for the isolated supervisor, not executed as native evidence here.
 for (const width of [1440, 390]) test(`Selected owner directory and quick drawer preserve canonical membership at ${width}px`, async ({ page }) => {
   test.setTimeout(120_000);
   const agent = await createActor("agent"), manager = await createActor("manager"), suffix = randomUUID().slice(0, 8);
@@ -22,6 +21,8 @@ for (const width of [1440, 390]) test(`Selected owner directory and quick drawer
     await row.click();
     const preview = page.locator('.kay-record-drawer[role="dialog"]'); await expect(preview.getByRole("heading", { name, exact: true })).toBeVisible();
     await expect(preview.getByText("Bien lié synthétique", { exact: true })).toBeVisible(); await expect(preview.getByRole("table")).toHaveCount(0);
+    await page.keyboard.press("Escape"); await expect(preview).toHaveCount(0); await expect(row).toBeFocused();
+    await row.click(); await expect(preview.getByRole("heading", { name, exact: true })).toBeVisible();
     await preview.getByRole("button", { name: "Modifier nom complet", exact: true }).click();
     const field = preview.getByRole("form", { name: "Modifier nom complet", exact: true }); await field.getByLabel("Nom du contact", { exact: true }).fill(changedName);
     await preview.getByRole("button", { name: `Fermer : ${name}`, exact: true }).click();

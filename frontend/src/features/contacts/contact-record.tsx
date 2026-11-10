@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/shared/page-header";
 import { CrmRecordHeader, CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
@@ -41,11 +42,11 @@ export function ContactRecord({ id, role, actorId, initialTask }: { id: string; 
   const heading = <PageHeader title="Fiche contact" description="Coordonnées et dossiers accessibles." route={`/contacts/${id}`} />;
   if (query.error) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
   if (scopeError) return <>{heading}{notice ? <p role="status">{notice}</p> : null}<RecordError error={scopeError} retry={() => { setScopeError(undefined); setEdited(undefined); setNotice(""); query.refresh(); }} /></>;
-  if (!contact) return <>{heading}<p role="status">Chargement du contact…</p></>;
+  if (!contact) return <>{heading}<div className="kay-sales-loading-record" role="status" aria-busy="true"><span className="sr-only">Chargement du contact…</span><Skeleton aria-hidden="true" /><Skeleton aria-hidden="true" /></div></>;
   const writable = !contact.archived_at;
-  const editAction = <RecordDrawer hideTrigger={!writable} label="Modifier" action="edit" title="Coordonnées du contact" description="Les coordonnées sont partagées par les dossiers de ce contact.">{(close, saved) => <ContactEditor key={`${contact.id}:${actorId ?? ""}:${role}`} actorId={actorId} role={role} denied={(error, acknowledged) => { setNotice(acknowledged ? "Les coordonnées sont enregistrées. Les droits d’accès ont changé." : ""); setScopeError(error); }} contact={contact} saved={value => { setEdited(value); setNotice("Contact enregistré."); saved(); }} cancel={close} />}</RecordDrawer>;
+  const editAction = <RecordDrawer className="kay-party-drawer" hideTrigger={!writable} label="Modifier" action="edit" title="Coordonnées du contact" description="Les coordonnées sont partagées par les dossiers de ce contact.">{(close, saved) => <ContactEditor key={`${contact.id}:${actorId ?? ""}:${role}`} actorId={actorId} role={role} denied={(error, acknowledged) => { setNotice(acknowledged ? "Les coordonnées sont enregistrées. Les droits d’accès ont changé." : ""); setScopeError(error); }} contact={contact} saved={value => { setEdited(value); setNotice("Contact enregistré."); saved(); }} cancel={close} />}</RecordDrawer>;
   const inline = { contact, writable, actorId, role, saved: (value: Contact) => { setEdited(value); setNotice("Contact enregistré."); }, denied: setScopeError };
-  return <InlineEditScope><div className="kay-record-page">
+  return <InlineEditScope><div className="kay-record-page kay-sales-record kay-party-record">
     <CrmRecordHeader contact={contact} title={contact.name} route={`/contacts/${id}`} backHref="/contacts" showContact={false} reference="Contact" badges={<CrmStatusBadge state={contact.archived_at ? "archived" : "active"}>{contact.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge>} actions={editAction} />
     {contact.id !== id ? <p>Cette fiche a été fusionnée. Vous consultez la <Link className="inline-flex min-h-control items-center text-link underline" href={`/contacts/${contact.id}`}>fiche conservée</Link>.</p> : null}
     {contact.archived_at ? <p role="status" className="mb-3 text-sm text-muted-foreground">Contact archivé. Restaurez-le pour reprendre les modifications.</p> : null}
@@ -73,7 +74,7 @@ export function ContactRecord({ id, role, actorId, initialTask }: { id: string; 
       </> },
       { id: "activity", label: "Activités", content: <><ContactTimeline key={contact.id} id={contact.id} archived={!writable} revision={contact.version} denied={(failure, acknowledged) => { setNotice(acknowledged ? "L’entrée est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} /><details className="mt-6 border-t pt-3"><summary className="flex min-h-control cursor-pointer items-center font-medium">Historique des attributions</summary><div className="pt-4"><ContactAssignments id={contact.id} revision={contact.version} /></div></details></> },
     ]} aside={<>
-      <ContactVisits contactId={contact.id} writable={writable} />
+      <ContactVisits contactId={contact.id} writable={writable} showCalendar />
       <RecordSection title="Tâches" action={<RecordDrawer label="Voir les tâches" title="Tâches du contact" action="task" description="Tâches, échéances et responsables de ce contact." initialOpen={Boolean(initialTask)}><TaskPanel contactId={contact.id} writable={writable} initialTask={initialTask} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Retrouvez les tâches et leurs échéances.</p></RecordSection>
       <RecordSection title="Documents" action={<RecordDrawer label="Voir les documents" title="Documents du contact" action="file" description="Documents privés accessibles sur ce contact."><FilePanel actorId={actorId} role={role} parentKind="contact" parentId={contact.id} writable={writable} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Pièces jointes partagées avec les personnes autorisées.</p></RecordSection>
     </>} />

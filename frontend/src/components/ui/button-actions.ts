@@ -1,6 +1,6 @@
 import type { KayIconComponent } from "@/components/icons";
 import {
-  AddIcon, ArchiveIcon, BackIcon, CalendarIcon, ChevronDownIcon, CloseIcon,
+  AddIcon, ArchiveIcon, BackIcon, CalendarIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon,
   ColumnsIcon, ListIcon, KanbanIcon, CompareIcon, CompletedIcon, ContactIcon, ContactsIcon, DealIcon,
   DeleteIcon, DownloadIcon, EditIcon, FileIcon, EnquiryIcon, FinanceIcon,
   FilterIcon, HelpIcon, ForwardIcon, HidePasswordIcon, PasswordIcon, PropertyIcon,
@@ -30,6 +30,8 @@ export const buttonActions = {
   restore: { icon: RestoreIcon, tone: "success", variant: "outline" },
   back: { icon: BackIcon, tone: "neutral", variant: "outline" },
   forward: { icon: ForwardIcon, tone: "neutral", variant: "outline" },
+  previous: { icon: ChevronLeftIcon, tone: "neutral", variant: "outline" },
+  next: { icon: ChevronRightIcon, tone: "neutral", variant: "outline" },
   up: { icon: ChevronDownIcon, tone: "neutral", variant: "outline", iconClassName: "rotate-180" },
   down: { icon: ChevronDownIcon, tone: "neutral", variant: "outline" },
   close: { icon: CloseIcon, tone: "neutral", variant: "outline" },

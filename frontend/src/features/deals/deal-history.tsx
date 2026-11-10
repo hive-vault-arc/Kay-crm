@@ -41,7 +41,7 @@ function QualificationHistory({ value }: { value: z.infer<typeof qualificationSn
 export function DealHistory({ id, revision }: { id: string; revision?: number }) {
   const [page, setPage] = useState(1);
   const query = useQuery(queryPath(`deals/${id}/history`, { page, page_size: 20 }), historySchema, revision);
-  return <section className="grid min-w-0 gap-4 border-t pt-6" aria-label="Historique de l’affaire"><h2 className="text-section font-medium">Historique de l’affaire</h2>
+  return <section className="grid min-w-0 gap-4 border-t pt-6" aria-label="Historique de l’affaire"><h2 className="text-section">Historique de l’affaire</h2>
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement de l’historique…</p> : <>
       <p>{query.value.total} événement(s), auteurs et conditions d’origine conservés.</p>
       <ol className="grid min-w-0 gap-6">{query.value.items.map(row => <li key={row.id} className="grid min-w-0 gap-2 border-b pb-4">
