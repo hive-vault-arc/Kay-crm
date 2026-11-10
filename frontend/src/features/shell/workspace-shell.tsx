@@ -17,9 +17,12 @@ import { HelpNavigationItem, Navigation, SettingsNavigationItem } from "./naviga
 import { ThemeControl } from "./theme-control";
 import { WorkspaceAccount } from "./workspace-account";
 import { WorkspaceNavigationGuard } from "@/components/shared/unsaved-guard";
+import { useWorkspaceWheel } from "./workspace-wheel";
 
 export function AppShell({ children, identity }: { children: ReactNode; identity: PublicIdentity }) {
   const pathname = usePathname(), hydrated = useHydrated();
+  useWorkspaceWheel(pathname);
+  const workspaceRoute = pathname.startsWith("/visits/") ? "/visits" : pathname;
   const [open, setOpen] = useState(false);
   const destination = useRef<string | null>(null), closeForNavigation = useRef(false);
   useEffect(() => {
@@ -52,6 +55,6 @@ export function AppShell({ children, identity }: { children: ReactNode; identity
       </div>
     </header>
     <aside data-sidebar data-kay-rail className="kay-rail" aria-label="Navigation principale"><Navigation compact settingsPlacement="external" /><div className="kay-rail-utilities"><HelpNavigationItem compact />{identity.user.role === "administrator" ? <SettingsNavigationItem compact /> : null}</div></aside>
-    <main id="main-content" tabIndex={-1} className="kay-main"><LiveUpdates /><div className="kay-route-motion grid min-w-0 gap-4" key={pathname}>{children}</div></main>
+    <main id="main-content" tabIndex={-1} className="kay-main"><LiveUpdates /><div className="kay-route-motion grid min-w-0 gap-4" key={workspaceRoute}>{children}</div></main>
   </div>;
 }

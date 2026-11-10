@@ -3,7 +3,7 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { expect, signedInTest as test, createActor, removeActor, clearActorContext, signIn } from "../helpers/auth";
 
-test("Dashboard header: welcome, utility actions and direct audit remain available", async ({ page, browser, actor, baseURL }) => {
+test("Dashboard header: filter and action layout adapts to desktop and touch widths", async ({ page, browser, actor, baseURL }) => {
   const failures: string[] = [];
   let healthRequests = 0;
   page.on("pageerror", () => failures.push("PAGE_ERROR"));
@@ -13,20 +13,24 @@ test("Dashboard header: welcome, utility actions and direct audit remain availab
   page.on("request", request => { if (new URL(request.url()).pathname === "/api/v1/health/ready") healthRequests++; });
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { name: "Répartition des affaires", exact: true })).toBeVisible();
-  const header = page.getByRole("banner");
-  const heading = page.getByRole("heading", { name: "Tableau de bord", exact: true, level: 1 });
-  const welcome = page.getByRole("heading", { name: /^Bonjour / });
-  await expect(heading).toBeVisible();
-  await expect(welcome).toBeVisible();
-  await expect(page.getByRole("region", { name: "Connexion au service" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Vérifier à nouveau", exact: true })).toHaveCount(0);
+  const header = page.locator("main header").filter({ has: page.getByRole("heading", { name: "Tableau de bord", exact: true }) });
+  await expect(header.getByRole("region", { name: "Connexion au service" })).toHaveCount(0);
+  await expect(header.getByRole("button", { name: "Vérifier à nouveau", exact: true })).toHaveCount(0);
+  await expect(header.getByRole("link", { name: "Journal d’audit", exact: true })).toHaveCount(0);
+  await expect(header.getByRole("link", { name: "Nouveau prospect", exact: true })).toHaveAttribute("href", "/leads/new");
+  await expect(header.getByText(/Service local|Vérification du service local/)).toHaveCount(0);
   await mkdir("output/playwright/dashboard-header", { recursive: true });
-  for (const width of [1440, 1024, 768, 360, 320]) {
+  for (const width of [1728, 1440, 1024, 768, 360, 320]) {
     await page.setViewportSize({ width, height: 900 });
-    await expect(welcome).toBeVisible();
-    await expect(header.getByRole("button", { name: "Ouvrir les notifications" })).toBeVisible();
-    await expect(header.getByRole("button", { name: /^Compte de / })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Nouveau prospect", exact: true })).toBeVisible();
+    const tools = (await header.getByRole("button", { name: "Suivi et rapports" }).boundingBox())!;
+    const create = (await header.getByRole("link", { name: "Nouveau prospect" }).boundingBox())!;
+    if (width <= 830) {
+      expect(create.y).toBeGreaterThan(tools.y);
+      expect(create.height).toBeGreaterThanOrEqual(44);
+      expect(create.width).toBeCloseTo((await header.boundingBox())!.width, 0);
+    } else if (width >= 1440) {
+      expect(create.y).toBeCloseTo(tools.y, 0);
+    }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     if ([1440, 768, 360].includes(width))
       await page.screenshot({ path: `output/playwright/dashboard-header/dashboard-${width}.png` });
@@ -34,12 +38,19 @@ test("Dashboard header: welcome, utility actions and direct audit remain availab
   await page.setViewportSize({ width: 1448, height: 1086 });
   await page.screenshot({ path: "output/playwright/dashboard-header/dashboard-reference-1448x1086.png" });
   await page.setViewportSize({ width: 1440, height: 900 });
-  const notifications = header.getByRole("button", { name: "Ouvrir les notifications" });
+  const tools = header.getByRole("button", { name: "Suivi et rapports" });
+  await tools.focus();
+  await page.keyboard.press("Enter");
+  await page.getByRole("menuitem", { name: "Indicateurs CRM" }).click();
+  await expect(page.getByRole("dialog", { name: "Rapports détaillés" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(tools).toBeFocused();
+  const notifications = page.getByRole("button", { name: "Ouvrir les notifications" });
   await notifications.click();
   await expect(page.getByRole("dialog", { name: "Notifications" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(notifications).toBeFocused();
-  const account = header.getByRole("button", { name: /^Compte de / });
+  const account = page.getByRole("button", { name: /^Compte de / });
   await account.click();
   await expect(page.getByRole("dialog", { name: "Compte utilisateur" })).toBeVisible();
   await expect(page.getByRole("dialog", { name: "Compte utilisateur" }).getByRole("button", { name: "Se déconnecter" })).toBeVisible();
@@ -48,21 +59,19 @@ test("Dashboard header: welcome, utility actions and direct audit remain availab
   expect(healthRequests).toBe(0);
   await page.getByRole("link", { name: "Journal d’audit", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Journal d’audit", exact: true })).toBeVisible();
-  await expect(page.locator('main img[src*="dashboard-city"]')).toHaveCount(0);
+  await expect(page.locator(".kay-dash-toolbar")).toHaveCount(0);
   expect((await page.request.get("/api/v1/audit/events")).status()).toBe(200);
-  const back = page.getByRole("main").getByRole("link", { name: "Tableau de bord", exact: true });
-  await back.focus(); await expect(back).toBeFocused(); await page.keyboard.press("Enter");
-  await expect(heading).toBeVisible();
+  await page.goto("/dashboard");
+  await expect(header).toBeVisible();
   const touch = await browser.newContext({ baseURL, viewport: { width: 360, height: 800 }, hasTouch: true, ignoreHTTPSErrors: true, locale: "fr-FR" });
   try {
     const mobile = await touch.newPage(); await signIn(mobile, actor);
     await expect(mobile.getByRole("region", { name: "Connexion au service" })).toHaveCount(0);
-    await expect(mobile.getByRole("link", { name: "Journal d’audit", exact: true })).toBeVisible();
     await expect(mobile.getByRole("button", { name: "Vérifier à nouveau", exact: true })).toHaveCount(0);
-    await mobile.getByRole("link", { name: "Journal d’audit", exact: true }).tap();
-    await expect(mobile.getByRole("heading", { name: "Journal d’audit", exact: true })).toBeVisible();
-    await mobile.getByRole("main").getByRole("link", { name: "Tableau de bord", exact: true }).tap();
     await expect(mobile.getByRole("heading", { name: "Tableau de bord", exact: true })).toBeVisible();
+    await mobile.getByRole("button", { name: "Suivi et rapports" }).tap();
+    await mobile.getByRole("menuitem", { name: "Travail à faire" }).tap();
+    await expect(mobile.getByRole("dialog", { name: "Travail à faire" })).toBeVisible();
   } finally { await touch.close(); }
   expect(failures).toEqual([]);
 });
@@ -71,22 +80,21 @@ test("Dashboard header: agent keeps the scoped title and no audit action", async
   const agent = await createActor("agent");
   try {
     await clearActorContext(page); await signIn(page, agent);
-    await expect(page.getByRole("heading", { name: /^Bonjour / })).toBeVisible();
-    await expect(page.getByText(/^Dossiers attribués ou partagés/)).toBeAttached();
-    await expect(page.getByRole("status").filter({ hasText: /Chargement du pipeline/ })).toHaveCount(0);
+    await expect(page.getByText("Vos priorités et rendez-vous, en un regard.", { exact: true })).toBeVisible();
+    await expect(page.getByText(/^Dossiers attribués ou partagés\./)).toBeAttached();
     await expect(page.getByRole("link", { name: "Journal d’audit", exact: true })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Connexion au service" })).toHaveCount(0);
-    const header = page.getByRole("banner");
-    await expect(header.getByRole("button", { name: "Ouvrir les notifications" })).toBeVisible();
-    await expect(header.getByRole("button", { name: /^Compte de / })).toBeVisible();
-    expect(await header.evaluate(element => getComputedStyle(element).borderTopWidth)).toBe("0px");
+    const header = page.locator("main header").filter({ has: page.getByRole("heading", { name: "Tableau de bord", exact: true }) });
+    await expect(header.getByRole("button", { name: "Suivi et rapports" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Ouvrir les notifications" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Compte de / })).toBeVisible();
     await page.goto("/dashboard?view=audit");
     await expect(page.locator("main").getByRole("alert")).toContainText("Accès non autorisé");
     expect((await page.request.get("/api/v1/audit/events")).status()).toBe(403);
   } finally { await clearActorContext(page); await removeActor(agent); }
 });
 
-test("Dashboard header: workspace heading and account actions remain usable at actual 200% Chrome zoom", async ({ actor, baseURL }, testInfo) => {
+test("Dashboard header: filters and account actions remain usable at actual 200% Chrome zoom", async ({ actor, baseURL }, testInfo) => {
   const profile = path.join(testInfo.project.outputDir, "dashboard-zoom", "dashboard-zoom-profile");
   const options = { channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, ignoreHTTPSErrors: true, args: ["--window-size=1440,1000"] };
   let context!: Awaited<ReturnType<typeof chromium.launchPersistentContext>>;
@@ -108,22 +116,19 @@ test("Dashboard header: workspace heading and account actions remain usable at a
     page.on("console", message => { if (message.type() === "error") failures.push("CONSOLE_ERROR"); });
     await page.goto(`${baseURL}/dashboard`);
     await expect(page.getByRole("heading", { name: "Répartition des affaires", exact: true })).toBeVisible();
-    await expect(page.getByRole("status").filter({ hasText: /Chargement du pipeline/ })).toHaveCount(0);
     const measurement = await page.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth }));
     expect(measurement.ratio / baseline.ratio).toBeCloseTo(2, 1);
     expect(measurement.width).toBeLessThan(baseline.width * 0.6);
     expect(measurement.overflow).toBe(false);
-    const header = page.getByRole("banner");
-    await expect(page.getByRole("heading", { name: /^Bonjour / })).toBeVisible();
+    const header = page.locator("main header").filter({ has: page.getByRole("heading", { name: "Tableau de bord", exact: true }) });
+    await expect(header.getByLabel("Du", { exact: true })).toBeVisible();
+    await expect(header.getByLabel("Au", { exact: true })).toBeVisible();
     await expect(header.getByRole("region", { name: "Connexion au service" })).toHaveCount(0);
-    await expect(header.getByRole("button", { name: "Ouvrir les notifications" })).toBeVisible();
+    await expect(header.getByRole("button", { name: "Ouvrir les notifications" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Ouvrir les notifications" })).toBeVisible();
     await page.getByRole("button", { name: "Ouvrir la navigation" }).click();
     const navigation = page.getByRole("dialog", { name: "Navigation KAY" });
-    await expect(navigation.getByRole("link", { name: "Tableau de bord", exact: true })).toHaveAttribute("aria-current", "page");
-    await page.keyboard.press("Escape");
-    const account = header.getByRole("button", { name: /^Compte de / });
-    await account.click();
-    await expect(page.getByRole("dialog", { name: "Compte utilisateur", exact: true }).getByRole("button", { name: "Se déconnecter", exact: true })).toBeVisible();
+    await expect(navigation.getByRole("link", { name: "Prospects" })).toBeVisible();
     await page.keyboard.press("Escape");
     await mkdir("output/playwright/dashboard-header", { recursive: true });
     await page.bringToFront();

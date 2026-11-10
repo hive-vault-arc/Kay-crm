@@ -1,5 +1,127 @@
 # KAY QA command register
 
+## Deals and visit calendar reference pass (2026-11-10)
+
+Compared the supplied prototype and the app components in headed Chrome
+with synthetic API responses. Checked Deals list and Kanban, filter rail
+focus, column controls, the four dossier tabs and access denial. Rechecked
+the Leads directory and record after sharing their sales layout. Calendar
+checks covered week, agenda, type grouping and private free/busy, date and
+type filters, rules, cancellation confirmation, and the booking and
+replanning forms. Checked widths from 320 to 1440 px and phone dark mode.
+The CRM UX, design-system-ops and React best-practices skills informed the
+changes. The temporary fixture was moved out of the application before build.
+
+Compiled headed Chrome verified the calendar's loading, empty, outage and
+retry behavior against disposable PostgreSQL at `0037_development_phase`.
+A second case verified that closing the routed booking drawer preserves
+the date, selected agenda tab and keyboard focus.
+The lead's inline contact edit and both Deal edit-recovery cases also passed
+against disposable PostgreSQL. The first Deal run used an outdated expected
+budget string and both cases passed after the test asserted the existing
+normalized API value. Across the focused runs, five cases passed.
+`npm run lint`, `npm run test:unit` (995 tests), `npm run build` and
+`npm run typecheck` passed. The complete CRM suite and owner design review
+remain pending.
+
+## Lead record reference pass (2026-11-10)
+
+Headed Chrome via Playwright CLI compared the supplied prototype and the
+individual lead record using synthetic API responses at 320, 390, 830,
+1024, 1180 and 1440 px. Checks covered the four tabs, keyboard and dialog
+focus, the activity filter, task and follow-up drawers, light and dark modes,
+and loading, archived and access-denied states. The temporary fixture was
+moved out of the app tree before the production build.
+
+Frontend `npm run lint`, `npm run build`, `npm run typecheck` and
+`npm run test:unit` passed, including 995 unit tests. The inventories found
+70 semantic glyphs and 532 button sites with zero violations. CRM UX,
+design-system-ops and React best practices informed the layout and reuse.
+Owner design review remains pending.
+
+Compiled, headed `playwright.chrome.config.ts` checks also ran on disposable
+PostgreSQL at `0037_development_phase`. Five focused cases passed across two
+runs: lead contact-name recovery, status and message PATCH recovery, and both
+conversion retry paths. The shared test database used an incompatible historical
+revision and was left in place. Projects, documents and follow-up drawers were
+checked with synthetic browser responses. The complete CRM suite was outside
+this pass.
+
+## Prospects reference pass (2026-11-10)
+
+Headed Chrome via Playwright CLI compared the supplied prototype and
+`/leads` components using synthetic API responses at 320, 390, 830, 1024,
+1180 and 1440px. Checks covered light and dark themes, separate table
+scrolling and sticky headings, filter rail focus return, touch filters,
+numbered pages, row selection, column choices, Kanban, and loading, empty
+and denied states. The export review stayed open through a viewport resize.
+Frontend `npm run lint`, `npm run build`, `npm run typecheck` and
+`npm run test:unit` passed. The unit suite passed 995 tests. The inventories
+reported 70 semantic glyphs and 530 button sites with zero violations.
+The temporary browser fixture was removed before the production build.
+Database-backed browser tests and owner review remain pending. The CRM UX,
+design-system-ops and React best-practices skills informed this pass.
+
+## Dashboard reference pass (2026-11-10)
+
+Frontend `npm run test:unit` passed 995 tests. `npm run lint`,
+`npm run build` and `npm run typecheck` passed. The inventories found
+70 semantic glyphs and 525 button sites with zero violations.
+Headed Chrome via Playwright CLI compared the
+prototype and the dashboard components with synthetic API responses at
+320, 390, 830, 1024, 1440 and 1728px. Checks covered light and dark themes,
+touch and keyboard menu actions, drawer focus return, scoped filters and
+reset, long labels, reduced motion, loading, empty and denied responses.
+The dashboard screenshot set uses placeholder photos. The browser fixture
+was removed before the production build. The database-backed Playwright
+suite and owner review remain pending. The CRM UX, design-system-ops and
+React best-practices skills informed this pass.
+
+## Reference workspace motion (2026-11-10)
+
+The frontend uses Motion 14.4.0 and Lenis 1.3.27 from the supplied prototype.
+`npm run lint`, `npm run build` and `npm run test:unit` passed. The 995 unit
+tests include deferred record-drawer closure and focus fallback.
+Headed Chrome exercised the real login and a temporary synthetic route built
+from the actual workspace primitives. It measured the 460ms route entrance,
+the four KPI delays of 0/40/80/120ms, 420/300ms overlay motion and 280ms menu
+entry. KPI data changes did not replay the entrance. The page, table and
+drawer wheel tests measured intermediate eased positions and separate scroll
+ownership. Opening a modal and switching to reduced motion stopped inertia.
+Escape, save, focus return, a 390px touch viewport and reduced-motion
+entrances passed. The temporary route was removed before the final build.
+
+`npm audit --omit=dev --json` reported zero runtime advisories. Full
+`npm run security:check` still fails on the same seven development-tool
+entries observed with and without Lenis, rooted in the existing minimatch
+advisory.
+
+## Reference component styling (2026-11-10)
+
+Frontend `npm run lint`, `npm run typecheck`, `npm run build` and
+`npm run test:unit` passed with 995 unit tests. The inventories reported
+70 semantic glyphs and 526 button sites with zero violations.
+Headed Chrome checked the actual login and appearance menu, then a temporary
+fixture rendered from the shared components against the built CSS. Widths
+320px to 1440px covered the type hierarchy, Lucide sizing, panel and control
+edges, selected and invalid states, keyboard focus and forced colors.
+Desktop screenshots cover both themes. Execution policy blocked isolated
+PostgreSQL setup, so authenticated route verification remains pending.
+
+## Reference design foundation (2026-11-10)
+
+In `frontend/`, `npm ci --ignore-scripts --no-audit --no-fund`, `npm run lint`,
+`npm run typecheck`, `npm run test:unit` (994 passed), and `npm run build`
+passed. The icon and button inventories reported zero violations.
+Headed Chrome via Playwright CLI compared the supplied Vite prototype and
+checked the built CRM login in light, dark and system modes at 1440px,
+390px and 320px. A temporary in-browser fixture confirmed the shared shell,
+panel, button, field and drawer styles, keyboard focus, hover/press feedback,
+and reduced-motion, reduced-transparency and forced-colors behavior.
+Design-system-ops guided geometry and responsiveness. Component and screen
+parity, authenticated route coverage and AFTER review belong to subsequent
+passes. [Design system](04-design/design-system.md)
+
 Selected affair form recovery,2026-10-29: frontend cwd `npm run test:unit`:
 727 pass/0 failed/skipped,20 added actual form/controller/route/context/record-
 host cases. Existing dossier coverage uses coherent full receipts and the real
@@ -1341,7 +1463,7 @@ still flags two trailing-space lines in `decisions.md`, outside this refinement.
 
 ## Riviera shared branding (2026-10-18)
 
-[Scope and current verification ledger](04-design/riviera-execution.md).
+Scope and current verification ledger (historical D36 verification).
 Frontend `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run test:unit`
 (49/49) and `npm.cmd run build` pass. Headed Chrome Riviera route verification
 passes1/1 across17 routes at1440/360; shell verification passes5/5, including
@@ -3686,3 +3808,141 @@ hydration and all existing conditions (focus-visible, solid2px outline,
 offset>=2px, contrast>=3), retaining every threshold. Three local repeats pass
 19.5s; ESLint and TypeScript pass. These are harness corrections, not a full
 release result, and no product styling or authorization was changed.
+
+## Contacts and Propriétaires redesign (2026-11-10)
+
+Reviewed the owner-supplied prototype with CRM UX, design-system-ops and
+React best practices. The configured design-taste-frontend and antislop skill
+files were unavailable. The prototype still governs layout and appearance.
+Product review is pending.
+
+- From `frontend`, `npm.cmd run lint`, `npm.cmd run typecheck`,
+  `npm.cmd run build` and `npm.cmd run test:unit` passed. All 995 frontend
+  unit tests passed.
+- Headed Chrome with synthetic responses exercised the two directories, drawer
+  and record layouts, inline table scrolling, filter reset, keyboard focus,
+  current and former property links, create/edit forms, delayed reads,
+  empty results, denied reads and outage/retry. Checked 1440 px desktop, 830 px,
+  390 px and 320 px layouts, including a dark phone view.
+- The first isolated PostgreSQL run passed nine scenarios covering Contacts
+  filters and counts, canonical edits on Contacts/Leads/Deals, and owner
+  create/edit/reuse recovery. The two owner directory cases initially reached
+  the authenticated login redirect while switching actors. They now clear the
+  prior synthetic context before signing in as the next actor. Both owner
+  directory cases passed on the rerun, including Escape focus restoration.
+- The same rerun passed real calendar loading/empty/outage recovery and three
+  dashboard cases covering desktop, touch layouts, agent scope and 200% Chrome
+  zoom. Calendar geometry measures settled colors with reduced motion and retains
+  the 4.5:1 contrast and 44 px control checks. The populated calendar exercised
+  six widths, touch navigation, and native 200% zoom. The zoom capture measured
+  6.35:1 minimum contrast, zero controls below 44 px and no horizontal page overflow.
+- Scope checks covered agent filtering, denial masking and edit/reuse recovery.
+  Contact coordinates are rendered as links from the same validated API fields.
+
+No backend contract or migration change. Production, the full browser suite
+and product acceptance are outside this evidence.
+
+## Projects reference redesign (2026-11-10)
+
+Reviewed the owner-supplied Projets reference in headed Chrome. Matched its
+inventory header, cards/list switch, collapsible filter rail, bounded result
+scrolling, compact phone cards, dossier layout and create/edit sheets. The
+existing record controllers, current identity proof, guarded commands and
+private photo delivery remain the integration points. A regression fix reads
+render-time programme capabilities from props while retaining the committed
+check at dispatch.
+
+- `npm.cmd --prefix frontend run lint`, `run typecheck`, `run build` and
+  `run test:unit` passed. All 996 frontend unit tests passed.
+- `npm.cmd --prefix frontend audit --omit=dev --json` reports zero production
+  vulnerabilities. `run security:check` refuses the current moderate
+  minimatch globparts-amplification advisory through the existing
+  typescript-eslint chain. The full audit reports seven affected package
+  entries. This UI slice changes no dependency versions or policy exceptions.
+- Earlier focused real-stack checks passed property/programme interrupted-save
+  recovery, create/edit drawer focus and draft retention, the holiday-riad
+  price/Maps flow and the narrow land form. The first photo run timed out on
+  an obsolete exact mobile filter label and left synthetic rows for the next
+  test. The selector now includes its active count. A fresh disposable
+  PostgreSQL run checks the final build and avoids carrying that failed
+  fixture state into the new evidence.
+
+Product review remains pending. This is local evidence on `codex/redesign`.
+
+The final fresh PostgreSQL/production-build run passed all eight selected headed
+Chrome scenarios in 2.9 minutes. The browser command was
+`node node_modules/@playwright/test/cli.js test --config=playwright.chrome.config.ts
+--headed --workers=1 --max-failures=3`, with a title filter over
+`projects-reference.spec.ts`, `project-presentation.spec.ts`,
+`property-listing-wizard.spec.ts`, `developments.spec.ts` and
+`inventory.spec.ts`. The ignored local supervisor
+`backend/.venv/Scripts/python.exe -u .local-data/design-check/proj-e2e.py`
+supplied a fresh loopback PostgreSQL target, the isolated database lease and
+temporary HTTPS ports 3123/8113–8115. It migrated only that disposable target
+and stopped it in its finally path.
+
+The run covered real WebP uploads and ClamAV scanning for eight synthetic
+photos, cards/list and route-history retention, exact annual-rent bounds,
+pagination, real API stop/retry, agent denial, draft discard/continue, drawer
+focus restoration, saved record refresh, holiday price/Maps and land-specific
+fields. Delayed card and list reads show their respective skeletons. Checked
+320/360/768/1024/1440/1677 px layouts, touch and keyboard operation and native
+200% zoom. Zoom measured 6.35:1 minimum contrast, zero controls below 44 px and
+zero horizontal page overflow. Desktop category radio rows deliberately follow
+the compact reference at 36 px. Touch controls retain 44 px. Desktop, phone,
+filter-sheet and zoom captures were visually inspected under ignored
+`frontend/output/playwright/projects-reference/`.
+
+Rapid repeated filtering/view changes encountered 24 HTTP 429 responses from
+the existing 30-per-minute private-photo permit limit. Independent fresh-session
+captures verified all eight photos and their authorized display. The throttling
+boundary and generic unavailable-photo fallback remain. Full browser/security
+acceptance and product approval are not inferred from these selected checks.
+The ClamAV test container was returned to its original stopped state after
+verification.
+
+## Help and Settings reference redesign (2026-11-10)
+
+Compared the owner-supplied prototype and the running CRM in headed Chrome.
+CRM UX, design-system-ops and React guidance govern this pass. The configured
+design-taste-frontend and antislop skill files were unavailable. The reference
+determines the layout, tokens and interaction rhythm. Phone guides reflow the
+action below the title to preserve readable line lengths. Working hours show
+the server's actual intervals, with the existing guarded preview and save
+drawer for both configured and empty schedules.
+
+The frontend unit suite passed 996 cases. Lint, typecheck and the production
+build passed. The production dependency audit reported zero vulnerabilities.
+The full dependency gate continues to flag the existing moderate minimatch
+advisory through the ESLint development chain. No dependency version or
+exception was changed in this slice.
+
+The route smoke visits Dashboard, Prospects, Affaires, Calendar, Projects,
+Contacts, Owners, Help and Settings from the authenticated shell. The
+browser work uses the production build, synthetic users and a disposable
+loopback PostgreSQL cluster. It exercises current navigation instead of the
+retired Riviera expand/collapse controls and checks the fixed rail against
+the actual scroll owner. This is focused design and regression verification,
+with product review still pending.
+
+All 21 selected Chrome scenarios passed across the regression run and its
+targeted rerun. Commands used `node node_modules/@playwright/test/cli.js test
+--config=playwright.chrome.config.ts --headed --workers=1` from `frontend`,
+with `help.spec.ts`, `users.spec.ts`, `policy-recovery.spec.ts`, `shell.spec.ts`
+and `users.chrome.spec.ts`. The ignored `.local-data/design-check/support-e2e.py`
+supervisor created fresh test targets with the existing backend virtual
+environment, applied the current migration head to disposable PostgreSQL
+only, and stopped each database cluster afterward.
+
+The checks cover role-scoped Help search and return links, empty results,
+copying a restricted guide URL, mobile and keyboard navigation, account
+creation and first login, profile and reset dialogs, deletion and last-admin
+protection, pagination, real outage and retry, and both scheduling save
+recovery boundaries. Inspected the desktop and phone captures and tested
+native 200% Chrome zoom for Help and the staff forms. Measured phone controls
+at 44 px and reference desktop form actions at 40 px. The latest scope is
+local on `codex/redesign`.
+
+The last visual adjustment removed the duplicate outline around phone user
+cards. The production build and focused headed Settings case passed again
+(30.5 s), and the updated phone capture shows one outline per card.

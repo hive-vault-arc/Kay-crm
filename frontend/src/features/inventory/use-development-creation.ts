@@ -21,7 +21,7 @@ export function useDevelopmentCreation({ actorId, role, available }: { actorId?:
   useEffect(() => { alive.current = true; authority.current = { ...origin }; return () => { alive.current = false; request.current?.abort(); attempt.current = undefined; authority.current = { actor: undefined, role: undefined }; }; }, [origin]);
   const current = () => alive.current && originKey.current === key && latestKey.current === key;
   const locked = () => lock.current || Boolean(attempt.current?.uncertain);
-  const canEdit = () => hydrated && current() && availability.current && !refused.current && !finished.current && !locked();
+  const canEdit = () => hydrated && current() && available && !refused.current && !finished.current && !locked();
   const authorize: NonNullable<CommandLifecycle["beforeDispatch"]> = identity => {
     if (!current() || identity.must_change_password) throw new ApiError(identity.must_change_password ? "PASSWORD_CHANGE_REQUIRED" : "FORBIDDEN", 403);
     if (authority.current.actor && authority.current.actor !== identity.user.id || authority.current.role && authority.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
@@ -54,7 +54,7 @@ export function useDevelopmentCreation({ actorId, role, available }: { actorId?:
     } finally { lock.current = false; if (current()) setPending(false); }
   }
   function submit(body: unknown, complete: Completion) {
-    if (!canEdit()) return Promise.resolve(undefined);
+    if (!canEdit() || !availability.current) return Promise.resolve(undefined);
     const parsed = developmentFieldsSchema.safeParse(body); if (!parsed.success) { const failure = new ApiError("VALIDATION_ERROR", 422); setError(failure); return Promise.resolve(failure); }
     const owned: Attempt = { body: structuredClone(parsed.data), key: crypto.randomUUID(), dispatched: false, uncertain: false, complete }; attempt.current = owned; setAcknowledged(false); return run(owned);
   }

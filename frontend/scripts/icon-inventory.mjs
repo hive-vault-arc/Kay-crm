@@ -10,7 +10,6 @@ async function walk(directory) {
     entry.isDirectory() ? walk(path.join(directory, entry.name)) : path.join(directory, entry.name)))).flat();
 }
 const files = (await walk(path.join(root, "src"))).filter(file => /\.[cm]?[jt]sx?$/.test(file)).sort();
-const manifest = JSON.parse(await readFile(path.join(root, "../docs/reference/iconsax/assets.json"), "utf8"));
 const selected = JSON.parse(await readFile(path.join(root, "../branding/prototype/kay-glyphs.json"), "utf8"));
 const shapeTags = new Set(["path", "circle", "rect", "ellipse", "line", "polyline", "polygon"]);
 for (const icon of selected.icons) {
@@ -21,7 +20,7 @@ for (const icon of selected.icons) {
     for (const [name, value] of Object.entries(attributes)) assert(!/^on/i.test(name) && !/href|style/i.test(name) && typeof value === "string", "Selected glyph contains an unapproved attribute");
   }
 }
-const known = new Set([...manifest.icons, ...selected.icons].map(icon => icon.export));
+const known = new Set(selected.icons.map(icon => icon.export));
 const consumers = [], chartSvg = [], violations = [];
 for (const file of files) {
   const relative = path.relative(root, file).replaceAll("\\", "/");

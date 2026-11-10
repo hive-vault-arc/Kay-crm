@@ -34,7 +34,7 @@ export function TaskRecord({ id, contactId, dealId, writable, changed, close }: 
   if (reloadError && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED"].includes(reloadError.code)) return <RecordError error={reloadError} />;
   const canWrite = writable && !task.contact_archived && task.status === "open";
   return <section aria-label="Tâche sélectionnée" className="grid min-w-0 gap-6 border-t pt-6">
-    <h3 ref={heading} tabIndex={-1} className="wrap-anywhere text-section font-medium">{task.title}</h3>
+    <h3 ref={heading} tabIndex={-1} className="wrap-anywhere text-section">{task.title}</h3>
     {reloadError ? <RecordError error={reloadError} /> : null}
     {editing && canWrite ? <TaskForm key={task.id} contactId={task.contact_id} value={task} saved={async () => { await endEdit(true); }} cancel={() => { void endEdit().catch(() => { focusEdit.current = true; setEditing(false); }); }} /> : <>
       <TaskFacts task={task} />{notice ? <p role="status" className="text-success">{notice}</p> : null}

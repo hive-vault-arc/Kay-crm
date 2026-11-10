@@ -1,6 +1,16 @@
 # Mandatory UI skill rules for KAY sprints
 
-Current owner instruction,2026-10-28: Ali requests Frontend Taste for every
+## Active reference foundation (2026-11-10)
+
+The owner-supplied KAY prototype governs the active visual foundation.
+Compare its final CSS cascade and rendered states with [DESIGN.md](../../DESIGN.md)
+and the [design system](../04-design/design-system.md). Apply design-system-ops
+to geometry and responsive behavior. Preserve the selected AFTER timing for
+any later audit. Review individual components and screens in their own passes.
+
+## Historical redesign instructions (2026-10-26 to 2026-10-28)
+
+Owner instruction,2026-10-28: Ali requests Frontend Taste for every
 frontend visual-design task, including operational app screens. Its current
 app-screen reference is now read and applicable; older dense-CRM exclusions below
 describe prior runs, not the current instruction. Apply relevant field grouping,
@@ -10,7 +20,7 @@ or run a browser inspector around the binding app-access restriction. Narrow
 changes need no new concept interview. AFTER timing remains unchanged, and the
 unavailable original-machine design-system-ops/antislop skills are not claimed.
 
-Current migration instruction,2026-10-26: the owner requests the frozen selected
+Migration instruction,2026-10-26: the owner requests the frozen selected
 prototype's appearance and intentional UX organization on `codex/redesign`.
 See the [current DESIGN override](../../DESIGN.md) and
 [execution record](design-prototype-migration-execution.md). This supersedes
@@ -20,34 +30,6 @@ raw SVG outside the semantic layer, another component/chart kit or weakened
 accessibility/authorization. Original-machine mandatory skill paths remain
 unavailable here and are not claimed executed. Keep AFTER timing and the dense
 CRM exclusions; final owner verification follows implementation as requested.
-
-Current visual-brand override,2026-10-18: Khalid selected
-[Riviera](../../branding/riviera/README.md) for shared colors, typography and
-component styling. Existing CRM layouts, Iconsax, shadcn/Tailwind/Bklit and
-functional contracts remain. Riviera supersedes older palette, system/Satoshi
-font and sidebar-color guidance in historical entries below. It does not select
-unrelated AFTER findings or authorize illustrative functionality/data.
-
-## Owner-requested Riviera rebrand: explicit current-task override (2026-10-18)
-
-Under [D36](../../decisions.md), Khalid replaced the app-wide palette and
-typography with the supplied [Riviera pack](../../branding/riviera/README.md),
-dashboard image and CRM UX guides. Riviera now owns colors, fonts, panel/control
-styling and dashboard composition. Existing route layouts and business copy,
-Iconsax, shadcn/Tailwind/Bklit, responsive behavior and all API/permission/data
-contracts remain binding. Reference sample values are illustrative and never
-become live dashboard data. The desktop rail gains an accessible collapse
-control and reuses the existing login line art; 72px is a documented geometry
-proposal pending visual verification. This branding request supersedes older
-visual colors/type and the pure-black-rail choice; the project's AFTER-only
-timing for aesthetic audit findings remains.
-
-Final evidence: headed Chrome checks17 routes at1440px/360px and all5 shell
-cases, with the 224px/72px collapse keyboard-operable and no measured overflow,
-contrast or touch-target failures. The one detector returns `[]`;
-[AFTER026](../../anti-slop/audit-026-2026-10-18.md) has0 new numbered findings.
-The shared execution ledger records commands, captures and limits. The72px
-collapsed width remains a proposal pending Khalid's product/design review.
 
 ## Historical UI redesign evidence (2026-10-16)
 

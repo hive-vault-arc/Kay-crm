@@ -10,7 +10,7 @@ export async function choosePhoto(page: Page, file: Parameters<Locator["setInput
   const gallery = page.getByRole("dialog", { name: "Photos du dossier", exact: true });
   await gallery.getByRole("button", { name: "Ajouter une photo", exact: true }).click();
   const form = gallery.getByRole("form", { name: "Ajouter une photo", exact: true });
-  await form.getByLabel("Photo à ajouter", { exact: true }).setInputFiles(file);
+  await form.getByLabel("Photo à ajouter", { exact: true }).and(form.locator('input[type="file"]')).setInputFiles(file);
   await expect(form.getByRole("button", { name: "Ajouter la photo", exact: true })).toBeEnabled(); return form;
 }
 export async function uploadPhoto(page: Page, file: Parameters<Locator["setInputFiles"]>[0]) {

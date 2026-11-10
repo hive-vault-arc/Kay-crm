@@ -11,10 +11,11 @@ import { RecordSection, RecordWorkspace } from "@/components/shared/record-works
 import { RecordDrawer } from "@/components/shared/record-drawer";
 import { RecordActions } from "@/components/shared/record-actions";
 import { useUnsavedGuard } from "@/components/shared/unsaved-guard";
-import { DealIcon, EnquiryIcon, FinanceIcon, InboxIcon, PropertyIcon, RadioIndicatorIcon } from "@/components/icons";
+import { ChevronDownIcon, DealIcon, EnquiryIcon, FinanceIcon, InboxIcon, PropertyIcon, RadioIndicatorIcon } from "@/components/icons";
 import { ContactProfilePanel } from "@/features/contacts/contact-profile-panel";
 import { campaignLabels, purchaseReasonLabels, ratingLabels } from "@/features/contacts/qualification-contracts";
 import type { StaffRole } from "@/features/contacts/contracts";
+import { ActivityForm } from "@/features/activities/activity-form";
 import { ActivityHistory } from "@/features/activities/activity-history";
 import { RecordLifecycleAction } from "@/features/discovery/record-lifecycle-action";
 import { FilePanel } from "@/features/files/file-panel";
@@ -23,7 +24,7 @@ import { OfferingFacts } from "@/features/requirements/offering-card";
 import { RequirementPanel } from "@/features/requirements/requirement-panel";
 import { ProjectLinksPanel } from "@/features/project-links/project-links-panel";
 import { ContactVisits } from "@/features/schedule/contact-visits";
-import { TaskPanel } from "@/features/work/task-panel";
+import { RecordSupportTasks } from "@/features/work/record-support-tasks";
 import { FinancePanel } from "@/features/finance/finance-panel";
 import type { ApiError } from "@/lib/api/client";
 import type { EntryDenied } from "@/features/activities/use-entry-command";
@@ -41,20 +42,21 @@ export function DealWorkspace({ deal, role, actorId, lifecycleHeldChanged, lifec
   reload: () => Promise<unknown>; error?: ApiError; notice?: string; commandState?: ReactNode; onEdit: () => void; editRef?: Ref<HTMLButtonElement>; initialTask?: string; initialTab?: string; contactChanged?: () => void; denied?: EntryDenied; recovery?: DealCommandRecovery;
 }) {
   const [historyRevision, setHistoryRevision] = useState(0);
+  const [followUpNotice, setFollowUpNotice] = useState("");
   const { request, dialog } = useUnsavedGuard();
   const canAct = !deal.contact.archived_at && !deal.archived_at;
   const edit = () => { if (!recovery?.protected && !recovery?.locked()) request(onEdit); };
   const inline = { deal, writable, busy, mutate, error, denied, recovery };
-  return <InlineEditScope><div className="kay-record-page">
+  return <InlineEditScope><div className="kay-record-page kay-sales-record">
     <CrmRecordHeader contact={deal.contact} title={deal.title} route={`/deals/${deal.id}`} backHref="/deals" badges={<><DealStageMenu deal={deal} writable={canAct} busy={busy} busyChanged={busyChanged} mutate={mutate} saved={reload} error={error} recovery={recovery} /><CrmStatusBadge state={deal.rating} dot={false}>{ratingLabels[deal.rating]}</CrmStatusBadge>{deal.archived_at ? <CrmStatusBadge state="archived">Archivée</CrmStatusBadge> : null}</>} actions={<>{writable ? <Button action="edit" ref={editRef} variant="outline" disabled={busy || recovery?.protected} onClick={edit}>Modifier</Button> : null}{canArchive ? <RecordActions disabled={recovery?.protected}><RecordLifecycleAction role={role} actorId={actorId} heldChanged={lifecycleHeldChanged} denied={lifecycleDenied} disabled={busy || recovery?.protected} kind="deals" id={deal.id} version={deal.version} archivedAt={deal.archived_at} label={deal.title} onChanged={lifecycleSaved} /></RecordActions> : null}</>} />
     {!canAct ? <p role="status" className="mb-3 text-sm text-muted-foreground">{deal.contact.archived_at ? "Contact archivé : dossier conservé en lecture seule." : "Affaire archivée : historique conservé, restauration possible pendant 30 jours."}</p> : null}
     {deal.stock_review_required ? <p role="status" className="mb-3 text-sm text-warning">Le stock lié a changé. Faites vérifier cette affaire par un responsable. Elle n’a pas été clôturée automatiquement.</p> : null}
     {deal.reservation_conflict ? <p role="status" className="mb-3 text-sm text-warning">{deal.reservation_conflict === "DEVELOPMENT_OVERLAP" ? "Une réservation du même type couvre déjà le programme entier ou une de ses unités." : "Cette offre est déjà réservée par une autre affaire."} Faites vérifier le stock par un responsable. Aucun autre dossier privé n’est affiché.</p> : null}
-    {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{commandState}
+    {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{followUpNotice ? <p role="status" className="mb-3 text-sm text-success">{followUpNotice}</p> : null}{commandState}
     <RecordWorkspace label="Rubriques de l’affaire" initialTab={initialTab} tabs={[
       { id: "overview", label: "Aperçu", content: <>
-        <ContactProfilePanel actorId={actorId} role={role} contact={deal.contact} writable={writable} changed={contactChanged} denied={denied} />
-        <RecordSection title="Qualification" action={<RecordDrawer label="Recherches" action="search" description="Critères de recherche liés au contact."><RequirementPanel contactId={deal.contact.id} writable={canAct} /></RecordDrawer>}><RecordFacts>
+        <ContactProfilePanel salesRecord actorId={actorId} role={role} contact={deal.contact} writable={writable} changed={contactChanged} denied={denied} />
+        <RecordSection title="Qualification"><RecordFacts>
           <DealInlineField {...inline} icon={FinanceIcon} label="Budget" field="initial_budget" display={deal.initial_budget || "À qualifier"} />
           <DealInlineField {...inline} icon={RadioIndicatorIcon} label="Qualification" field="rating" display={ratingLabels[deal.rating]} />
           <DealInlineField {...inline} icon={DealIcon} label="Motifs d’achat" field="purchase_reasons" display={deal.purchase_reasons.map(code => purchaseReasonLabels[code]).join(", ") || "Non renseignés"} />
@@ -64,13 +66,19 @@ export function DealWorkspace({ deal, role, actorId, lifecycleHeldChanged, lifec
           <RecordFact icon={EnquiryIcon} label="Prospect d’origine">{deal.enquiry_id ? <Link className="inline-flex min-h-control items-center hover:underline" href={`/leads/${deal.enquiry_id}`}>Voir le prospect</Link> : "Aucun prospect lié"}</RecordFact>
         </RecordFacts></RecordSection>
         <RecordSection title="Notes"><RecordFacts columns={1}><DealInlineField {...inline} icon={InboxIcon} label="Notes" field="notes" display={<span className="whitespace-pre-wrap">{deal.notes || "Aucune note renseignée."}</span>} /></RecordFacts></RecordSection>
+        <div className="kay-sales-secondary"><RecordDrawer label="Recherches" action="search" description="Critères de recherche liés au contact."><RequirementPanel contactId={deal.contact.id} writable={canAct} /></RecordDrawer></div>
       </> },
       { id: "projects", label: "Projets", content: <><RecordSection title="Projet et offre retenus"><RecordFacts columns={1}><DealInlineField {...inline} icon={PropertyIcon} label="Projets" field="projects" display={deal.projects.map(project => project.name).join(" · ") || "Non renseignés"} /></RecordFacts><div className="grid min-w-0 gap-3"><h3 className="text-sm font-medium">Offre d’inventaire liée</h3>{deal.offering ? <OfferingFacts offering={deal.offering} /> : <p className="text-sm text-muted-foreground">Aucune offre d’inventaire liée.</p>}</div></RecordSection><ProjectLinksPanel scope="deals" id={deal.id} writable={canAct} onChanged={() => setHistoryRevision(value => value + 1)} /><CustomerOffers key={deal.id} deal={deal} writable={writable} busy={busy} busyChanged={busyChanged} mutate={mutate} error={error} denied={denied} recovery={recovery} /></> },
-      { id: "activity", label: "Activités", content: <><ActivityHistory scope="deals" id={deal.id} writable={canAct} denied={denied} revision={deal.version + historyRevision} />{deal.enquiry_id ? <ActivityHistory scope="deals" id={deal.id} origin /> : null}<details className="kay-contact-more"><summary>Historique de l’affaire</summary><DealHistory id={deal.id} revision={deal.version} /></details><details className="kay-contact-more"><summary>Résultats, clôture et réouverture</summary><OutcomeHistory id={deal.id} revision={deal.version} /></details></> },
+      { id: "activity", label: "Activités", content: <div className="kay-sales-history"><ActivityHistory scope="deals" id={deal.id} writable={canAct} denied={denied} revision={deal.version + historyRevision} />{deal.enquiry_id ? <ActivityHistory scope="deals" id={deal.id} origin /> : null}<details className="kay-contact-more"><summary>Historique de l’affaire <ChevronDownIcon size={16} aria-hidden="true" /></summary><DealHistory id={deal.id} revision={deal.version} /></details><details className="kay-contact-more"><summary>Résultats, clôture et réouverture <ChevronDownIcon size={16} aria-hidden="true" /></summary><OutcomeHistory id={deal.id} revision={deal.version} /></details></div> },
       { id: "documents", label: "Documents", content: <><FilePanel actorId={actorId} role={role} parentKind="deal" parentId={deal.id} writable={writable && !busy} /><PreparedDocuments parentKind="deal" id={deal.id} /></> },
     ]} aside={<>
-      <RecordSection title="Suivi"><RecordFacts columns={1}><DealInlineField {...inline} icon={DealIcon} label="Action prévue" field="next_action" display={<span className="whitespace-pre-wrap">{deal.next_action || "Aucune prochaine action renseignée."}</span>} /></RecordFacts><RecordDrawer label="Voir les tâches" title="Tâches de l’affaire" action="task" description="Échéances et responsables de cette affaire." initialOpen={Boolean(initialTask)}><TaskPanel contactId={deal.contact.id} dealId={deal.id} writable={canAct} initialTask={initialTask} /></RecordDrawer></RecordSection>
-      <ContactVisits contactId={deal.contact.id} writable={canAct} />
+      <RecordSection title="Suivi"><RecordFacts columns={1}><DealInlineField {...inline} icon={DealIcon} label="Action prévue" field="next_action" display={<span className="whitespace-pre-wrap">{deal.next_action || "Aucune prochaine action renseignée."}</span>} /></RecordFacts><RecordSupportTasks contactId={deal.contact.id} dealId={deal.id} writable={canAct} initialTask={initialTask} onSaved={() => setFollowUpNotice("Tâche enregistrée.")} />
+        {canAct ? <div className="kay-record-support-actions">
+          <RecordDrawer label="Consigner un échange" action="activity" description="Ajoutez une note ou un échange à l’historique de l’affaire.">
+            {(close, saved) => <ActivityForm path={`/api/v1/deals/${deal.id}/activities`} denied={denied} cancel={close} saved={() => { saved(); setFollowUpNotice("Activité enregistrée."); setHistoryRevision(value => value + 1); }} />}
+          </RecordDrawer>
+        </div> : null}</RecordSection>
+      <ContactVisits contactId={deal.contact.id} writable={canAct} showCalendar />
       <RecordSection title="Réservation"><p className="text-sm text-muted-foreground">{deal.active_reservation ? "Une réservation est active sur l’offre liée. Gérez-la depuis le menu Étape." : "Aucune réservation active. Réservez une offre depuis le menu Étape."}</p></RecordSection>
       {role !== "agent" ? <RecordSection title="Finance" action={<RecordDrawer label="Voir la finance" title="Commissions et encaissements" action="finance" description="Commissions et encaissements autorisés pour cette affaire." initialOpen={initialTab === "finance"}><FinancePanel deal={deal} actorId={actorId} role={role} /></RecordDrawer>}><p className="text-sm text-muted-foreground">Commissions et encaissements facultatifs.</p></RecordSection> : null}
     </>} />{dialog}

@@ -1,9 +1,6 @@
 /* Selected prototype: compact directories, one dossier, a natural support rail. */
 .kay-directory-header { margin:0; }
 .kay-page-navigation { min-width:0; margin-right:auto; }
-.kay-project-kind-tabs { display:flex; gap:4px; flex-wrap:wrap; padding:0; border:0; background:transparent; }
-.projects-page [data-slot=tabs-content][hidden] { display:none!important; }
-.kay-project-view-options { display:flex; gap:4px; padding:0; border:0; background:transparent; }
 .kay-directory-tools { display:flex; align-items:center; gap:8px; min-width:0; }
 .kay-directory-utilities { display:grid; gap:4px; width:288px; max-width:calc(100vw - 32px); }
 .kay-directory-utilities > [data-slot=button] { justify-content:flex-start; width:100%; }
@@ -14,50 +11,24 @@
 .kay-filter-rail .crm-filter-heading { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-bottom:16px; }
 .kay-filter-rail .crm-filter-heading h2 { flex:1; font-size:16px; }
 .kay-filter-rail .crm-filter-heading > span { width:100%; order:2; color:var(--workspace-muted); font-size:12px; }
-.kay-filter-rail label,.kay-filter-fields label { font-size:13px; font-weight:500; }
+.kay-filter-rail label,.kay-filter-fields label { font-size:var(--workspace-type-label); font-weight:var(--workspace-type-label-weight); }
 .kay-filter-rail summary,.kay-filter-fields summary { min-height:var(--control-touch-target); align-content:center; }
 .kay-list-controls { display:flex; justify-content:flex-end; align-items:center; gap:8px; min-width:0; }
 .kay-list-search { flex:1; min-width:0; }
 .kay-list-search input { max-width:360px; }
-.kay-list-results { display:grid; align-content:start; gap:12px; min-width:0; padding:20px; border:1px solid var(--workspace-line); border-radius:24px; background:var(--workspace-panel); box-shadow:var(--workspace-shadow); }
+.kay-list-results { display:grid; align-content:start; gap:12px; min-width:0; padding:20px; border:1px solid var(--workspace-floating-edge); border-radius:var(--workspace-geometry-panel-radius); background:var(--workspace-panel); box-shadow:var(--workspace-shadow); }
 .kay-list-results[data-surface=false] { padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
-.kay-project-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); grid-auto-rows:1fr; gap:16px; align-items:stretch; align-content:start; min-width:0; }
-.kay-project-card { display:grid; min-width:0; border:1px solid var(--workspace-line); border-radius:24px; background:var(--workspace-panel); overflow:hidden; }
-.kay-project-open { display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:auto 1fr; min-width:0; text-decoration:none; }
-.kay-project-open:hover { background:var(--workspace-hover); }
-.kay-project-open:focus-visible { outline:2px solid var(--workspace-focus); outline-offset:-3px; border-radius:24px; }
-.kay-project-media { position:relative; height:180px; min-width:0; overflow:hidden; background:var(--workspace-field); }
-.kay-project-media > div { position:absolute; inset:0; width:100%; height:100%; border:0; padding:8px; }
-.kay-project-media > div > span { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
-.kay-project-body { display:grid; gap:10px; align-content:start; min-width:0; padding:16px; }
-.kay-project-head { display:flex; align-items:center; gap:8px; min-width:0; }
-.kay-project-head h2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; flex:1; min-width:0; font-size:16px; font-weight:600; line-height:1.4; overflow-wrap:anywhere; }
-.kay-project-head > svg { flex:none; color:var(--workspace-muted); }
-.kay-project-location { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 8px; min-width:0; color:var(--workspace-muted); font-size:12px; line-height:1.5; }
-.kay-project-location > span:first-child { display:flex; align-items:start; gap:4px; min-width:0; overflow-wrap:anywhere; }
-.kay-project-location svg { flex:none; margin-top:2px; }
-.kay-project-category { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px; font-size:12px; color:var(--workspace-muted); }
-.kay-project-counts { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 8px; font-size:12px; line-height:1.5; }
-.kay-stock-progress { display:block; width:100%; height:3px; border:0; border-radius:999px; overflow:hidden; background:var(--workspace-field); color:var(--workspace-primary); }
-.kay-stock-progress::-webkit-progress-bar { background:var(--workspace-field); }
-.kay-stock-progress::-webkit-progress-value { background:var(--workspace-primary); }
-.kay-stock-progress::-moz-progress-bar { background:var(--workspace-primary); }
-.kay-project-offers { display:grid; gap:8px; min-width:0; }
-.kay-project-offers > li { display:grid; grid-template-columns:minmax(0,64px) minmax(0,1fr) auto; align-items:center; gap:8px; min-width:0; font-size:12px; line-height:1.5; }
-.kay-project-offers > li > div { text-align:right; font-weight:600; }
-.kay-project-offers > li > span:first-child { color:var(--workspace-muted); }
-.kay-project-no-offer { font-size:12px; color:var(--workspace-muted); }
 .kay-shell [data-slot=table-container] { border:0; border-radius:0; background:transparent; }
 .kay-shell [data-slot=table-header] { background:transparent; }
-.kay-shell [data-slot=table-head] { background:var(--workspace-header); color:var(--workspace-ink); height:44px; padding:10px 14px; font-size:13px; font-weight:500; }
-.kay-shell [data-slot=table-head]:first-child { border-radius:14px 0 0 14px; }
-.kay-shell [data-slot=table-head]:last-child { border-radius:0 14px 14px 0; }
+.kay-shell [data-slot=table-head] { background:var(--workspace-header); color:var(--workspace-ink); height:44px; padding:10px 14px; font-size:var(--workspace-type-table-heading); font-weight:var(--workspace-type-table-heading-weight); }
+.kay-shell [data-slot=table-head]:first-child { border-start-start-radius:var(--workspace-geometry-compact-radius); border-end-start-radius:var(--workspace-geometry-compact-radius); }
+.kay-shell [data-slot=table-head]:last-child { border-start-end-radius:var(--workspace-geometry-compact-radius); border-end-end-radius:var(--workspace-geometry-compact-radius); }
 .kay-shell [data-slot=table-cell] { padding:10px 14px; font-size:14px; line-height:1.5; }
 .kay-shell [data-slot=table-row] { border-color:var(--workspace-line); }
 .kay-shell [data-slot=table-row]:hover { background:var(--workspace-hover); }
 .kay-shell .crm-directory-table tbody tr:nth-child(even) { background:transparent; }
 .kay-shell .crm-directory-table tbody tr:hover { background:var(--workspace-hover); }
-:root .crm-status-badge { gap:5px; padding:3px 7px; border-radius:999px; font-size:12px; line-height:1.4; }
+:root .crm-status-badge { gap:5px; padding:2px 7px; border-radius:var(--workspace-geometry-pill-radius); font-size:var(--workspace-type-badge); font-weight:var(--workspace-type-badge-weight); line-height:var(--workspace-type-badge-line); }
 :root .crm-status-dot { width:6px; height:6px; }
 .kay-shell .crm-selection-toolbar { gap:8px; padding:8px 12px; border-radius:14px; background:var(--workspace-selected); }
 :root .record-facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,max(var(--workspace-geometry-fact-column-min-width),calc((100% - var(--workspace-geometry-fact-column-gap))/2))),1fr)); gap:12px var(--workspace-geometry-fact-column-gap); margin:0; }
@@ -88,7 +59,7 @@
 .kay-record-section + .kay-record-section { border-top:1px solid var(--workspace-line); margin-top:24px; padding-top:20px; }
 .kay-record-aside .kay-record-section + .kay-record-section { margin-top:32px; padding-top:28px; }
 .kay-section-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 16px; min-width:0; margin-bottom:16px; }
-.kay-section-head h2 { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0; font-size:16px; line-height:1.4; font-weight:600; }
+.kay-section-head h2 { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0; font-size:var(--workspace-type-section); line-height:var(--workspace-type-section-line); font-weight:var(--workspace-type-section-weight); letter-spacing:var(--workspace-type-section-tracking); }
 .kay-section-count { display:inline-grid; place-items:center; min-width:24px; height:24px; padding:0 6px; border-radius:999px; background:var(--workspace-field); font-size:12px; color:var(--workspace-muted); }
 .kay-section-actions { display:flex; align-items:center; flex-wrap:wrap; gap:8px; min-width:0; }
 .kay-section-description { margin:0 0 16px; font-size:13px; line-height:1.6; color:var(--workspace-muted); }
@@ -197,31 +168,12 @@
 @media(max-width:830px) {
   .kay-directory-header .kay-page-actions { flex:none; }
   .kay-page-navigation { order:3; width:100%; margin:0; }
-  .kay-project-kind-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; width:100%; }
-  .kay-project-kind-tabs [data-slot=tabs-trigger] { min-width:0; font-size:12px; padding:8px; white-space:normal; }
-  .kay-project-view-options { display:none!important; }
   .kay-directory-tools { gap:6px; }
   .kay-directory-tools > [data-slot=button] { font-size:12px; padding-inline:10px; }
   .kay-filter-layout { display:flex; flex-direction:column; gap:8px; }
   .kay-list-controls,.kay-list-results { width:100%; }
   .kay-list-results { padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
   .kay-list-controls { gap:8px; }
-  .kay-project-grid { grid-template-columns:minmax(0,1fr); gap:8px; }
-  .kay-project-card { padding:4px; border-radius:18px; }
-  .kay-project-open { grid-template-columns:80px minmax(0,1fr); grid-template-rows:minmax(0,1fr); min-height:88px; border-radius:14px; }
-  .kay-project-open:focus-visible { border-radius:14px; }
-  .kay-project-media { height:auto; min-height:88px; border-radius:14px; }
-  .kay-project-body { align-content:center; gap:5px; padding:6px 6px 6px 10px; }
-  .kay-project-head h2 { font-size:13px; line-height:1.35; }
-  .kay-project-location { font-size:11px; line-height:1.4; gap:3px 6px; }
-  .kay-project-category { font-size:10px; gap:4px; }
-  .kay-project-category [data-slot=badge] { font-size:10px; padding:2px 5px; }
-  .kay-project-offers { gap:4px; }
-  .kay-project-offers > li { grid-template-columns:minmax(0,40px) minmax(0,1fr) auto; gap:4px; font-size:10px; line-height:1.4; }
-  .kay-project-offers > li > div { font-size:11px; }
-  :root .kay-project-offers .crm-status-badge { max-width:76px; padding:2px 5px; font-size:10px; white-space:normal; overflow-wrap:anywhere; }
-  .kay-project-offers [data-slot=badge] { max-width:76px; padding:2px 5px; font-size:10px; white-space:normal; }
-  .kay-project-counts { font-size:11px; }
   .kay-linked-project-columns { grid-template-columns:minmax(0,1fr); }
   .kay-linked-project-columns > section + section { padding:20px 0 0; border-left:0; border-top:1px solid var(--workspace-line); }
   .kay-record-heading { align-items:flex-start; gap:8px; padding-block:8px 12px; }

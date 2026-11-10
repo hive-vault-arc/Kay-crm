@@ -194,7 +194,7 @@ test("The real ownership dialog protects its reviewed fields, cancel and Escape 
   assert.equal(calls.length, 3); assert.equal(find(render(), "AlertDialog")[0].props.open, false);
 });
 
-const recordModules = { "react/jsx-runtime": runtime, "next/link": { default: "Link" }, "@/components/shared/page-header": { PageHeader: "Header" }, "@/components/shared/crm-presentation": { CrmRecordHeader: "RecordHeader", CrmStatusBadge: "Badge" }, "@/components/shared/record-workspace": { RecordSection: "Section", RecordWorkspace: "Workspace" }, "@/components/shared/record-drawer": { RecordDrawer: "Drawer" }, "@/components/shared/inline-record-field": { InlineEditScope: "Scope" }, "@/lib/api/client": { ApiError }, "@/lib/format": { formatInstant: value => value }, "@/components/icons": {} };
+const recordModules = { "react/jsx-runtime": runtime, "@/components/ui/skeleton": { Skeleton: "Skeleton" }, "next/link": { default: "Link" }, "@/components/shared/page-header": { PageHeader: "Header" }, "@/components/shared/crm-presentation": { CrmRecordHeader: "RecordHeader", CrmStatusBadge: "Badge" }, "@/components/shared/record-workspace": { RecordSection: "Section", RecordWorkspace: "Workspace" }, "@/components/shared/record-drawer": { RecordDrawer: "Drawer" }, "@/components/shared/inline-record-field": { InlineEditScope: "Scope" }, "@/lib/api/client": { ApiError }, "@/lib/format": { formatInstant: value => value }, "@/components/icons": {} };
 
 function contactAliasWorkspace() {
   const h = hooks(), canonical = ownershipContact(), id = randomUUID(), query = { value: canonical, refresh() {}, refreshQuietly() { refreshes++; } }; let refreshes = 0, fresh = canonical;

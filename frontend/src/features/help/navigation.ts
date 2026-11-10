@@ -14,6 +14,10 @@ export function helpDirectoryPath(navigation: Partial<HelpNavigation> = {}) {
   if (navigation.page && navigation.page > 1) params.set("page", String(navigation.page));
   return `/help${params.size ? `?${params}` : ""}`;
 }
+export function helpArticlePath(slug: string, navigation?: HelpNavigation) {
+  const context = navigation && (navigation.query || navigation.page > 1) ? helpDirectoryPath(navigation).slice("/help".length) : "";
+  return `/help/${slug}${context}`;
+}
 export function helpGuidePage(articles: HelpArticle[], requestedPage: number) {
   const size = 20;
   const page = Math.max(1, Math.min(requestedPage, Math.max(1, Math.ceil(articles.length / size))));

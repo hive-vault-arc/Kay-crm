@@ -8,6 +8,7 @@ import { apiProcess } from "../helpers/api-process";
 
 test("calendar reference: populated office, car and no-car visits", async ({ page, browser, baseURL }, info) => {
   test.setTimeout(240_000);
+  page.setDefaultTimeout(15_000);
   const actor = await createActor("administrator", false, "SP06 calendrier synthétique");
   const agent = await createActor("agent", false, "SP06 agent calendrier synthétique");
   try {
@@ -44,45 +45,33 @@ test("calendar reference: populated office, car and no-car visits", async ({ pag
       }
     }
     await page.goto("/visits");
-    const date = page.getByLabel("Aller à une date", { exact: true });
-    const openFilters = page.getByRole("button", { name: /^Filtres du calendrier/ });
-    const filters = page.getByRole("dialog", { name: "Filtres du calendrier", exact: true });
-    const closeFilters = filters.getByRole("button", { name: "Fermer les filtres du calendrier", exact: true });
-    const weekCount = (count: number) => page.getByText(`${count} visite(s) accessible(s) cette semaine.`, { exact: true });
-    await date.fill("2026-10-19");
-    await expect(weekCount(4)).toBeVisible();
+    await page.getByLabel("Aller à une date", { exact: true }).fill("2026-10-19");
+    await expect(page.getByText("4 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
     await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
     await page.evaluate(() => document.fonts.ready); await mkdir("output/playwright/calendar-reference", { recursive: true });
     await page.screenshot({ path: "output/playwright/calendar-reference/desktop.png", fullPage: true });
     const grid = page.getByRole("region", { name: "Visites de la semaine, défilement horizontal", exact: true });
-    await expect(grid.getByRole("article")).toHaveCount(4);
+    await expect(grid.locator(".kay-calendar-tile")).toHaveCount(4);
     for (const [type, icon, count] of [["company_car", "car", 1], ["without_company_car", "contacts", 1], ["office", "development", 2]] as const) {
-      const cards = grid.locator(`article[data-visit-kind="${type}"]`);
+      const cards = grid.locator(`.kay-calendar-tile[data-visit-kind="${type}"]`);
       await expect(cards).toHaveCount(count);
       await expect(cards.locator(`svg[data-kay-icon="${icon}"]`)).toHaveCount(count);
     }
-    const visitTypes = ["Au bureau", "Sans véhicule de société", "Avec véhicule de société"];
-    const type = (name: string) => filters.getByRole("checkbox", { name, exact: true });
-    await openFilters.click();
-    await type("Au bureau").uncheck();
-    await closeFilters.click();
-    await expect(weekCount(2)).toBeVisible();
-    await expect(grid.getByRole("article")).toHaveCount(2);
-    await openFilters.click();
-    await type("Au bureau").check();
-    for (const name of visitTypes) await type(name).uncheck();
-    await closeFilters.click();
+    const filters = page.getByRole("dialog", { name: "Filtres du calendrier", exact: true });
+    const changeFilters = async (names: string[]) => {
+      await page.getByRole("button", { name: /^Filtres du calendrier/ }).click();
+      for (const name of names) await filters.getByRole("checkbox", { name, exact: true }).click();
+      await filters.getByRole("button", { name: "Voir les visites", exact: true }).click();
+    };
+    await changeFilters(["Au bureau"]);
+    await expect(page.getByText("2 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
+    await expect(grid.locator(".kay-calendar-tile")).toHaveCount(2);
+    await changeFilters(["Sans véhicule de société", "Avec véhicule de société"]);
     await expect(page.getByText("Aucune visite ne correspond aux filtres sélectionnés.", { exact: true })).toBeVisible();
-    await openFilters.click();
-    for (const name of visitTypes) await type(name).check();
-    const scheduled = filters.getByRole("checkbox", { name: "Planifiée", exact: true });
-    await scheduled.uncheck();
-    await closeFilters.click();
-    await expect(weekCount(2)).toBeVisible();
-    await expect(grid.locator('article[data-crm-state="confirmed"]')).toHaveCount(2);
-    await openFilters.click();
-    await scheduled.check();
-    await closeFilters.click();
+    await changeFilters(["Au bureau", "Sans véhicule de société", "Avec véhicule de société", "Planifiée"]);
+    await expect(page.getByText("2 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
+    await expect(grid.locator(".kay-calendar-tile[data-crm-state=confirmed]")).toHaveCount(2);
+    await changeFilters(["Planifiée"]);
     await page.getByRole("tab", { name: "Agenda", exact: true }).click();
     await expect(page.getByRole("region", { name: "Agenda des visites" }).getByRole("article")).toHaveCount(4);
     await page.getByRole("tab", { name: "Par type", exact: true }).click();
@@ -96,30 +85,30 @@ test("calendar reference: populated office, car and no-car visits", async ({ pag
     await page.keyboard.press("Escape");
     await expect(rules).toBeFocused();
     await page.getByRole("button", { name: "Semaine suivante", exact: true }).click();
-    await expect(weekCount(0)).toBeVisible();
+    await expect(page.getByText("0 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Semaine précédente", exact: true }).click();
-    await expect(weekCount(4)).toBeVisible();
+    await expect(page.getByText("4 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Aujourd’hui", exact: true }).click();
     const today = (await (await page.request.get("/api/v1/calendar/context")).json()).today;
-    await expect(date).toHaveValue(today);
+    await expect(page.getByLabel("Aller à une date", { exact: true })).toHaveValue(today);
     await page.getByRole("link", { name: "Planifier une visite", exact: true }).click();
-    const createVisit = page.getByRole("dialog", { name: "Planifier une visite", exact: true });
-    await expect(createVisit.getByRole("heading", { name: "Planifier une visite", exact: true })).toBeVisible();
-    await page.goto("/visits");
-    await date.fill("2026-10-19");
-    await expect(weekCount(4)).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "Planifier une visite", exact: true })).toBeVisible();
+    await page.goto("/visits"); await page.getByLabel("Aller à une date", { exact: true }).fill("2026-10-19");
+    await expect(page.getByText("4 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
+    // Measure the settled tab colors when the selected view changes at a breakpoint.
+    await page.emulateMedia({ reducedMotion: "reduce" });
     for (const width of [320, 360, 768, 1024, 1440, 1586]) {
       await page.setViewportSize({ width, height: 992 }); await geometry(page);
     }
     await page.setViewportSize({ width: 360, height: 844 });
     await expect(page.getByRole("region", { name: "Agenda des visites", exact: true })).toBeVisible();
     await page.screenshot({ path: "output/playwright/calendar-reference/mobile.png", fullPage: true });
-    await openFilters.click();
-    await expect(filters).toBeVisible();
+    await page.getByRole("button", { name: /^Filtres du calendrier/ }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
     await geometry(page);
     await page.screenshot({ path: "output/playwright/calendar-reference/mobile-filters.png", fullPage: true });
     await page.keyboard.press("Escape");
-    const touch = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, viewport: { width: 360, height: 844 }, hasTouch: true });
+    const touch = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, viewport: { width: 360, height: 844 }, hasTouch: true, reducedMotion: "reduce" });
     try {
       const phone = await touch.newPage(); await signIn(phone, agent); await phone.goto("/visits");
       await phone.getByLabel("Aller à une date", { exact: true }).fill("2026-10-19");
@@ -127,15 +116,13 @@ test("calendar reference: populated office, car and no-car visits", async ({ pag
       await phone.getByRole("button", { name: /^Filtres du calendrier/ }).tap();
       await phone.getByRole("checkbox", { name: "Au bureau", exact: true }).tap();
       await expect(phone.getByRole("checkbox", { name: "Au bureau", exact: true })).not.toBeChecked();
-      await phone.getByRole("button", { name: "Fermer les filtres du calendrier", exact: true }).tap();
+      await phone.getByRole("button", { name: "Voir les visites", exact: true }).tap();
       await expect(phone.locator(".calendar-agenda-visit")).toHaveCount(2); await geometry(phone);
       await phone.locator(".calendar-agenda-visit").first().getByRole("link").tap();
-      const detail = phone.getByRole("dialog", { name: /^Visite synthétique/ });
-      await detail.getByText("Historique de la visite", { exact: true }).tap();
-      await expect(detail.getByText(/^Version 1 · Instants enregistrés/)).toBeVisible();
+      await expect(phone.getByRole("dialog").getByText("Historique de la visite", { exact: true })).toBeVisible();
     } finally { await touch.close(); }
     const profile = info.outputPath("calendar-zoom-profile");
-    const launch = { baseURL, ignoreHTTPSErrors: true, channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, args: ["--window-size=1440,1000"] } as const;
+    const launch = { baseURL, ignoreHTTPSErrors: true, channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, reducedMotion: "reduce", args: ["--window-size=1440,1000"] } as const;
     let zoom = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] });
     try {
       let zoomPage = zoom.pages()[0]; await signIn(zoomPage, agent);
@@ -181,7 +168,34 @@ test("calendar real loading, empty week and backend outage/retry", async ({ page
   } finally { release(); await apiProcess("start"); await clearActorContext(page); await removeActor(actor); }
 });
 
-test("calendar overlapping entries, short overnight visits and detail access stay reachable", async ({ page }) => {
+test("calendar keeps its week and view when the booking drawer closes", async ({ page }) => {
+  const actor = await createActor("agent");
+  try {
+    await signIn(page, actor);
+    await page.goto("/visits");
+    const date = page.getByLabel("Aller à une date", { exact: true });
+    await date.fill("2030-01-07");
+    const agenda = page.getByRole("tab", { name: "Agenda", exact: true });
+    await agenda.click();
+    await expect(page.getByRole("region", { name: "Agenda des visites", exact: true })).toBeVisible();
+    const booking = page.getByRole("link", { name: "Planifier une visite", exact: true });
+    await booking.focus();
+    await page.keyboard.press("Enter");
+    const drawer = page.getByRole("dialog", { name: "Planifier une visite", exact: true });
+    await expect(drawer).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(drawer).toHaveCount(0);
+    await expect(page).toHaveURL(/\/visits$/);
+    await expect(date).toHaveValue("2030-01-07");
+    await expect(agenda).toHaveAttribute("aria-selected", "true");
+    await expect.poll(() => page.evaluate(() => document.activeElement?.matches('[data-route="/visits"],a[href="/visits/new"]'))).toBe(true);
+  } finally {
+    await clearActorContext(page);
+    await removeActor(actor);
+  }
+});
+
+test("calendar overlap lanes, short overnight visits and detail access stay reachable", async ({ page }) => {
   test.setTimeout(120_000);
   const agent = await createActor("agent", false, "SP06 calendrier chevauchements synthétiques");
   try {

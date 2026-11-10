@@ -15,7 +15,7 @@ const navigation = loadServer(`${base}navigation.ts`);
 const helpViewModules = {
   react, "react/jsx-runtime": jsxRuntime,
   "next/link": { default: props => { const safe = { ...props }; delete safe.prefetch; return createElement("a", safe); } },
-  "next/navigation": { useRouter: () => ({ push() {} }) }, "@/components/icons": { SearchIcon: () => null, ForwardIcon: () => null, AlertIcon: () => null },
+  "next/navigation": { useRouter: () => ({ push() {} }) }, "@/components/icons": { SearchIcon: () => null, ForwardIcon: () => null, AlertIcon: () => null, FileIcon: () => null },
   "@/components/ui/button": { Button: ({ asChild, children, disabled, type }) => asChild ? children : createElement("button", { type, disabled }, children) },
   "@/components/ui/input": { Input: "input" }, "@/components/ui/label": { Label: "label" },
   "@/components/shared/page-header": { PageHeader: ({ title }) => createElement("h1", null, title) },
@@ -36,7 +36,7 @@ test("help home/catalog render scoped card links and reader retains every sectio
   assert.match(catalog, /kay-help-guide-grid/);
   for (const article of articles.filter(article => article.category === "start")) assert.ok(catalog.includes(`href="/help/${article.slug}"`));
   const article = helpArticleForRole("creer-prospect", "agent");
-  const html = renderToStaticMarkup(createElement(HelpArticle, { article, category: "Prospects et affaires", related: [] }));
+  const html = renderToStaticMarkup(createElement(HelpArticle, { article, related: [] }));
   const escaped = value => renderToStaticMarkup(createElement("span", null, value)).slice(6, -7);
   assert.match(html, /kay-help-reader-columns/); assert.match(html, /href="\/help\?topic=crm"/);
   for (const section of article.sections) {

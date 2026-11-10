@@ -20,7 +20,7 @@ export function PropertyCampaign({ kind, offerings }: { kind: Offering["kind"]; 
 export function PropertyCard({ property }: { property: PropertySummary }) {
   const href = `/projects/properties/${property.id}`, name = property.marketing_name || property.reference;
   const location = property.location || property.listing_details.city || "Localisation non renseignée";
-  return <InventoryCard reference={property.reference} name={name} category={property.category} location={location} href={href} offerings={property.offerings} area={property.area_sqm} />;
+  return <InventoryCard reference={property.reference} name={name} category={property.category} location={location} href={href} offerings={property.offerings} area={property.area_sqm} rooms={property.rooms} />;
 }
 const columns: ColumnDef<PropertySummary>[] = [
   { id: "name", header: "Bien", cell: ({ row: { original: item } }) => <div className="flex min-w-0 items-center gap-3"><InventoryThumbnail kind="property" id={item.id} compact /><div className="grid min-w-0 gap-1"><Link className="inline-flex min-h-control items-center font-semibold text-link underline" href={`/projects/properties/${item.id}`}>{item.marketing_name || item.reference}</Link><span className="text-xs text-muted-foreground">{item.reference}</span></div></div> },

@@ -1,397 +1,81 @@
 ---
-name: KAY Selected Workspace
-description: Owner-selected frozen prototype presentation, ported onto the existing French operational CRM.
+name: KAY Reference Workspace
+description: Shared visual system from the owner-supplied KAY prototype.
 colors:
-  primary: "#20221E"
-  primary-hover: "#383B32"
-  primary-pressed: "#181A16"
   canvas: "#F6F7F9"
-  surface: "#FFFFFF"
   ink: "#181918"
   muted: "#4C5562"
-  gold-text: "#181918"
-  inverse: "#FFFFFF"
-  sidebar: "#F6F7F9"
-  sidebar-active: "#20221E"
-  sidebar-label: "#4C5562"
-  control-border: "#C9D1DC"
-  divider: "#C9D1DC"
-  success: "#2D7653"
-  success-background: "#ECFDF5"
-  warning: "#73570C"
-  warning-background: "#FFF7D6"
-  danger: "#B24B55"
-  danger-background: "#FFF1F2"
-  info: "#2563EB"
-  info-background: "#EFF6FF"
-  stage-blue: "#3B82F6"
-  stage-cyan: "#06B6D4"
-  stage-yellow: "#FACC15"
-  stage-purple: "#8B5CF6"
-  stage-green: "#22C55E"
-  stage-orange: "#F97316"
-  stage-red: "#EF4444"
-  stage-pink: "#EC4899"
-  stage-slate: "#64748B"
+  primary: "#20221E"
+  primary-hover: "#383B32"
+  control: "#E7ECF2"
+  border: "#C9D1DC"
+  focus: "#64748B"
+  dark-canvas: "#151719"
+  dark-ink: "#E8E9EB"
+  dark-control: "#303944"
+  dark-border: "#4B5666"
 typography:
-  display:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "20px"
-    fontWeight: 650
-    lineHeight: 1.3
-    letterSpacing: "-0.025em"
   title:
     fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "20px"
-    fontWeight: 650
+    fontSize: "19px"
+    fontWeight: 700
     lineHeight: 1.3
-    letterSpacing: "-0.01em"
+    letterSpacing: "-0.025em"
   body:
     fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "14px"
-    fontWeight: 400
     lineHeight: "21px"
-  label:
+  section:
+    fontSize: "17px"
+    fontWeight: 650
+    lineHeight: 1.4
+    letterSpacing: "-0.02em"
+  control:
     fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "14px"
-    fontWeight: 500
-    lineHeight: "20px"
-  metadata:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "12px"
-    fontWeight: 400
-    lineHeight: "18px"
+    fontSize: "13px"
+    fontWeight: 600
+    lineHeight: 1.25
 rounded:
-  icon: "999px"
-  control: "999px"
   panel: "24px"
+  inset: "18px"
+  field: "20px"
+  pill: "999px"
 spacing:
-  unit: "4px"
+  micro: "4px"
   icon: "8px"
   compact: "12px"
   regular: "16px"
-  section: "20px"
-  page: "24px"
-  large: "32px"
-components:
-  button-creation:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.inverse}"
-    rounded: "{rounded.control}"
-    padding: "8px 16px"
-  button-outline:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    padding: "8px 16px"
-  input:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    padding: "8px 12px"
-    height: "44px"
-  navigation-current:
-    backgroundColor: "{colors.sidebar-active}"
-    textColor: "{colors.inverse}"
-    rounded: "{rounded.icon}"
-    padding: "8px 12px"
-  badge-success:
-    backgroundColor: "{colors.success-background}"
-    textColor: "{colors.success}"
-    rounded: "{rounded.icon}"
-    padding: "4px 8px"
-  panel:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.panel}"
-    padding: "16px"
+  panel: "20px"
+  group: "24px"
+  trailing: "32px"
 ---
 
-# KAY interface design direction
+# KAY workspace design
 
-## Current owner-selected workspace: 2026-10-26
+Use the owner-supplied `kay/kay` project dated 2026-11-10 as the visual
+reference. Read the stylesheet imports in `src/main.js` in order and compare
+the rendered state at the matching width, theme and interaction. Earlier
+prototype stylesheets can be superseded by later rules in that same project.
 
-The owner explicitly selected the frozen prototype as the visual AND UX
-authority for this migration, including intentional differences from the old
-repository. Implement on `codex/redesign`, preserve the selected design, and
-integrate missing real capabilities there. Merge remains subject to final
-verification and explicit owner confirmation.
+The shared source of truth is the [reference token file](branding/prototype/kay-workspace.tokens.json).
+The [design system](docs/04-design/design-system.md) describes the runtime
+mapping, visual roles and the boundary for this foundation pass.
 
-Current color/geometry/motion definitions are in
-[`branding/prototype`](branding/prototype/kay-workspace.tokens.json);
-the [migration execution](docs/03-planning/design-prototype-migration-execution.md)
-records progress and pending gates. Use Inter, pearl/frosted surfaces, graphite
-pill controls, the compact96px icon rail and selected mobile cards/flow. Reuse
-shadcn/Tailwind/Bklit and authoritative API rules. Selected glyphs remain in the
-typed, source-pinned registry; no arbitrary icon package or raw interface SVG.
-
-The remaining Riviera paragraphs below are historical appearance references,
-superseded by this owner instruction where they conflict. Original assets/tokens
-and their notices are retained; business/security/accessibility rules continue.
-This update records the branch implementation, not native or product acceptance.
-
-## Overview
-
-**Creative North Star: "Riviera"**
-
-Current owner-selected branding, 2026-10-18.
-
-Khalid explicitly selected the supplied Riviera 1.1.0 handoff and confirmed
-app-wide colors, fonts and shared component styling with existing layouts,
-wording, Iconsax and real metrics retained. [Riviera source and implementation
-mapping](branding/riviera/README.md) supersede conflicting older palette, font,
-pure-black-sidebar and panel-border statements below. Warm ivory canvas,
-warm-white surfaces, honey actions and olive-charcoal navigation carry the brand.
-Fraunces550 titles, Manrope UI and DM Sans metadata are self-hosted OFL fonts.
-The exact191 tokens are exported centrally; old application roles resolve to
-them rather than maintaining independent palettes. Panels are quiet/borderless;
-controls, focus and essential dividers keep visible boundaries. Later
-owner-requested geometry remains in force; the former nine-image reference is
-retired under D41.
-The desktop rail collapses to a 72px implementation proposal, keeps every
-destination accessibly named, and reuses the login villa/palm line art; global
-search remains available in the rail and responsive header. No sample chart
-allocations, icon-family switch, business copy or backend change is authorized.
-ENERGY1 / RHYTHM1 / MOTION1. Human visual review is separate.
-
-**Key Characteristics:**
-
-- Supplied Riviera palette and licensed local fonts on existing CRM compositions.
-- Quiet panels, visible control boundaries and explicit keyboard focus.
-- French labels, semantic Iconsax and live authorized values.
-
-## Colors
-
-The frontmatter records reused current colors; the exact 191-token handoff and
-all semantic aliases remain in the linked Riviera source. Honey identifies
-primary/creation actions. Dark gold carries readable links and light-surface
-focus. Feedback foreground/background pairs remain distinct from categorical
-pipeline fills. The sidebar keeps its own light labels and dark-surface focus.
-
-## Typography
-
-Fraunces gives headings their supplied Riviera character; Manrope serves working
-controls and body text; DM Sans serves compact metadata. The frontmatter records
-the implemented page/section/body roles, rather than asserting every exported
-handoff type role is used unchanged. Fraunces fixes opsz40, SOFT0 and WONK0.
-[Verified runtime files](branding/riviera/README.md#fonts-and-licenses) are
-Fraunces 1.000 WOFF2, Manrope 4.505 TTF and DM Sans 4.004 WOFF2.
-
-## Layout
-
-Preserve the existing route composition, compact Lead/Deal insets, paired forms,
-named table scroll regions and responsive navigation. Shared controls keep at
-least 44px targets. The later owner-supplied CRM dashboard screenshot overrides
-the earlier two-column title/photo treatment: `/dashboard` uses a full-width
-196px minimum panoramic banner, a solid-ivory-to-photo text fade, and working
-notification/account controls at desktop widths. Its compact toolbar, grouped
-live KPIs and paired pipelines remain responsive and role-scoped. The 224px
-expanded rail comes from the handoff; 72px collapsed remains a documented
-implementation proposal. No other historical route layout is inferred or
-normalized by this branding record.
-
-## Elevation & Depth
-
-Warm-white panels sit quietly on the ivory canvas. The supplied panel shadow
-adds restrained tonal separation; it is not a required control boundary.
-Inputs, outlined actions and focus retain visible boundaries. Exact shadow and
-motion extensions live in `.impeccable/design.json`.
-
-## Shapes
-
-Use the existing shared radius roles: icon tiles and badges, controls, and panels.
-Circular KPI badges keep their supplied category identity; these do not make
-ordinary fields or actions pill-shaped.
-
-## Components
-
-Creation and ordinary primary actions use honey with dark labels; save/positive
-confirmation keeps semantic success and destructive actions keep danger.
-Outlined alternatives use the warm-white surface and strong control border.
-Current navigation uses a gold Iconsax tile, a light label and trailing chevron.
-Status badges keep a written meaning. Panels and inputs retain their existing
-responsive padding, disabled states and Radix/shadcn behavior. The companion
-sidecar contains six self-contained previews of these actual shared recipes.
-
-## Do's and Don'ts
-
-### Do:
-
-- Do consume shared Riviera semantic roles through Tailwind and existing components.
-- Do preserve French labels, Iconsax, live scoped values and accessible states.
-- Do keep the exact verified runtime font versions and original OFL notices.
-
-### Don't:
-
-- Don't convert reference sample people, allocations or counts into application data.
-- Don't use categorical pipeline fills as semantic feedback colors.
-- Don't infer human product acceptance from technical or finish-review evidence.
-
-## Historical scope and evidence
-
-2026-10-18 latest Lead/Deal screenshot correction: use the shared coastal
-directory banner,314px desktop filter rail/12px gap, seven-column compact rows,
-initials and semantic status pills. Details use the large identity header,
-346px cream contact rail, coloured read-only status board and paired Lead
-request/follow-up regions. The central `crm*` layout tokens own these dimensions;
-the existing224px navigation and Riviera world remain. The earlier proportional
-refinement was rejected by the owner and is not visual acceptance. See the
-[current reference ledger and scoped verification](docs/03-planning/crm-reference-fidelity.md).
-
-The dated material below retains earlier scope and verification context. The
-current Riviera sections and source mapping above supersede conflicting palette,
-type and shared panel/control styling statements; unrelated history is preserved.
-
-Status: historical visual notes; former nine-image reference retired under D41
-Date: 2026-10-15
-
-2026-10-17 subsequent owner-requested interface refinement supersedes the inline
-filter presentation below. Leads and Deals use the existing left filter rail on
-wide screens and its accessible Sheet on smaller screens. Their list, detail,
-create and edit routes use the available workspace width with a small16px safe
-inset, not the centered reading-width cap. The owner explicitly included create
-and edit forms. Preserve KAY colours, the typed Iconsax layer, French labels,
-all fields and backend behavior; refine borders, table headers, grouped detail
-facts, compact form sections and action placement. Other routes retain their
-existing page geometry. See [interface scope and evidence](docs/03-planning/leads-deals-interface-refresh.md).
-
-2026-10-17 owner-requested Lead/Deal alignment takes precedence on those
-surfaces: reproduce the IMMO World workflow and compact paired composition,
-using the existing KAY palette, components and semantic geometry. Leads/Deals
-now use inline filter toolbars rather than the earlier left rail; Contacts and
-Projects retain their rail. Country, nationality, selectable calling codes,
-multiple languages, budget and campaign source are now implemented facts, not
-mockup-only exclusions. Conversion explicitly requires project, budget and
-buying intent, without a free-title step. Forms pair qualification/notes with
-the first project/follow-up; additional projects occupy balanced full-width
-rows. Historical profile facts come from each saved snapshot, not the current
-contact. Antislop retains Khalid's AFTER timing for aesthetic-only findings.
-[Scope, verification and open acceptance](docs/03-planning/leads-deals-immoworld-alignment.md).
-This is an established-world extension, not permission to replace the brand or
-unrelated screens. Earlier refinements below retain their historical scope.
-
-2026-10-16 publication authorization: the owner's latest push-to-main request
-permits publishing the prepared UI refinements through the protected CI flow.
-Earlier local-only/no-push notes record their preparation stage. They do not
-override this later request. [Publication scope and evidence](docs/06-delivery-and-operations/ui-refinements-publication.md).
-
-The former nine-image reference selected under D32 has been removed under [D41](decisions.md); do not require or link its PNGs for new work. The [design system](docs/04-design/design-system.md) supplies shared implementation rules; named screens and navigation are in the [screen map](docs/04-design/screen-map.md). Riviera and later owner-supplied references govern their applicable surfaces. Existing business/API/permission contracts and accessibility remain authoritative. The [branding folder](branding/README.md) also contains a separate KEPVY identity guide; do not replace the KAY logo with the KEPVY mark or treat the two brands as one logo.
-
-The historical visual direction used light neutral surfaces, compact tables and red destructive actions. Current Riviera colors, typography and later owner-requested geometry override conflicting older notes. Existing implementation is not reverted by D41.
-
-2026-10-16 explicit sidebar refinement: Khalid requests pure black `#000000`
-throughout the desktop sidebar and mobile navigation drawer to match the logo
-background. `color.surface.sidebar` owns this override; gold selection, white
-text, account/logout footer, main canvas, actions and all geometry stay unchanged.
-This historical note was later superseded by Riviera's sidebar color.
-
-2026-10-16 explicit list-action refinement: Leads/Deals creation links and the
-Leads contact-directory creation link use the existing KAY gold `#C9A75C` with
-charcoal labels. Adjacent list-header utilities are compact, borderless, normal
-weight secondary actions with44px hit targets. This is an opt-in header hierarchy,
-not a global recoloring of form submissions, confirmations or destructive actions.
-
-2026-10-16 explicit directory-filter refinement: page search and existing filters
-on Leads, Deals, Contacts and both Projects tabs sit in a left rail beside the
-results, following Khalid's supplied layout examples. The shared256px rail uses
-a24px results gap at1280px and above; narrower views use a labelled shadcn Sheet.
-The global header search and contact-record embedded lists stay in place. Only
-existing KAY filters are moved; reference-only fields/statuses are not features.
-
-2026-10-16 explicit dashboard-header refinement: only the circled city/title
-strip becomes borderless and square-edged. Its existing height steps increase
-by16px and the decorative city photo enlarges5% while covering the entire strip.
-The readable overlay, content, actions, main-page gutters and all KPI/chart
-surfaces stay unchanged. The photo does not become a whole-page background.
-
-2026-10-16 subsequent dashboard refinement: remove the development-oriented
-local-service status and its manual retry control from the user-facing header.
-The next explicit request also removes the `Journal d’audit` header shortcut;
-the city header now contains only its title and description. Keep the direct
-authorized audit view and normal dashboard error/retry states. Backend
-liveness/readiness endpoints, HTTPS facade and monitoring remain unchanged.
-This removes presentation, not a production-safety check or release requirement.
-
-2026-10-16 subsequent performance-dashboard refinement: the owner's new reference
-replaces the filled KPI tiles with a neutral, grouped current/selected-period
-strip. Keep small semantic icon/value accents. Pipelines use funnel silhouettes
-for current stage distributions, with exact legends and no conversion-rate
-claim. Stacked contributor totals sit directly underneath; the owner confirmed
-using existing API totals only, not new daily worked-Lead/Deal metrics. Tasks,
-notifications, other metrics and follow-up remain available below. This is local
-UI work, not a new Performance route or production release.
-
-2026-10-18 owner-supplied dashboard screenshot refinement: the pictured banner
-now spans the full content width with title/eyebrow over an ivory fade and live
-notification/account sheets at desktop sizes; the ordinary global utility bar
-remains on mobile. The toolbar exposes the server-authorized scope as read-only,
-keeps the existing inclusive date filter and links to the existing Lead form.
-Current versus selected-period KPIs and funnel distributions remain backed by
-the existing scoped APIs. No screenshot counts, agents, statuses, daily series or
-conversion metrics are copied. The older 2-column city-header note above is
-historical; the later owner-supplied screenshot governs the newer composition.
-
-For local UI work, follow the approved [local roadmap](docs/03-planning/local-roadmap.md), current Riviera tokens and Iconsax under [D33](decisions.md). Use shadcn/ui controls/tables, Tailwind CSS styling and Bklit UI charts. Build shared components first and preserve real data, fields, permissions and working workflows; illustrative screenshots do not define new backend states or metrics. Test contrast, keyboard, touch, zoom, long French labels and mobile reflow. [SP-01 evidence](docs/03-planning/sprints/sp-01-evidence.md) records an earlier shell, not current product acceptance.
-
-2026-10-16 explicit Lead/Deal detail refinement: retain vertically stacked record
-sections, but present their summary facts in two left/right columns at wide
-desktop widths. Each label has a semantic Iconsax icon and its value alongside;
-narrow screens stack the facts and then their label/value rows. Existing fields,
-links, actions, French copy and authority remain; reference-only country,
-nationality, temperatures or inline-edit controls are not new KAY features.
-This overrides only the older single-column summary presentation on these two
-detail pages.
-
-2026-10-16 subsequent app-wide button refinement: extend semantic Iconsax
-action icons and colors throughout existing controls, forms, dialogs and route
-families. Creation is KAY gold, save/positive confirmation uses existing success
-green, destructive actions retain red, and neutral utilities use restrained
-semantic icon accents. Dismissal stays neutral, distinct from cancelling a
-business record. This explicitly extends the earlier list-only gold-creation
-scope to existing creation buttons throughout the app; it does not recolor
-cards/charts or introduce screenshot-only conversion/deletion/Excel features.
-
-UI sprints also read and follow the [mandatory three-skill rules](docs/03-planning/ui-skill-rules.md): design-system-ops governs geometry, design-taste-frontend is applied only to in-scope surfaces, and antislop follows the owner's AFTER timing for aesthetic-only findings. These skills do not authorize replacing shadcn/ui, Tailwind CSS, Bklit or Iconsax.
-
-Iconsax migration: use the typed semantic layer at `frontend/src/components/icons`,
-not guessed React exports or the browser-only npm loader. Only verified selected
-Free linear assets are integrated, with inherited colors and retained notices.
-Preserve current geometry and accessible French control labels. See the
-[implementation and license record](docs/reference/iconsax/migration.md).
-This narrow icon decision does not resolve the separate wider DESIGN.md merge.
-
-2026-10-16 explicit compact-space refinement: Khalid asks that screens stop
-leaving broad unused areas around the left, right, top and bottom. Full-page
-frames should use their available viewport/content width instead of an arbitrary
-narrow cap or oversized offsets. Keep small safe edge insets and content-width
-limits only where they improve reading or form usability. Preserve meaningful
-internal rhythm, touch targets, dialog clearance and responsive behavior; this
-is not a command to remove every gap. The `/login` frame is the first applied
-surface: it now spans the viewport, keeps the approved three-panel composition,
-and uses a shorter footer. Other route geometry remains subject to its own
-visual review.
-
-2026-10-18 D38 calendar refinement: the supplied calendar image governs `/visits`
-composition, not a replacement brand. Reuse Riviera fonts/surfaces, the existing
-shell and shadcn controls; add the compact mini-month/type/status rail, weekly
-grid and Agenda/Par type views. Existing Iconsax building/people/car glyphs, not
-emojis, identify visit types. Full-week scoped counts and actual policy drive
-the interface. Central geometry uses a288px rail,64px hour,88px day header,
-56px time rail and52px minimum overlap lane before insets; controls retain44px
-targets. Mini-month week rows are intentionally taller than the image for that
-reason. Mobile uses the shared filter Sheet and chronological agenda. No calendar
-package, chart, font, raster or business-rule change. See
-[reference and evidence](docs/03-planning/calendar-reference-refresh.md).
-
-2026-10-18 D39 Projects refinement: the supplied photo-directory image now
-governs `/projects` standalone layout, superseding the older combined-toolbar/
-three-card composition only there. Preserve Riviera and current programme/detail
-flows. Use the314px warm filter rail, automatic type/status/category selection,
-image-first cards with category/name/location/two current campaigns and Cards/List/
-server sort. A240px central card minimum yields four columns at1677px, three where
-space permits, then two/one. Photo covers use148px; controls remain44px. Actual
-private clean previews, real whole-result facets and numbered pages replace
-reference-only values. No public file URLs, photo stand-ins for real inventory,
-new palette/font, chart or library. The compact44px utility header keeps global
-notifications reachable rather than deleting them to reproduce the static image.
-See [scope and evidence](docs/03-planning/projects-reference-refresh.md).
+- Use Inter for display, body, forms and metadata. Use the existing pinned
+  Lucide glyphs, wordmark and pearl texture from the reference.
+- Use 13px labels and table headings with their own weights. Use chevrons for
+  browsing pages and periods, and arrows for navigation to a destination.
+- Use the reference's pearl/graphite surfaces, 1px translucent edge, 24px outer
+  radius, 18px inset radius and compact spacing. Keep controls solid where the
+  reference uses a solid fill.
+- Use 40px labelled desktop buttons, 44px touch controls and 48px desktop
+  rail targets. Keep the 96px rail and 80px desktop header. The phone header
+  is 64px at 830px and below.
+- Use the reference's 260ms control easing, 120ms press feedback, 280/200ms
+  menu entrance/exit, 420/300ms drawer entrance/exit and 460ms route entrance.
+  Keep reduced-motion, reduced-transparency and forced-color behavior.
+- Use Motion for the dashboard KPI entrance and Lenis for the reference's
+  desktop wheel easing. Keep each scroll surface independent.
+- Keep the installed Next.js, Tailwind, shadcn/Radix and Bklit integration.
+  Preserve French labels, permissions, focus handling and real CRM data.
+  Review page and component composition separately using the supplied source.

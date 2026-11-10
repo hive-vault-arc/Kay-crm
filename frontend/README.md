@@ -139,7 +139,7 @@ testing remains separate from WebKit on Windows.
 - `src/features/shell`: navigation and the responsive workspace.
 - `src/components/ui`: reviewed shadcn Radix/New York source.
 - `src/components/shared`: KAY page, data-state and TanStack table compositions.
-- `src/lib/theme.ts`: maps `../branding/kay-ui-tokens.json` into CSS variables;
+- `src/lib/theme.ts`: maps `../branding/prototype/kay-workspace.tokens.json` into CSS variables;
   Turbopack's root includes the project so tokens have one source of truth.
 - `src/app/globals.css`: Tailwind v4 theme mapping and narrow global/safe-area rules.
 - `src/features/users`: strict account schemas, administrator pages, shared form,

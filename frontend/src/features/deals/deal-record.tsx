@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { RecordError } from "@/features/contacts/record-states";
@@ -35,7 +36,7 @@ function DealRecordLifetime({ id, initialTask, role = "agent", actorId, initialT
   const heading = <div className="grid min-w-0 justify-items-start gap-2">{returnLink}<PageHeader title="Affaire" description="Pipeline, prochaine action, propositions client et historique." route={`/deals/${id}`} /></div>;
   if (query.error && ((!editing && !value) || deniedRead)) return <>{heading}<RecordError error={query.error} retry={query.refresh} /></>;
   if (error && [401, 403, 404].includes(error.status)) return <>{heading}{entryNotice ? <p role="status">{entryNotice}</p> : null}<RecordError error={error} /></>;
-  if (!value) return <>{heading}<p role="status">Chargement de l’affaire…</p></>;
+  if (!value) return <>{heading}<div className="kay-sales-loading-record" role="status"><span className="sr-only">Chargement de l’affaire…</span><Skeleton aria-hidden="true" className="motion-reduce:animate-none" /><Skeleton aria-hidden="true" className="motion-reduce:animate-none" /></div></>;
   const writable = !value.contact.archived_at && !value.archived_at && (value.stage === "reserved" || ordinaryStages.includes(value.stage as typeof ordinaryStages[number]));
   const canArchive = !value.contact.archived_at && (role !== "agent" || (actorId && value.contact.primary_agent.id === actorId));
   if (editing && editReview) return <div className="grid min-w-0 gap-4">{query.error ? <RecordError error={query.error} retry={query.refresh} /> : null}<DealForm key={`edit:${editReview.id}`} value={editReview} contact={editReview.contact} actorId={actorId} role={role} unavailable={Boolean(query.error || !remote || !writable || value.contact.id !== editReview.contact.id)} denied={(failure, acknowledged) => { setEntryNotice(acknowledged ? "L’affaire est enregistrée. Les droits d’accès ont changé." : ""); setError(failure); }} busyChanged={setBusy} cancel={endEdit} saved={async (_id, accepted) => { setFresh(accepted); endEdit(); setNotice("Affaire enregistrée."); }} /></div>;

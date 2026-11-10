@@ -24,7 +24,8 @@ export async function reportFixture(page: Page, actors: TestActor[]) {
 
 export async function openReports(page: Page) {
   await page.goto("/dashboard");
-  await page.getByRole("button", { name: "Rapports", exact: true }).first().click();
+  await page.getByRole("button", { name: "Suivi et rapports", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Indicateurs CRM", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Rapports détaillés", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Dossiers : Contacts actifs par responsable actuel", exact: true })).toBeVisible();
 }

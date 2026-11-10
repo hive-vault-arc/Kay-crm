@@ -55,7 +55,7 @@ test("SP05 visible Chrome: desktop/mobile, keyboard, touch, duplicate/private an
     await mobile.getByRole("button", { name: "Appliquer", exact: true }).tap();
     await expect(mobile.getByText("1 demande(s) accessible(s).", { exact: true })).toBeVisible();
     await mobile.screenshot({ path: path.join(artifact, "sp05-list-mobile.png"), fullPage: true });
-    const scroller = mobile.getByRole("region", { name: "Tableau des Leads, défilement horizontal", exact: true });
+    const scroller = mobile.getByRole("region", { name: "Tableau des prospects, défilement vertical et horizontal", exact: true });
     await scroller.focus();
     await mobile.keyboard.press("ArrowRight");
     await expect.poll(() => scroller.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);

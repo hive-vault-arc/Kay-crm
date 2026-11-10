@@ -38,7 +38,7 @@ export function ContactTimeline({ id, archived, revision, denied }: { id: string
 export function ContactAssignments({ id, revision }: { id: string; revision?: number }) {
   const [page, setPage] = useState(1);
   const query = useQuery(queryPath(`contacts/${id}/assignment-events`, { page, page_size: 25 }), assignmentsSchema, revision);
-  return <section className="grid gap-4"><h2 className="text-section font-medium">Historique d’attribution</h2>
+  return <section className="grid gap-4"><h2 className="text-section">Historique d’attribution</h2>
     <p className="text-sm text-muted-foreground">L’acteur de la décision ne remplace jamais l’auteur des contributions.</p>
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des attributions…</p> : <>
       {query.value.items.length ? <ol className="grid gap-6">{query.value.items.map(item => <li key={item.id} className="grid min-w-0 gap-2 border-b pb-4">

@@ -3,7 +3,7 @@
 Status: generated and visually reviewed documentation artifact; full CRM schema remains partly proposed  
 Date: 2026-10-14  
 Confirmed styling: Khalid approved KAY ivory, charcoal and gold for these diagrams.  
-Source of truth: [data model](../../docs/04-design/data-model.md), [business rules](../../docs/02-requirements/business-rules.md), [identity ORM](../../backend/app/identity/models.py), [contact ORM](../../backend/app/contacts/models.py) and [KAY tokens](../../branding/kay-ui-tokens.json).
+Source of truth: [data model](../../docs/04-design/data-model.md), [business rules](../../docs/02-requirements/business-rules.md), [identity ORM](../../backend/app/identity/models.py), [contact ORM](../../backend/app/contacts/models.py).
 
 ## Pictures and editable sources
 

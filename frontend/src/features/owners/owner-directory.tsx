@@ -1,11 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState, type MouseEvent } from "react";
+import { useCallback, useMemo, useRef, useState, type MouseEvent } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { CrmAgent, CrmContactCell, CrmDirectoryHeader, CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { DataTable } from "@/components/shared/data-table";
 import { DirectoryRecordCard } from "@/components/shared/directory-record-card";
+import { DirectoryEmpty, DirectoryLoading, useDirectoryRail } from "@/components/shared/directory-presentation";
+import { ScrollableResultsTable } from "@/components/shared/scrollable-results-table";
 import { FilterResultsLayout } from "@/components/shared/filter-results-layout";
 import { RecordDrawer } from "@/components/shared/record-drawer";
 import { Button } from "@/components/ui/button";
@@ -21,7 +23,6 @@ import { useQuery } from "@/features/contacts/use-query";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { OwnerForm } from "./owner-form";
 import { ownerDirectoryDefaults, ownerDirectoryPath, ownerDrawerIntent } from "./owner-directory-model";
-import { OwnerLoading } from "./owner-loading";
 import { OwnerPreviewDrawer } from "./owner-preview";
 
 export function OwnerDirectory({ role, actorId }: { role: StaffRole; actorId?: string }) {
@@ -33,32 +34,36 @@ export function OwnerDirectory({ role, actorId }: { role: StaffRole; actorId?: s
   const denied = query.error && [401, 403, 404].includes(query.error.status);
   const archive = role === "agent" ? "active" : filters.archive;
   const activeCount = Number(Boolean(filters.q.trim())) + Number(archive !== "active");
-  function open(event: MouseEvent<HTMLAnchorElement>, id?: string) {
+  const { control, rail } = useDirectoryRail("owner-filter-rail", activeCount, reset, hydrated);
+  const open = useCallback((event: MouseEvent<HTMLAnchorElement>, id?: string) => {
     if (!ownerDrawerIntent(event, hydrated)) return;
     event.preventDefault(); returnFocus.current = event.currentTarget; setPanel({ id });
-  }
-  const columns: ColumnDef<ContactSummary>[] = [
-    { id: "name", header: "Propriétaire", cell: ({ row: { original: owner } }) => <CrmContactCell contact={owner} href={`/owners/${owner.id}`} describedBy={`owner-phone-${owner.id}`} onOpen={event => open(event, owner.id)} /> },
-    { id: "state", header: "État", cell: ({ row }) => <CrmStatusBadge state={row.original.archived_at ? "archived" : "active"}>{row.original.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge> },
-    { id: "agent", header: "Agent responsable", cell: ({ row }) => <CrmAgent name={row.original.primary_agent.display_name} /> },
-    { id: "type", header: "Type", cell: ({ row }) => row.original.type === "person" ? "Personne" : "Organisation" },
-    { id: "email", header: "E-mail", cell: ({ row }) => row.original.primary_email ? <a className="inline-flex min-h-control items-center text-link underline wrap-anywhere" href={`mailto:${row.original.primary_email}`}>{row.original.primary_email}</a> : <span className="text-muted-foreground">Non renseigné</span> },
-  ];
-  return <div className="crm-directory">
-    <CrmDirectoryHeader title="Propriétaires" count={!query.error ? query.value?.total : undefined} noun="propriétaires" description="Retrouvez leurs coordonnées et les biens liés à chaque contact." route="/owners" actions={<Button action="create" asChild variant="creation"><Link ref={createLink} prefetch={false} href="/owners/new" onClick={event => open(event)}>Ajouter un propriétaire</Link></Button>} />
-    <FilterResultsLayout title="Filtres des propriétaires" reference active={activeCount > 0} activeCount={activeCount} reset={reset} filters={close => <form className="crm-directory-filter-form" aria-label="Recherche et filtres des propriétaires" role="search" onSubmit={event => { event.preventDefault(); apply(close); }}>
+  }, [hydrated]);
+  const columns = useMemo<ColumnDef<ContactSummary>[]>(() => [
+    { id: "name", header: "Propriétaire", cell: ({ row: { original: owner } }) => <CrmContactCell contact={owner} href={`/owners/${owner.id}`} onOpen={event => open(event, owner.id)} /> },
+    { id: "phone", size: 145, header: "Téléphone", cell: ({ row }) => <a className="kay-directory-coordinate" href={`tel:${row.original.primary_phone}`}>{row.original.primary_phone}</a> },
+    { id: "email", header: "E-mail", cell: ({ row }) => row.original.primary_email ? <a className="kay-directory-coordinate" href={`mailto:${row.original.primary_email}`}>{row.original.primary_email}</a> : <span className="text-muted-foreground">Non renseigné</span> },
+    { id: "type", size: 104, header: "Type", cell: ({ row }) => row.original.type === "person" ? "Personne" : "Organisation" },
+    { id: "agent", size: 150, header: "Agent responsable", cell: ({ row }) => <CrmAgent name={row.original.primary_agent.display_name} /> },
+    { id: "state", size: 94, header: "État", cell: ({ row }) => <CrmStatusBadge state={row.original.archived_at ? "archived" : "active"}>{row.original.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge> },
+  ], [open]);
+  const create = (header = false) => <Button action="create" asChild variant="creation"><Link ref={header ? createLink : undefined} prefetch={false} href="/owners/new" onClick={event => open(event)}>{header ? "Ajouter un propriétaire" : "Ajouter le premier propriétaire"}</Link></Button>;
+  return <div className="crm-directory kay-sales-directory kay-party-directory" data-sales-view="list">
+    <CrmDirectoryHeader title="Propriétaires" count={query.error ? undefined : query.value?.total} unavailable={Boolean(query.error)} noun="propriétaires" description="Retrouvez leurs coordonnées et les biens liés à chaque contact." route="/owners" actions={<div className="kay-directory-tools">{control}{create(true)}</div>} />
+    <FilterResultsLayout {...rail} title="Filtres des propriétaires" reference active={activeCount > 0} activeCount={activeCount} reset={reset} filters={close => <form className="crm-directory-filter-form kay-sales-filters" aria-label="Recherche et filtres des propriétaires" role="search" onSubmit={event => { event.preventDefault(); apply(close); }}>
       <fieldset disabled={!hydrated} className="grid min-w-0 gap-5">
         <div className="grid gap-2"><Label htmlFor="owner-search">Rechercher</Label><div className="crm-search-input"><SearchIcon aria-hidden="true" /><Input id="owner-search" value={draft.q} maxLength={160} placeholder="Nom, téléphone ou e-mail" onChange={event => setDraft(current => ({ ...current, q: event.target.value }))} /></div></div>
         {role !== "agent" ? <div className="grid gap-2"><Label htmlFor="owner-archive">État</Label><NativeSelect id="owner-archive" value={draft.archive} onChange={event => setDraft(current => ({ ...current, archive: event.target.value }))}><option value="active">Actifs</option><option value="archived">Archivés</option><option value="all">Tous</option></NativeSelect></div> : null}
-        <div className="crm-filter-submit"><Button action="search" variant="outline" type="submit">Rechercher</Button><Button action="reset" variant="quiet" type="button" onClick={reset}>Réinitialiser</Button></div>
-      </fieldset><p className="crm-filter-note">La recherche est appliquée automatiquement.</p>
+      </fieldset>
+      <div className="crm-filter-submit"><Button action="filter" type="submit" disabled={!hydrated}>Appliquer</Button><Button action="reset" variant="quiet" type="button" onClick={reset}>Réinitialiser</Button></div>
     </form>}>
-      {query.error ? <RecordError error={query.error} retry={() => { setPanel(undefined); query.refresh(); }} /> : !query.value ? <OwnerLoading /> : <>
-        <h2 className="crm-results-title" aria-live="polite">{query.value.total} propriétaire{query.value.total > 1 ? "s" : ""}</h2>
-        <DataTable className="crm-directory-table" columns={columns} rows={query.value.items} getRowId={owner => owner.id} caption="Une ligne par propriétaire accessible." footerCaption scrollLabel="Tableau des propriétaires" emptyLabel={filters.q ? "Aucun propriétaire ne correspond à cette recherche." : archive === "archived" ? "Aucun propriétaire archivé." : "Aucun propriétaire enregistré. Ajoutez-en un pour commencer."} mobileCard={owner => <DirectoryRecordCard title={owner.name} href={`/owners/${owner.id}`} onOpen={event => open(event, owner.id)} agent={owner.primary_agent.display_name} phone={owner.primary_phone} status={<CrmStatusBadge state={owner.archived_at ? "archived" : "active"}>{owner.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge>} metadata={owner.type === "person" ? "Personne" : "Organisation"} details={[{ label: "E-mail", value: owner.primary_email ? <a className="inline-flex min-h-control items-center underline wrap-anywhere" href={`mailto:${owner.primary_email}`}>{owner.primary_email}</a> : "Non renseigné" }]} />} />
-        <NumberedPages compact page={page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages des propriétaires" />
-      </>}
+      {query.error ? <RecordError error={query.error} retry={() => { setPanel(undefined); query.refresh(); }} /> : !query.value ? <DirectoryLoading label="Chargement des propriétaires…" /> : <div className="kay-sales-list">
+        {!query.value.items.length ? <DirectoryEmpty title={query.value.total ? "Aucun propriétaire sur cette page" : filters.q ? "Aucun propriétaire correspondant" : archive === "archived" ? "Aucun propriétaire archivé" : "Aucun propriétaire enregistré"} action={query.value.total ? <Button action="back" variant="outline" onClick={() => setPage(1)}>Première page</Button> : activeCount ? <Button action="reset" variant="outline" onClick={reset}>Réinitialiser les filtres</Button> : create()}>
+          {query.value.total ? "Revenez à la première page pour retrouver les propriétaires." : activeCount ? "Essayez une autre recherche ou retirez vos filtres." : "Ajoutez un propriétaire pour retrouver ses coordonnées et les biens qui lui sont liés."}
+        </DirectoryEmpty> : <ScrollableResultsTable><DataTable className="crm-directory-table" columns={columns} rows={query.value.items} getRowId={owner => owner.id} caption="Une ligne par propriétaire accessible." emptyLabel="Aucun propriétaire" scrollLabel="Tableau des propriétaires, défilement vertical et horizontal" mobileCard={owner => <DirectoryRecordCard title={owner.name} href={`/owners/${owner.id}`} onOpen={event => open(event, owner.id)} agent={owner.primary_agent.display_name} phone={owner.primary_phone} status={<CrmStatusBadge state={owner.archived_at ? "archived" : "active"}>{owner.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge>} metadata={owner.type === "person" ? "Personne" : "Organisation"} details={[{ label: "E-mail", value: owner.primary_email ? <a className="inline-flex min-h-control items-center underline wrap-anywhere" href={`mailto:${owner.primary_email}`}>{owner.primary_email}</a> : "Non renseigné" }]} />} /></ScrollableResultsTable>}
+        {query.value.total ? <div className="kay-sales-pagination"><NumberedPages compact showPageSize page={page} total={query.value.total} size={query.value.page_size} change={setPage} label="Pages des propriétaires" /></div> : null}
+      </div>}
     </FilterResultsLayout>
-    {!denied && panel ? panel.id ? <OwnerPreviewDrawer key={`${panel.id}:${actorId ?? ""}:${role}`} id={panel.id} actorId={actorId} role={role} onClosed={() => setPanel(undefined)} onChanged={query.refreshQuietly} onDenied={query.refresh} returnFocus={returnFocus} fallbackFocus={createLink} /> : <RecordDrawer label="Ajouter un propriétaire" title="Ajouter un propriétaire" description="Identité et coordonnées du contact propriétaire." initialOpen hideTrigger returnFocus={returnFocus} fallbackFocus={createLink} onClosed={() => setPanel(undefined)}>{(close, done) => <OwnerForm actorId={actorId} role={role} presentation="drawer" cancel={close} onDenied={query.refresh} onSaved={id => { done(); router.push(`/owners/${id}`); }} />}</RecordDrawer> : null}
+    {!denied && panel ? panel.id ? <OwnerPreviewDrawer key={`${panel.id}:${actorId ?? ""}:${role}`} id={panel.id} actorId={actorId} role={role} onClosed={() => setPanel(undefined)} onChanged={query.refreshQuietly} onDenied={query.refresh} returnFocus={returnFocus} fallbackFocus={createLink} /> : <RecordDrawer className="kay-party-drawer" label="Ajouter un propriétaire" title="Ajouter un propriétaire" description="Identité et coordonnées du contact propriétaire." initialOpen hideTrigger returnFocus={returnFocus} fallbackFocus={createLink} onClosed={() => setPanel(undefined)}>{(close, done) => <OwnerForm actorId={actorId} role={role} presentation="drawer" cancel={close} onDenied={query.refresh} onSaved={id => { done(); router.push(`/owners/${id}`); }} />}</RecordDrawer> : null}
   </div>;
 }

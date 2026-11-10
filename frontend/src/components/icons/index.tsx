@@ -5,7 +5,7 @@ import prototypeGlyphs from "../../../../branding/prototype/kay-glyphs.json";
 // Selected prototype vectors; frozen source hashes/notices remain in the shared registry.
 type SvgProps = Omit<SVGProps<SVGSVGElement>, "children" | "dangerouslySetInnerHTML" | "viewBox" | "width" | "height" | "role" | "aria-label" | "aria-hidden">;
 export type KayIconProps = SvgProps & {
-  size?: 12 | 16 | 20 | 24 | 32 | 48;
+  size?: 12 | 16 | 18 | 20 | 24 | 32 | 48;
 } & ({ label: string; "aria-hidden"?: never } | { label?: never; "aria-hidden"?: true | "true" });
 export type KayIconComponent = ComponentType<KayIconProps>;
 
@@ -15,8 +15,8 @@ function createPrototypeIcon(name: string): KayIconComponent {
   const glyph = prototypeGlyphs.icons.find(icon => icon.name === name);
   if (!glyph) throw new Error(`Unknown selected glyph: ${name}`);
   const nodes = glyph.nodes as [string, Record<string, string>][];
-  function PrototypeIcon({ size = 24, label, ...props }: KayIconProps) {
-    return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" {...props} focusable="false" role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true} data-kay-icon={name} data-icon-family="lucide" data-icon-style="linear">{nodes.map(([tag, attributes], index) => createElement(tag, { ...attributes, key: index }))}</svg>;
+  function PrototypeIcon({ size, label, ...props }: KayIconProps) {
+    return <svg xmlns="http://www.w3.org/2000/svg" width={size ?? 24} height={size ?? 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" {...props} focusable="false" role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true} data-kay-icon={name} data-icon-sized={size === undefined ? undefined : ""} data-icon-family="lucide" data-icon-style="linear">{nodes.map(([tag, attributes], index) => createElement(tag, { ...attributes, key: index }))}</svg>;
   }
   PrototypeIcon.displayName = `KayPrototypeIcon(${name})`;
   return PrototypeIcon;
@@ -32,6 +32,9 @@ export const AlertIcon = createPrototypeIcon("alert");
 export const EmptyFolderIcon = createPrototypeIcon("empty-folder");
 export const CheckIcon = createPrototypeIcon("check");
 export const ChevronDownIcon = createPrototypeIcon("chevron-down");
+export const ChevronLeftIcon = createPrototypeIcon("chevron-left");
+export const ChevronRightIcon = createPrototypeIcon("chevron-right");
+export const CircleCheckIcon = createPrototypeIcon("circle-check");
 export const CloseIcon = createPrototypeIcon("close");
 export const RadioIndicatorIcon = createPrototypeIcon("radio-indicator");
 export const PasswordIcon = createPrototypeIcon("password");
@@ -56,6 +59,9 @@ export const NavigationMenuIcon = createPrototypeIcon("navigation-menu");
 export const CalendarIcon = createPrototypeIcon("calendar");
 export const DashboardIcon = createPrototypeIcon("dashboard");
 export const ChartIcon = createPrototypeIcon("chart");
+export const TrendUpIcon = createPrototypeIcon("trend-up");
+export const TrendDownIcon = createPrototypeIcon("trend-down");
+export const TrendSteadyIcon = createPrototypeIcon("trend-steady");
 export const SettingsIcon = createPrototypeIcon("settings");
 export const SearchIcon = createPrototypeIcon("search");
 export const AddIcon = createPrototypeIcon("add");

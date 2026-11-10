@@ -1,5 +1,22 @@
 # KAY screen map and navigation contract
 
+Aide and Paramètres, 2026-11-10. Help opens from the utility rail or phone
+navigation sheet. The topic grid, search catalog and two-column reader use
+the current reference. Search runs over the role-filtered guides sent by the
+server, and guide links retain a filtered return context. Narrow readers place
+the destination action below the heading when it would compress the text.
+
+Settings opens to the team and visit-hours overview. A section picker replaces
+the administration rail on phones. The users list uses a five-column table or
+phone cards with a details disclosure. Create, edit, reset and delete retain
+their existing authority and draft checks. Working hours show the actual
+weekly schedule and open the existing preview-and-confirm drawer for changes.
+
+Projets, 2026-11-10. The active prototype uses compact inventory cards, a desktop
+view switch, a collapsible filter rail and mobile filters in a sheet. Inventory
+create and edit actions open drawers from their list or record. Direct form
+routes remain available. [Contract](inventory-directory-local.md).
+
 Selected programme phase,2026-10-28: the existing identity/review forms, compact
 overview, image cards, desktop list, directory filters and original history now
 use real nullable programme phase. Overview retains four facts; category remains
@@ -290,7 +307,7 @@ The original request estimated 19 pages and named 17 screen families. The approv
 
 ## Visual reference and unpictured screens
 
-Use the current [design system](design-system.md), [DESIGN.md](../../DESIGN.md), Riviera branding and the owner's later screen-specific references for appearance across existing screens, tabs, dialogs and contextual panels. Keep every supported field/action and the existing role/business rules; illustrative screenshots do not add backend capabilities. The former nine-image reference was removed under D41.
+Use the [reference design system](design-system.md) and the owner-supplied prototype for appearance. Review the composition of each screen, tab, dialog and contextual panel against the corresponding reference in its own pass. Keep every supported field/action and the existing role/business rules; illustrative screenshots do not add backend capabilities. The former nine-image reference was removed under D41.
 
 ## Entry and navigation
 

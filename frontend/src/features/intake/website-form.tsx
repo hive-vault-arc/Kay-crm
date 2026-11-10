@@ -22,7 +22,7 @@ export function WebsiteForm() {
     <header className="kay-auth-header"><h1 id="website-title">Demande web</h1><p>Simulation locale · données synthétiques uniquement. Aucun site réel n’est connecté.</p></header>
     {!hydrated ? <p role="status">Préparation du formulaire…</p> : null}
     {receipt ? <section className="grid min-w-0 gap-4" aria-labelledby="receipt-title" aria-busy={busy}>
-      <h2 id="receipt-title" className="text-section font-medium">Reçu de la demande</h2>
+      <h2 id="receipt-title" className="text-section">Reçu de la demande</h2>
       <div ref={feedback} tabIndex={-1} className="grid min-w-0 gap-3"><p role="status"><Badge variant={receipt.state === "processed" ? "success" : receipt.state === "failed" ? "danger" : "info"}>{states[receipt.state]}</Badge></p><p className="text-sm text-muted-foreground">La réception est enregistrée. Ce reçu ne contient aucune information sur les contacts ou l’équipe.</p></div>
       <dl className="grid min-w-0 gap-2 rounded-xl border bg-muted/40 p-4"><dt className="text-xs text-muted-foreground">Référence du reçu</dt><dd className="wrap-anywhere select-all text-sm font-medium">{receipt.receipt_id}</dd></dl>
       {receipt.state === "queued" ? <p className="text-sm">Le traitement continue en arrière-plan. Actualiser le suivi n’envoie pas une nouvelle demande.</p> : receipt.state === "failed" ? <p className="text-sm">Conservez cette référence pour le responsable local. Ne renvoyez pas la demande avec une nouvelle référence.</p> : null}

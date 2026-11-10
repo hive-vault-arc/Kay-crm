@@ -62,7 +62,7 @@ Framework/component topics for this sprint:
 - [KAY shadcn/ui guide](../../04-design/ui-components.md)
 - [KAY Tailwind guide](../../04-design/styling.md)
 - [KAY design system](../../04-design/design-system.md)
-- [KAY semantic tokens](../../../branding/kay-ui-tokens.json)
+- KAY semantic tokens (retired design tokens)
 - [React Hook Form documentation](https://react-hook-form.com/get-started)
 - [Zod validation](https://zod.dev/)
 - [TanStack Table documentation](https://tanstack.com/table/latest/docs/introduction)

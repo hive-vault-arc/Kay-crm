@@ -1,0 +1,191 @@
+/* Prospect directory. The filter rail and table have separate scroll regions. */
+.crm-directory.kay-sales-directory {
+  --sales-filter-width:264px;
+  min-width:0;
+  gap:4px;
+  align-content:start;
+}
+.kay-sales-directory .kay-directory-header { column-gap:12px; }
+.kay-sales-directory .kay-page-heading { flex:0 1 calc(var(--sales-filter-width) - 12px); gap:0; }
+.kay-sales-directory .kay-page-heading h1 { font-weight:700; }
+.kay-sales-directory .kay-page-navigation { margin-inline-end:auto; }
+.kay-sales-directory .kay-directory-tools > button[data-variant=outline],
+.kay-sales-directory .kay-directory-views > button[aria-pressed=false] { background:var(--workspace-field); }
+.kay-sales-directory .kay-directory-tools > button[aria-expanded=true] { background:var(--workspace-selected); }
+.kay-sales-directory .kay-directory-tools > button:hover,
+.kay-sales-directory .kay-directory-views > button[aria-pressed=false]:hover { background:var(--workspace-hover); }
+.kay-sales-directory .kay-directory-views > button[aria-pressed=true]:hover { background:var(--workspace-primary-hover); }
+.kay-sales-directory .kay-directory-tools > a[data-action=create]:hover { background:var(--action-creation-hover); }
+.kay-sales-directory .kay-filter-layout { grid-template-columns:var(--sales-filter-width) minmax(0,1fr); }
+.kay-sales-directory .kay-filter-layout[data-rail-hidden=true] { grid-template-columns:minmax(0,1fr); }
+.kay-sales-directory .kay-filter-rail[hidden],.kay-sales-list[hidden] { display:none; }
+.kay-sales-filter-heading { display:flex; align-items:center; flex-wrap:wrap; gap:4px; padding-bottom:12px; }
+.kay-sales-filter-heading h2 { margin-inline-end:auto; font-size:16px; font-weight:650; }
+.kay-sales-filter-heading small { flex-basis:100%; color:var(--workspace-muted); font-size:12px; }
+.kay-sales-filter-heading > button[data-action=close] { background:var(--workspace-field); }
+.kay-sales-filter-heading > button[data-action=reset] { color:var(--workspace-muted); padding-inline:6px; }
+.kay-sales-directory .crm-filter-submit > button[type=submit] {
+  background:var(--workspace-primary);
+  color:var(--workspace-on-primary);
+}
+.kay-sales-directory .crm-filter-submit > button[type=submit]:hover { background:var(--workspace-primary-hover); }
+.kay-sales-filters .crm-status-filter > div { grid-template-columns:minmax(0,1fr); gap:0; }
+.kay-sales-filters .crm-status-filter label { gap:10px; min-height:36px; border:0; background:transparent; padding:4px; font-weight:500; }
+.kay-sales-filters .crm-status-filter label:is(:hover,[data-selected=true]) { border-radius:10px; background:var(--workspace-hover); }
+.kay-sales-filters .crm-status-filter .crm-status-dot { display:none; }
+.kay-sales-filters .crm-status-filter [data-slot=checkbox] { border-radius:50%; }
+.kay-sales-filters .crm-status-filter-count { margin-inline-start:auto; font-variant-numeric:tabular-nums; }
+.kay-sales-directory :is(.crm-search-input,[data-slot=native-select]) { border-radius:var(--workspace-geometry-control-radius); }
+.kay-sales-loading { display:grid; align-content:start; gap:10px; min-width:0; }
+.kay-sales-loading [data-slot=skeleton] { min-height:48px; border-radius:var(--workspace-geometry-compact-radius); }
+.kay-sales-loading [data-slot=skeleton]:first-of-type { min-height:44px; }
+.kay-sales-empty { display:grid; justify-items:center; gap:8px; padding:36px 16px; text-align:center; }
+.kay-sales-empty svg,.kay-sales-empty p { color:var(--workspace-muted); }
+.kay-sales-empty h2 { font-size:16px; font-weight:650; }
+.kay-sales-empty p { max-width:42ch; font-size:13px; }
+.kay-sales-list .crm-selection-toolbar { margin-bottom:4px; }
+.kay-sales-directory .crm-directory-table { table-layout:fixed; border-collapse:separate; border-spacing:0; }
+.kay-sales-directory .crm-directory-table tbody td { border-bottom:1px solid var(--workspace-line); padding:7px 12px; overflow-wrap:anywhere; }
+.kay-sales-directory .crm-directory-table tbody td.crm-selection-cell { padding:0; }
+.kay-sales-directory .crm-directory-table tbody tr:last-child td { border-bottom:0; }
+.kay-sales-directory .crm-directory-table tr[data-state=selected] td { background:var(--workspace-selected); }
+.kay-sales-directory .crm-directory-table .crm-agent > .crm-avatar { display:none; }
+.kay-sales-directory .crm-directory-table .crm-agent > span:last-child { max-width:9rem; }
+.kay-sales-directory .crm-directory-table .crm-contact-cell { min-width:0; gap:10px; }
+.kay-sales-directory .crm-directory-table .crm-contact-cell strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.kay-sales-directory .crm-directory-table .crm-contact-cell > span > span { overflow-wrap:anywhere; white-space:normal; }
+.kay-sales-directory .crm-directory-table :is(.crm-budget-cell,.crm-source-cell) { min-width:0; white-space:normal; }
+.kay-sales-directory .crm-directory-table .crm-agent > span:last-child { width:100%; }
+.kay-sales-directory .crm-directory-table time { color:var(--workspace-muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.kay-sales-directory .crm-directory-table th:has(.crm-sort-heading) { padding-block:0; }
+.kay-sales-directory .crm-directory-table .crm-sort-heading { padding-inline:0; white-space:nowrap; }
+.kay-sales-pagination { padding-top:4px; }
+.kay-sales-pagination .crm-directory-pagination [data-slot=button] { background:var(--workspace-field); }
+.kay-sales-pagination .crm-directory-pagination [data-slot=button]:hover { background:var(--workspace-hover); }
+.kay-sales-pagination .crm-directory-pagination [aria-current=page]:disabled { background:var(--workspace-selected); }
+.kay-sales-directory[data-sales-view=board] .kay-list-results { padding:0; border:0; background:transparent; box-shadow:none; }
+.kay-sales-directory[data-sales-view=board] .kay-kanban-scroll { position:relative; }
+.kay-sales-directory .kay-kanban-card { background:var(--workspace-floating); }
+
+@media(min-width:831px) {
+  .kay-sales-directory .kay-filter-rail { position:static; }
+  .kay-sales-directory .kay-filter-rail .crm-filter-submit > button[data-action=reset] { display:none; }
+  .kay-sales-directory[data-sales-view=list] .kay-filter-layout {
+    gap:0;
+    border:1px solid var(--workspace-floating-edge);
+    border-radius:var(--workspace-geometry-panel-radius);
+    background:var(--workspace-floating);
+    box-shadow:var(--workspace-floating-shadow);
+  }
+  .kay-sales-directory[data-sales-view=list] :is(.kay-filter-rail,.kay-list-results) {
+    border:0;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+    backdrop-filter:none;
+  }
+  .kay-sales-directory[data-sales-view=list] .kay-list-results:not(:first-child) { border-inline-start:1px solid var(--workspace-line); }
+  .kay-sales-directory[data-sales-view=list] [data-rail-hidden=true] .kay-list-results { border-inline-start:0; }
+}
+@media(min-height:560px) {
+  .kay-shell:has(.kay-sales-directory[data-sales-view=list]) {
+    height:100dvh;
+    overflow:hidden;
+  }
+  .kay-shell:has(.kay-sales-directory[data-sales-view=list]) .kay-main {
+    display:flex;
+    flex-direction:column;
+    height:calc(100dvh - var(--workspace-geometry-header));
+    min-height:0;
+    overflow:hidden;
+  }
+  .kay-shell:has(.kay-sales-directory[data-sales-view=list]) .kay-route-motion,
+  .kay-sales-directory[data-sales-view=list],
+  .kay-sales-directory[data-sales-view=list] :is(.kay-filter-rail:not([hidden]),.kay-list-results,.kay-sales-list:not([hidden])),
+  .kay-sales-list > div:has([data-slot=table-container]),
+  .kay-sales-list > div > div:has(> [data-slot=table-container]),
+  .kay-sales-list > div:has(.kay-mobile-collection),
+  .kay-sales-list > div > div:has(> .kay-mobile-collection) {
+    display:flex;
+    flex:1;
+    flex-direction:column;
+    min-height:0;
+  }
+  .kay-sales-directory[data-sales-view=list] .kay-filter-layout { flex:1; align-items:stretch; min-height:0; }
+  .kay-sales-directory[data-sales-view=list] .kay-filter-rail { max-height:none; overflow:hidden; }
+  .kay-sales-directory[data-sales-view=list] .kay-filter-rail form { display:flex; flex:1; flex-direction:column; min-height:0; gap:0; }
+  .kay-sales-directory[data-sales-view=list] .kay-filter-rail form > fieldset {
+    flex:1;
+    align-content:start;
+    overflow:auto;
+    overscroll-behavior:contain;
+    padding:4px 4px 12px;
+    margin-inline:-4px;
+  }
+  .kay-sales-directory[data-sales-view=list] .kay-filter-rail .crm-filter-submit { flex:none; padding-top:12px; }
+  .kay-sales-directory .kay-sales-list [data-slot=table-container] {
+    flex:1;
+    min-height:0;
+    overflow:auto;
+    overscroll-behavior:contain;
+    scrollbar-gutter:stable;
+  }
+  .kay-sales-directory .kay-sales-list thead th { position:sticky; top:0; z-index:1; }
+  .kay-sales-directory .kay-sales-pagination { margin-top:auto; }
+}
+@media(min-width:831px) and (max-width:1100px) {
+  .kay-sales-directory { --sales-filter-width:220px; }
+  .kay-sales-directory .kay-directory-tools { gap:6px; }
+}
+@media(max-width:830px) {
+  .crm-directory.kay-sales-directory { gap:8px; }
+  .kay-sales-directory .kay-page-heading { flex:1 1 auto; }
+  .kay-sales-directory .kay-page-actions { flex:0 1 auto; }
+  .kay-sales-directory .kay-list-controls { justify-content:flex-start; }
+  .kay-sales-directory .kay-list-leading { margin:0; }
+  .kay-sales-directory .kay-directory-action-label { display:none; }
+  .kay-sales-directory .kay-directory-tools { gap:4px; }
+  .kay-sales-directory .kay-directory-tools > button[aria-label="Autres actions de la liste"] { width:44px; padding:0; }
+  .kay-sales-directory .kay-directory-cards > li { background:var(--workspace-panel-opaque); padding:6px 10px; }
+  .kay-sales-directory .kay-directory-card-title { gap:0; }
+  .kay-sales-directory .kay-directory-card-title a { line-height:1.35; }
+  .kay-sales-directory .kay-directory-card-title small { overflow-wrap:anywhere; }
+  .kay-sales-directory .kay-directory-card-meta { display:grid; grid-template-columns:max-content minmax(0,1fr); align-items:start; gap:0 6px; }
+  .kay-sales-directory .kay-directory-card-meta > a { font-size:11px; white-space:nowrap; }
+  .kay-sales-directory .kay-directory-card-meta > span { gap:0 5px; }
+  .kay-sales-directory .kay-directory-card-meta strong { overflow-wrap:anywhere; text-align:end; }
+  .kay-prospect-card-source { flex:1 1 auto; min-width:0; overflow:hidden; text-align:end; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }
+  .kay-sales-directory .kay-directory-card-meta button { padding-inline:4px; }
+  .kay-sales-directory .kay-sales-pagination .crm-directory-pagination { justify-content:flex-start; }
+  .kay-sales-directory .kay-sales-pagination .crm-directory-pagination > span { width:100%; margin:0 0 4px; }
+  [data-filter-panel=mobile] .kay-sales-filters .crm-status-filter label { min-height:44px; }
+  [data-filter-panel=mobile] .kay-sales-filters .crm-filter-submit {
+    position:sticky;
+    bottom:0;
+    z-index:1;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    padding-block:8px max(8px,env(safe-area-inset-bottom));
+    background:var(--workspace-panel-opaque);
+  }
+}
+@media(max-width:830px) and (min-height:560px) {
+  .kay-shell:has(.kay-sales-directory[data-sales-view=list]) .kay-main { height:calc(100dvh - var(--workspace-geometry-mobile-header)); padding-bottom:max(12px,env(safe-area-inset-bottom)); }
+  .kay-sales-directory .kay-mobile-collection { min-height:0; overflow:auto; overscroll-behavior:contain; }
+  .kay-sales-directory .kay-list-controls { flex:none; }
+}
+@media(max-width:420px) {
+  .kay-sales-directory .kay-directory-tools > a[data-action=create] { font-size:12px; padding-inline:10px; }
+  .kay-sales-directory .kay-directory-card-head { gap:6px; }
+  .kay-sales-directory .kay-directory-card-head > .crm-status-badge { max-width:80px; white-space:normal; }
+}
+@media(max-width:360px) {
+  .kay-sales-directory .kay-page-actions,.kay-sales-directory .kay-directory-tools { width:100%; }
+  .kay-sales-directory .kay-directory-tools > a[data-action=create] { flex:1; }
+}
+@media(prefers-reduced-transparency:reduce) {
+  .kay-sales-directory[data-sales-view=list] .kay-filter-layout { background:var(--workspace-panel-opaque); }
+}
+@media(forced-colors:active) {
+  .kay-sales-directory[data-sales-view=list] .kay-filter-layout { border-color:CanvasText; background:Canvas; }
+  .kay-sales-filters .crm-status-filter label[data-selected=true] { outline:1px solid Highlight; }
+}

@@ -7,8 +7,8 @@ import type { Visit } from "./contracts";
 
 export function VisitWeekGrid({ days, visits, today }: { days: string[]; visits: Visit[]; today?: string }) {
   return <div className="kay-calendar-week" role="region" aria-label="Visites de la semaine, défilement horizontal" tabIndex={0}><div className="kay-calendar-days">{days.map(day => <section key={day} className="kay-calendar-day" data-today={day === today} aria-label={civilLabel(day, { dateStyle: "full" })}>
-    <Link className="kay-calendar-day-create" href={`/visits/new?date=${day}`} aria-label={`Planifier une visite le ${civilLabel(day, { dateStyle: "full" })}`}><span>{civilLabel(day, { weekday: "long" })}</span><strong>{civilLabel(day, { day: "numeric", month: "short" })}</strong><AddIcon size={16} aria-hidden="true" /></Link>
-    <div className="kay-calendar-day-events" role="region" tabIndex={0} aria-label={`Visites du ${civilLabel(day, { dateStyle: "full" })}`}>{visits.filter(visit => occursOn(visit, day)).map(visit => <CalendarVisit key={visit.id} visit={visit} tile day={day} />)}<Link className="kay-calendar-day-space" href={`/visits/new?date=${day}`} tabIndex={-1} aria-label={`Planifier une visite le ${civilLabel(day, { dateStyle: "full" })}`} /></div>
+    <Link className="kay-calendar-day-create" href={`/visits/new?date=${day}`} scroll={false} aria-label={`Planifier une visite le ${civilLabel(day, { dateStyle: "full" })}`}><span>{civilLabel(day, { weekday: "long" })}</span><strong>{civilLabel(day, { day: "numeric", month: "short" })}</strong><AddIcon size={16} aria-hidden="true" /></Link>
+    <div className="kay-calendar-day-events" role="region" tabIndex={0} aria-label={`Visites du ${civilLabel(day, { dateStyle: "full" })}`}>{visits.filter(visit => occursOn(visit, day)).map(visit => <CalendarVisit key={visit.id} visit={visit} tile day={day} />)}<Link className="kay-calendar-day-space" href={`/visits/new?date=${day}`} scroll={false} tabIndex={-1} aria-label={`Planifier une visite le ${civilLabel(day, { dateStyle: "full" })}`} /></div>
   </section>)}</div></div>;
 }
 

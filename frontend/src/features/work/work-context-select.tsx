@@ -15,7 +15,7 @@ export function WorkContextSelect({ contactId, value, change }: { contactId: str
   const id = useId();
   const [kind, setKind] = useState<"enquiry" | "deal">("enquiry");
   const [leadPage, setLeadPage] = useState(1), [dealPage, setDealPage] = useState(1);
-  return <section className="grid min-w-0 gap-3" aria-label="Dossier de l’action">
+  return <section className="kay-work-context grid min-w-0 gap-3" aria-label="Dossier de l’action">
     <div className="grid gap-2"><Label htmlFor={`${id}-kind`}>Lier l’action à</Label><NativeSelect id={`${id}-kind`} value={kind} onChange={event => { setKind(event.target.value as typeof kind); change({ enquiry_id: null, deal_id: null }); }}><option value="enquiry">Un prospect</option><option value="deal">Une affaire</option></NativeSelect></div>
     {kind === "enquiry" ? <LeadOptions contactId={contactId} page={leadPage} setPage={page => { setLeadPage(page); change({ enquiry_id: null, deal_id: null }); }} selected={value.enquiry_id} choose={enquiry_id => change({ enquiry_id, deal_id: null })} id={id} /> : <DealOptions contactId={contactId} page={dealPage} setPage={page => { setDealPage(page); change({ enquiry_id: null, deal_id: null }); }} selected={value.deal_id} choose={deal_id => change({ enquiry_id: null, deal_id })} id={id} />}
     <p className="text-sm text-muted-foreground">Le résultat et les notes automatiques apparaîtront dans l’historique de ce dossier.</p>

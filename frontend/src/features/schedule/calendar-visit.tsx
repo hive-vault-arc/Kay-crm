@@ -16,7 +16,7 @@ export function CalendarVisit({ visit, onChanged, onCancel, tile = false, day }:
   const cancellable = !visit.contact_archived && !["completed", "not_completed", "cancelled"].includes(visit.status);
   const details = `${visit.title} · ${visit.contact_name} · ${typeLabels[visit.type]} · ${statusLabels[visit.status]} · ${localLabel(visit.start_local)} à ${localLabel(visit.end_local)}`;
   return <article data-visit-kind={visit.type} data-crm-state={visit.status} className={`calendar-agenda-visit kay-calendar-entry${tile ? " kay-calendar-tile" : ""}`}>
-    <Link href={`/visits/${visit.id}`} title={details} aria-label={details} className="kay-calendar-entry-link">
+    <Link href={`/visits/${visit.id}`} scroll={false} title={details} aria-label={details} className="kay-calendar-entry-link">
       <span className="kay-calendar-entry-main">{tile ? <><span className="kay-calendar-entry-time">{day && visit.start_local.slice(0, 10) < day ? "Suite" : visit.start_local.slice(11, 16)}</span><strong><Icon aria-hidden="true" size={16} /><span>{visit.title}</span></strong><span>{visit.contact_name}</span></> : <><strong><Icon aria-hidden="true" size={16} /><span>{visit.start_local.slice(11, 16)} · {visit.title}</span></strong><span>{dayLabel(visit.start_local.slice(0, 10))} · {visit.contact_name}</span><span className="kay-calendar-entry-type">{typeLabels[visit.type]}</span></>}{visit.review_code ? <span className="text-warning">Règles de planification à revoir</span> : null}</span>
       <VisitStatus status={visit.status} />
     </Link>

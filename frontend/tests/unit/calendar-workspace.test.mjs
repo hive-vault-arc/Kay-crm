@@ -33,6 +33,7 @@ const visit = (overrides = {}) => ({ id: randomUUID(), version: 8, title: "Synth
 function calendarModule(state, phone, query) {
   return loadServer("src/features/schedule/visit-calendar.tsx", { modules: {
     react: state.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" },
+    "@/components/shared/page-header": { PageHeader: "Header" }, "@/components/ui/skeleton": { Skeleton: "Skeleton" },
     "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/native-select": { NativeSelect: "Select" },
     "@/components/ui/tabs": { Tabs: "Tabs", TabsContent: "Panel", TabsList: "TabList", TabsTrigger: "Tab" }, "@/components/ui/sheet": { Sheet: "Sheet", SheetContent: "SheetContent", SheetHeader: "SheetHeader", SheetTitle: "SheetTitle", SheetDescription: "SheetDescription", SheetTrigger: "SheetTrigger" },
     "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/contacts/record-states": { RecordError: "Error" },
@@ -71,17 +72,19 @@ test("Calendar keeps desktop presentation and explicit filters across week/mode/
   const state = harness(); let phone = false;
   const loaded = calendarModule(state, () => phone, () => ({ value: undefined, refresh() {} }));
   const props = { initial: "2026-10-19", actorId: randomUUID(), administrator: false }, render = () => state.render(() => loaded.Calendar(props));
+  const toolbar = view => find(view, "Header")[0].props.actions;
+  const tabs = view => find(view, "Header")[0].props.navigation;
   let view = render(); assert.equal(view.props.value, "week");
-  const filters = find(view, "Filters")[0]; assert.equal(filters.props.compact, true); filters.props.toggleType("office");
+  const filters = find(toolbar(view), "Filters")[0]; assert.equal(filters.props.compact, true); filters.props.toggleType("office");
   const selected = visit(); find(render(), node => node.type?.name === "Week")[0].props.cancel(selected);
-  phone = true; view = render(); assert.equal(view.props.value, "agenda"); assert.equal(find(view, "Tab").some(node => node.props.value === "week"), false);
+  phone = true; view = render(); assert.equal(view.props.value, "agenda"); assert.equal(find(tabs(view), "Tab").some(node => node.props.value === "week"), false);
   assert.equal(find(view, "Action")[0].props.value, selected);
   find(view, "Input")[0].props.onChange({ target: { value: "2026-10-26" } }); view = render();
-  assert.equal(find(view, "Filters")[0].props.types.includes("office"), false); assert.equal(find(view, "Action")[0].props.value, selected);
-  find(view, "Select")[0].props.onChange({ target: { value: "busy" } }); view = render(); assert.equal(view.props.value, "agenda"); assert.equal(find(view, "Filters").length, 0);
+  assert.equal(find(toolbar(view), "Filters")[0].props.types.includes("office"), false); assert.equal(find(view, "Action")[0].props.value, selected);
+  find(toolbar(view), "Select")[0].props.onChange({ target: { value: "busy" } }); view = render(); assert.equal(view.props.value, "agenda"); assert.equal(find(toolbar(view), "Filters").length, 0);
   phone = false; view = render(); assert.equal(view.props.value, "week");
-  find(view, "Action")[0].props.denied(new ApiError("FORBIDDEN", 403)); view = render(); assert.equal(view.type, "Error");
-  view.props.retry(); view = render(); assert.equal(find(view, "Action").length, 0); assert.equal(view.props.value, "week");
+  find(view, "Action")[0].props.denied(new ApiError("FORBIDDEN", 403)); view = render(); const failure = find(view, "Error")[0]; assert.equal(failure.props.error.status, 403);
+  failure.props.retry(); view = render(); assert.equal(find(view, "Action").length, 0); assert.equal(view.props.value, "week");
 });
 
 test("Drawer filters retain authoritative whole-range facets and every zero-count status", () => {
@@ -146,6 +149,7 @@ test("The real booking form keeps date-only context clean, tracks controlled edi
   const state = harness(), commands = [], formState = { isSubmitting: false, isDirty: false };
   const { VisitForm } = loadServer("src/features/schedule/visit-form.tsx", { globals: { crypto: { randomUUID } }, modules: {
     react: state.react, "react/jsx-runtime": runtime, "react-hook-form": { useWatch: () => ({ title: "Synthetic booking", location: "Synthetic location", overlap_reason: "" }), useForm: () => ({ formState, control: {}, setFocus() {}, handleSubmit: callback => () => callback({ title: "Synthetic booking", location: "Synthetic location", overlap_reason: "" }) }) }, "@hookform/resolvers/zod": { zodResolver: () => ({}) },
+    "@/components/shared/page-header": { PageHeader: "Header" }, "@/components/ui/skeleton": { Skeleton: "Skeleton" },
     "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/checkbox": { Checkbox: "Checkbox" },
     "@/components/ui/form": { Form: "Form", FormControl: "Control", FormField: "Field", FormItem: "Item", FormLabel: "FieldLabel", FormMessage: "Message" },
     "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request() {}, dialog: null }) }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": { useQuery: () => ({ value: undefined, refresh() {} }), queryPath: () => "/api/v1/calendar/availability" },
@@ -166,7 +170,7 @@ test("The real booking form keeps date-only context clean, tracks controlled edi
 test("Contact selection passes the calendar date through to the original authorized booking form", () => {
   const state = harness(), requested = [];
   const { VisitCreate } = loadServer("src/features/schedule/visit-create.tsx", { modules: {
-    react: state.react, "react/jsx-runtime": runtime, "next/navigation": { useRouter: () => ({ replace: value => requested.push(value) }) }, "@/components/ui/button": { Button: "Button" }, "@/features/contacts/contact-selector": { ContactSelector: "ContactSelector" }, "@/features/contacts/contracts": contacts, "@/features/contacts/use-query": {}, "@/features/contacts/record-states": { RecordError: "Error" }, "./visit-form": { VisitForm: "Booking" }, "./visit-route-drawer": { VisitRouteDrawer: "Drawer" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: null, request: callback => callback() }) },
+    react: state.react, "react/jsx-runtime": runtime, "next/navigation": { useRouter: () => ({ replace: value => requested.push(value) }) }, "@/components/ui/button": { Button: "Button" }, "@/features/contacts/contact-selector": { ContactSelector: "ContactSelector" }, "@/components/icons": { ContactsIcon: "ContactsIcon" }, "@/components/shared/section-heading": { SectionHeading: "Heading" }, "@/features/contacts/contracts": contacts, "@/features/contacts/use-query": {}, "@/features/contacts/record-states": { RecordError: "Error" }, "./visit-form": { VisitForm: "Booking" }, "./visit-route-drawer": { VisitRouteDrawer: "Drawer" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: null, request: callback => callback() }) },
   } });
   const props = { actorId: randomUUID(), date: "2026-10-20" }, render = () => state.render(() => VisitCreate(props));
   find(render().props.children(() => {}), "ContactSelector")[0].props.choose({ id: randomUUID(), name: "Synthetic contact", archived_at: null });

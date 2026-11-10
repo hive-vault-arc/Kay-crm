@@ -12,17 +12,11 @@ status: ready-for-review
 
 # Kepvy Brand Magazine
 
-## KAY-facing interface extension
+## KAY workspace
 
-Current KAY CRM branding (2026-10-18): [Riviera](riviera/README.md) supersedes the
-older KAY-facing palette/font proposals. The KEPVY magazine below remains a
-separate historical identity reference, not the current KAY application theme.
-
-This page documents the **KEPVY** brand magazine, not the KAY Real Estate logo. On 2026-10-16 Khalid explicitly replaced the earlier KAY artwork with the supplied [transparent Champagne Gold](kay-logo-reference-flat.png) and [black-background Luxury Gold](kay-logo-reference-textured.png) PNGs. These two reference paths now contain the new originals unchanged, not the retired artwork. See [current logo usage and verification](kay-logos.md). They are approved raster assets, not vector masters. The KAY-facing [interface design system](../docs/04-design/design-system.md) and [exact UI tokens](kay-ui-tokens.json) remain separate from this KEPVY identity guide.
-
-On 2026-10-18, the app's current KAY-facing palette and typography changed to
-the owner-selected [Riviera system](riviera/README.md). That separate interface
-handoff does not merge KEPVY and KAY logos or alter this brand magazine.
+The [KAY interface design system](../docs/04-design/design-system.md) and
+[reference tokens](prototype/kay-workspace.tokens.json) describe the active KAY
+application appearance. The KEPVY magazine below documents a separate identity.
 
 ## Quick Jump
 
@@ -55,7 +49,7 @@ The selected direction is the rounded parallel-stroke K with lowercase `kepvy`. 
 | Magazine layout | Existing CalBook pages as layout references only |
 | Image delivery | Five local JPEG brand-guide pages; original source files and a hash manifest are not present here |
 | Live-text proposal | Satoshi 400, 500 and 700 |
-| Specifications | This guide and the [KAY UI tokens](kay-ui-tokens.json) |
+| Specifications | This guide and the [KAY reference tokens](prototype/kay-workspace.tokens.json) |
 
 No coded image renderer, font installation, app changes or external publication was performed.
 

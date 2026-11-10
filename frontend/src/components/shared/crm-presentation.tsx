@@ -20,9 +20,10 @@ export function CrmStatusBadge({ state, children, dot = true, kind }: { state: s
   return <span className="crm-status-badge" data-crm-state={state} data-crm-kind={kind}>{dot ? <span className="crm-status-dot" aria-hidden="true" /> : null}{children}</span>;
 }
 
-export function CrmDirectoryHeader({ title, count, noun, description, route, actions }: { title: string; count?: number; noun: string; description: string; route: string; actions?: ReactNode }) {
+export function CrmDirectoryHeader({ title, count, unavailable, noun, description, route, actions, navigation }: { title: string; count?: number; unavailable?: boolean; noun: string; description: string; route: string; actions?: ReactNode; navigation?: ReactNode }) {
   return <header className="kay-directory-header kay-page-header">
-    <div className="kay-page-heading"><h1 tabIndex={-1} data-route={route}>{title}</h1><p aria-label={description}>{count === undefined ? "Chargement…" : `${count} ${count > 1 ? noun : noun.replace(/s$/, "")}`}</p></div>
+    <div className="kay-page-heading"><h1 tabIndex={-1} data-route={route}>{title}</h1><p aria-live="polite">{unavailable ? "Résultats indisponibles" : count === undefined ? "Chargement…" : `${count} ${count === 1 ? noun.replace(/s$/, "") : noun}`}</p><p className="sr-only">{description}</p></div>
+    {navigation ? <div className="kay-page-navigation">{navigation}</div> : null}
     {actions ? <div className="kay-page-actions">{actions}</div> : null}
   </header>;
 }
@@ -30,14 +31,21 @@ export function CrmDirectoryHeader({ title, count, noun, description, route, act
 const DirectoryMenuFocus = createContext<(() => void) | undefined>(undefined);
 export function useDirectoryMenuFocus() { return useContext(DirectoryMenuFocus); }
 
-export function CrmDirectoryToolbar({ children, primary }: { children: ReactNode; primary: ReactNode }) {
+export function CrmDirectoryToolbar({ children, primary, controls }: { children: ReactNode; primary: ReactNode; controls?: ReactNode }) {
   const menuRef = useRef<HTMLButtonElement>(null);
   const returnFocus = useCallback(() => { menuRef.current?.focus(); }, []);
-  return <div className="kay-directory-tools">{primary}<Popover><PopoverTrigger asChild><Button ref={menuRef} variant="outline" size="icon" aria-label="Autres actions de la liste"><MoreIcon aria-hidden="true" size={20} /></Button></PopoverTrigger><PopoverContent align="end" className="kay-directory-utilities" aria-label="Actions de la liste"><DirectoryMenuFocus value={returnFocus}>{children}</DirectoryMenuFocus></PopoverContent></Popover></div>;
+  return <div className="kay-directory-tools">
+    {controls === undefined ? primary : controls}
+    <Popover><PopoverTrigger asChild><Button ref={menuRef} variant="outline" size={controls === undefined ? "icon" : "default"} aria-label="Autres actions de la liste"><MoreIcon aria-hidden="true" size={controls === undefined ? 20 : 16} />{controls === undefined ? null : <span className="kay-directory-action-label">Actions</span>}</Button></PopoverTrigger><PopoverContent align="end" className="kay-directory-utilities" aria-label="Actions de la liste"><DirectoryMenuFocus value={returnFocus}>{children}</DirectoryMenuFocus></PopoverContent></Popover>
+    {controls === undefined ? null : primary}
+  </div>;
 }
 
-export function CrmRecordHeader({ contact, title, route, badges, actions, backHref, reference, showContact = true }: { contact: ContactSummary; title: string; route: string; badges: ReactNode; actions?: ReactNode; backHref?: string; reference?: ReactNode; showContact?: boolean }) {
-  return <RecordHeader title={title} route={route} badges={badges} actions={actions} backHref={backHref} reference={reference} kind={route.startsWith("/deals/") ? "deal" : "enquiry"} metadata={showContact ? <><a href={`tel:${contact.primary_phone}`}><PhoneIcon aria-hidden="true" size={16} />{contact.primary_phone}</a>{contact.primary_email ? <a href={`mailto:${contact.primary_email}`}><EmailIcon aria-hidden="true" size={16} />{contact.primary_email}</a> : null}</> : undefined} />;
+export function CrmRecordHeader({ contact, title, route, badges, actions, backHref, reference, context, showContact = true, showEmail = true }: { contact: ContactSummary; title: string; route: string; badges: ReactNode; actions?: ReactNode; backHref?: string; reference?: ReactNode; context?: ReactNode; showContact?: boolean; showEmail?: boolean }) {
+  return <RecordHeader title={title} route={route} badges={badges} actions={actions} backHref={backHref} reference={reference} kind={route.startsWith("/deals/") ? "deal" : "enquiry"} metadata={showContact || context ? <>
+    {showContact ? <><a href={`tel:${contact.primary_phone}`}><PhoneIcon aria-hidden="true" size={16} />{contact.primary_phone}</a>{showEmail && contact.primary_email ? <a href={`mailto:${contact.primary_email}`}><EmailIcon aria-hidden="true" size={16} />{contact.primary_email}</a> : null}</> : null}
+    {context}
+  </> : undefined} />;
 }
 
 export function CrmStatusBoard({ title, items, current, label, splitAt = 5 }: { title: string; items: { id: string; label: string }[]; current: string; label: string; splitAt?: number }) {
@@ -53,6 +61,6 @@ export function CrmAgent({ name }: { name: string }) {
   return <span className="crm-agent"><ContactAvatar name={name} /><span title={name}>{name}</span></span>;
 }
 
-export function CrmContactCell({ contact, href, describedBy, onOpen }: { contact: ContactSummary; href: string; describedBy: string; onOpen?: MouseEventHandler<HTMLAnchorElement> }) {
-  return <Link href={href} prefetch={onOpen ? false : undefined} onClick={onOpen} className="crm-contact-cell" aria-label={contact.name} aria-describedby={describedBy}><ContactAvatar name={contact.name} /><span><strong>{contact.name}</strong><span id={describedBy}>{contact.primary_phone}</span></span></Link>;
+export function CrmContactCell({ contact, href, describedBy, onOpen }: { contact: ContactSummary; href: string; describedBy?: string; onOpen?: MouseEventHandler<HTMLAnchorElement> }) {
+  return <Link href={href} prefetch={onOpen ? false : undefined} onClick={onOpen} className="crm-contact-cell" title={contact.name} aria-label={contact.name} aria-describedby={describedBy}><ContactAvatar name={contact.name} /><span><strong>{contact.name}</strong>{describedBy ? <span id={describedBy}>{contact.primary_phone}</span> : null}</span></Link>;
 }

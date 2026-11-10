@@ -30,7 +30,7 @@ const steps = [
   { label: "Vérification", mobileLabel: "Résumé", icon: CompletedIcon },
 ] as const;
 
-export function DevelopmentCreationWizard({ actorId, role }: { actorId?: string; role?: StaffRole } = {}) {
+export function DevelopmentCreationWizard({ actorId, role, cancel }: { actorId?: string; role?: StaffRole; cancel?: () => void } = {}) {
   const router = useRouter();
   const hydrated = useHydrated();
   const capabilities = useQuery("/api/v1/developments?page=1&page_size=1", developmentsSchema);
@@ -109,7 +109,7 @@ export function DevelopmentCreationWizard({ actorId, role }: { actorId?: string;
     { label: "Libellé public du promoteur", value: draft.developer_marketing_display?.trim() },
   ];
   if (command.denied) return <>{command.acknowledged ? <p role="status">Le programme est enregistré. Les droits d’accès ont changé.</p> : null}<RecordError error={command.denied} /></>;
-  return <form ref={scope} data-managed-draft="true" data-live-dirty={changes.dirty ? "true" : undefined} data-write-recovery={command.uncertain ? "true" : undefined} noValidate className="form-surface kay-inventory-wizard grid min-w-0 items-start gap-5" aria-label="Créer un programme" aria-busy={command.protected} onSubmit={event => { event.preventDefault(); if (step === 2) void form.handleSubmit(save)(event); else next(); }}>
+  return <form ref={scope} data-draft-managed data-live-dirty={changes.dirty ? "true" : undefined} data-write-recovery={command.uncertain ? "true" : undefined} noValidate className="form-surface kay-inventory-wizard grid min-w-0 items-start gap-5" aria-label="Créer un programme" aria-busy={command.protected} onSubmit={event => { event.preventDefault(); if (step === 2) void form.handleSubmit(save)(event); else next(); }}>
     <InventoryWizardSteps steps={steps} current={step} change={next => { if (lock.current || command.locked()) return; setValidation(""); focusStep(next); }} disabled={!hydrated || command.protected} />
     <div className="grid min-w-0 gap-5">
       <div>
@@ -135,10 +135,10 @@ export function DevelopmentCreationWizard({ actorId, role }: { actorId?: string;
       {capabilities.error ? <RecordError error={capabilities.error} retry={command.protected ? undefined : capabilities.refresh} /> : null}
       <InventoryError level="development" error={command.error} />
       {command.uncertain ? <p role="status">{command.acknowledged ? "Le programme est enregistré. Actualisez son résultat sans le créer à nouveau." : "La réponse est interrompue. Réessayez la même opération pour retrouver le programme."}</p> : null}
-      <div role="group" aria-label="Navigation du formulaire" className="flex flex-wrap gap-2 border-t pt-4">
+      <div role="group" aria-label="Navigation du formulaire" className="kay-inventory-form-actions flex flex-wrap gap-2 border-t pt-4">
         {step > 0 ? <Button action="back" type="button" variant="outline" disabled={command.protected} onClick={() => { if (lock.current || command.locked()) return; setValidation(""); focusStep(step - 1); }}>Précédent</Button> : null}
-        {step < 2 ? <Button action="forward" variant="creation" type="button" disabled={!hydrated || command.protected} onClick={event => { event.preventDefault(); next(); }}>Suivant</Button> : <Button action="create" type="submit" disabled={!hydrated || command.pending || !command.uncertain && !command.editable}>{command.pending ? "Enregistrement…" : command.uncertain ? command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération" : "Créer le programme"}</Button>}
-        <Button action="cancel" variant="outline" disabled={command.protected} asChild><Link href="/projects" aria-disabled={command.protected} tabIndex={command.protected ? -1 : undefined} onClick={event => { if (lock.current || command.locked()) event.preventDefault(); }}>Annuler</Link></Button>
+        {step < 2 ? <Button action="forward" variant="creation" type="button" disabled={!hydrated || command.protected} onClick={event => { event.preventDefault(); next(); }}>Suivant</Button> : <Button action="create" type="submit" disabled={!hydrated || command.pending || !command.uncertain && !command.canEdit()}>{command.pending ? "Enregistrement…" : command.uncertain ? command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération" : "Créer le programme"}</Button>}
+        {cancel ? <Button action="cancel" type="button" variant="outline" disabled={command.protected} onClick={() => { if (!lock.current && !command.locked()) cancel(); }}>Annuler</Button> : <Button action="cancel" variant="outline" disabled={command.protected} asChild><Link href="/projects?kind=programmes" aria-disabled={command.protected} tabIndex={command.protected ? -1 : undefined} onClick={event => { if (lock.current || command.locked()) event.preventDefault(); }}>Annuler</Link></Button>}
       </div>
     </div>
   </form>;

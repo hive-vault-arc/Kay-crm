@@ -19,10 +19,10 @@ export function WorkPropertySelect({ value, change, purpose = "task" }: { value:
   const [page, setPage] = useState(1);
   const query = useQuery(queryPath("properties", { q, page, page_size: 25, archive: "active" }), propertiesSchema);
   const selectedOnPage = query.value?.items.find(property => property.id === value);
-  return <fieldset className="kay-drawer-form-section grid min-w-0 gap-3"><legend className="mb-3 text-sm font-medium">Bien lié (facultatif)</legend>
+  return <fieldset className="kay-drawer-form-section kay-work-property grid min-w-0 gap-3"><legend className="mb-3 text-sm font-medium">Bien lié (facultatif)</legend>
     {value && !selectedOnPage ? <SelectedPropertySummary key={value} id={value} /> : null}
-    <div className="grid gap-2"><Label htmlFor={`${id}-search`}>Rechercher un bien ou une unité</Label><Input id={`${id}-search`} type="search" value={q} maxLength={160} onChange={event => { setQ(event.target.value); setPage(1); }} onKeyDown={event => { if (event.key === "Enter") event.preventDefault(); }} /></div>
-    <div className="grid gap-2"><Label htmlFor={`${id}-choice`}>Bien concerné</Label><NativeSelect id={`${id}-choice`} value={value ?? ""} disabled={!query.value || Boolean(query.error)} onChange={event => change(event.target.value || null)}><option value="">Aucun bien lié</option>
+    <div className="kay-work-property-field grid gap-2"><Label htmlFor={`${id}-search`}>Rechercher un bien ou une unité</Label><Input id={`${id}-search`} type="search" value={q} maxLength={160} onChange={event => { setQ(event.target.value); setPage(1); }} onKeyDown={event => { if (event.key === "Enter") event.preventDefault(); }} /></div>
+    <div className="kay-work-property-field grid gap-2"><Label htmlFor={`${id}-choice`}>Bien concerné</Label><NativeSelect id={`${id}-choice`} value={value ?? ""} disabled={!query.value || Boolean(query.error)} onChange={event => change(event.target.value || null)}><option value="">Aucun bien lié</option>
       {value && !selectedOnPage ? <option value={value}>Bien actuellement lié</option> : null}
       {query.value?.items.map(property => <option key={property.id} value={property.id}>{label(property)}</option>)}
     </NativeSelect></div>

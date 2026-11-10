@@ -72,7 +72,7 @@ test("Staff: admin-chosen password, immediate restricted login, own password and
     await confirm(page, "Supprimer l’utilisateur");
     await expect.poll(() => new URL(page.url()).pathname).toBe("/settings/users");
     await expect(page.getByRole("table")).toBeVisible();
-    expect(await page.getByRole("link", { name: "Personnel synthétique de contrôle", exact: true }).count()).toBe(0);
+    expect(await page.getByRole("link", { name: "Modifier Personnel synthétique de contrôle", exact: true }).count()).toBe(0);
     expect((await recipient.request.get("/api/v1/auth/me")).status()).toBe(401);
     expect((await page.request.get(`/api/v1/users/${staff.id}`)).status()).toBe(404);
     await clearActorContext(recipient); await deniedLogin(recipient, staff);

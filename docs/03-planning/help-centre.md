@@ -56,6 +56,15 @@ dependency, credential delivery or production operation is introduced.
 
 ## Design and responsive behaviour
 
+2026-11-10 reference update. The current KAY prototype replaces the original
+category rail with a topic-card home, a scrollable catalog and a guide reader
+with two columns on wide screens. The desktop utility rail and mobile
+navigation sheet expose Aide. Search updates the URL locally after typing, and
+return links preserve the search context. Phone readers give the title and
+summary a full-width row before the action link when space is limited.
+
+### Original 2026-10-23 presentation
+
 Design-system-ops and the installed UI skills preserve Riviera, semantic tokens,
 shadcn controls and existing Iconsax information/category/action assets. The
 dense authenticated help workspace is outside design-taste's marketing workflow.

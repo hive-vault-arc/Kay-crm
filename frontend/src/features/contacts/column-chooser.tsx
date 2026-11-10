@@ -3,7 +3,7 @@ import { useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { parseColumnPreference } from "@/lib/table/column-preferences";
 import { useHydrated } from "@/hooks/use-hydrated";
 
@@ -30,9 +30,41 @@ export function useLeadColumns() {
 }
 export function ColumnChooser({ visible, change, compact = false }: { visible: ColumnId[]; change: (columns: ColumnId[]) => void; compact?: boolean }) {
   const hydrated = useHydrated();
-  return <Sheet><SheetTrigger asChild><Button action="columns" variant={compact ? "quiet" : "outline"} size={compact ? "compact" : "default"} disabled={!hydrated}>Colonnes</Button></SheetTrigger><SheetContent side="right" className="overflow-y-auto"><SheetHeader><SheetTitle>Colonnes des Leads</SheetTitle><SheetDescription>Seuls les identifiants et leur ordre sont mémorisés sur ce navigateur, jamais les données des contacts.</SheetDescription></SheetHeader><div className="grid gap-6 p-4">
-    <fieldset className="grid gap-2"><legend className="mb-2 font-medium">Colonnes visibles</legend>{Object.entries(columnLabels).map(([id, label]) => <Label key={id} className="flex min-h-control cursor-pointer items-center gap-2"><Checkbox checked={visible.includes(id as ColumnId)} disabled={id === "name"} onCheckedChange={checked => change(checked ? [...visible, id as ColumnId] : visible.filter(value => value !== id))} />{label}{id === "name" ? " (toujours visible)" : ""}</Label>)}</fieldset>
-    <section className="grid gap-2" aria-label="Ordre des colonnes"><h3 className="font-medium">Ordre des colonnes visibles</h3>{visible.map((id, index) => <div className="grid gap-2 border-b pb-4" key={id}><span>{columnLabels[id]}</span><div className="flex flex-wrap gap-2"><Button action="up" variant="outline" disabled={index === 0} aria-label={`Monter ${columnLabels[id]}`} onClick={() => { const next = [...visible]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; change(next); }}>Monter</Button><Button action="down" variant="outline" disabled={index === visible.length - 1} aria-label={`Descendre ${columnLabels[id]}`} onClick={() => { const next = [...visible]; [next[index], next[index + 1]] = [next[index + 1], next[index]]; change(next); }}>Descendre</Button></div></div>)}</section>
-    <Button action="reset" variant="outline" onClick={() => change(defaults)}>Rétablir les colonnes</Button>
-  </div></SheetContent></Sheet>;
+  function move(index: number, target: number) {
+    const next = [...visible];
+    [next[index], next[target]] = [next[target], next[index]];
+    change(next);
+  }
+  return <Sheet>
+    <SheetTrigger asChild><Button action="columns" variant={compact ? "quiet" : "outline"} size={compact ? "compact" : "default"} disabled={!hydrated}>Colonnes</Button></SheetTrigger>
+    <SheetContent side="right" className="kay-record-drawer">
+      <SheetHeader className="kay-drawer-head">
+        <SheetTitle>Colonnes des Leads</SheetTitle>
+        <SheetDescription>La visibilité et l’ordre des colonnes sont mémorisés sur ce navigateur.</SheetDescription>
+      </SheetHeader>
+      <div className="kay-drawer-body flex-1">
+        <fieldset className="grid gap-1">
+          <legend className="mb-2 font-medium">Colonnes visibles</legend>
+          {Object.entries(columnLabels).map(([id, label]) => <Label key={id} className="flex min-h-control cursor-pointer items-center gap-3 rounded-control-compact px-3 hover:bg-muted">
+            <Checkbox checked={visible.includes(id as ColumnId)} disabled={id === "name"} onCheckedChange={checked => change(checked ? [...visible, id as ColumnId] : visible.filter(value => value !== id))} />
+            {label}{id === "name" ? " (toujours visible)" : ""}
+          </Label>)}
+        </fieldset>
+        <section aria-label="Ordre des colonnes">
+          <h3 className="mb-2 font-medium">Ordre des colonnes visibles</h3>
+          <ol className="divide-y">{visible.map((id, index) => <li className="flex items-center justify-between gap-2 py-1" key={id}>
+            <span className="text-sm">{columnLabels[id]}</span>
+            <div className="flex shrink-0 gap-1">
+              <Button action="up" variant="quiet" size="icon" disabled={index === 0} aria-label={`Monter ${columnLabels[id]}`} onClick={() => move(index, index - 1)} />
+              <Button action="down" variant="quiet" size="icon" disabled={index === visible.length - 1} aria-label={`Descendre ${columnLabels[id]}`} onClick={() => move(index, index + 1)} />
+            </div>
+          </li>)}</ol>
+        </section>
+      </div>
+      <footer className="kay-upload-footer">
+        <Button action="reset" variant="outline" onClick={() => change(defaults)}>Rétablir les colonnes</Button>
+        <SheetClose asChild><Button action="confirm" variant="default">Terminer</Button></SheetClose>
+      </footer>
+    </SheetContent>
+  </Sheet>;
 }

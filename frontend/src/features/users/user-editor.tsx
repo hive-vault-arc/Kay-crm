@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { RecordError } from "@/features/contacts/record-states";
 import { apiGet, ApiError } from "@/lib/api/client";
 import { userSchema, type StaffUser } from "./contracts";
@@ -27,6 +27,6 @@ function StaffEditorLifetime({ id, actorId }: { id: string; actorId: string }) {
     });
     return () => controller.abort();
   }, [id, retry]);
-  if (error || !user) return <SettingsWorkspace backToUsers active="users" route={`/settings/users/${id}/edit`} title="Modifier l’utilisateur" description="Accès de l’équipe">{error ? <div className="grid gap-4"><RecordError error={error} /><Button action="retry" variant="outline" onClick={() => { setUser(undefined); setError(undefined); setRetry(retry + 1); }}>Réessayer</Button></div> : <p role="status">Chargement du compte…</p>}</SettingsWorkspace>;
+  if (error || !user) return <SettingsWorkspace backToUsers active="users" route={`/settings/users/${id}/edit`} title="Modifier l’utilisateur" description="Accès de l’équipe">{error ? <RecordError error={error} retry={error.status >= 500 ? () => { setError(undefined); setRetry(value => value + 1); } : undefined} /> : <section className="kay-surface kay-settings-form-card grid gap-4" role="status"><span className="sr-only">Chargement du compte…</span><Skeleton className="h-6 w-36" /><Skeleton className="h-24 w-full" /></section>}</SettingsWorkspace>;
   return <UserForm key={`${user.id}:${user.version}`} user={user} actorId={actorId} notice={notice} changed={value => { setNotice("Compte enregistré. Les anciennes sessions ont été révoquées."); setUser(value); }} security={blocked => <UserActions user={user} actorId={actorId} disabled={blocked} changed={value => { setNotice("Mot de passe réinitialisé. La personne doit choisir son propre mot de passe à la prochaine connexion."); setUser(value); }} denied={failure => { setUser(undefined); setError(failure); }} />} />;
 }
