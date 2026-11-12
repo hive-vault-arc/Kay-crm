@@ -1,5 +1,11 @@
 # KEPVY: roles and permissions
 
+Client listing links: managers and administrators approve and withdraw a separate
+public snapshot. Active staff with inventory access can issue a link and revoke
+one they issued; managers and administrators can revoke any link. A holder can
+read only that approved public listing until it expires or is withdrawn or
+revoked. [Client listing boundary](docs/04-design/client-listing-links.md).
+
 2026-10-23 owner override: agents may upload their own WebP photographs to active
 shared properties (including units) and developments. Inventory photo archive,
 other authors' upload versions and ordinary attachments remain M/A-only. Private

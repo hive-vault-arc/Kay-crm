@@ -1,7 +1,7 @@
 """SP21 real PostgreSQL18 dump/restore, crypto, retention, pause and authorization."""
 
 from datetime import UTC, datetime, timedelta
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 from sqlalchemy import select, text
@@ -18,6 +18,10 @@ from app.recovery.maintenance import Admission, flag, pause
 from app.recovery.private import RecoveryError
 from app.recovery.service import create, extract_code, recovery_settings, restore
 from app.recovery.store import Store
+from app.shares.contracts import ApproveListing
+from app.shares.models import ListingLink
+from app.shares.public import read_listing
+from app.shares.service import approve, issue, status
 from tests.deal_support import run as deal_command
 from tests.recovery_support import build, clear_recovery
 
@@ -38,14 +42,41 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
         ),
         UUID(data["enquiry_id"]),
     )
+    listing_id = UUID(data["property_id"])
+    link_id = uuid4()
+    secret = settings.facade_secret.get_secret_value()
+    with database.session() as session, session.begin():
+        identity = current_identity(session, data["active_token"])
+        listing = status(session, identity, "property", listing_id)
+        approve(
+            session,
+            identity,
+            "property",
+            listing_id,
+            ApproveListing(
+                title="Fiche synthétique de récupération",
+                photos=[],
+                target_version=listing["target_version"],
+                expected_version=0,
+            ),
+        )
+        link = issue(session, identity, "property", listing_id, 1, link_id, secret)
+        assert (
+            read_listing(session, settings, link["token"])["title"]
+            == "Fiche synthétique de récupération"
+        )
     point = create(settings)
     result = restore(settings, UUID(point["point_id"]), replace_recovery=True)
-    assert result["verified_tables"] == 75 and result["objects"] >= 2
+    assert result["verified_tables"] == 77 and result["objects"] >= 2
     assert 0 <= result["rpo_seconds"] <= 3600 and result["restore_seconds"] < 14400
     target = recovery_settings(settings)
     db = Database(target.selected_database_url())
     try:
         with db.session() as session:
+            restored_link = session.get(ListingLink, link_id)
+            assert restored_link is not None and restored_link.revoked_at is not None
+            with pytest.raises(IdentityError, match="NOT_FOUND"):
+                read_listing(session, target, link["token"])
             with pytest.raises(IdentityError, match="UNAUTHENTICATED"):
                 current_identity(session, data["old_token"])
             with pytest.raises(IdentityError, match="UNAUTHENTICATED"):

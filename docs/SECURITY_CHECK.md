@@ -1,5 +1,16 @@
 # KAY security check for changes
 
+## Client listing links
+
+The authenticated facade checks session, exact origin and CSRF for commands.
+The backend rechecks live authority under lock; only managers and administrators
+approve or withdraw public snapshots. The anonymous API requires a separate
+expiring grant and sends typed allowlisted fields. Photo reads check the exact
+record, selected file version, scan verdict and archive state, verify storage
+integrity, strip metadata, then check access again before returning bytes.
+Tokens are kept out of paths, audit events and PostgreSQL plaintext. Restored
+links are revoked. See [client listing links](04-design/client-listing-links.md).
+
 ## Local first-admin recovery, 2026-11-02
 
 The separate local operator command accepts hidden TTY password input only. It

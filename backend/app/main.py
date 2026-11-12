@@ -42,6 +42,8 @@ from app.reports.router import router as reports_router
 from app.requirements.router import router as requirements_router
 from app.schedule.router import router as schedule_router
 from app.settings import Settings, load_settings
+from app.shares.router import public as public_listing_router
+from app.shares.router import staff as listing_shares_router
 from app.work.router import router as work_router
 
 logger = logging.getLogger("kay.requests")
@@ -117,11 +119,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(export_transfers)
     application.include_router(schedule_router)
     application.include_router(transfer_router)
+    application.include_router(listing_shares_router)
+    application.include_router(public_listing_router)
     application.add_middleware(
         CORSMiddleware,
         allow_origins=[config.frontend_origin],
         allow_methods=["PUT", "GET"],
-        allow_headers=["X-File-Permit", "X-File-Session", "Content-Type"],
+        allow_headers=["X-File-Permit", "X-File-Session", "X-Kay-Listing-Link", "Content-Type"],
         expose_headers=["Content-Disposition"],
         allow_credentials=False,
     )
@@ -148,6 +152,7 @@ async def request_context(
             (
                 "/api/v1/auth/",
                 "/api/v1/realtime/",
+                "/api/v1/listing-shares/",
                 "/api/v1/users",
                 "/api/v1/contacts",
                 "/api/v1/requirements",

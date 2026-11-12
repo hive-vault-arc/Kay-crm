@@ -16,6 +16,7 @@ import { relayImports } from "@/features/imports/facade";
 import { relayActivities } from "@/features/activities/facade";
 import { relayGenerated } from "@/features/generated/facade";
 import { relayProjectLinks } from "@/features/project-links/facade";
+import { relayListingShare } from "@/features/shares/facade";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -39,6 +40,7 @@ export async function GET(
   const requestId = randomUUID();
   const { path } = await context.params;
   const key = path.join("/");
+  if (key.startsWith("listing-shares/")) return relayListingShare(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/project-links$/.test(key)) return relayProjectLinks(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
   if (/^(search|exports|audit)(\/|$)/.test(key)) return relayDiscovery(key, request, requestId);
@@ -64,6 +66,7 @@ export async function POST(request: Request, context: { params: Promise<{ path: 
   const requestId = randomUUID();
   const { path } = await context.params;
   const key = path.join("/");
+  if (key.startsWith("listing-shares/")) return relayListingShare(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/project-links$/.test(key)) return relayProjectLinks(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
   if (/^enquiries\/[a-f0-9-]{36}\/convert$/.test(key)) return relayDeals(key, request, requestId);

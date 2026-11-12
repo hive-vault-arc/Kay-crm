@@ -46,6 +46,7 @@ class Settings(BaseSettings):
     benchmark_database_url: SecretStr | None = Field(default=None, validate_default=True)
     recovery_database_url: SecretStr | None = Field(default=None, validate_default=True)
     facade_secret: SecretStr
+    inventory_shares_enabled: bool = False
     realtime_enabled: bool = False
     web_push_enabled: bool = False
     vapid_private_key: SecretStr | None = None
