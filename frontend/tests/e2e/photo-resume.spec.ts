@@ -41,7 +41,7 @@ test("photo recovery: own agent uploads resume after reload with ten existing ph
     await mkdir("output/playwright/local-bug-sweep", { recursive: true });
     for (const width of [1440, 360]) {
       await page.setViewportSize({ width, height: 900 });
-      await geometry(page);
+      await geometry(page, width === 1440 ? 40 : 44);
       await gallery.getByRole("button", { name: "Parcourir", exact: true }).scrollIntoViewIfNeeded();
       await page.screenshot({ path: `output/playwright/local-bug-sweep/resume-${width}.png` });
     }

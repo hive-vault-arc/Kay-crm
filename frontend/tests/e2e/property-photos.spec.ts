@@ -157,7 +157,7 @@ test("agent uploads project and physical apartment photos without document privi
     const galleryWidth = await gallery.evaluate(element => element.getBoundingClientRect().width);
     const headerWidth = await page.getByRole("heading", { name: project.name, exact: true, includeHidden: true, level: 1 }).evaluate(element => element.closest("header")!.getBoundingClientRect().width);
     expect(headerWidth).toBeGreaterThanOrEqual(galleryWidth - 2);
-    await geometry(page);
+    await geometry(page, 40);
     await uploadPhoto(page, path.resolve("tests/fixtures/projects-reference/patio.png"));
     await expect(gallery.getByText("1 photo")).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Ouvrir la photo patio.webp" })).toBeVisible({ timeout: 60_000 });
