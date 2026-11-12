@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     recovery_database_url: SecretStr | None = Field(default=None, validate_default=True)
     facade_secret: SecretStr
     realtime_enabled: bool = False
+    inventory_video_enabled: bool = False
     web_push_enabled: bool = False
     vapid_private_key: SecretStr | None = None
     vapid_public_key: str | None = None

@@ -11,6 +11,7 @@ from app.files.models import DocumentVersion, FilePermit
 from app.files.storage import PrivateStorage
 from app.imports.models import ImportBatch
 from app.settings import Settings
+from app.videos.models import InventoryVideo, VideoPart
 
 
 def reconcile(database: Database, settings: Settings, now: datetime | None = None) -> int:
@@ -32,6 +33,12 @@ def reconcile(database: Database, settings: Settings, now: datetime | None = Non
         ) > instant - timedelta(hours=1):
             continue
         with database.session() as session, session.begin():
+            if session.scalar(select(VideoPart.object_key).where(VideoPart.object_key == key)):
+                continue
+            if session.scalar(
+                select(InventoryVideo.output_key).where(InventoryVideo.output_key == key)
+            ):
+                continue
             export = session.scalar(
                 select(ExportJob).where(ExportJob.object_key == key).with_for_update()
             )

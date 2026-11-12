@@ -42,6 +42,8 @@ from app.reports.router import router as reports_router
 from app.requirements.router import router as requirements_router
 from app.schedule.router import router as schedule_router
 from app.settings import Settings, load_settings
+from app.videos.router import router as video_router
+from app.videos.router import transfers as video_transfers
 from app.work.router import router as work_router
 
 logger = logging.getLogger("kay.requests")
@@ -117,12 +119,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(export_transfers)
     application.include_router(schedule_router)
     application.include_router(transfer_router)
+    application.include_router(video_router)
+    application.include_router(video_transfers)
     application.add_middleware(
         CORSMiddleware,
         allow_origins=[config.frontend_origin],
         allow_methods=["PUT", "GET"],
         allow_headers=["X-File-Permit", "X-File-Session", "Content-Type"],
-        expose_headers=["Content-Disposition"],
+        expose_headers=["Content-Disposition", "Accept-Ranges", "Content-Range"],
         allow_credentials=False,
     )
     application.middleware("http")(request_context)
@@ -168,6 +172,7 @@ async def request_context(
                 "/api/v1/unit-types",
                 "/api/v1/files/",
                 "/api/v1/documents",
+                "/api/v1/inventory-videos",
                 "/api/v1/imports",
                 "/api/v1/intake/",
                 "/api/v1/exports",

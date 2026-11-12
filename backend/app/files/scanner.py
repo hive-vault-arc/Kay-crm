@@ -2,6 +2,8 @@
 
 import socket
 import struct
+from collections.abc import Iterable
+from typing import BinaryIO
 
 from app.identity.security import IdentityError
 from app.settings import Settings
@@ -20,6 +22,16 @@ def response(connection: socket.socket) -> str:
 
 
 def scan(settings: Settings, data: bytes) -> tuple[str, str]:
+    return scan_chunks(
+        settings, (data[offset : offset + 65536] for offset in range(0, len(data), 65536))
+    )
+
+
+def scan_stream(settings: Settings, source: BinaryIO) -> tuple[str, str]:
+    return scan_chunks(settings, iter(lambda: source.read(65536), b""))
+
+
+def scan_chunks(settings: Settings, chunks: Iterable[bytes]) -> tuple[str, str]:
     try:
         with socket.create_connection(
             (settings.antivirus_host, settings.antivirus_port), timeout=20
@@ -33,8 +45,7 @@ def scan(settings: Settings, data: bytes) -> tuple[str, str]:
             (settings.antivirus_host, settings.antivirus_port), timeout=20
         ) as connection:
             connection.sendall(b"zINSTREAM\0")
-            for offset in range(0, len(data), 65536):
-                chunk = data[offset : offset + 65536]
+            for chunk in chunks:
                 connection.sendall(struct.pack("!I", len(chunk)) + chunk)
             connection.sendall(struct.pack("!I", 0))
             verdict = response(connection)

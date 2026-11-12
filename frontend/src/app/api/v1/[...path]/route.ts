@@ -5,6 +5,7 @@ import { relayAuth } from "@/lib/auth/facade";
 import { relayUsers } from "@/features/users/facade";
 import { relayContacts } from "@/features/contacts/facade";
 import { relayInventory } from "@/features/inventory/facade";
+import { relayVideos } from "@/features/files/video-facade";
 import { relayFiles } from "@/features/files/facade";
 import { relayRequirements } from "@/features/requirements/facade";
 import { relayDeals } from "@/features/deals/facade";
@@ -50,6 +51,7 @@ export async function GET(
   if (/^(visits|visit-schedule|calendar)(\/|$)/.test(key)) return relaySchedule(key, request, requestId);
   if (/^(deals|customer-offers)(\/|$)/.test(key)) return relayDeals(key, request, requestId);
   if (/^requirements(\/|$)/.test(key)) return relayRequirements(key, request, requestId);
+  if (/^inventory-videos(\/|$)/.test(key)) return relayVideos(key, request, requestId);
   if (/^(documents|files)(\/|$)/.test(key)) return relayFiles(key, request, requestId);
   if (/^(properties|offerings|developments|blocks|floors|unit-types)(\/|$)/.test(key)) return relayInventory(key, request, requestId);
   if (/^(contacts|enquiries)(\/|$)/.test(key)) return relayContacts(key, request, requestId);
@@ -75,6 +77,7 @@ export async function POST(request: Request, context: { params: Promise<{ path: 
   if (/^(visits|visit-schedule|calendar)(\/|$)/.test(key)) return relaySchedule(key, request, requestId);
   if (/^(deals|customer-offers)(\/|$)/.test(key)) return relayDeals(key, request, requestId);
   if (/^requirements(\/|$)/.test(key)) return relayRequirements(key, request, requestId);
+  if (/^inventory-videos(\/|$)/.test(key)) return relayVideos(key, request, requestId);
   if (/^(documents|files)(\/|$)/.test(key)) return relayFiles(key, request, requestId);
   if (/^(properties|offerings|developments|blocks|floors|unit-types)(\/|$)/.test(key)) return relayInventory(key, request, requestId);
   if (/^(contacts|enquiries)(\/|$)/.test(key)) return relayContacts(key, request, requestId);

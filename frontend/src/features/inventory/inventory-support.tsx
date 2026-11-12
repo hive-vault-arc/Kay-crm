@@ -5,13 +5,14 @@ import { RecordSection } from "@/components/shared/record-workspace";
 import { RecordDrawer } from "@/components/shared/record-drawer";
 import { ContactIcon } from "@/components/icons";
 import { InventoryThumbnail } from "@/features/files/inventory-thumbnail";
+import { InventoryVideos } from "@/features/files/inventory-videos";
 import { PropertyPhotos } from "@/features/files/property-photos";
 import type { Development } from "./development-contracts";
 
 export function InventoryPhotoRail({ id, kind, writable, archived, revision, changed }: {
   id: string; kind: "property" | "development"; writable: boolean; archived: boolean; revision: number; changed: () => void;
 }) {
-  return <RecordSection title="Photos" action={!archived ? <RecordDrawer label="Galerie" action="photos" title="Photos du dossier" description="Photos validées, transferts et reprises autorisés."><PropertyPhotos propertyId={id} parentKind={kind} writable={writable} uploadable onChanged={changed} /></RecordDrawer> : undefined}><div className="kay-inventory-photo-cover"><InventoryThumbnail key={revision} kind={kind} id={id} /></div></RecordSection>;
+  return <RecordSection title="Photos" action={!archived ? <RecordDrawer label="Galerie" action="photos" title="Photos du dossier" description="Photos validées, transferts et reprises autorisés."><PropertyPhotos propertyId={id} parentKind={kind} writable={writable} uploadable onChanged={changed} /><InventoryVideos kind={kind} id={id} /></RecordDrawer> : undefined}><div className="kay-inventory-photo-cover"><InventoryThumbnail key={revision} kind={kind} id={id} /></div></RecordSection>;
 }
 
 export function InventoryParty({ link }: { link: Development["developer"] }) {
