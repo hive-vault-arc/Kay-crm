@@ -46,7 +46,7 @@ export async function relayContacts(key: string, request: Request, requestId: st
   }
   try {
     const jar = await cookies();
-    const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: request.method as "GET" | "POST" | "PATCH" | "PUT", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: mutation ? frontendOrigin() : undefined, idempotencyKey: mutation ? retryKey : undefined, maxResponseBytes: 512 * 1024, contactDirectory: key === "contacts" && !mutation });
+    const upstream = await upstreamRequest(`/api/v1/${key}${url.search}`, requestId, { method: request.method as "GET" | "POST" | "PATCH" | "PUT", body, token: jar.get(SESSION_COOKIE)?.value, csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128), origin: mutation ? frontendOrigin() : undefined, idempotencyKey: mutation ? retryKey : undefined, maxResponseBytes: 512 * 1024, contactDirectory: key === "contacts" && !mutation, contactBirthDate: !mutation && request.headers.get("X-Kay-Contact-Birth-Date") === "1" });
     if (upstream.status !== 200) {
       const parsed = z.object({ error: z.object({ code: z.string() }) }).safeParse(upstream.body);
       const code = parsed.success && known.has(parsed.data.error.code) ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE";

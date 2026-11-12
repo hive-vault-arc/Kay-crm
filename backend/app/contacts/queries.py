@@ -47,10 +47,16 @@ def detail_in_session(
     return enquiry_views(session, [enquiry], [contact], detail=True)[0]
 
 
-def read_detail(database: Database, token: str, kind: str, target: UUID) -> dict[str, object]:
+def read_detail(
+    database: Database, token: str, kind: str, target: UUID, *, birth_date_enabled: bool = False
+) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
-        return detail_in_session(session, current_identity(session, token), kind, target)
+        result = detail_in_session(session, current_identity(session, token), kind, target)
+        if kind == "contacts" and birth_date_enabled:
+            birth_date = session.scalar(select(Contact.birth_date).where(Contact.id == target))
+            result["birth_date"] = birth_date.isoformat() if birth_date else None
+        return result
 
 
 def metadata(database: Database, token: str) -> dict[str, object]:

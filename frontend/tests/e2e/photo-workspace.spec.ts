@@ -16,7 +16,7 @@ for (const [kind, width] of [["property", 1440], ["development", 390]] as const)
     await page.getByRole("button", { name: "Galerie", exact: true }).click();
     const drawer = page.getByRole("dialog", { name: "Photos du dossier", exact: true });
     const gallery = drawer.getByRole("form", { name: "Galerie du dossier", exact: true });
-    await expect(gallery.getByText("0 / 10 photos", { exact: true })).toBeVisible(); await expect(drawer.locator('input[type="file"]')).toHaveCount(0);
+    await expect(gallery.getByText("0 photos", { exact: true })).toBeVisible(); await expect(drawer.locator('input[type="file"]')).toHaveCount(0);
     let creates = 0, transfers = 0;
     page.on("request", request => { if (request.method() === "POST" && new URL(request.url()).pathname === "/api/v1/documents") creates++; });
     await page.route("**/transfers/**", async route => {
@@ -34,7 +34,7 @@ for (const [kind, width] of [["property", 1440], ["development", 390]] as const)
     await discard.getByRole("button", { name: "Continuer la modification", exact: true }).click();
     await form.getByRole("button", { name: "Réessayer", exact: true }).click();
     await expect(form).toHaveCount(0); expect(creates).toBe(1);
-    await expect(gallery.getByText("1 / 10 photos", { exact: true })).toBeVisible();
+    await expect(gallery.getByText("1 photo", { exact: true })).toBeVisible();
     await expect(gallery.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 60_000 });
     await expect(gallery.getByRole("button", { name: "Archiver", exact: true })).toHaveCount(0);
     await gallery.getByRole("button", { name: "Ouvrir la photo patio.webp", exact: true }).click();

@@ -31,8 +31,8 @@ test("photo recovery: own agent uploads resume after reload even at ten slots", 
     }
     await page.reload();
     await openPhotos(page);
-    await expect(gallery.getByText("10 / 10 photos")).toBeVisible();
-    await expect(gallery.getByRole("button", { name: "Ajouter une photo", exact: true })).toHaveCount(0);
+    await expect(gallery.getByText("10 photos")).toBeVisible();
+    await expect(gallery.getByRole("button", { name: "Ajouter une photo", exact: true })).toBeVisible();
     const own = gallery.getByRole("listitem").filter({ has: page.getByRole("heading", { name: "patio.webp", exact: true }) });
     await own.getByRole("button", { name: "Reprendre", exact: true }).focus();
     await page.keyboard.press("Enter");
@@ -53,7 +53,7 @@ test("photo recovery: own agent uploads resume after reload even at ten slots", 
     expect(after.total).toBe(10);
     expect(after.items.some((item: { id: string }) => item.id === before.items[0].id)).toBe(true);
     await clearActorContext(page); await signIn(page, colleague); await page.goto(project.path); await openPhotos(page);
-    await expect(gallery.getByText("10 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("10 photos")).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Reprendre", exact: true })).toHaveCount(0);
     expect((await (await page.request.get(uri)).json()).items.every((item: { can_upload: boolean }) => item.can_upload === false)).toBe(true);
     await clearActorContext(page); await signIn(page, manager); await page.goto(project.path); await openPhotos(page);

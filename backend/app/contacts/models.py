@@ -1,11 +1,12 @@
 """Migration-owned private contact identities; enquiries are not duplicate contacts."""
 
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
     BigInteger,
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     Index,
@@ -27,6 +28,7 @@ class Contact(Base):
     __table_args__ = (
         CheckConstraint("length(btrim(name)) > 0", name="contact_name_required"),
         CheckConstraint("type IN ('person','organization')", name="contact_type"),
+        CheckConstraint("birth_date IS NULL OR type='person'", name="contact_birth_date_person"),
         CheckConstraint("country='' OR country ~ '^[A-Z]{2}$'", name="contact_country"),
         CheckConstraint("nationality='' OR nationality ~ '^[A-Z]{2}$'", name="contact_nationality"),
         CheckConstraint(
@@ -44,6 +46,7 @@ class Contact(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(160))
     type: Mapped[str] = mapped_column(String(24))
+    birth_date: Mapped[date | None] = mapped_column(Date)
     country: Mapped[str] = mapped_column(String(2), default="", server_default="")
     nationality: Mapped[str] = mapped_column(String(2), default="", server_default="")
     languages: Mapped[list[str]] = mapped_column(JSONB, default=list, server_default="[]")

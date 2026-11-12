@@ -16,14 +16,23 @@ export const agentSchema = z.object({ id: z.uuid(), display_name: z.string().min
 const instant = z.iso.datetime({ offset: true });
 const phoneSchema = z.object({ number: z.string().trim().min(1, "Saisissez un téléphone.").max(48), label: z.string().trim().max(40), is_primary: z.boolean() }).strict();
 const emailSchema = z.object({ email: z.string().trim().pipe(z.email("Saisissez un e-mail valide.").max(254)), label: z.string().trim().max(40), is_primary: z.boolean() }).strict();
+function contactToday() {
+  const parts = new Intl.DateTimeFormat("fr-FR", { timeZone: "Africa/Casablanca", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+  return ["year", "month", "day"].map(type => parts.find(part => part.type === type)?.value).join("-");
+}
+
+const birthDate = z.iso.date("Saisissez une date de naissance valide.").nullable().optional();
 export const contactFieldsSchema = z.object({
   name: z.string().trim().min(1, "Saisissez le nom du contact.").max(160),
   type: z.enum(["person", "organization"]),
+  birth_date: birthDate,
   phones: z.array(phoneSchema).min(1, "Un téléphone est obligatoire.").max(10),
   emails: z.array(emailSchema).max(10),
   roles: z.array(roleSchema).max(5),
   country: profileFields.country.optional(), nationality: profileFields.nationality.optional(), languages: profileFields.languages.optional(),
 }).strict().superRefine((values, context) => {
+  if (values.birth_date && values.type !== "person") context.addIssue({ code: "custom", path: ["birth_date"], message: "Réservée aux personnes." });
+  if (values.birth_date && values.birth_date > contactToday()) context.addIssue({ code: "custom", path: ["birth_date"], message: "La date ne peut pas être dans le futur." });
   if (values.phones.filter(value => value.is_primary).length !== 1) context.addIssue({ code: "custom", path: ["phones"], message: "Choisissez exactement un téléphone principal." });
   if (values.emails.length && values.emails.filter(value => value.is_primary).length !== 1) context.addIssue({ code: "custom", path: ["emails"], message: "Choisissez exactement un e-mail principal." });
   if (new Set(values.roles).size !== values.roles.length) context.addIssue({ code: "custom", path: ["roles"], message: "Choisissez chaque rôle une seule fois." });
@@ -48,6 +57,7 @@ export const contactSummarySchema = z.object({
   ...profileFields, calling_code: z.string().regex(/^\+[1-9][0-9]{0,2}$/).nullable(),
 }).strict();
 export const contactSchema = contactSummarySchema.extend({
+  birth_date: birthDate,
   phones: z.array(phoneSchema).min(1).max(10), emails: z.array(emailSchema).max(10), roles: z.array(roleSchema).max(5),
   source: contactSourceSchema, source_submission_id: z.uuid().nullable(), created_by_user_id: z.uuid().nullable(), created_at: instant, updated_at: instant,
   collaborators: z.array(agentSchema).max(100),

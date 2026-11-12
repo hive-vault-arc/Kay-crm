@@ -61,6 +61,7 @@ export function ContactRecord({ id, role, actorId, initialTask }: { id: string; 
           <ContactInlineField {...inline} icon={EmailIcon} field="emails" label="E-mails" />
           <ContactInlineField {...inline} icon={LocationIcon} field="country" label="Pays de résidence" />
           <ContactInlineField {...inline} icon={LocationIcon} field="nationality" label="Nationalité" />
+          {inline.contact.type === "person" ? <ContactInlineField {...inline} icon={CalendarIcon} field="birth_date" label="Date de naissance" /> : null}
           <ContactInlineField {...inline} icon={ContactIcon} field="languages" label="Langues" />
           <RecordFact icon={InboxIcon} label="Source initiale">{sourceLabels[contact.source]}</RecordFact>
         </RecordFacts></RecordSection>

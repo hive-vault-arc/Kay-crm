@@ -181,9 +181,15 @@ Existing document/permit/transfer routes now admit agent-created `purpose=photo`
 WebP documents for `property` and `development`. Current identity and active
 parent are checked at create, permit issue/consumption and upload publication.
 Agents cannot upload versions of another author's photo or ordinary inventory
-attachments; archive and scan-retry commands remain M/A-only. Photo filters,
-private downloads and the ten-image cap apply to both parent kinds. See the
+attachments; archive and scan-retry commands remain M/A-only. Photo filters and private downloads apply to both parent kinds. The gallery uses
+numbered pages without a per-record photo cap. See the
 [permission boundary](../03-planning/agent-inventory-photos.md).
+
+Contact details may opt into `birth_date` through the authenticated façade using
+`X-Kay-Contact-Birth-Date: 1`. The ISO calendar date is optional and applies to
+people only. Omitting it on an edit keeps the existing date. `null` clears it.
+A change from person to organization clears it as well. Directories, snapshots,
+activity history, exports and command receipts never include the date.
 
 ## Lead/Deal catalogue project links (2026-10-22)
 

@@ -1,12 +1,21 @@
 """Strict writable fields, independent of staff roles and source provenance."""
 
 import re
-from datetime import date
+from datetime import date, datetime
 from typing import Literal, Self
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 import phonenumbers
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    field_validator,
+    model_serializer,
+    model_validator,
+)
 
 from app.contacts.qualification import (
     CampaignSource,
@@ -76,12 +85,31 @@ class Email(StrictBody):
 class ContactFields(StrictBody):
     name: str = Field(min_length=1, max_length=160)
     type: Literal["person", "organization"] = "person"
+    birth_date: date | None = None
     phones: list[Phone] = Field(min_length=1, max_length=10)
     emails: list[Email] = Field(default_factory=list, max_length=10)
     roles: list[ContactRoleCode] = Field(default_factory=list, max_length=5)
     country: str = Field(default="", max_length=2)
     nationality: str = Field(default="", max_length=2)
     languages: list[str] = Field(default_factory=list, max_length=30)
+
+    @field_validator("birth_date", mode="before")
+    @classmethod
+    def calendar_birth_date(cls, value: object) -> date | None:
+        if value is None:
+            return None
+        if isinstance(value, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
+            return date.fromisoformat(value)
+        if isinstance(value, date) and not isinstance(value, datetime):
+            return value
+        raise ValueError("INVALID_BIRTH_DATE")
+
+    @model_serializer(mode="wrap")
+    def preserve_legacy_receipts(self, handler: SerializerFunctionWrapHandler) -> dict[str, object]:
+        fields: dict[str, object] = handler(self)
+        if "birth_date" not in self.model_fields_set:
+            fields.pop("birth_date", None)
+        return fields
 
     @field_validator("country", "nationality")
     @classmethod
@@ -95,6 +123,11 @@ class ContactFields(StrictBody):
 
     @model_validator(mode="after")
     def collections(self) -> Self:
+        if self.birth_date is not None and (
+            self.type != "person"
+            or self.birth_date > datetime.now(ZoneInfo("Africa/Casablanca")).date()
+        ):
+            raise ValueError("INVALID_BIRTH_DATE")
         if sum(phone.is_primary for phone in self.phones) != 1:
             raise ValueError("ONE_PRIMARY_PHONE_REQUIRED")
         if self.emails and sum(email.is_primary for email in self.emails) != 1:

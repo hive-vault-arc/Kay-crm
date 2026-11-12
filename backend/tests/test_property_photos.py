@@ -1,7 +1,8 @@
-"""Property photographs use the private file flow with a hard shared slot limit."""
+"""Property photographs use the private file flow and numbered pages."""
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
+from typing import cast
 from uuid import UUID, uuid4
 
 import pytest
@@ -43,7 +44,7 @@ def photo(database, token, pid, data=None, *, key=None, kind="property"):
     )
 
 
-def test_photo_limit_archive_and_legacy_attachment_count(settings, database):
+def test_photo_pagination_archive_and_legacy_attachment_count(settings, database):
     manager_id, manager = actor(settings, database, "manager")
     _, agent = actor(settings, database, "agent")
     pid = property_draft(settings, database, manager)
@@ -92,10 +93,11 @@ def test_photo_limit_archive_and_legacy_attachment_count(settings, database):
     assert list_documents(database, agent, "property", pid, 1, 10, "attachment")["total"] == 0
     for _ in range(7):
         photo(database, manager, pid)
-    assert list_documents(database, manager, "property", pid, 1, 10, "photo")["total"] == 10
-    with pytest.raises(IdentityError, match="PROPERTY_PHOTO_LIMIT"):
-        photo(database, manager, pid)
-    # A committed idempotency replay returns the same document, even at the limit.
+    assert list_documents(database, manager, "property", pid, 1, 10, "photo")["total"] == 11
+    photo(database, manager, pid)
+    second = list_documents(database, manager, "property", pid, 2, 10, "photo")
+    assert second["total"] == 11 and len(cast(list[object], second["items"])) == 1
+    # A committed idempotency replay returns the same archived document.
     key = uuid4()
     archived = document_command(
         database, manager, key, ArchiveDocument(expected_version=1), UUID(first["id"])
@@ -108,11 +110,11 @@ def test_photo_limit_archive_and_legacy_attachment_count(settings, database):
         == archived
     )
     photo(database, manager, pid)
-    assert list_documents(database, manager, "property", pid, 1, 10, "photo")["total"] == 10
+    assert list_documents(database, manager, "property", pid, 1, 10, "photo")["total"] == 11
 
 
 @pytest.mark.parametrize("kind", ["property", "development"])
-def test_photo_limit_concurrent_creates(settings, database, kind):
+def test_photo_concurrent_creates_cross_old_limit(settings, database, kind):
     _, manager = actor(settings, database, "manager")
     pid = (property_draft if kind == "property" else development)(settings, database, manager)
     for _ in range(9):
@@ -126,7 +128,7 @@ def test_photo_limit_concurrent_creates(settings, database, kind):
             return error.code
 
     with ThreadPoolExecutor(max_workers=2) as executor:
-        assert sorted(executor.map(create, range(2))) == ["PROPERTY_PHOTO_LIMIT", "created"]
+        assert sorted(executor.map(create, range(2))) == ["created", "created"]
 
 
 @pytest.mark.parametrize("kind", ["property", "development"])

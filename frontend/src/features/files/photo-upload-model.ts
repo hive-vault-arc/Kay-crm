@@ -6,7 +6,6 @@ import { requestFilePermit, uploadBytes } from "./transfers";
 import { convertPropertyPhoto, photoSelectionError } from "./photo-conversion";
 export { photoSelectionError } from "./photo-conversion";
 
-export const photoLimit = 10;
 export const photoDenied = (error: ApiError) => [401, 403, 404].includes(error.status);
 
 export type PhotoAttempt = { key: string; documentId: string; started: boolean; context?: string; source?: File; converted?: File };

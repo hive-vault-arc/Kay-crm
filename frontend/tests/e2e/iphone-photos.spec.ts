@@ -72,7 +72,7 @@ test("iPhone photos: real HEIC/HEIF batch converts privately under a CSP without
       { name: "patio.png", mimeType: "image/png", buffer: await png() },
     ]);
     await sendBatch(form);
-    await expect(gallery.getByText("3 / 10 photos", { exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(gallery.getByText("3 photos", { exact: true })).toBeVisible({ timeout: 30_000 });
     await expect(gallery.getByText("Analyse réussie", { exact: true })).toHaveCount(3, { timeout: 60_000 });
     expect(writes.map(item => item.filename)).toEqual(["IMG_0001.webp", "principal.webp", "patio.webp"]);
     expect(writes.every(item => item.mime_type === "image/webp")).toBe(true);
@@ -95,7 +95,7 @@ test("iPhone photos: real HEIC/HEIF batch converts privately under a CSP without
   } finally { await testControl("worker-stop"); await clearActorContext(page); await removeActor(actor); }
 });
 
-test("iPhone photos: batch retry keeps successes and handles a lost acknowledgement at ten slots", async ({ page }) => {
+test("iPhone photos: batch retry keeps successes and handles a lost acknowledgement", async ({ page }) => {
   test.setTimeout(180_000);
   const actor = await createActor("manager");
   try {
@@ -104,13 +104,10 @@ test("iPhone photos: batch retry keeps successes and handles a lost acknowledgem
     for (let index = 0; index < 8; index++) expect((await staffCommand(page, "documents", { parent_kind: "development", parent_id: project.id, purpose: "photo", filename: `reserve-${index}.webp`, mime_type: "image/webp", size_bytes: 100 })).status()).toBe(200);
     await page.reload();
     const gallery = await openPhotos(page);
-    await expect(gallery.getByText("8 / 10 photos", { exact: true })).toBeVisible();
+    await expect(gallery.getByText("8 photos", { exact: true })).toBeVisible();
     const image = await png();
     const payload = (name: string) => ({ name, mimeType: "image/png", buffer: image });
     const form = await openBatch(gallery);
-    await selectBatch(form, [payload("one.png"), payload("two.png"), payload("three.png")]);
-    await expect(gallery.getByRole("alert")).toContainText("places disponibles");
-    expect((await (await page.request.get(`/api/v1/documents?parent_kind=development&parent_id=${project.id}&purpose=photo`)).json()).total).toBe(8);
     let puts = 0;
     page.on("request", request => { if (request.method() === "PUT" && request.url().includes("/transfers/")) puts++; });
     await page.evaluate(() => {
@@ -164,7 +161,7 @@ test("iPhone photos: cancelled conversion keeps the remaining selection for retr
     await expect(form.getByText("2 fichiers sélectionnés", { exact: true })).toBeVisible();
     await page.evaluate(() => (window as unknown as { releaseSyntheticPhoto: () => void }).releaseSyntheticPhoto());
     await gallery.getByRole("button", { name: "Réessayer", exact: true }).tap();
-    await expect(gallery.getByText("2 / 10 photos", { exact: true })).toBeVisible();
+    await expect(gallery.getByText("2 photos", { exact: true })).toBeVisible();
     await expect(gallery.getByText("Analyse réussie", { exact: true })).toHaveCount(2, { timeout: 60_000 });
   } finally { await testControl("worker-stop"); await clearActorContext(page); await removeActor(actor); }
 });
@@ -206,7 +203,7 @@ test("iPhone photos: a full ten-photo agent batch fits the existing permit budge
     const form = await openBatch(gallery);
     await selectBatch(form, Array.from({ length: 10 }, (_, index) => ({ name: `piece-${index + 1}.png`, mimeType: "image/png", buffer })));
     await sendBatch(form);
-    await expect(gallery.getByText("10 / 10 photos", { exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(gallery.getByText("10 photos", { exact: true })).toBeVisible({ timeout: 30_000 });
     await expect(gallery.getByText(/10 photos envoyées/)).toBeVisible();
     await expect(gallery.getByText("Analyse réussie", { exact: true })).toHaveCount(10, { timeout: 60_000 });
     await expect(gallery.getByRole("button", { name: /^Ouvrir la photo/ })).toHaveCount(10);

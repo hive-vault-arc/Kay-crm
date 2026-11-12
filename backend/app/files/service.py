@@ -32,7 +32,6 @@ from app.inventory.hierarchy_models import Development
 from app.inventory.models import Property
 
 PHOTO_MIMES = ("image/jpeg", "image/png", "image/webp")
-MAX_PROPERTY_PHOTOS = 10
 
 
 def locked_identity(
@@ -276,20 +275,6 @@ def document_command(
                     or PurePosixPath(body.filename).suffix.lower() != ".webp"
                 ):
                     raise IdentityError("UNSUPPORTED_MEDIA_TYPE", 415)
-                used = (
-                    session.scalar(
-                        select(func.count())
-                        .select_from(Document)
-                        .where(
-                            getattr(Document, f"{body.parent_kind}_id") == body.parent_id,
-                            Document.mime_type.in_(PHOTO_MIMES),
-                            Document.archived_at.is_(None),
-                        )
-                    )
-                    or 0
-                )
-                if used >= MAX_PROPERTY_PHOTOS:
-                    raise IdentityError("PROPERTY_PHOTO_LIMIT", 409)
             elif body.parent_kind in {"property", "development"} and body.mime_type in PHOTO_MIMES:
                 raise IdentityError("PROPERTY_PHOTO_WEBP_REQUIRED", 415)
             document = Document(

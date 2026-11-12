@@ -25,6 +25,7 @@ export type ContactField = keyof Values;
 export { editableContactValues as contactEditValues };
 export function contactFieldText(contact: ContactSummary | Contact, field: ContactField): string {
   if (field === "name") return contact.name;
+  if (field === "birth_date") return "birth_date" in contact && contact.birth_date ? contact.birth_date.split("-").reverse().join("/") : "Non renseignée";
   if (field === "type") return contact.type === "person" ? "Personne" : "Organisation";
   if (field === "country" || field === "nationality") return countryLabel(contact[field]);
   if (field === "languages") return contact.languages.map(value => languageLabels[value] ?? value).join(", ") || "Non renseignées";

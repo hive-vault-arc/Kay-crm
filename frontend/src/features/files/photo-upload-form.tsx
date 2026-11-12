@@ -11,10 +11,10 @@ import { useHydrated } from "@/hooks/use-hydrated";
 import { ApiError } from "@/lib/api/client";
 import type { ProtectedDocument } from "./contracts";
 import { photoAccept } from "./photo-conversion";
-import { newPhotoAttempt, photoCanResume, photoDenied, photoLimit, photoSelectionError, sendPhoto, type PhotoPhase } from "./photo-upload-model";
+import { newPhotoAttempt, photoCanResume, photoDenied, photoSelectionError, sendPhoto, type PhotoPhase } from "./photo-upload-model";
 
-export function PhotoUploadForm({ parentId, parentKind, resume, writable, uploadable, total, saved, cancel, denied }: {
-  parentId: string; parentKind: "property" | "development"; resume?: ProtectedDocument; writable: boolean; uploadable: boolean; total: number;
+export function PhotoUploadForm({ parentId, parentKind, resume, writable, uploadable, saved, cancel, denied }: {
+  parentId: string; parentKind: "property" | "development"; resume?: ProtectedDocument; writable: boolean; uploadable: boolean;
   saved: (result: Awaited<ReturnType<typeof sendPhoto>>, remaining?: number, count?: number) => void; cancel: () => void; denied: (error: ApiError) => void;
 }) {
   const id = useId(), hydrated = useHydrated(), scope = useRef<HTMLFormElement>(null), input = useRef<HTMLInputElement>(null), browse = useRef<HTMLButtonElement>(null);
@@ -27,15 +27,11 @@ export function PhotoUploadForm({ parentId, parentKind, resume, writable, upload
   useEffect(() => { alive.current = true; browse.current?.focus(); return () => { alive.current = false; controller.current?.abort(); }; }, []);
   function chooseFiles(selected: File[]) {
     if (lock.current || attempt.current.started || completed.current) return;
-    if (!resume && selected.length > photoLimit - total) {
-      setFiles([]); setSent(0); setError(new ApiError("PROPERTY_PHOTO_SELECTION_LIMIT", 409)); return;
-    }
     setFiles(selected); setSent(0); setError(selected.map(photoSelectionError).find(Boolean)); attempt.current = newPhotoAttempt();
   }
   async function submit() {
     if (!hydrated || lock.current || completed.current || !files.length || !uploadable || files.some(photoSelectionError)) return;
     if (resume && !photoCanResume(resume, writable)) { denied(new ApiError("FORBIDDEN", 403)); return; }
-    if (!resume && !attempt.current.started && files.length > photoLimit - total) { setError(new ApiError("PROPERTY_PHOTO_SELECTION_LIMIT", 409)); return; }
     lock.current = true; setBusy(true); setError(undefined); setProgress(undefined);
     const abort = new AbortController(); controller.current = abort;
     try {

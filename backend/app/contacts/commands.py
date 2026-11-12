@@ -40,6 +40,10 @@ def replace_values(session: Session, contact: Contact, body: ContactFields, acto
         if isinstance(body, NewContact) or field in body.model_fields_set:
             value = getattr(body, field)
             setattr(contact, field, list(value) if field == "languages" else value)
+    if contact.type != "person":
+        contact.birth_date = None
+    elif "birth_date" in body.model_fields_set:
+        contact.birth_date = body.birth_date
     now = datetime.now(UTC)
     for model in (ContactPhone, ContactEmail):
         session.execute(

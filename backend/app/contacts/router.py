@@ -114,7 +114,13 @@ def enquiries(
 
 @router.get("/contacts/{target}")
 def contact(target: UUID, request: Request, token: Proof) -> dict[str, object]:
-    return read_detail(configuration(request)[0], token, "contacts", target)
+    return read_detail(
+        configuration(request)[0],
+        token,
+        "contacts",
+        target,
+        birth_date_enabled=request.headers.get("X-Kay-Contact-Birth-Date") == "1",
+    )
 
 
 @router.get("/contacts/{target}/portfolio")

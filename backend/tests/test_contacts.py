@@ -104,6 +104,42 @@ def test_required_and_collection_choices(patch: dict[str, object]) -> None:
         NewContact.model_validate({**data.model_dump(mode="json"), **patch})
 
 
+def test_contact_birth_date_is_private_and_optional(settings: Settings, database: Database) -> None:
+    _, token = actor(settings, database)
+    _, other = actor(settings, database, "agent")
+    fields: dict[str, object] = {
+        "name": "Contact synthétique",
+        "phones": [{"number": "+212600000001", "is_primary": True}],
+        "birth_date": "1996-02-29",
+    }
+    lead = create_lead(settings, database, token, new_lead(new_contact=fields))
+    cid = UUID(cast(dict[str, str], lead["contact"])["id"])
+    assert "birth_date" not in cast(dict[str, object], lead["contact"])
+    assert "birth_date" not in read_detail(database, token, "contacts", cid)
+
+    def private() -> object:
+        return read_detail(database, token, "contacts", cid, birth_date_enabled=True)["birth_date"]
+
+    assert private() == "1996-02-29"
+    with pytest.raises(IdentityError, match="NOT_FOUND"):
+        read_detail(database, other, "contacts", cid, birth_date_enabled=True)
+    assert "birth_date" not in str(read_list(database, token, "contacts", ListQuery()))
+
+    fields.pop("birth_date")
+    for version, extra in ((1, {}), (2, {"birth_date": None})):
+        update = EditContact.model_validate({**fields, **extra, "expected_version": version})
+        response = command(database, token, "synthetic-secret", uuid4(), "contacts", update, cid)
+        assert "birth_date" not in response
+        assert private() == ("1996-02-29" if version == 1 else None)
+
+    for invalid in ("2099-01-01", "2023-02-29", "1996-02-29T00:00:00Z", 825552000):
+        with pytest.raises(ValidationError):
+            NewContact.model_validate({**fields, "birth_date": invalid})
+    with pytest.raises(ValidationError):
+        NewContact.model_validate({**fields, "type": "organization", "birth_date": "1996-02-29"})
+    assert "birth_date" not in NewContact.model_validate(fields).model_dump(mode="json")
+
+
 def test_contact_collections_edit_provenance_and_separate_enquiries(
     settings: Settings, database: Database
 ) -> None:
