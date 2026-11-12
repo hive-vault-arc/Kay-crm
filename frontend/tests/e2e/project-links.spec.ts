@@ -7,6 +7,7 @@ import { geometry } from "../helpers/report-review";
 
 test("Lead and Deal keep independent catalogue links and lazily opened contact searches", async ({ page }) => {
   test.setTimeout(150_000);
+  page.setDefaultTimeout(15_000);
   const actor = await createActor("agent");
   const reference = `LINK-${randomUUID().slice(0, 8)}`.toUpperCase();
   const name = "Programme synthétique lié";
@@ -49,10 +50,10 @@ test("Lead and Deal keep independent catalogue links and lazily opened contact s
     await expect(searches).toBeVisible();
     await searches.focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("dialog", { name: "Recherches du contact", exact: true })).toBeVisible();
-    await expect(page.getByText("Aucune recherche enregistrée. Ajoutez un besoin d’achat ou de location pour commencer.")).toBeVisible();
-    await expect(page.getByRole("navigation", { name: "Pages des recherches" })).toHaveCount(0);
-    await page.getByRole("region", { name: "Recherches du contact" }).screenshot({ path: "output/playwright/project-links/lead-search-empty.png" });
+    const searchDrawer = page.getByRole("dialog", { name: "Recherches du contact", exact: true });
+    await expect(searchDrawer.getByText("Aucune recherche sur cette page. Ajoutez un besoin d’achat ou de location pour commencer.")).toBeVisible();
+    await expect(searchDrawer.getByRole("navigation", { name: "Pages des recherches" })).toHaveCount(0);
+    await searchDrawer.screenshot({ path: "output/playwright/project-links/lead-search-empty.png" });
     await page.keyboard.press("Escape");
     const dealId = await convertLead(page);
     await page.getByRole("tab", { name: "Projets", exact: true }).click();
