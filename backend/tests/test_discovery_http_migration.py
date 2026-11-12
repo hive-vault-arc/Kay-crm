@@ -127,7 +127,11 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
                 {"pid": pid},
             )
             assert connection.scalar(
-                text("SELECT website_source_id IS NULL AND birth_date IS NULL FROM contact WHERE id=:cid"), {"cid": cid}
+                text(
+                    "SELECT website_source_id IS NULL AND birth_date IS NULL "
+                    "FROM contact WHERE id=:cid"
+                ),
+                {"cid": cid},
             )
         request_export(database, manager, uuid4(), NewExport())
         refused = migrate("downgrade", "0019_atomic_contact_import")
