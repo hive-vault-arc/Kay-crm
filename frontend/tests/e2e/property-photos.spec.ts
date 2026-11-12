@@ -8,7 +8,7 @@ import { geometry } from "../helpers/report-review";
 import { choosePhoto, closePhotos, openPhotos, uploadPhoto } from "../helpers/photos";
 import { openDocuments } from "../helpers/files";
 
-test("property photos: private viewer, browser WebP conversion, ten slots, archive and agent upload", async ({ page }) => {
+test("property photos: private viewer, browser WebP conversion, cross-page navigation, archive and agent upload", async ({ page }) => {
   test.setTimeout(240_000);
   const manager = await createActor("manager", false, "SP06 Photos synthétiques");
   const agent = await createActor("agent", false, "SP06 Photos lecture seule");

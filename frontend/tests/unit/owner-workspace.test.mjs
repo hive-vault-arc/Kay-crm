@@ -75,7 +75,7 @@ test("Owner contact aliases retain canonical updates, while denial/retry/unmount
 test("Owner details reuse shared one-field controllers and preserve primary/secondary methods without a literal-role gate", () => {
   const loaded = loadServer("src/features/owners/owner-details.tsx", { modules: { ...common, "@/components/shared/record-facts": { RecordFacts: "Facts", RecordFact: "Fact" }, "@/features/contacts/contact-inline-field": { ContactInlineField: "Inline" }, "@/lib/format": { formatInstant: value => value } } });
   const contact = client(), props = { contact, saved() {}, denied() {} }, full = loaded.OwnerDetails(props), compact = loaded.OwnerDetails({ ...props, compact: true });
-  assert.equal(find(full, "Inline").length, 9); assert.equal(find(compact, "Inline").length, 5); assert.ok(find(full, "Inline").every(node => node.props.contact === contact && node.props.writable));
+  assert.equal(find(full, "Inline").length, 10); assert.equal(find(compact, "Inline").length, 5); assert.ok(find(full, "Inline").every(node => node.props.contact === contact && node.props.writable));
   assert.deepEqual(find(full, "Inline").filter(node => node.props.field === "phones").map(node => node.props.methodScope), ["primary", "secondary"]); assert.ok(!find(full, "Inline").some(node => node.props.field === "roles"));
   assert.ok(find(full, "Fact").some(node => node.props.label === "Rôles")); assert.ok(find(loaded.OwnerDetails({ ...props, contact: { ...contact, archived_at: at } }), "Inline").every(node => !node.props.writable));
 });

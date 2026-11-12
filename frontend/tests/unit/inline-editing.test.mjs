@@ -202,7 +202,9 @@ test("Contact profile keeps primary methods stable and loads secondary methods o
   find(view, "details")[0].props.onToggle({ currentTarget: { open: true } }); view = render();
   const methods = find(view, node => node.type?.name === "ContactAdditionalMethods")[0]; dispatcher = extra;
   const body = extra.render(() => methods.type(methods.props)); assert.equal(calls[0], `/api/v1/contacts/${original.id}`);
-  assert.equal(find(body, "Field").length, 2); assert.equal(find(body, "Field")[0].props.methodScope, "secondary"); assert.match(find(body, "Field")[0].props.display.props.children, /Bureau/);
+  assert.equal(find(body, "Field").length, 3); assert.ok(find(body, "Field").some(node => node.props.field === "birth_date"));
+  const secondary = find(body, "Field").find(node => node.props.field === "phones");
+  assert.equal(secondary.props.methodScope, "secondary"); assert.match(secondary.props.display.props.children, /Bureau/);
   remote = { ...remote, version: 18, name: "Authoritative same-version name" }; view = render();
   assert.equal(find(view, "Field").find(node => node.props.field === "name").props.contact.name, remote.name);
 });

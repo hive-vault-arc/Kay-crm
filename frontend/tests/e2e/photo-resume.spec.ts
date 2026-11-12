@@ -6,7 +6,7 @@ import { staffCommand } from "../helpers/leads";
 import { choosePhoto, openPhotos } from "../helpers/photos";
 import { geometry } from "../helpers/report-review";
 
-test("photo recovery: own agent uploads resume after reload even at ten slots", async ({ page }) => {
+test("photo recovery: own agent uploads resume after reload with ten existing photos", async ({ page }) => {
   test.setTimeout(180_000);
   const agent = await createActor("agent");
   const colleague = await createActor("agent");
