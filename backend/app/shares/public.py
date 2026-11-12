@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from app.files.storage import PrivateStorage
 from app.identity.security import IdentityError
 from app.settings import Settings
-from app.shares.contracts import MAX_PHOTOS, Snapshot
+from app.shares.contracts import Snapshot
 from app.shares.inventory import current_publication, photo_rows, publication_target, target
 from app.shares.models import ListingLink, ListingPublication
 from app.shares.service import digest, link_token
@@ -78,10 +78,8 @@ def sanitized_webp(data: bytes) -> bytes:
 
 
 def read_photo(session: Session, settings: Settings, token: str, position: int) -> bytes:
-    if not 0 <= position < MAX_PHOTOS:
-        raise IdentityError("NOT_FOUND", 404)
     item, snapshot = authorize(session, settings, token)
-    if position >= len(snapshot.photos):
+    if not 0 <= position < len(snapshot.photos):
         raise IdentityError("NOT_FOUND", 404)
     selected = snapshot.photos[position]
     candidate = photo_rows(session, *publication_target(item), [selected]).get(selected)

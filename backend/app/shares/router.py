@@ -14,7 +14,7 @@ from app.inventory.router import validate_query
 from app.settings import Settings
 from app.shares import public as client
 from app.shares import service
-from app.shares.contracts import ApproveListing, ExpectedVersion, TargetKind
+from app.shares.contracts import ApproveListing, ExpectedVersion, ListingDraftInput, TargetKind
 
 staff = APIRouter(prefix="/api/v1/listing-shares", dependencies=[Depends(facade_authority)])
 public = APIRouter(prefix="/api/v1/client-listing")
@@ -48,6 +48,43 @@ def get_status(
         if not settings.inventory_shares_enabled:
             return {"enabled": False}
         return service.status(session, identity, kind, identifier)
+
+
+@staff.get("/{kind}/{identifier}/draft")
+def get_draft(
+    request: Request, token: Proof, kind: TargetKind, identifier: UUID
+) -> dict[str, object]:
+    database, settings = resources(request)
+    validate_query(request, set())
+    with database.session() as session:
+        identity = current_identity(session, token)
+        if not settings.inventory_shares_enabled:
+            return {"enabled": False}
+        return service.status(session, identity, kind, identifier, include_draft=True)
+
+
+@staff.post("/{kind}/{identifier}/publish")
+def publish(
+    request: Request,
+    token: Proof,
+    kind: TargetKind,
+    identifier: UUID,
+    body: ListingDraftInput,
+    key: RetryKey,
+) -> dict[str, str]:
+    database, settings = resources(request)
+    enabled(settings)
+    validate_query(request, set())
+    with database.session() as session, session.begin():
+        return service.publish(
+            session,
+            locked_identity(session, token),
+            kind,
+            identifier,
+            body,
+            key,
+            settings.facade_secret.get_secret_value(),
+        )
 
 
 @staff.post("/{kind}/{identifier}/approve")

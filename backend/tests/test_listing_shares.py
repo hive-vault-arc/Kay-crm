@@ -11,7 +11,7 @@ from PIL import Image
 from app.files.models import Document, DocumentVersion
 from app.files.storage import PrivateStorage
 from app.identity.security import csrf_token
-from app.inventory.contracts import PropertyFields
+from app.inventory.contracts import ListingDetails, PropertyFields
 from app.inventory.models import Property
 from app.main import create_app
 from app.shares.models import ListingLink
@@ -72,6 +72,102 @@ def upload_fixture(settings, database, actor_id, parent, *, clean=True):
         )
     PrivateStorage(settings).path(key).write_bytes(data)
     return version_id, key
+
+
+async def test_ready_draft_and_atomic_publish_for_large_gallery(settings, database):
+    settings = settings.model_copy(update={"inventory_shares_enabled": True})
+    manager, manager_token = actor(settings, database, "manager")
+    _, agent_token = actor(settings, database)
+    record = run(
+        settings,
+        database,
+        manager_token,
+        "create-property",
+        PropertyFields(
+            reference="SYNTHETIC-DRAFT-REFERENCE",
+            marketing_name="Appartement synthétique",
+            category="apartment",
+            location="12 rue privée",
+            listing_details=ListingDetails(
+                description="Description de l’annonce.",
+                city="Tanger",
+                neighborhood="Iberia",
+                address="12 rue privée",
+                google_maps_url="https://maps.app.goo.gl/test",
+            ),
+        ),
+    )
+    identifier = UUID(record["property_id"])
+    path = f"/api/v1/listing-shares/property/{identifier}"
+    fixtures = [
+        upload_fixture(settings, database, manager, {"property_id": identifier}) for _ in range(26)
+    ]
+    pending, key = upload_fixture(
+        settings, database, manager, {"property_id": identifier}, clean=False
+    )
+    try:
+        async with client_for(create_app(settings)) as client:
+            manager_headers = staff_headers(settings, manager_token)
+            agent_headers = staff_headers(settings, agent_token)
+            reply = await client.get(f"{path}/draft", headers=manager_headers)
+            assert reply.status_code == 200
+            state = reply.json()
+            draft = state["draft"]
+            assert {key: draft[key] for key in ("title", "description", "neighbourhood")} == {
+                "title": "Appartement synthétique",
+                "description": "Description de l’annonce.",
+                "neighbourhood": "Iberia, Tanger",
+            }
+            assert "rue privée" not in reply.text and "maps.app" not in reply.text
+            assert "draft" not in (await client.get(f"{path}/draft", headers=agent_headers)).json()
+            options = [photo["version_id"] for photo in draft["photos"]]
+            assert set(options) == {str(version_id) for version_id, _ in fixtures}
+            selected = options[:-1]
+            body = {
+                **{key: draft[key] for key in ("title", "description", "neighbourhood")},
+                "photos": selected,
+                "price_mad": None,
+                "price_period": None,
+                "target_version": state["target_version"],
+                "expected_version": state["version"],
+            }
+            forbidden = await client.post(f"{path}/publish", json=body, headers=agent_headers)
+            assert forbidden.status_code == 403
+            invalid = await client.post(
+                f"{path}/publish",
+                json={**body, "photos": [*selected, str(pending)]},
+                headers=manager_headers,
+            )
+            assert invalid.status_code == 422
+            assert (await client.get(path, headers=manager_headers)).json()["active"] is False
+
+            issued = await client.post(f"{path}/publish", json=body, headers=manager_headers)
+            assert issued.status_code == 200
+            retried = await client.post(f"{path}/publish", json=body, headers=manager_headers)
+            assert retried.json() == issued.json()
+            latest = (await client.get(path, headers=manager_headers)).json()
+            conflict = await client.post(
+                f"{path}/publish",
+                json={
+                    **body,
+                    "description": "Autre description.",
+                    "expected_version": latest["version"],
+                },
+                headers=manager_headers,
+            )
+            assert conflict.status_code == 409
+            headers = public_headers(settings, issued.json()["token"])
+            published = await client.get(PUBLIC, headers=headers)
+            assert published.json()["description"] == "Description de l’annonce."
+            assert published.json()["photos"] == list(range(25))
+            assert published.json()["price_mad"] is None
+            assert (await client.get(f"{PUBLIC}/photos/24", headers=headers)).status_code == 200
+            assert (await client.get(f"{PUBLIC}/photos/25", headers=headers)).status_code == 404
+    finally:
+        storage = PrivateStorage(settings)
+        storage.path(key).unlink(missing_ok=True)
+        for _, object_key in fixtures:
+            storage.path(object_key).unlink(missing_ok=True)
 
 
 @pytest.mark.parametrize("kind", ["property", "unit", "development"])

@@ -12,7 +12,7 @@ from app.identity.security import IdentityError
 from app.inventory.hierarchy_models import Development
 from app.inventory.models import Property
 from app.inventory.queries import property_record
-from app.shares.contracts import ApproveListing, Snapshot, TargetKind
+from app.shares.contracts import ListingDraftInput, Snapshot, TargetKind
 from app.shares.models import ListingPublication
 
 Record = Property | Development
@@ -89,7 +89,7 @@ def photo_rows(
 
 
 def make_snapshot(
-    session: Session, kind: TargetKind, record: Record, body: ApproveListing
+    session: Session, kind: TargetKind, record: Record, body: ListingDraftInput
 ) -> Snapshot:
     if len(photo_rows(session, kind, record.id, body.photos)) != len(body.photos):
         raise IdentityError("LISTING_PHOTO_UNAVAILABLE", 422)

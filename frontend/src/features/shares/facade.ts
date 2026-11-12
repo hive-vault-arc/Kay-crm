@@ -16,9 +16,10 @@ export async function relayListingShare(path: string, request: Request, requestI
   const [, kind, id, action, linkId, last, ...rest] = path.split("/");
   const get = request.method === "GET";
   const revoke = action === "links" && last === "revoke" && uuid.safeParse(linkId).success;
-  const simple = ["approve", "withdraw", "links"].includes(action) && linkId === undefined;
+  const draft = action === "draft" && linkId === undefined;
+  const simple = ["approve", "withdraw", "links", "publish"].includes(action) && linkId === undefined;
   if (!["property", "development"].includes(kind) || !uuid.safeParse(id).success || rest.length ||
-      (get ? action !== undefined : request.method !== "POST" || !(simple || revoke)))
+      (get ? action !== undefined && !draft : request.method !== "POST" || !(simple || revoke)))
     return facadeError(404, "NOT_FOUND", requestId);
   if (new URL(request.url).search) return facadeError(422, "VALIDATION_ERROR", requestId);
   const key = request.headers.get("Idempotency-Key") ?? undefined;
@@ -26,8 +27,8 @@ export async function relayListingShare(path: string, request: Request, requestI
   if (!get) {
     if (request.headers.get("Origin") !== frontendOrigin()) return facadeError(403, "FORBIDDEN", requestId);
     if (!uuid.safeParse(key).success) return facadeError(422, "VALIDATION_ERROR", requestId);
-    const input = action === "approve" ? approveListing : revoke ? z.object({}).strict() : expectedShare;
-    try { body = JSON.stringify(input.parse(await boundedJson(request, 8192))); }
+    const input = action === "approve" || action === "publish" ? approveListing : revoke ? z.object({}).strict() : expectedShare;
+    try { body = JSON.stringify(input.parse(await boundedJson(request, action === "publish" ? 131072 : 8192))); }
     catch { return facadeError(422, "VALIDATION_ERROR", requestId); }
   }
   try {
@@ -37,13 +38,14 @@ export async function relayListingShare(path: string, request: Request, requestI
       token, method: get ? "GET" : "POST", body, idempotencyKey: key,
       csrf: request.headers.get("X-CSRF-Token")?.slice(0, 128),
       origin: get ? undefined : frontendOrigin(),
+      maxResponseBytes: draft ? 2 * 1024 * 1024 : undefined,
     });
     if (response.status !== 200) {
       const failure = errorBody.safeParse(response.body);
       if (failure.success && errors.has(failure.data.error.code)) return facadeError(response.status, failure.data.error.code, requestId);
       return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
     }
-    const schema = get ? listingShareState : action === "links" && !revoke ? issuedShare : shareSaved;
+    const schema = get ? listingShareState : (action === "links" || action === "publish") && !revoke ? issuedShare : shareSaved;
     return Response.json(schema.parse(response.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch {
     return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);

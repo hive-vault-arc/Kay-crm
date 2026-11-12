@@ -178,9 +178,13 @@ async def request_context(
                 "/api/v1/exports",
             )
         ):
+            listing_publish = request.url.path.startswith(
+                "/api/v1/listing-shares/"
+            ) and request.url.path.endswith("/publish")
             limit = (
                 131072
-                if request.url.path.startswith(
+                if listing_publish
+                or request.url.path.startswith(
                     (
                         "/api/v1/properties",
                         "/api/v1/offerings",

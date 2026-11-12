@@ -4,7 +4,7 @@ const categories: Record<ListingFacts["category"], string> = {
   apartment: "Appartement", villa: "Villa", house: "Maison", land: "Terrain", commercial: "Local commercial",
   riad: "Riad", room: "Chambre", office: "Bureau", farm: "Ferme", mixed: "Programme mixte",
 };
-const periods = { sale: "Prix de vente", month: "Par mois", year: "Par an", night: "Par nuit" };
+const periods = { sale: "Prix de vente", month: "Par mois", year: "Par an", week: "Par semaine", day: "Par jour", night: "Par nuit" };
 
 export function ClientListingFacts({ facts }: { facts: ListingFacts }) {
   const money = facts.price_mad ? new Intl.NumberFormat("fr-MA", { style: "currency", currency: "MAD" }).format(Number(facts.price_mad)) : null;
