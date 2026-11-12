@@ -124,8 +124,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.add_middleware(
         CORSMiddleware,
         allow_origins=[config.frontend_origin],
-        allow_methods=["PUT", "GET"],
-        allow_headers=["X-File-Permit", "X-File-Session", "Content-Type"],
+        allow_methods=["PUT", "GET", "HEAD"],
+        allow_headers=["X-File-Permit", "X-File-Session", "Content-Type", "Range"],
         expose_headers=["Content-Disposition", "Accept-Ranges", "Content-Range"],
         allow_credentials=False,
     )

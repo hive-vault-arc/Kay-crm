@@ -122,6 +122,16 @@ async def test_video_stream_serves_only_authorized_ranges(settings, database, mo
             "params": {"grant": token},
             "headers": {"Origin": settings.frontend_origin, "Range": "bytes=1-5"},
         }
+        preflight = await client.options(
+            path,
+            headers={
+                "Origin": settings.frontend_origin,
+                "Access-Control-Request-Method": "HEAD",
+                "Access-Control-Request-Headers": "Range",
+            },
+        )
+        assert preflight.status_code == 200
+        assert preflight.headers["access-control-allow-origin"] == settings.frontend_origin
         response = await client.get(path, **args)
         assert response.status_code == 206
         assert response.headers["content-range"] == f"bytes 1-5/{len(output)}"
