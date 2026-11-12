@@ -5,9 +5,9 @@ WORKDIR /workspace/backend
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends ca-certificates ffmpeg \
     && rm -rf /var/lib/apt/lists/*
-COPY requirements.lock ./
+COPY requirements.txt ./
 RUN python -m venv .venv \
-    && ./.venv/bin/python -m pip install --no-cache-dir --require-hashes -r requirements.lock \
+    && ./.venv/bin/python -m pip install --no-cache-dir --require-hashes -r requirements.txt \
     && groupadd --system kay && useradd --system --gid kay --home-dir /workspace/backend kay
 COPY --chown=kay:kay app ./app
 COPY --chown=kay:kay config ./config
