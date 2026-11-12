@@ -100,6 +100,8 @@ def encode(source: Path, target: Path) -> int:
                 "0:a:0?",
                 "-map_metadata",
                 "-1",
+                "-map_metadata:s",
+                "-1",
                 "-map_chapters",
                 "-1",
                 "-vf",

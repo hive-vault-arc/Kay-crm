@@ -116,7 +116,11 @@ def listing(database: Database, token: str, kind: ParentKind, target: UUID) -> d
                 | (InventoryVideo.creator_id == identity.user.id)
                 | (identity.user.role != "agent"),
             )
-            .order_by(InventoryVideo.created_at.desc(), InventoryVideo.id)
+            .order_by(
+                InventoryVideo.state == "failed",
+                InventoryVideo.created_at.desc(),
+                InventoryVideo.id,
+            )
             .limit(25)
         )
         return {
