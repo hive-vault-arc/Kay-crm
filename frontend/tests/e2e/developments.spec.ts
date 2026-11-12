@@ -91,6 +91,7 @@ test("SP08 AT-31/32/35/36/41: actual mixed units, template edit, filters, whole 
     await page.getByRole("button", { name: "Enregistrer le programme", exact: true }).click();
     await expect(page.getByRole("heading", { name: development.name, exact: true, level: 1 })).toBeVisible();
     await addOwners(page, ["SP08 propriétaire privé synthétique"]);
+    await page.getByRole("tab", { name: "Aperçu", exact: true }).click();
     await page.getByRole("button", { name: "Créer une offre de vente", exact: true }).click();
     const offering = page.getByRole("dialog", { name: "Créer une offre de vente", exact: true });
     await offering.getByLabel("Prix (MAD, facultatif)", { exact: true }).fill("25000000,01");

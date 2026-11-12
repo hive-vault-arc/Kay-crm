@@ -90,7 +90,7 @@ test("KAY manual deal: client profile, project qualification, atomic edit and ri
     await expect(page.getByRole("link", { name: "Client manuel actualisé", exact: true })).toBeVisible();
     await page.getByLabel("Source", { exact: true }).selectOption("facebook");
     await expect(page.getByText("0 affaire", { exact: true }).and(page.getByRole("status"))).toBeVisible();
-    await page.locator('[data-filter-panel="desktop"]').getByRole("button", { name: "Effacer", exact: true }).click();
+    await page.locator('[data-filter-panel="desktop"]').getByRole("button", { name: "Réinitialiser", exact: true }).click();
     await expect(page.getByText("1 affaire", { exact: true }).and(page.getByRole("status"))).toBeVisible();
     await page.getByRole("button", { name: "Autres actions de la liste", exact: true }).click();
     await page.getByRole("button", { name: "Colonnes", exact: true }).click();

@@ -40,7 +40,7 @@ test("SP11: list creation, numbered pages, scoped counts, filters and ID-only co
   test.setTimeout(180_000); const agent = await createActor("agent"); const outsider = await createActor("agent");
   try {
     await signIn(page, agent); const lead = await createLead(page, "SP11 contact du tableau"); const contact = (await (await page.request.get(`/api/v1/enquiries/${lead}`)).json()).contact.id;
-    await page.goto("/deals"); await expect(page.getByText(/Aucune affaire sur cette page/)).toBeVisible(); await page.getByRole("link", { name: "Créer une affaire", exact: true }).click(); await page.getByLabel("Client de l’affaire", { exact: true }).selectOption("existing"); await page.getByRole("button", { name: "Choisir SP11 contact du tableau", exact: true }).click(); await fillDeal(page, "SP11 tableau 00"); const first = await saveDeal(page);
+    await page.goto("/deals"); await expect(page.getByRole("heading", { name: "Aucune affaire", exact: true })).toBeVisible(); await page.getByRole("link", { name: "Créer une affaire", exact: true }).click(); await page.getByLabel("Client de l’affaire", { exact: true }).selectOption("existing"); await page.getByRole("button", { name: "Choisir SP11 contact du tableau", exact: true }).click(); await fillDeal(page, "SP11 tableau 00"); const first = await saveDeal(page);
     const derivedTitle = "SP11 contact du tableau · SP11 tableau 00";
     await expect(page.getByRole("heading", { name: derivedTitle, exact: true })).toBeVisible();
     for (let i = 1; i <= 10; i++) expect((await staffCommand(page, "deals", dealBody(contact, `SP11 tableau ${String(i).padStart(2, "0")}`))).status()).toBe(200);
@@ -50,7 +50,7 @@ test("SP11: list creation, numbered pages, scoped counts, filters and ID-only co
     await page.getByRole("button", { name: "Colonnes", exact: true }).click(); await page.getByRole("checkbox", { name: "Qualification", exact: true }).uncheck(); await page.keyboard.press("Escape"); await expect(page.getByRole("columnheader", { name: "Qualification", exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem("kay:deals:columns:v1")!))).toEqual({ version: 1, list: "deals", visibleColumns: ["name", "status", "projects", "budget", "responsibleAgent", "updatedAt"] });
     await page.getByLabel("Rechercher une affaire, un contact ou une action", { exact: true }).fill("SP11 tableau 00"); await expect(page.getByText("1 affaire", { exact: true }).and(page.getByRole("status"))).toBeVisible();
-    await page.getByRole("checkbox", { name: "Documents", exact: true }).check(); await expect(page.getByText("0 affaire", { exact: true }).and(page.getByRole("status"))).toBeVisible();
+    await page.getByLabel("Étape", { exact: true }).selectOption("documents"); await expect(page.getByText("0 affaire", { exact: true }).and(page.getByRole("status"))).toBeVisible();
     await clearActorContext(page); await signIn(page, outsider); expect((await page.request.get(`/api/v1/deals/${first}`)).status()).toBe(404); const list = await (await page.request.get("/api/v1/deals")).json(); expect(list.total).toBe(0); expect(Object.values(list.stage_counts).every(n => n === 0)).toBe(true); await page.goto(`/deals/${first}`); await expect(page.getByRole("alert").filter({ hasText: "introuvable" })).toBeVisible(); await expect(page.getByText(derivedTitle, { exact: true })).toHaveCount(0);
   } finally { await clearActorContext(page); await removeActor(agent); await removeActor(outsider); }
 });

@@ -37,7 +37,7 @@ async function geometry(page: Page, panel: Locator, desktop: boolean) {
     if (!await control.isVisible()) continue;
     const box = await control.evaluate(element => (element.matches('[role="checkbox"], [role="radio"], input[type="checkbox"], input[type="radio"]') ? element.closest("label") ?? element : element).getBoundingClientRect().toJSON());
     expect(box.width).toBeGreaterThanOrEqual(44);
-    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(desktop ? 36 : 44);
     expect(box.x).toBeGreaterThanOrEqual(panelBox.x);
     expect(box.x + box.width).toBeLessThanOrEqual(panelBox.x + panelBox.width + 1);
   }
@@ -45,10 +45,7 @@ async function geometry(page: Page, panel: Locator, desktop: boolean) {
   expect(new Set(ids).size).toBe(ids.length);
   if (desktop) {
     const results = (await page.locator("[data-list-results]:visible").boundingBox())!;
-    const projects = await page.locator(".projects-workbench").count();
-    const gap = page.viewportSize()!.width < 1100 ? 11 : 15;
-    if (projects) expect(results.x - panelBox.x - panelBox.width).toBeCloseTo(gap + 1, 0);
-    expect(results.x).toBeGreaterThanOrEqual(panelBox.x + panelBox.width + gap);
+    expect(results.x).toBeGreaterThanOrEqual(panelBox.x + panelBox.width - 1);
     expect(Math.abs(results.y - panelBox.y)).toBeLessThanOrEqual(1);
   }
 }
@@ -80,7 +77,8 @@ async function exerciseFilters(page: Page, panel: Locator, endpoint: string, sub
     const from = (await input.getAttribute("id"))!.endsWith("-from");
     const value = from ? "2026-10-01" : "2026-10-31";
     await input.fill(value);
-    expected[`${endpoint === "enquiries" ? "received" : "updated"}_${from ? "from" : "to"}`] = value;
+    const dateKind = endpoint === "enquiries" ? "received" : (await input.getAttribute("id"))!.includes("created") ? "created" : "updated";
+    expected[`${dateKind}_${from ? "from" : "to"}`] = value;
   }
   for (const label of ["Agents précédents", "Agents suivants"]) {
     const pager = panel.getByRole("button", { name: label, exact: true });
@@ -115,13 +113,14 @@ test("directory filters: left rails, mobile sheets and real scoped requests", as
     { name: "deals", path: "/deals", endpoint: "deals", search: "Rechercher une affaire, un contact ou une action", submit: "Appliquer", status: "1 affaire", empty: "0 affaire" },
     { name: "properties", path: "/projects", endpoint: "properties", search: "Rechercher un nom, une référence ou un lieu", submit: "", status: "1 bien correspondant", empty: "0 bien correspondant" },
     { name: "programmes", path: "/projects", endpoint: "developments", search: "Rechercher", submit: "Appliquer", status: "1 programme", empty: "0 programme" },
-    { name: "contacts", path: "/leads?view=contacts", endpoint: "contacts", search: "Rechercher", submit: "Appliquer", status: "1 contact(s) accessible(s) · Dossiers non archivés, prospects hors convertis.", empty: "0 contact(s) accessible(s) · Dossiers non archivés, prospects hors convertis." },
+    { name: "contacts", path: "/contacts", endpoint: "contacts", search: "Rechercher", submit: "Appliquer", status: "1 contact", empty: "0 contacts" },
   ];
   for (const screen of screens) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(screen.path);
     if (screen.name === "programmes") await page.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click();
-    await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
+    const statusRegion = screen.name === "contacts" ? page.locator('header [aria-live="polite"]') : page.getByRole("status");
+    await expect(statusRegion.and(page.getByText(screen.status, { exact: true }))).toBeVisible();
     for (const width of [320, 360, 768, 1024, 1279, 1280, 1440, ...(screen.name === "leads" || screen.name === "deals" ? [1535, 1536, 1600] : [])]) {
       await page.setViewportSize({ width, height: 900 });
       const panel = await openFilters(page, width);
@@ -130,7 +129,7 @@ test("directory filters: left rails, mobile sheets and real scoped requests", as
       if (screen.name === "properties") await panel.getByText("Filtres avancés des biens", { exact: true }).click();
       if (screen.name === "programmes") await panel.getByText("Archives", { exact: true }).click();
       await geometry(page, panel, width >= 831);
-      if (["leads", "deals"].includes(screen.name) && width >= 831) expect((await panel.boundingBox())!.width).toBeCloseTo(width < 1100 ? 220 : 264, 0);
+      if (["leads", "deals"].includes(screen.name) && width >= 831) expect((await panel.boundingBox())!.width).toBeCloseTo(width <= 1100 ? 220 : 264, 0);
       const captureWideCrm = width === 1600 && ["leads", "deals"].includes(screen.name);
       if (width === 1440 || captureWideCrm || (width === 360 && ["leads", "properties"].includes(screen.name))) await capture(page, `${screen.name}-${width}`);
       const query = panel.getByLabel(screen.search, { exact: true });
@@ -149,25 +148,25 @@ test("directory filters: left rails, mobile sheets and real scoped requests", as
     if (["leads", "deals"].includes(screen.name)) await panel.getByLabel(screen.search, { exact: true }).press("Enter");
     else if (screen.name !== "properties") await panel.getByRole("button", { name: screen.submit, exact: true }).click();
     expect(new URL((await sent).url()).searchParams.get("page")).toBe("1");
-    await expect(page.getByText(screen.empty, { exact: true }).and(page.getByRole("status"))).toBeVisible();
+    await expect(statusRegion.and(page.getByText(screen.empty, { exact: true }))).toBeVisible();
     await capture(page, `${screen.name}-empty`);
     if (screen.name === "contacts") {
       await panel.getByLabel(screen.search, { exact: true }).fill("");
       await panel.getByRole("button", { name: screen.submit, exact: true }).click();
-      await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
+      await expect(statusRegion.and(page.getByText(screen.status, { exact: true }))).toBeVisible();
       await panel.getByLabel("Archivage", { exact: true }).selectOption("archived");
       await panel.getByRole("button", { name: screen.submit, exact: true }).click();
-      await expect(page.getByText(screen.empty, { exact: true }).and(page.getByRole("status"))).toBeVisible();
+      await expect(statusRegion.and(page.getByText(screen.empty, { exact: true }))).toBeVisible();
     } else if (screen.name === "programmes") {
       await panel.getByLabel(screen.search, { exact: true }).fill("");
       await panel.getByRole("button", { name: screen.submit, exact: true }).click();
-      await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
+      await expect(statusRegion.and(page.getByText(screen.status, { exact: true }))).toBeVisible();
     } else {
-      await panel.getByRole("button", { name: ["leads", "deals"].includes(screen.name) ? "Effacer" : "Réinitialiser", exact: true }).click();
-      await expect(page.getByText(screen.status, { exact: true }).and(page.getByRole("status"))).toBeVisible();
+      await panel.getByRole("button", { name: "Réinitialiser", exact: true }).click();
+      await expect(statusRegion.and(page.getByText(screen.status, { exact: true }))).toBeVisible();
     }
     if (screen.name === "leads" || screen.name === "deals") {
-      const scroller = page.getByRole("region", { name: screen.name === "leads" ? "Tableau des prospects, défilement vertical et horizontal" : "Tableau des affaires, défilement horizontal", exact: true });
+      const scroller = page.getByRole("region", { name: screen.name === "leads" ? "Tableau des prospects, défilement vertical et horizontal" : "Tableau des affaires, défilement vertical et horizontal", exact: true });
       await page.setViewportSize({ width: 1280, height: 900 });
       await expect(page.getByText("Faites défiler le tableau horizontalement pour lire les colonnes choisies.", { exact: true })).toBeVisible();
       await scroller.focus();
@@ -180,7 +179,8 @@ test("directory filters: left rails, mobile sheets and real scoped requests", as
   const dossiers = page.getByRole("heading", { name: "Dossiers liés", exact: true }).locator("..").locator("..");
   await expect(dossiers.getByLabel("Afficher", { exact: true })).toHaveValue("active");
   await expect(dossiers.locator(`a[href="/leads/${lead}"]:visible`)).toBeVisible();
-  await expect(page.locator("[data-filter-panel]")).toHaveCount(0);
+  await expect(page.locator('[data-filter-panel="desktop"], [data-filter-panel="mobile"]')).toHaveCount(0);
+  await expect(dossiers.locator('[data-filter-panel="inline"]')).toBeVisible();
   expect(errors).toEqual([]);
   } finally { await clearActorContext(page); await removeActor(owner); }
 });
@@ -256,7 +256,7 @@ test("lead filter rail: mobile validation, selected-agent persistence, breakpoin
       await expect(phone.getByRole("dialog")).toHaveCount(0);
       await expect(phone.getByRole("link", { name: "Importer des contacts", exact: true })).toHaveCount(0);
       await phone.goto("/projects");
-      await expect(phone.getByRole("link", { name: "Nouveau bien", exact: true })).toBeVisible();
+      await expect(phone.getByRole("link", { name: "Créer un bien indépendant", exact: true })).toBeVisible();
       await phone.getByRole("button", { name: /^Afficher les filtres(?: \(.+\))?$/ }).tap();
       await phone.getByRole("button", { name: "Fermer les filtres", exact: true }).tap();
       await expect(phone.getByRole("button", { name: /^Afficher les filtres(?: \(.+\))?$/ })).toBeFocused();

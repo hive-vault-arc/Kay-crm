@@ -68,7 +68,7 @@ test("Lead/Deal facts: selected icons, intrinsic desktop details, mobile, keyboa
     await signIn(page, owner);
     const lead = await createLead(page, syntheticName);
     const detail = await (await page.request.get(`/api/v1/enquiries/${lead}`)).json();
-    const contact = page.locator(".kay-record-section").filter({ has: page.getByRole("heading", { name: "Contact", exact: true }) });
+    const contact = page.locator(".kay-record-section").filter({ has: page.getByRole("heading", { name: "Coordonnées", exact: true }) });
     await expect(contact.locator(".kay-record-fact").filter({ has: page.getByText("Téléphone", { exact: true }) }).locator("dd")).toContainText(detail.contact.primary_phone);
     await expect(contact.locator(".kay-record-fact").filter({ has: page.getByText("E-mail", { exact: true }) }).locator("dd")).toHaveText("Non renseigné");
     await expect(page.getByRole("button", { name: "Attribuer le prospect", exact: true })).toHaveCount(0);
@@ -120,7 +120,7 @@ test("Lead/Deal facts: selected icons, intrinsic desktop details, mobile, keyboa
       await mobile.goto(`/deals/${deal}`);
       await mobile.getByRole("link", { name: "Voir le prospect", exact: true }).tap();
       await expect(mobile.getByRole("heading", { level: 1, name: syntheticName, exact: true })).toBeVisible();
-      await mobile.getByRole("link", { name: "Voir le contact", exact: true }).tap();
+      await mobile.getByRole("link", { name: "Fiche du contact", exact: true }).tap();
       await expect(mobile.getByRole("heading", { level: 1, name: syntheticName, exact: true })).toBeVisible();
     } finally { await touch.close(); }
     await clearActorContext(page); await signIn(page, actor);
