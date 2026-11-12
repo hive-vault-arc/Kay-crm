@@ -29,7 +29,14 @@ synthetic MOV through the application's streaming scanner and refused a 321 MiB
 stream. The non-root worker encoded the synthetic portrait clip with the network
 turned off and a 2 CPU / 1 GiB container limit. It produced a 180-second,
 45,086,717-byte fast-start H.264 MP4 at 720 × 1280 and used 380 MiB peak memory.
-These checks do not verify the DigitalOcean bucket, shared worker load, or Safari.
+A separate full-size synthetic API run transferred exactly 300,000,000 bytes,
+resumed after the first chunk, scanned and encoded the upload, removed staged
+parts, served two byte ranges, and rejected playback after session revocation.
+A large MOV took longer to scan than the ordinary 20-second file deadline; the
+video path now waits up to 135 seconds for the verdict after sending the bytes.
+Connection and send timeouts stay at 20 seconds. These checks use a disposable
+PostgreSQL database and local storage; DigitalOcean Spaces, shared worker load,
+and physical iPhone Safari still require staging verification.
 
 Source parts are private until scanning and encoding complete. The worker
 removes the source after successful publication or a terminal failure.
