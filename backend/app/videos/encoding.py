@@ -2,6 +2,7 @@
 
 import json
 import math
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -16,6 +17,15 @@ def executable(name: str) -> str:
     if not path:
         raise IdentityError("VIDEO_ENCODER_UNAVAILABLE", 503)
     return str(Path(path).resolve())
+
+
+def codec_environment() -> dict[str, str]:
+    # The media subprocess has no use for database, session, or bucket credentials.
+    return {
+        name: os.environ[name]
+        for name in ("SystemRoot", "WINDIR", "TEMP", "TMP", "TMPDIR")
+        if name in os.environ
+    }
 
 
 def probe(source: Path) -> dict[str, Any]:
@@ -38,6 +48,8 @@ def probe(source: Path) -> dict[str, Any]:
                 str(source),
             ],
             check=True,
+            cwd=source.parent,
+            env=codec_environment(),
             capture_output=True,
             timeout=30,
         )
@@ -135,6 +147,8 @@ def encode(source: Path, target: Path) -> int:
                 str(target),
             ],
             check=True,
+            cwd=source.parent,
+            env=codec_environment(),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             timeout=480,
