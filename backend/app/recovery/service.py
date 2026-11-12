@@ -148,6 +148,8 @@ def validate_objects(connection: Connection, root: Path) -> None:
         UNION ALL SELECT object_key,size_bytes,file_hash FROM import_batch
         WHERE file_hash IS NOT NULL
         UNION ALL SELECT object_key,size_bytes,file_hash FROM export_job WHERE state='ready'
+        UNION ALL SELECT output_key,output_size,output_hash FROM inventory_video WHERE state='ready'
+        UNION ALL SELECT object_key,size_bytes,sha256 FROM inventory_video_part
     """)
     )
     for key, size, digest in references:
@@ -191,6 +193,11 @@ def revoke_and_reconcile(connection: Connection) -> dict[str, int]:
         state=CASE WHEN attempts<5 THEN 'retry' ELSE 'failed' END,
         lease_token=NULL,lease_until=NULL,available_at=now(),error_code='WORKER_INTERRUPTED'
         WHERE state='running'""").rowcount
+    connection.exec_driver_sql("DELETE FROM inventory_video_grant")
+    connection.exec_driver_sql("""UPDATE inventory_video SET upload_hash=NULL,
+        upload_session_id=NULL,fence=NULL,lease_until=NULL,
+        state=CASE WHEN state='processing' THEN 'queued' ELSE state END
+    """)
     connection.exec_driver_sql("UPDATE website_source SET active=false")
     # Finance/import originals and completed effects are never replayed.
     return {"sessions_revoked": revoked, "running_jobs_fenced": reset}
