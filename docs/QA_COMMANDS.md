@@ -1,5 +1,14 @@
 # KAY QA command register
 
+## Client listing links
+
+With a disposable PostgreSQL target, run `alembic upgrade head`, `alembic check`
+and `pytest -q tests/test_listing_shares.py` using the backend virtual environment.
+Then with a real scanner and `INVENTORY_SHARES_ENABLED=true`, run
+`npm run test:chrome -- tests/e2e/listing-shares.spec.ts` on the isolated stack.
+Keep database-writing suites serial. The manual full integration workflow runs
+this browser case with the opt-in flag on synthetic infrastructure only.
+
 ## Deals and visit calendar reference pass (2026-11-10)
 
 Compared the supplied prototype and the app components in headed Chrome

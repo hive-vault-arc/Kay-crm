@@ -71,6 +71,7 @@ from app.schedule.models import (
     WorkingWindow,
 )
 from app.settings import Settings
+from app.shares.models import ListingLink, ListingPublication
 from app.work.models import Task, TaskEvent, TaskReceipt
 from tests.deal_cleanup import actor_deal_ids, delete_actor_deals
 from tests.file_cleanup import delete_actor_files
@@ -119,6 +120,8 @@ def clear_identity(settings: Settings, database: Database) -> None:
             )
         )
         for model in (
+            ListingLink,
+            ListingPublication,
             PushDelivery,
             PushSubscription,
             RealtimePresence,
@@ -205,6 +208,8 @@ def clear_identity(settings: Settings, database: Database) -> None:
 
 def delete_actor_business(session: Session, user_id: UUID) -> None:
     """Called only after the private fixture validates its isolated synthetic actor."""
+    session.execute(delete(ListingLink).where(ListingLink.created_by == user_id))
+    session.execute(delete(ListingPublication).where(ListingPublication.approved_by == user_id))
     sessions = select(StaffSession.id).where(StaffSession.user_id == user_id)
     session.execute(delete(PushDelivery).where(PushDelivery.session_id.in_(sessions)))
     session.execute(delete(PushSubscription).where(PushSubscription.session_id.in_(sessions)))

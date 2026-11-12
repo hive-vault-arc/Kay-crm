@@ -192,6 +192,8 @@ def revoke_and_reconcile(connection: Connection) -> dict[str, int]:
         lease_token=NULL,lease_until=NULL,available_at=now(),error_code='WORKER_INTERRUPTED'
         WHERE state='running'""").rowcount
     connection.exec_driver_sql("UPDATE website_source SET active=false")
+    if connection.scalar(text("SELECT to_regclass('public.listing_link') IS NOT NULL")):
+        connection.exec_driver_sql("UPDATE listing_link SET revoked_at=COALESCE(revoked_at,now())")
     # Finance/import originals and completed effects are never replayed.
     return {"sessions_revoked": revoked, "running_jobs_fenced": reset}
 

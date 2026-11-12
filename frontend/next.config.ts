@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   async headers() {
     return [{
+      source: "/partage",
+      headers: [
+        { key: "X-Robots-Tag", value: "noindex, nofollow, noimageindex" },
+        { key: "Referrer-Policy", value: "no-referrer" },
+        { key: "Cache-Control", value: "private, no-store" },
+        { key: "X-Frame-Options", value: "DENY" },
+      ],
+    }, {
       source: "/heic/decoder-worker.js",
       headers: [
         { key: "Content-Security-Policy", value: "default-src 'none'; script-src 'self'; worker-src 'self'; connect-src 'self'" },

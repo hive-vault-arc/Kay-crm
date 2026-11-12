@@ -1,5 +1,8 @@
 export function frenchApiError(code: string): string {
   const messages: Record<string, string> = {
+    LISTING_NOT_APPROVED: "Cette fiche doit être approuvée à nouveau avant le partage.",
+    LISTING_PHOTO_UNAVAILABLE: "Une photo sélectionnée n’est plus disponible. Vérifiez votre sélection.",
+    LISTING_LINK_LIMIT: "Ce dossier a déjà 50 liens actifs. Désactivez un lien avant d’en créer un autre.",
     RECORD_ARCHIVED: "Ce dossier est archivé. Restaurez-le avant de le modifier.",
     RECORD_ALREADY_ARCHIVED: "Ce dossier est déjà archivé. Actualisez la fiche.",
     RECORD_NOT_ARCHIVED: "Ce dossier est déjà actif. Actualisez la fiche.",

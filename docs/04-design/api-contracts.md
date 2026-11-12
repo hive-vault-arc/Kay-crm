@@ -1,5 +1,10 @@
 # HTTP contracts for `/api/v1`
 
+[Client listing links](client-listing-links.md): the authenticated `/listing-shares`
+commands manage approvals and expiring grants. The separate `/client-listing`
+read endpoints use only the opaque client grant and return an explicit public
+projection and approved photo bytes.
+
 Inventory detail correction, 2026-11-07: property and development detail GETs
 include the existing exact-offering `target` projection on their current offers.
 Its shared inventory identity, level and target/development versions match the

@@ -114,6 +114,7 @@ jobs:
         env:
           KAY_E2E_PRODUCTION: '1'
           BROWSER_SCOPE: ${{ inputs.browser_scope }}
+          INVENTORY_SHARES_ENABLED: 'true'
         run: |
           if ($env:BROWSER_SCOPE -eq 'recovery-only') {
             npx playwright test --config=playwright.ci.config.ts '[\\/](recovery)[.]spec[.]ts$' --max-failures=1
