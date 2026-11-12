@@ -61,6 +61,8 @@ def merge_values(
     for field in ("country", "nationality"):
         if not getattr(survivor, field):
             setattr(survivor, field, getattr(source, field))
+    if survivor.type == source.type == "person" and survivor.birth_date is None:
+        survivor.birth_date = source.birth_date
     survivor.languages = list(dict.fromkeys([*survivor.languages, *source.languages]))
     if len(survivor.languages) > 30:
         raise ContactConflict("MERGE_IDENTITY_LIMIT", {})

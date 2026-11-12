@@ -4,7 +4,7 @@ export type ContactEditBinding = { actorId?: string; role?: StaffRole };
 export type ContactEditBody = ReturnType<typeof editContactSchema.parse>;
 
 export function contactEditValues(contact: Contact): ContactFields {
-  return { name: contact.name, type: contact.type, phones: contact.phones.map(value => ({ ...value })), emails: contact.emails.map(value => ({ ...value })), roles: [...contact.roles], country: contact.country, nationality: contact.nationality, languages: [...contact.languages] };
+  return { name: contact.name, type: contact.type, phones: contact.phones.map(value => ({ ...value })), emails: contact.emails.map(value => ({ ...value })), roles: [...contact.roles], country: contact.country, nationality: contact.nationality, birth_date: contact.birth_date, languages: [...contact.languages] };
 }
 
 export function contactProjectionValid(value: Contact) {

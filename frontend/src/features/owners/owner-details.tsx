@@ -26,6 +26,7 @@ export function OwnerDetails({ contact, compact = false, saved, denied, editActi
       {!compact ? <>
         <ContactInlineField {...inline} icon={LocationIcon} field="country" label="Pays de résidence" />
         <ContactInlineField {...inline} icon={LocationIcon} field="nationality" label="Nationalité" />
+        {inline.contact.type === "person" ? <ContactInlineField {...inline} icon={CalendarIcon} field="birth_date" label="Date de naissance" /> : null}
         <ContactInlineField {...inline} icon={PhoneIcon} field="phones" methodScope="secondary" label="Téléphones secondaires" display={methods("phones", false)} />
         <ContactInlineField {...inline} icon={EmailIcon} field="emails" methodScope="secondary" label="E-mails secondaires" display={methods("emails", false)} />
       </> : null}

@@ -121,12 +121,12 @@ test("The focused photo form stages a real dirty file, submits explicitly and gu
   s.submit(); await delay(0); assert.equal(s.saved.length, 1); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], undefined);
 });
 
-test("Unknown photo attempts freeze selection, lock duplicates and can retry their reserved slot even at ten photos", async () => {
+test("Unknown photo attempts freeze selection, lock duplicates and can retry their reserved slot after an interrupted upload", async () => {
   let resolve; const s = formSetup({ send: args => { args.attempt.started = true; args.reserved(); return new Promise(done => { resolve = done; }); } }), file = source();
   s.pick(file); s.submit(); s.submit(); assert.equal(s.sent.length, 1); assert.equal(find(s.render(), "form")[0].props["aria-busy"], true); s.pick(source("other.png")); assert.equal(find(s.render(), "Picker")[0].props.selected, file);
   resolve({ documentId: randomUUID(), state: "pending_scan", recovered: false }); await delay(0); assert.equal(s.saved.length, 1);
   let fail = true; const retry = formSetup({ send: async args => { args.attempt.started = true; args.reserved(); if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return { documentId: randomUUID(), state: "pending_scan", recovered: false }; } }); retry.pick(file); retry.submit(); await delay(0); retry.props.total = 10; fail = false; retry.submit(); await delay(0); assert.equal(retry.saved.length, 1); assert.equal(retry.sent[0].file, retry.sent[1].file); assert.equal(retry.sent[0].attempt, retry.sent[1].attempt);
-  const full = formSetup({ total: 10 }); full.pick(file); full.submit(); await delay(0); assert.equal(full.sent.length, 0);
+  const full = formSetup({ total: 10 }); full.pick(file); full.submit(); await delay(0); assert.equal(full.sent.length, 1);
 });
 
 test("Photo upload denial clears the file, interrupted work retains it and unmount aborts without late success", async () => {
@@ -134,14 +134,14 @@ test("Photo upload denial clears the file, interrupted work retains it and unmou
   let resolve; const late = formSetup({ send: () => new Promise(done => { resolve = done; }) }); late.pick(source()); late.submit(); late.unmount(); assert.equal(late.sent[0].signal.aborted, true); resolve({ documentId: randomUUID(), state: "pending_scan", recovered: false }); await delay(0); assert.equal(late.saved.length, 0);
 });
 
-test("Gallery keeps upload entry separate, permits authorized resume at capacity and clears composer/preview on denial", () => {
+test("Gallery keeps upload entry separate, permits authorized resume alongside new uploads and clears composer/preview on denial", () => {
   const h = harness(), m = model(), selected = photo(), uploadable = true, props = { propertyId: randomUUID(), writable: false, uploadable, onChanged() {} }, requests = [];
   let result = { value: { items: [selected], total: 10, page: 1, page_size: 10, has_next: false, has_previous: false }, refresh() {}, refreshQuietly() {} };
   const loaded = loadServer("src/features/files/property-photos.tsx", { modules: { ...shared, react: h.react, "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/contacts/use-query": { useQuery: path => { requests.push(path); return result; } }, "./photo-previews": { photoPreviewKey: previewKey }, "./photo-gallery-media": { PhotoCard: "Card", PhotoViewer: "Viewer" }, "./photo-upload-form": { PhotoUploadForm: "Uploader" }, "./photo-upload-model": m }, globals: { AbortController, setInterval: () => 1, clearInterval() {}, requestAnimationFrame: run => run() } });
   const render = () => h.render(() => { const root = loaded.PropertyPhotos(props); return root.type(root.props); });
-  let view = render(); assert.equal(find(view, "Uploader").length, 0); assert.equal(find(view, "Pages").length, 0); assert.equal(find(view, "Button").length, 0); assert.equal(typeof find(view, "Card")[0].props.resume, "function");
+  let view = render(); assert.equal(find(view, "Uploader").length, 0); assert.equal(find(view, "Pages").length, 0); assert.equal(find(view, "Button").length, 1); assert.equal(typeof find(view, "Card")[0].props.resume, "function");
   const actions = find(view, "Card")[0].props; assert.equal(actions.begin(), true); assert.equal(actions.begin(), false); assert.equal(find(render(), "form")[0].props["aria-busy"], true); actions.end();
-  find(view, "Card")[0].props.resume({}); view = render(); assert.equal(find(view, "Uploader")[0].props.total, 10); find(view, "Uploader")[0].props.denied(new ApiError("FORBIDDEN", 403)); view = render(); assert.equal(find(view, "Card").length, 0); assert.equal(find(view, "Uploader").length, 0);
+  find(view, "Card")[0].props.resume({}); view = render(); assert.equal(find(view, "Uploader")[0].props.resume, selected); find(view, "Uploader")[0].props.denied(new ApiError("FORBIDDEN", 403)); view = render(); assert.equal(find(view, "Card").length, 0); assert.equal(find(view, "Uploader").length, 0);
   result = { ...result, value: { ...result.value, items: [], total: 0 } }; find(view, "Error")[0].props.retry(); view = render(); button(view, "Ajouter une photo").props.onClick({ currentTarget: {} }); assert.equal(find(render(), "Uploader")[0].props.resume, undefined); assert.ok(requests.every(path => path.includes("purpose=photo")));
 });
 

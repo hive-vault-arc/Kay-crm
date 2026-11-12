@@ -60,7 +60,7 @@ export function PhotoCard({ photo, writable, disabled, begin, end, denied, refre
   </li>;
 }
 
-export function PhotoViewer({ photos, index, change, close, returnFocus, fallbackFocus, denied, cache, previewAbort }: { photos: ProtectedDocument[]; index: number; change: (index: number) => void; close: () => void; returnFocus: RefObject<HTMLButtonElement | null>; fallbackFocus: RefObject<HTMLHeadingElement | null>; denied: (error: ApiError) => void } & PreviewScope) {
+export function PhotoViewer({ photos, index, page, hasPrevious, hasNext, busy, error, change, close, returnFocus, fallbackFocus, denied, cache, previewAbort }: { photos: ProtectedDocument[]; index: number; page: number; hasPrevious: boolean; hasNext: boolean; busy: boolean; error?: string; change: (index: number) => void; close: () => void; returnFocus: RefObject<HTMLButtonElement | null>; fallbackFocus: RefObject<HTMLHeadingElement | null>; denied: (error: ApiError) => void } & PreviewScope) {
   const photo = photos[index];
   const cleanId = photo.versions.find(version => version.state === "clean")?.id;
   const [preview, setPreview] = useState<{ key: string; url: string }>();
@@ -69,9 +69,11 @@ export function PhotoViewer({ photos, index, change, close, returnFocus, fallbac
   const [retry, setRetry] = useState(0);
   const content = useRef<HTMLDivElement>(null);
   const mediaKey = `${photo.id}:${photo.version}:${navigation}:${retry}`;
+  const canGoBack = index > 0 || hasPrevious, canGoForward = index < photos.length - 1 || hasNext;
   function navigate(next: number) {
+    if (busy) return;
     // Keep keyboard events inside the dialog when the active arrow becomes disabled.
-    if (next === 0 || next === photos.length - 1) content.current?.focus();
+    if (next <= 0 || next >= photos.length - 1) content.current?.focus();
     setNavigation(value => value + 1);
     change(next);
   }
@@ -94,12 +96,14 @@ export function PhotoViewer({ photos, index, change, close, returnFocus, fallbac
   const url = preview?.key === mediaKey ? preview.url : undefined;
   return <Dialog open onOpenChange={open => { if (!open) close(); }}>
     <DialogContent ref={content} tabIndex={-1} className="inset-3 top-3 flex h-[calc(100dvh-1.5rem)] max-h-none max-w-none translate-y-0 flex-col overflow-hidden p-3 sm:inset-6 sm:top-6 sm:h-[calc(100dvh-3rem)] sm:p-5" onCloseAutoFocus={event => { event.preventDefault(); if (returnFocus.current?.isConnected) returnFocus.current.focus(); else fallbackFocus.current?.focus(); }} onKeyDown={event => {
-      if (event.key === "ArrowLeft" && index > 0) { event.preventDefault(); navigate(index - 1); }
-      if (event.key === "ArrowRight" && index < photos.length - 1) { event.preventDefault(); navigate(index + 1); }
+      if (event.key === "ArrowLeft" && canGoBack) { event.preventDefault(); navigate(index - 1); }
+      if (event.key === "ArrowRight" && canGoForward) { event.preventDefault(); navigate(index + 1); }
     }}>
-      <div className="flex min-w-0 items-start justify-between gap-3"><div className="min-w-0"><DialogTitle>Photos du dossier</DialogTitle><DialogDescription className="wrap-anywhere">{photo.filename} · {index + 1} sur {photos.length} photos analysées</DialogDescription></div><Button action="close" type="button" variant="outline" size="icon" aria-label="Fermer la photo" onClick={close}><span className="sr-only">Fermer</span></Button></div>
+      <div className="flex min-w-0 items-start justify-between gap-3"><div className="min-w-0"><DialogTitle>Photos du dossier</DialogTitle><DialogDescription className="wrap-anywhere">{photo.filename} · Page {page} · {index + 1} sur {photos.length} photos analysées</DialogDescription></div><Button action="close" type="button" variant="outline" size="icon" aria-label="Fermer la photo" onClick={close}><span className="sr-only">Fermer</span></Button></div>
       <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-sm bg-foreground" aria-live="polite">{url ? <Image src={url} alt={`Photo du dossier : ${photo.filename}`} fill unoptimized sizes="(min-width: 1024px) 90vw, 100vw" className="object-contain" onError={() => { setPreview(undefined); setFailedKey(mediaKey); }} /> : failedKey === mediaKey ? <div className="grid justify-items-center gap-3 p-4 text-center text-background"><p role="alert">Impossible d’ouvrir cette photo.</p><Button action="retry" type="button" variant="outline" onClick={() => { if (cleanId) cache.current.delete(photoPreviewKey(photo.id, cleanId)); setRetry(value => value + 1); }}>Réessayer</Button></div> : <p role="status" className="text-background">Ouverture de la photo…</p>}</div>
-      <div className="flex items-center justify-between gap-3"><Button action="back" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Précédente" disabled={index === 0} onClick={() => navigate(index - 1)}><span className="sr-only sm:not-sr-only">Précédente</span></Button><span className="text-sm text-muted-foreground" aria-live="polite">{index + 1} / {photos.length}</span><Button action="forward" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Suivante" disabled={index === photos.length - 1} onClick={() => navigate(index + 1)}><span className="sr-only sm:not-sr-only">Suivante</span></Button></div>
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}
+      {busy ? <p role="status">Chargement de la page de photos…</p> : null}
+      <div className="flex items-center justify-between gap-3"><Button action="back" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Précédente" disabled={busy || !canGoBack} onClick={() => navigate(index - 1)}><span className="sr-only sm:not-sr-only">Précédente</span></Button><span className="text-sm text-muted-foreground" aria-live="polite">{index + 1} / {photos.length}</span><Button action="forward" type="button" variant="outline" size="icon" className="sm:w-auto sm:px-4" aria-label="Suivante" disabled={busy || !canGoForward} onClick={() => navigate(index + 1)}><span className="sr-only sm:not-sr-only">Suivante</span></Button></div>
     </DialogContent>
   </Dialog>;
 }

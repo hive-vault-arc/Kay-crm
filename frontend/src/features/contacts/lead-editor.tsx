@@ -25,7 +25,7 @@ import { currentRecord } from "@/features/realtime/current-record";
 const fields = editEnquirySchema.omit({ expected_version: true, contact_fields: true });
 type Values = z.infer<typeof fields>;
 function clientValues(contact: Contact): ClientValues {
-  return { name: contact.name, type: contact.type, phones: contact.phones, emails: contact.emails, roles: contact.roles, country: contact.country, nationality: contact.nationality, languages: contact.languages };
+  return { name: contact.name, type: contact.type, phones: contact.phones, emails: contact.emails, roles: contact.roles, country: contact.country, nationality: contact.nationality, birth_date: contact.birth_date, languages: contact.languages };
 }
 function leadValues(enquiry: Enquiry): Values {
   return { message: enquiry.message, status: writableStatusSchema.parse(enquiry.status), initial_budget: enquiry.initial_budget ?? "", campaign_source: enquiry.campaign_source, rating: enquiry.rating };

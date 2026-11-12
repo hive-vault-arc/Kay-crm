@@ -8,7 +8,7 @@ import { geometry } from "../helpers/report-review";
 import { choosePhoto, closePhotos, openPhotos, uploadPhoto } from "../helpers/photos";
 import { openDocuments } from "../helpers/files";
 
-test("property photos: private viewer, browser WebP conversion, ten slots, archive and agent upload", async ({ page }) => {
+test("property photos: private viewer, browser WebP conversion, cross-page navigation, archive and agent upload", async ({ page }) => {
   test.setTimeout(240_000);
   const manager = await createActor("manager", false, "SP06 Photos synthétiques");
   const agent = await createActor("agent", false, "SP06 Photos lecture seule");
@@ -21,7 +21,7 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     const id = (await created.json()).property_id as string;
     await page.goto(`/projects/properties/${id}`);
     const gallery = await openPhotos(page);
-    await expect(gallery.getByText("0 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("0 photos")).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Ajouter une photo", exact: true })).toBeInViewport();
     let interrupted = false;
     await page.route("**/transfers/**", route => {
@@ -37,7 +37,7 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     await expect(upload.getByRole("button", { name: "Parcourir", exact: true })).toBeDisabled();
     await upload.getByRole("button", { name: "Réessayer", exact: true }).click(); await expect(upload).not.toBeVisible();
     await page.unroute("**/transfers/**");
-    await expect(gallery.getByText("1 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("1 photo")).toBeVisible();
     await expect(gallery.getByText("Analyse réussie")).toBeVisible({ timeout: 60_000 });
     await expect(gallery.locator('img[src^="blob:"]')).toBeVisible();
     const firstPhoto = gallery.getByRole("button", { name: "Ouvrir la photo patio.webp" });
@@ -50,7 +50,7 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     await expect(viewer).toHaveCount(0);
     await expect(firstPhoto).toBeFocused();
     await uploadPhoto(page, path.resolve("tests/fixtures/projects-reference/sable.png"));
-    await expect(gallery.getByText("2 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("2 photos")).toBeVisible();
     const secondPhoto = gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" });
     await expect(secondPhoto).toBeVisible({ timeout: 60_000 });
     await secondPhoto.click();
@@ -104,13 +104,22 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     }
     await page.reload();
     await openPhotos(page);
-    await expect(gallery.getByText("10 / 10 photos")).toBeVisible();
-    await expect(gallery.getByRole("button", { name: "Ajouter une photo", exact: true })).toHaveCount(0);
-    const overflow = await staffCommand(page, "documents", { parent_kind: "property", parent_id: id, purpose: "photo", filename: "onze.webp", mime_type: "image/webp", size_bytes: 100 });
-    expect(overflow.status()).toBe(409);
+    await expect(gallery.getByText("10 photos")).toBeVisible();
+    await expect(gallery.getByRole("button", { name: "Ajouter une photo", exact: true })).toBeVisible();
+    const eleventh = await staffCommand(page, "documents", { parent_kind: "property", parent_id: id, purpose: "photo", filename: "onze.webp", mime_type: "image/webp", size_bytes: 100 });
+    expect(eleventh.status()).toBe(200);
+    await page.reload();
+    await openPhotos(page);
+    await expect(gallery.getByText("11 photos", { exact: true })).toBeVisible();
+    await gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" }).click();
+    await viewer.getByRole("button", { name: "Suivante", exact: true }).click();
+    await expect(viewer.getByRole("img", { name: "Photo du dossier : patio.webp" })).toBeVisible();
+    await page.keyboard.press("ArrowLeft");
+    await expect(viewer.getByRole("img", { name: "Photo du dossier : sable.webp" })).toBeVisible();
+    await page.keyboard.press("Escape");
     await gallery.getByRole("button", { name: "Archiver" }).first().click();
     await page.getByRole("alertdialog", { name: "Archiver cette photo ?", exact: true }).getByRole("button", { name: "Confirmer l’archivage", exact: true }).click();
-    await expect(gallery.getByText("9 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("10 photos")).toBeVisible();
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(gallery.getByRole("button", { name: "Ajouter une photo", exact: true })).toBeVisible();
     const geometry = await page.evaluate(() => ({
@@ -122,15 +131,15 @@ test("property photos: private viewer, browser WebP conversion, ten slots, archi
     await page.screenshot({ path: "output/playwright/property-photos/mobile.png", fullPage: true });
     await clearActorContext(page); await signIn(page, agent); await page.goto(`/projects/properties/${id}`);
     await openPhotos(page);
-    await expect(gallery.getByText("9 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("10 photos")).toBeVisible();
     await gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" }).click();
     await expect(viewer.getByRole("img", { name: "Photo du dossier : sable.webp" })).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(gallery.getByRole("button", { name: "Ajouter une photo", exact: true })).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Archiver", exact: true })).toHaveCount(0);
     await uploadPhoto(page, path.resolve("tests/fixtures/projects-reference/patio.png"));
-    await expect(gallery.getByText("10 / 10 photos")).toBeVisible();
-    await expect(gallery.getByText("Analyse réussie")).toHaveCount(3, { timeout: 60_000 });
+    await expect(gallery.getByText("11 photos")).toBeVisible();
+    await expect(gallery.getByText("Analyse réussie")).toHaveCount(2, { timeout: 60_000 });
     expect((await staffCommand(page, "documents", { parent_kind: "property", parent_id: id, filename: "private.pdf", mime_type: "application/pdf", size_bytes: 100 })).status()).toBe(403);
   } finally { await testControl("worker-stop"); await clearActorContext(page); await removeActor(agent); await removeActor(manager); }
 });
@@ -144,13 +153,13 @@ test("agent uploads project and physical apartment photos without document privi
     await testControl("worker-start");
     const project = await createDevelopment(page);
     const gallery = await openPhotos(page);
-    await expect(gallery.getByText("0 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("0 photos")).toBeVisible();
     const galleryWidth = await gallery.evaluate(element => element.getBoundingClientRect().width);
     const headerWidth = await page.getByRole("heading", { name: project.name, exact: true, includeHidden: true, level: 1 }).evaluate(element => element.closest("header")!.getBoundingClientRect().width);
     expect(headerWidth).toBeGreaterThanOrEqual(galleryWidth - 2);
-    await geometry(page);
+    await geometry(page, 40);
     await uploadPhoto(page, path.resolve("tests/fixtures/projects-reference/patio.png"));
-    await expect(gallery.getByText("1 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("1 photo")).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Ouvrir la photo patio.webp" })).toBeVisible({ timeout: 60_000 });
     await closePhotos(page); const documents = await openDocuments(page, "inventory");
     await expect(documents.getByRole("button", { name: "Ajouter un document", exact: true })).toHaveCount(0);
@@ -166,9 +175,9 @@ test("agent uploads project and physical apartment photos without document privi
     await createBlock(page); await createFloor(page); await createType(page);
     const unit = await createUnit(page, project.id);
     await openPhotos(page);
-    await expect(gallery.getByText("0 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("0 photos")).toBeVisible();
     await uploadPhoto(page, path.resolve("tests/fixtures/projects-reference/sable.png"));
-    await expect(gallery.getByText("1 / 10 photos")).toBeVisible();
+    await expect(gallery.getByText("1 photo")).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" })).toBeVisible({ timeout: 60_000 });
     await page.setViewportSize({ width: 390, height: 844 });
     await gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" }).click();

@@ -23,6 +23,7 @@ export function ContactFields({ form, metadata, requireLanguages = false, compac
   const emails = useFieldArray({ control: form.control, name: "emails" });
   const selectedPhones = useWatch({ control: form.control, name: "phones" });
   const selectedEmails = useWatch({ control: form.control, name: "emails" });
+  const contactType = useWatch({ control: form.control, name: "type" });
   const countries = countryOptions(metadata);
   function primary(kind: "phones" | "emails", index: number) {
     form.getValues(kind).forEach((_, item) => form.setValue(`${kind}.${item}.is_primary`, item === index, { shouldDirty: true }));
@@ -33,8 +34,19 @@ export function ContactFields({ form, metadata, requireLanguages = false, compac
     if (kind === "phones") phones.replace(remaining as Values["phones"]); else emails.replace(remaining as Values["emails"]);
   }
   const nameField = !only || only === "name" ? <FormField control={form.control} name="name" render={({ field }) => <FormItem className={aligned ? "kay-form-field" : undefined}><FormLabel>{ownerLayout ? "Nom complet" : "Nom du contact"}</FormLabel><FormControl><Input {...field} maxLength={160} autoComplete="name" /></FormControl><FormMessage /></FormItem>} /> : null;
-  const typeField = !only || only === "type" ? <FormField control={form.control} name="type" render={({ field }) => <FormItem className={aligned ? "kay-form-field" : undefined}><FormLabel>Type de contact</FormLabel><FormControl><NativeSelect {...field}><option value="person">Personne</option><option value="organization">Organisation</option></NativeSelect></FormControl><FormMessage /></FormItem>} /> : null;
+  const typeField = !only || only === "type" ? <FormField control={form.control} name="type" render={({ field }) => <FormItem className={aligned ? "kay-form-field" : undefined}><FormLabel>Type de contact</FormLabel><FormControl><NativeSelect {...field} onChange={event => { field.onChange(event); if (event.currentTarget.value === "organization" && form.getValues("birth_date")) form.setValue("birth_date", null, { shouldDirty: true }); }}><option value="person">Personne</option><option value="organization">Organisation</option></NativeSelect></FormControl><FormMessage /></FormItem>} /> : null;
   const identityFields = !only || only === "name" || only === "type" ? <div className={`grid gap-4 ${only || workspace ? "" : "sm:grid-cols-2"}`}>{nameField}{typeField}</div> : null;
+  const birthDateField = contactType === "person" && (!only || only === "birth_date") ? (
+    <FormField control={form.control} name="birth_date" render={({ field }) => (
+      <FormItem className={aligned ? "kay-form-field" : undefined}>
+        <FormLabel>Date de naissance (facultatif)</FormLabel>
+        <FormControl>
+          <Input {...field} type="date" autoComplete="bday" value={field.value ?? ""} onChange={event => field.onChange(event.currentTarget.value || null)} />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )} />
+  ) : null;
   const phoneFields = !only || only === "phones" ? <fieldset className={workspace ? "kay-form-methods" : "grid min-w-0 gap-4"}><legend className="mb-4"><SectionHeading as="span" icon={PhoneIcon} tone="teal">Téléphones</SectionHeading></legend>
       <p className="text-xs text-muted-foreground" id={`${groupId}-phone-help`}>Choisissez l’indicatif, puis saisissez le numéro national. Le format international est vérifié à l’enregistrement.</p>
       <RadioGroup aria-label="Téléphone principal" value={String(selectedPhones.findIndex(value => value.is_primary))} onValueChange={value => primary("phones", Number(value))}>
@@ -59,10 +71,10 @@ export function ContactFields({ form, metadata, requireLanguages = false, compac
   const languageFields = !only || only === "languages" ? <FormField control={form.control} name="languages" render={({ field, fieldState }) => <FormItem className={aligned ? "kay-form-field" : undefined}><FormLabel htmlFor={`${groupId}-languages`}>Langues parlées{requireLanguages ? " *" : ""}</FormLabel><LanguagePicker ref={field.ref} metadata={metadata} id={`${groupId}-languages`} value={field.value ?? []} onChange={values => { field.onChange(values); if (values.length) form.clearErrors("languages"); }} onBlur={field.onBlur} aria-invalid={Boolean(fieldState.error)} aria-describedby={fieldState.error ? `${groupId}-languages-error` : undefined} /><FormMessage id={`${groupId}-languages-error`} /></FormItem>} /> : null;
   const roleFields = !only || only === "roles" ? <FormField control={form.control} name="roles" render={({ field }) => <fieldset className="grid gap-2"><legend className="mb-2 font-medium">Rôles du contact</legend><div className="flex flex-wrap gap-x-4 gap-y-1">{Object.entries(roleLabels).map(([value, label]) => <Label key={value} className="flex min-h-control cursor-pointer items-center gap-2"><Checkbox checked={field.value.includes(value as Values["roles"][number]) || value === requiredRole} disabled={value === requiredRole} onCheckedChange={checked => field.onChange(checked ? [...field.value, value] : field.value.filter(role => role !== value))} />{label}</Label>)}</div><FormMessage /></fieldset>} /> : null;
   const countryField = (name: "country" | "nationality") => <FormField key={name} control={form.control} name={name} render={({ field }) => <FormItem className={aligned ? "kay-form-field" : undefined}><FormLabel>{name === "country" ? "Pays de résidence" : "Nationalité"}</FormLabel><FormControl><NativeSelect {...field} value={field.value ?? ""}><option value="">Non renseigné</option>{countries.map(country => <option key={country.code} value={country.code}>{country.label}</option>)}</NativeSelect></FormControl><FormMessage /></FormItem>} />;
-  if (ownerLayout && !only) return <><RecordSection title="Coordonnées"><div className="kay-form-columns"><div className="kay-form-column">{nameField}{phoneFields}</div><div className="kay-form-column">{emailFields}{languageFields}</div></div><details><summary className="min-h-control cursor-pointer py-3 text-sm font-medium">Coordonnées complémentaires</summary><div className="kay-form-columns">{countryField("country")}{countryField("nationality")}</div></details></RecordSection><RecordSection title="Gestion du contact"><div className="kay-form-columns">{typeField}{assignment}</div>{roleFields}</RecordSection></>;
-  if (workspace && !only) return <div className="kay-form-columns"><div className="kay-form-column">{identityFields}{phoneFields}{countryField("country")}</div><div className="kay-form-column">{emailFields}{languageFields}{countryField("nationality")}{roleFields}</div></div>;
+  if (ownerLayout && !only) return <><RecordSection title="Coordonnées"><div className="kay-form-columns"><div className="kay-form-column">{nameField}{birthDateField}{phoneFields}</div><div className="kay-form-column">{emailFields}{languageFields}</div></div><details><summary className="min-h-control cursor-pointer py-3 text-sm font-medium">Coordonnées complémentaires</summary><div className="kay-form-columns">{countryField("country")}{countryField("nationality")}</div></details></RecordSection><RecordSection title="Gestion du contact"><div className="kay-form-columns">{typeField}{assignment}</div>{roleFields}</RecordSection></>;
+  if (workspace && !only) return <div className="kay-form-columns"><div className="kay-form-column">{identityFields}{birthDateField}{phoneFields}{countryField("country")}</div><div className="kay-form-column">{emailFields}{languageFields}{countryField("nationality")}{roleFields}</div></div>;
   return <div className={`grid min-w-0 items-start gap-6 ${only ? "" : compact ? "@5xl:grid-cols-2" : "lg:grid-cols-2"}`}>
-    {!only || ["name", "type", "phones", "emails"].includes(only) ? <div className="grid min-w-0 gap-4">{identityFields}{phoneFields}{emailFields}</div> : null}
+    {!only || ["name", "type", "birth_date", "phones", "emails"].includes(only) ? <div className="grid min-w-0 gap-4">{identityFields}{birthDateField}{phoneFields}{emailFields}</div> : null}
     {!only || ["country", "nationality", "languages", "roles"].includes(only) ? <div className="grid min-w-0 gap-4">
       {!only || only === "country" || only === "nationality" ? <div className={`grid min-w-0 gap-4 ${only ? "" : "sm:grid-cols-2"}`}>{(["country", "nationality"] as const).filter(name => !only || only === name).map(countryField)}</div> : null}
       {languageFields}{roleFields}

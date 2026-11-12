@@ -103,7 +103,7 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
                 connection.execute(text(query), {"cid": cid, "pid": pid}).scalars().all()
                 for query in (
                     "SELECT to_jsonb(c)-ARRAY['website_source_id','country','nationality',"
-                    "'languages'] FROM contact c WHERE id=:cid",
+                    "'languages','birth_date'] FROM contact c WHERE id=:cid",
                     "SELECT to_jsonb(p)-'website_source_id' FROM contact_phone p "
                     "WHERE contact_id=:cid ORDER BY id",
                     "SELECT to_jsonb(p)-ARRAY['archived_at','listing_details'] "
@@ -127,7 +127,11 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
                 {"pid": pid},
             )
             assert connection.scalar(
-                text("SELECT website_source_id IS NULL FROM contact WHERE id=:cid"), {"cid": cid}
+                text(
+                    "SELECT website_source_id IS NULL AND birth_date IS NULL "
+                    "FROM contact WHERE id=:cid"
+                ),
+                {"cid": cid},
             )
         request_export(database, manager, uuid4(), NewExport())
         refused = migrate("downgrade", "0019_atomic_contact_import")

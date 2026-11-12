@@ -5,7 +5,7 @@ export function ownerValues(contact?: Contact): ContactFields {
     name: contact.name, type: contact.type,
     phones: contact.phones.map(phone => ({ ...phone })), emails: contact.emails.map(email => ({ ...email })),
     roles: [...new Set([...contact.roles, "owner" as const])],
-    country: contact.country, nationality: contact.nationality, languages: [...contact.languages],
+    country: contact.country, nationality: contact.nationality, birth_date: contact.birth_date, languages: [...contact.languages],
   } : { name: "", type: "person", phones: [{ number: "", label: "", is_primary: true }], emails: [], roles: ["owner"], country: "", nationality: "", languages: [] };
 }
 
