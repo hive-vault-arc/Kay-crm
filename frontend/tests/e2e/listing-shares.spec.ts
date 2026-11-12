@@ -1,5 +1,6 @@
 import path from "node:path";
 import { test, expect, clearActorContext, createActor, removeActor, signIn } from "../helpers/auth";
+import { testControl } from "../helpers/api-process";
 import { createDevelopment } from "../helpers/developments";
 import { closePhotos, openPhotos, uploadPhoto } from "../helpers/photos";
 
@@ -12,6 +13,7 @@ test("manager shares a prefilled programme with selected photos, agent creates a
   const title = "Programme mixte synthétique";
   try {
     await signIn(page, manager);
+    await testControl("worker-start");
     const record = await createDevelopment(page);
     const origin = new URL(page.url()).origin;
     const gallery = await openPhotos(page);
