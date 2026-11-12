@@ -93,7 +93,7 @@ def test_photo_pagination_archive_and_legacy_attachment_count(settings, database
     assert list_documents(database, agent, "property", pid, 1, 10, "attachment")["total"] == 0
     for _ in range(7):
         photo(database, manager, pid)
-    assert list_documents(database, manager, "property", pid, 1, 10, "photo")["total"] == 11
+    assert list_documents(database, manager, "property", pid, 1, 10, "photo")["total"] == 10
     photo(database, manager, pid)
     second = list_documents(database, manager, "property", pid, 2, 10, "photo")
     assert second["total"] == 11 and len(cast(list[object], second["items"])) == 1
