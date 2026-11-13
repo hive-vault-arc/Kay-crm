@@ -24,6 +24,7 @@ rental stock command checks child calendars. Independent units remain separate.
 
 Migration `0045_property_periods` is additive. The partial PostgreSQL exclusion
 constraint applies to active rows by property and date range. It uses
-`btree_gist` for UUID equality. Existing inventory commands and the property
+a native PostgreSQL UUID range for property identity. Closed singleton UUID ranges
+match only the same property, so the GiST constraint needs no extension privileges. Existing inventory commands and the property
 calendar share the property/parent lock and existing idempotency receipts.
 Public shares, contact records, and visit calendars receive no period details.

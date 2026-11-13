@@ -13,7 +13,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute("CREATE EXTENSION IF NOT EXISTS btree_gist")
+    op.execute("CREATE TYPE property_uuid_range AS RANGE (subtype = uuid)")
     op.create_table(
         "property_period",
         sa.Column("id", sa.Uuid(), primary_key=True),
@@ -53,7 +53,14 @@ def upgrade() -> None:
             name="property_period_release",
         ),
         ExcludeConstraint(
-            ("property_id", "="),
+            (
+                sa.func.property_uuid_range(
+                    sa.literal_column("property_id"),
+                    sa.literal_column("property_id"),
+                    sa.literal_column("'[]'"),
+                ),
+                "&&",
+            ),
             (sa.func.daterange(sa.literal_column("start_on"), sa.literal_column("end_on")), "&&"),
             where=sa.text("cancelled_at IS NULL"),
             name="property_period_no_overlap",
@@ -68,3 +75,4 @@ def downgrade() -> None:
     if op.get_bind().scalar(sa.text("SELECT EXISTS (SELECT FROM property_period)")):
         raise RuntimeError("PROPERTY_PERIODS_HISTORY_PRESENT")
     op.drop_table("property_period")
+    op.execute("DROP TYPE property_uuid_range")

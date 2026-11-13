@@ -29,7 +29,13 @@ OVERLAP = "property_period_no_overlap"
 
 def overlap_constraint() -> ExcludeConstraint:
     return ExcludeConstraint(
-        ("property_id", "="),
+        (
+            # A closed singleton UUID range overlaps only the same property UUID.
+            func.property_uuid_range(
+                literal_column("property_id"), literal_column("property_id"), literal_column("'[]'")
+            ),
+            "&&",
+        ),
         (func.daterange(literal_column("start_on"), literal_column("end_on")), "&&"),
         where=text("cancelled_at IS NULL"),
         name=OVERLAP,
