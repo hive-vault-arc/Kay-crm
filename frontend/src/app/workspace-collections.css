@@ -4,6 +4,9 @@
 .kay-directory-tools { display:flex; align-items:center; gap:8px; min-width:0; }
 .kay-directory-utilities { display:grid; gap:4px; width:288px; max-width:calc(100vw - 32px); }
 .kay-directory-utilities > [data-slot=button] { justify-content:flex-start; width:100%; }
+@media (max-width: 830px), (pointer: coarse) {
+  .kay-directory-utilities > [data-slot=button] { min-height:var(--control-touch-target); }
+}
 .kay-filter-layout { display:grid; grid-template-columns:264px minmax(0,1fr); align-items:start; gap:16px; min-width:0; }
 .kay-filter-layout[data-filter-mode=drawer] { grid-template-columns:minmax(0,1fr); gap:12px; }
 .kay-filter-rail { position:sticky; top:96px; min-width:0; padding:20px; max-height:calc(100dvh - 116px); overflow:auto; }

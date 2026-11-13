@@ -6,6 +6,7 @@ import { staffCommand } from "../helpers/leads";
 
 test("propriétaire: create, private scope, inventory history and former link", async ({ page }) => {
   test.setTimeout(180_000);
+  page.setDefaultTimeout(15_000);
   const agent = await createActor("agent");
   const manager = await createActor("manager");
   const outsider = await createActor("agent");
@@ -25,19 +26,19 @@ test("propriétaire: create, private scope, inventory history and former link", 
     await expect(page.getByRole("link", { name: `Appeler ${phone}`, exact: true })).toHaveAttribute("href", `tel:${phone}`);
     await page.goto("/owners");
     await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /^[0-9]+ propriétaires?$/ })).toBeVisible();
+    await expect(page.locator('header [aria-live="polite"]').filter({ hasText: /^1 propriétaire$/ })).toBeVisible();
     await expect(page.getByRole("table", { name: "Une ligne par propriétaire accessible." })).toBeVisible();
     await mkdir("output/playwright", { recursive: true });
     await page.screenshot({ path: "output/playwright/owners-directory-desktop.png" });
     const filters = page.getByRole("search", { name: "Recherche et filtres des propriétaires", exact: true });
     await filters.getByLabel("Rechercher", { exact: true }).fill("aucun propriétaire correspondant");
-    await expect(page.getByText("Aucun propriétaire ne correspond à cette recherche.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Aucun propriétaire correspondant", exact: true })).toBeVisible();
     await filters.getByLabel("Rechercher", { exact: true }).fill(name);
     await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
     await page.setViewportSize({ width: 390, height: 844 });
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
     await page.screenshot({ path: "output/playwright/owners-directory-mobile.png" });
-    await page.getByRole("button", { name: "Afficher les filtres" }).click();
+    await page.getByRole("button", { name: /^Afficher les filtres/ }).click();
     await expect(page.getByRole("dialog").getByLabel("Rechercher", { exact: true })).toBeVisible();
     await page.keyboard.press("Escape");
     await page.setViewportSize({ width: 1280, height: 720 });
@@ -62,7 +63,7 @@ test("propriétaire: create, private scope, inventory history and former link", 
 
     await clearActorContext(page); await signIn(page, outsider);
     await page.goto("/owners");
-    await expect(page.getByRole("heading", { name: "0 propriétaire", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Aucun propriétaire enregistré", exact: true })).toBeVisible();
     await page.goto(`/owners/${ownerId}`);
     await expect(page.getByText("Cette fiche est introuvable ou vous n’y avez plus accès.")).toBeVisible();
 

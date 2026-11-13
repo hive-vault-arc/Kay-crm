@@ -73,7 +73,7 @@ test("Workspace glyphs: real Next HTML before hydration, disabled JavaScript and
     for (const label of ["Adresse e-mail", "Mot de passe"]) {
       const input = page.getByLabel(label, { exact: true });
       await expect(input).toHaveAccessibleName(label);
-      expect((await input.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      expect(await input.evaluate(element => (element as HTMLElement).offsetHeight)).toBeGreaterThanOrEqual(44);
     }
     expect(await page.locator("form label").evaluateAll(labels => labels.every(label => {
       const icon = label.querySelector("svg")!;

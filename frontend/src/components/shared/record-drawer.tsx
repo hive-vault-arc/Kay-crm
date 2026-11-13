@@ -34,7 +34,11 @@ export function RecordDrawer({ label, title = label, description, action = "forw
       else if (!busy) setOpen(true);
     }}>
       {!hideTrigger ? <SheetTrigger asChild><Button action={action} variant={iconOnly ? "quiet" : "outline"} size={iconOnly ? "icon" : "default"} aria-label={iconOnly ? label : undefined} disabled={!hydrated || busy}><span className={iconOnly ? "sr-only" : undefined}>{label}</span></Button></SheetTrigger> : null}
-      <SheetContent id={control} className={className ? `kay-record-drawer ${className}` : "kay-record-drawer"} closeLabel={`Fermer : ${title}`} onCloseAutoFocus={event => {
+      <SheetContent id={control} className={className ? `kay-record-drawer ${className}` : "kay-record-drawer"} closeLabel={`Fermer : ${title}`} onEscapeKeyDown={event => {
+        // A portalled confirmation can receive Escape before Radix updates the layer order.
+        const activeDialog = event.target instanceof Element ? event.target.closest('[role="alertdialog"], [role="dialog"]') : null;
+        if (activeDialog && activeDialog.id !== control) event.preventDefault();
+      }} onCloseAutoFocus={event => {
         if (returnFocus || fallbackFocus) {
           event.preventDefault();
           const target = returnFocus?.current?.isConnected ? returnFocus.current : fallbackFocus?.current;

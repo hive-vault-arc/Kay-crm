@@ -22,14 +22,14 @@ export function ListingShareDrawer({ busy, ...target }: ShareTarget & { busy?: b
 
 function SharePanel({ target }: { target: ShareTarget }) {
   const path = `/api/v1/listing-shares/${target.kind}/${target.id}` as const;
-  const query = useQuery(path, listingShareState);
+  const query = useQuery(`${path}/draft`, listingShareState);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<ApiError>();
   const [link, setLink] = useState<{ url: string; expiresAt: string; id?: string }>();
   const [notice, setNotice] = useState("");
   const [confirm, setConfirm] = useState<"withdraw" | string>();
-  const issueKey = useRef<string | undefined>(undefined);
+  const issueKey = useRef<{ fingerprint: string; key: string } | undefined>(undefined);
   const lock = useRef(false);
   async function run(work: () => Promise<void>) {
     if (lock.current) return;
@@ -37,27 +37,29 @@ function SharePanel({ target }: { target: ShareTarget }) {
     try { await work(); query.refreshQuietly(); }
     catch (failure) {
       setError(failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE", 503));
-      if (failure instanceof ApiError && failure.status < 500) { issueKey.current = undefined; query.refreshQuietly(); }
+      if (failure instanceof ApiError && failure.status < 500) issueKey.current = undefined;
     } finally { lock.current = false; setBusy(false); }
   }
   if (query.error) return <RecordError error={query.error} retry={query.refresh} />;
   if (!query.value) return <p role="status">Chargement du partage…</p>;
   if (!query.value.enabled) return <p className="text-muted-foreground">Le partage client n’est pas encore activé.</p>;
   const state = query.value;
-  function save(value: Approval) {
+  const showDraft = state.can_approve && state.draft && (editing || (!state.active && !link));
+  function issue(value?: Approval) {
     void run(async () => {
-      await apiCommand(`${path}/approve`, value, shareSaved, crypto.randomUUID());
-      setLink(undefined); setEditing(false); setNotice("Fiche approuvée.");
-    });
-  }
-  function issue() {
-    void run(async () => {
-      const key = issueKey.current ??= crypto.randomUUID();
-      const result = await apiCommand(`${path}/links`, { expected_version: state.version }, issuedShare, key);
+      const body = value ?? { expected_version: state.version };
+      const action = value ? "publish" : "links";
+      const fingerprint = JSON.stringify([action, body]);
+      if (issueKey.current?.fingerprint !== fingerprint) {
+        issueKey.current = { fingerprint, key: crypto.randomUUID() };
+      }
+      const { key } = issueKey.current;
+      const result = await apiCommand(`${path}/${action}`, body, issuedShare, key);
       issueKey.current = undefined;
       const url = new URL("/partage", window.location.origin);
       url.hash = result.token;
       setLink({ url: url.href, expiresAt: result.expires_at, id: key });
+      setEditing(false);
       setNotice("Lien créé. Copiez-le pour l’envoyer au client.");
     });
   }
@@ -74,14 +76,14 @@ function SharePanel({ target }: { target: ShareTarget }) {
   return <div className="grid min-w-0 gap-4">
     {error && <RecordError error={error} />}
     {notice && <p role="status" className="text-sm text-muted-foreground">{notice}</p>}
-    {editing && state.can_approve ? <ApprovalForm key={state.version} target={target} state={state} busy={busy} save={save} cancel={() => setEditing(false)} /> : <>
+    {showDraft && state.draft ? <ApprovalForm target={target} state={state} draft={state.draft} busy={busy} save={issue} cancel={editing ? () => setEditing(false) : undefined} /> : <>
       {state.active && state.snapshot ? <ClientListingFacts facts={state.snapshot} /> : <p className="text-sm text-muted-foreground">La fiche doit être approuvée par un responsable avant de créer un lien.</p>}
       <div className="flex flex-wrap gap-2">
-        {state.active && <Button action="create" disabled={busy} onClick={issue}>Créer un lien client</Button>}
-        {state.can_approve && <Button action="edit" variant="outline" disabled={busy} onClick={() => setEditing(true)}>{state.active ? "Modifier la fiche client" : "Préparer la fiche client"}</Button>}
+        {state.active && <Button action="create" disabled={busy} onClick={() => issue()}>Créer un lien client</Button>}
+        {state.active && state.can_approve && <Button action="edit" variant="outline" disabled={busy} onClick={() => setEditing(true)}>Modifier la fiche client</Button>}
         {state.active && state.can_approve && <Button action="archive" variant="outline" disabled={busy} onClick={() => setConfirm("withdraw")}>Retirer la fiche</Button>}
       </div>
-      {link && state.active && <div className="grid gap-2 rounded-lg border p-3">
+      {link && <div className="grid gap-2 rounded-lg border p-3">
         <label className="grid gap-1 text-sm">Lien client<Input value={link.url} readOnly autoComplete="off" data-private-credential onFocus={event => event.target.select()} /></label>
         <p className="text-sm text-muted-foreground">Expire le {date.format(new Date(link.expiresAt))}. Toute personne qui reçoit le lien peut l’ouvrir ou le transférer.</p>
         <Button action="forward" variant="outline" className="justify-self-start" onClick={() => {

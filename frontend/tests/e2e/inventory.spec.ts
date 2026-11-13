@@ -44,7 +44,8 @@ test("SP07 AT-23/39: failed logout restores normal session-expiry handling", asy
   const actor = await createActor("agent");
   try {
     await signIn(page, actor); await page.goto("/projects");
-    await expect(page.getByText("0 bien correspondant", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Projets", exact: true })).toBeVisible();
+    await expect(page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true })).toBeEnabled();
     await page.route("**/api/v1/auth/logout", route => route.abort("failed"), { times: 1 });
     await (await openWorkspaceAccount(page)).getByRole("button", { name: "Se déconnecter", exact: true }).click();
     await expect(page.getByRole("alert").filter({ hasText: "Le service local est indisponible." })).toBeVisible();
@@ -170,7 +171,8 @@ test("SP07 AT-27/31: all standalone categories, incomplete drafts and availabili
     const literalResult = await literalSearch;
     expect(literalResult.status()).toBe(200);
     expect((await literalResult.json()).total).toBe(0);
-    await expect(page.getByText("0 bien correspondant", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Projets", exact: true })).toBeVisible();
+    await expect(page.getByLabel("Rechercher un nom, une référence ou un lieu", { exact: true })).toBeEnabled();
     await page.goto(landPath);
     await expect(inventorySection(page, "Offres")).toBeVisible();
     await createCampaign(page, "rental", "");

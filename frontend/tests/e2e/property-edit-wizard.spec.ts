@@ -93,6 +93,7 @@ test("property edit: rich fields are prefilled, saved and reopened without chang
 });
 
 test("property edit: agents can edit legacy land with dynamic fields and cancel without writing", async ({ page }) => {
+  page.setDefaultTimeout(12_000);
   const actor = await createActor("agent");
   try {
     await signIn(page, actor);
@@ -124,11 +125,12 @@ test("property edit: agents can edit legacy land with dynamic fields and cancel 
     expect(after.offerings.every((item: { target: { version: number } }) => item.target.version === after.version)).toBe(true);
     await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await form.locator("#property-reference").fill("UNSAVED-SYNTHETIC");
-    await form.getByRole("link", { name: "Annuler", exact: true }).click();
+    await form.getByRole("button", { name: "Annuler", exact: true }).click();
     const discard = page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true });
     await expect(discard).toBeVisible();
     await discard.getByRole("button", { name: "Quitter sans enregistrer", exact: true }).click();
-    await expect(page.getByRole("link", { name: "Modifier", exact: true })).toBeVisible();
+    await expect(form).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Modifier", exact: true })).toBeFocused();
     expect((await (await page.request.get(`/api/v1/properties/${id}`)).json()).reference).toBe(after.reference);
   } finally { await removeActor(actor); }
 });

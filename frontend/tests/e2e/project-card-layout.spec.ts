@@ -8,20 +8,17 @@ async function cardGeometry(page: Page, count: number) {
   await expect(page.locator("article.kay-project-card:visible")).toHaveCount(count);
   await page.evaluate(() => document.fonts.ready);
   const cards = await page.locator("article.kay-project-card:visible").evaluateAll(elements => elements.map(card => {
-    const rect = card.getBoundingClientRect();
-    const footer = card.querySelector<HTMLElement>(".kay-project-open")!;
-    const action = footer.getBoundingClientRect();
-    return { width: rect.width, height: rect.height, footerWidth: action.width, footerHeight: action.height, bottomGap: rect.bottom - action.bottom, leftGap: action.left - rect.left, rightGap: rect.right - action.right };
+    const article = card as HTMLElement;
+    const link = article.querySelector<HTMLElement>(".kay-project-open")!;
+    const inset = Number.parseFloat(getComputedStyle(article).paddingLeft) + article.clientLeft;
+    return { width: article.offsetWidth, height: article.offsetHeight, linkWidth: link.offsetWidth, linkHeight: link.offsetHeight, inset };
   }));
-  expect(Math.max(...cards.map(card => card.height)) - Math.min(...cards.map(card => card.height))).toBeLessThanOrEqual(1);
+  expect(Math.max(...cards.map(card => card.height)) - Math.min(...cards.map(card => card.height)), JSON.stringify({ viewport: page.viewportSize(), cards })).toBeLessThanOrEqual(1);
   expect(Math.max(...cards.map(card => card.width)) - Math.min(...cards.map(card => card.width))).toBeLessThanOrEqual(1);
   for (const card of cards) {
-    expect(card.footerHeight).toBeGreaterThanOrEqual(44);
-    expect(Math.round((card.width - card.footerWidth) * 1000) / 1000).toBeLessThanOrEqual(10);
-    expect(Math.round((card.height - card.footerHeight) * 1000) / 1000).toBeLessThanOrEqual(10);
-    expect(Math.abs(card.bottomGap)).toBeLessThanOrEqual(5);
-    expect(Math.abs(card.leftGap)).toBeLessThanOrEqual(5);
-    expect(Math.abs(card.rightGap)).toBeLessThanOrEqual(5);
+    expect(card.linkHeight).toBeGreaterThanOrEqual(44);
+    expect(Math.abs(card.width - card.linkWidth - 2 * card.inset)).toBeLessThanOrEqual(1);
+    expect(Math.abs(card.height - card.linkHeight - 2 * card.inset)).toBeLessThanOrEqual(1);
   }
   await geometry(page);
 }
@@ -48,9 +45,10 @@ test("project cards: equal sizes and full-card hover, keyboard and touch navigat
     await expect(page.locator(".kay-project-location span[title]").filter({ hasText: longLocation })).toHaveAttribute("title", longLocation);
     const footer = page.locator(".kay-project-open:visible").first();
     const href = await footer.getAttribute("href");
-    const resting = await footer.evaluate(element => getComputedStyle(element).backgroundColor);
-    await footer.hover();
-    await expect.poll(() => footer.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe(resting);
+    const prompt = footer.getByText("Ouvrir la fiche", { exact: true });
+    const resting = await prompt.evaluate(element => getComputedStyle(element).backgroundColor);
+    await prompt.hover();
+    await expect.poll(() => prompt.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe(resting);
     await geometry(page);
     await mkdir("output/playwright/project-card-layout", { recursive: true });
     await page.screenshot({ path: "output/playwright/project-card-layout/desktop.png", fullPage: true });
@@ -58,7 +56,7 @@ test("project cards: equal sizes and full-card hover, keyboard and touch navigat
     await page.keyboard.press("Shift+Tab"); await page.keyboard.press("Tab");
     await expect(footer).toBeFocused();
     expect(await footer.evaluate(element => Number.parseFloat(getComputedStyle(element).outlineWidth))).toBeGreaterThanOrEqual(2);
-    expect(await footer.evaluate(element => Number.parseFloat(getComputedStyle(element).outlineOffset))).toBeLessThan(0);
+    expect(await footer.evaluate(element => Number.parseFloat(getComputedStyle(element).outlineOffset))).toBeGreaterThanOrEqual(0);
     await page.keyboard.press("Enter"); await expect(page).toHaveURL(new RegExp(`${href}$`));
     await page.goto("/projects");
     for (const width of [320, 360, 768, 1024, 1440]) { await page.setViewportSize({ width, height: 1000 }); await cardGeometry(page, 6); }

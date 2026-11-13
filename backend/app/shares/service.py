@@ -13,7 +13,8 @@ from sqlalchemy.orm import Session
 from app.identity.models import AuditEvent
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity
-from app.shares.contracts import ApproveListing, Snapshot, TargetKind
+from app.shares.contracts import ListingDraftInput, Snapshot, TargetKind
+from app.shares.drafts import build_draft
 from app.shares.inventory import (
     current_publication,
     make_snapshot,
@@ -46,7 +47,12 @@ def audit(session: Session, actor: UUID, kind: TargetKind, identifier: UUID, act
 
 
 def status(
-    session: Session, identity: CurrentIdentity, kind: TargetKind, identifier: UUID
+    session: Session,
+    identity: CurrentIdentity,
+    kind: TargetKind,
+    identifier: UUID,
+    *,
+    include_draft: bool = False,
 ) -> dict[str, object]:
     record, parent = target(session, kind, identifier)
     item = publication(session, kind, identifier)
@@ -75,6 +81,11 @@ def status(
         if item and (manager(identity) or active)
         else None,
         "links": links,
+        **(
+            {"draft": build_draft(session, kind, record)}
+            if include_draft and manager(identity)
+            else {}
+        ),
     }
 
 
@@ -83,8 +94,8 @@ def approve(
     identity: CurrentIdentity,
     kind: TargetKind,
     identifier: UUID,
-    body: ApproveListing,
-) -> None:
+    body: ListingDraftInput,
+) -> ListingPublication:
     require_manager(identity)
     record, parent = target(session, kind, identifier, lock=True)
     item = publication(session, kind, identifier, lock=True)
@@ -92,7 +103,7 @@ def approve(
         raise IdentityError("INVENTORY_VERSION_CONFLICT", 409)
     snapshot = make_snapshot(session, kind, record, body).model_dump(mode="json")
     if item is not None and current_publication(item, record, parent) and item.snapshot == snapshot:
-        return
+        return item
     if (item.version if item else 0) != body.expected_version:
         raise IdentityError("INVENTORY_VERSION_CONFLICT", 409)
     if item is None:
@@ -106,6 +117,21 @@ def approve(
     item.version += 1
     item.snapshot = snapshot
     audit(session, identity.user.id, kind, identifier, "approve")
+    return item
+
+
+def publish(
+    session: Session,
+    identity: CurrentIdentity,
+    kind: TargetKind,
+    identifier: UUID,
+    body: ListingDraftInput,
+    request_id: UUID,
+    secret: str,
+) -> dict[str, str]:
+    item = approve(session, identity, kind, identifier, body)
+    session.flush()
+    return issue_link(session, identity, kind, identifier, item, request_id, secret)
 
 
 def withdraw(
@@ -147,6 +173,18 @@ def issue(
     item = publication(session, kind, identifier, lock=True)
     if item is None or item.version != expected or not current_publication(item, record, parent):
         raise IdentityError("LISTING_NOT_APPROVED", 409)
+    return issue_link(session, identity, kind, identifier, item, request_id, secret)
+
+
+def issue_link(
+    session: Session,
+    identity: CurrentIdentity,
+    kind: TargetKind,
+    identifier: UUID,
+    item: ListingPublication,
+    request_id: UUID,
+    secret: str,
+) -> dict[str, str]:
     now = datetime.now(UTC)
     link = session.get(ListingLink, request_id)
     if link is not None:

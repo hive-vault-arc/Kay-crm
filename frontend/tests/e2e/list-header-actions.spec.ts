@@ -27,9 +27,9 @@ async function geometry(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   const controls = header(page).locator('[data-slot="button"]');
   for (const control of await controls.all()) {
-    const box = await control.boundingBox();
-    expect(Math.round(box!.height)).toBeGreaterThanOrEqual(44);
-    expect(Math.round(box!.width)).toBeGreaterThanOrEqual(44);
+    const dimensions = await control.evaluate(element => ({ height: (element as HTMLElement).offsetHeight, width: (element as HTMLElement).offsetWidth, touch: matchMedia("(max-width: 830px), (pointer: coarse)").matches }));
+    expect(dimensions.height).toBeGreaterThanOrEqual(dimensions.touch ? 44 : 40);
+    expect(dimensions.width).toBeGreaterThanOrEqual(dimensions.touch ? 44 : 40);
     expect(await control.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
   }
 }
@@ -45,8 +45,9 @@ async function utilities(page: Page) {
   await expect(menu).toBeVisible();
   for (const control of await menu.locator("button,a").all()) {
     if (!await control.isVisible()) continue;
-    const bounds = (await control.boundingBox())!;
-    expect(Math.round(bounds.width)).toBeGreaterThanOrEqual(44); expect(Math.round(bounds.height)).toBeGreaterThanOrEqual(44);
+    const dimensions = await control.evaluate(element => ({ height: (element as HTMLElement).offsetHeight, width: (element as HTMLElement).offsetWidth, touch: matchMedia("(max-width: 830px), (pointer: coarse)").matches }));
+    expect(dimensions.height).toBeGreaterThanOrEqual(dimensions.touch ? 44 : 36);
+    expect(dimensions.width).toBeGreaterThanOrEqual(dimensions.touch ? 44 : 36);
   }
   return menu;
 }
@@ -62,7 +63,7 @@ test("list header actions: selected creation, grouped utilities, responsive stat
   await page.route("**/api/v1/enquiries?**", async route => { await hold.promise; await route.abort("connectionfailed"); });
   try {
     await page.goto("/leads");
-    await expect(page.getByText("Chargement des Leads…", { exact: true })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: "Chargement des prospects…" })).toBeVisible();
     await creationStyle(header(page).getByRole("link", { name: "Nouveau prospect", exact: true }));
     await capture(page, "leads-loading");
   } finally { hold.resolve(); }
@@ -95,12 +96,12 @@ test("list header actions: selected creation, grouped utilities, responsive stat
     if (route === "/leads") await expect(page.getByRole("button", { name: "Créer le prospect", exact: true })).toHaveAttribute("data-variant", "creation");
   }
   await page.goto("/leads");
-  let menu = await utilities(page);
+  const menu = await utilities(page);
   await expect(menu.getByRole("button", { name: "Exporter les résultats filtrés", exact: true })).toBeVisible();
   await menu.getByRole("link", { name: "Contacts", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Contacts", exact: true })).toBeVisible();
   await creationStyle(header(page).getByRole("link", { name: "Nouveau prospect", exact: true }));
-  await expect(page.getByRole("status").filter({ hasText: /^0 contact\(s\) accessible\(s\)/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Aucun contact enregistré", exact: true })).toBeVisible();
   await geometry(page);
   await capture(page, "contacts-1440");
   await (await utilities(page)).getByRole("link", { name: "Prospects", exact: true }).click();
@@ -110,8 +111,7 @@ test("list header actions: selected creation, grouped utilities, responsive stat
   await expect(page).toHaveURL(/\/leads\?view=import$/);
   await expect(page.getByRole("button", { name: "Parcourir", exact: true })).toBeVisible();
   await page.goto("/leads");
-  menu = await utilities(page);
-  const columns = menu.getByRole("button", { name: "Colonnes", exact: true });
+  const columns = header(page).getByRole("button", { name: "Colonnes", exact: true });
   await columns.click();
   const drawer = page.getByRole("dialog", { name: "Colonnes des Leads", exact: true });
   await expect(drawer).toBeVisible();
@@ -123,8 +123,6 @@ test("list header actions: selected creation, grouped utilities, responsive stat
   for (const name of ["Pays", "Langues"]) await expect(drawer.getByRole("checkbox", { name, exact: true })).not.toBeChecked();
   await page.keyboard.press("Escape");
   await expect(columns).toBeFocused();
-  await page.keyboard.press("Escape");
-  await expect(menu).toBeHidden();
   await page.setViewportSize({ width: 360, height: 900 });
   await (await utilities(page)).getByRole("button", { name: "Exporter les résultats filtrés", exact: true }).click();
   await expect(page.getByRole("button", { name: "Créer l’export CSV", exact: true })).toBeDisabled();

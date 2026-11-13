@@ -57,7 +57,7 @@ function StandaloneDirectory({ role, view, rail }: { role: StaffRole; rail: Proj
   const data = query.error ? undefined : query.value;
   return <ProjectFilters id="property-filter-rail" title="Filtres des biens" rail={rail} activeCount={activeCount} reset={reset} filters={close => <PropertyFilterFields filters={draft} change={change} reset={reset} value={query.value} error={invalid} apply={() => apply(close)} />}>
     <ProjectResultsView view={view} loading={!data && !query.error ? "biens" : undefined} status={query.error ? "Biens indisponibles" : data ? `${data.total} bien${data.total > 1 ? "s correspondants" : " correspondant"}` : ""}
-      cards={data ? <div className="kay-project-grid">{data.items.map(property => <PropertyCard key={property.id} property={property} />)}</div> : undefined}
+      cards={data ? <div className="kay-project-grid"><div className="kay-project-grid-content">{data.items.map(property => <PropertyCard key={property.id} property={property} />)}</div></div> : undefined}
       list={data ? <PropertyList properties={data.items} /> : undefined}
       footer={data && (data.total > 0 || page > 1) ? <NumberedPages compact showPageSize label="Pages des biens" page={page} total={data.total} size={data.page_size} change={setPage} /> : null}>
       {query.error ? <RecordError error={query.error} retry={query.refresh} /> :

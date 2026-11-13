@@ -34,8 +34,8 @@ test("SP05 AT-03/23/39: international identities, primary choices, contact and L
   await page.getByRole("button", { name: "Créer le prospect", exact: true }).click();
   await expect.poll(() => /^\/leads\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
   const leadId = new URL(page.url()).pathname.split("/")[2];
-  await expect(page.locator(".kay-record-section").filter({ has: page.getByRole("heading", { name: "Contact", exact: true }) }).getByText("+33600000002", { exact: true })).toBeVisible();
-  await page.getByRole("link", { name: "Voir le contact", exact: true }).click();
+  await expect(page.locator(".kay-record-section").filter({ has: page.getByRole("heading", { name: "Coordonnées", exact: true }) }).getByText("+33600000002", { exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Fiche du contact", exact: true }).click();
   await expect(page.getByRole("heading", { name: "SP05 organisation synthétique", exact: true, level: 1 })).toBeVisible();
   await expect(page.getByText("Acheteur, Promoteur, Propriétaire, Vendeur, Locataire", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Modifier", exact: true }).click();
@@ -182,7 +182,7 @@ test("SP05 AT-22/23/39: numbered pages, scoped filters and column IDs/order only
   expect(preference.visibleColumns).toEqual(["name", "status", "budget", "rating", "responsibleAgent", "message", "updatedAt"]);
   await page.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true }).fill("SP05 absent");
   await expect(page.getByText("Aucune demande ne correspond à vos filtres.", { exact: true })).toBeVisible();
-  await page.locator('[data-filter-panel="desktop"]').getByRole("button", { name: "Effacer", exact: true }).click();
+  await page.locator('[data-filter-panel="desktop"]').getByRole("button", { name: "Réinitialiser", exact: true }).click();
   await expect(page.getByText("51 demandes", { exact: true }).and(page.getByRole("status"))).toBeVisible();
   await page.getByText("Filtres avancés", { exact: true }).click();
   await page.getByText("Dates", { exact: true }).click();

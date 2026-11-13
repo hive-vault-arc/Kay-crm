@@ -9,7 +9,7 @@ async function capture(page: Page, name: string) {
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
   await expect(page.getByText("0 demande", { exact: true }).and(page.getByRole("status", { includeHidden: true }))).toBeVisible();
   await mkdir(artifacts, { recursive: true });
-  await page.screenshot({ path: path.join(artifacts, `${name}.png`) });
+  await page.screenshot({ path: path.join(artifacts, `${name}.png`), animations: "disabled" });
 }
 
 const account = (page: Page) => page.getByRole("dialog", { name: "Compte utilisateur", exact: true });
@@ -40,13 +40,17 @@ test("workspace account: one account location, real role, long name and responsi
       const menu = account(page);
       await expect(menu.getByText(name, { exact: true })).toBeVisible();
       await expect(menu.getByText("Responsable", { exact: true })).toBeVisible();
+      await expect.poll(() => menu.evaluate(element => {
+        const { left, right } = element.getBoundingClientRect();
+        return left >= 0 && right <= innerWidth && element.scrollWidth <= element.clientWidth;
+      })).toBe(true);
       await expect(menu.getByRole("link", { name: "Changer le mot de passe", exact: true })).toHaveCount(0);
       const logout = menu.getByRole("button", { name: "Se déconnecter", exact: true });
       await expect(logout).toBeEnabled();
       await expect(logout).toBeInViewport();
-      const box = await logout.boundingBox();
-      expect(box!.width).toBeGreaterThanOrEqual(44);
-      expect(box!.height).toBeGreaterThanOrEqual(44);
+      const size = await logout.evaluate(element => ({ width: (element as HTMLElement).offsetWidth, height: (element as HTMLElement).offsetHeight }));
+      expect(size.width).toBeGreaterThanOrEqual(44);
+      expect(size.height).toBeGreaterThanOrEqual(44);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       if (width === 360 || width === 1440) await capture(page, `long-name-${width}`);
       await page.keyboard.press("Escape");

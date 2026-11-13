@@ -27,7 +27,7 @@ export function ProjectResultsView({ view, status, loading, cards, list, footer,
   const layout = phone ? "cards" : view;
   return <div className="kay-project-results" data-project-layout={layout}>
     <p role="status" className="sr-only">{status}</p>
-    <div className="kay-project-items">{loading ? <div role="status" aria-label={`Chargement ${layout === "cards" ? "des cartes" : "de la liste"} de ${loading}`} className={layout === "cards" ? "kay-project-grid" : "grid gap-2"}>
+    <div className="kay-project-items">{loading ? <div role="status" aria-label={`Chargement ${layout === "cards" ? "des cartes" : "de la liste"} de ${loading}`} className={layout === "cards" ? "kay-project-grid-content" : "grid gap-2"}>
       {Array.from({ length: layout === "cards" ? 4 : 8 }, (_, index) => <Skeleton key={index} className={layout === "cards" ? "kay-project-skeleton" : "h-11"} aria-hidden="true" />)}
     </div> : children ?? (layout === "cards" ? cards : list)}</div>
     {footer ? <div className="kay-project-pagination">{footer}</div> : null}

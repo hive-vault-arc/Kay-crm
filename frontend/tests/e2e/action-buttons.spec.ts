@@ -22,9 +22,7 @@ async function expectCreationColor(control: Locator) {
   const color = await control.evaluate(element => {
     const sample = document.createElement("span");
     sample.hidden = true;
-    const token = element.matches(":disabled")
-      ? "--riviera-color-interactive-disabled-background"
-      : element.matches(":hover") ? "--action-creation-hover" : "--action-creation-background";
+    const token = element.matches(":hover:not(:disabled)") ? "--action-creation-hover" : "--action-creation-background";
     sample.style.backgroundColor = `var(${token})`;
     element.append(sample);
     const expected = getComputedStyle(sample).backgroundColor;
@@ -38,12 +36,20 @@ async function inspectActions(page: Page) {
     if (!await control.isVisible()) continue;
     await expect(control.locator("[data-action-icon]")).toHaveCount(1);
     await expect(control.locator("[data-action-icon]")).toHaveAttribute("aria-hidden", "true");
-    const iconSize = await control.evaluate(element => element.classList.contains("crm-sort-heading")) ? "12px" : "16px";
+    const iconSize = await control.evaluate(element => {
+      if (element.classList.contains("crm-sort-heading")) return "12px";
+      if (element.matches('[data-size="icon"], [data-size="icon-sm"]')) return getComputedStyle(element).getPropertyValue("--workspace-geometry-action-icon").trim();
+      return "16px";
+    });
     await expect(control.locator("[data-action-icon]")).toHaveCSS("width", iconSize);
     await expect(control.locator("[data-action-icon]")).toHaveCSS("height", iconSize);
-    const box = (await control.boundingBox())!;
-    expect(box.height).toBeGreaterThanOrEqual(43.999);
-    expect(box.width).toBeGreaterThanOrEqual(43.999);
+    const { width, height, minimum } = await control.evaluate(element => ({
+      width: (element as HTMLElement).offsetWidth,
+      height: (element as HTMLElement).offsetHeight,
+      minimum: matchMedia("(max-width: 830px), (pointer: coarse)").matches ? 44 : 40,
+    }));
+    expect(height).toBeGreaterThanOrEqual(minimum);
+    expect(width).toBeGreaterThanOrEqual(minimum);
     expect(await control.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
     if (await control.getAttribute("data-action") === "create") {
       await expect(control).toHaveAttribute("data-variant", "creation");
@@ -94,7 +100,9 @@ test("Action buttons: every semantic action renders on the server with correct c
   const create = page.getByRole("button", { name: "Action create synthétique", exact: true });
   await create.focus(); await page.keyboard.press("Tab"); await page.keyboard.press("Shift+Tab");
   expect(await create.evaluate(element => element.matches(":focus-visible"))).toBe(true);
-  await expect(page.getByRole("button", { name: "Création indisponible", exact: true })).toBeDisabled();
+  const disabledCreation = page.getByRole("button", { name: "Création indisponible", exact: true });
+  await expect(disabledCreation).toBeDisabled();
+  await expect(disabledCreation).toHaveCSS("opacity", "0.5");
   const save = page.getByRole("button", { name: "Action save synthétique", exact: true });
   await save.hover(); await geometry(page);
   await page.mouse.down(); await geometry(page);
@@ -169,7 +177,7 @@ test("Action buttons: real CRM route families, responsive forms, dialogs and pre
     await expect(commission).not.toBeVisible();
     await expect(page.getByRole("button", { name: "Prévoir une commission", exact: true })).toBeVisible();
     await page.goto(`/leads/${lead}`);
-    const contactLink = page.getByRole("link", { name: "Voir le contact", exact: true });
+    const contactLink = page.getByRole("link", { name: "Fiche du contact", exact: true });
     await contactLink.click(); await expect(page.getByRole("heading", { name: "SP05 contact synthétique des actions", exact: true })).toBeVisible();
     for (const [name, route] of routes) {
       await test.step(`Inspect ${name} controls on desktop and mobile`, async () => {

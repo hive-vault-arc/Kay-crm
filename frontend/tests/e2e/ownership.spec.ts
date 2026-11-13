@@ -51,7 +51,8 @@ test("SP06 AT-05: collaborator contributes, transfer denies former session, queu
     await assignment.getByLabel("Attribuer à un agent du contact", { exact: true }).selectOption(b.id);
     await assignment.getByLabel("Motif de l’attribution", { exact: true }).fill("SP06 reprise synthétique par le nouveau responsable");
     await assignment.getByRole("button", { name: "Attribuer cette demande", exact: true }).click();
-    await expect(managerPage.getByText("Attribution enregistrée.", { exact: true })).toBeVisible();
+    await expect(assignment).toBeHidden();
+    await expect(managerPage.getByRole("main").getByText("Attribution enregistrée.", { exact: true })).toBeVisible();
     expect((await bPage.request.get(`/api/v1/enquiries/${enquiryId}`)).status()).toBe(200);
   } finally {
     await other.close(); await managerContext.close();

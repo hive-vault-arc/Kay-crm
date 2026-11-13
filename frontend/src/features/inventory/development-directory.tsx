@@ -39,7 +39,7 @@ export function DevelopmentDirectory({ writable, view, rail }: { writable: boole
     </fieldset><div className="crm-filter-submit"><Button action="filter" type="submit" disabled={!hydrated}>Appliquer</Button><Button action="reset" variant="quiet" type="button" onClick={reset}>Réinitialiser</Button></div>
   </form>}>
     <ProjectResultsView view={view} loading={!data && !result.error ? "programmes" : undefined} status={result.error ? "Programmes indisponibles" : data ? `${data.total} programme${data.total > 1 ? "s" : ""}` : ""}
-      cards={data ? <div className="kay-project-grid">{data.items.map(item => <DevelopmentCard key={item.id} development={item} />)}</div> : undefined}
+      cards={data ? <div className="kay-project-grid"><div className="kay-project-grid-content">{data.items.map(item => <DevelopmentCard key={item.id} development={item} />)}</div></div> : undefined}
       list={data ? <DevelopmentList developments={data.items} /> : undefined}
       footer={data && (data.total > 0 || page > 1) ? <NumberedPages compact showPageSize label="Pages des programmes" page={page} total={data.total} size={data.page_size} change={setPage} /> : null}>
       {result.error ? <RecordError error={result.error} retry={result.refresh} /> :

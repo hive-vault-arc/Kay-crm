@@ -155,7 +155,8 @@ li:last-child > .kay-dash-visit { border-bottom:0; }
   .kay-dash-filters { flex:1 0 100%; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
   .kay-dash-agent-field,.kay-dash-create { grid-column:1/-1; width:100%; }
   .kay-dash-date-field { width:100%; }
-  .kay-dash-date-field input[data-slot=input] { height:calc(var(--workspace-geometry-touch) - 2px); }
+  .kay-dash-date-field input[data-slot=input] { height:var(--workspace-geometry-touch); }
+  .kay-dash-outcomes dd [data-slot=button] { min-width:var(--workspace-geometry-touch); }
   .kay-dash-reset { justify-self:start; }
   .kay-dash-overview { gap:16px; }
   .kay-dash-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
@@ -188,8 +189,8 @@ li:last-child > .kay-dash-visit { border-bottom:0; }
   .kay-dash-task-due { flex-basis:32%; }
 }
 @media(pointer:coarse) {
-  .kay-dash-date-field input[data-slot=input] { height:calc(var(--workspace-geometry-touch) - 2px); }
-  .kay-dash-outcomes dd [data-slot=button] { min-width:44px; }
+  .kay-dash-date-field input[data-slot=input] { height:var(--workspace-geometry-touch); }
+  .kay-dash-outcomes dd [data-slot=button] { min-width:var(--workspace-geometry-touch); }
 }
 @media(prefers-color-scheme:dark) {
   :root[data-theme=system] .kay-dash-brand .kay-dash-key-light { display:none; }
