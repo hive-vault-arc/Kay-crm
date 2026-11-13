@@ -15,7 +15,13 @@ from starlette.concurrency import run_in_threadpool
 from starlette.requests import ClientDisconnect
 
 from app.db.session import Database
-from app.files.contracts import MAX_FILE_BYTES, ArchiveDocument, NewDocument, PermitRequest
+from app.files.contracts import (
+    MAX_FILE_BYTES,
+    ArchiveDocument,
+    NewDocument,
+    PermitRequest,
+    UploadPurpose,
+)
 from app.files.models import DocumentVersion
 from app.files.service import (
     authorized_document,
@@ -24,6 +30,7 @@ from app.files.service import (
     issue_permit,
     list_documents,
     publish_upload,
+    read_cover,
     read_document,
 )
 from app.files.storage import PrivateStorage
@@ -45,10 +52,15 @@ def resources(request: Request) -> tuple[Database, Settings]:
 
 
 def metadata_response(request: Request, result: dict[str, object]) -> dict[str, object]:
-    if request.headers.get("X-Kay-Photo-Capabilities") != "1":
+    capabilities = request.headers.get("X-Kay-Photo-Capabilities") == "1"
+    primary = request.headers.get("X-Kay-Primary-Photo") == "1"
+    if not capabilities or not primary:
         rows = cast(list[dict[str, object]], result["items"]) if "items" in result else [result]
         for row in rows:
-            row.pop("can_upload", None)
+            if not capabilities:
+                row.pop("can_upload", None)
+            if not primary:
+                row.pop("is_primary_photo", None)
     return result
 
 
@@ -66,7 +78,7 @@ def documents(
     token: Proof,
     parent_kind: Literal["contact", "development", "property", "deal"],
     parent_id: UUID,
-    purpose: Literal["attachment", "photo"] | None = None,
+    purpose: UploadPurpose | None = None,
     page: Annotated[int, Query(ge=1, le=100000)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 50,
 ) -> dict[str, object]:
@@ -77,6 +89,17 @@ def documents(
             resources(request)[0], token, parent_kind, parent_id, page, page_size, purpose
         ),
     )
+
+
+@router.get("/documents/cover")
+def document_cover(
+    request: Request,
+    token: Proof,
+    parent_kind: Literal["property", "development"],
+    parent_id: UUID,
+) -> dict[str, object]:
+    validate_query(request, {"parent_kind", "parent_id"})
+    return read_cover(resources(request)[0], token, parent_kind, parent_id)
 
 
 @router.get("/documents/{did}")
@@ -93,6 +116,14 @@ def archive_document(
     return metadata_response(
         request, document_command(resources(request)[0], token, key, body, did)
     )
+
+
+@router.post("/documents/{did}/set-primary")
+def choose_primary_photo(
+    request: Request, token: Proof, key: RetryKey, did: UUID, body: ArchiveDocument
+) -> dict[str, object]:
+    validate_query(request, set())
+    return document_command(resources(request)[0], token, key, body, did, "set-primary")
 
 
 @router.post("/files/permits")

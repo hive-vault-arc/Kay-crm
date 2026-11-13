@@ -114,12 +114,19 @@ def enquiries(
 
 @router.get("/contacts/{target}")
 def contact(target: UUID, request: Request, token: Proof) -> dict[str, object]:
+    validate_query(request)
+    if (
+        set(request.query_params) - {"owner_identity"}
+        or request.query_params.get("owner_identity", "true") != "true"
+    ):
+        raise IdentityError("VALIDATION_ERROR", 422)
     return read_detail(
         configuration(request)[0],
         token,
         "contacts",
         target,
         birth_date_enabled=request.headers.get("X-Kay-Contact-Birth-Date") == "1",
+        owner_identity="owner_identity" in request.query_params,
     )
 
 

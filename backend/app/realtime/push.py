@@ -104,6 +104,7 @@ def run_once(database: Database, config: Settings) -> bool:
                 PushSubscription.active,
                 StaffSession.revoked_at.is_(None),
                 StaffSession.expires_at > now,
+                Notification.document_id.is_(None),
                 Notification.read_at.is_(None),
                 Notification.created_at >= PushSubscription.created_at,
                 Notification.created_at > now - timedelta(days=1),

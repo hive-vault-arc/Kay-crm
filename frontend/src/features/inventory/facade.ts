@@ -7,21 +7,23 @@ import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
 import { frenchApiError } from "@/lib/api/errors";
 import { externalSchema, stockReviewSchema } from "./outcome-contracts";
+import { cancelPropertyPeriodSchema, propertyCalendarQuerySchema, propertyCalendarSchema, savePropertyPeriodSchema } from "./period-contracts";
 import { confirmSchema, createPropertySchema, editOfferingSchema, editPropertySchema, historySchema, inventoryQuerySchema, inventoryRoute, newOfferingSchema, offeringsSchema, ownersSchema, propertiesSchema, propertiesQuerySchema, propertySchema, resultSchema } from "./contracts";
 import { archiveDevelopmentSchema, blocksSchema, developmentFieldsSchema, developmentQuerySchema, developmentSchema, developmentsSchema, editDevelopmentSchema, floorsSchema, inventoryPageSchema, safeLinkSchema, structureFieldsSchema, typeFieldsSchema, unitTypesSchema } from "./development-contracts";
 
-const known = new Set(["STOCK_REVIEW_CHANGED", "PARTIAL_DEVELOPMENT_REVIEW_REQUIRED", "DEVELOPMENT_OVERLAP", "DEAL_TARGET_CHANGED", "RESERVATION_RELEASE_REQUIRED", "UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "INVENTORY_VERSION_CONFLICT", "AVAILABILITY_PRICE_REQUIRED", "AVAILABILITY_OWNER_REQUIRED", "INVALID_LEGAL_OWNER", "CURRENT_OFFERING_EXISTS", "PROPERTY_REFERENCE_EXISTS", "OFFERING_WITHDRAWN", "CONFIRM_AVAILABILITY_REQUIRED", "IDEMPOTENCY_CONFLICT", "INVALID_HIERARCHY", "STOCK_REVIEW_REQUIRED", "DEVELOPMENT_UNITS_REQUIRED", "DEVELOPMENT_REFERENCE_EXISTS", "HIERARCHY_CODE_EXISTS"]);
+const known = new Set(["STOCK_REVIEW_CHANGED", "PARTIAL_DEVELOPMENT_REVIEW_REQUIRED", "PROPERTY_PERIOD_ACTIVE", "PROPERTY_PERIOD_OVERLAP", "PROPERTY_PERIOD_UNDATED_BLOCK", "PROPERTY_PERIOD_CANCELLED", "DEVELOPMENT_OVERLAP", "DEAL_TARGET_CHANGED", "RESERVATION_RELEASE_REQUIRED", "UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "INVENTORY_VERSION_CONFLICT", "AVAILABILITY_PRICE_REQUIRED", "AVAILABILITY_OWNER_REQUIRED", "INVALID_LEGAL_OWNER", "CURRENT_OFFERING_EXISTS", "PROPERTY_REFERENCE_EXISTS", "OFFERING_WITHDRAWN", "CONFIRM_AVAILABILITY_REQUIRED", "IDEMPOTENCY_CONFLICT", "INVALID_HIERARCHY", "STOCK_REVIEW_REQUIRED", "DEVELOPMENT_UNITS_REQUIRED", "DEVELOPMENT_REFERENCE_EXISTS", "HIERARCHY_CODE_EXISTS"]);
 const ownerReadSchema = z.object({ owners: z.array(safeLinkSchema).max(100), version: z.number().int().positive() }).strict();
 export async function relayInventory(key: string, request: Request, requestId: string) {
   if (!inventoryRoute(key, request.method)) return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url);
   const mutation = request.method !== "GET";
-  const suffix = key.split("/")[2];
-  const list = ["properties", "offerings", "developments"].includes(key) || ["history", "inventory", "blocks", "floors", "unit-types", "stock-review"].includes(suffix);
+  const [, targetId, suffix, , action] = key.split("/");
+  const calendar = suffix === "calendar";
+  const list = ["properties", "offerings", "developments"].includes(key) || ["history", "inventory", "blocks", "floors", "unit-types", "stock-review", "calendar"].includes(suffix);
   const params = [...url.searchParams];
-  const parsedQuery = suffix === "stock-review" ? z.object({ offering_id: z.uuid() }).strict() : key === "properties" ? propertiesQuerySchema : key === "developments" ? developmentQuerySchema : key === "offerings" ? inventoryQuerySchema.extend({ offering_id: z.uuid().optional() }) : inventoryQuerySchema;
-  if ((url.search && (!list || mutation)) || new Set(params.map(([name]) => name)).size !== params.length || !parsedQuery.safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
-  const allowed = suffix === "stock-review" ? ["offering_id"] : ["history", "blocks", "floors", "unit-types"].includes(suffix) ? ["page", "page_size"] : suffix === "inventory" ? ["page", "page_size", "q", "category", "block_id", "floor_id", "unit_type_id", "offering_kind", "state"] : key === "offerings" ? ["page", "page_size", "property_id", "development_id", "kind", "state", "target_level", "q", "category", "block_id", "floor_id", "unit_type_id", "min_comparison_mad", "max_comparison_mad", "min_area_sqm", "min_rooms"] : key === "properties" ? ["page", "page_size", "q", "category", "offering_kind", "state", "sort", "development_id", "block_id", "floor_id", "unit_type_id", "target_level"] : key === "developments" ? ["page", "page_size", "q", "category", "offering_kind", "state", "sort"] : [];
+  const parsedQuery = calendar ? propertyCalendarQuerySchema : suffix === "stock-review" ? z.object({ offering_id: z.uuid() }).strict() : key === "properties" ? propertiesQuerySchema : key === "developments" ? developmentQuerySchema : key === "offerings" ? inventoryQuerySchema.extend({ offering_id: z.uuid().optional() }) : inventoryQuerySchema;
+  if ((url.search && (!list || mutation)) || new Set(params.map(([name]) => name)).size !== params.length || !(mutation && calendar ? params.length === 0 : parsedQuery.safeParse(Object.fromEntries(params)).success)) return facadeError(422, "VALIDATION_ERROR", requestId);
+  const allowed = calendar ? ["month"] : suffix === "stock-review" ? ["offering_id"] : ["history", "blocks", "floors", "unit-types"].includes(suffix) ? ["page", "page_size"] : suffix === "inventory" ? ["page", "page_size", "q", "category", "block_id", "floor_id", "unit_type_id", "offering_kind", "state"] : key === "offerings" ? ["page", "page_size", "property_id", "development_id", "kind", "state", "target_level", "q", "category", "block_id", "floor_id", "unit_type_id", "min_comparison_mad", "max_comparison_mad", "min_area_sqm", "min_rooms"] : key === "properties" ? ["page", "page_size", "q", "category", "offering_kind", "state", "sort", "development_id", "block_id", "floor_id", "unit_type_id", "target_level"] : key === "developments" ? ["page", "page_size", "q", "category", "offering_kind", "state", "sort"] : [];
   if (key === "offerings") allowed.push("offering_id");
   if (["properties", "developments"].includes(key) || suffix === "inventory") {
     allowed.push("min_comparison_mad", "max_comparison_mad");
@@ -38,7 +40,7 @@ export async function relayInventory(key: string, request: Request, requestId: s
   if (mutation) {
     if (request.headers.get("Origin") !== frontendOrigin()) return facadeError(403, "FORBIDDEN", requestId);
     if (!z.uuid().safeParse(retryKey).success) return facadeError(422, "VALIDATION_ERROR", requestId);
-    const schema = suffix === "external-outcome" ? externalSchema : suffix === "owners" ? ownersSchema : suffix === "confirm-availability" ? confirmSchema : ["archive", "restore"].includes(suffix) ? archiveDevelopmentSchema : key === "developments" ? developmentFieldsSchema : key.startsWith("developments/") && request.method === "PATCH" ? editDevelopmentSchema : suffix === "unit-types" || key.startsWith("unit-types/") ? typeFieldsSchema : suffix === "blocks" || suffix === "floors" || /^(blocks|floors)\//.test(key) ? structureFieldsSchema : request.method === "PATCH" ? key.startsWith("properties/") ? editPropertySchema : editOfferingSchema : key === "properties" ? createPropertySchema : newOfferingSchema;
+    const schema = calendar ? action === "cancel" ? cancelPropertyPeriodSchema : savePropertyPeriodSchema : suffix === "external-outcome" ? externalSchema : suffix === "owners" ? ownersSchema : suffix === "confirm-availability" ? confirmSchema : ["archive", "restore"].includes(suffix) ? archiveDevelopmentSchema : key === "developments" ? developmentFieldsSchema : key.startsWith("developments/") && request.method === "PATCH" ? editDevelopmentSchema : suffix === "unit-types" || key.startsWith("unit-types/") ? typeFieldsSchema : suffix === "blocks" || suffix === "floors" || /^(blocks|floors)\//.test(key) ? structureFieldsSchema : request.method === "PATCH" ? key.startsWith("properties/") ? editPropertySchema : editOfferingSchema : key === "properties" ? createPropertySchema : newOfferingSchema;
     try {
       const parsed = schema.safeParse(await boundedJson(request, 131072));
       if (!parsed.success) return facadeError(422, "VALIDATION_ERROR", requestId);
@@ -53,9 +55,18 @@ export async function relayInventory(key: string, request: Request, requestId: s
       const code = parsed.success && known.has(parsed.data.error.code) ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE";
       return Response.json({ error: { code, message: frenchApiError(code), field_errors: {}, request_id: requestId } }, { status: code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
     }
-    const schema = mutation ? resultSchema : suffix === "stock-review" ? stockReviewSchema : suffix === "history" ? historySchema : suffix === "owners" ? ownerReadSchema : suffix === "inventory" ? inventoryPageSchema : suffix === "blocks" ? blocksSchema : suffix === "floors" ? floorsSchema : suffix === "unit-types" ? unitTypesSchema : key === "developments" ? developmentsSchema : key.startsWith("developments/") ? developmentSchema : key === "properties" ? propertiesSchema : key === "offerings" ? offeringsSchema : propertySchema;
+    const schema = mutation ? resultSchema : calendar ? propertyCalendarSchema : suffix === "stock-review" ? stockReviewSchema : suffix === "history" ? historySchema : suffix === "owners" ? ownerReadSchema : suffix === "inventory" ? inventoryPageSchema : suffix === "blocks" ? blocksSchema : suffix === "floors" ? floorsSchema : suffix === "unit-types" ? unitTypesSchema : key === "developments" ? developmentsSchema : key.startsWith("developments/") ? developmentSchema : key === "properties" ? propertiesSchema : key === "offerings" ? offeringsSchema : propertySchema;
     const result = schema.parse(upstream.body);
-    const [root, targetId] = key.split("/");
+    const [root] = key.split("/");
+    if (calendar && !mutation) {
+      const projection = propertyCalendarSchema.parse(result);
+      if (projection.property_id !== targetId || projection.month !== url.searchParams.get("month")) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    }
+    if (calendar && mutation) {
+      const input = (action === "cancel" ? cancelPropertyPeriodSchema : savePropertyPeriodSchema).parse(JSON.parse(body!));
+      const receipt = resultSchema.parse(result);
+      if (!("property_id" in receipt) || receipt.property_id !== targetId || receipt.offering_id !== null || receipt.version <= input.expected_version) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    }
     if (!mutation && !suffix && targetId && ["properties", "developments"].includes(root) && (result as { id?: string }).id !== targetId) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
     if (suffix === "stock-review" && (result as { offering_id?: string }).offering_id !== url.searchParams.get("offering_id")) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
     if (mutation && suffix === "external-outcome") {

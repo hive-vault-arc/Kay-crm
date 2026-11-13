@@ -55,6 +55,10 @@ def apply(
         elif (row.due_at, row.owner_user_id) != (body.due_at, body.owner_user_id):
             row.schedule_version += 1
     if isinstance(body, (NewTask, EditTask)):
+        if "important" in body.model_fields_set:
+            row.important = body.important
+        if "kind" in body.model_fields_set:
+            row.kind = body.kind
         row.enquiry_id = check_context(session, identity, row, body, new=isinstance(body, NewTask))
         for name in ("title", "notes", "due_at", "owner_user_id", "deal_id", "property_id"):
             setattr(row, name, getattr(body, name))
@@ -77,10 +81,15 @@ def command(
     action: str = "updated",
 ) -> dict[str, object]:
     route = f"{type(body).__name__}/{tid or ''}/{action}"
+    payload = body.model_dump(mode="json")
+    if isinstance(body, (NewTask, EditTask)):
+        for field in ("important", "kind"):
+            if field not in body.model_fields_set:
+                payload.pop(field)
     digest = keyed_digest(
         secret,
         "task-command",
-        json.dumps(body.model_dump(mode="json"), sort_keys=True, separators=(",", ":")),
+        json.dumps(payload, sort_keys=True, separators=(",", ":")),
     )
     with database.session() as session, session.begin():
         session.scalar(select(Agency).where(Agency.id == AGENCY_ID).with_for_update())

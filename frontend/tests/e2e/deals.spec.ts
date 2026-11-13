@@ -11,6 +11,8 @@ test("Qualified conversion from Lead, accepted proposal and stage skipping", asy
   try {
     await signIn(page, agent); const lead = await createLead(page, "SP11 contact de création explicite"); const before = await (await page.request.get(`/api/v1/enquiries/${lead}`)).json();
     const id = await convertLead(page);
+    const phone = String(before.contact.primary_phone);
+    await expect(page.getByRole("link", { name: `Ouvrir WhatsApp pour ${phone}`, exact: true })).toHaveAttribute("href", `https://wa.me/${phone.slice(1)}`);
     const converted = await (await page.request.get(`/api/v1/enquiries/${lead}`)).json();
     expect(converted.status).toBe("converted"); expect(converted.contact.id).toBe(before.contact.id); expect(converted.converted_deal_id).toBe(id);
     await page.getByRole("tab", { name: "Projets", exact: true }).click();

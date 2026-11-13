@@ -54,6 +54,7 @@ test("AT-23/39: French entry and truthful authenticated navigation @shell", asyn
   for (const [label, path] of [
     ["Prospects", "leads"],
     ["Affaires", "deals"],
+    ["Tâches", "tasks"],
     ["Calendrier des visites", "visits"],
     ["Projets", "projects"],
     ["Contacts", "contacts"],
@@ -110,7 +111,7 @@ test("desktop rail keeps all destinations and header search reachable @shell", a
   await page.goto("/dashboard");
   const rail = page.locator("[data-kay-rail]");
   await expect.poll(async () => (await rail.boundingBox())?.width).toBe(96);
-  for (const name of ["Tableau de bord", "Prospects", "Affaires", "Calendrier des visites", "Contacts", "Propriétaires", "Projets", "Aide", "Paramètres"]) {
+  for (const name of ["Tableau de bord", "Prospects", "Affaires", "Tâches", "Calendrier des visites", "Contacts", "Propriétaires", "Projets", "Aide", "Paramètres"]) {
     const link = rail.getByRole("link", { name, exact: true });
     await expect(link).toBeInViewport();
     await expect(link).toHaveAttribute("title", name);

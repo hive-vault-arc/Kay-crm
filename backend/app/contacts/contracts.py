@@ -25,6 +25,7 @@ from app.contacts.qualification import (
     normalize_languages,
 )
 from app.identity.security import IdentityError, normalize_email
+from app.remarks import ImportantRemarks
 
 ContactRoleCode = Literal["buyer", "seller", "owner", "tenant", "developer"]
 ManualSource = Literal["manual", "phone", "email", "in_person", "referral"]
@@ -83,9 +84,11 @@ class Email(StrictBody):
 
 
 class ContactFields(StrictBody):
+    important_remarks: ImportantRemarks = None
     name: str = Field(min_length=1, max_length=160)
     type: Literal["person", "organization"] = "person"
     birth_date: date | None = None
+    national_id_number: str | None = None
     phones: list[Phone] = Field(min_length=1, max_length=10)
     emails: list[Email] = Field(default_factory=list, max_length=10)
     roles: list[ContactRoleCode] = Field(default_factory=list, max_length=5)
@@ -104,11 +107,23 @@ class ContactFields(StrictBody):
             return value
         raise ValueError("INVALID_BIRTH_DATE")
 
+    @field_validator("national_id_number", mode="before")
+    @classmethod
+    def national_id(cls, value: object) -> str | None:
+        if value is None:
+            return None
+        if isinstance(value, str) and re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9-]{1,30}[A-Za-z0-9]", value.strip()
+        ):
+            return value.strip().upper()
+        raise ValueError("INVALID_NATIONAL_ID")
+
     @model_serializer(mode="wrap")
     def preserve_legacy_receipts(self, handler: SerializerFunctionWrapHandler) -> dict[str, object]:
         fields: dict[str, object] = handler(self)
-        if "birth_date" not in self.model_fields_set:
-            fields.pop("birth_date", None)
+        for optional in ("birth_date", "national_id_number", "important_remarks"):
+            if optional not in self.model_fields_set:
+                fields.pop(optional, None)
         return fields
 
     @field_validator("country", "nationality")
@@ -128,6 +143,10 @@ class ContactFields(StrictBody):
             or self.birth_date > datetime.now(ZoneInfo("Africa/Casablanca")).date()
         ):
             raise ValueError("INVALID_BIRTH_DATE")
+        if self.national_id_number is not None and (
+            self.type != "person" or "owner" not in self.roles
+        ):
+            raise ValueError("INVALID_NATIONAL_ID")
         if sum(phone.is_primary for phone in self.phones) != 1:
             raise ValueError("ONE_PRIMARY_PHONE_REQUIRED")
         if self.emails and sum(email.is_primary for email in self.emails) != 1:

@@ -11,6 +11,8 @@
 .kay-inline-methods { display:flex; flex-wrap:wrap; align-items:center; gap:4px; }
 .kay-inline-methods > a { display:flex; align-items:center; justify-content:center; width:44px; min-height:44px; border-radius:999px; color:var(--workspace-muted); }
 .kay-inline-methods > a:hover { color:var(--workspace-ink); background:var(--workspace-field); }
+.kay-inline-methods > a[data-method=whatsapp] { color:var(--workspace-success); }
+.kay-inline-methods > a[data-method=whatsapp]:is(:hover,:focus-visible) { background:var(--workspace-success-background); }
 .kay-inline-methods > a:focus-visible { outline:2px solid var(--workspace-focus); outline-offset:2px; }
 .kay-inline-form { container-type:inline-size; display:grid; align-items:start; grid-template-columns:minmax(0,1fr); gap:8px; min-width:0; }
 .kay-inline-controls { display:grid; align-content:start; gap:12px; min-width:0; }

@@ -1,5 +1,39 @@
 # KAY QA command register
 
+## Property cover photo
+
+On disposable PostgreSQL, migration 0047 and the Alembic schema check passed.
+Run `pytest -q tests/test_property_photos.py tests/test_listing_shares.py`
+with the backend virtual environment and local ClamAV, then run
+`npm run test:chrome -- tests/e2e/property-photos.spec.ts` with headed browser
+and an isolated stack. Keep database-writing suites serial. The selected
+backend suite passed 17 cases. Both browser flows passed across the focused
+runs, including cover selection by keyboard, agent selection at phone width,
+persisted cover download and fallback after archive. Frontend build, lint
+and 1,005 unit tests passed. CRM UX and design-system-ops guided reuse of the
+existing gallery card and semantic button.
+
+## Property overview layout
+
+The headed property-edit-wizard case verified two columns at 1440 px and
+one column at 390 px against disposable PostgreSQL. Both screenshots were
+reviewed. The layout uses the existing RecordFacts grid and geometry tokens.
+
+## Inventory received date
+
+Use the backend virtual environment and a disposable PostgreSQL target. Run
+`alembic upgrade head`, `alembic check` and
+`pytest -q tests/test_inventory_received_date.py tests/test_inventory.py tests/test_developments.py tests/test_listing_shares.py`.
+Keep database-writing suites serial. On the isolated stack, run the headed
+property-edit-wizard, development-phase and unit-listing-wizard browser cases.
+
+Migration 0046 and the schema check passed on a disposable database. All 43
+selected backend tests and four headed Chromium flows passed. The frontend
+build, lint and 1,005 unit tests passed. The new field reuses the CRM UX,
+design-system-ops and React best-practices form patterns. The date field and
+keyboard focus were reviewed at 390 and 1440 px. This scoped check covers
+saving, clearing, legacy omission and exclusion from public listings.
+
 ## Client listing links
 
 With a disposable PostgreSQL target, run `alembic upgrade head`, `alembic check`

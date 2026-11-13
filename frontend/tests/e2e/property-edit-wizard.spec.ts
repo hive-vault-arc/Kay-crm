@@ -24,6 +24,7 @@ test("property edit: rich fields are prefilled, saved and reopened without chang
     const created = await staffCommand(page, "properties", {
       reference, category: "apartment", marketing_name: "Appartement synthétique avec un titre existant de plus de cinquante caractères à conserver", location: null, area_sqm: "120.00", rooms: 5, listing_details: details,
       initial_offering: { kind: "holiday", price_mad: "950.00", price_period: "day", currency: "MAD" },
+      owner_asking_price_mad: "900.00", monthly_syndic_fee_mad: "250.00", received_on: "2025-01-03",
     });
     expect(created.status()).toBe(200);
     const { property_id: id } = await created.json();
@@ -31,9 +32,24 @@ test("property edit: rich fields are prefilled, saved and reopened without chang
     await page.goto(`/projects/properties/${id}/edit`);
     const form = page.getByRole("form", { name: "Modifier le bien", exact: true });
     await expect(form.locator("#property-reference")).toHaveValue(reference);
+    const received = form.getByLabel("Date de réception (facultative)", { exact: true });
+    await expect(received).toHaveValue("2025-01-03");
+    await received.fill("2025-01-04");
     await expect(form.locator("#property-marketing_name")).toHaveValue(before.marketing_name);
     await expect(form.getByRole("region", { name: "Offres conservées" })).toContainText("950");
     await expect(form.locator("#property-price_mad")).toHaveCount(0);
+    const asking = form.getByLabel("Prix demandé par le propriétaire (MAD, facultatif)", { exact: true });
+    const syndic = form.getByLabel("Frais de syndic (MAD / mois, facultatif)", { exact: true });
+    await expect(asking).toHaveValue("900.00");
+    await expect(syndic).toHaveValue("250.00");
+    await mkdir("output/playwright/property-edit", { recursive: true });
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await geometry(page);
+      await page.screenshot({ path: `output/playwright/property-edit/costs-${width}.png`, fullPage: true });
+    }
+    await asking.clear();
+    await syndic.fill("315,75");
     await form.locator("#property-marketing_name").fill("Appartement synthétique révisé");
     await form.getByRole("button", { name: "Suivant", exact: true }).focus();
     await page.keyboard.press("Enter");
@@ -66,6 +82,7 @@ test("property edit: rich fields are prefilled, saved and reopened without chang
     await form.getByRole("checkbox", { name: "Jardin", exact: true }).uncheck();
     await form.locator("#property-description").fill("Description synthétique révisée.");
     await propertyEditStep(page, 4);
+    await expect(form.getByText("4 janv. 2025", { exact: true })).toBeVisible();
     const [savedResponse] = await Promise.all([
       page.waitForResponse(response => new URL(response.url()).pathname === `/api/v1/properties/${id}` && response.request().method() === "PATCH"),
       form.getByRole("button", { name: "Enregistrer le bien", exact: true }).click(),
@@ -78,9 +95,33 @@ test("property edit: rich fields are prefilled, saved and reopened without chang
     expect(after.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target")))).toEqual(before.offerings.map((item: Record<string, unknown>) => Object.fromEntries(Object.entries(item).filter(([key]) => key !== "target"))));
     expect(after.offerings.every((item: { target: { version: number } }) => item.target.version === after.version)).toBe(true);
     expect(after.location).toBeNull();
+    expect(after.received_on).toBe("2025-01-04");
+    await expect(page.getByText("4 janv. 2025", { exact: true })).toBeVisible();
+    const facts = page.locator("section").filter({ has: page.getByRole("heading", { name: "Informations du bien", exact: true }) }).locator("dl");
+    const referenceFact = facts.getByText("Référence", { exact: true });
+    const typeFact = facts.getByText("Type de bien", { exact: true });
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 900 });
+      const [referenceBox, typeBox] = await Promise.all([referenceFact.boundingBox(), typeFact.boundingBox()]);
+      expect(referenceBox).not.toBeNull();
+      expect(typeBox).not.toBeNull();
+      if (width === 1440) {
+        expect(typeBox!.x).toBeGreaterThan(referenceBox!.x);
+        expect(typeBox!.y).toBeCloseTo(referenceBox!.y, 0);
+      } else {
+        expect(typeBox!.x).toBeCloseTo(referenceBox!.x, 0);
+        expect(typeBox!.y).toBeGreaterThan(referenceBox!.y);
+      }
+      await geometry(page);
+      await page.screenshot({ path: `output/playwright/property-edit/overview-${width}.png`, fullPage: true });
+    }
+    expect(after.owner_asking_price_mad).toBeNull();
+    expect(after.monthly_syndic_fee_mad).toBe("315.75");
+    await expect(page.getByText("315,75 MAD / mois", { exact: true })).toBeVisible();
     const expectedDetails = { ...before.listing_details, city: "Tétouan", bedrooms: 4, amenities: ["terrace", "garage", "internet"], description: "Description synthétique révisée." };
     delete expectedDetails.garden_area_sqm;
     expect(after.listing_details).toEqual(expectedDetails);
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.getByRole("link", { name: "Modifier", exact: true }).click();
     await expect(form.locator("#property-marketing_name")).toHaveValue("Appartement synthétique révisé");
     await propertyEditStep(page, 2);

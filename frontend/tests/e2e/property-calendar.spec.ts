@@ -1,0 +1,65 @@
+import { mkdir } from "node:fs/promises";
+import { test, expect, createActor, removeActor, signIn, clearActorContext } from "../helpers/auth";
+import { createProperty } from "../helpers/inventory";
+
+test("property calendar blocks overlaps and releases cancelled dates", async ({ page }) => {
+  const manager = await createActor("manager");
+  const agent = await createActor("agent");
+  try {
+    await signIn(page, manager);
+    const id = await createProperty(page);
+    const route = `/projects/properties/${id}?tab=calendar`;
+    await page.goto(route);
+    const add = page.getByRole("button", { name: "Ajouter une période", exact: true });
+    const begin = await page.getByRole("button", { name: / · Disponible$/ }).first().getAttribute("aria-label");
+    expect(begin).toBeTruthy();
+    const monthLabel = await page.getByRole("heading", { level: 3 }).filter({ hasText: /^[^0-9]+ [0-9]{4}$/ }).textContent();
+    expect(monthLabel).toBeTruthy();
+    await add.click();
+    const form = page.getByRole("form", { name: "Ajouter une période", exact: true });
+    const start = (await form.getByLabel("Date d’arrivée", { exact: true }).inputValue()).slice(0, 7) + "-06";
+    const end = start.slice(0, 7) + "-08";
+    await form.getByLabel("Date d’arrivée", { exact: true }).fill(start);
+    await form.getByLabel("Date de départ", { exact: true }).fill(end);
+    await form.getByLabel("Note interne (facultative)", { exact: true }).fill("Note calendrier synthétique");
+    await form.getByRole("button", { name: "Enregistrer la période", exact: true }).click();
+    await expect(form).toBeHidden();
+    await expect(page.getByRole("button", { name: /^6 .* · Réservation$/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^8 .* · Disponible$/ })).toBeVisible();
+    await add.click();
+    await form.getByLabel("Type de période", { exact: true }).selectOption("closure");
+    await form.getByLabel("Début de la fermeture", { exact: true }).fill(start);
+    await form.getByLabel("Réouverture (date exclue)", { exact: true }).fill(end);
+    await form.getByRole("button", { name: "Enregistrer la période", exact: true }).click();
+    await expect(form.getByText(/chevauchent/)).toBeVisible();
+    await form.getByLabel("Début de la fermeture", { exact: true }).fill(end);
+    await form.getByLabel("Réouverture (date exclue)", { exact: true }).fill(start.slice(0, 7) + "-10");
+    await form.getByRole("button", { name: "Enregistrer la période", exact: true }).click();
+    await expect(form).toBeHidden();
+    await expect(page.getByRole("button", { name: /^8 .* · Fermeture$/ })).toBeVisible();
+    await mkdir("output/playwright/property-calendar", { recursive: true });
+    await page.screenshot({ path: "output/playwright/property-calendar/desktop.png" });
+    const reservation = page.getByRole("listitem").filter({ hasText: "Note calendrier synthétique" });
+    await reservation.getByRole("button", { name: "Annuler la période", exact: true }).click();
+    const cancellation = page.getByRole("form", { name: "Annuler la période", exact: true });
+    await cancellation.getByLabel("Motif d’annulation", { exact: true }).fill("Réservation annulée");
+    await cancellation.getByRole("button", { name: "Confirmer l’annulation", exact: true }).click();
+    await expect(page.getByRole("button", { name: /^6 .* · Disponible$/ })).toBeVisible();
+    await clearActorContext(page);
+    await signIn(page, agent);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(route);
+    await expect(page.getByRole("button", { name: /^8 .* · Fermeture$/ })).toBeVisible();
+    await expect(add).toHaveCount(0);
+    const day = page.getByRole("button", { name: /^8 .* · Fermeture$/ });
+    await day.focus();
+    await page.keyboard.press("Enter");
+    await expect(day).toHaveAttribute("aria-pressed", "true");
+    await page.screenshot({ path: "output/playwright/property-calendar/mobile.png" });
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  } finally {
+    await clearActorContext(page);
+    await removeActor(agent);
+    await removeActor(manager);
+  }
+});

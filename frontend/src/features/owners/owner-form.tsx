@@ -22,7 +22,7 @@ import { CommandError, RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { apiGet, ApiError } from "@/lib/api/client";
-import { ownerRoleBody, ownerValues } from "./owner-form-model";
+import { editableOwnerValues, ownerRoleBody } from "./owner-form-model";
 import { useOwnerFormCommand } from "./use-owner-form-command";
 import { OwnerContactChoice, OwnerContactSnapshot } from "./owner-form-parts";
 import { OwnerLoading } from "./owner-loading";
@@ -43,7 +43,7 @@ export function OwnerForm({ id, role, actorId, presentation = "page", ...options
 }
 type OwnerFieldsProps = { role: StaffRole; metadata: QualificationMetadata; retry: () => void; unavailable: boolean; readError?: ApiError; readRetry: () => void } & OwnerFormOptions;
 function OwnerEditLoader({ id, ...props }: { id: string } & OwnerFieldsProps) {
-  const query = useQuery(`/api/v1/contacts/${id}`, contactSchema);
+  const query = useQuery(`/api/v1/contacts/${id}?owner_identity=true`, contactSchema);
   const [loaded, setLoaded] = useState<Contact>(), [aliasError] = useState(() => new ApiError("NOT_FOUND", 404));
   const mismatch = Boolean(loaded && query.value && loaded.id !== query.value.id), refusal = query.error && [401, 403, 404].includes(query.error.status) ? query.error : mismatch ? aliasError : undefined;
   if (query.value && !mismatch && loaded !== query.value) setLoaded(query.value);
@@ -56,7 +56,15 @@ function OwnerEditLoader({ id, ...props }: { id: string } & OwnerFieldsProps) {
 }
 function OwnerFormFields({ role, actorId, metadata, contact, retry, presentation = "page", onSaved, cancel, onDenied, unavailable, readError, readRetry }: { contact?: Contact } & OwnerFieldsProps) {
   const hydrated = useHydrated(), router = useRouter(), scope = useRef<HTMLFormElement>(null), guard = useUnsavedGuard();
-  const form = useForm<Values>({ resolver: zodResolver(contactFieldsSchema), defaultValues: ownerValues(contact) });
+  const resolveFields = zodResolver(contactFieldsSchema);
+  const form = useForm<Values>({
+    resolver: (fields, context, options) => {
+      const [email] = fields.emails;
+      const emptyEmail = fields.emails.length === 1 && !email.email.trim() && !email.label.trim();
+      return resolveFields(emptyEmail ? { ...fields, emails: [] } : fields, context, options);
+    },
+    defaultValues: editableOwnerValues(contact),
+  });
   const values = useWatch({ control: form.control });
   const [mode, setMode] = useState("new"), [selected, setSelected] = useState<Contact>(), [selectedId, setSelectedId] = useState("");
   const [agent, setAgent] = useState(""), [agentName, setAgentName] = useState("");
@@ -102,7 +110,7 @@ function OwnerFormFields({ role, actorId, metadata, contact, retry, presentation
   function adopt(value: Contact, keep = false) {
     if (!command.accept(value)) return;
     if (isReuse) { setSelected(value); setSelectedId(value.id); }
-    else { setVersion(value.version); if (!keep) { const fields = ownerValues(value); form.reset(fields); draft.accept({ fields, agent: "", selectedId: "", recovery: false }); } form.setFocus("name"); }
+    else { setVersion(value.version); if (!keep) { const fields = editableOwnerValues(value); form.reset(fields); draft.accept({ fields, agent: "", selectedId: "", recovery: false }); } form.setFocus("name"); }
     setError(undefined);
   }
   const route = contact ? `/owners/${contact.id}/edit` : "/owners/new", back = contact ? `/owners/${contact.id}` : "/owners";
@@ -124,6 +132,7 @@ function OwnerFormFields({ role, actorId, metadata, contact, retry, presentation
       </fieldset></RecordSection> : null}
       <fieldset hidden={isReuse} disabled={fieldsDisabled || isReuse} className={`grid min-w-0 gap-0 ${contact ? "" : "border-t pt-5"}`}><ContactFields form={form} metadata={metadata} requiredRole="owner" workspace ownerLayout assignment={!contact && !isReuse && role !== "agent" ? <AgentPicker value={agent} selectedLabel={agentName} change={(id, name) => { if (!lock.current && command.canEdit()) { setAgent(id); setAgentName(name ?? ""); } }} denied={authorityDenied} /> : <p className="text-sm text-muted-foreground">Agent responsable : {contact?.primary_agent.display_name ?? "vous-même"}. L’attribution ne change pas dans cette fiche.</p>} /></fieldset>
       {current ? <RecordSection title={`Version actuelle ${current.version}`}><OwnerContactSnapshot contact={current} /><p className="text-sm">Votre saisie est conservée. Comparez-la avant de poursuivre.</p>{current.archived_at ? <p className="text-sm text-warning">Contact archivé : aucune modification possible.</p> : <div className="flex flex-wrap gap-2"><Button action="refresh" type="button" variant="outline" disabled={saving || unavailable} onClick={() => guard.request(() => adopt(current), scope.current ?? undefined)}>Charger la version actuelle</Button>{!isReuse ? <Button action="compare" type="button" variant="outline" disabled={saving || unavailable} onClick={() => adopt(current, true)}>Conserver ma saisie sur cette version</Button> : null}</div>}</RecordSection> : null}
+      {!isReuse && values.type === "person" ? <p className="text-sm text-muted-foreground">Ajoutez une copie de la carte nationale dans Documents sur la fiche du propriétaire.</p> : null}
       <p className="text-sm text-muted-foreground">Les biens se rattachent depuis leur fiche dans Projets. Le rôle Propriétaire ne crée aucun lien de propriété.</p>
     </div>
     {presentation === "drawer" ? <div className="kay-form-footer">{actions}</div> : null}

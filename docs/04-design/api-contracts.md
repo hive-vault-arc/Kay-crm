@@ -13,6 +13,12 @@ not copied into this projection. List/summary reads retain their existing bounde
 shape and query cost. Mutation DTOs, server authority and stock fingerprints stay
 unchanged; no migration is added for this response correction.
 
+Authenticated property and development detail endpoints expose optional
+`received_on` (YYYY-MM-DD). Create and edit accept a civil date up to today in
+Casablanca. Omission on edit preserves the recorded date and explicit `null`
+clears it. Lists and client listings omit it. Inventory history records changes
+with the authenticated actor and the actual event timestamp.
+
 Selected affair forms,2026-10-29: existing manual creation and atomic affair/
 optional-contact PATCH DTOs, separate versions and result remain unchanged.
 Client recovery owns original body/context/key, same originating actor/role,
@@ -167,6 +173,18 @@ notes_supported:true on calendar/context and notes in visit metadata/original
 history snapshots. Legacy projections keep their existing strict shape; free/busy
 is unchanged. Existing current scope, versions, CSRF and terminal commands prevail.
 [Concrete compatibility/storage contract](visit-scheduling-local.md).
+
+## Property cover photos
+
+`POST /documents/{id}/set-primary` takes the current document version and
+an idempotency key. Active staff with access to a physical property (including
+programme units) can select one of its active photos with a clean version.
+The selection is audited. Archiving the selected photo clears the designation.
+`GET /documents/cover?parent_kind=property&parent_id=...` returns the selected
+photo, the newest clean photo if none is selected, or null. Programme cover
+reads also use the newest clean photo. The ordinary file permit still protects
+image bytes. Document metadata exposes `is_primary_photo` to the facade with
+`X-Kay-Primary-Photo: 1`. Existing client shares retain their approved photos.
 
 ## Agent inventory photo uploads (2026-10-23)
 

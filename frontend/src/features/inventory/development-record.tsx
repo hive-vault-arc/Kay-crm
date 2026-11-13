@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ImportantRemarks } from "@/components/shared/important-remarks";
 import { RecordHeader } from "@/components/shared/record-header";
 import { ListingShareDrawer } from "@/features/shares/share-drawer";
 import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
@@ -12,7 +13,7 @@ import { RecordActions } from "@/components/shared/record-actions";
 import { CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/shared/page-header";
-import { DevelopmentIcon, LocationIcon, PropertyIcon } from "@/components/icons";
+import { CalendarIcon, DevelopmentIcon, LocationIcon, PropertyIcon } from "@/components/icons";
 import type { StaffRole } from "@/features/contacts/contracts";
 import { RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
@@ -30,7 +31,8 @@ import { InventoryBusyContext } from "./use-command";
 import { InventoryRecordContext, type InventoryRecord, type InventoryRecordScope } from "./record-scope";
 import type { Development } from "./development-contracts";
 import type { ApiError } from "@/lib/api/client";
-import { categoryLabels } from "./contracts";
+import { formatBusinessDate } from "@/lib/format";
+import { categoryLabels, receivedDateLabel } from "./contracts";
 import { InventoryPhotoRail, InventoryParty } from "./inventory-support";
 import { InventoryOfferSection } from "./inventory-offer-section";
 
@@ -63,8 +65,10 @@ export function DevelopmentRecord({ id, edit = false, role, actorId, initialTab 
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{archived ? <p role="status" className="mb-3 text-sm text-muted-foreground">Programme archivé : les informations restent consultables.</p> : null}
     <RecordWorkspace activeTab={tab} onTabChange={setTab} initialTab={tab} label="Rubriques du programme" tabs={[
       { id: "overview", label: "Aperçu", content: <>
+        {development.important_remarks ? <ImportantRemarks value={development.important_remarks} /> : null}
         <RecordSection title="Informations du programme"><RecordFacts columns={1}>
           <RecordFact icon={DevelopmentIcon} label="Référence">{development.reference}</RecordFact>
+          {development.received_on ? <RecordFact icon={CalendarIcon} label={receivedDateLabel}>{formatBusinessDate(development.received_on)}</RecordFact> : null}
           <RecordFact icon={LocationIcon} label="Localisation">{development.location ?? "Non renseignée"}</RecordFact>
           {development.phase_supported ? <RecordFact icon={DevelopmentIcon} label="État du programme"><DevelopmentPhaseBadge phase={development.phase} /></RecordFact> : <RecordFact icon={PropertyIcon} label="Catégorie">{development.category === "mixed" ? "Mixte" : categoryLabels[development.category]}</RecordFact>}
           <RecordFact icon={PropertyIcon} label="Unités physiques"><Button action="forward" variant="quiet" onClick={() => setTab("units")}>{development.unit_count} unités · {development.available_unit_count} disponibles</Button></RecordFact>

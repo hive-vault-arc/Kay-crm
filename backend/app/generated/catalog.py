@@ -115,6 +115,7 @@ TEMPLATES = (
             ("end_date", "Départ", "Séjour", False),
             ("price_mad", "Prix du séjour (MAD)", "Séjour", False),
             ("conditions", "Conditions particulières", "Séjour", True),
+            ("guest_instructions", "Consignes à transmettre au client", "Séjour", True),
         ),
     ),
     Template(

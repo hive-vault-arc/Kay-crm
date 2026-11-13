@@ -134,7 +134,12 @@ function PhotoWorkspace({ propertyId, parentKind = "property", writable, uploada
     {notice ? <p role="status" className="text-info">{notice}</p> : null}
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des photos…</p> : <>
       {uploadable ? <Button action="photos" type="button" className="justify-self-start" disabled={!hydrated || busy} onClick={event => show("new", event.currentTarget)}>Ajouter une photo</Button> : null}
-      {query.value.items.length ? <ul className="kay-photo-list">{query.value.items.map(photo => <PhotoCard key={`${photo.id}:${photo.version}`} photo={photo} cache={previews} previewAbort={previewAbort} writable={writable} disabled={!hydrated || busy} begin={begin} end={end} denied={denied} restoreFocus={() => heading.current?.focus()} refresh={() => { setPage(1); refresh(); }} onChanged={onChanged} openPreview={trigger => openViewer(photo.id, trigger)} resume={uploadable && photoCanResume(photo, writable) ? trigger => show(photo, trigger) : undefined} />)}</ul> : <p className="text-sm text-muted-foreground">Aucune photo ajoutée à ce dossier.</p>}
+      {query.value.items.length ? <ul className="kay-photo-list">{query.value.items.map(photo => <PhotoCard key={`${photo.id}:${photo.version}`} photo={photo} cache={previews} previewAbort={previewAbort} writable={writable} disabled={!hydrated || busy} begin={begin} end={end} denied={denied} restoreFocus={() => heading.current?.focus()} refresh={() => { setPage(1); refresh(); }} onChanged={onChanged} onPrimaryChanged={parentKind === "property" ? selected => {
+        setNotice(selected ? "Photo principale enregistrée." : "La photo principale a changé. Vérifiez la sélection.");
+        refresh();
+        onChanged();
+        heading.current?.focus();
+      } : undefined} openPreview={trigger => openViewer(photo.id, trigger)} resume={uploadable && photoCanResume(photo, writable) ? trigger => show(photo, trigger) : undefined} />)}</ul> : <p className="text-sm text-muted-foreground">Aucune photo ajoutée à ce dossier.</p>}
       {query.value.total > pageSize || page > 1 ? <NumberedPages label="Pages des photos" page={page} total={query.value.total} size={pageSize} change={setPage} /> : null}
       {viewer ? <PhotoViewer photos={viewer.photos} cache={previews} previewAbort={previewAbort} index={viewer.index} page={viewer.page} hasPrevious={viewer.hasPrevious} hasNext={viewer.hasNext} busy={viewerBusy} error={viewerError} change={index => void navigate(index)} close={closeViewer} returnFocus={previewTrigger} fallbackFocus={heading} denied={denied} /> : null}
     </>}

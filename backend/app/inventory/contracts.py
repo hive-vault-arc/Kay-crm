@@ -9,6 +9,9 @@ from uuid import UUID
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.inventory.received_date import ReceivedDate
+from app.remarks import ImportantRemarks
+
 
 def positive(value: str) -> str:
     if Decimal(value) <= 0:
@@ -16,7 +19,8 @@ def positive(value: str) -> str:
     return value
 
 
-Amount = Annotated[str, Field(pattern=r"^[0-9]{1,16}(\.[0-9]{1,2})?$"), AfterValidator(positive)]
+NonNegativeAmount = Annotated[str, Field(pattern=r"^[0-9]{1,16}(\.[0-9]{1,2})?$")]
+Amount = Annotated[NonNegativeAmount, AfterValidator(positive)]
 ComparisonAmount = Annotated[
     str, Field(pattern=r"^[0-9]{1,18}(\.[0-9]{1,2})?$"), AfterValidator(positive)
 ]
@@ -129,6 +133,8 @@ class StrictBody(BaseModel):
 
 
 class PropertyFields(StrictBody):
+    received_on: ReceivedDate = None
+    important_remarks: ImportantRemarks = None
     reference: str = Field(min_length=1, max_length=80)
     category: Category
     marketing_name: str | None = Field(default=None, min_length=1, max_length=160)
@@ -139,6 +145,8 @@ class PropertyFields(StrictBody):
     unit_type_id: UUID | None = None
     rooms: Annotated[int, Field(strict=True, ge=1, le=1000)] | None = None
     listing_details: ListingDetails | None = None
+    owner_asking_price_mad: Amount | None = None
+    monthly_syndic_fee_mad: NonNegativeAmount | None = None
 
     @field_validator("reference")
     @classmethod

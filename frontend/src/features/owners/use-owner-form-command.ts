@@ -37,7 +37,7 @@ export function useOwnerFormCommand({ contact, subject, actorId, role, available
   }
   async function prove(signal: AbortSignal) { const identity = await apiGet("/api/v1/auth/me", meSchema, signal); if (!active() || signal.aborted) return false; authorize(identity); return true; }
   async function read(id: string, version: number, signal: AbortSignal) {
-    const value = await apiGet(`/api/v1/contacts/${id}`, contactSchema, signal);
+    const value = await apiGet(`/api/v1/contacts/${id}?owner_identity=true`, contactSchema, signal);
     if (value.id !== id) throw new ApiError("NOT_FOUND", 404);
     if (value.version < Math.max(minimum.current.get(id) ?? 0, version) || !contactProjectionValid(value)) throw new ApiError("INVALID_RESPONSE", 503);
     return value;

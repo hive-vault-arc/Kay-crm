@@ -48,6 +48,7 @@ GROUPS = {
         "development_owner",
         "inventory_event",
         "reservation",
+        "property_period",
         "stock_outcome",
         "stock_effect",
         "stock_reversal",

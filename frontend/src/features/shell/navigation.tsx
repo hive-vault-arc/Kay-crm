@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   CalendarIcon,
+  TaskIcon,
   DealIcon,
   PropertyIcon,
   DashboardIcon,
@@ -19,6 +20,7 @@ const destinations = [
   { href: "/dashboard", label: "Tableau de bord", icon: DashboardIcon },
   { href: "/leads", label: "Prospects", icon: ContactsIcon },
   { href: "/deals", label: "Affaires", icon: DealIcon },
+  { href: "/tasks", label: "Tâches", icon: TaskIcon },
   { href: "/visits", label: "Calendrier des visites", icon: CalendarIcon },
   { href: "/contacts", label: "Contacts", icon: ContactIcon },
   { href: "/owners", label: "Propriétaires", icon: OwnerIcon },

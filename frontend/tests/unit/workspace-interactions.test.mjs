@@ -107,12 +107,13 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
     "@/components/shared/record-workspace": { RecordSection: "Section", RecordWorkspace: "Workspace" }, "@/components/shared/record-drawer": { RecordDrawer: "Drawer" },
     "@/components/shared/record-actions": { RecordActions: "Actions" }, "@/components/shared/crm-presentation": { CrmStatusBadge: "Badge" },
     "@/components/shared/page-header": { PageHeader: "PageHeader" }, "@/components/ui/skeleton": { Skeleton: "Skeleton" }, "@/components/icons": {},
+    "@/components/shared/important-remarks": { ImportantRemarks: "Remarks" }, "@/lib/format": loadServer("src/lib/format/index.ts"),
     "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": { useQuery: () => ({ value: development, refreshQuietly() {} }) },
     "@/features/discovery/lifecycle-panel": { LifecyclePanel: "Lifecycle" }, "@/features/files/file-panel": { FilePanel: "Files" },
     "@/features/shares/share-drawer": { ListingShareDrawer: "Share" },
     "./project-edit-link": { ProjectEditLink: "EditLink" }, "./development-contracts": {}, "./development-phase": { DevelopmentPhaseBadge: "Phase" }, "./development-editor": { DevelopmentEditor: "Editor" }, "./hierarchy-panel": { HierarchyPanel: "Hierarchy" },
     "./unit-directory": { UnitDirectory: "Units" }, "./owner-editor": { OwnerEditor: "OwnerEditor" }, "./inventory-history": { InventoryHistory: "History" },
-    "./use-command": { InventoryBusyContext: { Provider: "Provider" } }, "./record-scope": { InventoryRecordContext: { Provider: "RecordScope" } }, "./contracts": { categoryLabels: {} },
+    "./use-command": { InventoryBusyContext: { Provider: "Provider" } }, "./record-scope": { InventoryRecordContext: { Provider: "RecordScope" } }, "./contracts": { categoryLabels: {}, receivedDateLabel: "Date de réception" },
     "./inventory-support": { InventoryPhotoRail: "Photos", InventoryParty: "Party" }, "./inventory-offer-section": { InventoryOfferSection: "Offers" },
   } });
   const render = (role, edit = false) => harness.render(() => DevelopmentRecord({ id: development.id, role, edit }));
@@ -138,8 +139,9 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
   assert.equal(phase.props.children.type, "Phase"); assert.equal(phase.props.children.props.phase, "marketing");
   assert.equal(find(find(render("agent"), "Workspace")[0].props.tabs[0].content, "Fact").length, 4);
   assert.ok(find(render("agent"), "Header")[0].props.reference.includes("Mixte"));
-  development = { ...development, archived_at: "2026-10-26T00:00:00Z" };
+  development = { ...development, received_on: "2025-01-03", archived_at: "2026-10-26T00:00:00Z" };
   const archived = render("manager"), workspace = find(archived, "Workspace")[0];
+  assert.equal(find(workspace.props.tabs[0].content, "Fact").find(node => node.props.label === "Date de réception").props.children, "3 janv. 2025");
   assert.equal(find(render("agent", true), "Editor").length, 0);
   assert.equal(workspace.props.tabs[1].content.props.writable, false);
   assert.equal(find(workspace.props.tabs[0].content, "Offers")[0].props.writable, false);

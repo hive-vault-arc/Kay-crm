@@ -6,11 +6,15 @@ from uuid import UUID
 from pydantic import Field, field_validator
 
 from app.inventory.contracts import Amount, StrictBody, Version
+from app.inventory.received_date import ReceivedDate
+from app.remarks import ImportantRemarks
 
 UnitCategory = Literal["villa", "house", "apartment", "land", "commercial"]
 
 
 class DevelopmentFields(StrictBody):
+    received_on: ReceivedDate = None
+    important_remarks: ImportantRemarks = None
     reference: str = Field(min_length=1, max_length=80)
     name: str = Field(min_length=1, max_length=160)
     category: Literal["mixed", "villa", "house", "apartment", "land", "commercial"] = "mixed"

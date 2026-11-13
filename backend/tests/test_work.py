@@ -15,6 +15,7 @@ from app.schedule.contracts import EditVisit, FinishVisit
 from app.schedule.queries import detail as visit_detail
 from app.work.commands import command
 from app.work.contracts import (
+    CalendarWorkQuery,
     EditTask,
     NewTask,
     NotificationQuery,
@@ -23,7 +24,7 @@ from app.work.contracts import (
     TaskQuery,
 )
 from app.work.notifications import mark_read, read_notifications
-from app.work.queries import detail, follow_up, read_tasks
+from app.work.queries import calendar_work, detail, follow_up, read_tasks
 from app.work.worker import acknowledge, claim, deliver, dispatch, run_once
 from tests.contact_support import actor
 from tests.deal_support import setup
@@ -57,6 +58,48 @@ def new(uid, cid, **changes):
         )
         | changes
     )
+
+
+def test_calendar_lists_only_open_important_work_in_scope_and_period(settings, database):
+    uid, token, cid, _ = setup(settings, database)
+    _, outsider = actor(settings, database)
+    task = run(settings, database, token, new(uid, cid, important=True))
+    reminder = run(
+        settings,
+        database,
+        token,
+        new(uid, cid, important=True, kind="reminder", due_at=CLOCK + timedelta(minutes=1)),
+    )
+    run(settings, database, token, new(uid, cid))
+    run(settings, database, token, new(uid, cid, kind="reminder"))
+    run(
+        settings,
+        database,
+        token,
+        new(uid, cid, important=True, due_at=CLOCK + timedelta(days=1)),
+    )
+    query = CalendarWorkQuery(start_at=CLOCK, end_at=CLOCK + timedelta(days=1), page_size=1)
+    result = calendar_work(database, token, query)
+    assert result["total"] == 2
+    assert [item["id"] for item in result["items"]] == [task["id"]]
+    assert result["has_next"]
+    second = calendar_work(database, token, query.model_copy(update={"page": 2}))
+    assert second["items"][0]["id"] == reminder["id"]
+    assert second["items"][0]["kind"] == "reminder"
+    assert calendar_work(database, outsider, query)["total"] == 0
+
+    tid = UUID(task["id"])
+    edit = EditTask.model_validate(
+        {
+            **new(uid, cid).model_dump(exclude={"contact_id", "important", "kind"}),
+            "expected_version": 1,
+        }
+    )
+    run(settings, database, token, edit, tid)
+    assert calendar_work(database, token, query)["total"] == 2
+    assert detail(database, token, tid)["schedule_version"] == 1
+    run(settings, database, token, TaskAction(expected_version=2), tid, "completed")
+    assert calendar_work(database, token, query)["total"] == 1
 
 
 def test_task_lifecycle_due_read_once_versions_and_scoped_buckets(settings, database):

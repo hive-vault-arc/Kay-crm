@@ -44,9 +44,9 @@ export function CalendarSidebar({ date, today, choose, policy, value, types, sta
 }) {
   return <div className="calendar-sidebar grid min-w-0 gap-3">
     {compact ? <div className="grid gap-2"><Label htmlFor="calendar-filter-date">Aller à une date</Label><Input id="calendar-filter-date" type="date" value={date} min="2000-01-03" max="2100-12-24" onChange={event => choose(event.target.value)} /></div> : <MiniMonth key={date.slice(0, 7)} date={date} today={today} choose={choose} />}
-    <fieldset className="calendar-filter-group"><legend>Type de visite</legend>{visitTypeOrder.map(type => {
+    <fieldset className="calendar-filter-group"><legend>Type de rendez-vous</legend>{visitTypeOrder.map(type => {
       const Icon = visitIcons[type];
-      return <label key={type} className="calendar-filter min-h-control" data-visit-kind={type}><Checkbox checked={types.includes(type)} onCheckedChange={() => toggleType(type)} aria-label={typeLabels[type]} /><Icon aria-hidden="true" className="calendar-kind-icon size-5" /><span className="min-w-0 flex-1">{typeLabels[type]}</span><span className="text-xs tabular-nums text-muted-foreground">{value ? value.type_counts[type] : "…"}</span></label>;
+      return <label key={type} className="calendar-filter min-h-control" data-visit-kind={type}><Checkbox checked={types.includes(type)} onCheckedChange={() => toggleType(type)} aria-label={typeLabels[type]} /><Icon aria-hidden="true" className="calendar-kind-icon size-5" /><span className="min-w-0 flex-1">{typeLabels[type]}</span><span className="text-xs tabular-nums text-muted-foreground">{value ? value.type_counts[type] ?? 0 : "…"}</span></label>;
     })}</fieldset>
     <fieldset className="calendar-filter-group"><legend>Statut</legend>{visitStatusOrder.map(status => {
       const Icon = status === "confirmed" || status === "completed" ? CompletedIcon : status === "cancelled" || status === "not_completed" ? CloseIcon : ClockIcon;

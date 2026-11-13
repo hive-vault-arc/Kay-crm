@@ -1,5 +1,12 @@
 # Local tasks and internal reminders (SP-15)
 
+The sidebar **Tâches** page lists assigned open tasks and reminders by default.
+Staff can switch to all tasks in their current scope, change the state or period,
+and create an item after choosing its contact and exact prospect or deal. Deal
+records have a **Tâches** tab for the exact deal. Existing file scan results stay
+on the file record. The personal inbox and unread count exclude antivirus alerts,
+including older rows, and the file worker no longer creates them.
+
 2026-10-28 selected inbox: the header opens a bounded ten-row compact Popover;
 Tout voir opens the retained twenty-row full drawer with the same filter and
 existing push controls. Both share current-scope read-state/recovery behavior,
@@ -96,7 +103,7 @@ uses real account time. Tests must keep clock manipulation within this boundary.
 
 ## Reads and interface
 
-GET /tasks supports contact_id/deal_id/owner_user_id, bucket=all|today|overdue|
+GET /tasks supports contact_id/deal_id/owner_user_id, bucket=all|open|today|overdue|
 upcoming|completed|cancelled and numbered pages(default50,max100). Scope applies
 before counts/pages, ordered due_at/id. Today is the backend Casablanca civil
 day; overdue means open with due_at before now. An open overdue task due today

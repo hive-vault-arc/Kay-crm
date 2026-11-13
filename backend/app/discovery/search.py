@@ -170,7 +170,7 @@ def projections(
         records.append(
             row("document", Document.id, Document.filename, href(prefix, parent)).where(
                 Document.archived_at.is_(None),
-                Document.purpose != "generated",
+                Document.purpose.not_in(("generated", "identity_card")),
                 Document.template_code.is_(None),
                 parent.in_(ids),
                 Document.filename.ilike(needle, escape="\\"),

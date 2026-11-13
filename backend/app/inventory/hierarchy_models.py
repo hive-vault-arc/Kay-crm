@@ -1,12 +1,13 @@
 """Development-scoped structure; templates never represent physical stock."""
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
     BigInteger,
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     Index,
@@ -34,6 +35,10 @@ class Development(Base):
             name="development_reference",
         ),
         CheckConstraint(
+            "important_remarks IS NULL OR char_length(important_remarks) BETWEEN 1 AND 1000",
+            name="development_important_remarks",
+        ),
+        CheckConstraint(
             "briefing_text IS NULL OR length(briefing_text)<=10000", name="development_briefing"
         ),
         CheckConstraint("version>0", name="development_version"),
@@ -49,6 +54,8 @@ class Development(Base):
     phase: Mapped[str | None] = mapped_column(String(16))
     location: Mapped[str | None] = mapped_column(String(500))
     briefing_text: Mapped[str | None] = mapped_column(Text)
+    received_on: Mapped[date | None] = mapped_column(Date, deferred=True)
+    important_remarks: Mapped[str | None] = mapped_column(Text, deferred=True)
     developer_contact_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("contact.id", ondelete="RESTRICT"), index=True
     )

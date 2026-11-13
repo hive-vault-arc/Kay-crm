@@ -96,6 +96,22 @@ test("property photos: private viewer, browser WebP conversion, cross-page navig
     expect(photos.items.map((item: { filename: string }) => item.filename)).toEqual(expect.arrayContaining(["patio.webp", "sable.webp"]));
     expect(photos.items[0].mime_type).toBe("image/webp");
     expect(photos.items[0].size_bytes).toBeGreaterThan(0);
+    await openPhotos(page);
+    const patio = gallery.locator("li").filter({ has: page.getByRole("heading", { name: "patio.webp", exact: true }) });
+    const choosePatio = patio.getByRole("button", { name: "Définir comme photo principale : patio.webp", exact: true });
+    await expect(choosePatio).toBeEnabled();
+    await choosePatio.focus();
+    await page.keyboard.press("Enter");
+    await expect(patio.getByText("Photo principale", { exact: true })).toBeVisible();
+    await expect(gallery.getByRole("heading", { name: "Galerie", exact: true })).toBeFocused();
+    await page.screenshot({ path: "output/playwright/property-photos/primary-desktop.png" });
+    await closePhotos(page);
+    const coverPath = `/api/v1/documents/cover?parent_kind=property&parent_id=${id}`;
+    await expect.poll(async () => (await (await page.request.get(coverPath)).json()).photo.filename).toBe("patio.webp");
+    const permits = page.waitForResponse(response => response.url().includes("/api/v1/files/permits") && response.request().postDataJSON().document_id === photos.items.find((photo: { filename: string }) => photo.filename === "patio.webp").id);
+    await page.reload();
+    await permits;
+    await expect(page.locator('.kay-inventory-photo-cover img[src^="blob:"]').first()).toBeVisible();
     const invalid = await staffCommand(page, "documents", { parent_kind: "property", parent_id: id, filename: "direct.png", mime_type: "image/png", size_bytes: 100 });
     expect(invalid.status()).toBe(415);
     for (let index = 0; index < 8; index++) {
@@ -111,6 +127,7 @@ test("property photos: private viewer, browser WebP conversion, cross-page navig
     await page.reload();
     await openPhotos(page);
     await expect(gallery.getByText("11 photos", { exact: true })).toBeVisible();
+    await expect(gallery.getByRole("button", { name: /^Définir comme photo principale/ })).toHaveCount(1);
     await gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" }).click();
     await viewer.getByRole("button", { name: "Suivante", exact: true }).click();
     await expect(viewer.getByRole("img", { name: "Photo du dossier : patio.webp" })).toBeVisible();
@@ -137,6 +154,11 @@ test("property photos: private viewer, browser WebP conversion, cross-page navig
     await page.keyboard.press("Escape");
     await expect(gallery.getByRole("button", { name: "Ajouter une photo", exact: true })).toBeVisible();
     await expect(gallery.getByRole("button", { name: "Archiver", exact: true })).toHaveCount(0);
+    const sable = gallery.locator("li").filter({ has: page.getByRole("heading", { name: "sable.webp", exact: true }) });
+    await sable.getByRole("button", { name: "Définir comme photo principale : sable.webp", exact: true }).click();
+    await expect(sable.getByText("Photo principale", { exact: true })).toBeVisible();
+    await sable.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: "output/playwright/property-photos/primary-mobile.png" });
     await uploadPhoto(page, path.resolve("tests/fixtures/projects-reference/patio.png"));
     await expect(gallery.getByText("11 photos")).toBeVisible();
     await expect(gallery.getByText("Analyse réussie")).toHaveCount(2, { timeout: 60_000 });

@@ -30,8 +30,8 @@ test("SP15: deal task due edit, explicit cancellation, refresh and retained cont
     const dealResponse = await staffCommand(page, "deals", dealBody(contactId, "SP15 affaire de suivi"));
     expect(dealResponse.status()).toBe(200); const did = (await dealResponse.json()).id;
     await page.goto(`/deals/${did}`);
-    await page.getByRole("button", { name: "Toutes les tâches", exact: true }).click();
-    const panel = page.getByRole("dialog", { name: "Tâches de l’affaire", exact: true }).getByRole("region", { name: "Tâches du dossier", exact: true });
+    await page.getByRole("tab", { name: "Tâches", exact: true }).click();
+    const panel = page.getByRole("tabpanel", { name: "Tâches", exact: true }).getByRole("region", { name: "Tâches de l’affaire", exact: true });
     await panel.getByRole("button", { name: "Créer une tâche", exact: true }).click();
     await page.getByLabel("Titre de la tâche", { exact: true }).fill("SP15 tâche du dossier affaire");
     const context = await (await page.request.get("/api/v1/work/context")).json();
@@ -58,11 +58,62 @@ test("SP15: deal task due edit, explicit cancellation, refresh and retained cont
     const cancelled = await (await page.request.get(`/api/v1/tasks/${initial.id}`)).json();
     expect(cancelled.status).toBe("cancelled"); expect(cancelled.outcome).toBe("SP15 suivi annulé explicitement"); expect(cancelled.schedule_version).toBe(3);
     expect((await (await page.request.get(`/api/v1/tasks/${initial.id}/history`)).json()).total).toBe(3);
+    await page.goto(`/deals/${did}?task=${initial.id}`);
+    await expect(page.getByRole("tab", { name: "Tâches", exact: true })).toHaveAttribute("aria-selected", "true");
+    await expect(selected.getByRole("heading", { name: "SP15 tâche du dossier affaire", exact: true })).toBeVisible();
     await page.reload();
-    await page.getByRole("button", { name: "Toutes les tâches", exact: true }).click();
+    await page.getByRole("tab", { name: "Tâches", exact: true }).click();
     await panel.getByRole("button", { name: "SP15 tâche du dossier affaire", exact: true }).click();
     await expect(selected.getByText("Tâche conservée en lecture seule. Son historique reste disponible.", { exact: true })).toBeVisible();
   } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
+});
+
+test("Tasks directory creates a dossier reminder, filters it and opens its record", async ({ page }) => {
+  test.setTimeout(150_000);
+  const actors: TestActor[] = [];
+  try {
+    await workFixture(page, actors);
+    await page.getByRole("navigation", { name: "Navigation principale" })
+      .getByRole("link", { name: "Tâches", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Tâches", exact: true, level: 1 })).toBeVisible();
+    await page.getByRole("button", { name: "Nouvelle tâche", exact: true }).click();
+    const drawer = page.getByRole("dialog", { name: "Nouvelle tâche", exact: true });
+    await drawer.getByRole("button", { name: "Choisir SP15 contact synthétique", exact: true }).click();
+    await selectFirstProspect(page);
+    await drawer.getByLabel("Titre de la tâche", { exact: true }).fill("Rappel synthétique du répertoire");
+    await drawer.getByLabel("Type", { exact: true }).selectOption("reminder");
+    const context = (await (await page.request.get("/api/v1/work/context")).json());
+    await setTaskDue(page, `${context.today}T12:00`);
+    await drawer.getByRole("button", { name: "Enregistrer la tâche", exact: true }).click();
+    await expect(drawer).toBeHidden();
+    const task = page.getByRole("button", { name: "Rappel synthétique du répertoire", exact: true });
+    await expect(task).toBeVisible();
+    await page.getByLabel("État ou période", { exact: true }).selectOption("completed");
+    await expect(task).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Aucune échéance pour ces filtres", exact: true })).toBeVisible();
+    await page.getByLabel("État ou période", { exact: true }).selectOption("open");
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(task).toBeVisible();
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    await task.click();
+    const detail = page.getByRole("dialog", { name: "Détail de la tâche", exact: true });
+    await expect(detail.getByRole("heading", { name: "Rappel synthétique du répertoire", exact: true })).toBeFocused();
+    await detail.getByRole("button", { name: "Fermer la tâche", exact: true }).click();
+    await expect(task).toBeFocused();
+    const { items } = await (await page.request.get("/api/v1/tasks?bucket=open")).json();
+    const due = new Date(items[0].due_at);
+    await runReminders(new Date(due.getTime() - 24 * 60 * 60_000));
+    await runReminders(new Date(due.getTime() - 60 * 60_000));
+    await runReminders(due);
+    const inbox = await (await page.request.get("/api/v1/notifications")).json();
+    expect(inbox.items.map((item: { title: string }) => item.title).sort()).toEqual([
+      "Rappel prévu : H-1", "Rappel prévu : J-1", "Rappel à traiter",
+    ]);
+  } finally {
+    await clearActorContext(page);
+    await testControl("worker-start");
+    for (const actor of actors) await removeActor(actor);
+  }
 });
 
 test("SP15 AT-17/23: task creation, overdue delivery/read and completion in current scope", async ({ page }) => {

@@ -20,7 +20,7 @@ for (const [width, level] of [[1440, "development"], [390, "property"]] as const
     await page.goto(route); await page.getByRole("button", { name: "Créer une offre de vente", exact: true }).click();
     const create = page.getByRole("dialog", { name: "Créer une offre de vente", exact: true }), form = create.getByRole("form", { name: "Créer la campagne vente", exact: true });
     await expect(create.getByRole("form")).toHaveCount(1); await expect(create.getByRole("table")).toHaveCount(0);
-    await form.getByLabel("Prix (MAD, facultatif)", { exact: true }).fill("1000000,50"); await form.getByLabel("Conditions d’origine (facultatives)", { exact: true }).fill("Conditions synthétiques");
+    await form.getByLabel("Prix (MAD, facultatif)", { exact: true }).fill("1000000,50"); await form.getByLabel("Conditions de vente (facultatives)", { exact: true }).fill("Conditions synthétiques");
     await form.getByRole("button", { name: "Annuler", exact: true }).click();
     const discard = page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true }); await expect(discard).toBeVisible(); await discard.getByRole("button", { name: "Continuer la modification", exact: true }).click();
     await expect(form.getByLabel("Prix (MAD, facultatif)", { exact: true })).toHaveValue("1000000,50"); await form.getByRole("button", { name: "Créer la campagne", exact: true }).click(); await expect(create).toHaveCount(0);
@@ -34,6 +34,15 @@ for (const [width, level] of [[1440, "development"], [390, "property"]] as const
     await edit.getByRole("button", { name: "Enregistrer la campagne", exact: true }).click(); await edit.getByRole("button", { name: "Comparer l’offre actuelle", exact: true }).click();
     await expect(edit.getByLabel("Prix (MAD, facultatif)", { exact: true })).toHaveValue("1100000.75"); await edit.getByRole("button", { name: "Conserver ma saisie sur cette version", exact: true }).click(); await edit.getByRole("button", { name: "Enregistrer la campagne", exact: true }).click(); await expect(edit).toHaveCount(0);
     const after = await (await page.request.get(`/api/v1/${root}/${id}`)).json(); expect(after.offerings.find((item: { id: string }) => item.id === offer.id).price_mad).toBe("1100000.75");
+    if (level === "property") {
+      await page.getByRole("button", { name: "Créer une offre de location", exact: true }).click();
+      const rental = page.getByRole("form", { name: "Créer la campagne location", exact: true });
+      await rental.getByLabel("Conditions de location (facultatives)", { exact: true }).fill("Animaux acceptés sur accord.");
+      await rental.getByRole("button", { name: "Créer la campagne", exact: true }).click();
+      await expect(rental).toBeHidden();
+      await expect(page.getByText("Conditions de location", { exact: true })).toBeVisible();
+      await expect(page.getByText("Animaux acceptés sur accord.", { exact: true })).toBeVisible();
+    }
     await clearActorContext(page); await signIn(page, agent); await page.goto(route); await expect(page.getByRole("button", { name: "Modifier la campagne vente", exact: true })).toHaveCount(0); await expect(page.getByRole("button", { name: "Confirmer la disponibilité vente", exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   } finally { await clearActorContext(page); await removeActor(agent); await removeActor(manager); }

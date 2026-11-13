@@ -1,18 +1,20 @@
 """Standalone assets, distinct campaigns and durable typed provenance."""
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
     BigInteger,
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     Index,
     LargeBinary,
     Numeric,
     String,
+    Text,
     func,
     text,
 )
@@ -38,7 +40,19 @@ class Property(Base):
         CheckConstraint(
             "area_sqm IS NULL OR area_sqm != 'NaN'::numeric", name="property_area_finite"
         ),
+        CheckConstraint(
+            "owner_asking_price_mad > 0 AND owner_asking_price_mad != 'NaN'::numeric",
+            name="property_owner_asking_price",
+        ),
+        CheckConstraint(
+            "monthly_syndic_fee_mad >= 0 AND monthly_syndic_fee_mad != 'NaN'::numeric",
+            name="property_monthly_syndic_fee",
+        ),
         CheckConstraint("version > 0", name="property_version"),
+        CheckConstraint(
+            "important_remarks IS NULL OR char_length(important_remarks) BETWEEN 1 AND 1000",
+            name="property_important_remarks",
+        ),
         CheckConstraint("rooms IS NULL OR rooms BETWEEN 1 AND 1000", name="property_rooms"),
         Index("ix_property_updated_id", "updated_at", "id"),
     )
@@ -51,6 +65,10 @@ class Property(Base):
         JSONB, nullable=False, server_default=text("'{}'::jsonb")
     )
     area_sqm: Mapped[Decimal | None] = mapped_column(Numeric(18, 2))
+    received_on: Mapped[date | None] = mapped_column(Date, deferred=True)
+    important_remarks: Mapped[str | None] = mapped_column(Text, deferred=True)
+    owner_asking_price_mad: Mapped[Decimal | None] = mapped_column(Numeric(18, 2))
+    monthly_syndic_fee_mad: Mapped[Decimal | None] = mapped_column(Numeric(18, 2))
     development_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("development.id", ondelete="RESTRICT"), index=True
     )

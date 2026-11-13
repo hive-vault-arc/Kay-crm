@@ -46,6 +46,7 @@
 .kay-calendar-entry-main > span { color:var(--workspace-muted); }
 .kay-calendar-entry-main .kay-calendar-entry-time { color:var(--workspace-ink); font-weight:500; font-size:12px; }
 .kay-calendar-entry:has(.kay-calendar-entry-link:hover) { border-color:var(--workspace-line); background:var(--workspace-hover); }
+.calendar-agenda-visit[data-calendar-priority] { background:var(--status-warning-background); }
 .kay-calendar-entry-link:hover strong { text-decoration:underline; }
 .kay-calendar-entry > [data-slot=button] { flex:none; margin:4px 4px 0 0; }
 .kay-calendar-tile .kay-calendar-entry-link { display:grid; align-items:start; gap:8px; padding:10px; }

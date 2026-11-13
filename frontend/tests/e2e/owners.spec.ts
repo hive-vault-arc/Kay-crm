@@ -23,7 +23,9 @@ test("propriétaire: create, private scope, inventory history and former link", 
     await expect.poll(() => /^\/owners\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
     const ownerId = new URL(page.url()).pathname.split("/")[2];
     await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: `Appeler ${phone}`, exact: true })).toHaveAttribute("href", `tel:${phone}`);
+    const whatsapp = page.getByRole("link", { name: `Ouvrir WhatsApp pour ${phone}`, exact: true });
+    await expect(whatsapp).toHaveAttribute("href", `https://wa.me/${phone.slice(1)}`);
+    await expect(whatsapp).toHaveAttribute("rel", "noopener noreferrer");
     await page.goto("/owners");
     await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
     await expect(page.locator('header [aria-live="polite"]').filter({ hasText: /^1 propriétaire$/ })).toBeVisible();
@@ -66,6 +68,7 @@ test("propriétaire: create, private scope, inventory history and former link", 
     await expect(page.getByRole("heading", { name: "Aucun propriétaire enregistré", exact: true })).toBeVisible();
     await page.goto(`/owners/${ownerId}`);
     await expect(page.getByText("Cette fiche est introuvable ou vous n’y avez plus accès.")).toBeVisible();
+    await expect(page.getByRole("link", { name: /Ouvrir WhatsApp/ })).toHaveCount(0);
 
     await clearActorContext(page); await signIn(page, manager);
     const property = await (await page.request.get(`/api/v1/properties/${propertyId}`)).json();

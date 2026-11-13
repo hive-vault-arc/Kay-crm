@@ -78,7 +78,7 @@ test("Selected glyphs preserve every semantic export, source shape hash and acce
   for (const item of selected.icons) {
     assert.equal(createHash("sha256").update(JSON.stringify(item.nodes)).digest("hex"), item.sha256);
     const html = renderToStaticMarkup(createElement(icons[item.export], { size: 20 }));
-    assert.ok(html.includes('data-icon-family="lucide"'));assert.ok(html.includes('aria-hidden="true"'));assert.ok(html.includes('width="20"'));
+    assert.ok(html.includes(`data-icon-family="${item.family ?? "lucide"}"`));assert.ok(html.includes('aria-hidden="true"'));assert.ok(html.includes('width="20"'));
     const labelled = renderToStaticMarkup(createElement(icons[item.export], { label: "Action test" }));
     assert.ok(labelled.includes('role="img"'));assert.ok(labelled.includes('aria-label="Action test"'));assert.ok(!labelled.includes('aria-hidden="true"'));
   }

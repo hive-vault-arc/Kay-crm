@@ -44,6 +44,12 @@ def replace_values(session: Session, contact: Contact, body: ContactFields, acto
         contact.birth_date = None
     elif "birth_date" in body.model_fields_set:
         contact.birth_date = body.birth_date
+    if contact.type != "person":
+        contact.national_id_number = None
+    elif "national_id_number" in body.model_fields_set:
+        contact.national_id_number = body.national_id_number
+    if "important_remarks" in body.model_fields_set:
+        contact.important_remarks = body.important_remarks
     now = datetime.now(UTC)
     for model in (ContactPhone, ContactEmail):
         session.execute(

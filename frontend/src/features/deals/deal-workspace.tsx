@@ -24,7 +24,7 @@ import { OfferingFacts } from "@/features/requirements/offering-card";
 import { RequirementPanel } from "@/features/requirements/requirement-panel";
 import { ProjectLinksPanel } from "@/features/project-links/project-links-panel";
 import { ContactVisits } from "@/features/schedule/contact-visits";
-import { RecordSupportTasks } from "@/features/work/record-support-tasks";
+import { TaskPanel } from "@/features/work/task-panel";
 import { FinancePanel } from "@/features/finance/finance-panel";
 import type { ApiError } from "@/lib/api/client";
 import type { EntryDenied } from "@/features/activities/use-entry-command";
@@ -53,7 +53,7 @@ export function DealWorkspace({ deal, role, actorId, lifecycleHeldChanged, lifec
     {deal.stock_review_required ? <p role="status" className="mb-3 text-sm text-warning">Le stock lié a changé. Faites vérifier cette affaire par un responsable. Elle n’a pas été clôturée automatiquement.</p> : null}
     {deal.reservation_conflict ? <p role="status" className="mb-3 text-sm text-warning">{deal.reservation_conflict === "DEVELOPMENT_OVERLAP" ? "Une réservation du même type couvre déjà le programme entier ou une de ses unités." : "Cette offre est déjà réservée par une autre affaire."} Faites vérifier le stock par un responsable. Aucun autre dossier privé n’est affiché.</p> : null}
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}{followUpNotice ? <p role="status" className="mb-3 text-sm text-success">{followUpNotice}</p> : null}{commandState}
-    <RecordWorkspace label="Rubriques de l’affaire" initialTab={initialTab} tabs={[
+    <RecordWorkspace label="Rubriques de l’affaire" initialTab={initialTask ? "tasks" : initialTab} tabs={[
       { id: "overview", label: "Aperçu", content: <>
         <ContactProfilePanel salesRecord actorId={actorId} role={role} contact={deal.contact} writable={writable} changed={contactChanged} denied={denied} />
         <RecordSection title="Qualification"><RecordFacts>
@@ -70,9 +70,10 @@ export function DealWorkspace({ deal, role, actorId, lifecycleHeldChanged, lifec
       </> },
       { id: "projects", label: "Projets", content: <><RecordSection title="Projet et offre retenus"><RecordFacts columns={1}><DealInlineField {...inline} icon={PropertyIcon} label="Projets" field="projects" display={deal.projects.map(project => project.name).join(" · ") || "Non renseignés"} /></RecordFacts><div className="grid min-w-0 gap-3"><h3 className="text-sm font-medium">Offre d’inventaire liée</h3>{deal.offering ? <OfferingFacts offering={deal.offering} /> : <p className="text-sm text-muted-foreground">Aucune offre d’inventaire liée.</p>}</div></RecordSection><ProjectLinksPanel scope="deals" id={deal.id} writable={canAct} onChanged={() => setHistoryRevision(value => value + 1)} /><CustomerOffers key={deal.id} deal={deal} writable={writable} busy={busy} busyChanged={busyChanged} mutate={mutate} error={error} denied={denied} recovery={recovery} /></> },
       { id: "activity", label: "Activités", content: <div className="kay-sales-history"><ActivityHistory scope="deals" id={deal.id} writable={canAct} denied={denied} revision={deal.version + historyRevision} />{deal.enquiry_id ? <ActivityHistory scope="deals" id={deal.id} origin /> : null}<details className="kay-contact-more"><summary>Historique de l’affaire <ChevronDownIcon size={16} aria-hidden="true" /></summary><DealHistory id={deal.id} revision={deal.version} /></details><details className="kay-contact-more"><summary>Résultats, clôture et réouverture <ChevronDownIcon size={16} aria-hidden="true" /></summary><OutcomeHistory id={deal.id} revision={deal.version} /></details></div> },
+      { id: "tasks", label: "Tâches", content: <TaskPanel title="Tâches de l’affaire" contactId={deal.contact.id} dealId={deal.id} writable={canAct} initialTask={initialTask} /> },
       { id: "documents", label: "Documents", content: <><FilePanel actorId={actorId} role={role} parentKind="deal" parentId={deal.id} writable={writable && !busy} /><PreparedDocuments parentKind="deal" id={deal.id} /></> },
     ]} aside={<>
-      <RecordSection title="Suivi"><RecordFacts columns={1}><DealInlineField {...inline} icon={DealIcon} label="Action prévue" field="next_action" display={<span className="whitespace-pre-wrap">{deal.next_action || "Aucune prochaine action renseignée."}</span>} /></RecordFacts><RecordSupportTasks contactId={deal.contact.id} dealId={deal.id} writable={canAct} initialTask={initialTask} onSaved={() => setFollowUpNotice("Tâche enregistrée.")} />
+      <RecordSection title="Suivi"><RecordFacts columns={1}><DealInlineField {...inline} icon={DealIcon} label="Action prévue" field="next_action" display={<span className="whitespace-pre-wrap">{deal.next_action || "Aucune prochaine action renseignée."}</span>} /></RecordFacts><Button asChild action="task" variant="outline"><Link href={`/deals/${deal.id}?tab=tasks`}>Voir les tâches</Link></Button>
         {canAct ? <div className="kay-record-support-actions">
           <RecordDrawer label="Consigner un échange" action="activity" description="Ajoutez une note ou un échange à l’historique de l’affaire.">
             {(close, saved) => <ActivityForm path={`/api/v1/deals/${deal.id}/activities`} denied={denied} cancel={close} saved={() => { saved(); setFollowUpNotice("Activité enregistrée."); setHistoryRevision(value => value + 1); }} />}

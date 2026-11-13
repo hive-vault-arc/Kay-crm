@@ -1,6 +1,7 @@
 "use client";
 import type { ReactNode } from "react";
-import { CalendarIcon, ContactIcon, ContactsIcon, EmailIcon, LocationIcon, PhoneIcon } from "@/components/icons";
+import { CalendarIcon, ContactIcon, ContactsIcon, EmailIcon, FileIcon, LocationIcon, PhoneIcon } from "@/components/icons";
+import { ImportantRemarks } from "@/components/shared/important-remarks";
 import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
 import { RecordSection } from "@/components/shared/record-workspace";
 import { ContactInlineField } from "@/features/contacts/contact-inline-field";
@@ -18,16 +19,20 @@ export function OwnerDetails({ contact, compact = false, saved, denied, editActi
     return <span className="whitespace-pre-wrap">{values.join("\n") || (primary ? "Non renseigné" : "Aucun")}</span>;
   };
   return <>
+    {!compact && contact.important_remarks ? <ImportantRemarks value={contact.important_remarks} /> : null}
     <RecordSection title="Coordonnées" action={editAction}><RecordFacts>
       <ContactInlineField {...inline} icon={ContactIcon} field="name" label="Nom complet" />
-      <ContactInlineField {...inline} icon={PhoneIcon} field="phones" methodScope="primary" label="Téléphone principal" display={methods("phones", true)} />
+      <ContactInlineField {...inline} icon={PhoneIcon} field="phones" phoneAction="whatsapp" methodScope="primary" label="Téléphone principal" display={methods("phones", true)} />
       <ContactInlineField {...inline} icon={EmailIcon} field="emails" methodScope="primary" label="E-mail principal" display={methods("emails", true)} />
       <ContactInlineField {...inline} icon={ContactIcon} field="languages" label="Langues" />
       {!compact ? <>
         <ContactInlineField {...inline} icon={LocationIcon} field="country" label="Pays de résidence" />
         <ContactInlineField {...inline} icon={LocationIcon} field="nationality" label="Nationalité" />
-        {inline.contact.type === "person" ? <ContactInlineField {...inline} icon={CalendarIcon} field="birth_date" label="Date de naissance" /> : null}
-        <ContactInlineField {...inline} icon={PhoneIcon} field="phones" methodScope="secondary" label="Téléphones secondaires" display={methods("phones", false)} />
+        {contact.type === "person" ? <>
+          <ContactInlineField {...inline} icon={CalendarIcon} field="birth_date" label="Date de naissance" />
+          <RecordFact icon={FileIcon} label="Numéro de carte nationale (CIN)">{contact.national_id_number ? `•••• ${contact.national_id_number.slice(-2)}` : "Non renseigné"}</RecordFact>
+        </> : null}
+        <ContactInlineField {...inline} icon={PhoneIcon} field="phones" phoneAction="whatsapp" methodScope="secondary" label="Téléphones secondaires" display={methods("phones", false)} />
         <ContactInlineField {...inline} icon={EmailIcon} field="emails" methodScope="secondary" label="E-mails secondaires" display={methods("emails", false)} />
       </> : null}
     </RecordFacts></RecordSection>

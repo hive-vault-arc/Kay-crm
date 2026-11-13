@@ -5,6 +5,7 @@ import { TaskIcon } from "@/components/icons";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -36,6 +37,8 @@ function Editor({ contactId, dealId, enquiryId, value, currentUser, owners, save
   useEffect(() => { if (hydrated) titleInput.current?.focus(); }, [hydrated]);
   const followUp = presentation === "follow-up";
   const [title, setTitle] = useState(value?.title ?? (followUp ? "Relance du prospect" : "")), [notes, setNotes] = useState(value?.notes ?? "");
+  const [important, setImportant] = useState(value?.important ?? false);
+  const [kind, setKind] = useState<"task" | "reminder">(value?.kind ?? (followUp ? "reminder" : "task"));
   const [owner, setOwner] = useState(value?.owner_user_id ?? (owners.some(u => u.id === currentUser) ? currentUser : ""));
   const [context, setContext] = useState<WorkContext>({ enquiry_id: value?.enquiry_id ?? enquiryId ?? null, deal_id: value?.deal_id ?? dealId ?? null });
   const [local, setLocal] = useState(value?.due_local.slice(0, 16) ?? ""), [due, setDue] = useState(value?.due_at ?? "");
@@ -43,14 +46,15 @@ function Editor({ contactId, dealId, enquiryId, value, currentUser, owners, save
   const [baseVersion, setBaseVersion] = useState(value?.version), [comparison, setComparison] = useState<Task>();
   const [busy, setBusy] = useState(false), [error, setError] = useState<ApiError>(), [invalid, setInvalid] = useState("");
   const attempt = useRef({ fingerprint: "", key: "" }), lock = useRef(false);
-  const draft = useDossierDraft({ title, notes, owner, context, local, due, propertyId }, busy);
+  const draft = useDossierDraft({ title, notes, important, kind, owner, context, local, due, propertyId }, busy);
   const guard = useUnsavedGuard();
   const denied = error && ["NOT_FOUND", "FORBIDDEN", "UNAUTHENTICATED"].includes(error.code);
   const blocked = error?.code === "CONTACT_ARCHIVED" || comparison?.status !== undefined && comparison.status !== "open" || comparison?.contact_archived;
   async function submit() {
     if (lock.current || blocked) return;
     if (!value && !context.enquiry_id && !context.deal_id) { setInvalid("Choisissez le prospect ou l’affaire concernée."); return; }
-    const fields = { title, notes, owner_user_id: owner, due_at: due, ...context, property_id: propertyId };
+    const fields = { title, notes, ...(important || value?.important ? { important } : {}),
+      ...(kind === "reminder" || value?.kind === "reminder" ? { kind } : {}), owner_user_id: owner, due_at: due, ...context, property_id: propertyId };
     const parsed = value ? editTaskSchema.safeParse({ ...fields, expected_version: baseVersion }) : newTaskSchema.safeParse({ ...fields, contact_id: contactId });
     if (!parsed.success) { setInvalid("Renseignez le titre, un responsable autorisé et une échéance valide. Choisissez l’occurrence si l’heure est répétée."); return; }
     setInvalid(""); setError(undefined); setComparison(undefined); setBusy(true); lock.current = true;
@@ -82,6 +86,13 @@ function Editor({ contactId, dealId, enquiryId, value, currentUser, owners, save
       {!value && !dealId && !enquiryId ? <WorkContextSelect contactId={contactId} value={context} change={setContext} /> : null}
       <WorkPropertySelect value={propertyId} change={setPropertyId} />
       </>}
+      {!followUp ? <div className="grid gap-2"><Label htmlFor={`${id}-kind`}>Type</Label><NativeSelect id={`${id}-kind`} value={kind} onChange={event => setKind(event.target.value === "reminder" ? "reminder" : "task")}><option value="task">Tâche</option><option value="reminder">Rappel</option></NativeSelect></div> : null}
+      <div className="grid gap-1">
+        <Label className="flex min-h-control items-center gap-2">
+          <Checkbox checked={important} onCheckedChange={checked => setImportant(checked === true)} aria-describedby={`${id}-importance`} />Important
+        </Label>
+        <p id={`${id}-importance`} className="text-xs text-muted-foreground">Afficher cette échéance dans le calendrier.</p>
+      </div>
     </fieldset>
     {!followUp ? <p className="text-sm text-muted-foreground">Alertes internes 24 h et 1 h avant l’échéance, puis à l’heure prévue. Aucun e-mail, SMS ou message externe n’est envoyé.</p> : null}
     {invalid ? <p id={`${id}-invalid`} role="alert" className="text-danger">{invalid}</p> : null}

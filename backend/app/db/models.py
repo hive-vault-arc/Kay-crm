@@ -15,6 +15,7 @@ from app.intake import models as intake_models  # noqa: F401
 from app.inventory import (
     hierarchy_models,  # noqa: F401
     outcome_models,  # noqa: F401
+    period_models,  # noqa: F401
     reservation_models,  # noqa: F401
 )
 from app.inventory import models as inventory_models  # noqa: F401

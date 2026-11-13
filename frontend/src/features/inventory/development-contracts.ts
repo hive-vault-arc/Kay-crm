@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { importantRemarksSchema } from "@/lib/api/important-remarks";
 import { numberedPage } from "@/features/contacts/contracts";
-import { inventoryQuerySchema, offeringSchema, propertySummarySchema, developmentPhaseSchema } from "./contracts";
+import { inventoryQuerySchema, offeringSchema, propertySummarySchema, developmentPhaseSchema, receivedDateInputSchema, receivedDateValueSchema } from "./contracts";
 
 export const developmentPhaseLabels = { preparation: "Préparation", marketing: "Commercialisation" } as const;
 export const programmePhaseLabel = (phase: z.infer<typeof developmentPhaseSchema> | null) => phase ? developmentPhaseLabels[phase] : "À renseigner";
@@ -9,11 +10,11 @@ const date = z.iso.datetime({ offset: true });
 const nullableText = (max: number) => z.string().trim().min(1).max(max).nullable();
 const contact = z.object({ id: z.uuid(), name: z.string().max(160) }).strict().nullable();
 export const safeLinkSchema = z.object({ marketing_display: z.string().max(160).nullable(), contact }).strict();
-export const developmentFieldsSchema = z.object({ reference: z.string().trim().min(1).max(80), name: z.string().trim().min(1).max(160), category: z.enum(["mixed", "villa", "house", "apartment", "land", "commercial"]), location: nullableText(500), briefing_text: z.string().trim().refine(value => [...value].length <= 10000).nullable(), developer_contact_id: z.uuid().nullable(), developer_marketing_display: nullableText(160), phase: developmentPhaseSchema.nullable().optional() }).strict();
+export const developmentFieldsSchema = z.object({ reference: z.string().trim().min(1).max(80), name: z.string().trim().min(1).max(160), category: z.enum(["mixed", "villa", "house", "apartment", "land", "commercial"]), location: nullableText(500), briefing_text: z.string().trim().refine(value => [...value].length <= 10000).nullable(), developer_contact_id: z.uuid().nullable(), developer_marketing_display: nullableText(160), phase: developmentPhaseSchema.nullable().optional(), received_on: receivedDateInputSchema, important_remarks: importantRemarksSchema }).strict();
 export const developmentQuerySchema = inventoryQuerySchema.extend({ category: developmentFieldsSchema.shape.category.optional(), phase: developmentPhaseSchema.optional() });
 export const editDevelopmentSchema = developmentFieldsSchema.extend({ expected_version: version, developer_contact_id: z.uuid().nullable().optional() });
 export const developmentSummarySchema = z.object({ id: z.uuid(), reference: z.string().max(80), name: z.string().max(160), category: developmentFieldsSchema.shape.category, location: z.string().max(500).nullable(), version, created_at: date, updated_at: date, archived_at: date.nullable(), unit_count: z.number().int().nonnegative(), available_unit_count: z.number().int().nonnegative(), offerings: z.array(offeringSchema).max(2), phase: developmentPhaseSchema.nullable().optional(), phase_supported: z.literal(true).optional() }).strict().refine(value => (value.phase_supported === true) === (value.phase !== undefined), "INCOHERENT_DEVELOPMENT_PHASE");
-export const developmentSchema = developmentSummarySchema.safeExtend({ briefing_text: z.string().refine(value => [...value].length <= 10000).nullable(), developer: safeLinkSchema, owners: z.array(safeLinkSchema).max(100) });
+export const developmentSchema = developmentSummarySchema.safeExtend({ briefing_text: z.string().refine(value => [...value].length <= 10000).nullable(), received_on: receivedDateValueSchema, important_remarks: importantRemarksSchema, developer: safeLinkSchema, owners: z.array(safeLinkSchema).max(100) });
 export const developmentsSchema = numberedPage(developmentSummarySchema).extend({ phase_supported: z.literal(true).optional() }).refine(value => value.items.every(item => (item.phase_supported === true) === (value.phase_supported === true)), "INCOHERENT_DEVELOPMENT_PHASE_PAGE");
 const level = { id: z.uuid(), code: z.string().max(40), label: z.string().max(160) };
 export const blockSchema = z.object({ ...level, development_id: z.uuid(), display_order: z.number().int().nonnegative() }).strict();

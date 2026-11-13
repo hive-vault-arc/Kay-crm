@@ -35,6 +35,7 @@ def test_facets_span_all_pages_and_filters_combine_without_leaking_scope(setting
         "office": 51,
         "company_car": 1,
         "without_company_car": 0,
+        "meeting": 0,
     }
     filtered = read_visits(database, token, period(types="company_car", statuses="confirmed"))
     assert filtered["total"] == 1 and filtered["items"][0]["id"] == car["id"]

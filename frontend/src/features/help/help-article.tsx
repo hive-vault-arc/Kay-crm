@@ -6,7 +6,7 @@ import { helpCategoryIcons } from "./category-icon";
 import { helpArticlePath, helpDirectoryPath, type HelpNavigation } from "./navigation";
 import type { HelpArticle as Article } from "./types";
 
-const locations: Record<string, string> = { "/dashboard": "Tableau de bord", "/leads/new": "Prospects → Nouveau prospect", "/leads": "Prospects → Ouvrir une fiche", "/deals": "Affaires → Ouvrir une fiche", "/projects": "Projets", "/projects/properties/new": "Projets → Nouveau bien", "/owners": "Propriétaires", "/visits": "Calendrier des visites", "/settings/users": "Paramètres → Utilisateurs", "/notifications": "Cloche → Notifications" };
+const locations: Record<string, string> = { "/dashboard": "Tableau de bord", "/leads/new": "Prospects → Nouveau prospect", "/leads": "Prospects → Ouvrir une fiche", "/deals": "Affaires → Ouvrir une fiche", "/projects": "Projets", "/projects/properties/new": "Projets → Nouveau bien", "/owners": "Propriétaires", "/visits": "Calendrier des visites", "/tasks": "Tâches", "/settings/users": "Paramètres → Utilisateurs", "/notifications": "Cloche → Notifications" };
 
 export function HelpArticle({ article, related, navigation }: { article: Article; related: Article[]; navigation?: HelpNavigation }) {
   const Icon = helpCategoryIcons[article.category];

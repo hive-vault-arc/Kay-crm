@@ -9,14 +9,10 @@ from sqlalchemy.orm import Session
 from app.contacts.access import contact_scope
 from app.contacts.models import Contact
 from app.db.session import Database
-from app.deals.models import Deal
-from app.files.models import Document, Notification
-from app.files.service import parent
+from app.files.models import Notification
 from app.identity.models import AGENCY_ID, Agency, User
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
-from app.inventory.hierarchy_models import Development
-from app.inventory.models import Property
 from app.schedule.models import Visit, VisitParticipant
 from app.schedule.rules import ACTIVE, ZONE
 from app.work.contracts import NotificationQuery
@@ -64,47 +60,31 @@ def scope(identity: CurrentIdentity) -> ColumnElement[bool]:
         )
         .exists()
     )
-    document = (
-        select(Document.id)
-        .where(
-            Document.id == Notification.document_id,
-            Document.archived_at.is_(None),
-            or_(
-                contact_allowed(Document.contact_id),
-                select(Deal.id)
-                .where(Deal.id == Document.deal_id, contact_allowed(Deal.contact_id))
-                .exists(),
-                select(Property.id).where(Property.id == Document.property_id).exists(),
-                select(Development.id)
-                .where(Development.id == Document.development_id, Development.archived_at.is_(None))
-                .exists(),
-            ),
-        )
-        .exists()
-    )
-    return and_(Notification.user_id == identity.user.id, or_(task, visit, document))
+    return and_(Notification.user_id == identity.user.id, or_(task, visit))
 
 
 def view(session: Session, row: Notification) -> dict[str, object]:
-    title, context, href, due = "Analyse du fichier terminée", "Fichier", None, None
     if row.task_id:
         task = session.get(Task, row.task_id)
         if task is None:
             raise IdentityError("NOT_FOUND", 404)
-        title, context, due = (
-            {
-                "task.reminder.day": "Rappel de tâche : J-1",
-                "task.reminder.hour": "Rappel de tâche : H-1",
-                "task.due": "Échéance de tâche",
-            }[row.kind],
-            task.title,
-            task.due_at.astimezone(ZONE).isoformat(),
-        )
-        href = (
-            f"/deals/{task.deal_id}?task={task.id}"
-            if task.deal_id
-            else f"/contacts/{task.contact_id}?task={task.id}"
-        )
+        titles = {
+            "task.reminder.day": "Rappel de tâche : J-1",
+            "task.reminder.hour": "Rappel de tâche : H-1",
+            "task.due": "Échéance de tâche",
+        }
+        if task.kind == "reminder":
+            titles = {
+                "task.reminder.day": "Rappel prévu : J-1",
+                "task.reminder.hour": "Rappel prévu : H-1",
+                "task.due": "Rappel à traiter",
+            }
+        title, context = titles[row.kind], task.title
+        due = task.due_at.astimezone(ZONE).isoformat()
+        if task.deal_id:
+            href = f"/deals/{task.deal_id}?task={task.id}"
+        else:
+            href = f"/contacts/{task.contact_id}?task={task.id}"
     elif row.visit_id:
         visit = session.get(Visit, row.visit_id)
         if visit is None:
@@ -123,18 +103,8 @@ def view(session: Session, row: Notification) -> dict[str, object]:
             .astimezone(ZONE)
             .isoformat(),
         )
-    elif row.document_id:
-        document = session.get(Document, row.document_id)
-        if document is None:
-            raise IdentityError("NOT_FOUND", 404)
-        kind, pid = parent(document)
-        routes = {
-            "contact": "contacts",
-            "deal": "deals",
-            "property": "projects/properties",
-            "development": "projects",
-        }
-        href = f"/{routes[kind]}/{pid}"
+    else:
+        raise IdentityError("NOT_FOUND", 404)
     return {
         "id": str(row.id),
         "kind": row.kind,

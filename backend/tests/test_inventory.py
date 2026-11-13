@@ -18,6 +18,7 @@ from app.identity.security import IdentityError
 from app.inventory.commands import command
 from app.inventory.contracts import (
     ConfirmAvailability,
+    CreateProperty,
     EditOffering,
     EditProperty,
     InventoryQuery,
@@ -135,6 +136,60 @@ def test_standalone_categories_and_both_campaigns(settings, database, category):
         ]
         == 1
     )
+
+
+def test_optional_property_costs_preserve_existing_offer_and_legacy_edits(settings, database):
+    _, token = actor(settings, database)
+    fields = {"reference": "SYN-COSTS", "category": "apartment"}
+    body = CreateProperty.model_validate(
+        {
+            **fields,
+            "owner_asking_price_mad": "1400000.50",
+            "monthly_syndic_fee_mad": "0",
+            "initial_offering": {
+                "kind": "sale",
+                "price_mad": "1500000",
+                "price_period": None,
+                "currency": "MAD",
+            },
+        }
+    )
+    created = run(settings, database, token, "create-property", body)
+    pid = UUID(created["property_id"])
+    detail = read_detail(database, token, pid)
+    assert detail["owner_asking_price_mad"] == "1400000.50"
+    assert detail["monthly_syndic_fee_mad"] == "0.00"
+    assert detail["offerings"][0]["price_mad"] == "1500000.00"
+    assert (
+        "owner_asking_price_mad"
+        not in read_list(database, token, "properties", InventoryQuery())["items"][0]
+    )
+
+    edit = EditProperty.model_validate({**fields, "expected_version": detail["version"]})
+    saved = run(settings, database, token, "edit-property", edit, pid)
+    assert read_detail(database, token, pid)["owner_asking_price_mad"] == "1400000.50"
+
+    edit = EditProperty.model_validate(
+        {
+            **fields,
+            "expected_version": saved["version"],
+            "owner_asking_price_mad": None,
+            "monthly_syndic_fee_mad": "315.75",
+        }
+    )
+    run(settings, database, token, "edit-property", edit, pid)
+    updated = read_detail(database, token, pid)
+    assert updated["owner_asking_price_mad"] is None
+    assert updated["monthly_syndic_fee_mad"] == "315.75"
+    assert updated["offerings"][0]["price_mad"] == "1500000.00"
+
+    for patch in (
+        {"owner_asking_price_mad": "0"},
+        {"owner_asking_price_mad": "1.001"},
+        {"monthly_syndic_fee_mad": "-1"},
+    ):
+        with pytest.raises(ValidationError):
+            CreateProperty.model_validate({**fields, **patch})
 
 
 def test_owner_privacy_current_scope_no_implicit_contact_grant(settings, database):

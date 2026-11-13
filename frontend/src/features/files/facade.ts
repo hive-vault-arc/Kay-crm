@@ -5,19 +5,22 @@ import { boundedJson, frontendOrigin } from "@/lib/auth/facade";
 import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
 import { frenchApiError } from "@/lib/api/errors";
-import { documentSchema, documentsSchema, fileCommandSchema, newDocumentSchema, parentSchema, permitRequestSchema, permitSchema } from "./contracts";
+import { coverPhotoSchema, documentSchema, documentsSchema, fileCommandSchema, newDocumentSchema, parentSchema, permitRequestSchema, permitSchema, uploadPurpose } from "./contracts";
 
-const querySchema = parentSchema.extend({ purpose: z.enum(["attachment", "photo"]).optional(), page: z.coerce.number().int().min(1).max(100000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional() }).strict();
+const querySchema = parentSchema.extend({ purpose: uploadPurpose.optional(), page: z.coerce.number().int().min(1).max(100000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional() }).strict();
+const coverQuerySchema = parentSchema.extend({ parent_kind: z.enum(["property", "development"]) }).strict();
 const known = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "IDEMPOTENCY_CONFLICT", "RATE_LIMITED", "UNSUPPORTED_MEDIA_TYPE", "PROPERTY_PHOTO_LIMIT", "PROPERTY_PHOTO_WEBP_REQUIRED", "FILE_VERSION_CONFLICT", "FILE_NOT_CLEAN", "FILE_SCAN_NOT_PENDING", "FILE_SCAN_IN_PROGRESS"]);
 export async function relayFiles(key: string, request: Request, requestId: string) {
   const parts = key.split("/");
   const documentTarget = parts[0] === "documents" && parts.length >= 2 && z.uuid().safeParse(parts[1]).success;
-  const read = request.method === "GET" && (key === "documents" || (documentTarget && parts.length === 2));
-  const write = request.method === "POST" && (key === "documents" || key === "files/permits" || (documentTarget && parts.length === 3 && ["archive", "retry-scan"].includes(parts[2])));
+  const coverRead = request.method === "GET" && key === "documents/cover";
+  const read = request.method === "GET" && (coverRead || key === "documents" || (documentTarget && parts.length === 2));
+  const write = request.method === "POST" && (key === "documents" || key === "files/permits" || (documentTarget && parts.length === 3 && ["archive", "retry-scan", "set-primary"].includes(parts[2])));
   if (!read && !write) return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url);
   const entries = [...url.searchParams];
-  if (new Set(entries.map(([name]) => name)).size !== entries.length || (key === "documents" && read ? !querySchema.safeParse(Object.fromEntries(entries)).success : entries.length > 0)) return facadeError(422, "VALIDATION_ERROR", requestId);
+  const query = coverRead ? coverQuerySchema : key === "documents" && read ? querySchema : undefined;
+  if (new Set(entries.map(([name]) => name)).size !== entries.length || (query ? !query.safeParse(Object.fromEntries(entries)).success : entries.length > 0)) return facadeError(422, "VALIDATION_ERROR", requestId);
   let body: string | undefined;
   const retryKey = request.headers.get("Idempotency-Key") ?? undefined;
   if (write) {
@@ -38,7 +41,7 @@ export async function relayFiles(key: string, request: Request, requestId: strin
       const code = result.success && known.has(result.data.error.code) ? result.data.error.code : "DEPENDENCY_UNAVAILABLE";
       return Response.json({ error: { code, message: frenchApiError(code), field_errors: {}, request_id: requestId } }, { status: code === "DEPENDENCY_UNAVAILABLE" ? 503 : upstream.status, headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
     }
-    const schema = key === "files/permits" ? permitSchema : read && key === "documents" ? documentsSchema : documentSchema;
+    const schema = key === "files/permits" ? permitSchema : coverRead ? coverPhotoSchema : read && key === "documents" ? documentsSchema : documentSchema;
     const result = schema.parse(upstream.body);
     if ("transfer_url" in result) {
       const transfer = new URL(result.transfer_url);

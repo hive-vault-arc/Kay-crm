@@ -204,7 +204,14 @@ def detail(session: Session, identity: CurrentIdentity, pid: UUID) -> dict[str, 
                 "contact": {"id": str(contact.id), "name": contact.name} if contact else None,
             }
         )
-    return {**properties_view(session, [item], offering_targets=True)[0], "owners": owners}
+    return {
+        **properties_view(session, [item], offering_targets=True)[0],
+        "owners": owners,
+        "received_on": item.received_on.isoformat() if item.received_on else None,
+        "important_remarks": item.important_remarks,
+        "owner_asking_price_mad": money(item.owner_asking_price_mad),
+        "monthly_syndic_fee_mad": money(item.monthly_syndic_fee_mad),
+    }
 
 
 def read_detail(database: Database, token: str, pid: UUID) -> dict[str, object]:

@@ -2,6 +2,11 @@
 
 Status: implemented and technically accepted locally. Product review: pending Khalid.
 
+## Dated property calendar
+
+See [property calendar](property-calendar.md) for physical inventory periods,
+manager authorization, overlap checks and the interaction with undated holds.
+
 ## Commands and projections
 
 `POST /api/v1/deals/{id}/reserve` accepts exactly `expected_version`,

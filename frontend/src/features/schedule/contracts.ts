@@ -3,12 +3,12 @@ import { agentSchema, numberedPage } from "@/features/contacts/contracts";
 
 export const visitCreateContextSchema = z.object({ contact_id: z.uuid().optional(), date: z.iso.date().refine(value => value >= "2000-01-01" && value <= "2100-12-31").optional() }).strict();
 
-export const typeLabels = { company_car: "Avec véhicule de société", without_company_car: "Sans véhicule de société", office: "Au bureau" } as const;
+export const typeLabels = { company_car: "Avec véhicule de société", without_company_car: "Sans véhicule de société", office: "Au bureau", meeting: "Réunion" } as const;
 export const statusLabels = { draft: "Brouillon : aucun créneau garanti", scheduled: "Planifiée", confirmed: "Confirmée", completed: "Terminée", not_completed: "Non réalisée", cancelled: "Annulée" } as const;
 export const actionLabels = { created: "Visite créée", updated: "Visite modifiée", confirmed: "Visite confirmée", rescheduled: "Visite replanifiée", completed: "Visite terminée", not_completed: "Visite non réalisée", cancelled: "Visite annulée", contact_merged: "Contact fusionné" } as const;
 const version = z.number().int().positive();
 const instant = z.iso.datetime({ offset: true });
-const type = z.enum(["company_car", "without_company_car", "office"]);
+const type = z.enum(["company_car", "without_company_car", "office", "meeting"]);
 const status = z.enum(["draft", "scheduled", "confirmed", "completed", "not_completed", "cancelled"]);
 export const windowSchema = z.object({ weekday: z.number().int().min(1).max(7), start_local: z.string().regex(/^\d{2}:\d{2}$/), end_local: z.string().regex(/^\d{2}:\d{2}$/) }).strict();
 const policyFields = { company_car_capacity_per_hour: z.number().int().min(1).max(1000), working_windows: z.array(windowSchema).max(42), lunch_breaks: z.array(windowSchema).max(42) };
@@ -24,10 +24,10 @@ export const visitFinishSchema = visitActionSchema.extend({ reason: z.string().t
 export const resultSchema = z.object({ id: z.uuid(), version }).strict();
 const snapshot = z.object({ ...fields, enquiry_id: z.uuid().nullable().optional(), contact_id: z.uuid(), origin_contact_id: z.uuid(), organizer_user_id: z.uuid(), status, outcome: z.string().max(1000), policy_version: version, schedule_version: version.optional() }).strict();
 export const visitSchema = snapshot.extend({ id: z.uuid(), version, schedule_version: version, contact_name: z.string().max(160), contact_archived: z.boolean(), participants: z.array(agentSchema).max(100), created_at: instant, updated_at: instant, updated_by_user_id: z.uuid(), start_local: instant, end_local: instant, review_code: z.string().max(80).nullable() });
-export const visitTypeOrder = ["office", "without_company_car", "company_car"] as const;
+export const visitTypeOrder = ["office", "without_company_car", "company_car", "meeting"] as const;
 export const visitStatusOrder = ["confirmed", "scheduled", "draft", "completed", "not_completed", "cancelled"] as const;
 export const visitsSchema = numberedPage(visitSchema).extend({
-  type_counts: z.object({ office: z.number().int().nonnegative(), without_company_car: z.number().int().nonnegative(), company_car: z.number().int().nonnegative() }).strict(),
+  type_counts: z.object({ office: z.number().int().nonnegative(), without_company_car: z.number().int().nonnegative(), company_car: z.number().int().nonnegative(), meeting: z.number().int().nonnegative().optional() }).strict(),
   status_counts: z.object({ draft: z.number().int().nonnegative(), scheduled: z.number().int().nonnegative(), confirmed: z.number().int().nonnegative(), completed: z.number().int().nonnegative(), not_completed: z.number().int().nonnegative(), cancelled: z.number().int().nonnegative() }).strict(),
   unfiltered_total: z.number().int().nonnegative(),
 });

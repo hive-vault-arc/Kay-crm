@@ -12,6 +12,7 @@ from app.schedule.contracts import Strict
 from app.schedule.router import no_query
 from app.work.commands import command
 from app.work.contracts import (
+    CalendarWorkQuery,
     EditTask,
     NewTask,
     NotificationQuery,
@@ -20,7 +21,7 @@ from app.work.contracts import (
     TaskQuery,
 )
 from app.work.notifications import mark_read, read_notifications
-from app.work.queries import clock_context, detail, follow_up, read_tasks
+from app.work.queries import calendar_work, clock_context, detail, follow_up, read_tasks
 
 router = APIRouter(prefix="/api/v1", dependencies=[Depends(facade_authority)], tags=["work"])
 
@@ -31,6 +32,14 @@ def context(request: Request, token: Proof) -> dict[str, str]:
     with configuration(request)[0].session() as session:
         current_identity(session, token)
     return clock_context()
+
+
+@router.get("/work/calendar")
+def calendar(
+    request: Request, token: Proof, query: Annotated[CalendarWorkQuery, Query()]
+) -> dict[str, object]:
+    validate_query(request)
+    return calendar_work(configuration(request)[0], token, query)
 
 
 @router.get("/tasks")

@@ -8,7 +8,7 @@ from uuid import UUID, uuid4
 
 import pytest
 from pypdf import PdfReader
-from sqlalchemy import text
+from sqlalchemy import text, update
 
 from app.contacts.models import Contact, Enquiry
 from app.files.contracts import ArchiveDocument, PermitRequest
@@ -201,6 +201,39 @@ def test_deal_prefill_rendering_and_attachment_isolation(settings, database):
     pages = PdfReader(BytesIO(data)).pages
     assert "Bien de contrôle synthétique" in pages[0].extract_text()
     assert history(database, token, "deal", did, 1)["items"][0]["id"] == created["id"]
+
+
+def test_stay_instructions_are_explicit_and_internal_remarks_are_excluded(settings, database):
+    _, token, contact, _ = setup(settings, database)
+    with database.session() as session, session.begin():
+        session.execute(
+            update(Contact)
+            .where(Contact.id == contact)
+            .values(important_remarks="Interne synthétique confidentiel")
+        )
+    did = UUID(run(settings, database, token, new(contact))["id"])
+    preparation = context(database, token, "deal", did)
+    assert "Interne synthétique confidentiel" not in str(preparation)
+    assert "guest_instructions" not in preparation["defaults"]
+    created = generate(
+        database,
+        settings,
+        token,
+        uuid4(),
+        GenerateRequest(
+            parent_kind="deal",
+            parent_id=did,
+            template_code="05",
+            values={"guest_instructions": "Arrivée à 15 h. Prévenir en cas de retard."},
+        ),
+    )
+    with database.session() as session:
+        version = session.get(DocumentVersion, UUID(created["version_id"]))
+        assert version is not None
+        data = PrivateStorage(settings).read(version.object_key, version.size_bytes, version.sha256)
+    content = " ".join(page.extract_text() for page in PdfReader(BytesIO(data)).pages)
+    assert "Arrivée à 15 h. Prévenir en cas de retard." in content
+    assert "Interne synthétique confidentiel" not in content
 
 
 def test_same_key_concurrent_generation_has_one_result(settings, database):

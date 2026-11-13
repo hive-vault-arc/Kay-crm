@@ -18,6 +18,10 @@ the owner role **or** current/former property/development links. A role badge in
 this form describes the literal Contact role, not proof of legal ownership or a
 negative assertion about historical links.
 
+The owner detail phone actions open the selected number in WhatsApp. They use
+the same click-to-chat flow as prospect and deal details and appear only when
+the authorized record exposes a valid international number.
+
 The frozen owners.js form supplies existing/new contact choice, Coordonnées,
 Coordonnées complémentaires and Gestion du contact. The implementation uses the
 same dossier header/actions, sections, fields, compact entry/facts and responsive
@@ -27,6 +31,18 @@ languages, type and other Contact roles remain available. Owner is not removable
 in this form. The real language contract remains optional rather than copying
 the prototype's illustrative required rule. Layout integration is proposed
 pending native/owner review; no new theme/CSS/dependency/chart.
+
+The owner form shows the optional primary e-mail on both create and edit. A
+person can also have an optional CIN on their canonical contact (migration
+`0041_owner_identity`). Only an authorized owner-detail read returns it; the
+overview masks it and the edit form shows the full value. It stays out of
+directories, search, exports, activity notes and command receipts.
+
+After saving, **Documents → Carte nationale d’identité** accepts PDF and image
+copies, including HEIC/HEIF through the existing image conversion. Copies use the
+same private upload, scanning, download and archival controls as other contact
+files. They appear in their own section rather than in ordinary attachments or
+global search. **Pièces jointes** is available for other owner documents.
 
 ## New contact and explicit reuse
 
