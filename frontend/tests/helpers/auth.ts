@@ -28,8 +28,15 @@ export async function openWorkspaceAccount(page: Page) {
 export async function signIn(page: Page, actor: TestActor, returnTo?: string) {
   const path = returnTo ? `/login?return_to=${encodeURIComponent(returnTo)}` : "/login";
   const origin = page.url().startsWith("https:") ? new URL(page.url()).origin : undefined;
-  await page.goto(origin ? new URL(path, origin).href : path);
-  await expect(page.getByRole("button", { name: "Se connecter", exact: true })).toBeEnabled();
+  const target = origin ? new URL(path, origin).href : path;
+  try {
+    await page.goto(target);
+  } catch (failure) {
+    if (!(failure instanceof Error) || !failure.message.includes("net::ERR_CONNECTION_REFUSED")) throw failure;
+    // Retry only the initial, read-only navigation. A sign-in command is never retried.
+    await page.goto(target);
+  }
+  await expect(page.getByRole("button", { name: "Se connecter", exact: true })).toBeEnabled({ timeout: 15_000 });
   try {
     await page.getByLabel("Adresse e-mail", { exact: true }).fill(actor.email);
     await page.getByLabel("Mot de passe", { exact: true }).fill(actor.password);

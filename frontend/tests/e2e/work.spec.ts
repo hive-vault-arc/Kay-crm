@@ -46,7 +46,10 @@ test("SP15: deal task due edit, explicit cancellation, refresh and retained cont
     const edited = await (await page.request.get(`/api/v1/tasks/${initial.id}`)).json();
     expect(edited.schedule_version).toBe(2); expect(edited.due_at).not.toBe(initial.due_at);
     await selected.getByRole("button", { name: "Annuler la tâche", exact: true }).click();
-    await expect(page.getByRole("alertdialog", { name: "Annuler la tâche", exact: true })).toBeVisible(); await page.keyboard.press("Escape");
+    const confirmation = page.getByRole("alertdialog", { name: "Annuler la tâche", exact: true });
+    await expect(confirmation.getByRole("heading", { name: "Annuler la tâche", exact: true })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(confirmation).toHaveCount(0);
     await expect(selected.getByRole("button", { name: "Annuler la tâche", exact: true })).toBeFocused();
     await selected.getByRole("button", { name: "Annuler la tâche", exact: true }).click();
     await page.getByRole("alertdialog").getByLabel("Compte rendu (facultatif)", { exact: true }).fill("SP15 suivi annulé explicitement");
