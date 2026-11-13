@@ -18,8 +18,9 @@ async function openInbox(page: import("@playwright/test").Page) {
 }
 async function openDashboardWork(page: import("@playwright/test").Page) {
   await page.goto("/dashboard");
-  await page.getByRole("button", { name: "Travail", exact: true }).click();
-  await expect(page.getByRole("dialog", { name: "Travail et suivi", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Suivi et rapports", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Travail à faire", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Travail à faire", exact: true })).toBeVisible();
 }
 
 test("SP15: deal task due edit, explicit cancellation, refresh and retained context", async ({ page }) => {
@@ -28,7 +29,9 @@ test("SP15: deal task due edit, explicit cancellation, refresh and retained cont
     const { contactId } = await workFixture(page, actors);
     const dealResponse = await staffCommand(page, "deals", dealBody(contactId, "SP15 affaire de suivi"));
     expect(dealResponse.status()).toBe(200); const did = (await dealResponse.json()).id;
-    await page.goto(`/deals/${did}`); await page.getByRole("button", { name: "Voir les tâches", exact: true }).click(); const panel = page.getByRole("region", { name: "Tâches du dossier", exact: true });
+    await page.goto(`/deals/${did}`);
+    await page.getByRole("button", { name: "Toutes les tâches", exact: true }).click();
+    const panel = page.getByRole("dialog", { name: "Tâches de l’affaire", exact: true }).getByRole("region", { name: "Tâches du dossier", exact: true });
     await panel.getByRole("button", { name: "Créer une tâche", exact: true }).click();
     await page.getByLabel("Titre de la tâche", { exact: true }).fill("SP15 tâche du dossier affaire");
     const context = await (await page.request.get("/api/v1/work/context")).json();
@@ -36,7 +39,7 @@ test("SP15: deal task due edit, explicit cancellation, refresh and retained cont
     const selected = panel.getByRole("region", { name: "Tâche sélectionnée", exact: true }); await expect(selected).toBeVisible();
     const initial = (await (await page.request.get(`/api/v1/tasks?deal_id=${did}`)).json()).items[0];
     expect(initial.contact_id).toBe(contactId); expect(initial.deal_id).toBe(did);
-    await selected.getByRole("button", { name: "Actualiser la tâche", exact: true }).click();
+    await expect(selected.getByRole("heading", { name: "SP15 tâche du dossier affaire", exact: true })).toBeVisible();
     await selected.getByRole("button", { name: "Modifier la tâche", exact: true }).click();
     await setTaskDue(page, `${context.today}T15:00`); await page.getByRole("button", { name: "Enregistrer la tâche", exact: true }).click();
     await expect(selected.getByRole("button", { name: "Modifier la tâche", exact: true })).toBeVisible();
@@ -52,8 +55,8 @@ test("SP15: deal task due edit, explicit cancellation, refresh and retained cont
     const cancelled = await (await page.request.get(`/api/v1/tasks/${initial.id}`)).json();
     expect(cancelled.status).toBe("cancelled"); expect(cancelled.outcome).toBe("SP15 suivi annulé explicitement"); expect(cancelled.schedule_version).toBe(3);
     expect((await (await page.request.get(`/api/v1/tasks/${initial.id}/history`)).json()).total).toBe(3);
-    await selected.getByRole("button", { name: "Fermer la tâche", exact: true }).click();
-    await panel.getByRole("button", { name: "Actualiser les tâches", exact: true }).click();
+    await page.reload();
+    await page.getByRole("button", { name: "Toutes les tâches", exact: true }).click();
     await panel.getByRole("button", { name: "SP15 tâche du dossier affaire", exact: true }).click();
     await expect(selected.getByText("Tâche conservée en lecture seule. Son historique reste disponible.", { exact: true })).toBeVisible();
   } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
@@ -68,8 +71,8 @@ test("SP15 AT-17/23: task creation, overdue delivery/read and completion in curr
     expect((await runReminders(now)).processed).toBe(3); expect((await runReminders(now)).processed).toBe(0);
     await openDashboardWork(page); await page.getByLabel("Période des tâches", { exact: true }).selectOption("overdue");
     await expect(page.getByRole("region", { name: "Travail à faire", exact: true }).getByRole("link", { name: "SP15 tâche synthétique", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Fermer : Travail et suivi", exact: true }).click();
-    await expect(page.getByRole("dialog", { name: "Travail et suivi", exact: true })).not.toBeVisible();
+    await page.getByRole("button", { name: "Fermer : Travail à faire", exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "Travail à faire", exact: true })).not.toBeVisible();
     await expect(page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true })).toHaveCount(0);
     const inbox = await openInbox(page);
     await expect(inbox.getByRole("heading", { name: "Échéance de tâche", exact: true })).toHaveCount(1);
