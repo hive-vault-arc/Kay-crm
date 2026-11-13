@@ -238,7 +238,7 @@ test("Selected Finance visible Chrome: inline cards, guarded recovery, touch, ro
     await clearActorContext(mobile); await signIn(mobile, data.agent); await mobile.goto(`/deals/${data.dealId}?tab=finance`);
     await expect(mobile.getByRole("button", { name: "Voir la finance", exact: true })).toHaveCount(0);
     await expect(drawer(mobile)).toHaveCount(0); await expect(mobile.getByRole("tab", { name: "Finance", exact: true })).toHaveCount(0);
-    await expect(mobile.getByRole("tablist", { name: "Rubriques de l’affaire", exact: true }).getByRole("tab")).toHaveCount(4);
+    await expect(mobile.getByRole("tablist", { name: "Rubriques de l’affaire", exact: true }).getByRole("tab")).toHaveText(["Aperçu", "Projets", "Activités", "Tâches", "Documents"]);
     for (const route of [`deals/${data.dealId}/commissions`, `deals/${data.dealId}/commission-creation-key`, `commissions/${cid}`]) expect((await mobile.request.get(`/api/v1/${route}`)).status()).toBe(403);
     await geometry(mobile); await capture(mobile, "agent-mobile", true);
     console.info("Selected Finance prepared native observations", JSON.stringify({ browserVersion: browser.version(), formGeometry, dialogGeometry, desktopGeometry, zoomGeometry, baseline, measurement, expectedErrors, unexpectedErrors: errors }));

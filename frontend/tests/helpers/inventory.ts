@@ -49,7 +49,7 @@ export async function openInventoryHistory(page: Page) {
 }
 export async function openProperty(page: Page, id: string, section = "Aperçu") {
   await page.goto(`/projects/properties/${id}`);
-  await expect(page.getByRole("region", { name: "Informations du bien", exact: true })).toBeVisible();
+  await expect(page.getByRole("tabpanel", { name: "Aperçu", exact: true }).getByRole("heading", { name: "Informations du bien", exact: true })).toBeVisible();
   if (section === "Historique") await openInventoryHistory(page);
   else if (section !== "Aperçu") await inventorySection(page, section).scrollIntoViewIfNeeded();
 }
@@ -77,7 +77,7 @@ export async function createCampaign(page: Page, kind: "sale" | "rental", price 
   const drawer = page.getByRole("dialog", { name: `Créer une offre de ${label}`, exact: true });
   await drawer.getByLabel("Prix (MAD, facultatif)", { exact: true }).fill(price);
   if (kind === "rental") await drawer.getByLabel("Période du tarif d’origine", { exact: true }).selectOption(period);
-  await drawer.getByLabel("Conditions d’origine (facultatives)", { exact: true }).fill(`SP07 conditions initiales ${label}`);
+  await drawer.getByLabel(`Conditions de ${label} (facultatives)`, { exact: true }).fill(`SP07 conditions initiales ${label}`);
   await drawer.getByRole("button", { name: "Créer la campagne", exact: true }).click();
   await expect(drawer).not.toBeVisible(); await expect(page.getByText("Inventaire enregistré.", { exact: true })).toBeVisible();
 }
