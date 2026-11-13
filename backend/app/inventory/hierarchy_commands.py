@@ -23,6 +23,7 @@ from app.inventory.hierarchy_models import Block, Development, Floor, UnitType
 from app.inventory.hierarchy_rules import active_contact, development_record, marketable_structure
 from app.inventory.history import record
 from app.inventory.models import Offering, Property
+from app.inventory.received_date import received_date_change
 
 
 def execute_hierarchy(
@@ -35,7 +36,17 @@ def execute_hierarchy(
         item = Development(**body.model_dump(), created_by_user_id=identity.user.id)
         session.add(item)
         session.flush()
-        return item, None, record(session, identity, item, "developments.created")
+        return (
+            item,
+            None,
+            record(
+                session,
+                identity,
+                item,
+                "developments.created",
+                reason=received_date_change(None, body.received_on),
+            ),
+        )
     if target is None:
         raise IdentityError("NOT_FOUND", 404)
     level: Block | Floor | UnitType | None = None
@@ -71,6 +82,7 @@ def execute_hierarchy(
     if item.archived_at and operation != "development-restore":
         raise IdentityError("STOCK_REVIEW_REQUIRED", 409)
     offering = None
+    reason = ""
     action = "developments.updated"
     if isinstance(body, EditDevelopment):
         if "developer_contact_id" in body.model_fields_set:
@@ -83,8 +95,9 @@ def execute_hierarchy(
                 active_contact(session, body.developer_contact_id)
             item.developer_contact_id = body.developer_contact_id
         excluded = {"expected_version", "developer_contact_id"}
-        if "phase" not in body.model_fields_set:
-            excluded.add("phase")
+        excluded.update({"phase", "important_remarks", "received_on"} - body.model_fields_set)
+        if "received_on" in body.model_fields_set:
+            reason = received_date_change(item.received_on, body.received_on)
         for key, value in body.model_dump(exclude=excluded).items():
             setattr(item, key, value)
         if session.scalar(
@@ -168,5 +181,6 @@ def execute_hierarchy(
         action = "developments.unit-type"
     bump(item)
     session.flush()
-    reason = body.reason if isinstance(body, ConfirmAvailability | ArchiveDevelopment) else ""
+    if isinstance(body, ConfirmAvailability | ArchiveDevelopment):
+        reason = body.reason
     return item, offering, record(session, identity, item, action, offering, reason)

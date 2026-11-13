@@ -44,7 +44,7 @@ def test_omitted_phase_retains_exact_legacy_payload_and_explicit_clear_is_distin
     values = fields() | ({"expected_version": 4} if edit else {})
     model = EditDevelopment if edit else DevelopmentFields
     body = model(**values)
-    legacy = body.model_dump(mode="json", exclude={"phase"})
+    legacy = body.model_dump(mode="json", exclude={"phase", "received_on", "important_remarks"})
     if edit:
         legacy.pop("developer_contact_id")
     assert commands.command_payload(body) == legacy
@@ -98,7 +98,7 @@ def test_actual_edit_preserves_omitted_phase_and_records_explicit_phase_with_ver
     monkeypatch.setattr(
         hierarchy_commands,
         "record",
-        lambda _session, _identity, item, *_args: (
+        lambda _session, _identity, item, *_args, **_kwargs: (
             snapshots.append((item.phase, item.version)) or uuid4()
         ),
     )

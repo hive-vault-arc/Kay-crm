@@ -62,7 +62,7 @@ def policy_view(session: Session) -> dict[str, object]:
 
 
 def work_error(booking: Booking, works: list[Window], breaks: list[Window]) -> str | None:
-    if booking.type == "office":
+    if booking.type in {"office", "meeting"}:
         return None
     if not works:
         return "VISIT_SCHEDULE_NOT_CONFIGURED"

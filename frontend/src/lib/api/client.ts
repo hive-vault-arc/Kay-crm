@@ -40,7 +40,7 @@ export async function apiGet<T>(
         body: mutation ? JSON.stringify(mutation.body) : undefined,
         cache: "no-store",
         signal: bounded.signal,
-        headers: { Accept: "application/json", ...(!mutation && /^\/api\/v1\/contacts\/[0-9a-f-]+$/i.test(path) ? { "X-Kay-Contact-Birth-Date": "1" } : {}), ...(mutation ? { "Content-Type": "application/json" } : {}), ...(mutation?.csrf ? { "X-CSRF-Token": mutation.csrf } : {}), ...(mutation?.key ? { "Idempotency-Key": mutation.key } : {}) },
+        headers: { Accept: "application/json", ...(!mutation && /^\/api\/v1\/contacts\/[0-9a-f-]+$/i.test(pathname) ? { "X-Kay-Contact-Birth-Date": "1" } : {}), ...(mutation ? { "Content-Type": "application/json" } : {}), ...(mutation?.csrf ? { "X-CSRF-Token": mutation.csrf } : {}), ...(mutation?.key ? { "Idempotency-Key": mutation.key } : {}) },
       });
     } catch (error) {
       if (signal?.aborted) throw error;

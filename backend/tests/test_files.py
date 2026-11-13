@@ -17,6 +17,8 @@ from app.files.worker import claim, finish, run_once
 from app.identity.models import StaffSession
 from app.identity.security import IdentityError, token_hash
 from app.main import create_app
+from app.work.contracts import NotificationQuery
+from app.work.notifications import mark_read, read_notifications
 from tests.contact_support import actor, create_lead, new_lead
 from tests.file_support import (
     eicar_bytes,
@@ -94,7 +96,7 @@ def test_real_scanner_detects_controlled_test_signature(settings):
 
 @pytest.mark.anyio
 async def test_real_upload_pending_clean_download_and_single_use(settings, database):
-    _, token, contact = setup_contact(settings, database)
+    uid, token, contact = setup_contact(settings, database)
     data = image_bytes()
     document = new_document(settings, database, token, "contact", contact, data)
     permit = grant(database, token, document)
@@ -128,10 +130,23 @@ async def test_real_upload_pending_clean_download_and_single_use(settings, datab
         assert (await client.get(url, headers=headers(settings, download))).status_code == 403
     with database.session() as session:
         assert session.scalar(select(func.count()).select_from(OutboxEvent)) == 1
-        assert session.scalar(select(func.count()).select_from(Notification)) == 1
+        assert session.scalar(select(func.count()).select_from(Notification)) == 0
         stored = session.get(FilePermit, UUID(permit["permit_id"]))
         assert stored.token_hash == token_hash(permit["token"])
         assert "object_key" not in str(current) and "sha256" not in str(current)
+    with database.session() as session, session.begin():
+        legacy = Notification(
+            user_id=uid,
+            event_key=f"file.scanned:{permit['version_id']}",
+            document_id=UUID(document["id"]),
+        )
+        session.add(legacy)
+        session.flush()
+        legacy_id = legacy.id
+    inbox = read_notifications(database, token, NotificationQuery())
+    assert inbox["total"] == inbox["unread_total"] == 0
+    with pytest.raises(IdentityError, match="NOT_FOUND"):
+        mark_read(database, token, legacy_id)
 
 
 @pytest.mark.anyio
@@ -185,7 +200,7 @@ async def test_scanner_outage_retry_and_expired_lease_fencing(settings, database
     current = read_document(database, token, UUID(document["id"]))
     assert current["versions"][0]["state"] == "clean"
     with database.session() as session:
-        assert session.scalar(select(func.count()).select_from(Notification)) == 1
+        assert session.scalar(select(func.count()).select_from(Notification)) == 0
 
 
 def test_private_scope_shared_inventory_permit_race_and_revocation(settings, database):

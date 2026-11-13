@@ -1,5 +1,6 @@
 "use client";
 import { CompletedIcon, DevelopmentIcon, LocationIcon } from "@/components/icons";
+import { ImportantRemarksField } from "@/components/shared/important-remarks";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { useDossierDraft } from "@/components/shared/dossier-form";
 import type { StaffRole } from "@/features/contacts/contracts";
@@ -16,14 +17,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { categoryLabels } from "./contracts";
+import { formatBusinessDate } from "@/lib/format";
+import { categoryLabels, receivedDateError, receivedDateHint, receivedDateInputSchema, receivedDateLabel, receivedDateToday } from "./contracts";
 import { developmentFieldsSchema, developmentsSchema, developmentPhaseLabels, programmePhaseLabel, type Development } from "./development-contracts";
 import { InventoryDraftSummary } from "./inventory-draft-summary";
 import { InventoryWizardSteps } from "./inventory-wizard-steps";
 import { InventoryError } from "./states";
 import { useDevelopmentCreation } from "./use-development-creation";
 
-type Values = { phase: "" | keyof typeof developmentPhaseLabels; reference: string; name: string; category: Development["category"]; location: string; briefing_text: string; developer_marketing_display: string };
+type Values = { phase: "" | keyof typeof developmentPhaseLabels; reference: string; name: string; received_on: string; category: Development["category"]; location: string; briefing_text: string; important_remarks: string; developer_marketing_display: string };
 const steps = [
   { label: "Identité du programme", mobileLabel: "Programme", icon: DevelopmentIcon },
   { label: "Localisation et contexte", mobileLabel: "Détails", icon: LocationIcon },
@@ -44,18 +46,20 @@ export function DevelopmentCreationWizard({ actorId, role, cancel }: { actorId?:
   const [developer, setDeveloper] = useState<Development["developer"]["contact"]>(null);
   const [showDeveloper, setShowDeveloper] = useState(false);
   const [validation, setValidation] = useState("");
-  const form = useForm<Values>({ defaultValues: { phase: "preparation", reference: "", name: "", category: "mixed", location: "", briefing_text: "", developer_marketing_display: "" }, shouldUnregister: false });
+  const form = useForm<Values>({ defaultValues: { phase: "preparation", reference: "", name: "", received_on: "", category: "mixed", location: "", briefing_text: "", important_remarks: "", developer_marketing_display: "" }, shouldUnregister: false });
   const draft = useWatch({ control: form.control });
   const changes = useDossierDraft({ ...draft, reference: draft.reference?.trim() ?? "", name: draft.name?.trim() ?? "", location: draft.location?.trim() ?? "", briefing_text: draft.briefing_text?.trim() ?? "", developer_marketing_display: draft.developer_marketing_display?.trim() ?? "", developerId: developer?.id ?? null }, command.protected);
   const denyCreation = command.deny;
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   useEffect(() => { if (capabilities.error && [401, 403, 404].includes(capabilities.error.status)) denyCreation(capabilities.error); }, [capabilities.error, denyCreation]);
   function field(name: keyof Values) { const registered = form.register(name); return { ...registered, onChange: (event: Parameters<typeof registered.onChange>[0]) => { if (!lock.current && command.canEdit()) return registered.onChange(event); } }; }
-  const details = ({ phase, ...values }: Values) => ({
+  const details = ({ phase, important_remarks, received_on, ...values }: Values) => ({
     ...values,
+    ...(received_on ? { received_on } : {}),
     ...(phaseSupported ? { phase: phase || null } : {}),
     location: values.location.trim() || null,
     briefing_text: values.briefing_text.trim() || null,
+    ...(important_remarks?.trim() ? { important_remarks: important_remarks.trim() } : {}),
     developer_contact_id: developer?.id ?? null,
     developer_marketing_display: values.developer_marketing_display.trim() || null,
   });
@@ -70,7 +74,7 @@ export function DevelopmentCreationWizard({ actorId, role, cancel }: { actorId?:
     const invalid = parsed.success ? [] : parsed.error.issues.map(issue => issue.path[0]).filter((field): field is keyof Values => typeof field === "string" && fields.includes(field as keyof Values));
     invalid.forEach(field => form.setError(field, { type: "validate" }));
     if (invalid.length) {
-      setValidation(fields.includes("reference") ? "Renseignez une référence et un nom valides pour le programme." : "Vérifiez la localisation, la présentation et le libellé du promoteur.");
+      setValidation(invalid.includes("received_on") ? receivedDateError : invalid.includes("important_remarks") ? "Limitez les remarques à 1 000 caractères." : fields.includes("reference") ? "Renseignez une référence et un nom valides pour le programme." : "Vérifiez la localisation, la présentation et le libellé du promoteur.");
       form.setFocus(invalid[0]);
       return false;
     }
@@ -79,15 +83,15 @@ export function DevelopmentCreationWizard({ actorId, role, cancel }: { actorId?:
   }
   function next() {
     if (lock.current || command.locked()) return;
-    if (check(step === 0 ? ["reference", "name", "category", "phase"] : ["location", "briefing_text", "developer_marketing_display"])) focusStep(step + 1);
+    if (check(step === 0 ? ["reference", "name", "category", "phase", "received_on"] : ["location", "briefing_text", "important_remarks", "developer_marketing_display"])) focusStep(step + 1);
   }
   async function save(values: Values) {
     if (!hydrated || lock.current || command.pending) return;
     if (command.uncertain) { lock.current = true; try { await command.retry(); } finally { lock.current = false; } return; }
     if (!command.canEdit()) return;
     if (!phaseReady) { setValidation("Le statut du programme est en cours de chargement. Réessayez dans un instant."); return; }
-    if (!check(["reference", "name", "category", "phase", "location", "briefing_text", "developer_marketing_display"])) {
-      const first = ["reference", "name", "category", "phase"].some(field => form.getFieldState(field as keyof Values).invalid);
+    if (!check(["reference", "name", "category", "phase", "received_on", "location", "briefing_text", "important_remarks", "developer_marketing_display"])) {
+      const first = ["reference", "name", "category", "phase", "received_on"].some(field => form.getFieldState(field as keyof Values).invalid);
       focusStep(first ? 0 : 1);
       return;
     }
@@ -100,11 +104,13 @@ export function DevelopmentCreationWizard({ actorId, role, cancel }: { actorId?:
   }
   const facts = [
     { label: "Référence", value: draft.reference?.trim() },
+    { label: receivedDateLabel, value: draft.received_on && receivedDateInputSchema.safeParse(draft.received_on).success ? formatBusinessDate(draft.received_on) : null },
     { label: "Nom", value: draft.name?.trim() },
     ...(phaseSupported ? [{ label: "État du programme", value: programmePhaseLabel(draft.phase || null) }] : []),
     { label: "Catégorie", value: !draft.category || draft.category === "mixed" ? "Mixte" : categoryLabels[draft.category] },
     { label: "Localisation", value: draft.location?.trim() },
     { label: "Présentation", value: draft.briefing_text?.trim() ? "Renseignée" : null },
+    { label: "Remarques importantes (CRM)", value: draft.important_remarks?.trim(), fullWidth: true },
     { label: "Promoteur", value: developer ? "Contact lié" : null },
     { label: "Libellé public du promoteur", value: draft.developer_marketing_display?.trim() },
   ];
@@ -121,12 +127,14 @@ export function DevelopmentCreationWizard({ actorId, role, cancel }: { actorId?:
         {step === 0 ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
           <div className="grid gap-2"><Label htmlFor="development-reference">Référence du programme</Label><Input id="development-reference" maxLength={80} required aria-invalid={Boolean(form.formState.errors.reference)} aria-describedby={form.formState.errors.reference ? "development-validation" : undefined} {...field("reference")} /></div>
           <div className="grid gap-2"><Label htmlFor="development-name">Nom du programme</Label><Input id="development-name" maxLength={160} required aria-invalid={Boolean(form.formState.errors.name)} aria-describedby={form.formState.errors.name ? "development-validation" : undefined} {...field("name")} /></div>
+          <div className="grid min-w-0 gap-2"><Label htmlFor="development-received-on">{receivedDateLabel} (facultative)</Label><Input id="development-received-on" type="date" max={receivedDateToday()} aria-invalid={Boolean(form.formState.errors.received_on)} aria-describedby="development-received-help development-validation" {...field("received_on")} /><p id="development-received-help" className="text-xs text-muted-foreground">{receivedDateHint}</p></div>
           {phaseSupported ? <div className="grid gap-2 sm:col-span-2"><Label htmlFor="development-phase">État du programme</Label><NativeSelect id="development-phase" aria-invalid={Boolean(form.formState.errors.phase)} aria-describedby={form.formState.errors.phase ? "development-validation" : undefined} {...field("phase")}><option value="">À renseigner</option>{Object.entries(developmentPhaseLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div> : null}
           <div className="grid gap-2 sm:col-span-2"><Label htmlFor="development-category">Catégorie du programme</Label><NativeSelect id="development-category" {...field("category")}><option value="mixed">Mixte</option>{Object.entries(categoryLabels).filter(([value]) => ["villa", "house", "apartment", "land", "commercial"].includes(value)).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
         </div> : null}
         {step === 1 ? <div className="grid min-w-0 gap-4">
           <div className="grid gap-2"><Label htmlFor="development-location">Localisation du programme (facultative)</Label><Input id="development-location" maxLength={500} aria-invalid={Boolean(form.formState.errors.location)} aria-describedby={form.formState.errors.location ? "development-validation" : undefined} {...field("location")} /></div>
           <div className="grid gap-2"><Label htmlFor="development-briefing">Présentation partagée (facultative)</Label><Textarea id="development-briefing" rows={4} aria-invalid={Boolean(form.formState.errors.briefing_text)} aria-describedby="briefing-help development-validation" {...field("briefing_text")} /><p id="briefing-help" className="text-sm text-muted-foreground">Décrivez le programme sans coordonnées ni notes privées. 10 000 caractères maximum.</p></div>
+          <ImportantRemarksField id="development-important_remarks" aria-invalid={Boolean(form.formState.errors.important_remarks)} {...field("important_remarks")} />
           {!showDeveloper ? <Button action="add" type="button" variant="outline" className="justify-self-start" onClick={() => { if (!lock.current && command.canEdit()) setShowDeveloper(true); }}>Ajouter un promoteur (facultatif)</Button> : <fieldset className="grid min-w-0 gap-4 border-t pt-4"><legend className="font-medium">Promoteur (facultatif)</legend>{developer ? <><p>Contact lié au programme.</p><Button action="release" type="button" variant="outline" className="justify-self-start" onClick={() => { if (!lock.current && command.canEdit()) setDeveloper(null); }}>Dissocier le promoteur</Button></> : <ContactSelector denied={command.deny} choose={contact => { if (!lock.current && command.canEdit()) setDeveloper(contact); }} />}<div className="grid gap-2"><Label htmlFor="developer-display">Libellé commercial du promoteur (facultatif)</Label><Input id="developer-display" maxLength={160} aria-invalid={Boolean(form.formState.errors.developer_marketing_display)} aria-describedby={form.formState.errors.developer_marketing_display ? "development-validation" : undefined} {...field("developer_marketing_display")} /></div><p className="text-sm text-muted-foreground">Le nom privé du contact n’est pas copié dans le libellé partagé.</p></fieldset>}
         </div> : null}
         {step === 2 ? <InventoryDraftSummary icon={DevelopmentIcon} title="Programme à créer" facts={facts} onlyFilled wide next="Après la création, structurez les blocs, les étages et les unités physiques. Les offres du programme restent distinctes de celles des unités." /> : null}

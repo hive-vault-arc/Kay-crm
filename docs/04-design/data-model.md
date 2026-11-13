@@ -506,6 +506,14 @@ flowchart LR
 
 These indexes are proposals to validate against synthetic data with 200,000 contacts and 20,000 physical properties including units, plus a measured development/block/floor/type distribution. Report development count separately rather than adding it to physical-property count. Reviewed Alembic migrations will materialize the logical model; tables should not be silently edited by hand.
 
+## Property cover photo
+
+Migration 0047 adds a default-false `document.is_primary_photo`. A partial
+unique index on `property_id` allows at most one explicit cover per physical
+property. The row must be an active inventory image, and the service requires
+a clean file version. A cover change preserves the document version used for
+file transfers. Archive clears the designation in the same transaction.
+
 ## SP-09 implemented file schema
 
 Reviewed0010_protected_files and0011_file_session_binding add seven tables:

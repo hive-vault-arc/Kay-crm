@@ -29,7 +29,7 @@ for (const surface of ["contacts", "owners"] as const) {
       await drawer.getByRole("button", { name: "Vérifier l’impact", exact: true }).click();
       const confirmation = page.getByRole("alertdialog");
       await expect.poll(() => confirmation.isVisible()).toBe(true);
-      if (surface === "owners") await page.route(`**/api/v1/contacts/${contact.id}`, async route => {
+      if (surface === "owners") await page.route(url => url.pathname === `/api/v1/contacts/${contact.id}`, async route => {
         if (route.request().method() !== "GET" || !failRead) return route.continue();
         return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: { code: "DEPENDENCY_UNAVAILABLE" } }) });
       });

@@ -28,7 +28,16 @@ class Contact(Base):
     __table_args__ = (
         CheckConstraint("length(btrim(name)) > 0", name="contact_name_required"),
         CheckConstraint("type IN ('person','organization')", name="contact_type"),
+        CheckConstraint(
+            "important_remarks IS NULL OR char_length(important_remarks) BETWEEN 1 AND 1000",
+            name="contact_important_remarks",
+        ),
         CheckConstraint("birth_date IS NULL OR type='person'", name="contact_birth_date_person"),
+        CheckConstraint(
+            "national_id_number IS NULL OR (type='person' AND "
+            "national_id_number ~ '^[A-Z0-9][A-Z0-9-]{1,30}[A-Z0-9]$')",
+            name="contact_national_id_person",
+        ),
         CheckConstraint("country='' OR country ~ '^[A-Z]{2}$'", name="contact_country"),
         CheckConstraint("nationality='' OR nationality ~ '^[A-Z]{2}$'", name="contact_nationality"),
         CheckConstraint(
@@ -46,7 +55,9 @@ class Contact(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(160))
     type: Mapped[str] = mapped_column(String(24))
+    important_remarks: Mapped[str | None] = mapped_column(Text, deferred=True)
     birth_date: Mapped[date | None] = mapped_column(Date)
+    national_id_number: Mapped[str | None] = mapped_column(String(32), deferred=True)
     country: Mapped[str] = mapped_column(String(2), default="", server_default="")
     nationality: Mapped[str] = mapped_column(String(2), default="", server_default="")
     languages: Mapped[list[str]] = mapped_column(JSONB, default=list, server_default="[]")

@@ -29,7 +29,7 @@ export function useInventoryRecordCommand(scope: RecordCommandScope) {
   const authorize: NonNullable<CommandLifecycle["beforeDispatch"]> = identity => {
     if (!active() || hostRef.current?.id !== scope.id || hostRef.current.root !== scope.root) throw new ApiError("FORBIDDEN", 403);
     if (identity.must_change_password) throw new ApiError("PASSWORD_CHANGE_REQUIRED", 403);
-    if ((scope.kind === "owners" || scope.kind === "offering" || scope.kind === "lifecycle") && identity.user.role === "agent" || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
+    if ((scope.kind === "owners" || scope.kind === "period" || scope.kind === "offering" || scope.kind === "lifecycle") && identity.user.role === "agent" || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
     binding.current = { actor: identity.user.id, role: identity.user.role };
   };
   async function prove(signal: AbortSignal) { const identity = await apiGet("/api/v1/auth/me", meSchema, signal); if (!current() || signal.aborted) return false; authorize(identity); return true; }
@@ -71,7 +71,7 @@ export function useInventoryRecordCommand(scope: RecordCommandScope) {
     } catch (reason) {
       if (!current() || controller.signal.aborted) return;
       const failure = fail(reason);
-      if (![401, 403, 404].includes(failure.status)) { owned = { ...owned, uncertain: Boolean(owned.receipt) || owned.uncertain || owned.dispatched && (failure.status >= 500 || failure.code === "INVALID_RESPONSE") }; attempt.current = owned.uncertain ? owned : undefined; setUncertain(owned.uncertain); if (!owned.uncertain && failure.status === 409) { validReview.current = false; setNeedsReview(true); } }
+      if (![401, 403, 404].includes(failure.status)) { owned = { ...owned, uncertain: Boolean(owned.receipt) || owned.uncertain || owned.dispatched && (failure.status >= 500 || failure.code === "INVALID_RESPONSE") }; attempt.current = owned.uncertain ? owned : undefined; setUncertain(owned.uncertain); if (!owned.uncertain && failure.status === 409 && failure.code !== "PROPERTY_PERIOD_OVERLAP") { validReview.current = false; setNeedsReview(true); } }
       return failure;
     } finally { lock.current = false; if (current()) { setPending(false); if (!attempt.current?.uncertain) busy(false); } }
   }

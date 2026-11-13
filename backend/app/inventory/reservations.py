@@ -158,6 +158,10 @@ def apply(
     hold = active_hold(session, deal.id)
     releasing = isinstance(body, ReleaseReservation)
     if not releasing:
+        from app.inventory.periods import upcoming_period
+
+        if offering.kind != "sale" and upcoming_period(session, target, bookings_only=False):
+            raise IdentityError("PROPERTY_PERIOD_ACTIVE", 409)
         code = conflict(session, offering)
         if code:
             raise IdentityError(code, 409)

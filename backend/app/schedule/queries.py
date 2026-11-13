@@ -69,7 +69,7 @@ def read_visits(
         facets: dict[str, object] = {}
         if not busy:
             scoped = base.subquery()
-            types = dict.fromkeys(("office", "without_company_car", "company_car"), 0)
+            types = dict.fromkeys(("office", "without_company_car", "company_car", "meeting"), 0)
             statuses = dict.fromkeys(
                 ("draft", "scheduled", "confirmed", "completed", "not_completed", "cancelled"), 0
             )

@@ -69,6 +69,8 @@ def snapshot(row: Task) -> dict[str, object]:
         "owner_user_id": str(row.owner_user_id),
         "title": row.title,
         "notes": row.notes,
+        "important": row.important,
+        "kind": row.kind,
         "due_at": row.due_at.isoformat(),
         "status": row.status,
         "outcome": row.outcome,

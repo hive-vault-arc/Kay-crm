@@ -21,6 +21,9 @@ export function loadServer(relative, { env = {}, modules = {}, globals = {} } = 
   function scopedRequire(name) {
     if (Object.hasOwn(modules, name)) return modules[name];
     if (name === "server-only") return {};
+    if (name === "@/components/shared/important-remarks") return { ImportantRemarks: "ImportantRemarks", ImportantRemarksField: "ImportantRemarksField" };
+    if (name === "@/lib/api/important-remarks") return loadServer("src/lib/api/important-remarks.ts", { env, modules });
+    if (name === "./period-contracts") return loadServer("src/features/inventory/period-contracts.ts", { env, modules });
     if (name === "./errors") return loadServer("src/lib/api/errors.ts", { env, modules });
     if (name === "./contracts") return loadServer("src/lib/auth/contracts.ts", { env, modules });
     if (name.startsWith("node:") || name === "zod") return require(name);

@@ -26,12 +26,22 @@ for (const [role, width] of [["agent", 1440], ["manager", 390]] as const) {
       await expect(form.locator('#property-category option[value="room"]')).toHaveCount(0);
       await form.locator("#property-reference").fill(reference);
       await form.locator("#property-price_mad").fill("500000.25");
+      const asking = form.getByLabel("Prix demandé par le propriétaire (MAD, facultatif)", { exact: true });
+      const syndic = form.getByLabel("Frais de syndic (MAD / mois, facultatif)", { exact: true });
+      if (role === "agent") {
+        await form.getByLabel("Date de réception (facultative)", { exact: true }).fill("2025-01-05");
+        await asking.fill("480000,50");
+        await syndic.fill("0");
+      }
       await form.getByRole("button", { name: "Suivant", exact: true }).click();
       await form.locator("#property-city").fill("Ville synthétique");
       await form.getByRole("button", { name: "Suivant", exact: true }).click();
       await form.locator("#property-bathrooms").fill("0");
       await form.getByRole("button", { name: "Suivant", exact: true }).click();
       await form.locator("#property-description").fill("Description synthétique\nDeuxième ligne");
+      const remarks = form.getByLabel("Remarques importantes (facultatif)", { exact: true });
+      await expect(remarks).toBeVisible();
+      if (role === "agent") await remarks.fill("Remarque interne synthétique");
       await form.getByRole("button", { name: "Suivant", exact: true }).click();
       await expect(form.getByText("Programme synthétique des unités", { exact: true })).toBeVisible();
       await expect(form.getByText("Ville synthétique", { exact: true })).toBeVisible();
@@ -44,9 +54,23 @@ for (const [role, width] of [["agent", 1440], ["manager", 390]] as const) {
       expect(unit.reference).toBe(reference);
       expect(unit.development_id).toBe(id);
       expect(unit.area_sqm).toBeNull();
+      expect(unit.received_on).toBe(role === "agent" ? "2025-01-05" : null);
+      if (role === "agent") await expect(page.getByText("5 janv. 2025", { exact: true })).toBeVisible();
       expect(unit.listing_details.bathrooms).toBe(0);
+      expect(unit.important_remarks).toBe(role === "agent" ? "Remarque interne synthétique" : null);
+      if (role === "agent") await expect(page.getByRole("region", { name: "Remarques importantes", exact: true })).toContainText("Remarque interne synthétique");
       expect(unit.listing_details.description).toBe("Description synthétique\nDeuxième ligne");
       expect(unit.offerings[0].state).toBe("draft");
+      expect(unit.offerings[0].price_mad).toBe("500000.25");
+      expect(unit.owner_asking_price_mad).toBe(role === "agent" ? "480000.50" : null);
+      expect(unit.monthly_syndic_fee_mad).toBe(role === "agent" ? "0.00" : null);
+      const costs = page.getByRole("heading", { name: "Prix propriétaire et charges", exact: true });
+      if (role === "agent") {
+        await expect(costs).toBeVisible();
+        await expect(page.getByText("0,00 MAD / mois", { exact: true })).toBeVisible();
+      } else {
+        await expect(costs).toHaveCount(0);
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
     } finally {
       await clearActorContext(page);

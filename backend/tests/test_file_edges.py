@@ -263,7 +263,7 @@ async def test_retry_exhaustion_explicit_retry_and_immutable_clean_version(setti
     assert document_command(database, token, key, body, did, "retry-scan") == first
     assert run_once(database, settings)
     with database.session() as session:
-        assert session.scalar(select(func.count()).select_from(Notification)) == 1
+        assert session.scalar(select(func.count()).select_from(Notification)) == 0
         assert session.get(DocumentVersion, UUID(permit["version_id"])).state == "clean"
     with pytest.raises(IntegrityError), database.session() as session, session.begin():
         session.execute(

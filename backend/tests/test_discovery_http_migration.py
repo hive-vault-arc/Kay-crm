@@ -103,10 +103,12 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
                 connection.execute(text(query), {"cid": cid, "pid": pid}).scalars().all()
                 for query in (
                     "SELECT to_jsonb(c)-ARRAY['website_source_id','country','nationality',"
-                    "'languages','birth_date'] FROM contact c WHERE id=:cid",
+                    "'languages','birth_date','national_id_number','important_remarks'] "
+                    "FROM contact c WHERE id=:cid",
                     "SELECT to_jsonb(p)-'website_source_id' FROM contact_phone p "
                     "WHERE contact_id=:cid ORDER BY id",
-                    "SELECT to_jsonb(p)-ARRAY['archived_at','listing_details'] "
+                    "SELECT to_jsonb(p)-ARRAY['archived_at','listing_details','important_remarks',"
+                    "'owner_asking_price_mad','monthly_syndic_fee_mad','received_on'] "
                     "FROM property p WHERE id=:pid",
                     "SELECT to_jsonb(e)-'development_phase' FROM inventory_event e "
                     "WHERE property_id=:pid ORDER BY id",
@@ -128,7 +130,16 @@ def test_populated_upgrade_retains_contacts_inventory_history_and_downgrade_refu
             )
             assert connection.scalar(
                 text(
+                    "SELECT received_on IS NULL AND owner_asking_price_mad IS NULL "
+                    "AND monthly_syndic_fee_mad IS NULL AND important_remarks IS NULL "
+                    "FROM property WHERE id=:pid"
+                ),
+                {"pid": pid},
+            )
+            assert connection.scalar(
+                text(
                     "SELECT website_source_id IS NULL AND birth_date IS NULL "
+                    "AND national_id_number IS NULL AND important_remarks IS NULL "
                     "FROM contact WHERE id=:cid"
                 ),
                 {"cid": cid},

@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RecordError } from "@/features/contacts/record-states";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { ApiError } from "@/lib/api/client";
-import { kindLabels, type Offering } from "./contracts";
+import { kindLabels, offeringConditionsLabels, type Offering } from "./contracts";
 import { currentOffering, offeringBody, offeringEditable, offeringPeriods, offeringValues, periodLabels, readOfferingTarget, type OfferTarget, type OfferingValues } from "./offering-form-model";
 import { InventoryError, InventoryStatus, Price } from "./states";
 import { useInventoryRecordCommand } from "./use-record-command";
@@ -76,7 +76,14 @@ function OfferingForm({ property, kind, offering, saved, cancel, availability = 
       <RecordSection title={title} description={description}><div className="kay-form-pair">
         {!availability ? <><div className="grid min-w-0 gap-2"><Label htmlFor={`${id}-price`}>Prix (MAD, facultatif)</Label><Input id={`${id}-price`} name="price" value={values.price} inputMode="decimal" maxLength={19} aria-invalid={invalid.includes("price")} aria-describedby={invalid.includes("price") ? `${id}-validation` : undefined} onChange={event => change("price", event.target.value)} /></div>
           {kind !== "sale" ? <div className="grid min-w-0 gap-2"><Label htmlFor={`${id}-period`}>Période du tarif d’origine</Label><NativeSelect id={`${id}-period`} name="period" value={values.period} aria-invalid={invalid.includes("period")} aria-describedby={invalid.includes("period") ? `${id}-validation` : undefined} onChange={event => change("period", event.target.value)}>{offeringPeriods[kind].map(period => <option key={period} value={period}>{periodLabels[period]}</option>)}</NativeSelect></div> : null}
-          <div className="grid min-w-0 gap-2 col-span-full"><Label htmlFor={`${id}-conditions`}>Conditions d’origine (facultatives)</Label><Textarea id={`${id}-conditions`} name="conditions" value={values.conditions} maxLength={2000} aria-invalid={invalid.includes("conditions")} aria-describedby={invalid.includes("conditions") ? `${id}-validation` : undefined} onChange={event => change("conditions", event.target.value)} /></div>
+          <div className="grid min-w-0 gap-2 col-span-full">
+            <Label htmlFor={`${id}-conditions`}>{offeringConditionsLabels[kind]} (facultatives)</Label>
+            <Textarea id={`${id}-conditions`} name="conditions" value={values.conditions} maxLength={2000}
+              placeholder={kind === "rental" ? "Ex. Dépôt de garantie, durée du bail, animaux autorisés…" : kind === "holiday" ? "Ex. Heure d’arrivée, nombre de voyageurs, règles du logement…" : undefined}
+              aria-invalid={invalid.includes("conditions")}
+              aria-describedby={invalid.includes("conditions") ? `${id}-validation` : undefined}
+              onChange={event => change("conditions", event.target.value)} />
+          </div>
           {offering ? <div className="grid min-w-0 gap-2"><Label htmlFor={`${id}-state`}>Statut de la campagne</Label><NativeSelect id={`${id}-state`} name="state" value={values.state} aria-invalid={invalid.includes("state")} aria-describedby={invalid.includes("state") ? `${id}-validation` : undefined} onChange={event => change("state", event.target.value)}><option value="draft">Brouillon</option>{current?.state === "available" || values.state === "available" ? <option value="available" disabled={current?.state !== "available"}>{current?.state === "available" ? "Disponible" : "Disponible — confirmation requise"}</option> : null}<option value="withdrawn">Retirée</option></NativeSelect></div> : null}</> : null}
         {offering || availability ? <div className="grid min-w-0 gap-2 col-span-full"><Label htmlFor={`${id}-reason`}>{availability ? "Motif de confirmation" : "Motif de modification"}</Label><Textarea id={`${id}-reason`} name="reason" value={values.reason} required maxLength={1000} aria-invalid={invalid.includes("reason")} aria-describedby={invalid.includes("reason") ? `${id}-validation` : undefined} onChange={event => change("reason", event.target.value)} /></div> : null}
       </div></RecordSection>

@@ -177,7 +177,7 @@ async def test_approval_and_link_are_scoped_and_revocable(settings, database, ki
     _, agent_token = actor(settings, database)
     _, other_agent = actor(settings, database)
     other_property = property_draft(settings, database, manager_token)
-    parent = development(settings, database, manager_token)
+    parent = development(settings, database, manager_token, received_on="2025-01-03")
     if kind == "development":
         identifier = parent
     else:
@@ -197,6 +197,7 @@ async def test_approval_and_link_are_scoped_and_revocable(settings, database, ki
                 area_sqm="91.25",
                 rooms=3,
                 location="Synthetic exact address",
+                received_on="2025-01-03",
                 development_id=parent if kind == "unit" else None,
                 floor_id=floors[0],
                 unit_type_id=unit_type,

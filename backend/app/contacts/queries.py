@@ -5,7 +5,7 @@ from typing import get_args
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import func, or_, select, text
+from sqlalchemy import ColumnElement, func, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.contacts.access import check_phones, contact_scope, readable_contact
@@ -47,15 +47,43 @@ def detail_in_session(
     return enquiry_views(session, [enquiry], [contact], detail=True)[0]
 
 
+def owner_contact() -> ColumnElement[bool]:
+    return or_(
+        select(ContactRole.contact_id)
+        .where(ContactRole.contact_id == Contact.id, ContactRole.role == "owner")
+        .exists(),
+        select(PropertyOwner.id).where(PropertyOwner.contact_id == Contact.id).exists(),
+        select(DevelopmentOwner.id).where(DevelopmentOwner.contact_id == Contact.id).exists(),
+    )
+
+
 def read_detail(
-    database: Database, token: str, kind: str, target: UUID, *, birth_date_enabled: bool = False
+    database: Database,
+    token: str,
+    kind: str,
+    target: UUID,
+    *,
+    birth_date_enabled: bool = False,
+    owner_identity: bool = False,
 ) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
         result = detail_in_session(session, current_identity(session, token), kind, target)
+        if kind == "contacts":
+            result["important_remarks"] = session.scalar(
+                select(Contact.important_remarks).where(Contact.id == UUID(str(result["id"])))
+            )
         if kind == "contacts" and birth_date_enabled:
-            birth_date = session.scalar(select(Contact.birth_date).where(Contact.id == target))
+            birth_date = session.scalar(
+                select(Contact.birth_date).where(Contact.id == UUID(str(result["id"])))
+            )
             result["birth_date"] = birth_date.isoformat() if birth_date else None
+        if kind == "contacts" and owner_identity and result["type"] == "person":
+            result["national_id_number"] = session.scalar(
+                select(Contact.national_id_number).where(
+                    Contact.id == UUID(str(result["id"])), owner_contact()
+                )
+            )
         return result
 
 
@@ -137,17 +165,7 @@ def list_in_session(
     if query.owner_directory:
         if kind != "contacts":
             raise IdentityError("VALIDATION_ERROR", 422)
-        contacts = contacts.where(
-            or_(
-                select(ContactRole.contact_id)
-                .where(ContactRole.contact_id == Contact.id, ContactRole.role == "owner")
-                .exists(),
-                select(PropertyOwner.id).where(PropertyOwner.contact_id == Contact.id).exists(),
-                select(DevelopmentOwner.id)
-                .where(DevelopmentOwner.contact_id == Contact.id)
-                .exists(),
-            )
-        )
+        contacts = contacts.where(owner_contact())
     if kind == "contacts":
         contacts = filter_contacts(contacts, identity, query)
         count = session.scalar(select(func.count()).select_from(contacts.subquery())) or 0

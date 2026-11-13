@@ -22,6 +22,8 @@ from app.inventory.contracts import (
 from app.inventory.hierarchy_contracts import ArchiveDevelopment
 from app.inventory.outcome_contracts import ExternalOutcome
 from app.inventory.outcome_queries import stock_review
+from app.inventory.period_contracts import CalendarMonth, CancelPeriod, SavePeriod
+from app.inventory.periods import read_calendar
 from app.inventory.queries import read_detail, read_history, read_list
 from app.settings import Settings
 
@@ -106,6 +108,35 @@ def restore_property(
 def property_detail(request: Request, token: Proof, pid: UUID) -> dict[str, object]:
     validate_query(request, set())
     return read_detail(database(request), token, pid)
+
+
+@router.get("/properties/{pid}/calendar")
+def property_calendar(
+    request: Request, token: Proof, pid: UUID, query: Annotated[CalendarMonth, Query()]
+) -> dict[str, object]:
+    validate_query(request, {"month"})
+    return read_calendar(database(request), token, pid, query.month)
+
+
+@router.post("/properties/{pid}/calendar")
+def create_period(
+    request: Request, token: Proof, key: RetryKey, pid: UUID, body: SavePeriod
+) -> dict[str, object]:
+    return mutate(request, token, key, "period-create", body, pid)
+
+
+@router.patch("/properties/{pid}/calendar/{period_id}")
+def edit_period(
+    request: Request, token: Proof, key: RetryKey, pid: UUID, period_id: UUID, body: SavePeriod
+) -> dict[str, object]:
+    return mutate(request, token, key, f"period-edit:{period_id}", body, pid)
+
+
+@router.post("/properties/{pid}/calendar/{period_id}/cancel")
+def cancel_period(
+    request: Request, token: Proof, key: RetryKey, pid: UUID, period_id: UUID, body: CancelPeriod
+) -> dict[str, object]:
+    return mutate(request, token, key, f"period-cancel:{period_id}", body, pid)
 
 
 @router.patch("/properties/{pid}")

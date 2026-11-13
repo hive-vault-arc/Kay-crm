@@ -77,7 +77,7 @@ class Visit(Base):
     __tablename__ = "visit"
     __table_args__ = (
         CheckConstraint(
-            "type IN ('company_car','without_company_car','office')", name="visit_type"
+            "type IN ('company_car','without_company_car','office','meeting')", name="visit_type"
         ),
         CheckConstraint(
             "status IN ('draft','scheduled','confirmed','completed','not_completed','cancelled')",

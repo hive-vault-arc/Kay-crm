@@ -60,6 +60,8 @@ def preparation_sheet(
             if field.group != group:
                 continue
             value = display_value(field.key, values.get(field.key, ""))
+            if field.key == "guest_instructions" and not value:
+                continue
             entry = (field.label, value, field.multiline)
             if field.multiline or len(value) > 90:
                 if pending:

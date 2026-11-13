@@ -9,15 +9,22 @@ from pathlib import PurePosixPath
 from typing import cast
 from uuid import UUID, uuid4
 
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy import func, select, update
+from sqlalchemy.orm import Session, undefer
 
 from app.contacts.access import readable_contact, scoped_contact
-from app.contacts.queries import enquiry_in_scope
+from app.contacts.models import Contact
+from app.contacts.queries import enquiry_in_scope, owner_contact
 from app.db.session import Database
 from app.deals.access import authorized as authorized_deal
 from app.deals.access import writable as writable_deal
-from app.files.contracts import FORMATS, ArchiveDocument, NewDocument, PermitRequest
+from app.files.contracts import (
+    FORMATS,
+    IDENTITY_CARD_MIMES,
+    ArchiveDocument,
+    NewDocument,
+    PermitRequest,
+)
 from app.files.models import Document, DocumentVersion, FilePermit, FileReceipt, Job, OutboxEvent
 from app.generated.visibility import visible_template_codes
 from app.identity.models import AGENCY_ID, Agency, AuditEvent, User
@@ -163,6 +170,11 @@ def view(session: Session, document: Document, identity: CurrentIdentity) -> dic
             if document.purpose == "photo"
             else {}
         ),
+        **(
+            {"is_primary_photo": document.is_primary_photo}
+            if document.property_id and document.mime_type in PHOTO_MIMES
+            else {}
+        ),
         "versions": [
             {
                 "id": str(v.id),
@@ -193,7 +205,9 @@ def list_documents(
     with database.session() as session:
         identity = current_identity(session, token)
         authorize(session, identity, kind, pid)
-        if purpose == "photo" and kind not in {"property", "development"}:
+        if (purpose == "photo" and kind not in {"property", "development"}) or (
+            purpose == "identity_card" and kind != "contact"
+        ):
             raise IdentityError("VALIDATION_ERROR", 422)
         column = {
             "contact": Document.contact_id,
@@ -208,7 +222,11 @@ def list_documents(
             (Document.purpose != "generated")
             | Document.template_code.in_(visible_template_codes(identity.user.role)),
         )
-        if purpose is not None:
+        if purpose == "identity_card":
+            statement = statement.where(Document.purpose == "identity_card")
+        else:
+            statement = statement.where(Document.purpose != "identity_card")
+        if purpose not in {None, "identity_card"}:
             if kind in {"property", "development"}:
                 statement = statement.where(
                     Document.mime_type.in_(PHOTO_MIMES)
@@ -221,7 +239,8 @@ def list_documents(
                 statement = statement.where(Document.purpose == "generated")
         total = session.scalar(select(func.count()).select_from(statement.subquery())) or 0
         rows = session.scalars(
-            statement.order_by(Document.created_at.desc(), Document.id)
+            statement.options(undefer(Document.is_primary_photo))
+            .order_by(Document.created_at.desc(), Document.id)
             .offset((page - 1) * page_size)
             .limit(page_size)
         ).all()
@@ -233,6 +252,52 @@ def list_documents(
             "has_next": page * page_size < total,
             "has_previous": page > 1,
         }
+
+
+def read_cover(database: Database, token: str, kind: str, pid: UUID) -> dict[str, object]:
+    with database.session() as session:
+        identity = current_identity(session, token)
+        authorize(session, identity, kind, pid)
+        column = Document.property_id if kind == "property" else Document.development_id
+        document = session.scalar(
+            select(Document)
+            .where(
+                column == pid,
+                Document.archived_at.is_(None),
+                Document.mime_type.in_(PHOTO_MIMES),
+                select(DocumentVersion.id)
+                .where(DocumentVersion.document_id == Document.id, DocumentVersion.state == "clean")
+                .exists(),
+            )
+            .order_by(Document.is_primary_photo.desc(), Document.created_at.desc(), Document.id)
+            .limit(1)
+        )
+        return {"photo": view(session, document, identity) if document else None}
+
+
+def set_primary_photo(session: Session, document: Document) -> None:
+    if (
+        document.property_id is None
+        or document.archived_at is not None
+        or document.mime_type not in PHOTO_MIMES
+    ):
+        raise IdentityError("NOT_FOUND", 404)
+    if not session.scalar(
+        select(DocumentVersion.id)
+        .where(DocumentVersion.document_id == document.id, DocumentVersion.state == "clean")
+        .limit(1)
+    ):
+        raise IdentityError("FILE_NOT_CLEAN", 409)
+    session.execute(
+        update(Document)
+        .where(
+            Document.property_id == document.property_id,
+            Document.id != document.id,
+            Document.is_primary_photo,
+        )
+        .values(is_primary_photo=False)
+    )
+    document.is_primary_photo = True
 
 
 def document_command(
@@ -251,8 +316,12 @@ def document_command(
         identity = locked_identity(session, token)
         receipt = session.get(FileReceipt, (identity.user.id, key))
         if receipt:
-            document = authorized_document(session, identity, receipt.document_id, write=True)
-            if operation != "create" and (document.property_id or document.development_id):
+            document = authorized_document(
+                session, identity, receipt.document_id, write=operation != "set-primary"
+            )
+            if operation not in {"create", "set-primary"} and (
+                document.property_id or document.development_id
+            ):
                 require_role(identity, {"manager"})
             if receipt.operation != f"{operation}:{did}" or receipt.request_hash != digest:
                 raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
@@ -275,6 +344,15 @@ def document_command(
                     or PurePosixPath(body.filename).suffix.lower() != ".webp"
                 ):
                     raise IdentityError("UNSUPPORTED_MEDIA_TYPE", 415)
+            elif body.purpose == "identity_card":
+                if body.parent_kind != "contact" or body.mime_type not in IDENTITY_CARD_MIMES:
+                    raise IdentityError("UNSUPPORTED_MEDIA_TYPE", 415)
+                if not session.scalar(
+                    select(Contact.id).where(
+                        Contact.id == body.parent_id, Contact.type == "person", owner_contact()
+                    )
+                ):
+                    raise IdentityError("VALIDATION_ERROR", 422)
             elif body.parent_kind in {"property", "development"} and body.mime_type in PHOTO_MIMES:
                 raise IdentityError("PROPERTY_PHOTO_WEBP_REQUIRED", 415)
             document = Document(
@@ -292,18 +370,24 @@ def document_command(
             session.flush()
         else:
             assert did is not None  # noqa: S101
-            document = authorized_document(session, identity, did, write=True)
-            if document.property_id or document.development_id:
+            document = authorized_document(session, identity, did, write=operation != "set-primary")
+            if operation != "set-primary" and (document.property_id or document.development_id):
                 require_role(identity, {"manager"})
             if document.purpose == "generated":
                 raise IdentityError("FORBIDDEN", 403)
             if document.version != body.expected_version:
                 raise IdentityError("FILE_VERSION_CONFLICT", 409)
-            if operation == "retry-scan":
-                retry_scan(session, document)
+            if operation == "set-primary":
+                # The agency lock serializes selection and archival without changing file versions.
+                set_primary_photo(session, document)
             else:
-                document.archived_at = datetime.now(UTC)
-            document.version += 1
+                if operation == "retry-scan":
+                    retry_scan(session, document)
+                else:
+                    if document.property_id and document.mime_type in PHOTO_MIMES:
+                        document.is_primary_photo = False
+                    document.archived_at = datetime.now(UTC)
+                document.version += 1
         audit(session, identity, document, operation)
         session.add(
             FileReceipt(

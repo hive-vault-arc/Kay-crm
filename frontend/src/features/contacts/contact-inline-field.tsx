@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { KayIconComponent } from "@/components/icons";
-import { PhoneIcon, EmailIcon } from "@/components/icons";
+import { PhoneIcon, EmailIcon, WhatsAppIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { InlineFieldForm, InlineFieldLoading, InlineRecordField, type InlineEditorControls } from "@/components/shared/inline-record-field";
@@ -33,11 +33,19 @@ export function contactFieldText(contact: ContactSummary | Contact, field: Conta
   if (field === "emails") return "emails" in contact ? contact.emails.map(value => value.email + (value.label ? " · " + value.label : "") + (value.is_primary ? " · principal" : "")).join("\n") || "Non renseignés" : contact.primary_email || "Non renseigné";
   return "roles" in contact ? contact.roles.map(value => roleLabels[value]).join(", ") || "Non renseignés" : "Non renseignés";
 }
-export function ContactInlineField({ contact, field, label, icon, writable, saved, denied, display, methodScope = "all", actorId, role }: {
-  contact: ContactSummary | Contact; field: ContactField; label: string; icon: KayIconComponent; writable: boolean; saved: (contact: Contact) => void | Promise<void>; denied: (error: ApiError, acknowledged?: boolean) => void; display?: ReactNode; methodScope?: "all" | "primary" | "secondary"; actorId?: ContactEditBinding["actorId"]; role?: ContactEditBinding["role"];
+export function ContactInlineField({ contact, field, label, icon, writable, saved, denied, display, methodScope = "all", phoneAction = "call", actorId, role }: {
+  contact: ContactSummary | Contact; field: ContactField; label: string; icon: KayIconComponent; writable: boolean; saved: (contact: Contact) => void | Promise<void>; denied: (error: ApiError, acknowledged?: boolean) => void; display?: ReactNode; methodScope?: "all" | "primary" | "secondary"; phoneAction?: "call" | "whatsapp"; actorId?: ContactEditBinding["actorId"]; role?: ContactEditBinding["role"];
 }) {
   const methods = field === "phones" ? "phones" in contact ? contact.phones.filter(value => methodScope === "all" || value.is_primary === (methodScope === "primary")).map(value => value.number) : methodScope === "secondary" ? [] : [contact.primary_phone] : field === "emails" ? "emails" in contact ? contact.emails.filter(value => methodScope === "all" || value.is_primary === (methodScope === "primary")).map(value => value.email) : methodScope !== "secondary" && contact.primary_email ? [contact.primary_email] : [] : [];
-  return <InlineRecordField label={label} icon={icon} writable={writable && !contact.archived_at} display={display ?? <span className="whitespace-pre-wrap">{contactFieldText(contact, field)}</span>} actions={methods.length ? <div className="kay-inline-methods">{methods.map(value => <a key={value} href={(field === "phones" ? "tel:" : "mailto:") + value} aria-label={(field === "phones" ? "Appeler " : "Écrire à ") + value} title={value}>{field === "phones" ? <PhoneIcon size={16} aria-hidden="true" /> : <EmailIcon size={16} aria-hidden="true" />}</a>)}</div> : undefined} editor={controls => <ContactFieldLoader key={`${contact.id}:${actorId ?? ""}:${role ?? ""}`} actorId={actorId} role={role} id={contact.id} supplied={"phones" in contact ? contact : undefined} field={field} label={label} controls={controls} saved={saved} denied={denied} />} />;
+  const whatsapp = field === "phones" && phoneAction === "whatsapp";
+  const actionValues = whatsapp ? methods.filter(value => /^\+[1-9][0-9]{6,14}$/.test(value)) : methods;
+  const actions = actionValues.length ? <div className="kay-inline-methods">{actionValues.map(value => {
+    if (whatsapp) return <a key={value} data-method="whatsapp" href={`https://wa.me/${value.slice(1)}`} target="_blank" rel="noopener noreferrer" aria-label={`Ouvrir WhatsApp pour ${value}`} title="Ouvrir dans WhatsApp"><WhatsAppIcon size={16} aria-hidden="true" /></a>;
+    const phone = field === "phones";
+    const Icon = phone ? PhoneIcon : EmailIcon;
+    return <a key={value} href={(phone ? "tel:" : "mailto:") + value} aria-label={(phone ? "Appeler " : "Écrire à ") + value} title={value}><Icon size={16} aria-hidden="true" /></a>;
+  })}</div> : undefined;
+  return <InlineRecordField label={label} icon={icon} writable={writable && !contact.archived_at} display={display ?? <span className="whitespace-pre-wrap">{contactFieldText(contact, field)}</span>} actions={actions} editor={controls => <ContactFieldLoader key={`${contact.id}:${actorId ?? ""}:${role ?? ""}`} actorId={actorId} role={role} id={contact.id} supplied={"phones" in contact ? contact : undefined} field={field} label={label} controls={controls} saved={saved} denied={denied} />} />;
 }
 function ContactFieldLoader(props: { id: string; supplied?: Contact; field: ContactField; label: string; controls: InlineEditorControls; saved: (contact: Contact) => void | Promise<void>; denied: (error: ApiError, acknowledged?: boolean) => void; actorId?: ContactEditBinding["actorId"]; role?: ContactEditBinding["role"] }) {
   return props.supplied ? <ContactFieldMetadata {...props} contact={props.supplied} /> : <ReadContactField {...props} />;

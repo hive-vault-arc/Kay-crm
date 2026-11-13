@@ -10,7 +10,13 @@ from sqlalchemy import text
 
 from app.files.contracts import ArchiveDocument, NewDocument, PermitRequest
 from app.files.models import Document
-from app.files.service import document_command, issue_permit, list_documents, read_document
+from app.files.service import (
+    document_command,
+    issue_permit,
+    list_documents,
+    read_cover,
+    read_document,
+)
 from app.files.worker import run_once
 from app.identity.security import IdentityError
 from app.inventory.hierarchy_models import Development
@@ -23,6 +29,7 @@ from tests.test_files import headers
 from tests.test_foundation import client_for
 from tests.test_inventory import property_draft
 from tests.test_isolation_migrations import HEAD, migrate
+from tests.test_listing_shares import staff_headers
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
@@ -277,6 +284,95 @@ async def test_webp_photo_private_transfer_scan_and_wrong_bytes_denied(settings,
     current = read_document(database, agent, UUID(document["id"]))
     assert current["purpose"] == "photo" and current["versions"][0]["state"] == "clean"
     assert list_documents(database, agent, kind, pid, 1, 10, "photo")["total"] == 2
+
+
+@pytest.mark.anyio
+async def test_property_primary_photo_is_shared_and_safe_to_retry(settings, database):
+    _, manager = actor(settings, database, "manager")
+    _, agent = actor(settings, database)
+    pid = property_draft(settings, database, manager)
+    data = image_bytes("WEBP")
+
+    async with client_for(create_app(settings)) as client:
+        clean = []
+        for _ in range(2):
+            document = photo(database, manager, pid, data)
+            permit = grant(database, manager, document)
+            uploaded = await client.put(
+                f"/api/v1/transfers/{permit['permit_id']}",
+                headers=headers(settings, permit, "image/webp"),
+                content=data,
+            )
+            assert uploaded.status_code == 200
+            assert run_once(database, settings)
+            clean.append(read_document(database, manager, UUID(document["id"])))
+        first, second = clean
+        for _ in range(21):
+            pending = photo(database, manager, pid, data)
+        cover = f"/api/v1/documents/cover?parent_kind=property&parent_id={pid}"
+        key = uuid4()
+        proof = {**staff_headers(settings, agent, key), "X-Kay-Primary-Photo": "1"}
+        assert (await client.get(cover)).status_code == 403
+        assert (await client.get(cover, headers=proof)).json()["photo"]["id"] == second["id"]
+
+        pending_route = f"/api/v1/documents/{pending['id']}/set-primary"
+        refused = await client.post(pending_route, headers=proof, json={"expected_version": 1})
+        assert refused.status_code == 409
+        assert refused.json()["error"]["code"] == "FILE_NOT_CLEAN"
+        programme = development(settings, database, manager)
+        invalid = photo(database, manager, programme, data, kind="development")
+        refused = await client.post(
+            f"/api/v1/documents/{invalid['id']}/set-primary",
+            headers=proof,
+            json={"expected_version": 1},
+        )
+        assert refused.status_code == 404
+
+        route = f"/api/v1/documents/{first['id']}/set-primary"
+        body = {"expected_version": first["version"]}
+        denied = await client.post(
+            route, headers={**proof, "Origin": "https://other.invalid"}, json=body
+        )
+        assert denied.status_code == 403
+        selected = await client.post(route, headers=proof, json=body)
+        assert selected.status_code == 200
+        assert selected.json()["is_primary_photo"] is True
+        assert selected.json()["version"] == first["version"]
+        legacy = await client.get(
+            route.removesuffix("/set-primary"), headers=staff_headers(settings, agent)
+        )
+        assert "is_primary_photo" not in legacy.json()
+        assert (await client.get(cover, headers=proof)).json()["photo"]["id"] == first["id"]
+
+        second_route = f"/api/v1/documents/{second['id']}/set-primary"
+        replacement = await client.post(
+            second_route,
+            headers={**proof, "Idempotency-Key": str(uuid4())},
+            json={"expected_version": second["version"]},
+        )
+        assert replacement.status_code == 200
+        assert (await client.post(route, headers=proof, json=body)).json()[
+            "is_primary_photo"
+        ] is False
+        assert (await client.get(cover, headers=proof)).json()["photo"]["id"] == second["id"]
+
+    with database.session() as session:
+        assert (
+            session.scalar(
+                text("SELECT count(*) FROM document WHERE property_id=:pid AND is_primary_photo"),
+                {"pid": pid},
+            )
+            == 1
+        )
+    document_command(
+        database,
+        manager,
+        uuid4(),
+        ArchiveDocument(expected_version=second["version"]),
+        UUID(second["id"]),
+    )
+    fallback = read_cover(database, agent, "property", pid)["photo"]
+    assert fallback["id"] == first["id"] and fallback["is_primary_photo"] is False
 
 
 def test_additive_photo_migration_preserves_legacy_image_and_refuses_lossy_downgrade(

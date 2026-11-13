@@ -10,6 +10,7 @@ const icons = new Set([...manifest.icons, ...selected.icons].map(icon => icon.ex
 // This wrapper renders the existing NotificationIcon together with its live unread count.
 icons.add("LiveNotificationIcon");
 const dataControls = new Map([
+  ["src/features/inventory/property-calendar.tsx", "Calendar cells display the date number and an accessible availability label."],
   ["src/features/schedule/calendar-sidebar.tsx", "Mini-month week buttons show actual date values; month arrows use shared directional actions."],
   ["src/features/contacts/numbered-pages.tsx", "Numbered page identity; previous/next carry directional icons."],
   ["src/features/inventory/inventory-wizard-steps.tsx", "Selected source stepper uses an explicit step-number circle and full accessible label; navigation never submits."],
@@ -46,9 +47,10 @@ for (const file of (await walk(path.join(root, "src"))).filter(file => file.ends
         const metricValue = ["src/features/reports/kpi-summary.tsx", "src/features/reports/report-dashboard.tsx"].includes(relative) && body.startsWith("{metric.unit ===") && attribute("variant")?.initializer?.getText(ast) === '"link"';
         const seriesMarker = relative.endsWith("reports/metric-chart.tsx") && body.startsWith('<span aria-hidden="true" className="size-3');
         const calendarWeek = relative === "src/features/schedule/calendar-sidebar.tsx" && attribute("aria-pressed") && attribute("className")?.initializer?.getText(ast).includes("calendar-month-choice");
+        const calendarDay = relative === "src/features/inventory/property-calendar.tsx" && attribute("data-control")?.initializer?.getText(ast) === '"calendar-day"' && attribute("aria-pressed") && attribute("aria-label") && body === "{Number(day.slice(-2))}";
         const numberedStep = relative === "src/features/inventory/inventory-wizard-steps.tsx" && attribute("type")?.initializer?.getText(ast) === '"button"' && attribute("aria-label") && attribute("aria-current") && body.includes('className="kay-stepper-number" aria-hidden="true">{index + 1}</span>');
         const pipelineValue = relative === "src/features/reports/workspace-pipeline.tsx" && ((body.includes('className="kay-dash-dot"') && body.includes("value.pipeline[key]")) || body === '{value.outcomes[key].toLocaleString("fr-MA")}');
-        const exception = !action && !existingIcon && (numericPage || metricValue || seriesMarker || calendarWeek || numberedStep || pipelineValue) && dataControls.get(relative);
+        const exception = !action && !existingIcon && (numericPage || metricValue || seriesMarker || calendarWeek || calendarDay || numberedStep || pipelineValue) && dataControls.get(relative);
         if (!action && !existingIcon && !exception) violations.push({ file: relative, line, reason: "Action needs an explicit semantic icon mapping." });
         sites.push({ file: relative, line, action: action ?? null, existingIcon, exception: exception || null });
       }

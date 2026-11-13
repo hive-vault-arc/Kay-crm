@@ -38,7 +38,11 @@ from app.inventory.hierarchy_rules import development_record, marketable_structu
 from app.inventory.history import record
 from app.inventory.models import InventoryReceipt, Offering, Property, PropertyOwner
 from app.inventory.outcome_contracts import ExternalOutcome
+from app.inventory.period_contracts import CancelPeriod, SavePeriod
+from app.inventory.period_models import OVERLAP
+from app.inventory.periods import apply_period, upcoming_period
 from app.inventory.queries import property_record
+from app.inventory.received_date import received_date_change
 
 Body = (
     PropertyFields
@@ -52,6 +56,8 @@ Body = (
     | TypeFields
     | ArchiveDevelopment
     | ExternalOutcome
+    | SavePeriod
+    | CancelPeriod
 )
 
 
@@ -179,6 +185,14 @@ def property_values(body: PropertyFields) -> dict[str, object]:
         "unit_type_id": body.unit_type_id,
         "rooms": body.rooms,
     }
+    for field in ("owner_asking_price_mad", "monthly_syndic_fee_mad"):
+        if field in body.model_fields_set:
+            amount = getattr(body, field)
+            values[field] = Decimal(amount) if amount is not None else None
+    if "important_remarks" in body.model_fields_set:
+        values["important_remarks"] = body.important_remarks
+    if "received_on" in body.model_fields_set:
+        values["received_on"] = body.received_on
     if body.listing_details is not None:
         values["listing_details"] = body.listing_details.model_dump(mode="json", exclude_none=True)
     return values
@@ -189,6 +203,15 @@ def execute(
 ) -> tuple[Property | Development, Offering | None, UUID]:
     item: Property | Development
     offering: Offering | None = None
+    reason = ""
+    if isinstance(body, SavePeriod | CancelPeriod):
+        if target is None:
+            raise IdentityError("NOT_FOUND", 404)
+        _, _, period_key = operation.partition(":")
+        item, eid = apply_period(
+            session, identity, target, UUID(period_key) if period_key else None, body
+        )
+        return item, None, eid
     if operation in {"property-archive", "property-restore"} and isinstance(
         body, ArchiveDevelopment
     ):
@@ -196,6 +219,8 @@ def execute(
             raise IdentityError("NOT_FOUND", 404)
         item = property_record(session, target, lock=True)
         check_version(item.version, body.expected_version)
+        if operation == "property-archive" and upcoming_period(session, item, bookings_only=False):
+            raise IdentityError("PROPERTY_PERIOD_ACTIVE", 409)
         if operation == "property-archive" and session.scalar(
             select(Offering.id).where(Offering.property_id == item.id, Offering.is_current).limit(1)
         ):
@@ -264,7 +289,13 @@ def execute(
         item = Property(**property_values(body), created_by_user_id=identity.user.id)
         session.add(item)
         session.flush()
-        event_id = record(session, identity, item, "properties.created")
+        event_id = record(
+            session,
+            identity,
+            item,
+            "properties.created",
+            reason=received_date_change(None, body.received_on),
+        )
         if isinstance(body, CreateProperty) and body.initial_offering is not None:
             initial = body.initial_offering
             offering = Offering(
@@ -381,6 +412,8 @@ def execute(
         check_version(item.version, body.expected_version)
         if isinstance(body, EditProperty):
             validate_unit(session, body, item)
+            if "received_on" in body.model_fields_set:
+                reason = received_date_change(item.received_on, body.received_on)
             for name, value in property_values(body).items():
                 setattr(item, name, value)
             action = "properties.updated"
@@ -407,7 +440,8 @@ def execute(
             action = "offerings.confirmed"
         bump(item)
     session.flush()
-    reason = body.reason if isinstance(body, EditOffering | ConfirmAvailability) else ""
+    if isinstance(body, EditOffering | ConfirmAvailability):
+        reason = body.reason
     return item, offering, record(session, identity, item, action, offering, reason)
 
 
@@ -426,12 +460,20 @@ def result(receipt: InventoryReceipt) -> dict[str, object]:
 
 def command_payload(body: Body) -> dict[str, object]:
     payload = body.model_dump(mode="json")
+    if isinstance(body, PropertyFields):
+        for field in ("owner_asking_price_mad", "monthly_syndic_fee_mad"):
+            if field not in body.model_fields_set:
+                payload.pop(field)
     if isinstance(body, CreateProperty) and body.initial_offering is None:
         payload.pop("initial_offering")
     if isinstance(body, EditDevelopment) and "developer_contact_id" not in body.model_fields_set:
         payload.pop("developer_contact_id")
     if isinstance(body, DevelopmentFields) and "phase" not in body.model_fields_set:
         payload.pop("phase")
+    if isinstance(body, PropertyFields | DevelopmentFields):
+        for field in ("important_remarks", "received_on"):
+            if field not in body.model_fields_set:
+                payload.pop(field)
     return payload
 
 
@@ -481,6 +523,8 @@ def command(
     except IntegrityError as error:
         # Return only known conflict codes; never driver text/identifiers/values.
         constraint = getattr(getattr(error.orig, "diag", None), "constraint_name", "")
+        if constraint == OVERLAP:
+            raise IdentityError("PROPERTY_PERIOD_OVERLAP", 409) from None
         if constraint == "property_reference_key":
             raise IdentityError("PROPERTY_REFERENCE_EXISTS", 409) from None
         if constraint in {"uq_offering_current", "uq_offering_development_current"}:

@@ -137,6 +137,8 @@ def detail(
     return {
         **summary(session, [item], phase_enabled=phase_enabled, offering_targets=True)[0],
         "briefing_text": item.briefing_text,
+        "received_on": item.received_on.isoformat() if item.received_on else None,
+        "important_remarks": item.important_remarks,
         "developer": {
             "marketing_display": item.developer_marketing_display,
             "contact": scoped_contact(session, identity, item.developer_contact_id),

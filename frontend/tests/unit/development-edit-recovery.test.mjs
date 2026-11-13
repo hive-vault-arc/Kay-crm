@@ -8,12 +8,13 @@ import { loadRecordCommand, recordIntents } from "./record-command-fixtures.mjs"
 
 function fixture({ role = "agent", source = { ...recordFixture("developments"), phase: "marketing", phase_supported: true }, dispatch, completeRead, read, navigate, hydrated = true } = {}) {
   const h = entryHarness(), calls = [], navigations = [], decisions = [], focused = [], registrations = [], props = { development: source }; let values, errors = {};
-  const form = { control: {}, formState: { errors }, register: name => ({ name, onChange: event => { values[name] = event.target.value; registrations.push(name); } }), getValues: () => ({ ...values }), reset(next) { values = { ...next }; }, clearErrors() { errors = {}; form.formState.errors = errors; }, setError(name, error) { errors[name] = error; }, setFocus: name => focused.push(name), handleSubmit: save => event => { event.preventDefault(); return save({ ...values }); } };
+  const form = { control: {}, formState: { errors }, register: name => ({ name, onChange: event => { values[name] = event.target.value; registrations.push(name); } }), getValues: name => name ? values[name] : { ...values }, setValue(name, value) { values[name] = value; }, reset(next) { values = { ...next }; }, clearErrors() { errors = {}; form.formState.errors = errors; }, setError(name, error) { errors[name] = error; }, setFocus: name => focused.push(name), handleSubmit: save => event => { event.preventDefault(); return save({ ...values }); } };
   const command = loadRecordCommand(h, { source, role, hydrated, completeRead, dispatch: async context => { calls.push(context.args); return dispatch ? dispatch(context) : context.commit(); } });
   const draft = loadServer("src/components/shared/dossier-form.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "./record-header": {} } });
   const loaded = loadServer("src/features/inventory/development-editor.tsx", { modules: {
     react: h.react, "react/jsx-runtime": runtime, "next/link": { default: "Link" }, "next/navigation": { useRouter: () => ({ push: path => { navigations.push(path); return navigate?.(path); } }) },
     "react-hook-form": { useForm: options => { values ??= { ...options.defaultValues }; return form; }, useWatch: () => ({ ...values }) },
+    "@/lib/format": loadServer("src/lib/format/index.ts"), "@/components/shared/important-remarks": { ImportantRemarks: "Remarks", ImportantRemarksField: "RemarksField" },
     "@/components/icons": { DevelopmentIcon: "Icon" }, "@/components/shared/section-heading": { SectionHeading: "Heading" }, "@/components/shared/dossier-form": draft,
     "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/shared/record-entry": { RecordEntry: "Entry" }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: null, request: (run, scope) => decisions.push({ run, scope }) }) },
     "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/textarea": { Textarea: "Textarea" },
@@ -58,10 +59,10 @@ test("Acknowledged programme edit retries only current result and original faile
 test("Known programme conflict requires explicit current comparison while retaining omitted protected developer identity", async () => {
   let conflict = true, latest;
   const s = fixture({ dispatch: ({ commit }) => { if (conflict) throw new ApiError("INVENTORY_VERSION_CONFLICT", 409); return commit(); }, read: () => latest });
-  latest = { ...s.source, version: 9, name: "Synthetic current programme", developer: { marketing_display: "Synthetic public promoter", contact: null }, briefing_text: "Synthetic current shared presentation" };
+  latest = { ...s.source, version: 9, name: "Synthetic current programme", developer: { marketing_display: "Synthetic public promoter", contact: null }, briefing_text: "Synthetic current shared presentation", received_on: "2025-01-03" };
   s.change("name", "Synthetic retained draft"); s.change("phase", ""); await s.save(); await s.save(); assert.equal(s.calls.length, 1);
   await button(s.render(), "Comparer la version actuelle").props.onClick(); await tick(); assert.equal(find(s.render(), "fieldset")[0].props.disabled, true); assert.equal(s.values().name, "Synthetic retained draft");
-  button(s.render(), "Conserver ma saisie sur cette version").props.onClick(); conflict = false; await s.save(); assert.equal(s.calls[1][1].expected_version, 9); assert.equal(s.calls[1][1].name, "Synthetic retained draft"); assert.equal(s.calls[1][1].phase, null); assert.equal(Object.hasOwn(s.calls[1][1], "developer_contact_id"), false); assert.notEqual(s.calls[1][3], s.calls[0][3]); assert.equal(s.accepted[0].version, 10);
+  button(s.render(), "Conserver ma saisie sur cette version").props.onClick(); assert.equal(s.values().received_on, "2025-01-03"); conflict = false; await s.save(); assert.equal(s.calls[1][1].expected_version, 9); assert.equal(Object.hasOwn(s.calls[1][1], "received_on"), false); assert.equal(s.calls[1][1].name, "Synthetic retained draft"); assert.equal(s.calls[1][1].phase, null); assert.equal(Object.hasOwn(s.calls[1][1], "developer_contact_id"), false); assert.notEqual(s.calls[1][3], s.calls[0][3]); assert.equal(s.accepted[0].version, 10);
 });
 
 test("Explicit programme reload waits for draft approval, resets only on selection and leaves a clean current baseline", async () => {

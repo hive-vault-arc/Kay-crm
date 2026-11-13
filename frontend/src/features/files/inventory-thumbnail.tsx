@@ -2,8 +2,8 @@
 import Image from "next/image";
 import { DevelopmentIcon } from "@/components/icons";
 import { useEffect, useRef, useState } from "react";
-import { apiGet } from "@/lib/api/client";
-import { documentsSchema } from "./contracts";
+import { ApiError, apiGet } from "@/lib/api/client";
+import { coverPhotoSchema, documentsSchema } from "./contracts";
 import { downloadBytes, requestFilePermit } from "./transfers";
 
 export function InventoryThumbnail({ kind, id, compact = false }: { kind: "property" | "development"; id: string; compact?: boolean }) {
@@ -20,13 +20,20 @@ export function InventoryThumbnail({ kind, id, compact = false }: { kind: "prope
     const controller = new AbortController();
     async function load() {
       try {
-        const result = await apiGet(`/api/v1/documents?parent_kind=${kind}&parent_id=${id}&purpose=photo&page=1&page_size=20`, documentsSchema, controller.signal);
-        const document = result.items.find(item => !item.archived && item.mime_type.startsWith("image/") && item.versions[0]?.state === "clean");
+        const parent = `parent_kind=${kind}&parent_id=${id}`;
+        const photo = await apiGet(`/api/v1/documents/cover?${parent}`, coverPhotoSchema, controller.signal)
+          .then(result => result.photo)
+          .catch(async reason => {
+            if (!(reason instanceof ApiError) || ![404, 422].includes(reason.status) || controller.signal.aborted) throw reason;
+            const result = await apiGet(`/api/v1/documents?${parent}&purpose=photo&page=1&page_size=20`, documentsSchema, controller.signal);
+            return result.items.find(item => !item.archived && item.versions.some(version => version.state === "clean"));
+          });
+        const clean = photo?.versions.find(version => version.state === "clean");
         if (!active) return;
-        if (!document) { setState("Aperçu photographique non disponible"); return; }
-        const permit = await requestFilePermit({ action: "download", document_id: document.id, expected_version: document.version, version_id: document.versions[0].id });
+        if (!photo || !clean) { setState("Aperçu photographique non disponible"); return; }
+        const permit = await requestFilePermit({ action: "download", document_id: photo.id, expected_version: photo.version, version_id: clean.id }, controller.signal);
         if (!active) return;
-        const blob = await downloadBytes(permit);
+        const blob = await downloadBytes(permit, controller.signal);
         if (!active) return;
         objectUrl = URL.createObjectURL(blob); setPreview(objectUrl);
       } catch { if (active) setState("Aperçu indisponible. Ouvrez la galerie."); }

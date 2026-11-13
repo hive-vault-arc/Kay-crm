@@ -13,7 +13,9 @@ cascade. [Design system](../../docs/04-design/design-system.md)
 
 The original Inter OFL, Lucide ISC/Feather and Bklit MIT notices remain in
 `frontend/public/licenses/workspace/`. `kay-glyphs.json` pins the exact
-Lucide 1.59.0 semantic glyphs. `kay-status.tokens.json` pins the reference's
+Lucide 1.59.0 semantic glyphs and the WhatsApp mark from
+[Simple Icons 16.31.0](https://github.com/simple-icons/simple-icons/blob/16.31.0/icons/whatsapp.svg),
+used only for the chat shortcut. `kay-status.tokens.json` pins the reference's
 status-family mappings and soft badge surfaces. `kay-workspace.tokens.json`
 is the runtime source for appearance. Its `controlPx` and `layoutPx` sections
 adapt shared geometry to existing callers pending each component/page review.

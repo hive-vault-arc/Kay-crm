@@ -40,7 +40,7 @@ type Props = {
 };
 type ProjectDraft = { id: string; selected?: ProjectSelection };
 function clientValues(contact: Contact): ClientFields {
-  return { name: contact.name, type: contact.type, phones: contact.phones, emails: contact.emails, roles: contact.roles, country: contact.country, nationality: contact.nationality, birth_date: contact.birth_date, languages: contact.languages };
+  return { name: contact.name, type: contact.type, phones: contact.phones, emails: contact.emails, roles: contact.roles, country: contact.country, nationality: contact.nationality, birth_date: contact.birth_date, ...(contact.important_remarks !== undefined ? { important_remarks: contact.important_remarks } : {}), languages: contact.languages };
 }
 function dealValues(value?: Deal): DealFields {
   return { initial_budget: value?.initial_budget ?? "", campaign_source: value?.campaign_source ?? "unknown", rating: value?.rating ?? "cold", purchase_reasons: value?.purchase_reasons ?? [], projects: [], payment_method: value?.payment_method as DealFields["payment_method"] ?? null, number_of_rooms: value?.number_of_rooms ?? null, notes: value?.notes ?? "", next_action: value?.next_action ?? "", requirement_id: value?.requirement_id ?? null, offering_id: value?.offering?.id ?? null, expected_offering_version: value?.offering?.version ?? null };

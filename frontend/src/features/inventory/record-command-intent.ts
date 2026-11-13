@@ -1,16 +1,19 @@
 import { z } from "zod";
 import { confirmSchema, editOfferingSchema, newOfferingSchema, ownersSchema } from "./contracts";
 import { archiveDevelopmentSchema, editDevelopmentSchema, structureFieldsSchema, typeFieldsSchema } from "./development-contracts";
+import { cancelPropertyPeriodSchema, savePropertyPeriodSchema } from "./period-contracts";
 import type { InventoryRecord } from "./record-scope";
 
 export type RecordCommandScope = { root: "properties" | "developments"; id: string; version: number } & (
   { kind: "owners" } |
+  { kind: "period"; periodId?: string; cancel?: boolean } |
   { kind: "development-facts" } |
   { kind: "lifecycle"; operation: "archive" | "restore" } |
   { kind: "offering"; campaign: "sale" | "rental" | "holiday"; offeringId?: string; availability?: boolean } |
   { kind: "structure"; element: "blocks" | "floors" | "unit-types"; parent: string; itemId?: string }
 );
 export type RecordCommandIntent = { path: `/api/v1/${string}`; method: "POST" | "PATCH" | "PUT"; expectedVersion: number } & (
+  { kind: "period"; body: z.infer<typeof savePropertyPeriodSchema> | z.infer<typeof cancelPropertyPeriodSchema> } |
   { kind: "owners"; body: z.infer<typeof ownersSchema> } |
   { kind: "development-facts"; body: z.infer<typeof editDevelopmentSchema> } |
   { kind: "lifecycle"; body: z.infer<typeof archiveDevelopmentSchema> } |
@@ -27,6 +30,14 @@ export function recordCommandIntent(scope: RecordCommandScope, path: `/api/v1/${
   }
   if (scope.kind === "development-facts" && scope.root === "developments" && path === `/api/v1/developments/${scope.id}` && method === "PATCH") {
     const body = editDevelopmentSchema.safeParse(value); if (body.success) return { ...common, kind: "development-facts", body: body.data, expectedVersion: body.data.expected_version };
+  }
+  if (scope.kind === "period" && scope.root === "properties") {
+    if (scope.periodId && !z.uuid().safeParse(scope.periodId).success || scope.cancel && !scope.periodId) return;
+    const base = `/api/v1/properties/${scope.id}/calendar`;
+    const expected = scope.periodId ? `${base}/${scope.periodId}${scope.cancel ? "/cancel" : ""}` : base;
+    if (path !== expected || method !== (scope.periodId && !scope.cancel ? "PATCH" : "POST")) return;
+    const body = (scope.cancel ? cancelPropertyPeriodSchema : savePropertyPeriodSchema).safeParse(value);
+    if (body.success) return { ...common, kind: "period", body: body.data, expectedVersion: body.data.expected_version };
   }
   if (scope.kind === "owners" && path === `/api/v1/${scope.root}/${scope.id}/owners` && method === "PUT") {
     const body = ownersSchema.safeParse(value); if (body.success) return { ...common, kind: "owners", body: body.data, expectedVersion: body.data.expected_version };

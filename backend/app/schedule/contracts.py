@@ -17,7 +17,7 @@ from pydantic import (
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1000)]
 Reason = Annotated[str, StringConstraints(strip_whitespace=True, max_length=1000)]
-VisitType = Literal["company_car", "without_company_car", "office"]
+VisitType = Literal["company_car", "without_company_car", "office", "meeting"]
 Status = Literal["draft", "scheduled", "confirmed", "completed", "not_completed", "cancelled"]
 Version = Annotated[int, Field(strict=True, gt=0)]
 
@@ -157,7 +157,7 @@ class CalendarQuery(Period):
         if value == "":
             return value
         allowed = (
-            {"office", "company_car", "without_company_car"}
+            {"office", "company_car", "without_company_car", "meeting"}
             if info.field_name == "types"
             else {"draft", "scheduled", "confirmed", "completed", "not_completed", "cancelled"}
         )

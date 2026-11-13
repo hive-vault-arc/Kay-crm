@@ -51,6 +51,7 @@ from app.intake.models import WebsiteReceipt, WebsiteSource
 from app.inventory.hierarchy_models import Block, Development, DevelopmentOwner, Floor, UnitType
 from app.inventory.models import InventoryEvent, InventoryReceipt, Offering, Property, PropertyOwner
 from app.inventory.outcome_models import StockEffect, StockOutcome, StockReversal
+from app.inventory.period_models import PropertyPeriod
 from app.inventory.reservation_models import Reservation
 from app.project_links.models import ProjectLink
 from app.realtime.models import PushDelivery, PushSubscription, RealtimePresence, RealtimeTicket
@@ -120,6 +121,7 @@ def clear_identity(settings: Settings, database: Database) -> None:
             )
         )
         for model in (
+            PropertyPeriod,
             ListingLink,
             ListingPublication,
             PushDelivery,
@@ -353,6 +355,19 @@ def delete_actor_business(session: Session, user_id: UUID) -> None:
                 AuditEvent.property_id.in_(properties),
                 AuditEvent.development_id.in_(developments),
                 AuditEvent.actor_user_id == user_id,
+            )
+        )
+    )
+    session.execute(
+        delete(PropertyPeriod).where(
+            or_(
+                PropertyPeriod.property_id.in_(properties),
+                PropertyPeriod.create_event_id.in_(
+                    select(InventoryEvent.id).where(InventoryEvent.actor_user_id == user_id)
+                ),
+                PropertyPeriod.cancel_event_id.in_(
+                    select(InventoryEvent.id).where(InventoryEvent.actor_user_id == user_id)
+                ),
             )
         )
     )

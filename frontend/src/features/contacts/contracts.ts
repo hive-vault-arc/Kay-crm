@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { importantRemarksSchema } from "@/lib/api/important-remarks";
 import { campaignSchema, profileFields, ratingSchema } from "./qualification-contracts";
 
 export const sourceLabels = { manual: "Saisie manuelle", phone: "Téléphone", email: "E-mail", in_person: "En personne", referral: "Recommandation" } as const;
@@ -21,16 +22,20 @@ function contactToday() {
   return ["year", "month", "day"].map(type => parts.find(part => part.type === type)?.value).join("-");
 }
 
+const nationalIdNumber = z.string().trim().regex(/^[A-Za-z0-9][A-Za-z0-9-]{1,30}[A-Za-z0-9]$/, "Saisissez le numéro indiqué sur la carte.").transform(value => value.toUpperCase()).nullable().optional();
 const birthDate = z.iso.date("Saisissez une date de naissance valide.").nullable().optional();
 export const contactFieldsSchema = z.object({
   name: z.string().trim().min(1, "Saisissez le nom du contact.").max(160),
   type: z.enum(["person", "organization"]),
   birth_date: birthDate,
+  national_id_number: nationalIdNumber,
+  important_remarks: importantRemarksSchema,
   phones: z.array(phoneSchema).min(1, "Un téléphone est obligatoire.").max(10),
   emails: z.array(emailSchema).max(10),
   roles: z.array(roleSchema).max(5),
   country: profileFields.country.optional(), nationality: profileFields.nationality.optional(), languages: profileFields.languages.optional(),
 }).strict().superRefine((values, context) => {
+  if (values.national_id_number && (values.type !== "person" || !values.roles.includes("owner"))) context.addIssue({ code: "custom", path: ["national_id_number"], message: "Réservé aux propriétaires personnes physiques." });
   if (values.birth_date && values.type !== "person") context.addIssue({ code: "custom", path: ["birth_date"], message: "Réservée aux personnes." });
   if (values.birth_date && values.birth_date > contactToday()) context.addIssue({ code: "custom", path: ["birth_date"], message: "La date ne peut pas être dans le futur." });
   if (values.phones.filter(value => value.is_primary).length !== 1) context.addIssue({ code: "custom", path: ["phones"], message: "Choisissez exactement un téléphone principal." });
@@ -58,6 +63,8 @@ export const contactSummarySchema = z.object({
 }).strict();
 export const contactSchema = contactSummarySchema.extend({
   birth_date: birthDate,
+  national_id_number: nationalIdNumber,
+  important_remarks: importantRemarksSchema,
   phones: z.array(phoneSchema).min(1).max(10), emails: z.array(emailSchema).max(10), roles: z.array(roleSchema).max(5),
   source: contactSourceSchema, source_submission_id: z.uuid().nullable(), created_by_user_id: z.uuid().nullable(), created_at: instant, updated_at: instant,
   collaborators: z.array(agentSchema).max(100),

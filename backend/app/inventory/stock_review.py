@@ -128,7 +128,14 @@ def occupied(session: Session, offerings: Sequence[Offering]) -> set[UUID]:
 def close_conflict(
     session: Session, offering: Offering, deal_id: UUID | None, *, external: bool = False
 ) -> str | None:
-    offerings, _ = scope(session, offering)
+    from app.inventory.periods import upcoming_period
+
+    offerings, targets = scope(session, offering)
+    target = next(
+        item for item in targets if item.id == (offering.property_id or offering.development_id)
+    )
+    if upcoming_period(session, target, bookings_only=offering.kind == "sale"):
+        return "PROPERTY_PERIOD_ACTIVE"
     holds = {
         h.offering_id: h.deal_id
         for h in session.scalars(

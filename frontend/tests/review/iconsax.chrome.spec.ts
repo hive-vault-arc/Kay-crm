@@ -80,7 +80,7 @@ test("Workspace glyphs: real Next HTML before hydration, disabled JavaScript and
       return icon.getBoundingClientRect().width === 16;
     }))).toBe(true);
     for (const button of await page.locator("form button").all())
-      expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      expect(await button.evaluate(element => (element as HTMLElement).offsetHeight)).toBeGreaterThanOrEqual(44);
     if ([360, 768, 1440].includes(width))
       await page.screenshot({ path: `output/playwright/login-icons/login-${width}.png`, fullPage: true });
   }

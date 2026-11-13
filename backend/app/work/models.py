@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     CheckConstraint,
     DateTime,
     ForeignKey,
@@ -12,6 +13,7 @@ from sqlalchemy import (
     LargeBinary,
     String,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
@@ -28,6 +30,13 @@ class Task(Base):
         CheckConstraint("num_nonnulls(enquiry_id,deal_id)<=1", name="task_single_context"),
         Index("ix_task_owner_due_status", "owner_user_id", "due_at", "status", "id"),
         Index("ix_task_contact_due", "contact_id", "due_at", "id"),
+        CheckConstraint("kind IN ('task','reminder')", name="task_kind"),
+        Index(
+            "ix_task_calendar_important",
+            "due_at",
+            "id",
+            postgresql_where=text("important IS TRUE AND status='open'"),
+        ),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     contact_id: Mapped[UUID] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
@@ -40,6 +49,8 @@ class Task(Base):
     owner_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     created_by_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     updated_by_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
+    important: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    kind: Mapped[str] = mapped_column(String(12), server_default="task")
     title: Mapped[str] = mapped_column(String(160))
     notes: Mapped[str] = mapped_column(String(1000), server_default="")
     outcome: Mapped[str] = mapped_column(String(1000), server_default="")

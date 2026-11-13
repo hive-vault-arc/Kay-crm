@@ -24,7 +24,8 @@ export async function relayContacts(key: string, request: Request, requestId: st
   const list = ["contacts", "enquiries", "contacts/assignment-options", "contacts/responsible-options", "enquiries/assigned-options"].includes(key) || history || portfolio;
   const mutation = request.method !== "GET";
   const params = [...url.searchParams];
-  if ((url.search && (!list || mutation)) || new Set(params.map(([name]) => name)).size !== params.length || !(portfolio ? ownerPortfolioQuerySchema : listQuerySchema).safeParse(Object.fromEntries(params)).success) return facadeError(422, "VALIDATION_ERROR", requestId);
+  const ownerIdentity = !mutation && /^contacts\/[a-f0-9-]{36}$/.test(key) && url.search === "?owner_identity=true";
+  if (!ownerIdentity && ((url.search && (!list || mutation)) || new Set(params.map(([name]) => name)).size !== params.length || !(portfolio ? ownerPortfolioQuerySchema : listQuerySchema).safeParse(Object.fromEntries(params)).success)) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (["contacts/assignment-options", "contacts/responsible-options", "enquiries/assigned-options"].includes(key) && params.some(([name]) => !["q", "page", "page_size"].includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (["contacts", "enquiries"].includes(key) && !validListKind(key as "contacts" | "enquiries", listQuerySchema.parse(Object.fromEntries(params)))) return facadeError(422, "VALIDATION_ERROR", requestId);
   if (history && params.some(([name]) => !["page", "page_size"].includes(name))) return facadeError(422, "VALIDATION_ERROR", requestId);

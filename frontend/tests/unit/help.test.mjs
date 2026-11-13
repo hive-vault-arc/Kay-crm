@@ -77,7 +77,7 @@ test("help catalog has unique complete articles, valid categories, related guide
   assert(helpArticles.length >= 28);
   assert.equal(new Set(helpArticles.map(article => article.slug)).size, helpArticles.length);
   const categories = new Set(helpCategories.map(category => category.id));
-  const routes = new Set(["/dashboard", "/leads", "/leads/new", "/deals", "/projects", "/projects/properties/new", "/visits", "/notifications", "/owners", "/settings/users"]);
+  const routes = new Set(["/dashboard", "/leads", "/leads/new", "/deals", "/projects", "/projects/properties/new", "/tasks", "/visits", "/notifications", "/owners", "/settings/users"]);
   for (const article of helpArticles) {
     assert.match(article.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     assert(categories.has(article.category));

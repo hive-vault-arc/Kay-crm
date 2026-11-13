@@ -39,6 +39,7 @@ function calendarModule(state, phone, query) {
     "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/contacts/record-states": { RecordError: "Error" },
     "@/features/contacts/use-query": { useQuery: query, queryPath: (kind, params) => `/api/v1/${kind}?${new URLSearchParams(params)}` }, "@/hooks/use-phone-layout": { usePhoneLayout: phone }, "@/lib/api/client": { ApiError },
     "./contracts": contracts, "./time": { ...time, resolveLocal: async local => ({ choices: [{ instant: local + ":00Z" }] }) }, "./calendar-model": model,
+    "@/features/work/contracts": {}, "./calendar-priority": { CalendarPriority: "Priority" },
     "./week-grid": { VisitWeekGrid: "WeekGrid", BusyWeekGrid: "BusyGrid" }, "./calendar-sidebar": { CalendarSidebar: "Filters" }, "./calendar-visit": { CalendarVisit: "Visit" }, "./calendar-frame": { CalendarFrame: "Frame" }, "./visit-record": { VisitAction: "Action" },
   } });
 }
@@ -53,7 +54,7 @@ test("Calendar day creation context admits real dates, bounded IDs and no unknow
 test("Selected week cards retain every overlapping/multi-day visit and exclude the exact midnight end", () => {
   const icon = () => createElement("svg", { "aria-hidden": true }), calls = [];
   const cards = loadServer("src/features/schedule/calendar-visit.tsx", { modules: { "react/jsx-runtime": jsxRuntime, "next/link": { default: "a" }, "@/components/icons": { CarIcon: icon, ContactsIcon: icon, DevelopmentIcon: icon, CompletedIcon: icon, ClockIcon: icon, CloseIcon: icon }, "@/components/ui/button": { Button: "button" }, "@/components/shared/crm-presentation": { CrmStatusBadge: ({ state, children }) => createElement("span", { "data-crm-state": state }, children) }, "./contracts": contracts, "./time": time, "./visit-record": { VisitAction: () => null } } });
-  const loaded = loadServer("src/features/schedule/week-grid.tsx", { modules: { "react/jsx-runtime": jsxRuntime, "next/link": { default: "a" }, "@/components/icons": { AddIcon: icon }, "./calendar-model": model, "./time": time, "./calendar-visit": { CalendarVisit: props => { calls.push(props); return createElement(cards.CalendarVisit, props); } } } });
+  const loaded = loadServer("src/features/schedule/week-grid.tsx", { modules: { "react/jsx-runtime": jsxRuntime, "next/link": { default: "a" }, "@/components/icons": { AddIcon: icon }, "./calendar-model": model, "./time": time, "./calendar-priority": { CalendarPriority: () => null }, "./calendar-visit": { CalendarVisit: props => { calls.push(props); return createElement(cards.CalendarVisit, props); } } } });
   const overnight = visit({ start_local: "2026-10-19T23:30:00+01:00", end_local: "2026-10-21T00:00:00+01:00" }), overlap = visit();
   const days = Array.from({ length: 7 }, (_, index) => model.calendarDay("2026-10-19", index));
   const html = renderToStaticMarkup(createElement(loaded.VisitWeekGrid, { days, visits: [overnight, overlap], today: days[0] }));
@@ -91,11 +92,11 @@ test("Drawer filters retain authoritative whole-range facets and every zero-coun
   const state = harness(), icon = () => createElement("svg", { "aria-hidden": true });
   const { CalendarSidebar } = loadServer("src/features/schedule/calendar-sidebar.tsx", { modules: {
     react: state.react, "react/jsx-runtime": jsxRuntime, "@/components/ui/button": { Button: "button" }, "@/components/ui/checkbox": { Checkbox: ({ checked, onCheckedChange, ...props }) => createElement("input", { ...props, type: "checkbox", checked, onChange: onCheckedChange }) },
-    "@/components/ui/input": { Input: "input" }, "@/components/ui/label": { Label: "label" }, "@/components/icons": { ClockIcon: icon, CompletedIcon: icon, CloseIcon: icon }, "./calendar-model": model, "./contracts": contracts, "./calendar-visit": { visitIcons: { office: icon, company_car: icon, without_company_car: icon } },
+    "@/components/ui/input": { Input: "input" }, "@/components/ui/label": { Label: "label" }, "@/components/icons": { ClockIcon: icon, CompletedIcon: icon, CloseIcon: icon }, "./calendar-model": model, "./contracts": contracts, "./calendar-visit": { visitIcons: { office: icon, company_car: icon, without_company_car: icon, meeting: icon } },
   } });
-  const value = { items: [], total: 34, type_counts: { office: 17, company_car: 24, without_company_car: 5 }, status_counts: { confirmed: 24, scheduled: 10, draft: 0, completed: 12, not_completed: 0, cancelled: 0 }, unfiltered_total: 46 };
+  const value = { items: [], total: 34, type_counts: { office: 17, company_car: 24, without_company_car: 5, meeting: 0 }, status_counts: { confirmed: 24, scheduled: 10, draft: 0, completed: 12, not_completed: 0, cancelled: 0 }, unfiltered_total: 46 };
   const html = renderToStaticMarkup(createElement(CalendarSidebar, { compact: true, date: "2026-10-19", today: "2026-10-19", choose() {}, value, types: [], statuses: ["cancelled"], toggleType() {}, toggleStatus() {} }));
-  assert.equal((html.match(/type="checkbox"/g) ?? []).length, 9);
+  assert.equal((html.match(/type="checkbox"/g) ?? []).length, 10);
   for (const count of [17, 24, 5, 10, 12, 0]) assert.ok(html.includes(`>${count}</span>`));
   assert.match(html, /aria-label="Annulée"[^>]*checked=""/);
   assert.doesNotMatch(html, /Pause déjeuner|calendar-month-choice/);

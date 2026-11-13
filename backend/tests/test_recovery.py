@@ -67,12 +67,13 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
         )
     point = create(settings)
     result = restore(settings, UUID(point["point_id"]), replace_recovery=True)
-    assert result["verified_tables"] == 77 and result["objects"] >= 2
+    assert result["verified_tables"] == 78 and result["objects"] >= 2
     assert 0 <= result["rpo_seconds"] <= 3600 and result["restore_seconds"] < 14400
     target = recovery_settings(settings)
     db = Database(target.selected_database_url())
     try:
         with db.session() as session:
+            assert session.scalar(text("SELECT to_regclass('property_period') IS NOT NULL"))
             restored_link = session.get(ListingLink, link_id)
             assert restored_link is not None and restored_link.revoked_at is not None
             with pytest.raises(IdentityError, match="NOT_FOUND"):

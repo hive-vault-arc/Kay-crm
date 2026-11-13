@@ -6,8 +6,10 @@ const version = z.number().int().positive();
 const instant = z.iso.datetime({ offset: true });
 export const taskStatusLabels = { open: "À faire", completed: "Terminée", cancelled: "Annulée" } as const;
 export const taskActionLabels = { created: "Tâche créée", updated: "Tâche modifiée", completed: "Tâche terminée", cancelled: "Tâche annulée", contact_merged: "Contact fusionné" } as const;
-export const bucketLabels = { today: "Aujourd’hui", overdue: "En retard", upcoming: "À venir", all: "Toutes", completed: "Terminées", cancelled: "Annulées" } as const;
+export const bucketLabels = { today: "Aujourd’hui", overdue: "En retard", upcoming: "À venir", open: "À faire", all: "Toutes", completed: "Terminées", cancelled: "Annulées" } as const;
+const taskKindSchema = z.enum(["task", "reminder"]);
 const fields = {
+  important: z.boolean().optional(), kind: taskKindSchema.optional(),
   title: z.string().trim().min(1).max(160), notes: z.string().trim().max(1000),
   owner_user_id: z.uuid(), due_at: instant, deal_id: z.uuid().nullable(), enquiry_id: z.uuid().nullable().optional(), property_id: z.uuid().nullable(),
 };
@@ -21,12 +23,19 @@ const clock = { now: instant, today: z.iso.date(), time_zone: z.literal("Africa/
 export const workContextSchema = z.object(clock).strict();
 export const tasksSchema = numberedPage(taskSchema).extend(clock);
 export const taskHistorySchema = numberedPage(z.object({ id: z.uuid(), version, action: z.enum(Object.keys(taskActionLabels) as [keyof typeof taskActionLabels, ...(keyof typeof taskActionLabels)[]]), actor: agentSchema, snapshot, occurred_at: instant, occurred_local: instant }).strict());
-const href = z.string().max(250).regex(/^\/(contacts|deals|visits|projects(?:\/properties)?)\/[a-f0-9-]{36}(?:\?task=[a-f0-9-]{36})?$/);
-export const notificationSchema = z.object({ id: z.uuid(), kind: z.enum(["file.scanned", "visit.reminder.day", "visit.reminder.hour", "visit.follow_up", "task.reminder.day", "task.reminder.hour", "task.due"]), title: z.string().max(160), context: z.string().max(160), href, due_local: instant.nullable(), created_at: instant, read_at: instant.nullable() }).strict();
+const href = z.string().max(250).regex(/^\/(?:(contacts|deals)\/[a-f0-9-]{36}\?task=[a-f0-9-]{36}|visits\/[a-f0-9-]{36})$/);
+export const notificationSchema = z.object({ id: z.uuid(), kind: z.enum(["visit.reminder.day", "visit.reminder.hour", "visit.follow_up", "task.reminder.day", "task.reminder.hour", "task.due"]), title: z.string().max(160), context: z.string().max(160), href, due_local: instant.nullable(), created_at: instant, read_at: instant.nullable() }).strict();
 export const notificationsSchema = numberedPage(notificationSchema).extend({ unread_total: z.number().int().nonnegative() });
 export const readSchema = z.object({ read: z.literal(true) }).strict();
 export const followUpSchema = numberedPage(visitSchema.omit({ review_code: true })).extend(clock);
 export const pageQuerySchema = z.object({ page: z.coerce.number().int().min(1).max(1_000_000).optional(), page_size: z.coerce.number().int().min(1).max(100).optional() }).strict();
+export const calendarWorkQuerySchema = pageQuerySchema.extend({ start_at: instant, end_at: instant });
+const calendarWorkItemSchema = z.object({
+  id: z.uuid(), title: z.string().min(1).max(160), kind: taskKindSchema, due_local: instant,
+  contact_id: z.uuid(), enquiry_id: z.uuid().nullable(), deal_id: z.uuid().nullable(),
+}).strict();
+export const calendarWorkSchema = numberedPage(calendarWorkItemSchema);
+export type CalendarWorkItem = z.infer<typeof calendarWorkItemSchema>;
 export const taskQuerySchema = pageQuerySchema.extend({ contact_id: z.uuid().optional(), deal_id: z.uuid().optional(), owner_user_id: z.uuid().optional(), bucket: z.enum(Object.keys(bucketLabels) as [keyof typeof bucketLabels, ...(keyof typeof bucketLabels)[]]).optional() });
 export const notificationQuerySchema = pageQuerySchema.extend({ state: z.enum(["all", "unread", "read"]).optional() });
 export type Task = z.infer<typeof taskSchema>;

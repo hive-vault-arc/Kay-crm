@@ -1,5 +1,67 @@
 # KAY security check for changes
 
+## Property cover photos
+
+Only active authenticated staff with access to the physical property may choose
+one of its active images with an antivirus-clean version. The existing agency
+lock, document version, idempotency receipt and actor audit protect the mutation.
+A PostgreSQL partial unique index limits each property to one explicit cover.
+Archive clears the selection in the same transaction. Reads use the existing
+private metadata and download-permit boundaries. Client share grants are unchanged.
+
+## Inventory received date
+
+The optional received date follows existing inventory read and edit permissions.
+It is shown on authenticated detail records and recorded in inventory history.
+Client shares, directories and search projections omit it. Older requests that
+omit it preserve the saved value and keep the same receipt fingerprint.
+
+## Dated property calendar
+
+The authenticated property calendar projects only dates and availability to
+agents. Only managers and administrators can modify periods or read their notes.
+Writes use the existing inventory locks, current role, CSRF, version and receipt.
+PostgreSQL independently prevents overlapping active periods. Audit entries retain
+dates and the real actor. Notes and cancellation reasons stay out of shared history.
+
+## Tasks and antivirus alerts
+
+The Tasks directory and deal tab use the existing scoped task API and its write
+authorization. The file worker still records clean, rejected and retry results.
+Existing antivirus notifications are excluded before inbox counts, pagination,
+and read mutations. Push dispatch also excludes them, and queued items must pass
+the current inbox scope before delivery.
+
+## WhatsApp contact shortcuts
+
+Prospect, deal and owner details build a fixed `https://wa.me/` destination from
+an already authorized international phone number. The link does not prefill a
+message or send the record URL as a referrer. No API, directory, permissions, or
+background data transfer changes are required.
+
+## Important remarks and stay instructions
+
+Internal remarks are nullable text on the contact, property or programme. They
+are returned on authenticated detail reads using existing access rules. They
+stay out of directories, search, exports, command receipts, listing share
+snapshots and PDF defaults. Only the short-stay template accepts the separately
+entered client instructions. It renders them on the preparation sheet and
+keeps the source appendix unchanged.
+
+## Owner identity and documents
+
+The owner detail resolves the authorized canonical contact before reading its
+optional CIN. Directories, search, exports, timeline events and command receipts
+do not include it. The owner overview masks the number; its edit form shows the
+full value. The scoped read uses the existing authenticated, no-store facade.
+
+Card copies use the private contact transfer path and existing antivirus
+quarantine. The server accepts them only against a person in the owner workspace,
+and the dedicated document classification keeps copies out of ordinary file
+lists, global search and public listing galleries. Scan notifications contain no
+filename or identity number. Migration 0041 is additive for existing contacts and
+files; downgrading with identity data is refused.
+
 ## Client listing links
 
 The authenticated facade checks session, exact origin and CSRF for commands.

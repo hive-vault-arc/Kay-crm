@@ -14,9 +14,10 @@ export type KayIconComponent = ComponentType<KayIconProps>;
 function createPrototypeIcon(name: string): KayIconComponent {
   const glyph = prototypeGlyphs.icons.find(icon => icon.name === name);
   if (!glyph) throw new Error(`Unknown selected glyph: ${name}`);
+  const brand = glyph.family === "brand";
   const nodes = glyph.nodes as [string, Record<string, string>][];
   function PrototypeIcon({ size, label, ...props }: KayIconProps) {
-    return <svg xmlns="http://www.w3.org/2000/svg" width={size ?? 24} height={size ?? 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" {...props} focusable="false" role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true} data-kay-icon={name} data-icon-sized={size === undefined ? undefined : ""} data-icon-family="lucide" data-icon-style="linear">{nodes.map(([tag, attributes], index) => createElement(tag, { ...attributes, key: index }))}</svg>;
+    return <svg xmlns="http://www.w3.org/2000/svg" width={size ?? 24} height={size ?? 24} viewBox="0 0 24 24" fill={brand ? "currentColor" : "none"} stroke={brand ? "none" : "currentColor"} strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" {...props} focusable="false" role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true} data-kay-icon={name} data-icon-sized={size === undefined ? undefined : ""} data-icon-family={brand ? "brand" : "lucide"} data-icon-style={brand ? "filled" : "linear"}>{nodes.map(([tag, attributes], index) => createElement(tag, { ...attributes, key: index }))}</svg>;
   }
   PrototypeIcon.displayName = `KayPrototypeIcon(${name})`;
   return PrototypeIcon;
@@ -42,6 +43,7 @@ export const SignInIcon = createPrototypeIcon("sign-in");
 export const ShowPasswordIcon = createPrototypeIcon("show-password");
 export const HidePasswordIcon = createPrototypeIcon("hide-password");
 export const PhoneIcon = createPrototypeIcon("phone");
+export const WhatsAppIcon = createPrototypeIcon("whatsapp");
 export const EmailIcon = createPrototypeIcon("email");
 export const ContactIcon = createPrototypeIcon("contact");
 export const TaskIcon = createPrototypeIcon("task");

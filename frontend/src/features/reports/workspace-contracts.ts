@@ -26,7 +26,7 @@ const property = z.object({
   location: z.string().max(500).nullable(), deal_count: z.number().int().positive(), campaigns: z.array(campaign).max(3),
 }).strict();
 const visit = z.object({
-  id: z.uuid(), title: z.string().min(1).max(160), type: z.enum(["company_car", "without_company_car", "office"]),
+  id: z.uuid(), title: z.string().min(1).max(160), type: z.enum(["company_car", "without_company_car", "office", "meeting"]),
   status: z.enum(["scheduled", "confirmed"]), start_at: instant, end_at: instant, start_local: instant, end_local: instant,
   location: z.string().max(1000), property_id: z.uuid().nullable(), contact_name: z.string().max(160), organizer_name: z.string().max(160),
 }).strict();

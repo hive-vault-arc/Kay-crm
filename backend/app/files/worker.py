@@ -4,10 +4,9 @@ from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 
 from sqlalchemy import and_, or_, select
-from sqlalchemy.dialects.postgresql import insert
 
 from app.db.session import Database
-from app.files.models import DocumentVersion, Job, Notification, OutboxEvent
+from app.files.models import DocumentVersion, Job, OutboxEvent
 from app.files.scanner import scan
 from app.files.storage import PrivateStorage
 from app.identity.security import IdentityError
@@ -119,16 +118,6 @@ def finish(
         version.state, version.scanner_version = verdict
         version.scanned_at, version.scan_error = now, None
         job.state, job.error_code = "done", None
-        session.execute(
-            insert(Notification)
-            .values(
-                id=uuid4(),
-                user_id=version.created_by_user_id,
-                event_key=f"file.scanned:{version.id}",
-                document_id=version.document_id,
-            )
-            .on_conflict_do_nothing(index_elements=["user_id", "event_key"])
-        )
         return True
 
 

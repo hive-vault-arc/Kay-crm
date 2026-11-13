@@ -203,6 +203,17 @@ No fleet assignment, external message, reminder consumer or automatic cancellati
 is added. SP-15 owns reminders/overdue delivery. No production/real-data acceptance
 or Khalid product/design approval is implied by this contract.
 
+## Calendar priorities and meetings
+
+Week, agenda and type views show open tasks or follow-up reminders only when
+explicitly marked Important. Each item is placed at its own Casablanca due time.
+The bounded work/calendar read applies the current contact scope and excludes
+archived contexts before pagination. Priority changes do not change notification
+timing. The colleague availability view continues to return only appointment
+intervals without details. Meetings are bookable through the visit form and use
+the same timing and participant overlap rules as office visits, without consuming
+a company-car slot. On-site visits retain both transport options.
+
 ## D38 calendar composition (2026-10-18)
 
 The supplied calendar reference extends S09 only: compact toolbar, mini-month,

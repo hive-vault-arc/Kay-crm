@@ -92,9 +92,15 @@ button,a,input,select,textarea { -webkit-tap-highlight-color:transparent; }
 @media(prefers-reduced-transparency:reduce) {
   .kay-surface,.kay-shell .kay-rail,.kay-shell .kay-global-bar { background:var(--workspace-panel-opaque); backdrop-filter:none; }
 }
-@media(max-height:620px) {
+@media(max-height:800px) {
   .kay-rail .kay-navigation { padding-top:var(--workspace-geometry-space-large); }
   .kay-rail :is(.kay-navigation,.kay-nav-group) { gap:var(--workspace-geometry-space-icon); }
+}
+@media(max-height:670px) {
+  .kay-shell .kay-rail { gap:4px; padding-bottom:var(--workspace-geometry-space-icon); }
+  .kay-rail .kay-navigation { padding-top:var(--workspace-geometry-space-icon); }
+  .kay-rail :is(.kay-navigation,.kay-nav-group,.kay-rail-utilities) { gap:4px; }
+  .kay-rail .kay-nav-link[data-compact=true] { width:var(--control-touch-target); height:var(--control-touch-target); }
 }
 @media(forced-colors:active) {
   .kay-shell::before,.kay-auth::before { display:none; }

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImportantRemarks } from "@/components/shared/important-remarks";
 import { PageHeader } from "@/components/shared/page-header";
 import { CrmRecordHeader, CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { RecordFact, RecordFacts } from "@/components/shared/record-facts";
@@ -53,6 +54,7 @@ export function ContactRecord({ id, role, actorId, initialTask }: { id: string; 
     {notice ? <p role="status" className="mb-3 text-sm text-success">{notice}</p> : null}
     <RecordWorkspace label="Rubriques du contact" tabs={[
       { id: "overview", label: "Aperçu", content: <>
+        {contact.important_remarks ? <ImportantRemarks value={contact.important_remarks} /> : null}
         <RecordSection title="Coordonnées"><RecordFacts>
           <ContactInlineField {...inline} icon={ContactIcon} field="name" label="Nom" />
           <ContactInlineField {...inline} icon={ContactIcon} field="type" label="Type" />

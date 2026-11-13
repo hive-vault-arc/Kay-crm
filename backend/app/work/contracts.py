@@ -4,12 +4,14 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import AwareDatetime, Field, StringConstraints, field_validator
+from pydantic import AwareDatetime, Field, StrictBool, StringConstraints, field_validator
 
 from app.schedule.contracts import Period, Reason, Strict, Version
 
 
 class TaskFields(Strict):
+    important: StrictBool = False
+    kind: Literal["task", "reminder"] = "task"
     title: Annotated[str, StringConstraints(min_length=1, max_length=160)]
     notes: Reason = ""
     owner_user_id: UUID
@@ -42,11 +44,15 @@ class PageQuery(Strict):
     page_size: Annotated[int, Field(ge=1, le=100)] = 50
 
 
+class CalendarWorkQuery(Period, PageQuery):
+    pass
+
+
 class TaskQuery(PageQuery):
     contact_id: UUID | None = None
     deal_id: UUID | None = None
     owner_user_id: UUID | None = None
-    bucket: Literal["all", "today", "overdue", "upcoming", "completed", "cancelled"] = "all"
+    bucket: Literal["all", "open", "today", "overdue", "upcoming", "completed", "cancelled"] = "all"
 
 
 class NotificationQuery(PageQuery):

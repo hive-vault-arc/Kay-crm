@@ -35,6 +35,7 @@ export function TaskRecord({ id, contactId, dealId, writable, changed, close }: 
   const canWrite = writable && !task.contact_archived && task.status === "open";
   return <section aria-label="Tâche sélectionnée" className="grid min-w-0 gap-6 border-t pt-6">
     <h3 ref={heading} tabIndex={-1} className="wrap-anywhere text-section">{task.title}</h3>
+    {task.important ? <p className="text-sm font-medium text-danger">{task.kind === "reminder" ? "Rappel important" : "Tâche importante"}</p> : null}
     {reloadError ? <RecordError error={reloadError} /> : null}
     {editing && canWrite ? <TaskForm key={task.id} contactId={task.contact_id} value={task} saved={async () => { await endEdit(true); }} cancel={() => { void endEdit().catch(() => { focusEdit.current = true; setEditing(false); }); }} /> : <>
       <TaskFacts task={task} />{notice ? <p role="status" className="text-success">{notice}</p> : null}

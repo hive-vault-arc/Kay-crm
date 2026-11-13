@@ -12,7 +12,9 @@ for (const width of [1440, 390]) test(`Selected Projects proposals preserve inde
     const contactReply = await staffCommand(page, "contacts", { name: `Client proposition synthétique ${suffix}`, type: "person", phones: [{ number: `+212612${digits}`, label: "Principal", is_primary: true }], emails: [], roles: ["buyer"], country: "MA", nationality: "", languages: ["french"] }); expect(contactReply.status()).toBe(200); const contact = await contactReply.json();
     const dealReply = await staffCommand(page, "deals", dealBody(contact.id, `Projet proposition synthétique ${suffix}`)); expect(dealReply.status()).toBe(200); const { id } = await dealReply.json();
     await page.goto(`/deals/${id}?tab=projects`);
-    const tabs = page.getByRole("tablist", { name: "Rubriques de l’affaire", exact: true }); await expect(tabs.getByRole("tab")).toHaveCount(4); await expect(tabs.getByRole("tab", { name: "Projets", exact: true })).toHaveAttribute("aria-selected", "true");
+    const tabs = page.getByRole("tablist", { name: "Rubriques de l’affaire", exact: true });
+    await expect(tabs.getByRole("tab")).toHaveText(["Aperçu", "Projets", "Activités", "Tâches", "Documents"]);
+    await expect(tabs.getByRole("tab", { name: "Projets", exact: true })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByRole("form", { name: "Nouvelle proposition client", exact: true })).toHaveCount(0); await page.getByRole("button", { name: "Nouvelle proposition", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Nouvelle proposition", exact: true }), form = dialog.getByRole("form", { name: "Nouvelle proposition client", exact: true });
     await expect(dialog.getByRole("form")).toHaveCount(1); await expect(dialog.getByRole("table")).toHaveCount(0);

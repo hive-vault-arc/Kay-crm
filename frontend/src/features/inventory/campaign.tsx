@@ -3,7 +3,7 @@ import type { InventoryRecord } from "./record-scope";
 import { RecordDrawer } from "@/components/shared/record-drawer";
 import { RecordSection } from "@/components/shared/record-workspace";
 import { formatInstant } from "@/lib/format";
-import { kindLabels, type InventoryTarget, type Offering } from "./contracts";
+import { kindLabels, offeringConditionsLabels, type InventoryTarget, type Offering } from "./contracts";
 import { Availability, OfferingEditor } from "./offering-editor";
 import { InventoryStatus, Price } from "./states";
 import { ExternalOutcome } from "./external-outcome";
@@ -25,7 +25,7 @@ export function Campaign({ property, kind }: { property: InventoryTarget; kind: 
   const offering = property.offerings.find(item => item.kind === kind && item.is_current);
   return <RecordSection title={kindLabels[kind]}>{offering ? <>
     <InventoryStatus state={offering.state} conflict={offering.reservation_conflict} occupied={offering.occupied} /><Price offering={offering} />
-    <p className="text-sm whitespace-pre-wrap wrap-anywhere">{offering.conditions || "Conditions non renseignées"}</p><p className="text-sm text-muted-foreground">Dernière confirmation : {formatInstant(offering.availability_confirmed_at)}</p>
+    <dl className="grid gap-1 text-sm"><dt className="font-medium">{offeringConditionsLabels[kind]}</dt><dd className="whitespace-pre-wrap wrap-anywhere">{offering.conditions || "Non renseignées"}</dd></dl><p className="text-sm text-muted-foreground">Dernière confirmation : {formatInstant(offering.availability_confirmed_at)}</p>
     {offering.state === "reserved" ? <p className="text-sm">Réservation active : une libération explicite depuis l’affaire autorisée est nécessaire avant de modifier cette campagne.</p> : null}
     {offering.reservation_conflict === "DEVELOPMENT_OVERLAP" ? <p className="text-sm text-warning">Un programme ou une unité du même type est réservé. Faites vérifier le chevauchement par un responsable.</p> : null}
     {["sold", "rented", "review"].includes(offering.state) ? <p className="text-sm">Résultat ou revue de stock conservé : une modification ordinaire ne peut pas le remplacer.</p> : null}

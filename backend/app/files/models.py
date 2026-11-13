@@ -5,13 +5,16 @@ from uuid import UUID, uuid4
 
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     CheckConstraint,
     DateTime,
     ForeignKey,
     Index,
     LargeBinary,
     String,
+    false,
     func,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -31,7 +34,20 @@ class Document(Base):
         CheckConstraint("size_bytes>0 AND size_bytes<=20971520", name="document_size"),
         CheckConstraint("version>0", name="document_version_positive"),
         CheckConstraint(
-            "purpose IN ('attachment','photo','generated') AND "
+            "NOT is_primary_photo OR (property_id IS NOT NULL AND archived_at IS NULL "
+            "AND mime_type IN ('image/jpeg','image/png','image/webp'))",
+            name="document_primary_photo_scope",
+        ),
+        Index(
+            "uq_document_property_primary_photo",
+            "property_id",
+            unique=True,
+            postgresql_where=text("is_primary_photo"),
+        ),
+        CheckConstraint(
+            "purpose IN ('attachment','photo','generated','identity_card') AND "
+            "(purpose<>'identity_card' OR (contact_id IS NOT NULL AND "
+            "mime_type IN ('image/jpeg','image/png','image/webp','application/pdf'))) AND "
             "(purpose<>'photo' OR ((property_id IS NOT NULL OR development_id IS NOT NULL) "
             "AND mime_type='image/webp')) AND "
             "(purpose<>'generated' OR (template_code IS NOT NULL AND mime_type='application/pdf' "
@@ -66,6 +82,7 @@ class Document(Base):
         String(20), default="attachment", server_default="attachment"
     )
     size_bytes: Mapped[int] = mapped_column(BigInteger)
+    is_primary_photo: Mapped[bool] = mapped_column(Boolean, server_default=false(), deferred=True)
     created_by_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     version: Mapped[int] = mapped_column(BigInteger, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
