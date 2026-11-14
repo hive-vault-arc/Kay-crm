@@ -51,6 +51,14 @@ class Contact(Base):
         ),
         Index("ix_contact_scope", "primary_agent_id", "archived_at"),
         Index("ix_contact_updated_id", "updated_at", "id"),
+        Index(
+            "ix_contact_birthday_active",
+            text("EXTRACT(month FROM birth_date)"),
+            text("EXTRACT(day FROM birth_date)"),
+            postgresql_where=text(
+                "archived_at IS NULL AND birth_date IS NOT NULL AND type='person'"
+            ),
+        ),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(160))

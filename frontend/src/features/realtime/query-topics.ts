@@ -16,6 +16,7 @@ const groups: Record<string, string[]> = {
 };
 export function matchesTopics(path: string, topics: string[]) {
   if (/^\/api\/v1\/reports\/workspace(?:[/?]|$)/.test(path) && topics.some(topic => ["reports", "contacts", "enquiries", "deals", "inventory", "tasks", "visits"].includes(topic))) return true;
+  if (path === "/api/v1/work/holidays") return topics.includes("holidays") || topics.includes("identity");
   const ownerPortfolio = /^\/api\/v1\/contacts\/[a-f0-9-]{36}\/portfolio(?:\?|$)/.test(path);
   const ownerDirectory = path.startsWith("/api/v1/contacts?") && new URLSearchParams(path.split("?")[1]).get("owner_directory") === "true";
   if ((ownerPortfolio || ownerDirectory) && topics.includes("inventory")) return true;

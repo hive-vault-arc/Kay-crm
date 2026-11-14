@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, type ReactNode } from "react";
-import { ClockIcon, ContactsIcon, ForwardIcon, PasswordIcon, SettingsIcon } from "@/components/icons";
+import { CalendarIcon, ClockIcon, ContactsIcon, ForwardIcon, PasswordIcon, SettingsIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -14,6 +14,7 @@ const sections = [
   { key: "overview", href: "/settings", label: "Vue d’ensemble", detail: "L’agence en bref", Icon: SettingsIcon },
   { key: "users", href: "/settings/users", label: "Utilisateurs", detail: "Comptes et accès", Icon: ContactsIcon },
   { key: "hours", href: "/settings/working-hours", label: "Horaires de travail", detail: "Organisation des visites", Icon: ClockIcon },
+  { key: "holidays", href: "/settings/holidays", label: "Jours fériés", detail: "Dates et rappels au Maroc", Icon: CalendarIcon },
 ] as const;
 
 export function SettingsWorkspace({ active, route, title = "Paramètres", description = "Administration de l’agence", children, actions, backToUsers = false }: {
@@ -40,7 +41,7 @@ export function SettingsWorkspace({ active, route, title = "Paramètres", descri
         const section = sections.find(item => item.key === event.target.value);
         if (section && section.key !== active) guard.request(() => router.push(section.href));
       }}>{sections.map(({ key, label }) => <option key={key} value={key}>{label}</option>)}</NativeSelect></div>
-      <div className="kay-settings-access-note"><PasswordIcon size={16} aria-hidden="true" /><p>La gestion des accès et des horaires est réservée aux administrateurs.</p></div></aside>
+      <div className="kay-settings-access-note"><PasswordIcon size={16} aria-hidden="true" /><p>Ces paramètres sont réservés aux administrateurs.</p></div></aside>
     <div className="kay-settings-content">{children}</div>
   </div></div>;
 }

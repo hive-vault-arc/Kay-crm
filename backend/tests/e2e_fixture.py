@@ -110,7 +110,38 @@ def main() -> int:
             clear_recovery(settings)
             clear_identity(settings, database)
             print(json.dumps({"done": True}))
+        elif action == "holiday-demo":
+            from app.work.holiday_models import HolidayOccurrence
+            from app.work.holidays import deliver_holidays, holiday_at
+
+            if not settings.holidays_enabled or set(command) != {"action"}:
+                raise ValueError
+            from app.schedule.rules import ZONE
+
+            day = datetime.now(ZONE).date().replace(month=12, day=18)
+            with database.session() as session, session.begin():
+                emails = session.scalars(select(User.email)).all()
+                if not emails or any(
+                    not re.fullmatch(r"sp03-[a-f0-9]{32}@example.com", email) for email in emails
+                ):
+                    raise ValueError
+                row = HolidayOccurrence(
+                    year=day.year,
+                    code="eid-al-fitr-synthetic",
+                    name="Aïd de contrôle",
+                    category="religious",
+                    status="estimated",
+                    start_on=day,
+                    end_on=day + timedelta(days=1),
+                    source_url="https://agendamaroc.com/widget",
+                )
+                session.add(row)
+            processed = deliver_holidays(
+                database, holiday_at(day).astimezone(UTC) - timedelta(hours=24)
+            )
+            print(json.dumps({"id": str(row.id), "date": day.isoformat(), "processed": processed}))
         elif action == "work-run":
+            from app.work.birthdays import deliver_birthdays
             from app.work.worker import instant, run_once
 
             if set(command) != {"action", "clock"} or not isinstance(command["clock"], str):
@@ -127,7 +158,7 @@ def main() -> int:
             processed = 0
             while processed < 50 and run_once(database, clock):
                 processed += 1
-            print(json.dumps({"processed": processed}))
+            print(json.dumps({"processed": processed + deliver_birthdays(database, clock)}))
         elif action == "queue-status":
             from tests.queue_status import export_queue
 

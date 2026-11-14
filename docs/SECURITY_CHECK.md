@@ -1,5 +1,14 @@
 # KAY security check for changes
 
+## Client birthday reminders
+
+Only the current responsible agent with an active usable account receives
+birthday reminders. Inbox scope and mark-as-read reject transferred, archived
+or stale dates. The stored occurrence is an annual date, with no copied birth
+year, age or contact name. The authenticated inbox resolves the contact name
+on read. Live invalidation carries only the recipient topic. Birthday alerts
+stay out of Web Push, exports and public listing data.
+
 ## Property cover photos
 
 Only active authenticated staff with access to the physical property may choose
@@ -3510,3 +3519,15 @@ Settings URL and origin/CSRF denial, and both schedule receipt/completion
 recovery paths. Production dependencies audit clean. The full dependency
 gate still refuses the inherited moderate minimatch advisory in the
 development tooling chain. See the current QA register for browser scope.
+
+## Moroccan holiday reminders
+
+External requests use fixed HTTPS hosts and routes with no CRM data, bounded
+headers/body reads and a 256 KiB body limit. Administrator-supplied source
+links are validated and displayed, with no server-side fetch. Manual
+confirmation requires current administrator authority, exact-origin/CSRF
+proof, a reviewed version and an idempotency key. Only recipients receive
+inbox invalidations, and only administrators receive holiday settings
+invalidations. Holiday notifications are excluded from Web Push enqueue and
+delivery. Migration 0049 keeps legacy constraints and adds a narrow
+versioned exception for reopening the holiday advance reminder.

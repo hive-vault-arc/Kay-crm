@@ -105,6 +105,8 @@ def run_once(database: Database, config: Settings) -> bool:
                 StaffSession.revoked_at.is_(None),
                 StaffSession.expires_at > now,
                 Notification.document_id.is_(None),
+                Notification.contact_id.is_(None),
+                Notification.holiday_id.is_(None),
                 Notification.read_at.is_(None),
                 Notification.created_at >= PushSubscription.created_at,
                 Notification.created_at > now - timedelta(days=1),
@@ -156,7 +158,7 @@ def run_once(database: Database, config: Settings) -> bool:
                 select(Notification).where(
                     Notification.id == job.notification_id,
                     Notification.read_at.is_(None),
-                    scope(identity),
+                    scope(identity, birthdays=False),
                 )
             )
             present = session.scalar(

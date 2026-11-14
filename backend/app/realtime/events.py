@@ -64,6 +64,7 @@ GROUPS = {
     },
     "tasks": {"task", "task_event"},
     "notifications": {"notification"},
+    "holidays": {"holiday_occurrence", "holiday_sync"},
     "files": {"document", "document_version"},
     "imports": {"import_batch", "import_preview"},
     "exports": {"export_job"},
@@ -77,7 +78,7 @@ SHARED = {"inventory", "identity", "visits"}
 
 def topics_for(tables: set[str]) -> set[str]:
     topics = {topic for topic, names in GROUPS.items() if tables & names}
-    if topics - {"identity", "notifications", "imports", "exports", "files"}:
+    if topics - {"identity", "notifications", "holidays", "imports", "exports", "files"}:
         topics.add("reports")
     return topics
 
@@ -123,6 +124,8 @@ def install(database: Database) -> Callable[[], None]:
                     payloads = []
                     for uid, role in users:
                         topics = set(hint["topics"])
+                        if role != "administrator":
+                            topics.discard("holidays")
                         if role == "agent":
                             topics -= {"finance", "imports", "exports"}
                             if str(uid) not in allowed:

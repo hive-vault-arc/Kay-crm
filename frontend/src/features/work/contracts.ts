@@ -24,7 +24,15 @@ export const workContextSchema = z.object(clock).strict();
 export const tasksSchema = numberedPage(taskSchema).extend(clock);
 export const taskHistorySchema = numberedPage(z.object({ id: z.uuid(), version, action: z.enum(Object.keys(taskActionLabels) as [keyof typeof taskActionLabels, ...(keyof typeof taskActionLabels)[]]), actor: agentSchema, snapshot, occurred_at: instant, occurred_local: instant }).strict());
 const href = z.string().max(250).regex(/^\/(?:(contacts|deals)\/[a-f0-9-]{36}\?task=[a-f0-9-]{36}|visits\/[a-f0-9-]{36})$/);
-export const notificationSchema = z.object({ id: z.uuid(), kind: z.enum(["visit.reminder.day", "visit.reminder.hour", "visit.follow_up", "task.reminder.day", "task.reminder.hour", "task.due"]), title: z.string().max(160), context: z.string().max(160), href, due_local: instant.nullable(), created_at: instant, read_at: instant.nullable() }).strict();
+const notificationFields = { id: z.uuid(), title: z.string().max(160), context: z.string().max(160), created_at: instant, read_at: instant.nullable() };
+const birthdayKinds = ["contact.birthday.eve", "contact.birthday.today"] as const;
+export const notificationSchema = z.discriminatedUnion("kind", [
+  z.object({ ...notificationFields, kind: z.enum(["visit.reminder.day", "visit.reminder.hour", "visit.follow_up", "task.reminder.day", "task.reminder.hour", "task.due"]), href, due_local: instant.nullable() }).strict(),
+  z.object({ ...notificationFields, kind: z.enum(birthdayKinds), href: z.string().regex(/^\/contacts\/[a-f0-9-]{36}$/), due_local: instant }).strict(),
+  z.object({ ...notificationFields, kind: z.enum(["holiday.eve", "holiday.today"]), href: z.null(), due_local: instant, start_on: z.iso.date(), end_on: z.iso.date(), estimated: z.boolean(), corrected: z.boolean() }).strict(),
+]);
+export const isBirthdayNotification = (kind: z.infer<typeof notificationSchema>["kind"]): kind is typeof birthdayKinds[number] =>
+  kind === "contact.birthday.eve" || kind === "contact.birthday.today";
 export const notificationsSchema = numberedPage(notificationSchema).extend({ unread_total: z.number().int().nonnegative() });
 export const readSchema = z.object({ read: z.literal(true) }).strict();
 export const followUpSchema = numberedPage(visitSchema.omit({ review_code: true })).extend(clock);

@@ -1,5 +1,6 @@
 """Explicit internal work routes use the existing session/facade and CSRF boundary."""
 
+from datetime import UTC, datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -20,6 +21,7 @@ from app.work.contracts import (
     TaskAction,
     TaskQuery,
 )
+from app.work.holidays import ConfirmHoliday, confirm_holiday, settings_view
 from app.work.notifications import mark_read, read_notifications
 from app.work.queries import calendar_work, clock_context, detail, follow_up, read_tasks
 
@@ -103,13 +105,51 @@ def notifications(
     request: Request, token: Proof, query: Annotated[NotificationQuery, Query()]
 ) -> dict[str, object]:
     validate_query(request)
-    return read_notifications(configuration(request)[0], token, query)
+    return read_notifications(
+        configuration(request)[0],
+        token,
+        query,
+        birthdays=request.headers.get("X-Kay-Birthday-Notifications") == "1",
+        holidays=request.headers.get("X-Kay-Holiday-Notifications") == "1",
+    )
 
 
 @router.post("/notifications/{nid}/read")
 def read(request: Request, token: Proof, nid: UUID, body: Strict) -> dict[str, bool]:
     no_query(request)
-    return mark_read(configuration(request)[0], token, nid)
+    return mark_read(
+        configuration(request)[0],
+        token,
+        nid,
+        holidays=request.headers.get("X-Kay-Holiday-Notifications") == "1",
+    )
+
+
+@router.get("/work/holidays")
+def holidays(request: Request, token: Proof) -> dict[str, object]:
+    no_query(request)
+    return settings_view(
+        configuration(request)[0],
+        token,
+        request.app.state.settings.holidays_enabled,
+        datetime.now(UTC),
+    )
+
+
+@router.post("/work/holidays/{hid}/confirm")
+def confirm(
+    request: Request, token: Proof, key: RetryKey, hid: UUID, body: ConfirmHoliday
+) -> dict[str, object]:
+    no_query(request)
+    return confirm_holiday(
+        configuration(request)[0],
+        token,
+        hid,
+        key,
+        body,
+        datetime.now(UTC),
+        enabled=request.app.state.settings.holidays_enabled,
+    )
 
 
 @router.get("/visits/follow-up")
