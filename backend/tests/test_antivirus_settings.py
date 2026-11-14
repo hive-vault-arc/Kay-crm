@@ -3,12 +3,13 @@
 import secrets
 import socket
 from contextlib import nullcontext
+from io import BytesIO
 from types import SimpleNamespace
 
 import pytest
 from pydantic import ValidationError
 
-from app.files.scanner import scan
+from app.files.scanner import scan, scan_stream
 from app.identity.security import IdentityError
 from app.settings import ConfigurationError, Settings, load_settings
 
@@ -177,3 +178,22 @@ def test_private_endpoint_keeps_stream_protocol_and_verdicts(
         with pytest.raises(IdentityError, match="ANTIVIRUS_UNAVAILABLE") as error:
             scan(settings, b"synthetic bytes")
         assert error.value.status == 503
+
+
+def test_video_waits_longer_for_verdict_without_extending_connect_or_upload(monkeypatch):
+    replies = iter([b"ClamAV 1.5.4/12345/synthetic\0", b"stream: OK\0"])
+    timeouts, sent = [], []
+
+    def connection(endpoint, *, timeout):
+        timeouts.append(("connect", timeout))
+        return nullcontext(
+            SimpleNamespace(
+                sendall=sent.append,
+                recv=lambda _: next(replies),
+                settimeout=lambda seconds: timeouts.append(("verdict", seconds, sent[-1])),
+            )
+        )
+
+    monkeypatch.setattr(socket, "create_connection", connection)
+    assert scan_stream(load_settings(), BytesIO(b"synthetic video"))[0] == "clean"
+    assert timeouts == [("connect", 20), ("connect", 20), ("verdict", 135, b"\0" * 4)]

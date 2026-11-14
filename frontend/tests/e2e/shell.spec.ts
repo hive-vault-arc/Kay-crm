@@ -183,7 +183,19 @@ test("AT-23: sheet keyboard, containment, Escape and focus return @shell", async
   await expect(dialog).not.toBeVisible();
   await expect(trigger).toBeFocused();
   await trigger.click();
-  await dialog.getByRole("link", { name: "Calendrier des visites" }).click();
+  let releaseContext!: () => void;
+  const loading = new Promise<void>(resolve => { releaseContext = resolve; });
+  await page.route("**/api/v1/calendar/context", async route => {
+    await loading;
+    await route.continue();
+  });
+  try {
+    await dialog.getByRole("link", { name: "Calendrier des visites" }).click();
+    await expect(page.getByRole("status", { name: "", exact: true }).filter({ hasText: "Chargement du calendrier" })).toBeAttached();
+    await expect(page.getByRole("heading", { level: 1 })).not.toBeFocused();
+  } finally {
+    releaseContext();
+  }
   await expect(dialog).not.toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Calendrier des visites",

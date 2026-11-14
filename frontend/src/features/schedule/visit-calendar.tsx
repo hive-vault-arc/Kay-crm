@@ -32,7 +32,7 @@ const planVisit = <Button action="create" asChild><Link href="/visits/new" scrol
 export function VisitCalendar({ actorId, administrator = false }: { actorId: string; administrator?: boolean }) {
   const query = useQuery("/api/v1/calendar/context", calendarContextSchema);
   if (query.value && !query.error) return <Calendar initial={query.value.today} actorId={actorId} administrator={administrator} />;
-  return <><PageHeader {...calendarTitle} actions={planVisit} />{query.error ? <RecordError error={query.error} retry={query.refresh} /> : <CalendarLoading label="Chargement du calendrier…" />}</>;
+  return <><PageHeader {...calendarTitle} route={query.error ? calendarTitle.route : undefined} actions={planVisit} />{query.error ? <RecordError error={query.error} retry={query.refresh} /> : <CalendarLoading label="Chargement du calendrier…" />}</>;
 }
 export function Calendar({ initial, actorId, administrator }: { initial: string; actorId: string; administrator: boolean }) {
   const [date, setDate] = useState(initial), [mode, setMode] = useState("details"), [user, setUser] = useState(actorId);

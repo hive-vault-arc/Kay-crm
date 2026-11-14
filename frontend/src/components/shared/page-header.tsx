@@ -11,7 +11,7 @@ export function PageHeader({
 }: {
   title: ReactNode;
   description: string;
-  route: string;
+  route?: string;
   actions?: ReactNode;
   navigation?: ReactNode;
   icon?: KayIconComponent;
