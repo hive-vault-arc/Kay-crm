@@ -15,12 +15,17 @@ from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
 from app.schedule.models import Visit, VisitParticipant
 from app.schedule.rules import ACTIVE, ZONE
+from app.work.birthdays import BIRTHDAY_EVE, birthday_at, birthday_matches
 from app.work.contracts import NotificationQuery
+from app.work.holiday_models import HolidayOccurrence
+from app.work.holidays import EVE, holiday_at
 from app.work.models import Task
 from app.work.queries import page
 
 
-def scope(identity: CurrentIdentity) -> ColumnElement[bool]:
+def scope(
+    identity: CurrentIdentity, *, birthdays: bool = True, holidays: bool = False
+) -> ColumnElement[bool]:
     def contact_allowed(
         cid: SQLColumnExpression[UUID] | SQLColumnExpression[UUID | None],
     ) -> ColumnElement[bool]:
@@ -60,11 +65,41 @@ def scope(identity: CurrentIdentity) -> ColumnElement[bool]:
         )
         .exists()
     )
-    return and_(Notification.user_id == identity.user.id, or_(task, visit))
+    sources = [task, visit]
+    if birthdays:
+        sources.append(
+            select(Contact.id)
+            .where(
+                Contact.id == Notification.contact_id,
+                Contact.primary_agent_id == identity.user.id,
+                Contact.archived_at.is_(None),
+                birthday_matches(Notification.birthday_on),
+            )
+            .exists()
+        )
+    if holidays:
+        return and_(
+            Notification.user_id == identity.user.id,
+            or_(*sources, Notification.holiday_id.is_not(None)),
+        )
+    return and_(Notification.user_id == identity.user.id, or_(*sources))
 
 
 def view(session: Session, row: Notification) -> dict[str, object]:
-    if row.task_id:
+    extra: dict[str, object] = {}
+    if row.holiday_id:
+        occurrence = session.get(HolidayOccurrence, row.holiday_id)
+        if occurrence is None or occurrence.start_on is None or occurrence.end_on is None:
+            raise IdentityError("NOT_FOUND", 404)
+        title = "Rappel de jour férié" if row.kind == EVE else "Jour férié aujourd’hui"
+        context, href, due = occurrence.name, None, holiday_at(occurrence.start_on).isoformat()
+        extra = {
+            "start_on": occurrence.start_on.isoformat(),
+            "end_on": occurrence.end_on.isoformat(),
+            "estimated": occurrence.status == "estimated",
+            "corrected": row.holiday_revision is not None,
+        }
+    elif row.task_id:
         task = session.get(Task, row.task_id)
         if task is None:
             raise IdentityError("NOT_FOUND", 404)
@@ -103,9 +138,22 @@ def view(session: Session, row: Notification) -> dict[str, object]:
             .astimezone(ZONE)
             .isoformat(),
         )
+    elif row.contact_id and row.birthday_on:
+        contact = session.get(Contact, row.contact_id)
+        if contact is None:
+            raise IdentityError("NOT_FOUND", 404)
+        title = (
+            "Rappel d’anniversaire : J-1" if row.kind == BIRTHDAY_EVE else "Anniversaire du jour"
+        )
+        context, href, due = (
+            contact.name,
+            f"/contacts/{contact.id}",
+            birthday_at(row.birthday_on).isoformat(),
+        )
     else:
         raise IdentityError("NOT_FOUND", 404)
     return {
+        **extra,
         "id": str(row.id),
         "kind": row.kind,
         "title": title,
@@ -118,12 +166,19 @@ def view(session: Session, row: Notification) -> dict[str, object]:
 
 
 def read_notifications(
-    database: Database, token: str, query: NotificationQuery
+    database: Database,
+    token: str,
+    query: NotificationQuery,
+    *,
+    birthdays: bool = True,
+    holidays: bool = False,
 ) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
         identity = current_identity(session, token)
-        visible = select(Notification).where(scope(identity))
+        visible = select(Notification).where(
+            scope(identity, birthdays=birthdays, holidays=holidays)
+        )
         unread = (
             session.scalar(
                 select(func.count()).select_from(
@@ -148,7 +203,9 @@ def read_notifications(
         return page([view(session, row) for row in rows], total, query) | {"unread_total": unread}
 
 
-def mark_read(database: Database, token: str, nid: UUID) -> dict[str, bool]:
+def mark_read(
+    database: Database, token: str, nid: UUID, *, holidays: bool = False
+) -> dict[str, bool]:
     with database.session() as session, session.begin():
         session.scalar(select(Agency).where(Agency.id == AGENCY_ID).with_for_update())
         identity = current_identity(session, token)
@@ -156,7 +213,9 @@ def mark_read(database: Database, token: str, nid: UUID) -> dict[str, bool]:
         session.expire_all()
         identity = current_identity(session, token)
         row = session.scalar(
-            select(Notification).where(Notification.id == nid, scope(identity)).with_for_update()
+            select(Notification)
+            .where(Notification.id == nid, scope(identity, holidays=holidays))
+            .with_for_update()
         )
         if row is None:
             raise IdentityError("NOT_FOUND", 404)

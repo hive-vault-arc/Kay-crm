@@ -108,6 +108,14 @@ jobs:
         env:
           KAY_E2E_PRODUCTION: '1'
         run: npm run test:realtime -- --max-failures=1
+      - name: Holiday confirmation and live inbox browser regression (serial)
+        if: matrix.suite == 'browser' && inputs.browser_scope == 'full'
+        working-directory: frontend
+        env:
+          KAY_E2E_PRODUCTION: '1'
+          HOLIDAYS_ENABLED: 'true'
+          REALTIME_ENABLED: 'true'
+        run: npm run test:e2e -- --config=playwright.ci.config.ts tests/e2e/holiday-reminders.spec.ts --max-failures=1
       - name: ${{ inputs.browser_scope == 'full' && 'Full compiled Chromium end-to-end regression (serial)' || 'Diagnostic browser journey (not a release gate)' }}
         if: matrix.suite == 'browser'
         working-directory: frontend

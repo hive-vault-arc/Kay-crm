@@ -566,6 +566,16 @@ claims filter `file.scan`, so stock events cannot be mistaken for scan jobs.
 stage, not an ordinary write option. Downgrade refuses retained reservation
 history, including released holds, and all development downgrades.
 
+## Client birthday reminders
+
+Migration `0048_contact_birthday_alerts` adds nullable `notification.contact_id`
+and `notification.birthday_on`. Only the two birthday kinds may populate both,
+and their existing per-recipient event key includes the contact, date and stage.
+Prior task, visit and file rows keep their existing parent rules. The contact
+index covers month and day on active people with a birth date. The notification
+stores the annual occurrence only. The original birth date stays on the
+canonical contact.
+
 ## SP-14 physical visit extension
 
 Additive `0016_visit_calendar` creates `visit_schedule_policy`,
@@ -665,3 +675,14 @@ categories remain the original five. `offering.kind` adds `holiday` as a separat
 current slot on standalone residential property only, with day/week/month
 periods. Sale and ordinary rental retain their existing periods. Holiday prices
 have no annual-equivalent comparison. See the [listing boundary](../03-planning/property-listing-fields-2026-10-22.md).
+
+## Moroccan holiday reminder records
+
+Migration `0049_moroccan_holiday_reminders` adds a unique occurrence per
+Gregorian year and stable holiday code, per-provider/year sync state, and
+administrator confirmation receipts. The optional inbox occurrence foreign
+key and the existing unique recipient/event key allow two stages per
+recipient. Legacy inbox parent, event-key and retention checks still apply.
+Only an advance reminder can reopen at a newer occurrence revision. Its
+recipient, event key, parent, creation time and other stored fields remain
+immutable.

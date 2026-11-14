@@ -1,3 +1,5 @@
+import { randomInt } from "node:crypto";
+import { mkdir } from "node:fs/promises";
 import { test, expect, clearActorContext, createActor, removeActor, signIn, type TestActor } from "../helpers/auth";
 import { testControl } from "../helpers/api-process";
 import { staffCommand } from "../helpers/leads";
@@ -22,6 +24,58 @@ async function openDashboardWork(page: import("@playwright/test").Page) {
   await page.getByRole("menuitem", { name: "Travail à faire", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Travail à faire", exact: true })).toBeVisible();
 }
+
+test("Birthday reminders open the private contact at both stages", async ({ page }) => {
+  const agent = await createActor("agent");
+  const name = "Client synthétique anniversaire";
+  const phone = `+2126${randomInt(10_000_000, 100_000_000)}`;
+  try {
+    await signIn(page, agent);
+    await testControl("worker-stop");
+    const response = await staffCommand(page, "contacts", {
+      name, type: "person", phones: [{ number: phone, label: "Principal", is_primary: true }],
+      emails: [], roles: ["buyer"], birth_date: "1996-01-16",
+    });
+    expect(response.status()).toBe(200);
+    const { id } = await response.json();
+    await page.goto(`/contacts/${id}`);
+    await expect(page.getByText("16/01/1996", { exact: true })).toBeVisible();
+    const realtime = page.locator("[data-realtime-status]");
+    if (process.env.REALTIME_ENABLED === "true") await expect(realtime).toHaveAttribute("data-realtime-status", "connected");
+    await page.getByRole("button", { name: "Modifier date de naissance", exact: true }).click();
+    const edit = page.getByRole("form", { name: "Modifier date de naissance", exact: true });
+    await edit.getByLabel("Date de naissance (facultatif)", { exact: true }).fill("1996-01-15");
+    await edit.getByRole("button", { name: "Enregistrer date de naissance", exact: true }).click();
+    await expect(page.getByText("15/01/1996", { exact: true })).toBeVisible();
+    expect(await runReminders(new Date("2035-01-14T12:00:00Z"))).toEqual({ processed: 1 });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/dashboard");
+    const inbox = await openInbox(page);
+    await expect(inbox.getByText("Rappel d’anniversaire : J-1", { exact: true })).toBeVisible();
+    await expect(inbox.getByText(name, { exact: true })).toBeVisible();
+    await expect(inbox.getByText("Date de l’anniversaire", { exact: true })).toBeVisible();
+    await expect(inbox.getByRole("link", { name: "Ouvrir le contact", exact: true })).toHaveAttribute("href", `/contacts/${id}`);
+    await expect(inbox).not.toContainText("1996");
+    await mkdir("output/playwright/contact-birthdays", { recursive: true });
+    await page.screenshot({ path: "output/playwright/contact-birthdays/phone.png" });
+    await inbox.getByRole("button", { name: "Marquer comme lue", exact: true }).click();
+    await expect(inbox.getByText("Lue", { exact: true })).toBeVisible();
+    await inbox.getByRole("link", { name: "Ouvrir le contact", exact: true }).click();
+    await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
+    await expect(page.getByText("15/01/1996", { exact: true })).toBeVisible();
+    expect(await runReminders(new Date("2035-01-15T12:00:00Z"))).toEqual({ processed: 1 });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.reload();
+    const updatedInbox = await openInbox(page);
+    await expect(updatedInbox.getByText("Anniversaire du jour", { exact: true })).toBeVisible();
+    await expect(updatedInbox.getByText("Rappel d’anniversaire : J-1", { exact: true })).toBeVisible();
+    await page.screenshot({ path: "output/playwright/contact-birthdays/desktop.png" });
+  } finally {
+    await clearActorContext(page);
+    await testControl("worker-start");
+    await removeActor(agent);
+  }
+});
 
 test("SP15: deal task due edit, explicit cancellation, refresh and retained context", async ({ page }) => {
   test.setTimeout(150_000); const actors: TestActor[] = [];

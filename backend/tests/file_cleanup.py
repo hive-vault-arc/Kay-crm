@@ -45,7 +45,11 @@ def delete_actor_files(
     session.execute(delete(OutboxEvent).where(OutboxEvent.version_id.in_(versions)))
     session.execute(
         delete(Notification).where(
-            or_(Notification.document_id.in_(ids), Notification.user_id == uid)
+            or_(
+                Notification.document_id.in_(ids),
+                Notification.contact_id.in_(contacts),
+                Notification.user_id == uid,
+            )
         )
     )
     session.execute(

@@ -22,6 +22,7 @@ from app.work.contact_links import merge_tasks
 CONTACT_LINK_POLICIES = {
     "import_row": "immutable_origin_contact_at_import",
     "task": "reparent_current_preserve_owner_origin_and_actor_history",
+    "notification": "retain_original_contact_hide_archived_alias_and_schedule_survivor",
     "visit": "reparent_current_preserve_origin_and_actor_history",
     "deal": "reparent_current_preserve_independent_origin_targets_and_history",
     "deal_stage_event": "historical_current_deal_scope",

@@ -24,4 +24,5 @@ from app.realtime import models as realtime_models  # noqa: F401
 from app.requirements import models as requirement_models  # noqa: F401
 from app.schedule import models as schedule_models  # noqa: F401
 from app.shares import models as share_models  # noqa: F401
+from app.work import holiday_models  # noqa: F401
 from app.work import models as work_models  # noqa: F401

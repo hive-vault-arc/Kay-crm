@@ -1161,6 +1161,12 @@ ended visits. GET /work/context supplies backend now/today/Africa/Casablanca.
 There is no public clock override or external messaging endpoint.
 [Execution and current gate status](../03-planning/sprints/sp-15-execution.md).
 
+The trusted façade can opt into birthday alerts on GET /notifications with
+`X-Kay-Birthday-Notifications: 1`. The additional kinds are
+`contact.birthday.eve` and `contact.birthday.today`. Their link is the authorized
+`/contacts/{id}` and `due_local` is the annual birthday occurrence at 09:00
+Casablanca time. They are private inbox records with the same read-state route.
+
 ## Live invalidation and browser notification boundary
 
 The [realtime contract](realtime.md) defines POST /realtime/tickets, direct
@@ -1384,3 +1390,17 @@ expired/far-future keys return FINANCE_CREATION_KEY_EXPIRED, both409. Original
 operations remain. Backend/frontend must roll out together; retained legacy
 receipts still replay. [Contract](finance-creation-keys-local.md). Real-stack
 acceptance remains pending.
+
+## Moroccan holiday reminders
+
+`GET /work/holidays` returns the administrator-only current and next-year
+occurrences, feed sync status and processing flag. `POST
+/work/holidays/{id}/confirm` requires the current administrator session, CSRF,
+exact origin, an idempotency key, the reviewed version, civil start and end
+dates, and an HTTPS announcement on an approved Moroccan government host.
+It returns the occurrence ID and resulting version.
+
+The façade opts into `holiday.eve` and `holiday.today` with
+`X-Kay-Holiday-Notifications: 1` on inbox reads and mark-as-read. Existing
+clients retain their original inbox shape and unread count. Holiday rows
+carry a date span, estimated and corrected flags, and a null record link.

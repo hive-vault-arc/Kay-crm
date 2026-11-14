@@ -1,12 +1,13 @@
 """Migration-owned file metadata; neither plaintext permits nor file bytes enter SQL."""
 
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
     BigInteger,
     Boolean,
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     Index,
@@ -264,8 +265,17 @@ class Notification(Base):
         ),
         Index("uq_notification_user_event", "user_id", "event_key", unique=True),
         Index("ix_notification_user_created", "user_id", "created_at", "id"),
+        Index(
+            "ix_notification_birthday_contact",
+            "contact_id",
+            "birthday_on",
+            "user_id",
+            "kind",
+            postgresql_where=text("contact_id IS NOT NULL"),
+        ),
         CheckConstraint(
-            "(kind='file.scanned' AND document_id IS NOT NULL AND visit_id IS NULL "
+            "((contact_id IS NULL AND birthday_on IS NULL) AND "
+            "((kind='file.scanned' AND document_id IS NOT NULL AND visit_id IS NULL "
             "AND task_id IS NULL AND schedule_version IS NULL) OR "
             "(kind IN ('visit.reminder.day','visit.reminder.hour','visit.follow_up') "
             "AND visit_id IS NOT NULL "
@@ -274,8 +284,27 @@ class Notification(Base):
             "(kind IN ('task.reminder.day','task.reminder.hour','task.due') "
             "AND task_id IS NOT NULL "
             "AND document_id IS NULL AND visit_id IS NULL AND schedule_version IS NOT NULL "
-            "AND schedule_version>0)",
+            "AND schedule_version>0))) OR "
+            "(kind IN ('contact.birthday.eve','contact.birthday.today') "
+            "AND contact_id IS NOT NULL AND birthday_on IS NOT NULL "
+            "AND document_id IS NULL AND visit_id IS NULL AND task_id IS NULL "
+            "AND schedule_version IS NULL "
+            "AND event_key=kind||':'||contact_id::text||':'||to_char(birthday_on,'YYYYMMDD')) OR "
+            "(kind IN ('holiday.eve','holiday.today') AND holiday_id IS NOT NULL "
+            "AND contact_id IS NULL AND birthday_on IS NULL AND document_id IS NULL "
+            "AND visit_id IS NULL AND task_id IS NULL AND schedule_version IS NULL "
+            "AND event_key=kind||':'||holiday_id::text)",
             name="notification_typed_parent",
+        ),
+        CheckConstraint(
+            "(holiday_id IS NULL OR kind IN ('holiday.eve','holiday.today')) "
+            "AND (holiday_revision IS NULL OR (kind='holiday.eve' AND holiday_revision>0))",
+            name="notification_holiday_parent",
+        ),
+        Index(
+            "ix_notification_holiday_id",
+            "holiday_id",
+            postgresql_where=text("holiday_id IS NOT NULL"),
         ),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
@@ -292,5 +321,13 @@ class Notification(Base):
         ForeignKey("task.id", ondelete="RESTRICT"), index=True
     )
     schedule_version: Mapped[int | None] = mapped_column(BigInteger)
+    contact_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("contact.id", name="fk_notification_contact_id", ondelete="RESTRICT")
+    )
+    birthday_on: Mapped[date | None] = mapped_column(Date)
+    holiday_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("holiday_occurrence.id", name="fk_notification_holiday_id", ondelete="RESTRICT")
+    )
+    holiday_revision: Mapped[int | None] = mapped_column(BigInteger)
     read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

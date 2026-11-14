@@ -45,7 +45,7 @@ async function acquireLease() {
 }
 async function fixture(command) {
   const recovery = command.action === "recovery-prepare";
-  const resumeWorker = Boolean(worker) && ["clear", "delete", "delete-bulk", "work-run"].includes(command.action);
+  const resumeWorker = Boolean(worker) && ["clear", "delete", "delete-bulk", "work-run", "holiday-demo"].includes(command.action);
   if (recovery) await stopWorker();
   if (resumeWorker) await stopWorker();
   try { return await new Promise((resolve, reject) => {

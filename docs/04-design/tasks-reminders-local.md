@@ -7,6 +7,32 @@ records have a **Tâches** tab for the exact deal. Existing file scan results st
 on the file record. The personal inbox and unread count exclude antivirus alerts,
 including older rows, and the file worker no longer creates them.
 
+## Client birthdays
+
+The existing optional **Date de naissance** on a person is shared by the
+Contacts, Prospects, Affaires and Propriétaires workflows. The CRM worker
+delivers two annual inbox reminders to the person's current responsible agent.
+The first is due 24 elapsed hours before the second, which is due at 09:00 in
+Africa/Casablanca on the birthday. A February 29 birthday is observed on
+February 28 in non-leap years. A missed reminder can be delivered later on its
+scheduled local day. The inbox shows the person's name, the current year's
+birthday date and a link to the private contact. It never returns the birth
+year or age and birthday reminders are excluded from Web Push.
+
+The worker reads bounded batches of active contacts with indexed month/day
+matching. It locks the agency in the same order as assignment and contact
+commands. Delivery and deduplication commit together, once per recipient,
+contact, annual occurrence and stage. Inbox reads and mark-as-read recheck the
+current assignment, archive state and calendar match. Merge keeps old notices
+attached to the archived source, where they are hidden, and schedules from the
+survivor's canonical date. The current façade opts into the new notification
+kinds so an older deployed façade continues to read the old inbox shape.
+
+Verification uses `backend/tests/test_contact_birthdays.py` and the birthday
+journey in `frontend/tests/e2e/work.spec.ts`. The cases cover annual timing,
+scope changes, simultaneous delivery, read state, the two inbox messages and
+navigation to the private contact.
+
 2026-10-28 selected inbox: the header opens a bounded ten-row compact Popover;
 Tout voir opens the retained twenty-row full drawer with the same filter and
 existing push controls. Both share current-scope read-state/recovery behavior,
@@ -172,3 +198,35 @@ constraints and reminder SQL guard, and backfills only current unresolved event
 kinds. No contact content or credentials enter queue rows. Production migration
 and deployment require separate authorization and are not implied by synthetic
 test success.
+
+## Moroccan holidays
+
+With `HOLIDAYS_ENABLED=true`, the worker syncs the current and next Casablanca
+calendar year once per day, independently for MoroccoAPI and Agenda Maroc.
+HTTPS runs outside database transactions and outside the main worker loop.
+Failed or unpublished feeds retain their last valid data. Only MoroccoAPI can
+provide fixed dates and sourced confirmations. Agenda Maroc supplies estimates
+for religious holidays. Administrators can confirm or correct a religious
+holiday in **Paramètres → Jours fériés** with its official announcement link.
+An accepted manual confirmation takes precedence over later imports.
+
+Each active staff member receives an inbox reminder 24 elapsed hours before
+09:00 Casablanca time on the first day, and a second reminder at 09:00 if the
+date is confirmed. Late confirmations can generate the second reminder until
+local midnight. The advance reminder can say **Date prévisionnelle** and
+shows the full known span. A date correction updates the existing advance
+reminder and reopens it once per change. Confirmation without a date change
+retains the read state. Neither reminder generates Web Push or an email.
+
+Migration `0049_moroccan_holiday_reminders` follows
+`0048_contact_birthday_alerts`. The default-off flag controls syncing,
+confirmation and delivery. Published reminders remain readable when the flag
+is off. For rollout, require the automatic aggregate and full PostgreSQL and
+browser release checks on the exact commit. Verify a restorable database
+backup, apply the migration and check Alembic current/head and drift before
+deploying the new API and worker with the flag off. Deploy the frontend and
+check readiness and existing reminders before enabling the flag on both
+services. Use **Jours fériés** to verify success timestamps and unpublished
+years for each source. Watch worker logs for `HOLIDAY_SYNC` errors and
+`HOLIDAY_REMINDER_DELIVERY_UNAVAILABLE`, and check the ordinary reminder queue
+and delivery latency. Disable the flag if needed and keep the migrated data.

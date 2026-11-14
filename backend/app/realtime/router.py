@@ -193,6 +193,8 @@ async def socket(ws: WebSocket) -> None:
             role, _ = await run_in_threadpool(admitted, check, hub.database, sid, cid, visible)
             while not queue.empty():
                 topics |= queue.get_nowait()
+            if role != "administrator":
+                topics.discard("holidays")
             if role == "agent":
                 topics -= {"finance", "imports", "exports", "identity"}
             if topics:

@@ -2436,3 +2436,11 @@ that styles a bare button can lose to the shared data-slot and data-size rules.
 Test the intended desktop control height separately from the 44 px phone hit
 area. Native zoom can report a 44 px control as 43.999985 px. Round measurement
 noise at thousandths of a CSS pixel before comparing bounds.
+
+## Version holiday corrections at the inbox boundary
+
+Before adding an inbox write, inspect both the SQL checks and the retained-row
+trigger. A holiday date correction may reset read state once per occurrence
+revision. The exception is limited to the existing advance reminder and keeps
+its ID, recipient, event key and creation time. Verify the populated upgrade
+and a repeated correction on PostgreSQL, where the trigger is enforced.

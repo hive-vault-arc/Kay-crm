@@ -3989,3 +3989,23 @@ local on `codex/redesign`.
 The last visual adjustment removed the duplicate outline around phone user
 cards. The production build and focused headed Settings case passed again
 (30.5 s), and the updated phone capture shows one outline per card.
+
+## Moroccan holiday reminders
+
+Disposable PostgreSQL 18 was upgraded from `0048_contact_birthday_alerts` to
+`0049_moroccan_holiday_reminders`. A populated migration case verified legacy
+inbox rows, read state and unread counts, then ran `alembic check` with no
+operations detected. The focused regression passed 68 tests across
+`test_holiday_reminders.py`, `test_contact_birthdays.py`, `test_work.py`,
+`test_work_edges.py`, `test_schedule.py`, `test_realtime.py` and
+`test_isolation_migrations.py`. This includes task, visit and birthday
+delivery while the holiday feed is blocked, correction replay, current
+authorization, and holiday exclusion from Web Push.
+
+Frontend lint, production build and all 1,005 unit tests passed. The headed
+Chrome checks use the compiled app with disposable PostgreSQL. The holiday
+journey requires `HOLIDAYS_ENABLED=true` and `REALTIME_ENABLED=true` and
+checks administrator confirmation, cross-session inbox invalidation,
+read/unread state, and the staff settings denial at a mobile viewport.
+`tests/e2e/work.spec.ts` also covers both birthday reminders and the contact link.
+Full hosted CI and the exact-release integration checks remain separate gates.
