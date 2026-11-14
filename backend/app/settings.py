@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     inventory_shares_enabled: bool = False
     realtime_enabled: bool = False
     holidays_enabled: bool = False
+    inventory_video_enabled: bool = False
     web_push_enabled: bool = False
     vapid_private_key: SecretStr | None = None
     vapid_public_key: str | None = None

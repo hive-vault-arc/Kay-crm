@@ -1,6 +1,8 @@
 """SP21 real PostgreSQL18 dump/restore, crypto, retention, pause and authorization."""
 
+import hashlib
 from datetime import UTC, datetime, timedelta
+from io import BytesIO
 from uuid import UUID, uuid4
 
 import pytest
@@ -22,6 +24,9 @@ from app.shares.contracts import ApproveListing
 from app.shares.models import ListingLink
 from app.shares.public import read_listing
 from app.shares.service import approve, issue, status
+from app.videos.models import InventoryVideo
+from app.videos.service import grant_playback, playback
+from app.videos.storage import VideoStorage
 from tests.deal_support import run as deal_command
 from tests.recovery_support import build, clear_recovery
 
@@ -65,9 +70,35 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
             read_listing(session, settings, link["token"])["title"]
             == "Fiche synthétique de récupération"
         )
+    video_id, video_key = uuid4(), uuid4()
+    synthetic_video = b"synthetic processed video payload"
+    video_hash = hashlib.sha256(synthetic_video).digest()
+    source = VideoStorage(settings)
+    source.write(video_key, BytesIO(synthetic_video), len(synthetic_video))
+    with database.session() as session, session.begin():
+        session.add(
+            InventoryVideo(
+                id=video_id,
+                property_id=UUID(data["property_id"]),
+                creator_id=UUID(data["admin"]["id"]),
+                filename="visite-synthetique.mp4",
+                input_size=len(synthetic_video),
+                source_fingerprint=video_hash,
+                state="ready",
+                created_at=datetime.now(UTC),
+                expires_at=datetime.now(UTC),
+                next_part=-1,
+                attempts=1,
+                output_key=video_key,
+                output_size=len(synthetic_video),
+                output_hash=video_hash,
+                duration_seconds=1,
+            )
+        )
+    old_playback = grant_playback(database, data["active_token"], video_id)["grant"]
     point = create(settings)
     result = restore(settings, UUID(point["point_id"]), replace_recovery=True)
-    assert result["verified_tables"] == 81 and result["objects"] >= 2
+    assert result["verified_tables"] == 84 and result["objects"] >= 3
     assert 0 <= result["rpo_seconds"] <= 3600 and result["restore_seconds"] < 14400
     target = recovery_settings(settings)
     db = Database(target.selected_database_url())
@@ -159,6 +190,11 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
         )
         with db.session() as session:
             assert current_identity(session, token).user.id == UUID(data["agent"]["id"])
+        with pytest.raises(IdentityError, match="FILE_PERMIT_INVALID"):
+            playback(db, video_id, old_playback)
+        new_playback = grant_playback(db, token, video_id)["grant"]
+        restored_key, restored_size = playback(db, video_id, new_playback)
+        assert VideoStorage(target).read(restored_key, restored_size, video_hash) == synthetic_video
         print(
             "SP21_LOCAL_RESTORE",
             {
@@ -168,6 +204,7 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
         )
     finally:
         db.close()
+        source.delete_blob(video_key)
         clear_recovery(settings)
 
 
