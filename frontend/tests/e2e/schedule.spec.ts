@@ -82,7 +82,7 @@ test("SP14 AT-40/23: policy impact preserved, administrator-only settings and pr
     await policyDrawer.getByRole("region",{name:"Lundi",exact:true}).getByRole("button",{name:"Retirer plages de travail 1 Lundi",exact:true}).click();
     await page.getByRole("button",{name:"Prévisualiser l’impact",exact:true}).click();await expect(page.getByRole("heading",{name:"1 visite(s) future(s) à revoir",exact:true})).toBeVisible();
     await page.getByRole("button",{name:"Enregistrer les horaires",exact:true}).click();await expect(page.getByText("Horaires enregistrés. Les visites existantes sont conservées.",{exact:true})).toBeVisible();
-    const record=await(await page.request.get(`/api/v1/visits/${vid}`)).json();expect(record.status).toBe("scheduled");expect(record.version).toBe(1);expect(record.review_code).toBe("VISIT_SCHEDULE_NOT_CONFIGURED");
+    const record=await(await page.request.get(`/api/v1/visits/${vid}`)).json();expect(record.status).toBe("confirmed");expect(record.version).toBe(1);expect(record.review_code).toBe("VISIT_SCHEDULE_NOT_CONFIGURED");
     for(const role of [outsider,manager]){
       await clearActorContext(page);await signIn(page,role);await page.goto("/settings/working-hours");await expect(page.getByRole("heading",{name:"Accès non autorisé",exact:true})).toBeVisible();
       const denial=await staffCommand(page,"visit-schedule/policy/preview",{expected_version:3,company_car_capacity_per_hour:2,working_windows:[],lunch_breaks:[]});expect(denial.status()).toBe(403);

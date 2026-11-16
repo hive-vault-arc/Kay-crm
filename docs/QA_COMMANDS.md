@@ -1,5 +1,20 @@
 # KAY QA command register
 
+## Direct visit confirmation and report reminders (D52)
+
+From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --unit-only` passed
+586 cases. The targeted PostgreSQL run of `test_schedule.py`,
+`test_visit_notes_unit.py`, `test_calendar_filters.py`, `test_work.py` and
+`test_proactive_work.py` passed 53 cases. Ruff, formatting and mypy passed.
+Migration 0053 and `alembic check` passed on the isolated and development databases.
+
+From `frontend/`, `npm.cmd run test:unit` passed 1,008 cases. TypeScript,
+ESLint and the dependency audit passed. Headed Chrome on isolated ports
+3112/8112/8113/8114 exercised booking, slot rejection, retry and report reminders.
+Reviewed the booking dialog in a 1440 px viewport and its touch interaction
+at 320 px, including both disclosures and the sticky action. Applied CRM UX,
+design-system-ops and React guidance. Antislop and design-taste were unavailable.
+
 ## Agent handoff and collaboration (D51)
 
 From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_coverage.py`
