@@ -203,7 +203,8 @@ test("agent uploads project and physical apartment photos without document privi
     await expect(gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" })).toBeVisible({ timeout: 60_000 });
     await page.setViewportSize({ width: 390, height: 844 });
     await gallery.getByRole("button", { name: "Ouvrir la photo sable.webp" }).click();
-    await expect(page.getByRole("dialog", { name: "Galerie du dossier", exact: true }).getByRole("img", { name: "Photo du dossier : sable.webp" })).toBeVisible();
+    const viewer = page.getByRole("dialog", { name: "Photos du dossier", exact: true }).filter({ has: page.getByRole("button", { name: "Fermer la photo", exact: true }) });
+    await expect(viewer.getByRole("img", { name: "Photo du dossier : sable.webp" })).toBeVisible();
     await page.keyboard.press("Escape");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
     await mkdir("output/playwright/property-photos", { recursive: true });
