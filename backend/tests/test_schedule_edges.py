@@ -64,7 +64,7 @@ def test_policy_restriction_racing_booking_is_serialized_and_requires_fresh_revi
         dict(start_at="2030-01-07T10:30:01Z"),
         dict(participant_ids=[]),
         dict(type="car"),
-        dict(status="confirmed"),
+        dict(status="cancelled"),
         dict(actor_id=str(uuid4())),
         dict(expected_version=True),
     ],
