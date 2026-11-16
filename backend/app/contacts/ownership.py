@@ -8,7 +8,13 @@ from uuid import UUID
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from app.contacts.access import ContactConflict, has_scope, readable_contact, scoped_contact
+from app.contacts.access import (
+    ContactConflict,
+    has_scope,
+    readable_contact,
+    require_collaboration_manager,
+    scoped_contact,
+)
 from app.contacts.eligibility import valid_assignees
 from app.contacts.history import assignment, record
 from app.contacts.merge import lock_phones, merge_values
@@ -38,7 +44,7 @@ def locked_identity(session: Session, token: str) -> CurrentIdentity:
 def locked_contacts(
     session: Session, identity: CurrentIdentity, cid: UUID, intent: ChangeIntent
 ) -> tuple[Contact, Contact | None]:
-    if intent.operation != "merge":
+    if intent.operation not in {"merge", "collaborators"}:
         require_role(identity, {"manager"})
     ids = sorted({cid} | ({intent.survivor_id} if intent.survivor_id else set()))
     session.scalars(
@@ -48,6 +54,8 @@ def locked_contacts(
     contact = readable_contact(session, identity, cid)
     if contact.id != cid:
         raise IdentityError("CONTACT_MERGED", 409)
+    if intent.operation == "collaborators":
+        require_collaboration_manager(identity, contact)
     survivor = (
         readable_contact(session, identity, intent.survivor_id) if intent.survivor_id else None
     )
@@ -183,8 +191,10 @@ def mutate(
     )
     with database.session() as session, session.begin():
         identity = locked_identity(session, token)
-        if operation not in {"notes", "merge"}:
+        if operation not in {"notes", "merge", "collaborators"}:
             require_role(identity, {"manager"})
+        if operation == "collaborators" and identity.user.role == "agent":
+            require_collaboration_manager(identity, scoped_contact(session, identity, cid))
         session.execute(
             delete(IdempotencyRecord).where(
                 IdempotencyRecord.created_at < datetime.now(UTC) - timedelta(hours=24)

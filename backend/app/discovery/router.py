@@ -25,9 +25,17 @@ def find(
     token: Proof,
     query: Annotated[SearchQuery, Query()],
     prepared_version: Annotated[Literal["2"] | None, Header(alias="X-Kay-Search-Version")] = None,
+    coverage_version: Annotated[Literal["1"] | None, Header(alias="X-Kay-Coverage-Search")] = None,
 ) -> dict[str, object]:
     validate_query(request, set(SearchQuery.model_fields))
-    return search(configuration(request)[0], token, query, prepared=prepared_version == "2")
+    database, secret = configuration(request)
+    return search(
+        database,
+        token,
+        query,
+        prepared=prepared_version == "2",
+        coverage_secret=secret if coverage_version == "1" else None,
+    )
 
 
 @router.get("/audit/events")

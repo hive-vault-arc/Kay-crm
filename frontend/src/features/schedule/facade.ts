@@ -4,19 +4,19 @@ import { z } from "zod";
 import { boundedJson, frontendOrigin } from "@/lib/auth/facade";
 import { SESSION_COOKIE } from "@/lib/auth/contracts";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
-import { availabilityQuerySchema, availabilitySchema, calendarContextSchema, busySchema, calendarQuerySchema, colleaguesSchema, editVisitSchema, historySchema, localTimeSchema, newVisitSchema, policyEditSchema, policyPreviewSchema, policySaveSchema, policySchema, resultSchema, visitActionSchema, visitFinishSchema, visitSchema, visitsSchema, visitsQuerySchema } from "./contracts";
+import { availabilityQuerySchema, availabilitySchema, calendarContextSchema, busySchema, calendarQuerySchema, colleaguesSchema, editVisitSchema, historySchema, localTimeSchema, newVisitSchema, policyEditSchema, policyPreviewSchema, policySaveSchema, policySchema, resultSchema, visitActionSchema, visitFinishSchema, visitSchema, visitPropertiesQuerySchema, visitPropertiesSchema, visitsSchema, visitsQuerySchema } from "./contracts";
 
 const id = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}";
-const allowedErrors = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONTACT_ARCHIVED", "IDEMPOTENCY_CONFLICT", "VERSION_CONFLICT", "SCHEDULE_REPREVIEW_REQUIRED", "VISIT_TERMINAL", "VISIT_STATE_UNCHANGED", "VISIT_NOT_ENDED", "INVALID_STATE", "INVALID_VISIT_PARTICIPANT", "INVALID_VISIT_CONTEXT", "INVALID_WORK_CONTEXT", "ENQUIRY_CONTEXT_REQUIRED", "VISIT_SCHEDULE_NOT_CONFIGURED", "VISIT_OUTSIDE_WORKING_HOURS", "VISIT_LUNCH_BREAK", "COMPANY_CAR_CAPACITY_FULL", "VISIT_OVERLAP_REASON_REQUIRED"]);
+const allowedErrors = new Set(["UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONTACT_ARCHIVED", "IDEMPOTENCY_CONFLICT", "VERSION_CONFLICT", "SCHEDULE_REPREVIEW_REQUIRED", "VISIT_TERMINAL", "VISIT_STATE_UNCHANGED", "VISIT_NOT_ENDED", "INVALID_STATE", "INVALID_VISIT_PARTICIPANT", "INVALID_VISIT_CONTEXT", "INVALID_VISIT_PROPERTY", "VISIT_CONTEXT_UNAVAILABLE", "INVALID_WORK_CONTEXT", "ENQUIRY_CONTEXT_REQUIRED", "VISIT_SCHEDULE_NOT_CONFIGURED", "VISIT_OUTSIDE_WORKING_HOURS", "VISIT_LUNCH_BREAK", "COMPANY_CAR_CAPACITY_FULL", "VISIT_OVERLAP_REASON_REQUIRED"]);
 export async function relaySchedule(key: string, request: Request, requestId: string) {
   const method = request.method;
   const policy = key === "visit-schedule/policy", preview = key === "visit-schedule/policy/preview", list = key === "visits";
   const record = new RegExp(`^visits/${id}$`).test(key), history = new RegExp(`^visits/${id}/history$`).test(key);
   const action = new RegExp(`^visits/${id}/(confirm|reschedule|complete|not-completed|cancel)$`).test(key);
-  const busy = key === "calendar/free-busy", availability = key === "calendar/availability", colleagues = key === "calendar/colleagues", clock = key === "calendar/local-time", context = key === "calendar/context";
-  if (!((policy && ["GET", "PUT"].includes(method)) || (preview && method === "POST") || (list && ["GET", "POST"].includes(method)) || (record && ["GET", "PATCH"].includes(method)) || (action && method === "POST") || ((history || busy || availability || colleagues || clock || context) && method === "GET"))) return facadeError(404, "NOT_FOUND", requestId);
+  const busy = key === "calendar/free-busy", availability = key === "calendar/availability", colleagues = key === "calendar/colleagues", clock = key === "calendar/local-time", context = key === "calendar/context", visitProperties = key === "calendar/visit-properties";
+  if (!((policy && ["GET", "PUT"].includes(method)) || (preview && method === "POST") || (list && ["GET", "POST"].includes(method)) || (record && ["GET", "PATCH"].includes(method)) || (action && method === "POST") || ((history || busy || availability || colleagues || clock || context || visitProperties) && method === "GET"))) return facadeError(404, "NOT_FOUND", requestId);
   const url = new URL(request.url), params = [...url.searchParams], query = Object.fromEntries(params);
-  const querySchema = list ? visitsQuerySchema : busy ? calendarQuerySchema : availability ? availabilityQuerySchema : colleagues ? z.object({ contact_id: z.uuid().optional() }).strict() : clock ? z.object({ local: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/) }).strict() : z.object({}).strict();
+  const querySchema = list ? visitsQuerySchema : busy ? calendarQuerySchema : availability ? availabilityQuerySchema : visitProperties ? visitPropertiesQuerySchema : colleagues ? z.object({ contact_id: z.uuid().optional() }).strict() : clock ? z.object({ local: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/) }).strict() : z.object({}).strict();
   if (new Set(params.map(([k]) => k)).size !== params.length || !(method === "GET" ? querySchema : z.object({}).strict()).safeParse(query).success) return facadeError(422, "VALIDATION_ERROR", requestId);
   const mutation = method !== "GET", retryKey = request.headers.get("Idempotency-Key") ?? undefined;
   let body: string | undefined;
@@ -35,7 +35,7 @@ export async function relaySchedule(key: string, request: Request, requestId: st
       const code = parsed.success && allowedErrors.has(parsed.data.error.code) ? parsed.data.error.code : "DEPENDENCY_UNAVAILABLE";
       return facadeError(code === "DEPENDENCY_UNAVAILABLE" ? 503 : response.status, code, requestId);
     }
-    const schema = policy || preview ? mutation ? policyPreviewSchema : policySchema : mutation ? resultSchema : list ? visitsSchema : record ? visitSchema : history ? historySchema : busy ? busySchema : availability ? availabilitySchema : clock ? localTimeSchema : context ? calendarContextSchema : colleaguesSchema;
+    const schema = policy || preview ? mutation ? policyPreviewSchema : policySchema : mutation ? resultSchema : list ? visitsSchema : record ? visitSchema : history ? historySchema : busy ? busySchema : availability ? availabilitySchema : clock ? localTimeSchema : context ? calendarContextSchema : visitProperties ? visitPropertiesSchema : colleaguesSchema;
     return Response.json(schema.parse(response.body), { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });
   } catch { return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId); }
 }

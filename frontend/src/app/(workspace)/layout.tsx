@@ -9,6 +9,5 @@ export default async function WorkspaceLayout({
   const identity = await getIdentity();
   // Each page owns its redirect so the original destination is preserved.
   if (identity.state !== "authenticated") return identity.state === "anonymous" ? children : <AuthFrame title="Votre espace KAY" description="Vérification de votre accès."><AuthUnavailable path="/dashboard" /></AuthFrame>;
-  if (identity.profile.must_change_password) return children;
   return <AppShell identity={identity.profile}>{children}</AppShell>;
 }

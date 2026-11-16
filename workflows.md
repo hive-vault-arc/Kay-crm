@@ -71,7 +71,7 @@ A manager either creates a standalone villa, house, apartment, or land parcel, o
 
 ## W05: organize a visit (C06, C07)
 
-The agent records one of `company_car`, `without_company_car`, or `office`, plus the contact, duration, participants, and location. Both off-site types are checked against the current agency working days/hours and lunch breaks; office visits can be booked at any time. Company-car visits additionally use the agency-wide hourly capacity, initially two and adjustable by an administrator. A full-capacity or out-of-hours slot is rejected, not bypassed by an overlap reason. The agent sees their own details and only free/busy intervals for colleagues. An ordinary appointment overlap opens a warning; proceeding requires a reason while all hard scheduling rules still hold. Internal reminders at one day and one hour before follow the current appointment. Rescheduling and cancellation keep the appointment identity and invalidate old reminders; overdue unresolved visits appear in a follow-up list. Accepted local Q-07 counts every clock-hour interval touched by [start,end), excluding the exact end boundary and distinguishing DST offsets.
+The agent chooses the contact, visit type, time, participants and optionally a physical property already linked to the selected dossier. **Planifier** checks the slot and saves a confirmed visit in one operation. Both off-site types must fit the current agency working windows and avoid lunch breaks. Office visits can be booked at any time. Company-car visits also use the agency-wide hourly capacity, initially two and adjustable by an administrator. Accepted local Q-07 counts every clock-hour interval touched by [start,end), excluding the exact end boundary and distinguishing DST offsets. Colleagues see only free/busy. An ordinary participant overlap requires no explanation. Internal reminders follow the current appointment. Once the visit ends, the agent can enter its result or record that it did not occur. Daily report reminders continue while the visit remains unresolved. Rescheduling and cancellation retain visit identity and invalidate stale reminders.
 
 The calendar exposes cancellation directly in its agenda/type views; a week-grid
 visit opens the same detail action. A reason is required and the cancelled visit
@@ -79,7 +79,9 @@ remains in history and in the optional cancelled-status filter.
 
 ## W06: collaborate or hand over (C02, C05)
 
-A manager adds a collaborator or transfers a contact's primary agent after previewing active enquiries, deals, visits, and tasks. The action records the former and new assignees and the true actor. Historical actions remain attributed to their authors; a collaborator does not become the primary agent. Any enquiry assignment that would point to an agent losing contact access is cleared or reassigned in the same transaction for manager review; it does not preserve a hidden access path. The former agent's access is recalculated after commit.
+The primary agent or a manager can manage collaborators from a prospect or deal header after reviewing the impact on the contact and linked dossiers. A manager may transfer ownership. The action records the former and new assignees and the true actor. Historical actions remain attributed to their authors. Any enquiry assignment that would point to an agent losing contact access is cleared or reassigned in the same transaction for manager review. The former agent's access is recalculated after commit.
+
+For coverage during an absence, an agent enters the complete phone number in global search and opens the affected dossier in read-only mode. The agent adds a note at the end of the overview. The current responsible agent receives internal reminders during work hours and can acknowledge the note inside the dossier or in the inbox. [Handoff contract](docs/04-design/agent-handoff-local.md).
 
 ## W07: close and reopen a deal (C08, C04)
 

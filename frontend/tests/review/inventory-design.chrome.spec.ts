@@ -22,9 +22,10 @@ test("inventory forms and records use the workspace width without losing their a
 
     await page.goto("/projects/properties/new");
     const propertyForm = page.getByRole("form", { name: "Créer un bien indépendant" });
-    const propertyReference = `UI-${randomUUID().slice(0, 8)}`.toUpperCase();
-    await propertyForm.locator("#property-reference").fill(propertyReference);
+    const propertyReference = /BIEN-DE-CONTROLE-SYNTHETIQUE-20241012-[A-F0-9]{12}/;
+    await expect(propertyForm.locator("#property-reference")).toHaveCount(0);
     await propertyForm.locator("#property-marketing_name").fill("Bien de contrôle synthétique");
+    await propertyForm.locator("#property-received_on").fill("2024-10-12");
     await propertyForm.locator("#property-price_mad").fill("900000.01");
     await expect(propertyForm.getByRole("navigation", { name: "Progression de la création", exact: true }).getByRole("button", { name: /^Étape 1 sur 5 :/ })).toHaveAttribute("aria-current", "step");
     await expect(propertyForm.locator("#property-area_sqm")).toHaveCount(0);
@@ -40,7 +41,7 @@ test("inventory forms and records use the workspace width without losing their a
     await page.screenshot({ path: path.join(evidence, "property-characteristics-desktop.png") });
     await propertyForm.getByRole("button", { name: "Suivant", exact: true }).click();
     await propertyForm.getByRole("button", { name: "Suivant", exact: true }).click();
-    await expect(propertyForm.getByRole("complementary", { name: "Aperçu du dossier" })).toContainText(propertyReference);
+    await expect(propertyForm.getByRole("complementary", { name: "Aperçu du dossier" })).toContainText("Attribuée à l’enregistrement");
     await expect(propertyForm.getByRole("complementary", { name: "Aperçu du dossier" })).toContainText("900 000,01 MAD");
     await expect(propertyForm.getByRole("complementary", { name: "Aperçu du dossier" })).not.toContainText("Non renseigné");
     await expect(propertyForm.getByRole("button", { name: "Créer le bien", exact: true })).toBeEnabled();
@@ -139,8 +140,8 @@ test("an agent must enter a valid rental price before creating a priced draft", 
     await signIn(page, agent);
     await page.goto("/projects/properties/new");
     const form = page.getByRole("form", { name: "Créer un bien indépendant" });
-    const reference = `RENT-${randomUUID().slice(0, 8)}`.toUpperCase();
-    await form.locator("#property-reference").fill(reference);
+    await expect(form.locator("#property-reference")).toHaveCount(0);
+    await form.locator("#property-marketing_name").fill("Location synthétique");
     await form.getByRole("radio", { name: "Location", exact: true }).check();
     await form.getByRole("button", { name: "Suivant", exact: true }).click();
     await expect(form.getByRole("alert")).toContainText("prix en MAD");
@@ -164,7 +165,7 @@ test("an agent must enter a valid rental price before creating a priced draft", 
     await form.getByRole("button", { name: "Suivant", exact: true }).click();
     await expect(form.getByRole("complementary", { name: "Aperçu du dossier" })).toContainText("8 000,50 MAD / an");
     await form.getByRole("button", { name: "Créer le bien", exact: true }).click();
-    await expect(page.getByRole("heading", { name: reference, exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Location synthétique", exact: true })).toBeVisible();
     await expect(inventorySection(page, "Offres")).toContainText("8 000,50 MAD / an");
     const id = new URL(page.url()).pathname.split("/")[3];
     const detail = await (await page.request.get(`/api/v1/properties/${id}`)).json();
@@ -184,8 +185,8 @@ test("creation steps adapt to land and commercial premises without dropping ente
     await page.goto("/projects/properties/new");
     const form = page.getByRole("form", { name: "Créer un bien indépendant" });
     await form.getByRole("button", { name: "Suivant", exact: true }).click();
-    await expect(form.getByRole("alert")).toContainText("référence");
-    await form.locator("#property-reference").fill("WIZARD-LAND");
+    await expect(form.getByRole("alert")).toContainText("prix en MAD");
+    await form.locator("#property-marketing_name").fill("WIZARD-LAND");
     await form.locator("#property-category").selectOption("land");
     await form.locator("#property-price_mad").fill("500000");
     await form.getByRole("button", { name: "Suivant", exact: true }).click();
@@ -201,7 +202,7 @@ test("creation steps adapt to land and commercial premises without dropping ente
     await form.locator("#property-area_sqm").fill("250.50");
     await form.getByRole("button", { name: "Précédent", exact: true }).click();
     await form.getByRole("button", { name: "Précédent", exact: true }).click();
-    await expect(form.locator("#property-reference")).toHaveValue("WIZARD-LAND");
+    await expect(form.locator("#property-marketing_name")).toHaveValue("WIZARD-LAND");
     await form.locator("#property-category").selectOption("commercial");
     await form.getByRole("button", { name: "Suivant", exact: true }).click();
     await form.getByRole("button", { name: "Suivant", exact: true }).click();

@@ -1,4 +1,4 @@
-"""The four allowlisted staff auth operations; bootstrap has no HTTP endpoint."""
+"""The allowlisted staff auth operations; bootstrap has no HTTP endpoint."""
 
 import secrets
 from typing import Annotated, cast
@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
 from app.db.session import Database
 from app.identity.security import IdentityError, csrf_token
-from app.identity.service import change_password, login, logout
+from app.identity.service import login, logout
 from app.identity.sessions import current_identity
 from app.settings import Settings
 
@@ -17,12 +17,6 @@ class LoginBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
     email: str = Field(min_length=1, max_length=254)
     password: SecretStr = Field(min_length=1, max_length=1024)
-
-
-class ChangePasswordBody(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    old_password: SecretStr = Field(min_length=1, max_length=1024)
-    new_password: SecretStr = Field(min_length=12, max_length=1024)
 
 
 def facade_authority(request: Request) -> None:
@@ -45,7 +39,7 @@ def session_proof(request: Request) -> str:
     token = request.headers.get("X-Kay-Session", "")
     database = cast(Database, request.app.state.database)
     with database.session() as session:
-        current_identity(session, token, restricted_allowed=True)
+        current_identity(session, token)
     if request.method != "GET":
         settings = cast(Settings, request.app.state.settings)
         expected = csrf_token(settings.facade_secret.get_secret_value(), token)
@@ -74,7 +68,7 @@ def me(request: Request, token: Annotated[str, Depends(session_proof)]) -> dict[
     database = cast(Database, request.app.state.database)
     settings = cast(Settings, request.app.state.settings)
     with database.session() as session:
-        identity = current_identity(session, token, restricted_allowed=True)
+        identity = current_identity(session, token)
         return {
             "user": {
                 "id": str(identity.user.id),
@@ -92,16 +86,3 @@ def me(request: Request, token: Annotated[str, Depends(session_proof)]) -> dict[
 def sign_out(request: Request, token: Annotated[str, Depends(session_proof)]) -> dict[str, bool]:
     logout(cast(Database, request.app.state.database), token)
     return {"signed_out": True}
-
-
-@router.post("/change-password")
-def own_password(
-    body: ChangePasswordBody, request: Request, token: Annotated[str, Depends(session_proof)]
-) -> dict[str, bool]:
-    change_password(
-        cast(Database, request.app.state.database),
-        token,
-        body.old_password.get_secret_value(),
-        body.new_password.get_secret_value(),
-    )
-    return {"fresh_login_required": True}

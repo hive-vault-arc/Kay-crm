@@ -31,7 +31,7 @@ The selected workspace glyphs are frozen vector nodes from `lucide@1.59.0`, unde
 ISC license with applicable Feather notices. The complete original license is
 retained in `public/licenses/workspace/lucide-LICENSE.txt`. Only selected shapes
 are integrated into the typed semantic icon layer; no runtime icon package or
-loose icon pack is installed. `branding/prototype/kay-glyphs.json` records their
+loose icon pack is installed. `src/lib/design/kay-glyphs.json` records their
 provenance and hashes. The owner's current prototype-fidelity instruction governs
 these glyphs. All45 prior semantic exports retain their names and behavior via
 this selected visual family; additional Help/Owner/theme aliases share the same
@@ -61,9 +61,7 @@ and are self-hosted through `next/font/local`. Runtime files use WOFF2 for
 Fraunces/DM Sans and the verified TTF for Manrope. The original Google Fonts TTF
 source archive and its SHA256 manifest are retained. Original copyright and
 license notices are retained in `src/fonts/*-OFL.txt` and distributed at
-`public/licenses/fonts/`. See `../branding/riviera/README.md` for source/version
-verification. Font names and original notices remain intact; no font sublicense
-or proprietary ownership is claimed.
+`public/licenses/fonts/`. Font names and original notices remain intact. No font sublicense or proprietary ownership is claimed.
 
 ## Iconsax Free — selected interface assets
 

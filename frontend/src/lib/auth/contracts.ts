@@ -15,11 +15,6 @@ export const loginSchema = z.object({
   email: z.string().trim().pipe(z.email("Saisissez une adresse e-mail valide.").max(254)),
   password: z.string().min(1, "Saisissez votre mot de passe.").max(1024),
 }).strict();
-export const changeSchema = z.object({
-  old_password: z.string().min(1, "Saisissez votre mot de passe actuel.").max(1024),
-  new_password: z.string().min(12, "Choisissez au moins 12 caractères.").max(1024),
-}).strict();
-
 const returnPaths = new Set(["/search", "/dashboard", "/contacts", "/leads", "/leads/new", "/deals", "/tasks", "/visits", "/projects", "/projects/new", "/projects/properties/new", "/settings", "/settings/users", "/settings/users/new"]);
 export function safeReturnPath(value: unknown): string {
   if (typeof value === "string" && (value === "/help" || (value.length <= 86 && /^\/help\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)))) return value;

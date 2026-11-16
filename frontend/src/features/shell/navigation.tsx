@@ -63,9 +63,9 @@ export function Navigation({
   );
 }
 
-export function SettingsNavigationItem({ compact = false, onNavigate }: { compact?: boolean; onNavigate?: (href: string) => void }) {
+export function SettingsNavigationItem({ compact = false, onNavigate, href = "/settings" }: { compact?: boolean; onNavigate?: (href: string) => void; href?: "/settings" | "/settings/users" }) {
   const pathname = usePathname();
-  return <Link href="/settings" prefetch={false} onClick={() => onNavigate?.("/settings")} aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label="Paramètres" title={compact ? "Paramètres" : undefined} data-compact={compact} className="kay-nav-link">
+  return <Link href={href} prefetch={false} onClick={() => onNavigate?.(href)} aria-current={pathname.startsWith(href) ? "page" : undefined} aria-label="Paramètres" title={compact ? "Paramètres" : undefined} data-compact={compact} className="kay-nav-link">
     <span className="navigation-icon"><SettingsIcon aria-hidden="true" className="size-5" /></span>
     <span className={compact ? "sr-only" : "min-w-0 wrap-break-word"}>Paramètres</span>
   </Link>;

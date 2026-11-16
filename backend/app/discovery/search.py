@@ -27,6 +27,7 @@ from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity, current_identity
 from app.inventory.hierarchy_models import Development, UnitType
 from app.inventory.models import Property
+from app.work.coverage import coverage_matches
 
 
 def page_result(
@@ -221,13 +222,19 @@ def projections(
 
 
 def search(
-    database: Database, token: str, query: SearchQuery, *, prepared: bool = False
+    database: Database,
+    token: str,
+    query: SearchQuery,
+    *,
+    prepared: bool = False,
+    coverage_secret: str | None = None,
 ) -> dict[str, object]:
     if query.kind == "generated_document" and not prepared:
         raise IdentityError("VALIDATION_ERROR", 422)
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
-        matches = projections(current_identity(session, token), query, prepared=prepared)
+        identity = current_identity(session, token)
+        matches = projections(identity, query, prepared=prepared)
         counts: dict[str, int] = dict(
             session.execute(select(matches.c.kind, func.count()).group_by(matches.c.kind)).all()
         )
@@ -255,4 +262,15 @@ def search(
         result = page_result(items, total, query.page, query.page_size) | {"counts": counts}
         if prepared:
             result["search_version"] = 2
+        if coverage_secret is not None:
+            coverage_kind = {"enquiry": "enquiries", "deal": "deals"}.get(query.kind or "")
+            result["coverage"] = (
+                [
+                    item
+                    for item in coverage_matches(session, identity, query.q, coverage_secret)
+                    if coverage_kind is None or item["kind"] == coverage_kind
+                ]
+                if query.page == 1 and query.kind in {None, "enquiry", "deal"}
+                else []
+            )
         return result

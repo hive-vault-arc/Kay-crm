@@ -14,6 +14,7 @@ from app.identity.models import AGENCY_ID, Agency
 from app.schedule.models import Visit, VisitParticipant
 from app.work.models import Task
 from app.work.reminders import KINDS
+from app.work.visit_reports import REPORT, REPORT_DELAY
 
 
 def instant(now: datetime | None = None) -> datetime:
@@ -126,8 +127,8 @@ def deliver(database: Database, jid: UUID, fence: UUID, now: datetime | None = N
                 target is not None
                 and target.status in ("scheduled", "confirmed")
                 and (
-                    target.end_at + timedelta(hours=2) <= clock <= target.end_at + timedelta(days=7)
-                    if event.kind == "visit.follow_up"
+                    target.end_at + REPORT_DELAY <= clock
+                    if event.kind == REPORT
                     else target.start_at > clock
                 )
             )
@@ -160,6 +161,17 @@ def deliver(database: Database, jid: UUID, fence: UUID, now: datetime | None = N
         if contact is not None and contact.archived_at is None:
             for uid in sorted(recipients):
                 if has_scope(session, uid, contact):
+                    if event.kind == REPORT and session.scalar(
+                        select(Notification.id)
+                        .where(
+                            Notification.kind == REPORT,
+                            Notification.visit_id == event.visit_id,
+                            Notification.schedule_version == event.schedule_version,
+                            Notification.user_id == uid,
+                        )
+                        .limit(1)
+                    ):
+                        continue
                     session.execute(
                         insert(Notification)
                         .values(

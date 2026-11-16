@@ -39,9 +39,12 @@ References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs
 
 | Action | Administrator | Manager | Agent |
 |---|---|---|---|
-| Create/delete later accounts, change roles, reset another user's password | Yes; chooses initial password; reset also requires their own current password. First login requires own-password change. Delete revokes/hides access, retaining CRM attribution. Existing credentials remain unchanged. First administrator still uses the guarded server-local script. | No | No |
+| List and create later accounts, reset another user’s password | All staff roles. Reset requires the administrator’s own current password. | Agent accounts only. Reset requires the manager’s own current password. | No |
+| Change staff identity or role, delete a staff account | Yes. Delete revokes sessions and hides the account while preserving business attribution. | No | No |
 | Read/edit contacts, enquiries, requirements, notes, and deals | All | All | S |
-| Assign the primary agent or collaborators; merge across portfolios | Yes | Yes | No |
+| Assign the primary agent or merge across portfolios | Yes | Yes | No |
+| Manage collaborators | Yes | Yes | Primary agent on that contact |
+| Exact-phone handoff view and new handoff note on a colleague’s dossier | Standard dossier access | Standard dossier access | Exact lookup and valid session proof |
 | Merge duplicates within the same writable scope after confirmation | Yes | Yes | Yes, within S only |
 | Read developments, blocks, floors, unit types, properties/units, their offerings, and shared inventory attachments | All | All | All |
 | Create/edit development facts and shared briefing, hierarchy, unit types, properties/units | Yes | Yes | Yes; developer selection requires current contact scope |
@@ -61,7 +64,7 @@ References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs
 | Archive/restore an individual Lead or deal within 30 days | Yes | Yes | Only the Lead's current assigned agent or the deal contact's current primary agent, respectively; current contact scope is still required |
 | Read privileged security audit | Yes | Yes when operationally needed | No |
 
-When an agent enters a phone already held by a private contact, only the current primary agent's name is shown. This is the narrow BR-04 disclosure exception. The agent cannot open, duplicate, or merge the contact, or see its deals. A shared development or unit record may show a non-private marketing name/reference, but its developer/owner link does not expose protected contact IDs, phones, documents, deals, or notes. Current permissions are rechecked on reads, search, writes, notifications, exports, downloads, and worker execution. Removing a collaboration or transferring a contact revokes access that has no remaining basis without changing the recorded authorship of past actions. Private contacts must not leak through counts, autocomplete, filenames, or copied URLs.
+When an agent enters a phone already held by a private contact in an ordinary creation or duplicate check, only the current primary agent's name is shown. D51 separately authorizes a limited handoff from exact-phone global search. Standard contact and dossier routes, edits, merge, private files, and exports still require their ordinary permissions. A shared development or unit record may show a non-private marketing name/reference, but its developer/owner link does not expose protected contact IDs, phones, documents, deals, or notes. Current permissions are rechecked on reads, search, writes, notifications, exports, downloads, and worker execution. Removing a collaboration or transferring a contact revokes access that has no remaining basis without changing the recorded authorship of past actions. Private contacts must not leak through ordinary counts, autocomplete, filenames, or copied URLs.
 
 ## Local SP-15 enforcement detail
 

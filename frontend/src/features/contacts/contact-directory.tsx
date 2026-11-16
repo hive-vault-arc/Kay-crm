@@ -16,7 +16,7 @@ import { SearchIcon } from "@/components/icons";
 import { FilterResultsLayout } from "@/components/shared/filter-results-layout";
 import { ExportAction } from "@/features/discovery/export-action";
 import { useHydrated } from "@/hooks/use-hydrated";
-import { contactsSchema, roleLabels, type DirectoryContact, type StaffRole } from "./contracts";
+import { contactsSchema, type DirectoryContact, type StaffRole } from "./contracts";
 import { AgentPicker } from "./agent-picker";
 import { DirectoryCountryFilter } from "./directory-country-filter";
 import { useDirectoryFilters } from "./use-directory-filters";
@@ -35,7 +35,7 @@ const columns: ColumnDef<DirectoryContact>[] = [
   { id: "agent", size: 150, header: "Agent responsable", cell: ({ row }) => <CrmAgent name={row.original.primary_agent.display_name} /> },
   { id: "status", size: 94, header: "Statut", cell: ({ row }) => <CrmStatusBadge state={row.original.archived_at ? "archived" : "active"}>{row.original.archived_at ? "Archivé" : "Actif"}</CrmStatusBadge> },
 ];
-const defaults = { q: "", primary_agent_id: "", language: "", linked: "", country: "", role: "", created_from: "", created_to: "", archive: "active", sort: "-updated_at", page_size: 20 };
+const defaults = { q: "", primary_agent_id: "", language: "", linked: "", country: "", created_from: "", created_to: "", archive: "active", sort: "-updated_at", page_size: 20 };
 
 export function ContactDirectory({ role }: { role: StaffRole }) {
   const hydrated = useHydrated();
@@ -53,7 +53,6 @@ export function ContactDirectory({ role }: { role: StaffRole }) {
       <fieldset disabled={!supported} className="grid gap-4">
         <details><summary>Agent responsable</summary>{supported || draft.primary_agent_id ? <AgentPicker purpose="contact-filter" optional selectedLabel={agentLabel} value={draft.primary_agent_id} change={(id, label) => { setDraft({ ...draft, primary_agent_id: id }); setAgentLabel(label ?? ""); }} /> : null}</details>
         <div className="grid gap-2"><Label htmlFor="contact-linked">Dossiers liés</Label><NativeSelect id="contact-linked" value={draft.linked} onChange={event => setDraft({ ...draft, linked: event.target.value })}><option value="">Tous les contacts</option><option value="enquiries">Avec prospects</option><option value="deals">Avec affaires</option><option value="none">Sans dossier</option></NativeSelect><p className="text-xs text-muted-foreground">Dossiers non archivés. Prospects hors convertis.</p></div>
-        <div className="grid gap-2"><Label htmlFor="contact-role">Rôle</Label><NativeSelect id="contact-role" value={draft.role} onChange={event => setDraft({ ...draft, role: event.target.value })}><option value="">Tous les rôles</option>{Object.entries(roleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</NativeSelect></div>
         <details><summary>Date de création</summary><div className="grid gap-3"><div className="grid gap-2"><Label htmlFor="contact-created-from">Créé du</Label><Input id="contact-created-from" type="date" value={draft.created_from} onChange={event => setDraft({ ...draft, created_from: event.target.value })} /></div><div className="grid gap-2"><Label htmlFor="contact-created-to">Au</Label><Input id="contact-created-to" type="date" value={draft.created_to} onChange={event => setDraft({ ...draft, created_to: event.target.value })} /></div></div></details>
       </fieldset>
       {value && !supported ? <p className="text-xs text-muted-foreground">Les filtres de responsabilité et de dossiers nécessitent la mise à jour du service.</p> : null}

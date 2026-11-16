@@ -1,5 +1,86 @@
 # KAY security check for changes
 
+## Direct visit confirmation and repeated reports
+
+The booking and rescheduling commands still serialize with current agency
+and policy state and record the real actor. Direct confirmation checks all
+hard working-time and capacity rules. Property choices and writes are
+scoped to the authorized dossier. The notification worker checks the
+current visit version, organizer and participant access before delivery.
+Repeated reminders retain immutable rows, with only the latest visible
+per person and current visit schedule. Recording an outcome or cancelling
+invalidates the current reminder context under the same transaction lock.
+
+## Agent handoff and collaboration
+
+Standard portfolio filters and command permissions remain independent of the
+exact-phone handoff path. The limited read and note endpoints validate the
+signed session-bound proof and current phone, primary-agent, and dossier grants.
+The handoff projection excludes documents, finance, general contact identity,
+unrelated dossier activity and other write capabilities. The author and clock
+come from the server. Note writes and acknowledgements audit only IDs and action
+names. The worker checks the current recipient and working windows before
+delivery, and coverage reminders stay in the internal inbox.
+
+Collaboration preview and confirmation both require the contact’s current
+primary agent or a privileged staff role. Receipt replay rechecks that
+authority. A collaborator may neither delegate access nor transfer ownership.
+
+## Catalogue projects in activities
+
+The activity command checks current contact and dossier authority before looking
+up project IDs. It validates active inventory and writes the discussed links,
+activity history and receipt in one transaction. The existing agency and dossier
+locks coordinate the standalone link command and activity writes. An invalid
+target rolls back the entire command. Legacy label-only request fingerprints and
+receipt replay stay compatible. Inventory, reservations and offers are unaffected.
+
+## Inventory gallery video formats
+
+The MP4/MOV tab uses the existing scoped inventory video commands and private
+part upload and playback grants. The photo picker still rejects videos. The
+separate worker checks FFmpeg availability before claiming a job, scans the
+private input with ClamAV, and publishes the encoded output after verification.
+Playback remains bound to current staff authority. No session, grant, or client
+file is included in synthetic browser captures.
+
+## D50 contact creation and duplicate numbers
+
+Manual creation derives buyer classification inside the existing command
+transaction, after receipt lookup. New buyers cannot carry an owner identity
+number. The accessible duplicate response links to the existing scoped deal
+route. Private duplicate responses continue to expose only the permitted agent
+name. Owner category changes use the existing versioned contact command and
+leave existing dossiers and property links intact.
+
+## Automatic standalone property reference
+
+The wizard supplies the reference on the existing authorized inventory
+command. Its inputs are shared listing facts. The server continues to
+validate the reference and enforce uniqueness in PostgreSQL. An interrupted
+submission replays using the original payload and command key.
+
+## Automatic visit dossier link
+
+Visit context resolution follows the existing contact scope and uses the
+current canonical contact. An agent’s automatic prospect link is limited to
+their visible enquiries. Explicit references still pass the dossier checks.
+Retries reuse the original command fingerprint and receipt. Availability
+remains a preview, and all booking authorities and slot checks run at write time.
+
+## Staff passwords and manager scope
+
+D46 checks the current actor before and inside the staff transaction. Manager
+lists and details are scoped to agents. Manager writes accept agent creation
+and agent password reset. The target check precedes receipt replay. Resets use
+the actor’s current password and revoke target sessions atomically. The form
+masks the chosen password by default. Persistence uses Argon2id hashes and
+keyed command fingerprints.
+Legacy temporary hashes cannot sign in or continue a session. The old
+self-service password endpoint is closed. The separate owner-authorized
+single-machine purge ran against loopback development and preserved the sole
+administrator credential. It added no application purge route or command.
+
 ## Client birthday reminders
 
 Only the current responsible agent with an active usable account receives

@@ -61,12 +61,11 @@ automatic screenshots and AI failure snapshots, strip matcher input contexts and
 capture only empty fields or safe post-login synthetic UI. Never preserve raw
 password/cookie/token diagnostics, including generated test failure artifacts.
 
-Current D37 (2026-10-18) supersedes SP-04's generated-password/handoff flow:
-admin chooses an initial password, new accounts are active, and first login
-requires a different own password followed by fresh login. Reset additionally
-requires the admin's current password. Confirmed Delete hides/revokes access
-while retaining identity/CRM history. No existing staff are bulk-changed; no
-automatic external credential delivery. See [current evidence](docs/03-planning/staff-onboarding-deletion.md).
+D46 (2026-11-15) governs staff passwords. Authorized administrators and managers
+choose the password at creation or reset. Managers may create agent accounts
+and reset agent passwords. Recipients sign in directly with that password.
+Reset confirms the actor’s current password and revokes target sessions. Normal
+staff deletion retains CRM attribution. See the [account runbook](docs/06-delivery-and-operations/admin-bootstrap.md).
 
 Historical SP-04 adds administrator-only Settings/user administration, one-time temporary
 credential display, confirmed in-person handoff and current-password-protected

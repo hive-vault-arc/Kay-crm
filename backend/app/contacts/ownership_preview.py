@@ -6,7 +6,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.contacts.access import ContactConflict, responsible_agent
+from app.contacts.access import ContactConflict, require_collaboration_manager, responsible_agent
 from app.contacts.eligibility import accounts, eligible
 from app.contacts.merge import verify_link_policies
 from app.contacts.models import Contact, ContactCollaborator, ContactEmail, ContactPhone, Enquiry
@@ -40,7 +40,9 @@ def proposed_scope(
     survivor: Contact | None,
     intent: ChangeIntent,
 ) -> tuple[UUID, set[UUID]]:
-    if intent.operation != "merge":
+    if intent.operation == "collaborators":
+        require_collaboration_manager(identity, contact)
+    elif intent.operation != "merge":
         require_role(identity, {"manager"})
     elif survivor is None or survivor.id == contact.id:
         raise IdentityError("VALIDATION_ERROR", 422)
@@ -69,8 +71,13 @@ def proposed_scope(
         grants = set(intent.collaborator_ids)
         if owner in grants:
             raise IdentityError("PRIMARY_NOT_COLLABORATOR", 422)
-        for uid in grants:
-            responsible_agent(session, identity, uid)
+        candidates = accounts(session, grants)
+        if grants != {
+            user.id
+            for user, credential in candidates.values()
+            if user.role == "agent" and eligible(user, credential)
+        }:
+            raise IdentityError("INVALID_ASSIGNEE", 422)
     elif intent.operation == "merge":
         verify_link_policies(session)
     return owner, grants

@@ -20,6 +20,8 @@ from app.deals.access import authorized
 from app.deals.models import Deal
 from app.identity.security import IdentityError, keyed_digest
 from app.identity.sessions import CurrentIdentity, current_identity
+from app.project_links.contracts import NewLink
+from app.project_links.service import add_link, lock_parent
 
 ActivityScope = Literal["enquiries", "deals"]
 
@@ -44,10 +46,14 @@ def append_activity(
     body: NewActivity,
 ) -> dict[str, object]:
     route = f"{scope}/{target}/activities"
+    payload = body.model_dump(mode="json")
+    if not body.project_targets:
+        # Preserve the fingerprint of existing activity receipts.
+        del payload["project_targets"]
     digest = keyed_digest(
         secret,
         "activity-command",
-        json.dumps(body.model_dump(mode="json"), sort_keys=True, separators=(",", ":")),
+        json.dumps(payload, sort_keys=True, separators=(",", ":")),
     )
     with database.session() as session, session.begin():
         identity = locked_identity(session, token)
@@ -68,6 +74,24 @@ def append_activity(
         if contact.archived_at:
             raise IdentityError("CONTACT_ARCHIVED", 409)
         scoped_contact(session, identity, cid)
+        projects = list(body.projects)
+        if body.project_targets:
+            lock_parent(session, scope, target)
+            for choice in body.project_targets:
+                link = NewLink(
+                    kind="discussed",
+                    development_id=choice.development_id,
+                    property_id=choice.property_id,
+                )
+                try:
+                    _, name = add_link(
+                        session, identity, scope, target, cid, link, reuse_existing=True
+                    )
+                except IdentityError as error:
+                    if error.code == "NOT_FOUND":
+                        raise IdentityError("ACTIVITY_PROJECT_UNAVAILABLE", 409) from None
+                    raise
+                projects.append(name)
         event_id = record(
             session,
             identity,
@@ -78,7 +102,7 @@ def append_activity(
             deal_id=target if scope == "deals" else None,
             duration_minutes=body.duration_minutes,
             direction=body.direction,
-            projects=list(body.projects),
+            projects=projects,
         )
         session.flush()
         response: dict[str, object] = {"id": str(event_id)}

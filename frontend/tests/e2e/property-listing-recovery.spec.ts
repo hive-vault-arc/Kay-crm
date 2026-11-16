@@ -16,7 +16,13 @@ for (const scenario of [{ kind: "standalone-create", width: 390, failure: "ackno
       const name = scenario.kind === "edit" ? "Modifier le bien" : scenario.kind === "unit-create" ? "Créer une unité" : "Créer un bien indépendant", form = page.getByRole("form", { name, exact: true }), reference = `PLR-${randomUUID().slice(0, 8)}`.toUpperCase();
       if (scenario.kind === "edit") { await form.locator("#property-marketing_name").fill("Synthetic retained edited listing"); await form.getByRole("button", { name: "Étape 5 sur 5 : Vérification", exact: true }).click(); }
       else {
-        await form.locator("#property-category").selectOption("villa"); await form.locator("#property-reference").fill(reference); await form.locator("#property-price_mad").fill("9007199254740993.01"); await form.getByRole("button", { name: "Suivant", exact: true }).click();
+        await form.locator("#property-category").selectOption("villa");
+        if (scenario.kind === "unit-create") await form.locator("#property-reference").fill(reference);
+        else {
+          await form.locator("#property-marketing_name").fill("Résidence Atlas");
+          await form.locator("#property-received_on").fill("2024-10-12");
+        }
+        await form.locator("#property-price_mad").fill("9007199254740993.01"); await form.getByRole("button", { name: "Suivant", exact: true }).click();
         await form.locator("#property-city").fill("Synthetic listing city"); if (scenario.kind === "standalone-create") await form.locator("#property-region").fill("Synthetic listing region"); await form.getByRole("button", { name: "Suivant", exact: true }).click();
         if (scenario.kind === "standalone-create") { await form.locator("#property-area_sqm").fill("108.50"); await form.locator("#property-rooms").fill("3"); await form.locator("#property-bedrooms").fill("2"); } await form.locator("#property-bathrooms").fill("0"); await form.getByRole("button", { name: "Suivant", exact: true }).click();
         await form.locator("#property-description").fill("Synthetic retained listing description"); await form.getByRole("button", { name: "Suivant", exact: true }).click();
@@ -32,7 +38,11 @@ for (const scenario of [{ kind: "standalone-create", width: 390, failure: "ackno
       await expect.poll(() => form.getByRole("button", { name: "Précédent", exact: true }).isDisabled()).toBe(true); await page.keyboard.press("Escape"); await expect.poll(() => form.count()).toBe(1); blockRead = false; await retry.click(); await expect.poll(() => Boolean(id && page.url().endsWith(`/projects/properties/${id}`))).toBe(true);
       expect(attempts.length).toBe(scenario.failure === "acknowledgement" ? 2 : 1); if (attempts.length === 2) expect(attempts[0].body === attempts[1].body && attempts[0].key === attempts[1].key).toBe(true);
       const response = await page.request.get(`/api/v1/properties/${id}`); if (response.status() !== 200) throw new Error("SYNTHETIC_LISTING_RESULT_FAILED"); const current = propertySchema.parse(await response.json()); expect(current.id === id && current.version === (scenario.kind === "edit" ? initialVersion + 1 : 2)).toBe(true);
-      if (scenario.kind === "edit") expect(current.marketing_name === "Synthetic retained edited listing").toBe(true); else expect(current.reference === reference && current.listing_details.bathrooms === 0 && current.listing_details.description === "Synthetic retained listing description" && current.offerings.some(value => value.price_mad === "9007199254740993.01" && value.state === "draft" && value.version === 1) && (current.development_id ?? null) === (scenario.kind === "unit-create" ? data.inventory.did : null)).toBe(true);
+      if (scenario.kind === "edit") expect(current.marketing_name === "Synthetic retained edited listing").toBe(true); else {
+        if (scenario.kind === "standalone-create") expect(current.reference).toMatch(/^RESIDENCE-ATLAS-20241012-[A-F0-9]{12}$/);
+        else expect(current.reference).toBe(reference);
+        expect(current.listing_details.bathrooms === 0 && current.listing_details.description === "Synthetic retained listing description" && current.offerings.some(value => value.price_mad === "9007199254740993.01" && value.state === "draft" && value.version === 1) && (current.development_id ?? null) === (scenario.kind === "unit-create" ? data.inventory.did : null)).toBe(true);
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
     } finally { await clearActorContext(page); for (const actor of actors) await removeActor(actor); }
   });

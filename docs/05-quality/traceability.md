@@ -221,7 +221,7 @@ interruption/rollback, current-actor/scope checks and isolated0004 migration.
 Headed Chrome30/30, built HTTPS19/19 and final privacy/artifact checks also pass;
 commands, actual200% zoom and safe capture review are recorded there.
 Product/design review and
-[AFTER audit005](../../anti-slop/audit-005-2026-10-14.md) LOW finding1 remain pending
+AFTER audit005 LOW finding1 remain pending
 Khalid. SP-05 alone did not accept assignment/collaboration/merge/history; SP-06
 adds that evidence above. Signed intake,import/export,deals/dashboard and
 full-product variants remain outside these slices.
@@ -233,7 +233,7 @@ credential, pending/handoff/24h/restricted change/fresh login, password-confirme
 reset, role/deactivation revocation, last durable administrator and observed
 current-actor/role/disable races, versioned safe retry/rollback and no GET secret:
 62 backend tests, 95 five-browser cases, 22 headed Chrome and 12 built HTTPS smoke
-cases; zero skipped. [AFTER audit 004](../../anti-slop/audit-004-2026-10-14.md) has
+cases; zero skipped. AFTER audit 004 has
 one LOW mobile-table hierarchy finding pending Khalid's selection; no audit-only
 fix. Actual administrator execution/staff delivery, real Safari/devices,
 file-permit/restore and full-product variants remain separate. Product review pending.
@@ -245,7 +245,7 @@ PostgreSQL lock contention, Argon2id, generic/rate-limited sign-in, current
 credential/role/expiry/revocation, facade/Origin/CSRF, restricted own-password
 change and fresh login: 47 pytest, 70 five-target E2E, five focused pending-form
 checks, 16 headed Chrome plus two extended visual cases, seven built HTTPS smoke
-cases. [AFTER audit 003](../../anti-slop/audit-003-2026-10-14.md) has zero numbered
+cases. AFTER audit 003 has zero numbered
 findings. Actual administrator execution/product review remain human operations;
 At that historical SP-03 boundary, handoff/user management, business data, file/restore variants and actual
 Safari/device validation are not claimed. Native Windows WebKit SameSite-reporting

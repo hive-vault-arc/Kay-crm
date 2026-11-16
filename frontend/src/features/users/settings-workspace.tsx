@@ -17,8 +17,8 @@ const sections = [
   { key: "holidays", href: "/settings/holidays", label: "Jours fériés", detail: "Dates et rappels au Maroc", Icon: CalendarIcon },
 ] as const;
 
-export function SettingsWorkspace({ active, route, title = "Paramètres", description = "Administration de l’agence", children, actions, backToUsers = false }: {
-  active: typeof sections[number]["key"]; route: string; title?: string; description?: string; children: ReactNode; actions?: ReactNode; backToUsers?: boolean;
+export function SettingsWorkspace({ active, route, title = "Paramètres", description = "Administration de l’agence", children, actions, backToUsers = false, agentAccountsOnly = false }: {
+  active: typeof sections[number]["key"]; route: string; title?: string; description?: string; children: ReactNode; actions?: ReactNode; backToUsers?: boolean; agentAccountsOnly?: boolean;
 }) {
   const navigation = useRef<HTMLElement>(null), current = useRef<HTMLAnchorElement>(null);
   const picker = useId(), router = useRouter();
@@ -35,6 +35,7 @@ export function SettingsWorkspace({ active, route, title = "Paramètres", descri
     observer.observe(nav); observer.observe(item); reveal();
     return () => observer.disconnect();
   }, [active]);
+  if (agentAccountsOnly) return <div className="kay-settings-page">{guard.dialog}{backToUsers ? <Button action="back" asChild variant="ghost" className="w-fit"><Link href="/settings/users">Utilisateurs</Link></Button> : null}<PageHeader title={title} description="Gestion des comptes agents" route={route} actions={actions} /><div className="kay-settings-content">{children}</div></div>;
   return <div className="kay-settings-page">{guard.dialog}{backToUsers ? <Button action="back" asChild variant="ghost" className="w-fit"><Link href="/settings/users">Utilisateurs</Link></Button> : null}<PageHeader title={title} description={description} route={route} actions={actions} /><div className="kay-settings-layout">
     <aside className="kay-settings-navigation"><nav ref={navigation} className="kay-surface kay-settings-nav" aria-label="Sections des paramètres"><p>Administration</p>{sections.map(({ key, href, label, detail, Icon }) => <Link key={key} ref={active === key ? current : undefined} href={href} aria-current={active === key ? "page" : undefined} aria-label={label} className="kay-settings-nav-link"><Icon size={20} aria-hidden="true" /><span><strong>{label}</strong><small>{detail}</small></span><ForwardIcon size={16} aria-hidden="true" /></Link>)}</nav>
       <div className="kay-settings-picker"><Label htmlFor={picker}>Section</Label><NativeSelect id={picker} value={active} onChange={event => {

@@ -30,19 +30,15 @@ test("calendar reference: populated office, car and no-car visits", async ({ pag
     expect(created.status()).toBe(200);
     const leadId = (await created.json()).id;
     const contact = (await (await page.request.get(`/api/v1/enquiries/${leadId}`)).json()).contact.id;
-    for (const [day, hour, type, title, confirmed] of [
-      ["2026-10-19", "10", "company_car", "Visite synthétique avec véhicule", true],
-      ["2026-10-20", "14", "without_company_car", "Visite synthétique sans véhicule", false],
-      ["2026-10-21", "11", "office", "Rendez-vous synthétique au bureau", true],
-      ["2026-10-23", "15", "office", "Suivi synthétique au bureau", false],
+    for (const [day, hour, type, title] of [
+      ["2026-10-19", "10", "company_car", "Visite synthétique avec véhicule"],
+      ["2026-10-20", "14", "without_company_car", "Visite synthétique sans véhicule"],
+      ["2026-10-21", "11", "office", "Rendez-vous synthétique au bureau"],
+      ["2026-10-23", "15", "office", "Suivi synthétique au bureau"],
     ] as const) {
       const resolve = async (hour: string) => (await (await page.request.get(`/api/v1/calendar/local-time?local=${day}T${hour}:00`)).json()).choices[0].instant;
       const result = await staffCommand(page, "visits", { contact_id: contact, title, type, start_at: await resolve(hour), end_at: await resolve(String(Number(hour) + 1)), location: "Lieu synthétique de démonstration", participant_ids: [agent.id], overlap_reason: "", deal_id: null, property_id: null, status: "scheduled" });
       expect(result.status()).toBe(200);
-      if (confirmed) {
-        const response = await staffCommand(page, `visits/${(await result.json()).id}/confirm`, { expected_version: 1, reason: "Confirmation synthétique" });
-        expect(response.status()).toBe(200);
-      }
     }
     await page.goto("/visits");
     await page.getByLabel("Aller à une date", { exact: true }).fill("2026-10-19");
@@ -68,10 +64,10 @@ test("calendar reference: populated office, car and no-car visits", async ({ pag
     await expect(grid.locator(".kay-calendar-tile")).toHaveCount(2);
     await changeFilters(["Sans véhicule de société", "Avec véhicule de société"]);
     await expect(page.getByText("Aucune visite ne correspond aux filtres sélectionnés.", { exact: true })).toBeVisible();
-    await changeFilters(["Au bureau", "Sans véhicule de société", "Avec véhicule de société", "Planifiée"]);
-    await expect(page.getByText("2 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
-    await expect(grid.locator(".kay-calendar-tile[data-crm-state=confirmed]")).toHaveCount(2);
-    await changeFilters(["Planifiée"]);
+    await changeFilters(["Au bureau", "Sans véhicule de société", "Avec véhicule de société", "Confirmée"]);
+    await expect(page.getByText("Aucune visite ne correspond aux filtres sélectionnés.", { exact: true })).toBeVisible();
+    await expect(grid.locator(".kay-calendar-tile[data-crm-state=confirmed]")).toHaveCount(0);
+    await changeFilters(["Confirmée"]);
     await page.getByRole("tab", { name: "Agenda", exact: true }).click();
     await expect(page.getByRole("region", { name: "Agenda des visites" }).getByRole("article")).toHaveCount(4);
     await page.getByRole("tab", { name: "Par type", exact: true }).click();
@@ -211,7 +207,7 @@ test("calendar overlap lanes, short overnight visits and detail access stay reac
       ...Array.from({ length: 4 }, (_, index) => [`Chevauchement synthétique ${index}`, "2026-10-19T10:00", "2026-10-19T11:00"]),
       ["Courte visite nocturne synthétique", "2026-10-19T23:55", "2026-10-20T00:05"],
     ]) {
-      const result = await staffCommand(page, "visits", { contact_id: contact, title, type: "office", start_at: await resolve(start), end_at: await resolve(end), location: "Lieu synthétique", participant_ids: [agent.id], overlap_reason: "Chevauchement synthétique délibéré", deal_id: null, property_id: null, status: title.endsWith("3") ? "draft" : "scheduled" });
+      const result = await staffCommand(page, "visits", { contact_id: contact, title, type: "office", start_at: await resolve(start), end_at: await resolve(end), location: "Lieu synthétique", participant_ids: [agent.id], overlap_reason: "Chevauchement synthétique délibéré", deal_id: null, property_id: null, status: "scheduled" });
       expect(result.status()).toBe(200);
     }
     await page.goto("/visits"); await page.getByLabel("Aller à une date", { exact: true }).fill("2026-10-19");
@@ -232,17 +228,18 @@ test("calendar overlap lanes, short overnight visits and detail access stay reac
     await page.goto("/visits"); await page.getByLabel("Aller à une date", { exact: true }).fill("2026-10-19");
     const filtersButton = page.getByRole("button", { name: /^Filtres du calendrier/ });
     const filters = page.getByRole("dialog", { name: "Filtres du calendrier", exact: true });
-    const draft = filters.getByRole("checkbox", { name: "Brouillon", exact: true });
+    const scheduled = filters.getByRole("checkbox", { name: "Confirmée", exact: true });
     await filtersButton.click();
-    await expect(draft).toBeChecked();
-    await draft.focus();
+    await expect(filters.getByRole("checkbox", { name: "À replanifier", exact: true })).toHaveCount(0);
+    await expect(scheduled).toBeChecked();
+    await scheduled.focus();
     await page.keyboard.press("Space");
-    await expect(draft).not.toBeChecked();
-    await expect(draft).toBeFocused();
+    await expect(scheduled).not.toBeChecked();
+    await expect(scheduled).toBeFocused();
     await page.keyboard.press("Escape");
-    await expect(page.getByText("4 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
+    await expect(page.getByText("0 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
     await filtersButton.click();
-    await draft.check();
+    await scheduled.check();
     await page.keyboard.press("Escape");
     await expect(page.getByText("5 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
   } finally { await clearActorContext(page); await removeActor(agent); }

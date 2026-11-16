@@ -12,9 +12,14 @@ The header bell opens a shadcn/Radix Popover rather than the older large Sheet.
 Its360px maximum width,12px collision clearance,9px offset,16px padding,24px
 radius and420px/available-viewport height cap follow the selected source. Title,
 unread count, close, three quick filters and compact tonal entries occupy the
-panel. Each entry has one native dossier link, title/context, and a44px icon read
-action or Lue label. The selected five-pixel attention dot replaces the large
-numeric bell pill; its accessible status retains the full real unread count.
+panel. Each entry has a type icon, title, context and a 44 px read action or Lue
+label. Notifications with a dossier retain their direct link. The header shows
+the bell and the total unread count. The visible number caps at 99+, and
+assistive technology receives the exact count.
+The preview and complete list share the type vocabulary for birthdays, holidays,
+visits, visit reports, calls, follow-ups, emails, reminders and tasks. Call,
+follow-up and email icons use the corresponding task action names in the current
+contract.
 
 The server supplies the first ten current items for all/unread/read. Counts are
 never inferred from those ten rows and no incomplete-page browser filtering is
@@ -69,7 +74,9 @@ the idempotent read; the next opening reads current state.
 After an acknowledged read, the feed refreshes and emits only the existing
 `notifications` invalidation topic. Other inbox instances and the bell can thus
 refresh through the existing deduplicated subscription even with socket delivery
-disabled. The event contains no ID/title/context or private value. No browser
+disabled. The bell also reads one unread row on demand when the preview opens,
+when the page becomes visible or the network returns, and once a minute while
+visible. The event contains no ID/title/context or private value. No browser
 storage, cookie, log, telemetry or new synchronization service is introduced.
 Current DTO href validation and protected destination authorization remain.
 

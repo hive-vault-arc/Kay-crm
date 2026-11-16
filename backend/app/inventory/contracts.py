@@ -25,6 +25,8 @@ ComparisonAmount = Annotated[
     str, Field(pattern=r"^[0-9]{1,18}(\.[0-9]{1,2})?$"), AfterValidator(positive)
 ]
 Version = Annotated[int, Field(strict=True, ge=1)]
+# Property details are read and edited as JSON numbers in the browser.
+MAX_SAFE_JSON_INTEGER = 2**53 - 1
 Category = Literal[
     "villa", "house", "apartment", "land", "commercial", "riad", "room", "office", "farm"
 ]
@@ -82,8 +84,8 @@ class ListingDetails(BaseModel):
     minimum_nights: int | None = Field(default=None, ge=1, le=365)
     age_band: AgeBand | None = None
     floor_type: Literal["parquet", "marble", "tile", "other"] | None = None
-    unit_floor: int | None = Field(default=None, ge=0, le=20)
-    building_floors: int | None = Field(default=None, ge=1, le=4)
+    unit_floor: int | None = Field(default=None, ge=0, le=MAX_SAFE_JSON_INTEGER)
+    building_floors: int | None = Field(default=None, ge=1, le=MAX_SAFE_JSON_INTEGER)
     orientation: Literal["north", "west", "east", "south"] | None = None
     plot_area_sqm: Amount | None = None
     land_delivery: Literal["planned", "titled"] | None = None

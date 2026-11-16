@@ -1,5 +1,11 @@
 # Lead and Deal activity histories
 
+The **Projets évoqués** selector searches active programmes, properties and
+units by name or reference. Saving an activity stores the selected catalogue
+names in its immutable history and associates the targets with the dossier’s
+**Projets discutés** list. An already active association is reused. The current
+dossier permissions and the existing project-link history govern the operation.
+
 ## Dated automatic entries (2026-10-22)
 
 New Lead creation writes « Prospect créé le … » with the server event instant
@@ -100,7 +106,7 @@ Main agent read antislop, design-system-ops and its four geometry references,
 design-taste-frontend, responsive, Impeccable Operate/craft-floor, uncodixfy,
 React and Playwright guidance. Design-taste's marketing/asset workflow excludes
 this dense product table/form; KAY's existing design system wins. Antislop
-remains AFTER: [audit029](../../anti-slop/audit-029-2026-10-18.md) records the
+remains AFTER: audit029 records the
 finished slice, with no audit-only changes. Surface context was inspected;
 its historical black/system-font/256px notes do not override newer Riviera and
 reference-fidelity authority. No global metadata drift was silently repaired.

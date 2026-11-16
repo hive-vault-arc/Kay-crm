@@ -10,16 +10,22 @@ from pydantic import (
     ConfigDict,
     Field,
     StringConstraints,
+    TypeAdapter,
     ValidationInfo,
     field_validator,
     model_validator,
 )
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1000)]
+VisitTitle = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)]
 Reason = Annotated[str, StringConstraints(strip_whitespace=True, max_length=1000)]
 VisitType = Literal["company_car", "without_company_car", "office", "meeting"]
 Status = Literal["draft", "scheduled", "confirmed", "completed", "not_completed", "cancelled"]
 Version = Annotated[int, Field(strict=True, gt=0)]
+DEFAULT_VISIT_TITLE = "Visite"
+DEFAULT_VISIT_LOCATION = "Non renseigné"
+DEFAULT_VISIT_DURATION = timedelta(hours=1)
+visit_instant = TypeAdapter(AwareDatetime)
 
 
 class Strict(BaseModel):
@@ -90,8 +96,8 @@ class Period(Strict):
 
 class VisitFields(Period):
     type: VisitType
-    title: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)]
-    location: Text
+    title: VisitTitle = DEFAULT_VISIT_TITLE
+    location: Text = DEFAULT_VISIT_LOCATION
     participant_ids: Annotated[list[UUID], Field(min_length=1, max_length=100)]
     overlap_reason: Reason = ""
     notes: Reason = ""
@@ -115,11 +121,26 @@ class VisitFields(Period):
 
 class NewVisit(VisitFields):
     contact_id: UUID
-    status: Literal["draft", "scheduled"] = "scheduled"
+    # Retain the old wire default for replay of receipts issued before direct confirmation.
+    status: Literal["draft", "scheduled", "confirmed"] = "scheduled"
+
+    @model_validator(mode="before")
+    @classmethod
+    def default_end(cls, value: object) -> object:
+        if isinstance(value, dict) and "start_at" in value and "end_at" not in value:
+            start = cls.instant(visit_instant.validate_python(value["start_at"]))
+            return {**value, "end_at": start + DEFAULT_VISIT_DURATION}
+        return value
 
 
 class EditVisit(VisitFields):
     expected_version: Version
+
+
+class VisitPropertyQuery(Strict):
+    contact_id: UUID
+    visit_id: UUID | None = None
+    page: Annotated[int, Field(ge=1, le=1_000_000)] = 1
 
 
 class VisitAction(Strict):

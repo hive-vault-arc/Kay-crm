@@ -59,10 +59,10 @@ test("CRM references: populated directories, real filters, row selection, lead f
       await page.getByRole("button", { name: "Effacer la sélection", exact: true }).click();
       await expect(rows).toHaveCount(12);
       if (route === "leads") await panel.getByRole("checkbox", { name: "À relancer", exact: true }).check();
-      else await panel.getByLabel("Étape", { exact: true }).selectOption("visit");
+      else await panel.getByRole("checkbox", { name: "Visite", exact: true }).check();
       await expect(rows).toHaveCount(route === "leads" ? 2 : 4);
       if (route === "leads") await panel.getByRole("checkbox", { name: "À relancer", exact: true }).uncheck();
-      else await panel.getByLabel("Étape", { exact: true }).selectOption("");
+      else await panel.getByRole("checkbox", { name: "Visite", exact: true }).uncheck();
       await expect(rows).toHaveCount(12);
       const source = panel.getByLabel("Source", { exact: true });
       await source.selectOption("facebook");

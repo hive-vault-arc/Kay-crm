@@ -17,14 +17,24 @@ from app.schedule.models import Visit, VisitParticipant
 from app.schedule.rules import ACTIVE, ZONE
 from app.work.birthdays import BIRTHDAY_EVE, birthday_at, birthday_matches
 from app.work.contracts import NotificationQuery
+from app.work.coverage import NOTE_KIND, acknowledge, dossier
+from app.work.coverage_models import CoverageNote
+from app.work.coverage_reminders import inbox_scope
 from app.work.holiday_models import HolidayOccurrence
 from app.work.holidays import EVE, holiday_at
 from app.work.models import Task
 from app.work.queries import page
+from app.work.visit_reports import latest_visit_report
 
 
 def scope(
-    identity: CurrentIdentity, *, birthdays: bool = True, holidays: bool = False
+    identity: CurrentIdentity,
+    *,
+    birthdays: bool = True,
+    holidays: bool = False,
+    coverage: bool = False,
+    latest_coverage: bool = True,
+    latest_visits: bool = True,
 ) -> ColumnElement[bool]:
     def contact_allowed(
         cid: SQLColumnExpression[UUID] | SQLColumnExpression[UUID | None],
@@ -65,7 +75,12 @@ def scope(
         )
         .exists()
     )
-    sources = [task, visit]
+    sources: list[ColumnElement[bool]] = [
+        task,
+        and_(visit, latest_visit_report()) if latest_visits else visit,
+    ]
+    if coverage:
+        sources.append(inbox_scope(latest=latest_coverage))
     if birthdays:
         sources.append(
             select(Contact.id)
@@ -87,7 +102,20 @@ def scope(
 
 def view(session: Session, row: Notification) -> dict[str, object]:
     extra: dict[str, object] = {}
-    if row.holiday_id:
+    if row.coverage_note_id:
+        note = session.get(CoverageNote, row.coverage_note_id)
+        if note is None:
+            raise IdentityError("NOT_FOUND", 404)
+        if note.enquiry_id:
+            _, contact = dossier(session, "enquiries", note.enquiry_id)
+            href = f"/leads/{note.enquiry_id}?tab=handoff#notes-autres-agents"
+        elif note.deal_id:
+            _, contact = dossier(session, "deals", note.deal_id)
+            href = f"/deals/{note.deal_id}?tab=handoff#notes-autres-agents"
+        else:
+            raise IdentityError("NOT_FOUND", 404)
+        title, context, due = "Note d’un autre agent", contact.name, None
+    elif row.holiday_id:
         occurrence = session.get(HolidayOccurrence, row.holiday_id)
         if occurrence is None or occurrence.start_on is None or occurrence.end_on is None:
             raise IdentityError("NOT_FOUND", 404)
@@ -139,15 +167,15 @@ def view(session: Session, row: Notification) -> dict[str, object]:
             .isoformat(),
         )
     elif row.contact_id and row.birthday_on:
-        contact = session.get(Contact, row.contact_id)
-        if contact is None:
+        birthday_contact = session.get(Contact, row.contact_id)
+        if birthday_contact is None:
             raise IdentityError("NOT_FOUND", 404)
         title = (
             "Rappel d’anniversaire : J-1" if row.kind == BIRTHDAY_EVE else "Anniversaire du jour"
         )
         context, href, due = (
-            contact.name,
-            f"/contacts/{contact.id}",
+            birthday_contact.name,
+            f"/contacts/{birthday_contact.id}",
             birthday_at(row.birthday_on).isoformat(),
         )
     else:
@@ -172,12 +200,13 @@ def read_notifications(
     *,
     birthdays: bool = True,
     holidays: bool = False,
+    coverage: bool = False,
 ) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
         identity = current_identity(session, token)
         visible = select(Notification).where(
-            scope(identity, birthdays=birthdays, holidays=holidays)
+            scope(identity, birthdays=birthdays, holidays=holidays, coverage=coverage)
         )
         unread = (
             session.scalar(
@@ -204,7 +233,12 @@ def read_notifications(
 
 
 def mark_read(
-    database: Database, token: str, nid: UUID, *, holidays: bool = False
+    database: Database,
+    token: str,
+    nid: UUID,
+    *,
+    holidays: bool = False,
+    coverage: bool = False,
 ) -> dict[str, bool]:
     with database.session() as session, session.begin():
         session.scalar(select(Agency).where(Agency.id == AGENCY_ID).with_for_update())
@@ -214,11 +248,31 @@ def mark_read(
         identity = current_identity(session, token)
         row = session.scalar(
             select(Notification)
-            .where(Notification.id == nid, scope(identity, holidays=holidays))
+            .where(
+                Notification.id == nid,
+                scope(
+                    identity,
+                    holidays=holidays,
+                    coverage=coverage,
+                    latest_coverage=False,
+                    latest_visits=False,
+                ),
+            )
             .with_for_update()
         )
         if row is None:
             raise IdentityError("NOT_FOUND", 404)
+        if row.kind == NOTE_KIND and row.coverage_note_id:
+            note = session.get(CoverageNote, row.coverage_note_id)
+            if note is None:
+                raise IdentityError("NOT_FOUND", 404)
+            if note.enquiry_id:
+                _, contact = dossier(session, "enquiries", note.enquiry_id)
+            elif note.deal_id:
+                _, contact = dossier(session, "deals", note.deal_id)
+            else:
+                raise IdentityError("NOT_FOUND", 404)
+            acknowledge(session, note, contact, identity.user.id)
         if row.read_at is None:
             row.read_at = datetime.now(UTC)
         return {"read": True}

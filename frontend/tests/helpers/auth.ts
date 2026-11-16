@@ -46,12 +46,10 @@ export async function signIn(page: Page, actor: TestActor, returnTo?: string) {
   const loginStatus = (await loginResponse).status();
   if (loginStatus !== 200) throw new Error(`SYNTHETIC_LOGIN_HTTP_${loginStatus}`);
   // Poll a primitive: page matchers can attach secret-bearing input snapshots.
-  await expect.poll(() => /\/(dashboard|leads|deals|visits|projects|change-password)$/.test(page.url())).toBe(true);
+  await expect.poll(() => /\/(dashboard|leads|deals|visits|projects|settings\/users)$/.test(page.url())).toBe(true);
   await page.waitForLoadState("load");
   const pathname = new URL(page.url()).pathname;
-  if (pathname === "/change-password") {
-    await expect(page.getByRole("button", { name: "Se déconnecter", exact: true })).toBeEnabled();
-  } else if (pathname === "/dashboard") {
+  if (pathname === "/dashboard") {
     await expect(page.getByRole("heading", { name: "Tableau de bord", exact: true, level: 1 })).toBeVisible();
     await expect(page.getByRole("button", { name: "Ouvrir les notifications", exact: true })).toBeEnabled();
   } else {

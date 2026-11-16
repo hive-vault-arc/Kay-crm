@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { apiGet, apiPost, ApiError } from "@/lib/api/client";
-import { loginSchema, meSchema, safeReturnPath } from "@/lib/auth/contracts";
+import { apiPost, ApiError } from "@/lib/api/client";
+import { loginSchema, safeReturnPath } from "@/lib/auth/contracts";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { EmailIcon, PasswordIcon, ForwardIcon, ShowPasswordIcon, HidePasswordIcon } from "@/components/icons";
 
@@ -24,8 +24,7 @@ export function LoginForm({ returnTo }: { returnTo: string }) {
     try {
       await apiPost("/api/v1/auth/login", values, z.object({ signed_in: z.literal(true) }));
       form.resetField("password");
-      const profile = await apiGet("/api/v1/auth/me", meSchema);
-      window.location.replace(profile.must_change_password ? "/change-password" : safeReturnPath(returnTo));
+      window.location.replace(safeReturnPath(returnTo));
     } catch (reason) {
       form.resetField("password");
       setError(reason instanceof ApiError ? reason.message : "La connexion a échoué. Réessayez.");

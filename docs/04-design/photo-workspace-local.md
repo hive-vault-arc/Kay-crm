@@ -7,6 +7,12 @@ transfer/scanner and product review remain pending. The existing
 
 ## Selected gallery and focused form
 
+The current property and programme drawer is labelled **Galerie du dossier**.
+Its Photos tab opens the photo workspace below. The **Vidéos MP4 / MOV** tab
+uses the separate private video workflow, with explicit upload and an analysis
+status. Selecting a supported video in the photo form points to the video tab.
+Changing tabs respects the current upload and draft protection.
+
 Frozen `photo-gallery.js`, `photo-recovery.css` and `photo-upload.js` supply the
 composition: a compact Galerie/count header, explicit Ajouter une photo entry,
 tonal image cards and a separate focused form. The current drawer keeps its
@@ -20,8 +26,8 @@ WebP preparation as part of the explicit send.
 Cards use the selected3:2 image, inset radius, filenames, size, current protected
 state and44px actions. The two-column gallery becomes one column inside a560px
 container. The exact frozen Camera vector is added to the typed/hash-checked
-registry and semantic photos action; no runtime icon dependency or package
-change. No table, additional tab, empty pagination or reading-width cap is added.
+registry and semantic photos action. The photo workspace uses image cards with
+no table, empty pagination or reading-width cap.
 Numbered pages remain available for any existing larger legacy collection.
 
 Archive and scan retry retain manager authority; Agent upload remains separate.

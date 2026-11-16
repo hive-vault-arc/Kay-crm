@@ -1,18 +1,18 @@
 import { mkdir, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { test, expect, signIn, clearActorContext, createActor, removeActor } from "../helpers/auth";
+import { test, expect, signIn, clearActorContext, createActor } from "../helpers/auth";
 import { testControl } from "../helpers/api-process";
 import { clearIntake, simulatorOrigin } from "../helpers/intake";
 
 const iconUrl = "/favicon.svg?v=kay-gold-20261016";
 const captures = "output/playwright/brand";
 
-test("KAY branding: supplied originals, real favicon assets and server-rendered login", async ({ page, browser, baseURL }) => {
+test("KAY branding: shipped logos, favicon assets and server-rendered login", async ({ page, browser, baseURL }) => {
   await mkdir(captures, { recursive: true });
   for (const [name, hash] of [
-    ["flat", "a4476635e72072a437b7642feba9215452e37dd4a3ddb94e12f0b59dc38e5966"],
-    ["textured", "259606cb181020ad9784a382c79a3d5bf263d3971930692f7db91e13fed5bdba"],
-  ]) expect(createHash("sha256").update(await readFile(`../branding/kay-logo-reference-${name}.png`)).digest("hex")).toBe(hash);
+    ["kay-champagne-gold", "aa843b8d10c0329266436f445d4670900879c7702c77c66788824fd39621468a"],
+    ["kay-luxury-gold", "b4dc5e11f39e7267c204021f725edde4d6f653f33341227bd5c6f3ff94b92260"],
+  ]) expect(createHash("sha256").update(await readFile(`public/images/${name}.png`)).digest("hex")).toBe(hash);
   for (const [url, type] of [
     [iconUrl, "image/svg+xml"], ["/favicon.ico", "image/x-icon"],
     ["/images/kay-apple-icon.png", "image/png"],
@@ -88,18 +88,6 @@ test("KAY branding: separate website simulator serves every advertised icon", as
       expect((await response.body()).length).toBeGreaterThan(100);
     }
   } finally { await clearIntake(); }
-});
-
-test("KAY branding: mandatory password-change screen reuses transparent artwork", async ({ page }) => {
-  const actor = await createActor("administrator", true);
-  try {
-    await signIn(page, actor);
-    await expect(page).toHaveURL(/\/change-password$/);
-    const logo = page.getByRole("img", { name: "KAY", exact: true });
-    await expect(logo).toHaveAttribute("src", /images\/workspace\/kay-logo\.svg/);
-    await expect.poll(() => logo.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-    await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", iconUrl);
-  } finally { await clearActorContext(page); await removeActor(actor); }
 });
 
 test("KAY branding: shared shell covers every navigation family and responsive drawer", async ({ page, actor }) => {

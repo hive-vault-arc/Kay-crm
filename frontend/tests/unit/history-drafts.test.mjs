@@ -16,7 +16,7 @@ class WindowEvents {
 }
 class Pop extends Event { stopped = false; constructor(state) { super("popstate"); this.state = state; } stopImmediatePropagation() { this.stopped = true; super.stopImmediatePropagation(); } }
 class Navigate extends Event { constructor(destination, cancelable, sameDocument = true) { super("navigate", { cancelable }); this.navigationType = "traverse"; this.destination = { ...destination, sameDocument }; } }
-function fixture() {
+function fixture(settled) {
   const entries = [entry("a", "/leads"), entry("b", "/contacts/record"), entry("c", "/projects"), entry("anchor", "/contacts/record#notes"), entry("same", "/contacts/record")];
   const target = new WindowEvents(), navigation = new EventTarget(), commands = [], decisions = [], nextRestores = [], errors = [];
   let current = entries[1], failure = false, state = { dirty: true, busy: false };
@@ -32,7 +32,7 @@ function fixture() {
     target.dispatch(new Pop(destination.state)); return true;
   }
   navigation.traverseTo = key => { commands.push(key); return { finished: Promise.resolve().then(() => { if (failure) throw new Error("Synthetic traversal interrupted"); if (!moved(key)) throw new Error("Synthetic traversal prevented"); }) }; };
-  const dispose = protectHistoryDrafts({ navigation, target, protection: () => state, confirm: resume => decisions.push(resume), restoreFailed: retry => errors.push(retry) });
+  const dispose = protectHistoryDrafts({ navigation, target, protection: () => state, confirm: resume => decisions.push(resume), restoreFailed: retry => errors.push(retry), settled });
   return { entries, navigation, target, commands, decisions, nextRestores, errors, dispose, moved, current: () => current, state: next => { state = next; }, fail: value => { failure = value; }, changed(key, type) { current = entries.find(value => value.key === key); const event = new Event("currententrychange"); event.navigationType = type; navigation.dispatchEvent(event); } };
 }
 
@@ -75,6 +75,24 @@ test("Framework push/replace entry changes establish the live return entry witho
   for (const type of ["push", "replace"]) {
     const s = fixture(); s.changed("c", type); s.moved("a", false); await delay(0); assert.equal(s.current().key, "c"); assert.deepEqual(s.commands, ["c"]); assert.equal(s.nextRestores.length, 0); s.dispose();
   }
+});
+
+test("Framework commits settle outside the history event and preserve newer prompts", async () => {
+  let settled = 0;
+  const s = fixture(() => settled++);
+  s.changed("c", "push");
+  assert.equal(settled, 0);
+  await delay(0);
+  assert.equal(settled, 1);
+  s.changed("b", "replace");
+  s.moved("a", true);
+  await delay(0);
+  assert.equal(settled, 1);
+  assert.equal(s.decisions.length, 1);
+  s.changed("c", "push");
+  s.dispose();
+  await delay(0);
+  assert.equal(settled, 1);
 });
 
 test("Interrupted return traversal retries only three times, retains the editor and exposes an explicit retry of that same return", async () => {

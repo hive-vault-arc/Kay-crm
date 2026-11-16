@@ -48,8 +48,9 @@ view preference survives cards-only phones. Native acceptance remains pending.
 Selected header inbox,2026-10-28: compact Popover with ten server-backed entries,
 quick filters and read icons replaces the first-click large Sheet. Tout voir
 opens the shared full drawer with the active filter; `/notifications` remains.
-Read recovery, current denial, discreet full-count accessible bell indicator and
-fallback local invalidation use existing scoped APIs. Native review is pending.
+The bell shows the unread total. The preview and full list display category
+icons on each notification. Read recovery, current denial and count refresh use existing
+scoped APIs.
 [Contract](notification-inbox-local.md).
 
 Selected Recherches workspace,2026-10-27: Contact overview and Lead/Deal
@@ -436,6 +437,11 @@ not a claim requirements are still unimplemented. Scoped actual results:
 
 Lead and deal lists must perform authorization **before** search, filtering, counts, sorting and pagination. Proposed lead filters: enquiry status/source, responsible agent where permitted, and received date; proposed deal filters: stage, responsible agent, offering kind and updated date. Project filters follow the existing hierarchy and availability contract. Column selection changes presentation only; it cannot fetch or reveal a field the role cannot read. Persisting a user's column layout across devices is a later design choice, not a new backend requirement. All lists keep stable numbered pages, Next/Previous, and loading, empty, filtered-empty, denied, error, and stale-data states.
 
+The Affaires directory uses the same two-column Statut tiles as Prospects in
+its desktop rail and mobile drawer. It displays the eight deal stages with the
+pipeline colors and scoped counts returned by the directory. Selecting a tile
+applies its stage to the list or Kanban. Selecting it again clears the stage.
+
 Use the same contact identity across leads and deals. A lead detail may prefill deal creation, but creating a deal is a separate explicit action; it does not automatically convert, remove or close the enquiry. Every screen follows the [design system](design-system.md), the mandatory [component](ui-components.md), [styling](styling.md), and [chart](charts.md) rules, and the C13 accessibility checks.
 
 ## SP-09 implemented attachment surfaces
@@ -505,6 +511,10 @@ earlier “future deals” descriptions above are historical sprint boundaries.
 S02 displays scoped Today/Overdue work (plus other explicit task filters),
 a personal internal inbox/read filter and unresolved ended-visit follow-up.
 S05 contact detail gains a Tâches tab; S08 deal detail gains inline task controls.
+The Tâches directory uses the CRM filter rail and mobile drawer. Its status
+tiles show scoped counts for À faire, Terminée and Annulée. Attribution sets
+the scope. The Échéance control filters open tasks by today, overdue or
+upcoming, and reset restores Mes tâches and À faire.
 Task deep links select the existing record context using ?task=UUID, with
 current-scope denial before private facts. Create/edit is inline; complete/cancel
 uses the existing explicit confirmation. Failure drafts and retry identity are

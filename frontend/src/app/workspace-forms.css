@@ -18,6 +18,19 @@
 .kay-form-feedback { display:grid; min-width:0; gap:16px; }
 .kay-form-disclosure > summary { display:flex; align-items:center; min-height:44px; cursor:pointer; font-size:13px; font-weight:550; }
 .kay-form-disclosure > summary:focus-visible { outline:2px solid var(--workspace-focus); outline-offset:2px; border-radius:8px; }
+.kay-visit-disclosure > summary {
+  justify-content:space-between;
+  gap:var(--workspace-geometry-space-icon);
+  padding-inline:var(--workspace-geometry-space-regular);
+  border:1px solid var(--workspace-line);
+  border-radius:var(--workspace-geometry-compact-radius);
+  background:var(--workspace-field);
+  list-style:none;
+}
+.kay-visit-disclosure > summary::-webkit-details-marker { display:none; }
+.kay-visit-disclosure > summary:hover { background:var(--workspace-hover); }
+.kay-visit-disclosure > summary > svg { flex:none; }
+.kay-visit-disclosure[open] > summary > svg { rotate:180deg; }
 .kay-form-projects { display:grid; min-width:0; gap:16px; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); }
 .kay-form-project { display:grid; min-width:0; align-content:start; gap:12px; border:1px solid var(--workspace-line); border-radius:18px; padding:16px; background:var(--workspace-field); }
 .kay-contact-choice { display:grid; min-width:0; gap:12px; border-radius:18px; padding:16px; background:var(--workspace-field); }

@@ -1,6 +1,6 @@
 import type { ComponentType, SVGProps } from "react";
 import { createElement } from "react";
-import prototypeGlyphs from "../../../../branding/prototype/kay-glyphs.json";
+import prototypeGlyphs from "../../lib/design/kay-glyphs.json";
 
 // Selected prototype vectors; frozen source hashes/notices remain in the shared registry.
 type SvgProps = Omit<SVGProps<SVGSVGElement>, "children" | "dangerouslySetInnerHTML" | "viewBox" | "width" | "height" | "role" | "aria-label" | "aria-hidden">;
@@ -57,6 +57,7 @@ export const CompletedIcon = createPrototypeIcon("completed");
 export const InboxIcon = createPrototypeIcon("inbox");
 export const ContactsIcon = createPrototypeIcon("contacts");
 export const NotificationIcon = createPrototypeIcon("notification");
+export const BirthdayIcon = createPrototypeIcon("birthday");
 export const NavigationMenuIcon = createPrototypeIcon("navigation-menu");
 export const CalendarIcon = createPrototypeIcon("calendar");
 export const DashboardIcon = createPrototypeIcon("dashboard");

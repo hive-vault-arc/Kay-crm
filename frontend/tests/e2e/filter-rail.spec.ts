@@ -10,7 +10,7 @@ test.use({ actionTimeout: 15_000 });
 async function capture(page: Page, name: string) {
   await expect(page.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
   await mkdir(artifacts, { recursive: true });
-  await page.screenshot({ path: path.join(artifacts, `${name}.png`) });
+  await page.screenshot({ path: path.join(artifacts, `${name}.png`), animations: "disabled" });
 }
 async function openFilters(page: Page, width: number) {
   if (width < 831) {
@@ -50,6 +50,23 @@ async function geometry(page: Page, panel: Locator, desktop: boolean) {
   }
 }
 
+async function statusGrid(panel: Locator, count = 10) {
+  const status = panel.getByRole("group", { name: "Statut", exact: true });
+  await expect(status.getByRole("checkbox")).toHaveCount(count);
+  await expect(status.locator(".crm-status-filter-count")).toHaveCount(count);
+  const tiles = await status.locator("label").evaluateAll(labels => labels.map(tile => ({
+    box: tile.getBoundingClientRect().toJSON(),
+    background: getComputedStyle(tile).backgroundColor,
+  })));
+  expect(tiles[0].box.y).toBeCloseTo(tiles[1].box.y, 0);
+  expect(tiles[1].box.x).toBeGreaterThan(tiles[0].box.x);
+  expect(tiles[2].box.x).toBeCloseTo(tiles[0].box.x, 0);
+  expect(tiles[2].box.y).toBeGreaterThan(tiles[0].box.y);
+  expect(tiles.every(tile => tile.box.height >= 44)).toBe(true);
+  expect(new Set(tiles.map(tile => tile.background)).size).toBeGreaterThan(1);
+  expect(await status.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+}
+
 async function exerciseFilters(page: Page, panel: Locator, endpoint: string, submit: string, search: string) {
   for (const details of await panel.locator("details").all()) {
     if (await details.getAttribute("open") === null) await details.locator(":scope > summary").click();
@@ -57,7 +74,7 @@ async function exerciseFilters(page: Page, panel: Locator, endpoint: string, sub
   await panel.getByLabel(search, { exact: true }).fill("");
   const parameterByLabel: Record<string, string> = {
     "Statut": "status", "Source": ["enquiries", "deals"].includes(endpoint) ? "campaign_source" : "source", "Provenance": "source", "Qualification": "rating", "Trier par": "sort", "Lignes par page": "page_size", "Biens par page": "page_size",
-    "Agent attribué": "assigned_agent_id", "Agent responsable": "assigned_agent_id", "Étape": "stage",
+    "Agent attribué": "assigned_agent_id", "Agent responsable": "assigned_agent_id",
     "Type d’offre liée": "offering_kind", "Contacts": "archive", "Catégorie": "category",
     "Type d’offre": "offering_kind", "Statut de l’offre": "state", "État de l’offre": "state", "État du dossier": "archive",
     "Statut du programme": "phase", "Offre du programme": "offering_kind", "Catégorie du programme": "category", "Offre du programme entier": "offering_kind", "Langue": "language", "Pays de résidence": "country",
@@ -72,6 +89,10 @@ async function exerciseFilters(page: Page, panel: Locator, endpoint: string, sub
     await select.selectOption(value);
     await expect(select).toHaveValue(value);
     expected[parameter] = value;
+  }
+  if (endpoint === "deals") {
+    await panel.getByRole("group", { name: "Statut", exact: true }).getByRole("checkbox", { name: "Annulée", exact: true }).check();
+    expected.stage = "cancelled";
   }
   for (const input of await panel.locator('input[type="date"]').all()) {
     const from = (await input.getAttribute("id"))!.endsWith("-from");
@@ -93,6 +114,74 @@ async function exerciseFilters(page: Page, panel: Locator, endpoint: string, sub
   else if (endpoint !== "properties") await panel.getByRole("button", { name: submit, exact: true }).click();
   expect((await response).status()).toBe(200);
 }
+
+test("deal filter rail shows eight colored stages with counts and applies the selected stage", async ({ page, browser, baseURL }) => {
+  test.setTimeout(120_000);
+  const agent = await createActor("agent");
+  try {
+    await signIn(page, agent);
+    const lead = await createLead(page, "Contact synthétique des statuts d’affaires", "+212600000082");
+    const { contact } = await (await page.request.get(`/api/v1/enquiries/${lead}`)).json();
+    expect((await staffCommand(page, "deals", dealBody(contact.id, "Projet synthétique nouveau"))).status()).toBe(200);
+    expect((await staffCommand(page, "deals", { ...dealBody(contact.id, "Projet synthétique en visite"), stage: "visit" })).status()).toBe(200);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/deals");
+    const panel = await openFilters(page, 1440);
+    const status = panel.getByRole("group", { name: "Statut", exact: true });
+    const stageCount = (stage: string) => status.locator(`label[data-crm-state="${stage}"] .crm-status-filter-count`);
+    const negotiation = status.getByText("Négociation", { exact: true });
+    const negotiationLines = () => negotiation.evaluate(element => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return range.getClientRects().length;
+    });
+    await statusGrid(panel, 8);
+    expect(await negotiationLines()).toBe(1);
+    await expect(stageCount("new")).toHaveText("1");
+    await expect(stageCount("visit")).toHaveText("1");
+    await expect(stageCount("won")).toHaveText("0");
+    expect(await status.locator('[data-crm-state="new"]').evaluate(element => {
+      const style = getComputedStyle(element);
+      return style.getPropertyValue("--crm-state-color").trim() === style.getPropertyValue("--kay-status-proposition-dot").trim();
+    })).toBe(true);
+    await capture(page, "deals-colored-status-desktop");
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await statusGrid(panel, 8);
+    expect(await negotiationLines()).toBe(1);
+    const visit = status.getByRole("checkbox", { name: "Visite", exact: true });
+    await visit.focus();
+    const filtered = page.waitForResponse(response => {
+      const url = new URL(response.url());
+      return url.pathname === "/api/v1/deals" && url.searchParams.get("stage") === "visit";
+    });
+    await page.keyboard.press("Space");
+    await expect(visit).toBeChecked();
+    expect((await (await filtered).json()).items.map((record: { stage: string }) => record.stage)).toEqual(["visit"]);
+    await panel.getByRole("button", { name: "Réinitialiser", exact: true }).first().click();
+    await expect(visit).not.toBeChecked();
+    await expect(stageCount("new")).toHaveText("1");
+
+    const touch = await browser.newContext({ baseURL, viewport: { width: 360, height: 800 }, hasTouch: true, ignoreHTTPSErrors: true });
+    try {
+      await touch.addCookies(await page.context().cookies());
+      const phone = await touch.newPage();
+      await phone.goto("/deals");
+      const drawer = await openFilters(phone, 360);
+      await statusGrid(drawer, 8);
+      await capture(phone, "deals-colored-status-mobile");
+      await drawer.getByRole("checkbox", { name: "Nouvelle", exact: true }).tap();
+      await expect(drawer.getByRole("checkbox", { name: "Nouvelle", exact: true })).toBeChecked();
+      await drawer.getByRole("button", { name: "Appliquer", exact: true }).tap();
+      await expect(phone.getByRole("dialog")).toHaveCount(0);
+      await expect(phone.getByRole("status").and(phone.getByText("1 affaire", { exact: true }))).toBeVisible();
+    } finally {
+      await touch.close();
+    }
+  } finally {
+    await clearActorContext(page);
+    await removeActor(agent);
+  }
+});
 
 test("directory filters: left rails, mobile sheets and real scoped requests", async ({ page, actor }) => {
   test.setTimeout(240_000);
@@ -196,9 +285,16 @@ test("lead filter rail: mobile validation, selected-agent persistence, breakpoin
     await page.setViewportSize({ width: 360, height: 800 });
     await page.goto("/leads");
     let panel = await openFilters(page, 360);
+    await statusGrid(panel);
+    await capture(page, "leads-colored-status-mobile");
     await panel.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true }).focus();
     await page.keyboard.press("Tab");
-    await expect(panel.getByRole("checkbox", { name: "Nouveau", exact: true })).toBeFocused();
+    const nouveau = panel.getByRole("checkbox", { name: "Nouveau", exact: true });
+    await expect(nouveau).toBeFocused();
+    await page.keyboard.press("Space");
+    await expect(nouveau).toBeChecked();
+    await page.keyboard.press("Space");
+    await expect(nouveau).not.toBeChecked();
     await panel.getByText("Filtres avancés", { exact: true }).click();
     await panel.getByText("Agent attribué", { exact: true }).first().click();
     await panel.getByText("Dates", { exact: true }).click();
@@ -223,6 +319,10 @@ test("lead filter rail: mobile validation, selected-agent persistence, breakpoin
     await expect(page.getByRole("dialog")).toHaveCount(0);
     await expect(panel.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true })).toBeFocused();
     await expect(panel.getByLabel("Rechercher un nom, téléphone ou e-mail", { exact: true })).toHaveValue("SP06 brouillon conservé");
+    await statusGrid(panel);
+    await capture(page, "leads-colored-status-desktop");
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await statusGrid(panel);
     await page.setViewportSize({ width: 768, height: 900 });
     await expect(page.getByRole("dialog")).toHaveCount(0);
     await expect(page.getByRole("button", { name: /^Afficher les filtres(?: \(.+\))?$/ })).toBeFocused();
@@ -246,6 +346,9 @@ test("lead filter rail: mobile validation, selected-agent persistence, breakpoin
       const phone = await touch.newPage();
       await phone.goto("/leads");
       const drawer = await openFilters(phone, 360);
+      const contacted = drawer.getByRole("checkbox", { name: "Contacté", exact: true });
+      await contacted.tap();
+      await expect(contacted).toBeChecked();
       await drawer.getByText("Filtres avancés", { exact: true }).tap();
       await drawer.getByText("Agent attribué", { exact: true }).first().tap();
       await expect(drawer.getByRole("option", { name: "SP06 agent synthétique choisi dans les filtres", exact: true })).toHaveCount(1);

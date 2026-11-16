@@ -28,7 +28,7 @@ export function VisitRecord({ id, actorId }: { id: string; actorId: string }) {
   const recordHeading = useRef<HTMLDivElement>(null), hydrated = useHydrated(), value = currentRecord(query.value, fresh, id);
   const guard = useUnsavedGuard();
   const focusDetails = () => requestAnimationFrame(() => recordHeading.current?.focus());
-  const frame = (body: React.ReactNode, record?: Visit) => <VisitRouteDrawer title={record?.title ?? "Visite"} description="Rendez-vous, participants et historique">{guard.dialog}{body}</VisitRouteDrawer>;
+  const frame = (body: React.ReactNode, record?: Visit) => <VisitRouteDrawer title={record?.title === "Visite" ? `Visite · ${record.contact_name}` : record?.title ?? "Visite"} description="Rendez-vous, participants et historique">{guard.dialog}{body}</VisitRouteDrawer>;
   async function saved() {
     try { setFresh(await apiGet(`/api/v1/visits/${id}`, visitSchema)); setEditing(false); setNotice("Visite enregistrée."); setError(undefined); }
     catch (reason) { const failure = reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503); setError(failure); throw failure; }
@@ -43,8 +43,8 @@ export function VisitRecord({ id, actorId }: { id: string; actorId: string }) {
     {editing && !terminal ? <VisitForm contactId={value.contact_id} contactName={value.contact_name} actorId={actorId} value={value} saved={() => { void saved().catch(() => {}); }} cancel={() => { setEditing(false); focusDetails(); }} /> : <>
       <div className="kay-contact-choice"><span className="text-xs text-muted-foreground">Contact</span><Link className="inline-flex min-h-control items-center text-sm font-medium text-link hover:underline wrap-anywhere" href={`/contacts/${value.contact_id}`}>{value.contact_name}</Link></div>
       <div className="kay-visit-related">{value.enquiry_id ? <Button action="show" asChild variant="ghost"><Link href={`/leads/${value.enquiry_id}`}>Prospect lié</Link></Button> : null}{value.deal_id ? <Button action="show" asChild variant="ghost"><Link href={`/deals/${value.deal_id}`}>Affaire liée</Link></Button> : null}{value.property_id ? <Button action="show" asChild variant="ghost"><Link href={`/projects/properties/${value.property_id}`}>Bien ou unité</Link></Button> : null}</div>
-      <dl className="kay-visit-facts"><div><dt>Début</dt><dd>{localLabel(value.start_local)}</dd></div><div><dt>Fin</dt><dd>{localLabel(value.end_local)}</dd></div><div><dt>Lieu</dt><dd className="whitespace-pre-wrap wrap-anywhere">{value.location}</dd></div><div><dt>Participants</dt><dd className="wrap-anywhere">{value.participants.map(user => user.display_name).join(", ")}</dd></div></dl>
-      {value.notes || value.overlap_reason ? <details className="kay-form-disclosure"><summary>{value.notes ? "Notes et chevauchement" : "Chevauchement expliqué"}</summary><div className="grid gap-4 pt-3">{value.notes ? <div className="grid gap-1 text-sm"><h3 className="font-semibold">Notes</h3><p className="whitespace-pre-wrap wrap-anywhere">{value.notes}</p></div> : null}{value.overlap_reason ? <div className="grid gap-1 text-sm"><h3 className="font-semibold">Explication du chevauchement</h3><p className="whitespace-pre-wrap wrap-anywhere">{value.overlap_reason}</p></div> : null}</div></details> : null}
+      <dl className="kay-visit-facts"><div><dt>Début</dt><dd>{localLabel(value.start_local)}</dd></div><div><dt>Fin</dt><dd>{localLabel(value.end_local)}</dd></div>{value.location !== "Non renseigné" ? <div><dt>Lieu</dt><dd className="whitespace-pre-wrap wrap-anywhere">{value.location}</dd></div> : null}<div><dt>Participants</dt><dd className="wrap-anywhere">{value.participants.map(user => user.display_name).join(", ")}</dd></div></dl>
+      {value.notes ? <details className="kay-form-disclosure"><summary>Notes</summary><p className="whitespace-pre-wrap wrap-anywhere pt-3">{value.notes}</p></details> : null}
       {value.outcome ? <RecordEntry title="Résultat ou motif"><p className="whitespace-pre-wrap wrap-anywhere">{value.outcome}</p></RecordEntry> : null}
       {value.review_code ? <p role="status" className="text-sm text-warning">À revoir selon la politique actuelle : {new ApiError(value.review_code, 409).message}. Cette visite n’a pas été annulée automatiquement.</p> : null}
       {value.contact_archived ? <p role="status" className="text-sm">Contact archivé : visite conservée en lecture seule.</p> : null}
@@ -56,21 +56,43 @@ export function VisitRecord({ id, actorId }: { id: string; actorId: string }) {
   </div>, value);
 }
 
+type OutcomeAction = "complete" | "not-completed" | "cancel";
+
 function VisitControls({ value, edit, saved, denied, finished }: { value: Visit; edit: () => void; saved: () => Promise<void>; denied: (error: ApiError) => void; finished: () => void }) {
-  const [command, setCommand] = useState<{ action: "confirm" | "complete" | "not-completed" | "cancel"; value: Visit }>();
+  const [command, setCommand] = useState<{ action: OutcomeAction; value: Visit }>();
+  const [endedAt, setEndedAt] = useState<string>();
   const primary = useRef<HTMLButtonElement>(null), hydrated = useHydrated();
-  const canFinish = ["scheduled", "confirmed"].includes(value.status);
-  const primaryAction = value.status === "confirmed" ? "complete" : "confirm";
-  return <div className="kay-form-footer kay-visit-record-actions"><RecordActions><Button action="edit" type="button" variant="ghost" disabled={!hydrated} onClick={edit}>Replanifier</Button>{value.status === "scheduled" ? <Button action="complete" type="button" variant="ghost" onClick={() => setCommand({ action: "complete", value })}>Terminer la visite</Button> : null}{canFinish ? <Button action="cancelRecord" type="button" variant="ghost" onClick={() => setCommand({ action: "not-completed", value })}>Marquer non réalisée</Button> : null}<Button action="cancelRecord" type="button" variant="destructive" onClick={() => setCommand({ action: "cancel", value })}>Annuler la visite</Button></RecordActions><Button action="complete" ref={primary} type="button" disabled={!hydrated} onClick={() => setCommand({ action: primaryAction, value })}>{primaryAction === "complete" ? "Terminer la visite" : "Confirmer"}</Button>{command ? <VisitAction key={command.action} dialogOnly value={command.value} action={command.action} saved={saved} denied={denied} finished={finished} returnFocus={primary} closed={() => setCommand(undefined)} /> : null}</div>;
+  const booked = value.status === "scheduled" || value.status === "confirmed";
+  const canFinish = endedAt === value.end_at;
+  useEffect(() => {
+    const end = Date.parse(value.end_at);
+    let timer: ReturnType<typeof setTimeout>;
+    function waitForEnd() {
+      const remaining = end - Date.now();
+      if (remaining > 0) timer = setTimeout(waitForEnd, Math.min(remaining, 2_147_000_000));
+      else setEndedAt(value.end_at);
+    }
+    timer = setTimeout(waitForEnd, 0);
+    return () => clearTimeout(timer);
+  }, [value.end_at]);
+  return <div className="kay-form-footer kay-visit-record-actions">
+    <RecordActions>
+      <Button action="edit" type="button" variant="ghost" disabled={!hydrated} onClick={edit}>Replanifier</Button>
+      {booked && canFinish ? <Button action="cancelRecord" type="button" variant="ghost" onClick={() => setCommand({ action: "not-completed", value })}>Marquer non réalisée</Button> : null}
+      <Button action="cancelRecord" type="button" variant="destructive" onClick={() => setCommand({ action: "cancel", value })}>Annuler la visite</Button>
+    </RecordActions>
+    {booked ? <Button action="complete" ref={primary} type="button" disabled={!hydrated || !canFinish} title={!canFinish ? "Disponible après la fin du créneau" : undefined} onClick={() => setCommand({ action: "complete", value })}>Saisir le résultat</Button> : null}
+    {command ? <VisitAction key={command.action} dialogOnly value={command.value} action={command.action} saved={saved} denied={denied} finished={finished} returnFocus={primary} closed={() => setCommand(undefined)} /> : null}
+  </div>;
 }
-export function VisitAction({ value, action, saved, finished, dialogOnly = false, closed, returnFocus, denied }: { value: Visit; action: "confirm" | "complete" | "not-completed" | "cancel"; saved: () => Promise<void> | void; finished?: () => void; dialogOnly?: boolean; closed?: () => void; returnFocus?: RefObject<HTMLButtonElement | null>; denied?: (error: ApiError) => void }) {
+export function VisitAction({ value, action, saved, finished, dialogOnly = false, closed, returnFocus, denied }: { value: Visit; action: OutcomeAction; saved: () => Promise<void> | void; finished?: () => void; dialogOnly?: boolean; closed?: () => void; returnFocus?: RefObject<HTMLButtonElement | null>; denied?: (error: ApiError) => void }) {
   const [invalid, setInvalid] = useState(""), committed = useRef(false), lock = useRef(false); const [open, setOpen] = useState(dialogOnly), [reason, setReason] = useState(""), [error, setError] = useState<ApiError>(), [busy, setBusy] = useState(false);
   const [reviewed, setReviewed] = useState(value);
   const id = useId(), heading = useRef<HTMLHeadingElement>(null), attempt = useRef({ body: "", key: "" }), hydrated = useHydrated();
-  const label = action === "confirm" ? "Confirmer la visite" : action === "complete" ? "Terminer la visite" : action === "not-completed" ? "Marquer non réalisée" : "Annuler la visite";
+  const label = action === "complete" ? "Enregistrer le résultat" : action === "not-completed" ? "Marquer non réalisée" : "Annuler la visite";
   async function submit(event: React.FormEvent) {
     event.preventDefault(); if (!hydrated || lock.current) return; setError(undefined); setInvalid("");
-    if (action !== "confirm" && !reason.trim()) { setInvalid(action === "complete" ? "Indiquez le résultat de la visite." : action === "not-completed" ? "Indiquez pourquoi la visite n’a pas eu lieu." : "Indiquez un motif d’annulation."); return; }
+    if (!reason.trim()) { setInvalid(action === "complete" ? "Indiquez le résultat de la visite." : action === "not-completed" ? "Indiquez pourquoi la visite n’a pas eu lieu." : "Indiquez un motif d’annulation."); return; }
     const body = { expected_version: reviewed.version, reason: reason.trim() }, serialized = JSON.stringify(body);
     if (attempt.current.body !== serialized) attempt.current = { body: serialized, key: crypto.randomUUID() };
     lock.current = true; setBusy(true);
@@ -78,7 +100,7 @@ export function VisitAction({ value, action, saved, finished, dialogOnly = false
     catch (failure) { const problem = failure instanceof ApiError ? failure : new ApiError("DEPENDENCY_UNAVAILABLE",503); setError(problem); if (["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "PASSWORD_CHANGE_REQUIRED"].includes(problem.code)) denied?.(problem); }
     finally { lock.current = false; setBusy(false); }
   }
-  return <AlertDialog open={open} onOpenChange={next => { if (!lock.current) { if (next) setReviewed(value); setOpen(next); if (!next) closed?.(); } }} >{!dialogOnly ? <AlertDialogTrigger asChild><Button action={action === "cancel" ? "cancelRecord" : "complete"} variant={action === "cancel" ? "destructive" : "outline"} disabled={!hydrated}>{label}</Button></AlertDialogTrigger> : null}<AlertDialogContent className="kay-visit-confirmation" onCloseAutoFocus={event => { if (committed.current && action !== "confirm" && finished) { event.preventDefault(); finished(); } else if (returnFocus) { event.preventDefault(); returnFocus.current?.focus(); } }} onOpenAutoFocus={e => { e.preventDefault(); heading.current?.focus(); }}><AlertDialogTitle ref={heading} tabIndex={-1}>{label}</AlertDialogTitle><AlertDialogDescription>{action === "confirm" ? "Les horaires, la capacité et les participants seront revérifiés. Un chevauchement ordinaire doit être expliqué." : "Le rendez-vous reste dans l’historique et ne consommera plus de capacité. Cette action ne peut pas réécrire son résultat ensuite."}</AlertDialogDescription><p className="wrap-anywhere">{reviewed.title} : {typeLabels[reviewed.type]}, {localLabel(reviewed.start_local)}.</p><form method="post" aria-busy={busy} noValidate className="grid min-w-0 gap-4" onSubmit={e => void submit(e)}><fieldset disabled={!hydrated || busy} className="grid min-w-0 gap-4"><Label htmlFor={id}>{action === "confirm" ? "Explication du chevauchement éventuel" : action === "complete" ? "Résultat de la visite (obligatoire)" : action === "not-completed" ? "Pourquoi la visite n’a pas eu lieu (obligatoire)" : "Motif d’annulation (obligatoire)"}</Label><Textarea id={id} value={reason} maxLength={1000} onChange={e => setReason(e.target.value)} aria-invalid={Boolean(invalid)} aria-describedby={invalid ? `${id}-error` : undefined} />{invalid ? <p id={`${id}-error`} role="alert" className="text-danger">{invalid}</p> : null}{error ? <div className="grid gap-2"><RecordError error={error} /><p>La saisie est conservée. Après une interruption, réessayez la même action sans la modifier.</p></div> : null}<div className="kay-form-footer kay-visit-confirmation-footer"><AlertDialogCancel asChild><Button action="cancel" type="button" variant="outline">Conserver la visite</Button></AlertDialogCancel><Button action={action === "cancel" ? "cancelRecord" : "complete"} type="submit" variant={action === "cancel" ? "destructive" : "default"}>{busy ? "Enregistrement…" : label}</Button></div></fieldset></form></AlertDialogContent></AlertDialog>;
+  return <AlertDialog open={open} onOpenChange={next => { if (!lock.current) { if (next) setReviewed(value); setOpen(next); if (!next) closed?.(); } }} >{!dialogOnly ? <AlertDialogTrigger asChild><Button action={action === "cancel" ? "cancelRecord" : "complete"} variant={action === "cancel" ? "destructive" : "outline"} disabled={!hydrated}>{label}</Button></AlertDialogTrigger> : null}<AlertDialogContent className="kay-visit-confirmation" onCloseAutoFocus={event => { if (committed.current && finished) { event.preventDefault(); finished(); } else if (returnFocus) { event.preventDefault(); returnFocus.current?.focus(); } }} onOpenAutoFocus={e => { e.preventDefault(); heading.current?.focus(); }}><AlertDialogTitle ref={heading} tabIndex={-1}>{label}</AlertDialogTitle><AlertDialogDescription>Le résultat ou le motif sera ajouté à l’historique de la visite.</AlertDialogDescription><p className="wrap-anywhere">{reviewed.title} : {typeLabels[reviewed.type]}, {localLabel(reviewed.start_local)}.</p><form method="post" aria-busy={busy} noValidate className="grid min-w-0 gap-4" onSubmit={e => void submit(e)}><fieldset disabled={!hydrated || busy} className="grid min-w-0 gap-4"><Label htmlFor={id}>{action === "complete" ? "Résultat de la visite (obligatoire)" : action === "not-completed" ? "Pourquoi la visite n’a pas eu lieu (obligatoire)" : "Motif d’annulation (obligatoire)"}</Label><Textarea id={id} value={reason} maxLength={1000} onChange={e => setReason(e.target.value)} aria-invalid={Boolean(invalid)} aria-describedby={invalid ? `${id}-error` : undefined} />{invalid ? <p id={`${id}-error`} role="alert" className="text-danger">{invalid}</p> : null}{error ? <div className="grid gap-2"><RecordError error={error} /><p>La saisie est conservée. Après une interruption, réessayez la même action sans la modifier.</p></div> : null}<div className="kay-form-footer kay-visit-confirmation-footer"><AlertDialogCancel asChild><Button action="cancel" type="button" variant="outline">Conserver la visite</Button></AlertDialogCancel><Button action={action === "cancel" ? "cancelRecord" : "complete"} type="submit" variant={action === "cancel" ? "destructive" : "default"}>{busy ? "Enregistrement…" : label}</Button></div></fieldset></form></AlertDialogContent></AlertDialog>;
 }
 function VisitHistory({ id, revision, denied }: { id: string; revision?: number; denied: (error: ApiError) => void }) {
   const query = useQuery(`/api/v1/visits/${id}/history`, historySchema, revision);

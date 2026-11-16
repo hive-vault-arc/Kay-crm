@@ -260,8 +260,19 @@ class Notification(Base):
     __table_args__ = (
         CheckConstraint(
             "schedule_version IS NULL OR event_key=kind||':'||"
-            "coalesce(visit_id,task_id)::text||':'||schedule_version::text",
+            "coalesce(visit_id,task_id)::text||':'||schedule_version::text OR "
+            "(kind='visit.follow_up' AND event_key ~ "
+            "('^visit[.]follow_up:'||visit_id::text||':'||schedule_version::text||':r:[0-9]+$'))",
             name="notification_reminder_key",
+        ),
+        Index(
+            "ix_notification_visit_follow_up",
+            "visit_id",
+            "schedule_version",
+            "user_id",
+            "created_at",
+            "id",
+            postgresql_where=text("kind='visit.follow_up'"),
         ),
         Index("uq_notification_user_event", "user_id", "event_key", unique=True),
         Index("ix_notification_user_created", "user_id", "created_at", "id"),
@@ -293,8 +304,24 @@ class Notification(Base):
             "(kind IN ('holiday.eve','holiday.today') AND holiday_id IS NOT NULL "
             "AND contact_id IS NULL AND birthday_on IS NULL AND document_id IS NULL "
             "AND visit_id IS NULL AND task_id IS NULL AND schedule_version IS NULL "
-            "AND event_key=kind||':'||holiday_id::text)",
+            "AND event_key=kind||':'||holiday_id::text) OR "
+            "(kind='coverage.note' AND coverage_note_id IS NOT NULL "
+            "AND contact_id IS NULL AND birthday_on IS NULL AND document_id IS NULL "
+            "AND visit_id IS NULL AND task_id IS NULL AND schedule_version IS NULL "
+            "AND event_key LIKE kind||':'||coverage_note_id::text||':%')",
             name="notification_typed_parent",
+        ),
+        CheckConstraint(
+            "(kind='coverage.note') = (coverage_note_id IS NOT NULL)",
+            name="notification_coverage_parent",
+        ),
+        Index(
+            "ix_notification_coverage",
+            "coverage_note_id",
+            "user_id",
+            "created_at",
+            "id",
+            postgresql_where=text("coverage_note_id IS NOT NULL"),
         ),
         CheckConstraint(
             "(holiday_id IS NULL OR kind IN ('holiday.eve','holiday.today')) "
@@ -329,5 +356,8 @@ class Notification(Base):
         ForeignKey("holiday_occurrence.id", name="fk_notification_holiday_id", ondelete="RESTRICT")
     )
     holiday_revision: Mapped[int | None] = mapped_column(BigInteger)
+    coverage_note_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("coverage_note.id", name="fk_notification_coverage_note", ondelete="RESTRICT")
+    )
     read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

@@ -1,3 +1,4 @@
+import { mkdir } from "node:fs/promises";
 import { test, expect, signIn, clearActorContext, removeActor, type TestActor } from "../helpers/auth";
 import { testControl } from "../helpers/api-process";
 import { createTaskApi, runReminders, workFixture } from "../helpers/work";
@@ -9,14 +10,21 @@ test("selected notification inbox: compact preview, exact recovery, full list an
   page.on("pageerror", () => errors.push("APPLICATION_PAGE_ERROR")); mobile.on("pageerror", () => errors.push("APPLICATION_PAGE_ERROR"));
   try {
     const { agent, contactId, now } = await workFixture(page, actors), due = new Date(now.getTime() + 48 * 60 * 60_000);
-    for (let index = 0; index < 11; index++) await createTaskApi(page, agent.id, contactId, due, { title: `Notification synthétique ${index} · suivi du dossier et prochaines étapes` });
+    const actions = ["Appeler le prospect", "Relance du prospect", "Vérifier le dossier", "Préparer un e-mail au prospect"];
+    for (let index = 0; index < 11; index++) await createTaskApi(page, agent.id, contactId, due, { kind: "reminder", title: `${actions[index % actions.length]} · synthétique ${index}` });
     // Deliver only J-1 reminders, before the H-1 and due notifications are eligible.
     expect((await runReminders(new Date(due.getTime() - 24 * 60 * 60_000 + 60_000))).processed).toBe(11); await page.goto("/dashboard");
-    const trigger = page.getByRole("button", { name: "Ouvrir les notifications", exact: true }); await trigger.focus(); await page.keyboard.press("Enter");
+    const trigger = page.getByRole("button", { name: "Ouvrir les notifications", exact: true });
+    await expect(trigger.getByRole("status", { name: "11 notifications non lues", exact: true })).toHaveText("11");
+    await expect(trigger.locator("[data-kay-icon]")).toHaveCount(1);
+    await expect(trigger).toBeEnabled(); await trigger.focus(); await page.keyboard.press("Enter");
     const popup = page.locator('.kay-notification-popover[role="dialog"]'); await expect(popup).toBeVisible(); await expect(popup.getByRole("heading", { name: "Notifications", exact: true })).toBeFocused(); await expect(page.locator('.kay-record-drawer')).toHaveCount(0); await expect(popup.locator(".kay-notification-preview-entry")).toHaveCount(10); await expect(popup.getByRole("button", { name: "Tout voir · 11", exact: true })).toBeVisible();
+    for (const type of ["Appel à faire", "Relance", "Rappel", "E-mail à préparer"]) await expect(popup.getByRole("img", { name: type, exact: true }).first()).toBeVisible();
     for (const width of [320, 360, 390, 830, 1440]) {
-      await page.setViewportSize({ width, height: 900 }); const box = await popup.boundingBox(); expect(box).not.toBeNull(); expect(box!.width).toBeLessThanOrEqual(Math.min(360, width - 24) + 1); expect(box!.x).toBeGreaterThanOrEqual(11); expect(box!.x + box!.width).toBeLessThanOrEqual(width - 11); await expect.poll(() => popup.evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
+      await page.setViewportSize({ width, height: 900 }); const box = await popup.boundingBox(); expect(box).not.toBeNull(); expect(box!.width).toBeLessThanOrEqual(Math.min(360, width - 24) + 1); expect(box!.x).toBeGreaterThanOrEqual(11); expect(box!.x + box!.width).toBeLessThanOrEqual(width - 11); await expect.poll(() => popup.evaluate(node => node.scrollWidth <= node.clientWidth && document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
+    await mkdir("output/playwright/notification-icons", { recursive: true });
+    await page.screenshot({ path: "output/playwright/notification-icons/desktop.png" });
     await popup.getByRole("group", { name: "Notifications affichées", exact: true }).getByRole("button", { name: "Non lues", exact: true }).click();
     const current = await (await page.request.get("/api/v1/notifications?state=unread&page=1&page_size=10")).json(), first = current.items[0] as { id: string; title: string; context: string }; let interrupt = true; const keys: (string | undefined)[] = [];
     await page.route(`**/api/v1/notifications/${first.id}/read`, async route => {

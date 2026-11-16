@@ -1,5 +1,236 @@
 # KAY QA command register
 
+## Direct visit confirmation and report reminders (D52)
+
+From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --unit-only` passed
+586 cases. The targeted PostgreSQL run of `test_schedule.py`,
+`test_visit_notes_unit.py`, `test_calendar_filters.py`, `test_work.py` and
+`test_proactive_work.py` passed 53 cases. Ruff, formatting and mypy passed.
+Migration 0053 and `alembic check` passed on the isolated and development databases.
+
+From `frontend/`, `npm.cmd run test:unit` passed 1,008 cases. TypeScript,
+ESLint and the dependency audit passed. Headed Chrome on isolated ports
+3112/8112/8113/8114 exercised booking, slot rejection, retry and report reminders.
+Reviewed the booking dialog in a 1440 px viewport and its touch interaction
+at 320 px, including both disclosures and the sticky action. Applied CRM UX,
+design-system-ops and React guidance. Antislop and design-taste were unavailable.
+
+## Agent handoff and collaboration (D51)
+
+From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_coverage.py`
+passed all three real PostgreSQL cases. They cover exact-phone lookup, proof
+binding and revocation, collaborative access, concurrent note replay, working
+hours and lunch breaks, and stopping reminders from either acknowledgement path.
+The combined run with `tests/test_ownership.py` and `tests/test_discovery.py`
+passed all 38 tests. Ruff, formatting and mypy passed. Migration 0052 and
+`alembic check` passed on the isolated and local development databases.
+
+From `frontend/`, `npm.cmd run test:unit` passed 1,008 tests. Focused ownership
+and discovery tests, TypeScript and ESLint passed. Headed native Chrome
+`npm.cmd run test:chrome -- tests/e2e/coverage.spec.ts --reporter=list` passed
+on isolated ports 3112/8112/8113/8114. The case covers mobile search and note
+retry, the responsive handoff view, owner acknowledgement, the prospect and
+deal collaboration buttons and editing access after the grant. Reviewed the
+1280 px owner capture and 390 px mobile capture. CRM UX, design-system-ops and
+React guidance were applied. Antislop and design-taste were unavailable.
+
+## Catalogue selection in activities
+
+From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_scoped_activities.py`
+passed 25 tests, including scoped access, rollback on an unavailable target and
+reuse on repeat submission. `tests/test_project_links.py` passed three tests.
+Focused Ruff and mypy checks passed. From `frontend/`, `npm.cmd run test:unit`
+passed all 1,008 tests. TypeScript, focused ESLint and the icon/button inventories
+passed.
+
+`npm.cmd run test:chrome -- tests/e2e/scoped-activities.spec.ts tests/e2e/entry-recovery.spec.ts tests/e2e/project-links.spec.ts --grep 'Lead notes survive conversion|Selected (leads|deals) activity drawer|independent catalogue links' --reporter=list`
+passed four cases on isolated ports 3112/8112/8113/8114. They covered keyboard
+programme selection, touch property selection, history and links under both
+dossier types, refresh of an open Projets tab, and lost-response replay without
+duplicate links. Reviewed catalogue captures at 1600 and 390 px. CRM UX,
+design-system-ops and React guidance were applied. The antislop and design-taste
+skill files were unavailable. The manual ports stayed up.
+
+## Unread count and notification type icons
+
+The same focused Chrome cases passed after moving category icons into the
+lists only. Reviewed the desktop inbox at 1440 px and the phone header at
+390 px with the numeric unread badge. The 18 notification unit tests,
+TypeScript and focused ESLint passed. The manual ports stayed up.
+
+`npm.cmd run test:chrome -- tests/e2e/notifications-inbox.spec.ts tests/e2e/work.spec.ts --grep 'selected notification inbox|Birthday reminders' --reporter=list`
+passed both cases with realtime disabled on isolated ports 3112/8112/8113/8114.
+Chrome checked the unread count before opening the panel, the latest birthday
+icon, distinct call, follow-up, reminder and email rows, count changes after
+reading, refresh on reconnect, keyboard activation, touch, and layout from
+320 to 1440 px. Desktop 1440 px and phone 390 px captures were reviewed.
+`npm.cmd run test:unit` passed 1,008 tests. TypeScript, focused ESLint, and the
+icon and button inventories passed. CRM UX, design-system-ops and React
+guidance were applied. Antislop and design-taste were unavailable.
+
+## MP4 and iPhone MOV in the inventory gallery
+
+From `frontend/`, put FFmpeg and ffprobe on `PATH`, set
+`KAY_E2E_VIDEO_SMOKE=1` and `INVENTORY_VIDEO_ENABLED=true`, then run
+`npm.cmd run test:chrome -- tests/e2e/inventory-videos.spec.ts tests/e2e/photo-workspace.spec.ts --reporter=list`.
+On isolated ports 3112/8112/8113/8114, the two video cases passed with an H.264
+MP4 property upload and an HEVC MOV programme upload. Both used the real API,
+ClamAV, the separate FFmpeg worker, and the protected Chrome player. They
+checked the wrong-picker notice, keyboard tabs, touch, and retaining a draft.
+The two existing photo cases passed for upload, retry and viewing. Video picker
+captures were reviewed at 1280 and 390 px. A physical iPhone was outside this
+check. CRM UX and design-system-ops were applied. The antislop and design-taste
+skill files were unavailable.
+
+From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_inventory_videos.py tests/test_property_photos.py tests/test_antivirus_settings.py`
+passed 68 tests. `npm.cmd run test:unit` passed 1,007 tests. TypeScript,
+focused ESLint, Ruff and mypy passed. Manual ports 3100 and 8100 stayed up.
+The local video worker uses the existing scanner and its 100 MiB stream limit.
+
+## Contact creation and owner category (D50)
+
+From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_contacts.py tests/test_deals.py tests/test_manual_deal_qualification.py tests/test_owner_identity.py tests/test_owner_directory.py`
+passed 58 tests. Focused Ruff and mypy checks passed. From `frontend/`,
+`npm.cmd run test:unit` passed 1,006 tests. TypeScript and focused ESLint passed.
+
+Eight focused cases from `leads.spec.ts`, `deals-qualification.spec.ts`,
+`owners.spec.ts`, `owner-reuse.spec.ts`, and `creation-recovery.spec.ts` passed
+with `npm.cmd run test:chrome` on isolated ports 3112/8112/8113/8114. The cases
+covered manual prospect and deal creation, an accessible duplicate leading to
+an independent deal, private phone denial, both owner categories, and addition
+of an existing contact as owner with identity and attribution preserved. Two
+prospect cases recovered an interrupted acknowledgement at 1440 and 390 px.
+The category control was reviewed at 1280 and 390 px, including keyboard
+focus and mobile reflow.
+CRM UX and design-system-ops were applied. The referenced antislop and
+design-taste skill files were unavailable. Manual ports 3100 and 8100 stayed up.
+
+## Tâches directory filters
+
+Tâches uses the shared desktop filter rail, mobile drawer and status tiles.
+The three counts come from bounded task reads under the same assignment scope.
+The existing task API handles status and open-task due periods.
+
+`npm.cmd run test:chrome -- tests/e2e/work.spec.ts --grep 'Tasks directory' --reporter=list --max-failures=1`
+passed on isolated ports 3112/8112/8113/8114. The case verified keyboard
+selection, counts, reset, due periods, tablet-width table wrapping, phone
+touch, and opening the task record. Desktop 1280 px and phone 360 px captures
+were reviewed. TypeScript, focused ESLint, and 1,007 frontend unit tests passed.
+CRM UX and design-system-ops were applied. The antislop and design-taste skill
+files were unavailable. Manual ports 3100 and 8100 stayed running.
+
+## Affaires status filter
+
+The Affaires rail and mobile drawer reuse the Prospects status tiles and the
+existing deal-stage counts. Tiles use the pipeline palette and keep the full
+stage labels in the narrow rail. The filter applies one stage at a time.
+
+`npm.cmd run test:chrome -- tests/e2e/filter-rail.spec.ts --grep 'deal filter rail|lead filter rail' --reporter=list --max-failures=2`
+passed both Chrome cases on isolated ports 3112/8112/8113/8114. The Affaires
+case checked the eight counts, keyboard selection, reset, touch, and layout
+at 360, 1024 and 1440 px. The updated desktop and mobile captures were reviewed.
+TypeScript, focused ESLint, and 1,007 frontend unit tests passed. CRM UX and
+design-system-ops were applied. The referenced antislop and design-taste
+skill files were unavailable. Manual ports 3100 and 8100 stayed running.
+
+## Property floor limits
+
+D49 removes the listing caps of 20 for Étage and 4 for Étages du bâtiment.
+The form uses whole-number controls with minima of 0 and 1, respectively.
+The API preserves exact JSON integer precision. Both values use the existing
+listing details column.
+
+`./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_property_listing_unit.py tests/test_property_listing_db.py tests/test_unit_listing_draft.py tests/test_unit_listing_draft_unit.py`
+passed 55 tests from `backend/`. Ruff, TypeScript, focused ESLint, and all
+1,007 frontend unit tests passed. Three headed Chrome tests on the isolated
+stack saved floor 37, saved a building with 12 floors, and edited an existing
+property from floor 0 to 64. Chrome also checked the fractional input error.
+The desktop and mobile captures retained the existing form grid and focus
+treatment. Design-system-ops and CRM UX were applied. The antislop and
+design-taste skill files were unavailable. Manual ports 3100 and 8100 stayed up.
+
+## Automatic standalone property references
+
+The standalone wizard reuses the current KAY form grid and creation command.
+It generates the reference at submission from the title, receipt date and
+random suffix. Missing inputs use the property category and Casablanca date.
+The command keeps the generated value across interrupted submissions.
+
+`npm.cmd run test:unit` passed all 1,007 tests. TypeScript and focused ESLint
+passed. Headed Chrome passed four cases from `property-listing-wizard.spec.ts`
+and `property-listing-recovery.spec.ts` on isolated ports 3112/8112/8113/8114.
+The cases covered title and date, blank inputs, retry, and narrow keyboard
+navigation. The blank-input case passed on rerun after a fixture setup error.
+From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_property_listing_db.py tests/test_inventory_received_date.py`
+passed all 10 tests.
+
+Desktop 1440 px and mobile 360 px captures were reviewed. The form also passed
+the 320 px keyboard case. Design-system-ops and CRM UX were applied. The
+required antislop and design-taste skill files were unavailable. The manual
+frontend and API stayed running on ports 3100 and 8100.
+
+## Simplified visit booking (2026-11-15)
+
+Migration `0051_visit_booking_defaults` ran on isolated test and loopback
+development. The development check compared visit and event rows before and
+after, then verified all three defaults. The manual frontend and API processes
+continued on ports 3100 and 8100.
+
+From `backend/`, run
+`./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_schedule.py tests/test_schedule_edges.py tests/test_schedule_http.py tests/test_calendar_filters.py`.
+42 tests passed. The check covers automatic dossier selection, new booking
+defaults, legacy state handling, capacity, policy, and replay. Focused Ruff
+and mypy checks passed.
+
+From `frontend/`, `npm.cmd run test:unit` passed all 1,006 tests. TypeScript
+and focused ESLint checks passed. Headed Chrome passed seven scheduling and
+calendar cases on isolated ports 3112/8112/8113/8114. The cases covered keyboard
+opening, phone touch, automatic prospect and deal links, booking and rescheduling,
+overlap and hard slot rules, interrupted saves, and the calendar.
+A separate Chrome probe verified native 200% zoom, horizontal reflow, keyboard
+opening of the rules and access to the notes.
+
+Design-system-ops was applied with the existing KAY geometry. The desktop
+1440 px and mobile 320 px drawer captures were visually reviewed. The required
+antislop and design-taste skill files were unavailable. Product review remains
+pending.
+
+## Prospect status filter grid (2026-11-15)
+
+The Prospects rail and mobile drawer reuse the shadcn checkbox, French labels,
+server counts and KAY status colors. The layout applies the supplied two-column
+reference, with counts above the label in the narrow rail to preserve text width.
+Design-system-ops was applied. The referenced antislop and design-taste skills
+were unavailable. The completed desktop and phone captures were visually reviewed.
+
+`npm.cmd run test:chrome -- tests/e2e/filter-rail.spec.ts --grep 'lead filter rail' --reporter=list --max-failures=1`
+passed with isolated frontend/API/control/simulator ports 3112/8112/8113/8114.
+It checked two columns, ten counts, status colors, minimum 44 px tile height,
+overflow, keyboard selection and touch at 360, 1024 and 1440 px. The user’s
+manual frontend and API continued on ports 3100 and 8100.
+
+## Staff passwords and local data reset (2026-11-15)
+
+The guarded PostgreSQL suite ran serially on the freshly migrated isolated test
+target. From `backend/`, run
+`./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_auth.py tests/test_users.py tests/test_staff_deletion.py tests/test_local_admin_recovery.py`.
+45 tests passed, including direct sign-in, manager role/target limits, reset
+revocation and rollback. Ruff and mypy passed for the changed identity code.
+From `frontend/`, `npm.cmd run typecheck`, `npm.cmd run build`, `npm.cmd run lint`
+and `npm.cmd run test:unit` passed (1,006 unit tests). Headed Chrome verified admin
+creation and deletion, reset with current-password confirmation, and manager
+creation/reset with the mobile Settings drawer and keyboard reset confirmation.
+The compiled headed run (`KAY_E2E_PRODUCTION=1`, `npm.cmd run test:chrome`,
+staff, auth, Help and staff-review specs) passed 11 cases. Coverage included
+scope denial, mobile touch, 200% native zoom, and exact reset replay after a lost
+response. The supervisor released its isolation lease and both ports.
+The staff views reuse the existing KAY form, field and dialog components. The
+empty desktop create form and empty 360 px reset dialog were reviewed visually.
+The recorded antislop and design-taste skill paths were unavailable. Review was
+limited to this workflow and the existing desktop and mobile design system.
+The shared history guard now settles the draft UI after a framework history
+commit. The unit test covers deferral, superseded prompts and disposal.
+
 ## Property cover photo
 
 On disposable PostgreSQL, migration 0047 and the Alembic schema check passed.

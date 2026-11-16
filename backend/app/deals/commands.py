@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.contacts.access import ContactConflict, readable_contact
 from app.contacts.commands import apply_command as contact_command
-from app.contacts.commands import create_contact
+from app.contacts.commands import create_buyer_contact
 from app.db.session import Database
 from app.deals.access import authorized, check_links, check_period, context_kind, writable
 from app.deals.contracts import (
@@ -73,7 +73,7 @@ def apply(
         return convert(session, identity, did, body), None
     if isinstance(body, NewDeal):
         contact = (
-            create_contact(session, identity, body.new_contact, "manual", None)
+            create_buyer_contact(session, identity, body.new_contact, "manual", None)
             if body.new_contact is not None
             else readable_contact(session, identity, body.contact_id)
             if body.contact_id is not None

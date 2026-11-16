@@ -28,7 +28,7 @@ for (const scenario of [
     if (scenario.kind === "add-role") {
       await form.getByLabel("Contact", { exact: true }).selectOption("existing"); await form.getByLabel("Rechercher un contact accessible", { exact: true }).fill(name);
       await form.getByRole("button", { name: "Rechercher", exact: true }).click(); await form.getByRole("button", { name: `Choisir ${name}`, exact: true }).click();
-      await expect(form.getByText("Rôle Propriétaire à ajouter", { exact: true })).toBeVisible();
+      await expect(form.getByText("Contact existant", { exact: true })).toBeVisible();
     } else {
       await form.getByLabel("Nom complet", { exact: true }).fill(savedName);
       if (scenario.kind === "create") await form.getByLabel("Téléphone 1 *", { exact: true }).fill(phone);
@@ -49,7 +49,7 @@ for (const scenario of [
       }
       return route.continue();
     });
-    await form.getByRole("button", { name: scenario.kind === "create" ? "Créer le propriétaire" : scenario.kind === "edit" ? "Enregistrer les modifications" : "Ajouter le rôle Propriétaire", exact: true }).click();
+    await form.getByRole("button", { name: scenario.kind === "create" ? "Créer le propriétaire" : scenario.kind === "edit" ? "Enregistrer les modifications" : "Ajouter comme propriétaire", exact: true }).click();
     const retry = form.getByRole("button", { name: scenario.fault === "receipt" ? "Réessayer la même opération" : "Actualiser le résultat", exact: true });
     await expect(retry).toBeEnabled();
     if (scenario.kind === "add-role") await expect(form.getByLabel("Contact", { exact: true })).toBeDisabled();

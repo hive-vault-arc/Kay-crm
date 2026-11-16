@@ -9,12 +9,13 @@ import { queryPath, useQuery } from "./use-query";
 import { RecordError } from "./record-states";
 import type { ApiError } from "@/lib/api/client";
 
-export function AgentPicker({ value, change, label = "Agent responsable", optional = false, selectedLabel, denied, purpose = "assignment", unassigned = false }: { value: string; change: (id: string, label?: string) => void; label?: string; optional?: boolean; selectedLabel?: string; denied?: (error: ApiError) => void; purpose?: "assignment" | "contact-filter" | "enquiry-filter"; unassigned?: boolean }) {
+export function AgentPicker({ value, change, label = "Agent responsable", optional = false, selectedLabel, denied, purpose = "assignment", unassigned = false, collaborationFor }: { value: string; change: (id: string, label?: string) => void; label?: string; optional?: boolean; selectedLabel?: string; denied?: (error: ApiError) => void; purpose?: "assignment" | "contact-filter" | "enquiry-filter"; unassigned?: boolean; collaborationFor?: string }) {
   const controlId = useId();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [chosen, setChosen] = useState<{ id: string; display_name: string }>();
-  const { value: result, error, refresh } = useQuery(queryPath(purpose === "enquiry-filter" ? "enquiries/assigned-options" : purpose === "contact-filter" ? "contacts/responsible-options" : "contacts/assignment-options", { q: search, page, page_size: 50 }), agentsSchema);
+  const path = collaborationFor ? `contacts/${collaborationFor}/collaboration-options` : purpose === "enquiry-filter" ? "enquiries/assigned-options" : purpose === "contact-filter" ? "contacts/responsible-options" : "contacts/assignment-options";
+  const { value: result, error, refresh } = useQuery(queryPath(path, { q: search, page, page_size: 50 }), agentsSchema);
   useEffect(() => { if (error && [401, 403].includes(error.status)) denied?.(error); }, [error, denied]);
   const options = result?.items ?? [];
   const selection = chosen?.id === value ? chosen : value && selectedLabel ? { id: value, display_name: selectedLabel } : undefined;

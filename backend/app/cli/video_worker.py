@@ -14,6 +14,7 @@ def main() -> None:
     from app.identity.security import IdentityError
     from app.recovery.maintenance import Admission
     from app.settings import load_settings
+    from app.videos.encoding import executable
     from app.videos.service import enabled
     from app.videos.worker import run_once
 
@@ -25,6 +26,11 @@ def main() -> None:
     if not enabled(settings):
         raise SystemExit("INVENTORY_VIDEO_DISABLED")
     assert_runtime_target(settings)
+    try:
+        executable("ffmpeg")
+        executable("ffprobe")
+    except IdentityError as error:
+        raise SystemExit(error.code) from None
     database = Database(settings.selected_database_url())
     admission = Admission(settings)
     try:

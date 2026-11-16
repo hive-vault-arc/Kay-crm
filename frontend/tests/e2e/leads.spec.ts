@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { clearActorContext, test as base, expect, signIn, createActor, removeActor } from "../helpers/auth";
+import { fillDeal, saveDeal } from "../helpers/deals";
 import { apiProcess, testControl } from "../helpers/api-process";
 import { changeLeadFilters, createLead, staffCommand } from "../helpers/leads";
 
@@ -27,7 +28,8 @@ test("SP05 AT-03/23/39: international identities, primary choices, contact and L
   await page.getByRole("button", { name: "Ajouter un e-mail", exact: true }).click();
   await page.getByLabel("E-mail 2", { exact: true }).fill("two@example.com");
   await page.getByRole("radiogroup", { name: "E-mail principal", exact: true }).getByLabel("Principal 2", { exact: true }).check();
-  for (const role of ["Acheteur", "Vendeur", "Propriétaire", "Locataire", "Promoteur"]) await page.getByRole("checkbox", { name: role, exact: true }).check();
+  await expect(page.getByText("Rôles du contact", { exact: true })).toHaveCount(0);
+  await expect(page.getByLabel("Contact de la demande", { exact: true })).toHaveCount(0);
   await page.getByLabel("Source du prospect", { exact: true }).selectOption("external_referral");
   await qualification(page);
   await page.getByLabel("Message", { exact: true }).fill("SP05 première demande synthétique");
@@ -55,9 +57,12 @@ test("SP05 AT-03/23/39: international identities, primary choices, contact and L
   if (desktop) await page.setViewportSize(desktop);
   await page.getByText("Informations du contact", { exact: true }).click();
   await expect(page.getByRole("link", { name: "Ouvrir WhatsApp pour +212600000001", exact: true })).toHaveAttribute("href", "https://wa.me/212600000001");
+  const lead = await (await page.request.get(`/api/v1/enquiries/${leadId}`)).json();
+  const contactResponse = await page.request.get(`/api/v1/contacts/${lead.contact.id}`);
+  expect(contactResponse.status()).toBe(200);
+  expect((await contactResponse.json()).roles).toEqual(["buyer"]);
   await page.getByRole("link", { name: "Fiche du contact", exact: true }).click();
   await expect(page.getByRole("heading", { name: "SP05 organisation synthétique", exact: true, level: 1 })).toBeVisible();
-  await expect(page.getByText("Acheteur, Promoteur, Propriétaire, Vendeur, Locataire", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Modifier", exact: true }).click();
   await page.getByLabel("Nom du contact", { exact: true }).fill("SP05 identité modifiée synthétique");
   await page.getByRole("button", { name: "Enregistrer le contact", exact: true }).click();
@@ -80,7 +85,7 @@ test("SP05 AT-03/23/39: international identities, primary choices, contact and L
   expect((await page.request.get("/api/v1/users")).status()).toBe(403);
 });
 
-test("SP05 AT-04/39: explicit accessible reuse, private-phone denial and copied IDs", async ({ page, actor, browser, baseURL }) => {
+test("SP05 AT-04/39: a duplicate offers an affaire, with private-phone denial and copied IDs", async ({ page, actor, browser, baseURL }) => {
   const other = await createActor("agent");
   const context = await browser.newContext({ baseURL, ignoreHTTPSErrors: true });
   const privatePage = await context.newPage();
@@ -93,41 +98,19 @@ test("SP05 AT-04/39: explicit accessible reuse, private-phone denial and copied 
     await page.getByLabel("Téléphone 1 *", { exact: true }).fill("00212 600000001");
     await qualification(page);
     await page.getByRole("button", { name: "Créer le prospect", exact: true }).click();
-    const dialog = page.getByRole("alertdialog");
-    await expect(dialog).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(dialog).toHaveCount(0);
-    await expect(page.getByLabel("Nom du contact", { exact: true })).toHaveValue("SP05 saisie à conserver");
-    await page.getByRole("button", { name: "Créer le prospect", exact: true }).click();
     const original = (await (await page.request.get(`/api/v1/enquiries/${firstId}`)).json()).contact;
-    let release = () => {};
-    const selectedRead = new Promise<void>(resolve => { release = resolve; });
-    await page.route(`**/api/v1/contacts/${original.id}`, async route => {
-      const response = await route.fetch(); await selectedRead; await route.fulfill({ response });
-    }, { times: 1 });
-    await dialog.getByRole("button", { name: "Réutiliser SP05 contact synthétique", exact: true }).click();
-    try {
-      await expect(page.getByText("Chargement du contact choisi…", { exact: true })).toBeVisible();
-      await expect(page.getByRole("button", { name: "Chargement…", exact: true })).toBeDisabled();
-      expect((await (await page.request.get("/api/v1/enquiries")).json()).total).toBe(1);
-    } finally { release(); }
-    await expect(page.getByText("Contact choisi : SP05 contact synthétique", { exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Créer le prospect", exact: true })).toBeFocused();
-    await page.getByRole("button", { name: "Créer le prospect", exact: true }).click();
-    await expect.poll(() => /^\/leads\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
-    expect(new URL(page.url()).pathname !== `/leads/${firstId}`).toBe(true);
+    const link = page.getByRole("link", { name: "Créer une affaire pour SP05 contact synthétique", exact: true });
+    await expect(link).toHaveAttribute("href", `/deals/new?contact_id=${original.id}`);
+    await expect(page.getByLabel("Nom du contact", { exact: true })).toHaveValue("SP05 saisie à conserver");
+    expect((await (await page.request.get("/api/v1/enquiries")).json()).total).toBe(1);
     expect((await (await page.request.get("/api/v1/contacts")).json()).total).toBe(1);
-    expect((await (await page.request.get("/api/v1/enquiries")).json()).total).toBe(2);
-    await page.goto("/leads/new");
-    await expect(page.getByRole("button", { name: "Créer le prospect", exact: true })).toBeEnabled();
-    await page.getByLabel("Contact de la demande", { exact: true }).selectOption("existing");
-    await page.getByLabel("Rechercher un contact accessible", { exact: true }).fill("SP05 contact");
-    await page.getByRole("button", { name: "Rechercher", exact: true }).click();
-    await page.getByRole("button", { name: "Choisir SP05 contact synthétique", exact: true }).click();
-    await qualification(page);
-    await page.getByRole("button", { name: "Créer le prospect", exact: true }).click();
-    await expect.poll(() => /^\/leads\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
-    expect((await (await page.request.get("/api/v1/contacts")).json()).total).toBe(1);
+    await link.click();
+    await page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true }).getByRole("button", { name: "Quitter sans enregistrer", exact: true }).click();
+    await fillDeal(page);
+    const dealId = await saveDeal(page);
+    const deal = await (await page.request.get(`/api/v1/deals/${dealId}`)).json();
+    expect(deal.contact.id).toBe(original.id);
+    expect((await (await page.request.get(`/api/v1/contacts/${original.id}`)).json()).version).toBe(original.version);
     await signIn(privatePage, other);
     const privateId = await createLead(privatePage, "SP05 identité privée synthétique", "+33600000002");
     const privateRecord = await (await privatePage.request.get(`/api/v1/enquiries/${privateId}`)).json();

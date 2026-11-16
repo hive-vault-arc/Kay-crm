@@ -73,6 +73,7 @@ from app.schedule.models import (
 )
 from app.settings import Settings
 from app.shares.models import ListingLink, ListingPublication
+from app.work.coverage_models import CoverageNote
 from app.work.holiday_models import HolidayConfirmation, HolidayOccurrence, HolidaySync
 from app.work.models import Task, TaskEvent, TaskReceipt
 from tests.deal_cleanup import actor_deal_ids, delete_actor_deals
@@ -137,6 +138,7 @@ def clear_identity(settings: Settings, database: Database) -> None:
             Receipt,
             Commission,
             Notification,
+            CoverageNote,
             HolidayConfirmation,
             HolidayOccurrence,
             HolidaySync,
@@ -296,6 +298,18 @@ def delete_actor_business(session: Session, user_id: UUID) -> None:
         )
     )
     session.execute(text("SET LOCAL kay.synthetic_cleanup='on'"))
+    coverage_ids = select(CoverageNote.id).where(
+        or_(
+            CoverageNote.author_user_id == user_id,
+            CoverageNote.seen_by_user_id == user_id,
+            CoverageNote.enquiry_id.in_(select(Enquiry.id).where(Enquiry.contact_id.in_(contacts))),
+            CoverageNote.deal_id.in_(
+                actor_deal_ids(session, user_id, contacts, properties, developments)
+            ),
+        )
+    )
+    session.execute(delete(Notification).where(Notification.coverage_note_id.in_(coverage_ids)))
+    session.execute(delete(CoverageNote).where(CoverageNote.id.in_(coverage_ids)))
     session.execute(
         delete(ProjectLink).where(
             or_(

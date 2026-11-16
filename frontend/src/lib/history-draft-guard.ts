@@ -69,7 +69,13 @@ export function protectHistoryDrafts({ navigation, target, protection, confirm, 
       if (!restoring) {
         const next = navigation.currentEntry, moved = next?.key !== accepted?.key || next?.url !== accepted?.url;
         accepted = next;
-        if (moved) { decisionVersion++; settled(); }
+        if (moved) {
+          const version = ++decisionVersion;
+          // Next can commit the entry during useInsertionEffect. Settle the UI after that commit.
+          void Promise.resolve().then(() => {
+            if (!disposed && version === decisionVersion) settled();
+          });
+        }
       }
     }
   };

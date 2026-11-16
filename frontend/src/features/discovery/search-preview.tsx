@@ -10,7 +10,7 @@ import { RecordError } from "@/features/contacts/record-states";
 import { queryPath, useQuery } from "@/features/contacts/use-query";
 import { searchSchema } from "./contracts";
 import { searchFocusIndex, searchPageHref } from "./search-model";
-import { SearchResultLink } from "./search-presentation";
+import { CoverageResults, SearchResultLink } from "./search-presentation";
 
 export function DesktopSearch() {
   const [text, setText] = useState(""), [query, setQuery] = useState(""), [open, setOpen] = useState(false);
@@ -66,5 +66,8 @@ export function DesktopSearch() {
 
 function PreviewResults({ query, close }: { query: string; close: () => void }) {
   const result = useQuery(queryPath("search", { q: query, page: 1, page_size: 8 }), searchSchema);
-  return result.error ? <RecordError error={result.error} retry={result.refresh} /> : !result.value ? <p role="status" className="kay-search-preview-note">Recherche en cours…</p> : <><p role="status" className="kay-search-preview-note">{result.value.total.toLocaleString("fr-MA")} résultat(s) accessible(s)</p>{result.value.items.length ? <ul>{result.value.items.slice(0, 8).map(item => <li key={item.kind + item.id}><SearchResultLink item={item} close={close} /></li>)}</ul> : <p className="kay-search-preview-note">Aucun résultat accessible.</p>}</>;
+  if (result.error) return <RecordError error={result.error} retry={result.refresh} />;
+  if (!result.value) return <p role="status" className="kay-search-preview-note">Recherche en cours…</p>;
+  const { items, coverage, total } = result.value;
+  return <>{items.length ? <><p role="status" className="kay-search-preview-note">{total.toLocaleString("fr-MA")} résultat(s) accessible(s)</p><ul>{items.map(item => <li key={item.kind + item.id}><SearchResultLink item={item} close={close} /></li>)}</ul></> : null}<CoverageResults items={coverage?.slice(0, 8)} close={close} />{!items.length && !coverage?.length ? <p role="status" className="kay-search-preview-note">Aucun résultat accessible.</p> : null}</>;
 }

@@ -30,28 +30,18 @@ export async function configureSchedule(page: Page) {
   await page.getByRole("button",{name:"Enregistrer les horaires",exact:true}).click();
   await expect(page.getByText("Horaires enregistrés. Les visites existantes sont conservées.",{exact:true})).toBeVisible();
 }
-export async function fillVisit(page: Page, cid: string, kind="company_car", start="2030-01-07T10:30", end="2030-01-07T11:30", title="SP14 visite synthétique") {
+export async function fillVisit(page: Page, cid: string, kind="company_car", start="2030-01-07T10:30") {
   await page.goto(`/visits/new?contact_id=${cid}`);
   const form = page.getByRole("form",{name:"Nouvelle visite",exact:true});
-  await expect(form.getByLabel("Titre *",{exact:true})).toBeEnabled();
-  const prospect = form.getByLabel("Prospect concerné", { exact: true });
-  await expect.poll(() => prospect.locator("option").count()).toBeGreaterThan(1);
-  await prospect.selectOption({ index: 1 });
-  await form.getByLabel("Titre *",{exact:true}).fill(title);
-  await form.getByLabel("Lieu *",{exact:true}).fill("SP14 lieu synthétique uniquement");
   await form.getByLabel("Type de visite",{exact:true}).selectOption(kind);
-  await setVisitTimes(page,start,end);
+  await setVisitTimes(page,start);
   return form;
 }
-export async function setVisitTimes(page: Page, start: string, end: string) {
-  for (const [label, value] of [["Début", start], ["Fin", end]]) {
-    const [day, time] = value.split("T");
-    await page.getByLabel(`${label} · Date`, { exact: true }).fill(day);
-    await page.getByLabel(`${label} · Heure`, { exact: true }).fill(time);
-  }
-  await expect(page.getByRole("button",{name:"Vérifier le créneau",exact:true})).toBeEnabled();
-  await page.getByRole("button",{name:"Vérifier le créneau",exact:true}).click();
-  await expect(page.locator('[aria-label="Disponibilité du créneau"]')).toBeVisible();
+export async function setVisitTimes(page: Page, start: string) {
+  const [day, time] = start.split("T");
+  await page.getByLabel("Date", { exact: true }).fill(day);
+  await page.getByLabel("Heure", { exact: true }).fill(time);
+  await expect(page.getByRole("button", { name: /^(Planifier|Enregistrer)$/ })).toBeEnabled();
 }
 export async function saveVisit(page: Page) {
   await page.getByRole("button",{name:"Planifier",exact:true}).click();

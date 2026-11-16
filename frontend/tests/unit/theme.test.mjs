@@ -6,10 +6,10 @@ import { clsx } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 import { loadServer } from "./load-server.mjs";
 
-const tokenUrl = new URL("../../../branding/prototype/kay-workspace.tokens.json", import.meta.url);
+const tokenUrl = new URL("../../src/lib/design/kay-workspace.tokens.json", import.meta.url);
 const workspace = JSON.parse(readFileSync(tokenUrl, "utf8"));
 const variables = loadServer("src/lib/theme.ts", { modules: {
-  "../../../branding/prototype/kay-workspace.tokens.json": { default: workspace },
+  "./design/kay-workspace.tokens.json": { default: workspace },
 } }).themeVariables;
 const app = new URL("../../src/app/", import.meta.url);
 const css = readdirSync(app).filter(file => file.endsWith(".css"))

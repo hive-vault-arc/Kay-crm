@@ -20,6 +20,7 @@ function harness() {
   const frames = new Map(); let frame, cursor = 0, formCursor = 0, prior = new Set();
   const effects = [], allForms = [];
   const react = {
+    useId: () => "owner-category",
     useState(initial) { const own = frame, i = cursor++; if (!(i in own.slots)) own.slots[i] = typeof initial === "function" ? initial() : initial; return [own.slots[i], next => { own.slots[i] = typeof next === "function" ? next(own.slots[i]) : next; }]; },
     useRef(initial) { const i = cursor++; return frame.slots[i] ??= { current: initial }; },
     useCallback(run, deps) { const i = cursor++, old = frame.slots[i]; if (!old || deps.some((value, n) => !Object.is(value, old.deps[n]))) frame.slots[i] = { deps, run }; return frame.slots[i].run; },
@@ -51,7 +52,7 @@ function setup({ role = "manager", original, read, currentRead, command, options
 test("Owner role payload preserves complete canonical fields and other roles without provenance, attribution or owner-link writes", () => {
   const original = client(), body = model.ownerRoleBody(original); assert.equal(contacts.editContactSchema.safeParse(body).success, true); assert.equal(body.expected_version, original.version);
   for (const field of ["name", "type", "phones", "emails", "country", "nationality", "languages"]) assert.deepEqual(plain(body[field]), plain(original[field]));
-  assert.deepEqual(plain(body.roles), [...original.roles, "owner"]); for (const field of ["primary_agent_id", "source", "source_submission_id", "created_by_user_id", "owners"]) assert.equal(Object.hasOwn(body, field), false);
+  assert.deepEqual(plain(body.roles).sort(), ["buyer", "developer", "owner", "seller"]); for (const field of ["primary_agent_id", "source", "source_submission_id", "created_by_user_id", "owners"]) assert.equal(Object.hasOwn(body, field), false);
   body.phones[0].label = "Changed draft"; body.emails[0].label = "Changed draft"; body.languages.push("english"); assert.equal(original.phones[0].label, "Principal conservé"); assert.equal(original.emails[0].label, "Bureau conservé"); assert.equal(original.languages.includes("english"), false);
 });
 
@@ -127,7 +128,7 @@ test("Owner-role conflict reload preserves the latest identity/roles and never o
   const s = setup({ read: async () => original, currentRead: async () => fail ? newer : s.current(), command: async (...args) => { if (fail) throw new ApiError("VERSION_CONFLICT", 409, { current: newer }); return s.receipt(args); } }); s.mode("existing"); await s.select(original.id); s.submit(); await delay(0);
   assert.equal(find(s.render(), "Snapshot").length, 0); find(s.render(), "Button").find(node => text(node) === "Comparer la version actuelle").props.onClick(); await delay(0);
   const view = s.render(); assert.equal(find(view, "Snapshot")[0].props.contact.name, newer.name); assert.equal(find(view, "Button").some(node => text(node) === "Conserver ma saisie sur cette version"), false);
-  find(view, "Button").find(node => text(node) === "Charger la version actuelle").props.onClick(); fail = false; s.submit(); await delay(0); assert.equal(s.calls[1][1].expected_version, 8); assert.equal(s.calls[1][1].name, newer.name); assert.deepEqual(plain(s.calls[1][1].roles), [...newer.roles, "owner"]); assert.notEqual(s.calls[0][3], s.calls[1][3]); assert.equal(s.navigations.length, 1);
+  find(view, "Button").find(node => text(node) === "Charger la version actuelle").props.onClick(); fail = false; s.submit(); await delay(0); assert.equal(s.calls[1][1].expected_version, 8); assert.equal(s.calls[1][1].name, newer.name); assert.deepEqual(plain(s.calls[1][1].roles), [...newer.roles, "owner", "seller"]); assert.notEqual(s.calls[0][3], s.calls[1][3]); assert.equal(s.navigations.length, 1);
 });
 
 test("Full owner edit keeps all fields/version and requires an explicit conflict choice; a foreign current snapshot is not adopted", async () => {
@@ -148,20 +149,23 @@ test("Unmount aborts a selected-contact lookup and suppresses a late mutation re
   const pending = setup({ read: async () => new Promise(() => {}) }); pending.mode("existing"); find(pending.render(), "ContactSelector")[0].props.choose({ id: randomUUID() }); pending.unmount(); assert.equal(pending.reads[0][2].aborted, true);
 });
 
-test("Owner field composition keeps one pair of collection controllers, labelled source sections and a non-removable owner role", () => {
+test("Owner fields provide a single category and no generic contact roles", () => {
   const value = model.ownerValues(client()), arrays = [], h = harness();
   const form = { control: {}, formState: { errors: {} }, getValues: name => value[name], setValue: (key, next) => { value[key] = next; }, clearErrors() {} };
   const loaded = loadServer("src/features/contacts/contact-fields.tsx", { modules: { react: { ...h.react, useId: () => "synthetic-owner-fields" }, "react/jsx-runtime": runtime, "react-hook-form": { useWatch: ({ name }) => value[name], useFieldArray: ({ name }) => { arrays.push(name); return { fields: value[name].map((item, index) => ({ ...item, id: `${name}-${index}` })), append() {}, replace() {} }; } }, "@/components/icons": { PhoneIcon: "Phone", EmailIcon: "Email" }, "@/components/shared/section-heading": { SectionHeading: "Heading" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/ui/form": { FormControl: "Control", FormField: "Field", FormItem: "Item", FormLabel: "Label", FormMessage: "Message" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/radio-group": { RadioGroup: "Radios", RadioGroupItem: "Radio" }, "@/components/ui/checkbox": { Checkbox: "Checkbox" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/button": { Button: "Button" }, "./contracts": contacts, "./qualification-inputs": { countryOptions: () => [], InternationalPhoneInput: "PhoneInput", LanguagePicker: "Languages" } } });
-  const root = () => loaded.ContactFields({ form, metadata, ownerLayout: true, workspace: true, requiredRole: "owner", assignment: jsx("Assignment", {}) }), view = h.render(root);
+  const root = () => loaded.ContactFields({ form, metadata, ownerLayout: true, workspace: true, ownerCategory: jsx("Category", {}), assignment: jsx("Assignment", {}) }), view = h.render(root);
   assert.deepEqual(arrays, ["phones", "emails"]); assert.deepEqual(find(view, "Section").map(node => node.props.title), ["Coordonnées", "Gestion du contact"]); assert.equal(find(view, "Assignment").length, 1); assert.equal(find(view, "details").length, 1);
-  const names = find(view, "Field").map(node => node.props.name); for (const name of ["name", "type", "phones.0.number", "emails.0.email", "roles", "country", "nationality", "languages"]) assert.equal(names.filter(value => value === name).length, 1);
-  const roles = find(view, "Field").find(node => node.props.name === "roles").props.render({ field: { value: [], onChange() {} } }); assert.equal(find(roles, "Checkbox").filter(node => node.props.disabled).length, 1); assert.equal(find(roles, "Checkbox").find(node => node.props.disabled).props.checked, true);
+  const names = find(view, "Field").map(node => node.props.name); for (const name of ["name", "type", "phones.0.number", "emails.0.email", "country", "nationality", "languages"]) assert.equal(names.filter(value => value === name).length, 1);
+  assert.equal(names.includes("roles"), false);
+  assert.equal(find(view, "Category").length, 1);
+  assert.deepEqual(plain(model.ownerRoles([], "seller")), ["owner", "seller"]);
+  assert.deepEqual(plain(model.ownerRoles([], "developer")), ["owner", "seller", "developer"]);
 });
 
 test("Owner duplicate confirmation describes only adding a role, preserves cancellation and never promises another enquiry or ownership link", () => {
   const reused = [], loaded = loadServer("src/features/contacts/record-states.tsx", { modules: { "react/jsx-runtime": runtime, "@/components/icons": { AlertIcon: "Icon" }, "next/link": { default: "Link" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/alert-dialog": Object.fromEntries(["AlertDialog", "AlertDialogCancel", "AlertDialogContent", "AlertDialogDescription", "AlertDialogTitle"].map(name => [name, name])), "@/lib/api/client": { ApiError } } });
   const id = randomUUID(), view = loaded.CommandError({ error: new ApiError("DUPLICATE_CONTACT", 409, { contacts: [{ id, name: "Synthetic known identity" }] }), record: "propriétaire", reuse: id => reused.push(id), dismiss() {} });
-  const description = text(find(view, "AlertDialogDescription")[0]); assert.ok(description.includes("rôle Propriétaire")); assert.ok(description.includes("seront conservés")); assert.ok(!description.includes("nouvelle demande")); assert.equal(find(view, "AlertDialogCancel").length, 1);
+  const description = text(find(view, "AlertDialogDescription")[0]); assert.ok(description.includes("aux propriétaires")); assert.ok(description.includes("seront conservés")); assert.ok(!description.includes("nouvelle demande")); assert.equal(find(view, "AlertDialogCancel").length, 1);
   find(view, "Button").find(node => text(node).startsWith("Réutiliser")).props.onClick(); assert.deepEqual(reused, [id]);
 });
 

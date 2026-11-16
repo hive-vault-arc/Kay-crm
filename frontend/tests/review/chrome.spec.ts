@@ -1,5 +1,5 @@
 import { chromium } from "@playwright/test";
-import { expect, signedInTest as test, test as publicTest, signIn, createActor, removeActor } from "../helpers/auth";
+import { expect, signedInTest as test, test as publicTest, signIn, openWorkspaceAccount } from "../helpers/auth";
 import { randomBytes } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -87,9 +87,8 @@ test("AT-23: visible Chrome, touch, screenshots and actual 200% browser zoom", a
     path: path.join(artifactRoot, "sp03-mobile-visits.png"),
     fullPage: true,
   });
-  await mobile.goto(`${baseURL}/change-password`);
-  await expect(mobile.getByRole("heading", { level: 1 })).toHaveText("Changer le mot de passe");
-  await mobile.getByRole("button", { name: "Se déconnecter", exact: true }).tap();
+  const mobileAccount = await openWorkspaceAccount(mobile);
+  await mobileAccount.getByRole("button", { name: "Se déconnecter", exact: true }).tap();
   await expect.poll(() => mobile.url().includes("/login?signed_out=1")).toBe(true);
   await touch.close();
 
@@ -279,25 +278,10 @@ publicTest("SP-03: visible login, empty-field captures, invalid feedback and mob
   await signIn(page, actor);
   await page.screenshot({ path: path.join(artifactRoot, "sp03-dashboard-mobile.png"), fullPage: true });
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/change-password");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Changer le mot de passe");
-  await page.goBack();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Tableau de bord");
-  await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
+  const account = await openWorkspaceAccount(page);
+  await account.getByRole("button", { name: "Se déconnecter", exact: true }).click();
   await expect.poll(() => page.url().includes("/login?signed_out=1")).toBe(true);
   await page.goto("/dashboard");
   await expect.poll(() => page.url().includes("/login?return_to=")).toBe(true);
-  const restricted = await createActor("agent", true);
-  try {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await signIn(page, restricted);
-    expect(await page.locator('input[type="password"]').evaluateAll((fields) => fields.every((field) => (field as HTMLInputElement).value === ""))).toBe(true);
-    await page.screenshot({ path: path.join(artifactRoot, "sp03-change-password-desktop.png"), fullPage: true });
-    await page.setViewportSize({ width: 360, height: 800 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.screenshot({ path: path.join(artifactRoot, "sp03-change-password-mobile.png"), fullPage: true });
-    await page.getByRole("button", { name: "Se déconnecter", exact: true }).click();
-    await expect.poll(() => page.url().includes("/login?signed_out=1")).toBe(true);
-  } finally { await removeActor(restricted); }
   expect(errors).toEqual([]);
 });

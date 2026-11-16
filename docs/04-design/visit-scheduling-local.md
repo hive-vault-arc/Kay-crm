@@ -1,5 +1,8 @@
 # Local visit scheduling contract (SP-14)
 
+[Direct confirmation and visit reports](#direct-confirmation-and-visit-reports)
+supersedes the earlier booking and reminder flow described below.
+
 Current selected command recovery,2026-10-29: the
 [working-hours owner](policy-command-recovery-local.md) now pins the original
 reviewed operation, verifies contextual receipts and completes from a fresh
@@ -60,13 +63,31 @@ permission or scheduling rule. Native/final acceptance remains pending.
 The visits layout owns the calendar while the existing create/detail routes open
 shared guarded drawers. Page identity/UUID/query/password gates remain. Forms
 retain date-only entry, resolved instants, scoped contact/property/dossier choices,
-participants, reviewed versions, retries and explicit commands. Draft rescheduling
-retains its draft status without a booking preview. Saved overlap explanations
-remain separate from outcomes. History lazily presents the existing latest100
+participants, reviewed versions, retries and explicit commands. The original
+drawer could reschedule a draft without a booking preview. D47 replaces this
+behavior below. Saved overlap explanations remain separate from outcomes.
+History lazily presents the existing latest100
 entries in20-entry cards; current denial clears the old view. Native route/focus/
 stacking acceptance remains pending. The prototype's separate general Notes field
 still needs a persistence mapping and is not claimed implemented by this UI slice.
 [Current execution](../03-planning/design-prototype-migration-execution.md).
+
+## Simplified booking (2026-11-15)
+
+The drawer captures the contact, visit type, optional property, Date, Heure,
+participants, and optional notes or overlap explanation. The slot rules and
+notes each open with a disclosure button. A successful availability preview
+enables Planifier. The write checks the slot again using Casablanca time.
+
+Local implementation defaults are a 60-minute elapsed slot and a link to the
+latest updated visible non-archived deal. When there is no such deal, use the
+latest received visible non-archived prospect that has yet to convert. A contact
+with neither returns `VISIT_CONTEXT_UNAVAILABLE`. Rescheduling keeps the recorded
+duration and dossier and books a legacy unplanned visit after checking current rules.
+
+Migration 0051 sets the database defaults for title, location and status. Older
+titles, locations, visits and audit events remain readable. The drawer sends
+compatible wire values while an earlier API process is running.
 
 ## Rule and authority
 
@@ -131,11 +152,15 @@ conflict. Current authority is checked before returning an old acknowledgement.
 - PUT `/visit-schedule/policy`: same proposal plus preview_hash. Under the lock,
   changed policy/version or visit set requires a new preview. Success returns
   impact and appends immutable schedule history plus non-secret audit.
-- POST `/visits`: contact_id, title, type, explicit offset-aware minute-precision
-  start_at/end_at, location, unique participant_ids, overlap_reason, nullable
-  deal_id/property_id, and status draft|scheduled. Contact aliases resolve to
-  the authorized survivor. Participants are active, unrestricted staff with
-  current contact authority; membership never grants detail access.
+- POST `/visits`: contact_id, type, offset-aware minute-precision start_at,
+  unique participant_ids, optional property_id, overlap_reason and notes.
+  Omitted end_at uses 60 elapsed minutes. Omitted title and location use
+  “Visite” and “Non renseigné”. The status defaults to scheduled. A new draft
+  write returns INVALID_STATE. Older same-key receipts can still replay.
+  When no dossier is supplied, the backend resolves the link in scope.
+  Contact aliases resolve to the authorized survivor. Participants are active,
+  unrestricted staff with current contact authority. Membership grants no
+  detail access.
 - PATCH `/visits/{id}` and POST `/visits/{id}/reschedule`: full editable fields
   plus expected_version, retaining the contact/organizer/origin/identity.
 - POST `/visits/{id}/confirm`: expected_version and reason, required on overlap.
@@ -225,6 +250,33 @@ local strings determine event position; the browser does only Gregorian date
 arithmetic. Overlap clusters get distinct lanes, short visits retain44px targets,
 and overnight visits continue on the next day. Dynamic hours and local scrolling
 retain early/late events; server pagination remains explicit. Calendar geometry
-is centralized in `branding/prototype/kay-workspace.tokens.json`, not a new library or chart.
+is centralized in `../../frontend/src/lib/design/kay-workspace.tokens.json`, not a new library or chart.
 No schema migration or development-data seed. See the
 [implementation and verification](../03-planning/calendar-reference-refresh.md).
+
+## Direct confirmation and visit reports
+
+Under D52, **Planifier** submits the visit once. The server checks current
+Casablanca work windows, lunch breaks, participant access and shared vehicle
+capacity in the transaction that records the confirmed appointment.
+Ordinary participant overlaps are permitted while the hard capacity and
+working-hour rules still apply. The form has one optional **Bien concerné**
+selector. It shows active properties already linked to the chosen prospect
+or deal, including a deal's physical offer or listed properties. The server
+rechecks a new property selection. Existing property links can be retained
+when rescheduling the same dossier.
+
+The standalone confirmation dialog is retired. Legacy scheduled visits are
+shown as **Confirmée** in the calendar and detail view, together with confirmed
+visits in the status filter. Legacy drafts remain distinguishable until
+replanned. The migration preserves recorded statuses and event snapshots.
+New bookings and rescheduling save as confirmed.
+
+The result and non-realization commands are available after the stored end
+time. The first report reminder is due two hours after end. An unresolved
+visit sends another reminder every 24 elapsed hours while the organizer or
+participant still has access. Only the latest reminder for the current
+schedule appears in the inbox. Reading that reminder leaves the visit open.
+Recording a result, marking the visit not realized or cancelling retires
+the old schedule's notifications. Migration `0053_confirmed_visit_reports`
+adds the recurring notification key and supporting indexes.

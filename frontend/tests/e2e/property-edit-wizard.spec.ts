@@ -63,6 +63,7 @@ test("property edit: rich fields are prefilled, saved and reopened without chang
     await propertyEditStep(page, 2);
     for (const [key, value] of Object.entries({ area_sqm: "120.00", rooms: "5", bedrooms: "3", bathrooms: "2", capacity: "6", minimum_nights: "2", condition: "good", age_band: "5_10", floor_type: "tile", unit_floor: "0", orientation: "south" })) await expect(form.locator(`#property-${key}`)).toHaveValue(value);
     await form.locator("#property-bedrooms").fill("4");
+    await form.getByRole("spinbutton", { name: "Étage", exact: true }).fill("64");
     await mkdir("output/playwright/property-edit", { recursive: true });
     for (const width of [320, 390, 768, 1024, 1440]) {
       await page.setViewportSize({ width, height: 900 });
@@ -118,7 +119,7 @@ test("property edit: rich fields are prefilled, saved and reopened without chang
     expect(after.owner_asking_price_mad).toBeNull();
     expect(after.monthly_syndic_fee_mad).toBe("315.75");
     await expect(page.getByText("315,75 MAD / mois", { exact: true })).toBeVisible();
-    const expectedDetails = { ...before.listing_details, city: "Tétouan", bedrooms: 4, amenities: ["terrace", "garage", "internet"], description: "Description synthétique révisée." };
+    const expectedDetails = { ...before.listing_details, city: "Tétouan", bedrooms: 4, unit_floor: 64, amenities: ["terrace", "garage", "internet"], description: "Description synthétique révisée." };
     delete expectedDetails.garden_area_sqm;
     expect(after.listing_details).toEqual(expectedDetails);
     await page.setViewportSize({ width: 1440, height: 900 });

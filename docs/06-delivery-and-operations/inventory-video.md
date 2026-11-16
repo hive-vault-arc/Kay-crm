@@ -13,6 +13,23 @@ origin and environment prefix. Disable access logging that records query
 strings for the video playback route. Playback URLs contain a ten-minute grant
 and must not be copied into logs, analytics or screenshots.
 
+## Local Windows use
+
+The inventory gallery has a **Vidéos MP4 / MOV** tab for properties and
+programmes. Its file picker includes QuickTime MOV from iPhone and MP4.
+After applying `0050_inventory_videos`, set `INVENTORY_VIDEO_ENABLED=true`
+in the ignored `backend/.env` and load it on the next local API startup.
+From `backend/`, run `./.venv/Scripts/python.exe -m app.cli.video_worker`
+in a shell whose `PATH` includes both `ffmpeg.exe` and `ffprobe.exe`.
+The video worker checks for both executables before claiming uploads.
+
+The video worker uses the ClamAV endpoint configured in its own environment.
+The ordinary local scanner accepts streams up to 100 MiB in the current
+configuration. An endpoint provisioned with the video scanner limits below
+is required to exercise the full 300 MB upload limit end to end.
+
+## Scanner and release verification
+
 In staging, build `backend/video-scanner.Dockerfile` with `backend/` as its
 context. It retains the official ClamAV image's signature updates and sets
 `StreamMaxLength` and `MaxFileSize` to 320 MiB, `MaxScanSize` to 400 MiB, and

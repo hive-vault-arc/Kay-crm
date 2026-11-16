@@ -15,6 +15,21 @@ test("propriétaire: create, private scope, inventory history and former link", 
   try {
     await signIn(page, agent);
     await page.goto("/owners/new");
+    await expect(page.getByText("Rôles du contact", { exact: true })).toHaveCount(0);
+    const category = page.getByLabel("Catégorie du propriétaire", { exact: true });
+    await expect(category).toHaveValue("seller");
+    await expect(category.locator("option")).toHaveText(["Vendeur", "Promoteur"]);
+    await mkdir("output/playwright", { recursive: true });
+    const desktop = page.viewportSize();
+    await category.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: "output/playwright/owner-category-desktop.png" });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    await category.focus();
+    await expect(category).toBeFocused();
+    await page.screenshot({ path: "output/playwright/owner-category-mobile.png" });
+    if (desktop) await page.setViewportSize(desktop);
+    await category.selectOption("developer");
     await page.getByLabel("Nom complet", { exact: true }).fill(name);
     await page.getByLabel("Téléphone 1 *", { exact: true }).fill(phone);
     const created = page.waitForResponse(response => response.url().endsWith("/api/v1/contacts") && response.request().method() === "POST");
@@ -23,6 +38,7 @@ test("propriétaire: create, private scope, inventory history and former link", 
     await expect.poll(() => /^\/owners\/[a-f0-9-]{36}$/.test(new URL(page.url()).pathname)).toBe(true);
     const ownerId = new URL(page.url()).pathname.split("/")[2];
     await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
+    expect((await (await page.request.get(`/api/v1/contacts/${ownerId}`)).json()).roles.sort()).toEqual(["developer", "owner", "seller"]);
     const whatsapp = page.getByRole("link", { name: `Ouvrir WhatsApp pour ${phone}`, exact: true });
     await expect(whatsapp).toHaveAttribute("href", `https://wa.me/${phone.slice(1)}`);
     await expect(whatsapp).toHaveAttribute("rel", "noopener noreferrer");
@@ -30,7 +46,6 @@ test("propriétaire: create, private scope, inventory history and former link", 
     await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
     await expect(page.locator('header [aria-live="polite"]').filter({ hasText: /^1 propriétaire$/ })).toBeVisible();
     await expect(page.getByRole("table", { name: "Une ligne par propriétaire accessible." })).toBeVisible();
-    await mkdir("output/playwright", { recursive: true });
     await page.screenshot({ path: "output/playwright/owners-directory-desktop.png" });
     const filters = page.getByRole("search", { name: "Recherche et filtres des propriétaires", exact: true });
     await filters.getByLabel("Rechercher", { exact: true }).fill("aucun propriétaire correspondant");
@@ -59,9 +74,12 @@ test("propriétaire: create, private scope, inventory history and former link", 
     await expect(page.getByRole("dialog", { name: "Historique", exact: true })).toBeVisible();
 
     await page.goto(`/owners/${ownerId}/edit`);
+    await expect(category).toHaveValue("developer");
+    await category.selectOption("seller");
     await page.getByLabel("Nom complet", { exact: true }).fill(`${name} révisé`);
     await page.getByRole("button", { name: "Enregistrer les modifications" }).click();
     await expect(page.getByRole("heading", { name: `${name} révisé`, exact: true })).toBeVisible();
+    expect((await (await page.request.get(`/api/v1/contacts/${ownerId}`)).json()).roles.sort()).toEqual(["owner", "seller"]);
 
     await clearActorContext(page); await signIn(page, outsider);
     await page.goto("/owners");

@@ -111,6 +111,7 @@ def notifications(
         query,
         birthdays=request.headers.get("X-Kay-Birthday-Notifications") == "1",
         holidays=request.headers.get("X-Kay-Holiday-Notifications") == "1",
+        coverage=request.headers.get("X-Kay-Coverage-Notifications") == "1",
     )
 
 
@@ -122,6 +123,7 @@ def read(request: Request, token: Proof, nid: UUID, body: Strict) -> dict[str, b
         token,
         nid,
         holidays=request.headers.get("X-Kay-Holiday-Notifications") == "1",
+        coverage=request.headers.get("X-Kay-Coverage-Notifications") == "1",
     )
 
 

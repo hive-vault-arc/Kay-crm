@@ -16,7 +16,7 @@ test("Prospect creation freezes contact/qualification/provenance and same key th
   let fail = true; const s = editorFixture({ create: true, command: async (contact, enquiry, path, body) => { if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return accepted(s, enquiry, body); } });
   prepare(s); find(s.render(), "Textarea")[0].props.onChange({ target: { value: "Synthetic reviewed message" } }); submit(s); await delay(0);
   const initial = s.calls[0]; s.queries.metadata = { error: new ApiError("DEPENDENCY_UNAVAILABLE", 503) }; const tree = s.render();
-  find(tree, "Qualification")[0].props.change({ initial_budget: "9900000" }); find(tree, "Agent")[0].props.change(randomUUID()); find(tree, "Select").find(node => node.props.id === "contact-mode").props.onChange({ target: { value: "existing" } }); find(tree, "Textarea")[0].props.onChange({ target: { value: "Synthetic changed message" } }); action(s, "cancel").props.onClick();
+  find(tree, "Qualification")[0].props.change({ initial_budget: "9900000" }); find(tree, "Agent")[0].props.change(randomUUID()); find(tree, "Textarea")[0].props.onChange({ target: { value: "Synthetic changed message" } }); action(s, "cancel").props.onClick();
   assert.equal(s.guarded.length, 0); assert.equal(find(s.render(), "fieldset")[0].props.disabled, true); assert.equal(action(s, "create").props.disabled, false); assert.equal(find(tree, "form")[0].props["data-write-recovery"], true);
   fail = false; submit(s); await delay(0);
   assert.equal(s.calls.length, 2); assert.equal(initial[0], "/api/v1/enquiries"); assert.equal(initial[4], "POST"); assert.equal(initial[3], s.calls[1][3]); assert.deepEqual(plain(initial[1]), plain(s.calls[1][1])); assert.equal(initial[1].initial_budget, "1400000"); assert.equal(initial[1].message, "Synthetic reviewed message"); assert.equal(initial[1].assigned_agent_id, s.contact.primary_agent.id); assert.equal(initial[1].new_contact.primary_agent_id, s.contact.primary_agent.id); assert.equal(initial[1].campaign_source, "facebook"); assert.equal(initial[1].rating, "warm"); assert.equal(initial[1].status, "in_progress"); assert.deepEqual(plain(initial[1].new_contact.phones), plain(s.contact.phones)); assert.deepEqual(plain(initial[1].new_contact.emails), plain(s.contact.emails)); assert.equal(s.navigated.length, 1);
@@ -28,11 +28,16 @@ test("Successful creation cannot be submitted again or rearmed by stale field/ca
   assert.equal(s.calls.length, 1); assert.equal(s.navigated.length, 1); assert.equal(s.guarded.length, 0); assert.equal(action(s, "create").props.disabled, true); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], undefined);
 });
 
-test("Known duplicate rejection permits explicit scoped canonical contact reuse with a new key and the same submission identity", async () => {
-  const canonical = randomUUID(); let duplicate = true; const s = editorFixture({ create: true, command: async (contact, enquiry, path, body) => { if (duplicate) throw new ApiError("DUPLICATE_PHONE", 409, { contacts: [s.summary(contact)] }); return accepted(s, enquiry, body, { contact: s.summary({ ...contact, id: canonical }) }); }, read: async contact => ({ ...contact, id: canonical }) });
-  prepare(s); submit(s); await delay(0); const first = s.calls[0]; find(s.render(), "CommandError")[0].props.reuse(s.contact.id); await delay(0);
-  assert.equal(s.reads[0][0], `/api/v1/contacts/${s.contact.id}`); assert.ok(s.reads[0][2] instanceof AbortSignal); assert.equal(find(s.render(), "ContactFields").length, 0);
-  duplicate = false; submit(s); await delay(0); const next = s.calls[1]; assert.notEqual(next[3], first[3]); assert.equal(next[1].source_submission_id, first[1].source_submission_id); assert.equal(next[1].contact_id, canonical); assert.equal(next[1].new_contact, undefined); assert.equal(next[1].assigned_agent_id, s.contact.primary_agent.id); assert.equal(s.navigated.length, 1);
+test("A prospect duplicate preserves the new contact draft and offers the opportunity path", async () => {
+  const s = editorFixture({ create: true, command: async contact => { throw new ApiError("DUPLICATE_PHONE", 409, { contacts: [s.summary(contact)] }); } });
+  prepare(s); s.forms()[0].setValue("roles", ["tenant"]); submit(s); await delay(0);
+  assert.deepEqual(plain(s.calls[0][1].new_contact.roles), ["buyer"]);
+  assert.equal(s.calls[0][1].contact_id, undefined);
+  const error = find(s.render(), "CommandError")[0].props;
+  assert.equal(error.record, "prospect"); assert.equal(error.reuse, undefined);
+  assert.equal(error.error.details.contacts[0].id, s.contact.id);
+  assert.equal(find(s.render(), "ContactFields").length, 1);
+  assert.equal(s.reads.length, 0); assert.equal(s.navigated.length, 0);
 });
 
 test("Creation preserves explicit M/A queue choice and leaves Agent responsibility assignment authoritative", async () => {
@@ -59,20 +64,15 @@ test("Creation validation is synchronously owned and disposed validation cannot 
   s.dispose(); release(true); await delay(0); assert.equal(s.calls.length, 0); assert.equal(s.lateUpdates(), 0);
 });
 
-test("Disposed duplicate reuse aborts the scoped read and cannot populate a departed creation form", async () => {
-  let finish; const s = editorFixture({ create: true, command: async contact => { throw new ApiError("DUPLICATE_PHONE", 409, { contacts: [s.summary(contact)] }); }, read: () => new Promise(resolve => { finish = resolve; }) });
-  prepare(s); submit(s); await delay(0); find(s.render(), "CommandError")[0].props.reuse(s.contact.id); await delay(0); assert.equal(s.reads.length, 1); s.dispose(); finish(s.contact); await delay(0); assert.equal(s.reads[0][2].aborted, true); assert.equal(s.lateUpdates(), 0);
-});
-
 test("Acknowledged creation retries only navigation without another POST", async () => {
   let fail = true; const s = editorFixture({ create: true, navigate: () => { if (fail) throw new Error("Synthetic navigation failure"); } }); prepare(s); submit(s); await delay(0);
   assert.equal(s.calls.length, 1); assert.equal(action(s, "create").props.children, "Ouvrir le prospect créé"); fail = false; submit(s); await delay(0); assert.equal(s.calls.length, 1); assert.equal(s.navigated.length, 1);
 });
 
-test("Foreign submission/source/actor/contact creation results remain recoverable without wrong navigation", async () => {
-  for (const failure of ["submission", "source", "actor", "contact"]) {
-    let valid = false; const s = editorFixture({ create: true, command: async (contact, enquiry, path, body) => accepted(s, enquiry, body, valid ? {} : failure === "submission" ? { source_submission_id: randomUUID() } : failure === "source" ? { source: "referral" } : failure === "actor" ? { created_by_user_id: randomUUID() } : { contact: s.summary({ ...contact, id: randomUUID() }) }) });
-    prepare(s); if (failure === "contact") { find(s.render(), "Select").find(node => node.props.id === "contact-mode").props.onChange({ target: { value: "existing" } }); find(s.render(), "ContactSelector")[0].props.choose(s.summary(s.contact)); }
+test("Foreign submission, source or actor results remain recoverable without wrong navigation", async () => {
+  for (const failure of ["submission", "source", "actor"]) {
+    let valid = false; const s = editorFixture({ create: true, command: async (contact, enquiry, path, body) => accepted(s, enquiry, body, valid ? {} : failure === "submission" ? { source_submission_id: randomUUID() } : failure === "source" ? { source: "referral" } : { created_by_user_id: randomUUID() }) });
+    prepare(s);
     submit(s); await delay(0); assert.equal(s.navigated.length, 0); assert.equal(find(s.render(), "CommandError")[0].props.error.code, "INVALID_RESPONSE"); valid = true; submit(s); await delay(0); assert.equal(s.navigated.length, 1); assert.equal(s.calls[0][3], s.calls[1][3]); assert.deepEqual(plain(s.calls[0][1]), plain(s.calls[1][1]));
   }
 });

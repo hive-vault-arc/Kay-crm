@@ -78,6 +78,84 @@ def read_links(
         }
 
 
+def lock_parent(session: Session, scope: Scope, target: UUID) -> None:
+    model = Enquiry if scope == "enquiries" else Deal
+    session.execute(select(model.id).where(model.id == target).with_for_update())
+
+
+def record_change(
+    session: Session,
+    identity: CurrentIdentity,
+    scope: Scope,
+    target: UUID,
+    cid: UUID,
+    link: ProjectLink,
+    operation: Literal["added", "removed"],
+) -> None:
+    label = "Projet discuté" if link.kind == "discussed" else "Projet visité"
+    record(
+        session,
+        identity,
+        cid,
+        f"{scope}.project_link.{operation}",
+        body=f"{label} : {link.name}",
+        enquiry_id=target if scope == "enquiries" else None,
+        deal_id=target if scope == "deals" else None,
+    )
+
+
+def add_link(
+    session: Session,
+    identity: CurrentIdentity,
+    scope: Scope,
+    target: UUID,
+    cid: UUID,
+    body: NewLink,
+    *,
+    reuse_existing: bool = False,
+) -> tuple[ProjectLink, str]:
+    parent_field = ProjectLink.enquiry_id if scope == "enquiries" else ProjectLink.deal_id
+    catalogue = (
+        session.get(Development, body.development_id)
+        if body.development_id
+        else session.get(Property, body.property_id)
+    )
+    if catalogue is None or catalogue.archived_at is not None:
+        raise IdentityError("NOT_FOUND", 404)
+    name = (
+        catalogue.name
+        if isinstance(catalogue, Development)
+        else (catalogue.marketing_name or catalogue.reference)
+    )
+    target_field = ProjectLink.development_id if body.development_id else ProjectLink.property_id
+    existing = session.scalar(
+        select(ProjectLink).where(
+            parent_field == target,
+            ProjectLink.kind == body.kind,
+            target_field == catalogue.id,
+            ProjectLink.removed_at.is_(None),
+        )
+    )
+    if existing is not None:
+        if reuse_existing:
+            return existing, name
+        raise IdentityError("PROJECT_LINK_EXISTS", 409)
+    link = ProjectLink(
+        id=uuid4(),
+        enquiry_id=target if scope == "enquiries" else None,
+        deal_id=target if scope == "deals" else None,
+        development_id=body.development_id,
+        property_id=body.property_id,
+        kind=body.kind,
+        name=name,
+        created_by_user_id=identity.user.id,
+    )
+    session.add(link)
+    session.flush()
+    record_change(session, identity, scope, target, cid, link, "added")
+    return link, name
+
+
 def mutate_link(
     database: Database,
     token: str,
@@ -88,7 +166,6 @@ def mutate_link(
     body: NewLink | None,
     link_id: UUID | None = None,
 ) -> dict[str, object]:
-    operation = "added" if body else "removed"
     route = f"{scope}/{target}/project-links/{link_id or ''}"
     payload = body.model_dump(mode="json") if body else {"link_id": str(link_id)}
     digest = keyed_digest(
@@ -105,48 +182,11 @@ def mutate_link(
             return previous.response
         if contact.archived_at is not None or row.archived_at is not None:
             raise IdentityError("CONTACT_ARCHIVED", 409)
-        parent_model = Enquiry if scope == "enquiries" else Deal
-        session.execute(select(parent_model.id).where(parent_model.id == target).with_for_update())
-        parent_field = ProjectLink.enquiry_id if scope == "enquiries" else ProjectLink.deal_id
+        lock_parent(session, scope, target)
         if body:
-            catalogue = (
-                session.get(Development, body.development_id)
-                if body.development_id
-                else session.get(Property, body.property_id)
-            )
-            if catalogue is None or catalogue.archived_at is not None:
-                raise IdentityError("NOT_FOUND", 404)
-            target_field = (
-                ProjectLink.development_id if body.development_id else ProjectLink.property_id
-            )
-            catalogue_id = body.development_id or body.property_id
-            if session.scalar(
-                select(ProjectLink.id).where(
-                    parent_field == target,
-                    ProjectLink.kind == body.kind,
-                    target_field == catalogue_id,
-                    ProjectLink.removed_at.is_(None),
-                )
-            ):
-                raise IdentityError("PROJECT_LINK_EXISTS", 409)
-            name = (
-                catalogue.name
-                if isinstance(catalogue, Development)
-                else (catalogue.marketing_name or catalogue.reference)
-            )
-            link = ProjectLink(
-                id=uuid4(),
-                enquiry_id=target if scope == "enquiries" else None,
-                deal_id=target if scope == "deals" else None,
-                development_id=body.development_id,
-                property_id=body.property_id,
-                kind=body.kind,
-                name=name,
-                created_by_user_id=identity.user.id,
-            )
-            session.add(link)
-            session.flush()
+            link, _ = add_link(session, identity, scope, target, cid, body)
         else:
+            parent_field = ProjectLink.enquiry_id if scope == "enquiries" else ProjectLink.deal_id
             existing = session.scalar(
                 select(ProjectLink)
                 .where(
@@ -161,16 +201,7 @@ def mutate_link(
             link = existing
             link.removed_at = datetime.now(UTC)
             link.removed_by_user_id = identity.user.id
-        label = "Projet discuté" if link.kind == "discussed" else "Projet visité"
-        record(
-            session,
-            identity,
-            cid,
-            f"{scope}.project_link.{operation}",
-            body=f"{label} : {link.name}",
-            enquiry_id=target if scope == "enquiries" else None,
-            deal_id=target if scope == "deals" else None,
-        )
+            record_change(session, identity, scope, target, cid, link, "removed")
         response: dict[str, object] = {"id": str(link.id)}
         session.add(
             IdempotencyRecord(

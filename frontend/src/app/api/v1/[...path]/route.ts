@@ -18,6 +18,7 @@ import { relayActivities } from "@/features/activities/facade";
 import { relayGenerated } from "@/features/generated/facade";
 import { relayProjectLinks } from "@/features/project-links/facade";
 import { relayListingShare } from "@/features/shares/facade";
+import { relayCoverage } from "@/features/handoff/facade";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,6 +42,7 @@ export async function GET(
   const requestId = randomUUID();
   const { path } = await context.params;
   const key = path.join("/");
+  if (key.startsWith("coverage/")) return relayCoverage(key, request, requestId);
   if (key.startsWith("listing-shares/")) return relayListingShare(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/project-links$/.test(key)) return relayProjectLinks(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
@@ -68,6 +70,7 @@ export async function POST(request: Request, context: { params: Promise<{ path: 
   const requestId = randomUUID();
   const { path } = await context.params;
   const key = path.join("/");
+  if (key.startsWith("coverage/")) return relayCoverage(key, request, requestId);
   if (key.startsWith("listing-shares/")) return relayListingShare(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/project-links$/.test(key)) return relayProjectLinks(key, request, requestId);
   if (/^(enquiries|deals)\/[^/]+\/(activities|origin-activities)$/.test(key)) return relayActivities(key, request, requestId);
@@ -85,7 +88,7 @@ export async function POST(request: Request, context: { params: Promise<{ path: 
   if (/^(properties|offerings|developments|blocks|floors|unit-types)(\/|$)/.test(key)) return relayInventory(key, request, requestId);
   if (/^(contacts|enquiries)(\/|$)/.test(key)) return relayContacts(key, request, requestId);
   if (key === "users" || key.startsWith("users/")) return relayUsers(key, request, requestId);
-  if (!["auth/login", "auth/logout", "auth/change-password"].includes(key))
+  if (!["auth/login", "auth/logout"].includes(key))
     return facadeError(404, "NOT_FOUND", requestId);
   if (new URL(request.url).search) return facadeError(422, "VALIDATION_ERROR", requestId);
   return relayAuth(key, request, requestId);

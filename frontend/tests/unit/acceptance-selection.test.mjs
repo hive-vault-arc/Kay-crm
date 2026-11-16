@@ -18,7 +18,7 @@ test("acceptance discovery retains staff onboarding and conversion in every repr
   }
   report.suites.forEach(collect);
   for (const [name, titles] of profiles) {
-    assert.equal(titles.filter(title => title.startsWith("Staff: admin-chosen password, immediate restricted login")).length, 1, name);
+    assert.equal(titles.filter(title => title.startsWith("Staff: admin-chosen password works immediately")).length, 1, name);
     assert.equal(titles.filter(title => title.startsWith("Qualified conversion from Lead, accepted proposal")).length, 1, name);
     if (name !== "chrome-final") assert.equal(titles.length, 19, name);
   }

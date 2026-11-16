@@ -23,7 +23,7 @@ async function confirm(page: Page, name: string) {
   await dialog.getByRole("button", { name, exact: true }).click();
 }
 
-test("Staff: admin-chosen password, immediate restricted login, own password and deletion", async ({ page, actor, browser, baseURL }) => {
+test("Staff: admin-chosen password works immediately and deletion revokes access", async ({ page, actor, browser, baseURL }) => {
   test.setTimeout(120_000);
   const context = await browser.newContext({ baseURL, ignoreHTTPSErrors: true });
   const recipient = await context.newPage();
@@ -40,7 +40,7 @@ test("Staff: admin-chosen password, immediate restricted login, own password and
     const email = `sp03-${randomUUID().replaceAll("-", "")}@example.com`;
     const temporary = randomBytes(24).toString("base64url");
     await privateFill(page, "Adresse e-mail *", email);
-    await privateFill(page, "Mot de passe initial *", temporary);
+    await privateFill(page, "Mot de passe *", temporary);
     await page.getByRole("button", { name: "Afficher le mot de passe", exact: true }).click();
     expect(await page.locator("[data-private-credential]").getAttribute("type") === "text").toBe(true);
     await page.getByRole("button", { name: "Masquer le mot de passe", exact: true }).click();
@@ -60,15 +60,8 @@ test("Staff: admin-chosen password, immediate restricted login, own password and
     await expect(page.getByRole("button", { name: "Supprimer l’utilisateur", exact: true })).toBeVisible();
     expect(await page.getByRole("button", { name: /Confirmer la remise|Désactiver le compte/ }).count()).toBe(0);
     await signIn(recipient, staff);
-    expect(new URL(recipient.url()).pathname).toBe("/change-password");
+    expect(new URL(recipient.url()).pathname).toBe("/dashboard");
     expect((await recipient.request.get("/api/v1/users")).status()).toBe(403);
-    const final = randomBytes(24).toString("base64url");
-    await privateFill(recipient, "Mot de passe actuel", temporary);
-    await privateFill(recipient, "Nouveau mot de passe", final);
-    await privateFill(recipient, "Confirmer le nouveau mot de passe", final);
-    await recipient.getByRole("button", { name: "Changer le mot de passe", exact: true }).click();
-    await expect.poll(() => recipient.url().endsWith("/login?changed=1")).toBe(true);
-    staff.password = final; await signIn(recipient, staff);
     await confirm(page, "Supprimer l’utilisateur");
     await expect.poll(() => new URL(page.url()).pathname).toBe("/settings/users");
     await expect(page.getByRole("table")).toBeVisible();
@@ -80,7 +73,7 @@ test("Staff: admin-chosen password, immediate restricted login, own password and
   } finally { await context.close(); if (staff) await removeActor(staff); }
 });
 
-test("Staff: existing password unchanged, reset requires admin password, expiry and recovery", async ({ page, actor, browser, baseURL }) => {
+test("Staff: reset requires current admin password and replaces the sign-in password", async ({ page, actor, browser, baseURL }) => {
   test.setTimeout(120_000);
   const target = await createActor("manager");
   const context = await browser.newContext({ baseURL, ignoreHTTPSErrors: true });
@@ -89,32 +82,25 @@ test("Staff: existing password unchanged, reset requires admin password, expiry 
     await signIn(page, actor); await signIn(staff, target);
     await page.goto(`/settings/users/${target.id}/edit`);
     await expect(page.getByLabel("Nom complet *", { exact: true })).toBeEnabled();
-    expect(await page.getByLabel("Mot de passe initial *", { exact: true }).count()).toBe(0);
+    expect(await page.getByLabel("Mot de passe *", { exact: true }).count()).toBe(0);
     expect((await staff.request.get("/api/v1/auth/me")).status()).toBe(200);
     await clearActorContext(staff); await signIn(staff, target);
-    let temporary = randomBytes(24).toString("base64url");
+    const replacement = randomBytes(24).toString("base64url");
     await page.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).click();
     const dialog = page.getByRole("alertdialog");
-    await privateFill(page, "Nouveau mot de passe initial", temporary);
-    await privateFill(page, "Votre mot de passe administrateur", randomBytes(24).toString("base64url"));
+    await privateFill(page, "Nouveau mot de passe", replacement);
+    await privateFill(page, "Votre mot de passe", randomBytes(24).toString("base64url"));
     await dialog.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).click();
     await expect(dialog.getByRole("alert")).toBeVisible();
-    expect(await page.getByLabel("Votre mot de passe administrateur", { exact: true }).inputValue() === "").toBe(true);
-    await privateFill(page, "Votre mot de passe administrateur", actor.password);
+    expect(await page.getByLabel("Votre mot de passe", { exact: true }).inputValue() === "").toBe(true);
+    await privateFill(page, "Votre mot de passe", actor.password);
     await dialog.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).click();
     await expect(dialog).toHaveCount(0);
     expect((await staff.request.get("/api/v1/auth/me")).status()).toBe(401);
-    await testControl("fixture", { action: "expire-temporary", id: target.id });
-    await clearActorContext(staff); await deniedLogin(staff, { ...target, password: temporary });
-    temporary = randomBytes(24).toString("base64url");
-    await page.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).click();
-    await privateFill(page, "Nouveau mot de passe initial", temporary);
-    await privateFill(page, "Votre mot de passe administrateur", actor.password);
-    await dialog.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).click();
-    await expect(dialog).toHaveCount(0);
+    await clearActorContext(staff); await deniedLogin(staff, target);
     expect(await page.locator("[data-private-credential]").count()).toBe(0);
-    await signIn(staff, { ...target, password: temporary });
-    expect(new URL(staff.url()).pathname).toBe("/change-password");
+    await signIn(staff, { ...target, password: replacement });
+    expect(new URL(staff.url()).pathname).toBe("/dashboard");
   } finally { await context.close(); await removeActor(target); }
 });
 
@@ -127,8 +113,8 @@ test("Staff: direct role denial, copied settings URLs, origin and CSRF", async (
     expect((await page.request.post("/api/v1/users", { headers: { ...headers, "Idempotency-Key": randomUUID() }, data: body })).status()).toBe(403);
     expect((await page.request.delete(`/api/v1/users/${actor.id}`, { headers: { ...headers, "Idempotency-Key": randomUUID() }, data: { expected_version: 1 } })).status()).toBe(403);
   }
-  for (const role of ["manager", "agent"]) {
-    const nonAdmin = await createActor(role);
+  {
+    const nonAdmin = await createActor("agent");
     try {
       await clearActorContext(page); await signIn(page, nonAdmin);
       expect((await page.request.get("/api/v1/users")).status()).toBe(403);
@@ -139,6 +125,51 @@ test("Staff: direct role denial, copied settings URLs, origin and CSRF", async (
       }
     } finally { await removeActor(nonAdmin); }
   }
+});
+
+test("Staff: manager creates and resets agents from mobile Settings", async ({ page, actor, browser, baseURL }) => {
+  const manager = await createActor("manager");
+  const context = await browser.newContext({ baseURL, ignoreHTTPSErrors: true });
+  const recipient = await context.newPage();
+  let staff: TestActor | undefined;
+  try {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await signIn(page, manager);
+    await page.getByRole("button", { name: "Ouvrir la navigation", exact: true }).click();
+    await page.getByRole("dialog").getByRole("link", { name: "Paramètres", exact: true }).click();
+    await expect(page).toHaveURL(/\/settings\/users$/);
+    await page.getByRole("link", { name: "Créer un utilisateur", exact: true }).click();
+    await expect(page.getByText("Rôle · Agent", { exact: true })).toBeVisible();
+    await expect(page.getByRole("combobox", { name: "Rôle", exact: true })).toHaveCount(0);
+    await page.getByLabel("Nom complet *", { exact: true }).fill("Agent synthétique");
+    const email = `sp03-${randomUUID().replaceAll("-", "")}@example.com`;
+    const password = randomBytes(24).toString("base64url");
+    await privateFill(page, "Adresse e-mail *", email);
+    await privateFill(page, "Mot de passe *", password);
+    const created = page.waitForResponse(r => r.url().endsWith("/api/v1/users") && r.request().method() === "POST");
+    await page.getByRole("button", { name: "Créer le compte", exact: true }).click();
+    const response = await created;
+    if (response.status() !== 200) throw new Error("MANAGER_CREATE_DENIED");
+    const result = await response.json();
+    staff = { id: result.user.id, email, password };
+    await signIn(recipient, staff);
+    await page.getByRole("link", { name: "Gérer le compte", exact: true }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Compte agent");
+    await expect(page.getByRole("button", { name: "Supprimer l’utilisateur", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Horaires de travail", exact: true })).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const reset = page.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true });
+    await reset.focus(); await page.keyboard.press("Enter");
+    const dialog = page.getByRole("alertdialog");
+    const replacement = randomBytes(24).toString("base64url");
+    await privateFill(page, "Nouveau mot de passe", replacement);
+    await privateFill(page, "Votre mot de passe", manager.password);
+    await dialog.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    expect((await recipient.request.get("/api/v1/auth/me")).status()).toBe(401);
+    await clearActorContext(recipient); await signIn(recipient, { ...staff, password: replacement });
+    expect((await page.request.get(`/api/v1/users/${actor.id}`)).status()).toBe(404);
+  } finally { await context.close(); if (staff) await removeActor(staff); await removeActor(manager); }
 });
 
 test("Staff: real outage/retry, keyboard deletion confirmation and last admin conflict", async ({ page, actor }) => {

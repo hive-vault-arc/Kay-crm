@@ -142,6 +142,7 @@ def main() -> int:
             print(json.dumps({"id": str(row.id), "date": day.isoformat(), "processed": processed}))
         elif action == "work-run":
             from app.work.birthdays import deliver_birthdays
+            from app.work.coverage_reminders import deliver_coverage
             from app.work.worker import instant, run_once
 
             if set(command) != {"action", "clock"} or not isinstance(command["clock"], str):
@@ -158,7 +159,15 @@ def main() -> int:
             processed = 0
             while processed < 50 and run_once(database, clock):
                 processed += 1
-            print(json.dumps({"processed": processed + deliver_birthdays(database, clock)}))
+            print(
+                json.dumps(
+                    {
+                        "processed": processed
+                        + deliver_birthdays(database, clock)
+                        + deliver_coverage(database, clock)
+                    }
+                )
+            )
         elif action == "queue-status":
             from tests.queue_status import export_queue
 

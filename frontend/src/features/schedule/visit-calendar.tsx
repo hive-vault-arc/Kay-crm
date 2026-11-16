@@ -51,7 +51,10 @@ export function Calendar({ initial, actorId, administrator }: { initial: string;
   const active = types.length !== visitTypeOrder.length || statuses.length !== visitStatusOrder.length - 1 || statuses.includes("cancelled");
   function choose(value: string) { if (/^\d{4}-\d{2}-\d{2}$/.test(value) && value >= "2000-01-03" && value <= "2100-12-24" && calendarDay(value) === value) setDate(value); }
   function toggleType(type: Visit["type"]) { setTypes(values => values.includes(type) ? values.filter(value => value !== type) : [...values, type]); }
-  function toggleStatus(status: Visit["status"]) { setStatuses(values => values.includes(status) ? values.filter(value => value !== status) : [...values, status]); }
+  function toggleStatus(status: Visit["status"]) {
+    const matches = (value: Visit["status"]) => value === status || status === "confirmed" && value === "scheduled";
+    setStatuses(values => values.includes(status) ? values.filter(value => !matches(value)) : status === "confirmed" ? [...values, "confirmed", "scheduled"] : [...values, status]);
+  }
   if (scopeFailure) return <><PageHeader {...calendarTitle} actions={planVisit} /><RecordError error={scopeFailure} retry={() => { setScopeFailure(undefined); setCounts(undefined); setRevision(value => value + 1); }} /></>;
   return <Tabs value={displayed} onValueChange={value => { if (["week", "agenda", "types"].includes(value)) setView(value as View); }} className="kay-calendar">
     <div className="kay-calendar-controls">

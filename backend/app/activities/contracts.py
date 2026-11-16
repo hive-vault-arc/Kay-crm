@@ -1,10 +1,11 @@
 """Manual interaction fields never accept historical authors or business transitions."""
 
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self
 
-from pydantic import Field, StringConstraints, field_validator
+from pydantic import Field, StringConstraints, field_validator, model_validator
 
 from app.contacts.contracts import StrictBody
+from app.project_links.contracts import CatalogueTarget
 
 ActivityKind = Literal["note", "call", "message", "email", "meeting", "visit", "other"]
 MANUAL_KINDS = ("note", "call", "message", "email", "meeting", "visit", "other")
@@ -20,6 +21,7 @@ class NewActivity(StrictBody):
     duration_minutes: int | None = Field(default=None, strict=True, ge=1, le=1440)
     direction: Literal["inbound", "outbound"] | None = None
     projects: list[ProjectLabel] = Field(default_factory=list, max_length=3)
+    project_targets: list[CatalogueTarget] = Field(default_factory=list, max_length=3)
 
     @field_validator("projects")
     @classmethod
@@ -27,6 +29,16 @@ class NewActivity(StrictBody):
         if len({value.casefold() for value in values}) != len(values):
             raise ValueError("DUPLICATE_ACTIVITY_PROJECT")
         return values
+
+    @model_validator(mode="after")
+    def distinct_catalogue_targets(self) -> Self:
+        if self.projects and self.project_targets:
+            raise ValueError("ONE_ACTIVITY_PROJECT_FORMAT_REQUIRED")
+        if len({(item.development_id, item.property_id) for item in self.project_targets}) != len(
+            self.project_targets
+        ):
+            raise ValueError("DUPLICATE_ACTIVITY_PROJECT")
+        return self
 
 
 class ActivityQuery(StrictBody):

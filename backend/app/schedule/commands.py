@@ -29,32 +29,12 @@ from app.work.reminders import synchronize
 Body = NewVisit | EditVisit | VisitAction | FinishVisit | PolicySave
 
 
-def overlaps(session: Session, row: Visit, participant_ids: list[UUID]) -> bool:
-    return (
-        session.scalar(
-            select(Visit.id)
-            .join(VisitParticipant)
-            .where(
-                Visit.id != row.id,
-                Visit.status.in_(ACTIVE),
-                Visit.start_at < row.end_at,
-                Visit.end_at > row.start_at,
-                VisitParticipant.user_id.in_(participant_ids),
-            )
-            .limit(1)
-        )
-        is not None
-    )
-
-
-def booking_check(session: Session, row: Visit, fields: VisitFields) -> None:
+def booking_check(session: Session, row: Visit) -> None:
     if row.status not in ACTIVE:
         return
     error = hard_error(session, row, policy_view(session), row.id)
     if error:
         raise IdentityError(error, 409)
-    if overlaps(session, row, fields.participant_ids) and not fields.overlap_reason:
-        raise IdentityError("VISIT_OVERLAP_REASON_REQUIRED", 409)
 
 
 def fields_from_row(session: Session, row: Visit, reason: str) -> VisitFields:
@@ -91,7 +71,7 @@ def apply_visit(
             contact_id=contact.id,
             origin_contact_id=contact.id,
             organizer_user_id=identity.user.id,
-            status=body.status,
+            status="confirmed",
             version=1,
             updated_by_user_id=identity.user.id,
             policy_version=1,
@@ -121,26 +101,33 @@ def apply_visit(
             if row.status == "confirmed":
                 raise IdentityError("VISIT_STATE_UNCHANGED", 409)
             row.status = "confirmed"
+        elif action == "rescheduled" or isinstance(body, EditVisit) and row.status == "scheduled":
+            row.status = "confirmed"
         elif action in ("completed", "not_completed", "cancelled"):
             if not isinstance(body, FinishVisit) or (
                 action in ("completed", "not_completed") and row.status not in ACTIVE
             ):
                 raise IdentityError("INVALID_STATE", 422)
-            if action == "not_completed" and row.end_at > datetime.now(UTC):
+            if action in ("completed", "not_completed") and row.end_at > datetime.now(UTC):
                 raise IdentityError("VISIT_NOT_ENDED", 409)
             row.status, row.outcome = action, body.reason
-    row.enquiry_id = check_context(session, identity, row, fields, new=isinstance(body, NewVisit))
+    is_new = isinstance(body, NewVisit)
+    row.deal_id, row.enquiry_id = check_context(session, identity, row, fields, new=is_new)
     for name in (
         "title",
         "type",
         "location",
         "start_at",
         "end_at",
-        "deal_id",
         "property_id",
         "overlap_reason",
     ):
-        setattr(row, name, getattr(fields, name))
+        if (
+            is_new
+            or name not in {"title", "location", "overlap_reason"}
+            or name in fields.model_fields_set
+        ):
+            setattr(row, name, getattr(fields, name))
     # Old clients omit this field: unrelated edits must preserve stored notes.
     if "notes" in fields.model_fields_set:
         row.notes = fields.notes
@@ -150,7 +137,7 @@ def apply_visit(
         row.status,
     ):
         row.schedule_version += 1
-    booking_check(session, row, fields)
+    booking_check(session, row)
     row.updated_by_user_id, row.updated_at = identity.user.id, datetime.now(UTC)
     row.policy_version = int(str(policy_view(session)["version"]))
     session.execute(
@@ -226,6 +213,8 @@ def command(
             if receipt.request_hash != digest:
                 raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
             return receipt.result
+        if isinstance(body, NewVisit) and body.status == "draft":
+            raise IdentityError("INVALID_STATE", 422)
         if isinstance(body, PolicySave):
             with session.no_autoflush:
                 result, row = save(session, identity, body, secret), None

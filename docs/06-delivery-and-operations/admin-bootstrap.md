@@ -1,9 +1,9 @@
 # First-administrator bootstrap and initial credentials
 
-Status: bootstrap unchanged; D37 replaces staff activation/handoff with admin-chosen passwords. Local implementation evidence is recorded separately; real credential delivery/deployment remain human operations.
+Status: D46 governs staff passwords and manager access to agent accounts.
 Date: 2026-10-14  
 Confirmed decision: KAY will run a script manually on the deployed server to create the first administrator; there is no public bootstrap endpoint.  
-Technical proposals: bootstrap guard, hidden prompt and transaction remain; D37 supersedes the earlier in-person activation policy.
+Technical proposals: the bootstrap guard, hidden prompt and transaction remain. D46 supersedes D37’s first-login change and temporary expiry.
 References: [C01 scope](../../core-scope.md), [decisions](../../decisions.md), [security](../04-design/security-and-privacy.md), [data model](../04-design/data-model.md), [API contract](../04-design/api-contracts.md), [acceptance tests](../05-quality/acceptance-tests.md), [release procedure](release-and-recovery.md), and [OWASP password storage guidance](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
 
 ## Boundary
@@ -78,25 +78,25 @@ isolated test databases.
 
 The bootstrap operator and first administrator are the same person, so **no initial secret is delivered** to someone else. The first administrator verifies sign-in with their chosen password through the normal Vercel facade before creating staff accounts. A restore exercise must verify that the completed account and audit event persist and that replay does not create a second administrator.
 
-## Later staff accounts: D37 setup policy
+## Later staff accounts
 
-Administrators create named manager, agent or administrator accounts with an initial password they choose (12–1024 characters, not only spaces). The form masks it and offers deliberate reveal before submission. Only an Argon2id hash persists; the API returns safe user metadata, never the password. Accounts are active immediately, with a24-hour initial-password expiry and mandatory password change. There is no activation/handoff confirmation. The administrator privately distributes the chosen credential; KAY does not automatically send email/SMS/chat or copy it elsewhere.
+Administrators create staff accounts at any of the three roles. Managers can create agent accounts and reset agent passwords. The person creating or resetting the account chooses its password (12–1,024 characters, with at least one non-space character). The form masks it and offers deliberate reveal before submission. The stored password is an Argon2id hash, and the API returns safe user metadata. The responsible manager or administrator delivers the credential privately.
 
-First sign-in permits only own profile, password change and logout. The recipient chooses a different own password, then signs in freshly before CRM access. Expired initial credentials cannot create/continue sessions. Existing staff passwords, flags and sessions are unchanged. Existing legacy pending/disabled accounts remain unchanged until an explicit administrator reset; deleted accounts cannot reset or sign in.
+Staff can sign in directly with the chosen password. Reset requires the actor’s current password and revokes the target’s existing sessions. A legacy account carrying a temporary password, or a legacy disabled or pending account, needs an authorized reset before sign-in. Deleted accounts cannot be reset or used to sign in.
 
 ## Required verification before use
 
-Verify unchanged AT-37 bootstrap guards and D37 / AT-01/02/23/38 with synthetic PostgreSQL users: chosen initial/reset password, immediate restricted login, own-password change/fresh login, expiry, admin-current-password reset, role/current-version denial, safe same-key retries and atomic rollback. Deletion must revoke/hide access while preserving CRM attribution and last-final-admin protection. No password may appear in responses, receipts, logs, screenshots or reports. [Current evidence](../03-planning/staff-onboarding-deletion.md).
+Verify AT-37 bootstrap guards and D46 with synthetic PostgreSQL users. Cover direct sign-in with the chosen password, manager scope, current-password confirmation, revocation on reset, stale-version denial, same-key retries and rollback. Staff deletion preserves CRM attribution and the last-administrator protection. Passwords stay out of responses, receipts, logs, screenshots and reports. [QA commands](../QA_COMMANDS.md).
 
 ## Local staff operation
 
-After bootstrap and normal sign-in, an administrator opens Paramètres → Tous les
-utilisateurs → Créer un utilisateur. Enter name/email/role and choose the initial
-password. Reveal privately only when needed, then distribute it privately.
+After sign-in, open Paramètres → Utilisateurs → Créer un utilisateur. Enter the name,
+sign-in email and password. Administrators choose the role, and a manager’s form creates an agent.
+Reveal privately only when needed, then distribute it privately.
 Successful submission clears the form's secret state; GET cannot retrieve it.
 Do not preserve credentials in repository files, screenshots, logs or test reports.
 
-The person signs in immediately, chooses their own password and signs in freshly.
+The person signs in directly with that password.
 Supprimer l’utilisateur requires confirmation, removes access/list visibility and
 retains identity and CRM history. It is not a physical purge. To recover a lost/
 expired initial credential or a nondeleted legacy disabled account, choose a

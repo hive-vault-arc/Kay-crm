@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useDossierDraft } from "@/components/shared/dossier-form";
 import { FilePicker } from "@/components/shared/file-picker";
 import { RecordSection } from "@/components/shared/record-workspace";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -10,7 +11,7 @@ import { useQuery } from "@/features/contacts/use-query";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { ApiError } from "@/lib/api/client";
 import { apiCommand } from "@/lib/api/command";
-import { playbackTarget, videoArchived, videoErrors, videoList, type InventoryVideo } from "./video-contracts";
+import { playbackTarget, videoAccept, videoArchived, videoErrors, videoList, type InventoryVideo } from "./video-contracts";
 import { uploadVideo } from "./video-transfer";
 
 const statusLabel = {
@@ -31,6 +32,7 @@ export function InventoryVideos({ kind, id }: { kind: "property" | "development"
   const [progress, setProgress] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<ApiError>();
+  const [sent, setSent] = useState(false);
   const [selected, setSelected] = useState<string>();
   const [archiveId, setArchiveId] = useState<string>();
   const [archiveBusy, setArchiveBusy] = useState(false);
@@ -38,6 +40,7 @@ export function InventoryVideos({ kind, id }: { kind: "property" | "development"
   const browse = useRef<HTMLButtonElement>(null);
   const operation = useRef<AbortController | null>(null);
   const archiveOperation = useRef<AbortController | null>(null);
+  const draft = useDossierDraft(file ? { uploadId } : null, busy);
   useEffect(() => () => { operation.current?.abort(); archiveOperation.current?.abort(); }, []);
   const { refreshQuietly } = query;
   const active = query.value?.items.some(item => item.state === "queued" || item.state === "processing");
@@ -48,13 +51,15 @@ export function InventoryVideos({ kind, id }: { kind: "property" | "development"
   }, [active, refreshQuietly]);
 
   if (query.error) return <RecordSection title="Vidéos"><RecordError error={query.error} retry={query.refresh} /></RecordSection>;
-  if (!query.value?.enabled) return null;
+  if (!query.value) return <p role="status">Chargement des vidéos…</p>;
+  if (!query.value.enabled) return <p role="status">L’envoi et la lecture des vidéos sont désactivés sur ce serveur.</p>;
 
   function choose(value?: File) {
     if (operation.current) return;
     setFile(value);
     setProgress(0);
     setError(undefined);
+    setSent(false);
     setUploadId(value ? resume?.id ?? crypto.randomUUID() : undefined);
   }
 
@@ -68,9 +73,11 @@ export function InventoryVideos({ kind, id }: { kind: "property" | "development"
     try {
       await uploadVideo({ file, id: uploadId, parentKind: kind, parentId: id, signal: abort.signal, progress: setProgress });
       if (!abort.signal.aborted) {
+        draft.accept(null);
         setFile(undefined);
         setUploadId(undefined);
         setResume(undefined);
+        setSent(true);
       }
     } catch (reason) {
       if (!abort.signal.aborted) setError(reason instanceof ApiError ? reason : new ApiError("FILE_TRANSFER_INTERRUPTED", 503));
@@ -108,9 +115,9 @@ export function InventoryVideos({ kind, id }: { kind: "property" | "development"
 
   const videos = query.value.items;
   return <RecordSection title="Vidéos">
-    <form className="grid gap-3" onSubmit={event => void send(event)} aria-busy={busy}>
+    <form aria-label="Ajouter une vidéo" className="grid gap-3" onSubmit={event => void send(event)} data-draft-managed data-live-dirty={draft.dirty || undefined} aria-busy={busy}>
       <FilePicker id={fieldId} label={resume ? `Vidéo à reprendre · ${resume.filename}` : "Vidéo à ajouter"}
-        accept=".mov,.mp4,video/quicktime,video/mp4" description="MOV ou MP4 · 3 minutes et 300 Mo maximum · jusqu’à 5 vidéos."
+        accept={videoAccept} description="MP4 ou MOV (iPhone) · 3 minutes et 300 Mo maximum par vidéo · jusqu’à 5 vidéos."
         inputRef={input} browseRef={browse} selected={file} choose={value => choose(value)} disabled={!hydrated || busy} />
       {file ? <div className="flex flex-wrap items-center gap-2">
         <Button action={error ? "retry" : "upload"} type="submit" disabled={!hydrated || busy}>{busy ? "Envoi en cours…" : error ? "Réessayer" : resume ? "Reprendre l’envoi" : "Ajouter la vidéo"}</Button>
@@ -119,6 +126,7 @@ export function InventoryVideos({ kind, id }: { kind: "property" | "development"
       </div> : null}
       {resume && !busy ? <Button action="cancel" type="button" variant="outline" className="justify-self-start" onClick={() => { setResume(undefined); setFile(undefined); setUploadId(undefined); setError(undefined); }}>Annuler la reprise</Button> : null}
     </form>
+    {sent ? <p role="status" className="text-info">Vidéo envoyée. Elle sera disponible après l’analyse antivirus et la compression.</p> : null}
     {error && !archiveId ? <p role="alert" className="text-sm text-danger">{videoErrors[error.code] ?? error.message}</p> : null}
     {videos.length ? <ul className="grid gap-3">{videos.map(video => (
       <li key={video.id} className="grid min-w-0 gap-2 rounded-md border p-3">

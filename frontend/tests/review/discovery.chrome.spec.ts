@@ -15,14 +15,14 @@ test("SP19 visible Chrome: search/export/lifecycle/audit, states, keyboard, touc
     await expect(target.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
     await target.evaluate(() => { for (const animation of document.getAnimations()) { if (animation.effect?.getComputedTiming().iterations !== Infinity) animation.finish(); } });
     const cdp = await target.context().newCDPSession(target);
-    try { if (full) await target.evaluate(() => scrollTo(0, 0)); const metrics = full ? await cdp.send("Page.getLayoutMetrics") : undefined, width = await target.evaluate(() => innerWidth); const shot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, ...(metrics ? { captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: metrics.cssContentSize.height, scale: 1 } } : {}) }); const bytes = Buffer.from(shot.data, "base64"); await writeFile(`output/playwright/sp19-${name}.png`, bytes); if (["search-desktop", "search-mobile"].includes(name)) await writeFile(`../.impeccable/review/${name.endsWith("desktop") ? "desktop" : "mobile"}.png`, bytes); } finally { await cdp.detach(); }
+    try { if (full) await target.evaluate(() => scrollTo(0, 0)); const metrics = full ? await cdp.send("Page.getLayoutMetrics") : undefined, width = await target.evaluate(() => innerWidth); const shot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, ...(metrics ? { captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: metrics.cssContentSize.height, scale: 1 } } : {}) }); const bytes = Buffer.from(shot.data, "base64"); await writeFile(`output/playwright/sp19-${name}.png`, bytes); } finally { await cdp.detach(); }
   }
   async function sheetGeometry(target: Page) {
     const measured = await target.locator('[data-slot="sheet-content"]').evaluate(el => ({ overflow: el.scrollWidth > el.clientWidth, controls: [...el.querySelectorAll("button,input,select")].map(control => { const r = control.getBoundingClientRect(); return { width: r.width, height: r.height }; }), padding: getComputedStyle(el).padding }));
     expect(measured.overflow).toBe(false); expect(measured.controls.filter(c => c.width < 44 || c.height < 44)).toEqual([]); return measured;
   }
   try {
-    await mkdir("output/playwright", { recursive: true }); await mkdir("../.impeccable/review", { recursive: true }); await page.setViewportSize({ width: 1440, height: 1000 });
+    await mkdir("output/playwright", { recursive: true }); await page.setViewportSize({ width: 1440, height: 1000 });
     const data = await discoveryFixture(page, actors); monitor(page);
     await page.goto("/leads"); await expect(page.getByRole("button", { name: "Exporter les résultats filtrés", exact: true })).toBeVisible(); await page.getByRole("button", { name: "Exporter les résultats filtrés", exact: true }).click(); await geometry(page); await capture(page, "export-confirmation-desktop", true);
     await page.getByRole("button", { name: "Annuler", exact: true }).click();

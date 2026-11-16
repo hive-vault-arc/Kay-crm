@@ -7,6 +7,7 @@ const groups: Record<string, string[]> = {
   visits: ["visits", "tasks", "contacts", "inventory"], calendar: ["visits"],
   "visit-schedule": ["visits"], tasks: ["tasks", "contacts", "visits"],
   notifications: ["notifications", "tasks", "visits", "contacts"],
+  coverage: ["notifications", "contacts", "enquiries", "deals"],
   reports: ["reports"], commissions: ["finance"], documents: ["files"], files: ["files"],
   imports: ["imports"], exports: ["exports"], work: ["tasks", "visits", "contacts", "enquiries", "deals"],
   users: ["identity"], requirements: ["requirements", "inventory"], search: ["contacts", "enquiries", "deals", "inventory", "files"],
@@ -15,6 +16,7 @@ const groups: Record<string, string[]> = {
   audit: ["contacts", "deals", "inventory", "visits", "tasks", "files", "finance", "imports", "exports", "identity"],
 };
 export function matchesTopics(path: string, topics: string[]) {
+  if (/^\/api\/v1\/(enquiries|deals)\/[a-f0-9-]{36}\/project-links(?:\?|$)/.test(path) && topics.includes("project-links")) return true;
   if (/^\/api\/v1\/reports\/workspace(?:[/?]|$)/.test(path) && topics.some(topic => ["reports", "contacts", "enquiries", "deals", "inventory", "tasks", "visits"].includes(topic))) return true;
   if (path === "/api/v1/work/holidays") return topics.includes("holidays") || topics.includes("identity");
   const ownerPortfolio = /^\/api\/v1\/contacts\/[a-f0-9-]{36}\/portfolio(?:\?|$)/.test(path);

@@ -44,9 +44,34 @@ test("Settings authority denial hides both summaries; transient failures keep in
  const html=renderToStaticMarkup(createElement(View));assert.ok(html.includes("DEPENDENCY_UNAVAILABLE"));assert.ok(!html.includes("Synthetic colleague"));assert.ok(html.includes("7 / heure"));
 });
 
-test("Settings route wrappers retain exact administrator gates before rendering sections",async()=>{
- for(const [file,path] of [["page.tsx","/settings"],["working-hours/page.tsx","/settings/working-hours"],["users/new/page.tsx","/settings/users/new"]]){
-  const destinations=[];let allowed=false;const {default:Page}=loadServer(`src/app/(workspace)/settings/${file}`,{modules:{"react/jsx-runtime":runtime,"@/features/users/access":{adminAccess:async destination=>{destinations.push(destination);return allowed?{actorId:"synthetic-actor",denied:null}:{denied:"DENIED"};}},"@/features/users/settings-workspace":{SettingsWorkspace:"Workspace"},"@/features/users/settings-overview":{SettingsOverview:"Overview"},"@/features/schedule/working-hours":{WorkingHours:"Hours"},"@/features/users/user-form":{UserForm:"UserForm"}}});
-  assert.equal(await Page(),"DENIED");allowed=true;const rendered=await Page();if(path.endsWith("/new"))assert.equal(rendered.props.actorId,"synthetic-actor");else assert.equal(rendered.props.route,path);assert.deepEqual(destinations,[path,path]);
+test("Settings routes admit managers only to agent management", async () => {
+ for (const [file, path, gate] of [["page.tsx", "/settings", "staff"], ["working-hours/page.tsx", "/settings/working-hours", "admin"], ["users/new/page.tsx", "/settings/users/new", "staff"]]) {
+  const destinations = [];
+  let role = "agent";
+  const access = expected => async destination => {
+    destinations.push([expected, destination]);
+    return role === "administrator" || (expected === "staff" && role === "manager")
+      ? { actorId: "synthetic-actor", denied: null, manager: role === "manager" }
+      : { denied: "DENIED" };
+  };
+  const { default: Page } = loadServer(`src/app/(workspace)/settings/${file}`, { modules: {
+    "react/jsx-runtime": runtime,
+    "next/navigation": { redirect: destination => { throw new Error(destination); } },
+    "@/features/users/access": { adminAccess: access("admin"), staffAccess: access("staff") },
+    "@/features/users/settings-workspace": { SettingsWorkspace: "Workspace" },
+    "@/features/users/settings-overview": { SettingsOverview: "Overview" },
+    "@/features/schedule/working-hours": { WorkingHours: "Hours" },
+    "@/features/users/user-form": { UserForm: "UserForm" },
+  } });
+  assert.equal(await Page(), "DENIED");
+  role = "administrator";
+  const rendered = await Page();
+  if (path.endsWith("/new")) assert.equal(rendered.props.actorId, "synthetic-actor");
+  else assert.equal(rendered.props.route, path);
+  role = "manager";
+  if (path === "/settings") await assert.rejects(Page(), { message: "/settings/users" });
+  else if (gate === "admin") assert.equal(await Page(), "DENIED");
+  else assert.equal((await Page()).props.agentAccountsOnly, true);
+  assert.deepEqual(destinations, Array(3).fill([gate, path]));
  }
 });

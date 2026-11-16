@@ -27,6 +27,9 @@ const page = (items, extra = {}) => work.notificationsSchema.parse({ items, page
 const businessDate = { formatBusinessDate: value => value };
 const holidays = loadServer("src/features/work/holiday-contracts.ts", { modules: { "@/lib/format": businessDate } });
 const ui = { "./holiday-contracts": holidays, "./contracts": work, "react/jsx-runtime": runtime, "next/link": { default: "Link" }, "@/components/icons": { NotificationIcon: "Icon", CalendarIcon: "Calendar", TaskIcon: "Task", CompletedIcon: "Completed", FileIcon: "File" }, "@/components/ui/button": { Button: "Button" }, "@/components/ui/badge": { Badge: "Badge" }, "@/components/ui/popover": { Popover: "Popover", PopoverContent: "PopoverContent", PopoverTrigger: "Trigger" }, "@/components/shared/record-drawer": { RecordDrawer: "Drawer" }, "@/components/shared/record-entry": { RecordEntry: "Entry" }, "@/components/shared/crm-presentation": { CrmStatusBadge: "Status" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/numbered-pages": { NumberedPages: "Pages" }, "@/features/realtime/notification-bell": { LiveNotificationIcon: "Bell" }, "@/features/realtime/push-control": { PushControl: "Push" }, "@/lib/format": { ...businessDate, formatInstant: value => value }, "@/features/schedule/time": { localLabel: value => value }, "./notification-panel": { NotificationPanel: "Panel" }, "./notification-controls": { NotificationFilters: "Filters", NotificationProblem: "Problem" } };
+const icons = { ...ui["@/components/icons"], BirthdayIcon: "Birthday", ClockIcon: "Clock", EmailIcon: "Email", FlagIcon: "Flag", PhoneIcon: "Phone", RefreshIcon: "Refresh" };
+const display = loadServer("src/features/work/notification-display.ts", { modules: { "@/components/icons": icons } });
+ui["./notification-display"] = display;
 function setup({ size = 10, state = "all", hydrated = true, command, rows } = {}) {
   const h = harness(), first = item(), second = item({ kind: "visit.follow_up", href: `/visits/${randomUUID()}` }), query = { value: page(rows ?? [first, second], { page_size: size }), refresh() { query.value = undefined; delete query.error; refreshes++; } }, calls = [], paths = [], events = [];
   let refreshes = 0;
@@ -134,9 +137,28 @@ test("full inbox retains task/visit/file details, push controls, twenty-row page
   feed.authority = new ApiError("FORBIDDEN", 403); feed.value = undefined; feed.problem = feed.authority; view = render(); assert.equal(find(view, "Entry").length, 0); assert.equal(find(view, "Push").length, 0); assert.equal(find(view, "span").some(node => node.props.className === "kay-work-count"), false);
 });
 
-test("bell shows the selected discreet indicator with the real full accessible count, and hides denied or malformed counts", () => {
-  const s = setup(), query = { value: page([s.first], { page_size: 1, total: 120, unread_total: 120, has_next: true }) }, loaded = loadServer("src/features/realtime/notification-bell.tsx", { modules: { ...ui, "@/features/contacts/use-query": { useQuery: () => query }, "@/features/work/contracts": work, "@/features/work/notification-feed": s.feed } });
-  let view = loaded.LiveNotificationIcon(); const dot = find(view, "span").find(node => node.props.className === "kay-notification-dot"); assert.equal(dot.props["aria-label"], "120 notifications non lues"); assert.ok(!text(view).includes("99+")); query.error = new ApiError("FORBIDDEN", 403); assert.equal(find(loaded.LiveNotificationIcon(), "span").some(node => node.props.className === "kay-notification-dot"), false); delete query.error; query.value = page([s.first], { page_size: 20 }); assert.equal(find(loaded.LiveNotificationIcon(), "span").some(node => node.props.className === "kay-notification-dot"), false);
+test("the bell shows just its icon and the accessible unread count, and refreshes in a visible tab", () => {
+  const h = harness(), s = setup(), events = new Map(), document = { visibilityState: "visible", addEventListener: (event, handler) => events.set(event, handler), removeEventListener: event => events.delete(event) };
+  const input = item({ kind: "contact.birthday.eve", href: `/contacts/${randomUUID()}` });
+  let refreshed = 0;
+  const query = { value: page([input], { page_size: 1, total: 120, unread_total: 120, has_next: true }), refreshQuietly: () => refreshed++ };
+  const loaded = loadServer("src/features/realtime/notification-bell.tsx", { modules: { ...ui, react: h.react, "@/features/contacts/use-query": { useQuery: (path, _, revision) => { assert.equal(path, "/api/v1/notifications?state=unread&page=1&page_size=1"); assert.equal(revision, 2); return query; } }, "@/features/work/contracts": work, "@/features/work/notification-feed": s.feed }, globals: { document, window: { setInterval: handler => events.set("timer", handler), clearInterval: () => events.delete("timer"), addEventListener: document.addEventListener, removeEventListener: document.removeEventListener } } });
+  const render = () => h.render(() => loaded.LiveNotificationIcon({ revision: 2, descriptionId: "unread" }));
+  const badge = view => find(view, "span").find(node => node.props.className === "kay-notification-count");
+  let view = render(); assert.equal(badge(view).props["aria-label"], "120 notifications non lues"); assert.equal(text(badge(view)), "99+"); assert.equal(find(view, "Icon").length, 1); assert.equal(text(find(view, "span").find(node => node.props.id === "unread")), "120 notifications non lues");
+  query.value = page([input], { page_size: 1 }); view = render(); assert.equal(badge(view).props["aria-label"], "1 notification non lue"); assert.equal(text(badge(view)), "1");
+  query.error = new ApiError("FORBIDDEN", 403); assert.equal(badge(render()), undefined);
+  delete query.error; query.value = page([s.first], { page_size: 20 }); assert.equal(badge(render()), undefined);
+  document.visibilityState = "hidden"; events.get("timer")(); assert.equal(refreshed, 0);
+  document.visibilityState = "visible"; events.get("visibilitychange")(); assert.equal(refreshed, 1); h.unmount(); assert.equal(events.size, 0);
+});
+
+test("notification actions with the same wire kind get distinct icons", () => {
+  for (const [action, icon] of [["Appeler le prospect", "Phone"], ["Call back tomorrow", "Phone"], ["Relance du prospect", "Refresh"], ["Préparer un e-mail au prospect", "Email"], ["Vérifier le dossier", "Clock"]]) {
+    assert.equal(display.notificationType(item({ context: action, title: "Rappel à traiter" })).Icon, icon);
+  }
+  assert.equal(display.notificationType(item({ context: "Appelant inconnu" })).Icon, "Task");
+  assert.equal(display.notificationType(item({ kind: "visit.follow_up", href: `/visits/${randomUUID()}` })).Icon, "File");
 });
 
 

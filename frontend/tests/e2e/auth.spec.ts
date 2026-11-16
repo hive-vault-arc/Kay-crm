@@ -98,9 +98,9 @@ test("AT-39: agent/manager Settings denial, scoped empty dashboard, shared Proje
       await signIn(page, actor);
       await expect(page.getByText("Vos priorités et rendez-vous, en un regard.", { exact: true })).toBeVisible();
       await expect(page.getByText(role === "agent" ? /^Dossiers attribués ou partagés\./ : /^Périmètre de l’agence\./)).toBeAttached();
-      await expect(page.getByText("Paramètres", { exact: true })).toHaveCount(0);
       await page.goto("/settings");
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText("Accès non autorisé");
+      if (role === "agent") await expect(page.getByRole("heading", { level: 1 })).toHaveText("Accès non autorisé");
+      else await expect(page).toHaveURL(/\/settings\/users$/);
       await page.goto("/projects");
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("Projets");
       const account = await openWorkspaceAccount(page);
@@ -110,26 +110,16 @@ test("AT-39: agent/manager Settings denial, scoped empty dashboard, shared Proje
   }
 });
 
-test("AT-37/38 scoped: restricted change, validation and required fresh login", async ({ page }) => {
+test("AT-38: legacy password requires a privileged reset", async ({ page }) => {
   const actor = await createActor("agent", true);
-  const replacement = randomBytes(24).toString("base64url");
   try {
-    await signIn(page, actor);
-    await expect(page).toHaveURL(/\/change-password$/);
-    await page.goto("/projects");
-    await expect(page).toHaveURL(/\/change-password$/);
-    await page.getByRole("button", { name: "Changer le mot de passe", exact: true }).click();
-    await expect(page.getByText("Choisissez au moins 12 caractères.", { exact: true })).toBeVisible();
-    try {
-      await page.getByLabel("Mot de passe actuel", { exact: true }).fill(actor.password);
-      await page.getByLabel("Nouveau mot de passe", { exact: true }).fill(replacement);
-      await page.getByLabel("Confirmer le nouveau mot de passe", { exact: true }).fill(replacement);
-    } catch { throw new Error("SYNTHETIC_PASSWORD_CHANGE_INPUT_FAILED"); }
-    await page.getByRole("button", { name: "Changer le mot de passe", exact: true }).click();
-    await expect(page).toHaveURL(/\/login\?changed=1$/);
-    await expect(page.getByRole("status")).toContainText("Mot de passe modifié.");
-    await signIn(page, { ...actor, password: replacement });
-    await expect(page).toHaveURL(/\/dashboard$/);
+    await page.goto("/login");
+    const origin = new URL(page.url()).origin;
+    const response = await page.request.post("/api/v1/auth/login", {
+      headers: { Origin: origin }, data: { email: actor.email, password: actor.password },
+    });
+    expect(response.status()).toBe(401);
+    expect((await page.request.post("/api/v1/auth/change-password", { data: {} })).status()).toBe(404);
   } finally { await removeActor(actor); }
 });
 

@@ -10,7 +10,7 @@ async function walk(directory) {
     entry.isDirectory() ? walk(path.join(directory, entry.name)) : path.join(directory, entry.name)))).flat();
 }
 const files = (await walk(path.join(root, "src"))).filter(file => /\.[cm]?[jt]sx?$/.test(file)).sort();
-const selected = JSON.parse(await readFile(path.join(root, "../branding/prototype/kay-glyphs.json"), "utf8"));
+const selected = JSON.parse(await readFile(path.join(root, "src/lib/design/kay-glyphs.json"), "utf8"));
 const shapeTags = new Set(["path", "circle", "rect", "ellipse", "line", "polyline", "polygon"]);
 for (const icon of selected.icons) {
   assert.equal(createHash("sha256").update(JSON.stringify(icon.nodes)).digest("hex"), icon.sha256, `Selected glyph source changed: ${icon.export}`);

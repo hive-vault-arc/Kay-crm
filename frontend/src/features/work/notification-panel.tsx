@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useId, useRef } from "react";
-import { CalendarIcon, CompletedIcon, NotificationIcon, TaskIcon } from "@/components/icons";
+import { CalendarIcon, CompletedIcon, NotificationIcon } from "@/components/icons";
 import { CrmStatusBadge } from "@/components/shared/crm-presentation";
 import { RecordEntry } from "@/components/shared/record-entry";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { localLabel } from "@/features/schedule/time";
 import { PushControl } from "@/features/realtime/push-control";
 import { formatBusinessDate, formatInstant } from "@/lib/format";
 import { NotificationFilters, NotificationProblem } from "./notification-controls";
+import { notificationType } from "./notification-display";
 import { useNotificationFeed, type NotificationState } from "./notification-feed";
 import { holidayNotice } from "./holiday-contracts";
 import { isBirthdayNotification } from "./contracts";
@@ -21,7 +22,7 @@ export function NotificationPanel({ initialState = "all", navigate }: { initialS
     {!feed.value ? !feed.problem ? <p role="status">Chargement des notifications…</p> : null : <>{feed.value.items.length ? <ul className="kay-work-list">{feed.value.items.map(item => {
       const birthday = isBirthdayNotification(item.kind);
       const holiday = "start_on" in item;
-      const Icon = birthday || holiday || item.kind.startsWith("visit.") ? CalendarIcon : TaskIcon;
+      const { Icon } = notificationType(item);
       const due = holiday ? [{ label: "Date du jour férié", icon: CalendarIcon, value: holidayNotice(item) }] : item.due_local ? [{ label: birthday ? "Date de l’anniversaire" : "Échéance", icon: CalendarIcon, value: birthday ? formatBusinessDate(item.due_local.slice(0, 10)) : localLabel(item.due_local) }] : [];
       const StateIcon = item.read_at ? CompletedIcon : NotificationIcon;
       return <li key={item.id}><RecordEntry title={item.title} icon={Icon} status={<CrmStatusBadge state={item.read_at ? "draft" : "in_progress"} dot={false}><StateIcon size={12} aria-hidden="true" />{item.read_at ? "Lue" : "Non lue"}</CrmStatusBadge>} meta={due} actions={<>{item.href ? <Button action="forward" asChild variant="quiet"><Link href={item.href} onClick={navigate}>{birthday ? "Ouvrir le contact" : "Ouvrir le dossier"}</Link></Button> : null}{!item.read_at ? <Button action="read" type="button" variant="outline" disabled={!feed.hydrated || Boolean(feed.busy) || feed.uncertain} onClick={() => { void feed.markRead(item.id).then(saved => { if (saved) heading.current?.focus(); }); }}>{feed.busy === item.id ? "Enregistrement…" : "Marquer comme lue"}</Button> : null}</>}><p className="kay-notification-context">{item.context}</p><time className="kay-notification-time" dateTime={item.created_at}>{formatInstant(item.created_at)}</time></RecordEntry></li>;

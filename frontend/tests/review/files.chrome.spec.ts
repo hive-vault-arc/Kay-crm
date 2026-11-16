@@ -18,7 +18,6 @@ async function capture(page: Page, name: string) {
     const pixels = Buffer.from(result.data, "base64");
     await writeFile(path.resolve(`output/playwright/sp09-${name}.png`), pixels);
     if (name === "clean-desktop" || name === "clean-mobile") {
-      await mkdir(path.resolve("../.impeccable/review"), { recursive: true });
       const fullPage = await page.context().newPage();
       try {
         await fullPage.setViewportSize(page.viewportSize()!); await fullPage.goto(page.url());
@@ -33,7 +32,6 @@ async function capture(page: Page, name: string) {
           const full = await fullCdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: metrics.cssContentSize.height, scale: 1 } });
           const fullPixels = Buffer.from(full.data, "base64");
           const size = name === "clean-desktop" ? "desktop" : "mobile";
-          await writeFile(path.resolve(`../.impeccable/review/${size}.png`), fullPixels);
           await writeFile(path.resolve(`output/playwright/sp09-full-${size}.png`), fullPixels);
         } finally { await fullCdp.detach(); }
       } finally { await fullPage.close(); await page.bringToFront(); }

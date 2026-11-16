@@ -27,6 +27,7 @@ const href = z.string().max(250).regex(/^\/(?:(contacts|deals)\/[a-f0-9-]{36}\?t
 const notificationFields = { id: z.uuid(), title: z.string().max(160), context: z.string().max(160), created_at: instant, read_at: instant.nullable() };
 const birthdayKinds = ["contact.birthday.eve", "contact.birthday.today"] as const;
 export const notificationSchema = z.discriminatedUnion("kind", [
+  z.object({ ...notificationFields, kind: z.literal("coverage.note"), href: z.string().regex(/^\/(leads|deals)\/[a-f0-9-]{36}\?tab=handoff#notes-autres-agents$/), due_local: z.null() }).strict(),
   z.object({ ...notificationFields, kind: z.enum(["visit.reminder.day", "visit.reminder.hour", "visit.follow_up", "task.reminder.day", "task.reminder.hour", "task.due"]), href, due_local: instant.nullable() }).strict(),
   z.object({ ...notificationFields, kind: z.enum(birthdayKinds), href: z.string().regex(/^\/contacts\/[a-f0-9-]{36}$/), due_local: instant }).strict(),
   z.object({ ...notificationFields, kind: z.enum(["holiday.eve", "holiday.today"]), href: z.null(), due_local: instant, start_on: z.iso.date(), end_on: z.iso.date(), estimated: z.boolean(), corrected: z.boolean() }).strict(),

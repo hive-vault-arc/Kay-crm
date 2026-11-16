@@ -27,6 +27,7 @@ from app.shares.service import approve, issue, status
 from app.videos.models import InventoryVideo
 from app.videos.service import grant_playback, playback
 from app.videos.storage import VideoStorage
+from app.work.coverage_models import CoverageNote
 from tests.deal_support import run as deal_command
 from tests.recovery_support import build, clear_recovery
 
@@ -49,8 +50,22 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
     )
     listing_id = UUID(data["property_id"])
     link_id = uuid4()
+    note_id = uuid4()
+    note_author = UUID(data["other"]["id"])
+    note_deal = UUID(data["deal_id"])
+    note_body = "Passation synthétique à restaurer."
     secret = settings.facade_secret.get_secret_value()
     with database.session() as session, session.begin():
+        session.add(
+            CoverageNote(
+                id=note_id,
+                deal_id=note_deal,
+                author_user_id=note_author,
+                author_name="Agent synthétique de remplacement",
+                request_key=uuid4(),
+                body=note_body,
+            )
+        )
         identity = current_identity(session, data["active_token"])
         listing = status(session, identity, "property", listing_id)
         approve(
@@ -98,13 +113,20 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
     old_playback = grant_playback(database, data["active_token"], video_id)["grant"]
     point = create(settings)
     result = restore(settings, UUID(point["point_id"]), replace_recovery=True)
-    assert result["verified_tables"] == 84 and result["objects"] >= 3
+    assert result["verified_tables"] == 85 and result["objects"] >= 3
     assert 0 <= result["rpo_seconds"] <= 3600 and result["restore_seconds"] < 14400
     target = recovery_settings(settings)
     db = Database(target.selected_database_url())
     try:
         with db.session() as session:
             assert session.scalar(text("SELECT to_regclass('property_period') IS NOT NULL"))
+            note = session.get(CoverageNote, note_id)
+            assert note is not None
+            assert (note.deal_id, note.author_user_id, note.body) == (
+                note_deal,
+                note_author,
+                note_body,
+            )
             restored_link = session.get(ListingLink, link_id)
             assert restored_link is not None and restored_link.revoked_at is not None
             with pytest.raises(IdentityError, match="NOT_FOUND"):

@@ -90,7 +90,7 @@ test("help catalog has unique complete articles, valid categories, related guide
 
 test("help roles hide staff and manager guides from agents and reject copied article slugs", () => {
   assert.equal(helpArticleForRole("comptes-utilisateurs", "agent"), undefined);
-  assert.equal(helpArticleForRole("comptes-utilisateurs", "manager"), undefined);
+  assert(helpArticleForRole("comptes-utilisateurs", "manager"));
   assert.equal(helpArticleForRole("imports-exports", "agent"), undefined);
   assert.equal(helpArticleForRole("not-a-guide", "administrator"), undefined);
   assert(helpArticleForRole("comptes-utilisateurs", "administrator"));

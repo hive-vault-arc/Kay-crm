@@ -21,10 +21,12 @@ from app.schedule.contracts import (
     PolicyEdit,
     PolicySave,
     VisitAction,
+    VisitPropertyQuery,
 )
 from app.schedule.local_time import resolve_local
 from app.schedule.presentation import notes_projection
 from app.schedule.queries import availability, colleagues, detail, read_policy, read_visits
+from app.schedule.records import property_options
 from app.schedule.rules import ZONE
 
 router = APIRouter(prefix="/api/v1", dependencies=[Depends(facade_authority)], tags=["schedule"])
@@ -190,3 +192,11 @@ def staff(request: Request, token: Proof, contact_id: UUID | None = None) -> dic
     if set(request.query_params) - {"contact_id"}:
         raise IdentityError("VALIDATION_ERROR", 422)
     return colleagues(configuration(request)[0], token, contact_id)
+
+
+@router.get("/calendar/visit-properties")
+def linked_properties(
+    request: Request, token: Proof, query: Annotated[VisitPropertyQuery, Query()]
+) -> dict[str, object]:
+    validate_query(request)
+    return property_options(configuration(request)[0], token, query)

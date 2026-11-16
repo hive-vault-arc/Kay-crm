@@ -90,13 +90,13 @@ async def test_history_http_csrf_strict_fields_denied_private_and_put(
             await client.post(base + "/notes", headers=headers(at), json={"body": "synthetic"})
         ).status_code == 200
         draft = intent("collaborators", collaborator_ids=[str(b)])
+        payload = draft.model_dump(mode="json", exclude_unset=True)
         assert (
-            await client.post(
-                base + "/preview",
-                headers=headers(at),
-                json=draft.model_dump(mode="json", exclude_unset=True),
-            )
-        ).status_code == 403
+            await client.post(base + "/preview", headers=headers(at), json=payload)
+        ).status_code == 200
+        assert (
+            await client.post(base + "/preview", headers=headers(bt), json=payload)
+        ).status_code == 404
         body = confirmation(settings, database, mt, target, draft)
         wrong = await client.post(
             base + "/archive",
@@ -113,6 +113,14 @@ async def test_history_http_csrf_strict_fields_denied_private_and_put(
         history = await client.get(base + "/timeline", headers=read_headers(bt))
         assert history.status_code == 200 and history.headers["cache-control"] == "no-store"
         assert str(a) in {item["actor"]["id"] for item in history.json()["items"]}
+        removal = intent("collaborators", version=2, collaborator_ids=[])
+        assert (
+            await client.post(
+                base + "/preview",
+                headers=headers(bt),
+                json=removal.model_dump(mode="json", exclude_unset=True),
+            )
+        ).status_code == 403
 
 
 def test_retry_changed_body_role_denial_and_note_single_effect(

@@ -30,8 +30,8 @@ for (const operation of ["profile", "reset"] as const) {
       });
       if (operation === "reset") {
         await page.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).click();
-        await privateFill(page, "Nouveau mot de passe initial", randomBytes(24).toString("base64url"));
-        await privateFill(page, "Votre mot de passe administrateur", actor.password);
+        await privateFill(page, "Nouveau mot de passe", randomBytes(24).toString("base64url"));
+        await privateFill(page, "Votre mot de passe", actor.password);
         await page.getByRole("alertdialog").getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).click();
       } else {
         await privateFill(page, "Nom complet *", "Collaborateur synthétique modifié");
@@ -43,7 +43,7 @@ for (const operation of ["profile", "reset"] as const) {
       // Its native save control must still be disabled by the shared operation owner.
       await expect.poll(() => page.getByRole("button", { name: "Enregistrer", exact: true, includeHidden: true }).isDisabled()).toBe(true);
       if (operation === "reset") {
-        await expect.poll(() => page.getByLabel("Votre mot de passe administrateur", { exact: true }).isDisabled()).toBe(true);
+        await expect.poll(() => page.getByLabel("Votre mot de passe", { exact: true }).isDisabled()).toBe(true);
         await page.keyboard.press("Escape");
         await expect.poll(() => page.getByRole("alertdialog").isVisible()).toBe(true);
       } else {

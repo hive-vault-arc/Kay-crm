@@ -35,6 +35,8 @@ import { campaignLabels, ratingLabels } from "./qualification-contracts";
 import { ContactProfilePanel } from "./contact-profile-panel";
 import { LeadStatusMenu } from "./lead-status-menu";
 import { RecordSupportTasks } from "@/features/work/record-support-tasks";
+import { ScopedCoverageNotes } from "@/features/handoff/coverage-notes";
+import { CollaborationAction } from "./collaboration-action";
 
 type Props = { id: string; edit?: boolean; role?: StaffRole; actorId?: string; initialTab?: string; initialTask?: string };
 export function LeadRecord(props: Props) { return <LeadRecordLifetime key={`${props.id}:${props.actorId ?? ""}:${props.role ?? "agent"}`} {...props} />; }
@@ -74,6 +76,7 @@ function LeadRecordLifetime({ id, edit = false, role = "agent", actorId, initial
         <CrmStatusBadge state={enquiry.rating} dot={false}>{ratingLabels[enquiry.rating]}</CrmStatusBadge>
         {enquiry.archived_at ? <CrmStatusBadge state="archived">Archivé</CrmStatusBadge> : null}</>}
       actions={<>
+        {writable ? <CollaborationAction contact={enquiry.contact} role={role} actorId={actorId} changed={refreshQuietly} /> : null}
         {writable && (canEdit || enquiry.converted_deal_id) ? <ConvertLead enquiry={enquiry} actorId={actorId} role={role} onRefresh={refreshQuietly} denied={(failure, acknowledged) => { setNotice(acknowledged ? "La conversion est enregistrée. Les droits d’accès ont changé." : ""); setScopeError(failure); }} /> : null}
         {canEdit || canArchive || projection.holding ? <RecordActions>
           {canEdit ? <Button action="edit" asChild variant="quiet"><Link href={`/leads/${id}/edit`}>Modifier</Link></Button> : null}
@@ -97,6 +100,7 @@ function LeadRecordLifetime({ id, edit = false, role = "agent", actorId, initial
         </RecordSection>
         {enquiry.converted_at ? <RecordSection title="Conversion"><p className="text-sm text-muted-foreground">Converti le {formatInstant(enquiry.converted_at)}. L’origine et l’historique sont conservés.</p>{enquiry.converted_deal_id ? <Button action="forward" variant="outline" asChild><Link href={`/deals/${enquiry.converted_deal_id}`}>Voir l’affaire</Link></Button> : null}</RecordSection> : null}
         <div className="kay-sales-secondary"><RecordDrawer label="Recherches du contact" action="search" description="Critères de recherche liés à ce contact."><RequirementPanel contactId={enquiry.contact.id} writable={writable} /></RecordDrawer></div>
+        {writable ? <ScopedCoverageNotes kind="enquiries" id={id} /> : null}
       </> },
       { id: "projects", label: "Projets", content: <ProjectLinksPanel scope="enquiries" id={id} writable={writable} onChanged={() => setHistoryRevision(value => value + 1)} /> },
       { id: "activity", label: "Activités", content: <div className="kay-sales-history"><ActivityHistory key={id} scope="enquiries" id={id} writable={writable} denied={activityDenied} revision={enquiry.version + historyRevision} /></div> },

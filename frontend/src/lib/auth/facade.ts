@@ -2,7 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { facadeError, upstreamRequest } from "@/lib/api/facade";
-import { changeSchema, loginSchema, meSchema, SESSION_COOKIE } from "./contracts";
+import { loginSchema, meSchema, SESSION_COOKIE } from "./contracts";
 
 const tokenResponse = z.object({
   session_token: z.string().regex(/^[A-Za-z0-9_-]{43}$/),
@@ -41,10 +41,9 @@ export async function relayAuth(key: string, request: Request, requestId: string
   if (mutation && request.headers.get("Origin") !== frontendOrigin())
     return facadeError(403, "FORBIDDEN", requestId);
   let body: string | undefined;
-  if (key === "auth/login" || key === "auth/change-password") {
+  if (key === "auth/login") {
     try {
-      const schema = key === "auth/login" ? loginSchema : changeSchema;
-      const parsed = schema.safeParse(await boundedJson(request));
+      const parsed = loginSchema.safeParse(await boundedJson(request));
       if (!parsed.success) return facadeError(422, "VALIDATION_ERROR", requestId);
       body = JSON.stringify(parsed.data);
     } catch { return facadeError(422, "VALIDATION_ERROR", requestId); }
@@ -72,10 +71,7 @@ export async function relayAuth(key: string, request: Request, requestId: string
       result = { signed_in: true };
     } else if (key === "auth/me") result = meSchema.parse(upstream.body);
     else {
-      const schema = key === "auth/logout"
-        ? z.object({ signed_out: z.literal(true) }).strict()
-        : z.object({ fresh_login_required: z.literal(true) }).strict();
-      result = schema.parse(upstream.body);
+      result = z.object({ signed_out: z.literal(true) }).strict().parse(upstream.body);
       jar.set(SESSION_COOKIE, "", { ...cookieOptions, maxAge: 0 });
     }
     return Response.json(result, { headers: { "Cache-Control": "no-store", "X-Request-ID": requestId } });

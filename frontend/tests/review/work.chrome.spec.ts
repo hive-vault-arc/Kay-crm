@@ -34,7 +34,6 @@ async function capture(page: Page, name: string, full = false) {
     const shot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, ...(metrics ? { captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: metrics.cssContentSize.height, scale: 1 } } : {}) });
     const bytes = Buffer.from(shot.data, "base64");
     await writeFile(path.resolve(`output/playwright/sp15-${name}.png`), bytes);
-    if (["dashboard-desktop", "dashboard-mobile"].includes(name)) await writeFile(path.resolve(`../.impeccable/review/${name.endsWith("desktop") ? "desktop" : "mobile"}.png`), bytes);
   } finally { await cdp.detach(); }
 }
 
@@ -77,7 +76,7 @@ test("SP15 visible Chrome: work, inbox, retained task recovery, roles and actual
   let profile: string | undefined, zoomContext: Awaited<ReturnType<typeof chromium.launchPersistentContext>> | undefined;
   function monitor(target: Page) { target.on("pageerror", () => errors.push("PAGE_ERROR")); target.on("console", message => { if (message.type() !== "error") return; const location = new URL(message.location().url || "https://localhost").pathname; const code = message.text().match(/net::ERR_[A-Z_]+|status of [0-9]{3}/)?.[0] ?? "UNCLASSIFIED"; if (expectedEndpoints.has(location) && /status of (403|404|409|503)|net::ERR_CONNECTION_FAILED/.test(code)) expectedErrors.push(code); else errors.push(`CONSOLE_ERROR:${code}`); }); }
   monitor(page); monitor(mobile);
-  await mkdir(path.resolve("output/playwright"), { recursive: true }); await mkdir(path.resolve("../.impeccable/review"), { recursive: true });
+  await mkdir(path.resolve("output/playwright"), { recursive: true });
   try {
     await page.setViewportSize({ width: 1440, height: 1000 });
     const { agent, contactId, now } = await workFixture(page, actors);
@@ -116,7 +115,7 @@ test("SP15 visible Chrome: work, inbox, retained task recovery, roles and actual
     await runReminders(new Date("2030-01-06T10:30:00Z")); await page.goto("/dashboard");
     let reminderItem = page.getByRole("region", { name: "Notifications internes", exact: true }).getByRole("listitem").filter({ hasText: "Rappel de visite : J-1" });
     await expect(reminderItem).toHaveCount(1); await capture(page, "reminder-desktop", true); await reminderItem.getByRole("link").click();
-    await page.getByRole("button", { name: "Modifier ou replanifier la visite", exact: true }).click(); await setVisitTimes(page, "2030-01-09T10:30", "2030-01-09T11:30"); await page.getByRole("button", { name: "Replanifier la visite", exact: true }).click(); await expect(page.getByText("Visite enregistrée. Son historique et son auteur sont conservés.", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Modifier ou replanifier la visite", exact: true }).click(); await setVisitTimes(page, "2030-01-09T10:30"); await page.getByRole("button", { name: "Replanifier la visite", exact: true }).click(); await expect(page.getByText("Visite enregistrée. Son historique et son auteur sont conservés.", { exact: true })).toBeVisible();
     await page.goto("/dashboard"); await expect(page.getByRole("heading", { name: "Rappel de visite : J-1", exact: true })).toHaveCount(0); await capture(page, "obsolete-reminder-desktop", true);
     expect((await runReminders(new Date("2030-01-08T10:30:00Z"))).processed).toBe(1); await page.getByRole("button", { name: "Actualiser les notifications", exact: true }).click();
     reminderItem = page.getByRole("region", { name: "Notifications internes", exact: true }).getByRole("listitem").filter({ hasText: "Rappel de visite : J-1" }); await expect(reminderItem).toHaveCount(1); await reminderItem.scrollIntoViewIfNeeded(); await capture(page, "rescheduled-reminder-desktop"); await reminderItem.getByRole("link").click(); await expect(page).toHaveURL(new RegExp(`/visits/${reminderVisit}$`));

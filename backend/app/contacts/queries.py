@@ -8,7 +8,13 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import ColumnElement, func, or_, select, text
 from sqlalchemy.orm import Session
 
-from app.contacts.access import check_phones, contact_scope, readable_contact
+from app.contacts.access import (
+    check_phones,
+    contact_scope,
+    readable_contact,
+    require_collaboration_manager,
+    scoped_contact,
+)
 from app.contacts.contracts import EnquiryStatus, ListQuery
 from app.contacts.directory import filter_contacts, page_dossier_counts
 from app.contacts.models import Contact, ContactEmail, ContactPhone, ContactRole, Enquiry
@@ -281,20 +287,36 @@ def resolve_phone(database: Database, token: str, phone: str) -> dict[str, bool]
         return {"available": True}
 
 
-def assignment_options(database: Database, token: str, query: ListQuery) -> dict[str, object]:
+def assignment_options(
+    database: Database,
+    token: str,
+    query: ListQuery,
+    *,
+    collaboration_for: UUID | None = None,
+) -> dict[str, object]:
     with database.session() as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
-        require_role(current_identity(session, token), {"manager"})
+        identity = current_identity(session, token)
+        if collaboration_for is None:
+            require_role(identity, {"manager"})
+            owner = None
+        else:
+            contact = scoped_contact(session, identity, collaboration_for)
+            require_collaboration_manager(identity, contact)
+            owner = contact.primary_agent_id
         users = (
             select(User)
             .join(Credential)
             .where(
                 User.role == "agent",
                 User.state == "active",
+                User.deleted_at.is_(None),
                 Credential.must_change_password.is_(False),
                 Credential.temporary_expires_at.is_(None),
             )
         )
+        if owner is not None:
+            users = users.where(User.id != owner)
         if query.q:
             users = users.where(User.display_name.contains(query.q, autoescape=True))
         total = session.scalar(select(func.count()).select_from(users.subquery())) or 0

@@ -21,10 +21,8 @@ export const getIdentity = cache(async (): Promise<IdentityResult> => {
   } catch { return { state: "unavailable" }; }
 });
 
-export async function requireIdentity(path: string, restrictedAllowed = false) {
+export async function requireIdentity(path: string) {
   const result = await getIdentity();
   if (result.state === "anonymous") redirect(`/login?return_to=${encodeURIComponent(safeReturnPath(path))}`);
-  if (result.state === "authenticated" && result.profile.must_change_password && !restrictedAllowed)
-    redirect("/change-password");
   return result;
 }

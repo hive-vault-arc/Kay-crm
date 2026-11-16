@@ -71,6 +71,8 @@ def test_new_client_and_manual_deal_commit_once_with_exact_facts(settings, datab
     uid, token = actor(settings, database)
     project_names = ["Projet principal", "Alternative", "Troisième intérêt"][:project_count]
     body = new_client_deal(projects=[{"external_name": name} for name in project_names])
+    assert body.new_contact is not None
+    body.new_contact.roles = ["seller", "owner", "tenant"]
     key = uuid4()
     result = run(settings, database, token, body, key=key)
     assert run(settings, database, token, body, key=key) == result
@@ -88,6 +90,9 @@ def test_new_client_and_manual_deal_commit_once_with_exact_facts(settings, datab
     assert deal["client_snapshot"]["calling_code"] == "+33"
     assert deal["client_snapshot"]["country"] == "FR"
     assert deal["contact"]["primary_agent"]["id"] == str(uid)
+    assert contact_detail(database, token, "contacts", UUID(deal["contact"]["id"]))["roles"] == [
+        "buyer"
+    ]
     assert deal["active_reservation"] is None and deal["offering"] is None
     history = read_children(database, token, UUID(deal["id"]), "history", ChildQuery())
     assert history["items"][0]["qualification"]["projects"] == deal["projects"]

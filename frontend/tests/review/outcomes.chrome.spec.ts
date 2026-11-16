@@ -16,7 +16,6 @@ async function capture(page: Page, name: string, full = false) {
     const width = await page.evaluate(() => innerWidth);
     const shot = await session.send("Page.captureScreenshot", { format: "png", fromSurface: true, ...(metrics ? { captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: metrics.cssContentSize.height, scale: 1 } } : {}) });
     await writeFile(path.resolve(`output/playwright/sp13-${name}.png`), Buffer.from(shot.data, "base64"));
-    if (name === "close-desktop" || name === "reopen-mobile") await writeFile(path.resolve(`../.impeccable/review/${name === "close-desktop" ? "desktop" : "mobile"}.png`), Buffer.from(shot.data, "base64"));
   } finally { await session.detach(); }
 }
 async function geometry(page: Page) {
@@ -41,7 +40,7 @@ test("SP13 visible Chrome: close, partial programme, reopen, external results, k
   const errors: string[] = []; const expectedNetworkErrors: string[] = []; let intentionalMobileInterruption = false;
   function monitor(target: Page) { target.on("pageerror", () => errors.push("APPLICATION_PAGE_ERROR")); target.on("console", message => { if (message.type() !== "error" || /Failed to load resource:.*(401|403|404|409|422|503)|net::ERR_FAILED|net::ERR_CONNECTION_REFUSED/.test(message.text())) return; const code = message.text().match(/net::ERR_[A-Z_]+|status of [0-9]{3}/)?.[0] ?? "UNCLASSIFIED"; if (target === mobile && intentionalMobileInterruption && /\/api\/v1\/deals\/[^/]+\/reopen$/.test(message.location().url) && /^net::ERR_(CONNECTION_FAILED|ABORTED|CONNECTION_CLOSED)$/.test(code)) expectedNetworkErrors.push(code); else errors.push(`APPLICATION_CONSOLE_ERROR:${code}`); }); }
   monitor(page); monitor(mobile); monitor(context);
-  await mkdir(path.resolve("output/playwright"), { recursive: true }); await mkdir(path.resolve("../.impeccable/review"), { recursive: true });
+  await mkdir(path.resolve("output/playwright"), { recursive: true });
   try {
     await page.setViewportSize({ width: 1440, height: 1000 }); const data = await reservationFixture(page, actors); const pair = await salePair(page, data);
     await context.setViewportSize({ width: 1440, height: 1000 }); await context.goto(`/deals/${data.unit}`);

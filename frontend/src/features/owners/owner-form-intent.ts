@@ -16,5 +16,5 @@ export function ownerFormReceipt(intent: Exclude<OwnerFormIntent, { kind: "open"
   const contact = result.data;
   // Server phone/email normalizers stay authoritative. Bind the generated root
   // to its actual creating actor, intended responsibility and stable identity.
-  if (contact.version === 1 && !contact.archived_at && contact.source === "manual" && contact.created_by_user_id === actor && contact.primary_agent.id === (intent.body.primary_agent_id || actor) && contact.name === intent.body.name && contact.type === intent.body.type && contact.roles.includes("owner") && contactProjectionValid(contact)) return contact;
+  if (contact.version === 1 && !contact.archived_at && contact.source === "manual" && contact.created_by_user_id === actor && contact.primary_agent.id === (intent.body.primary_agent_id || actor) && contact.name === intent.body.name && contact.type === intent.body.type && contact.roles.length === intent.body.roles.length && intent.body.roles.every(role => contact.roles.includes(role)) && contactProjectionValid(contact)) return contact;
 }

@@ -12,6 +12,6 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   if (identity.state !== "authenticated") return <AuthUnavailable path={`/leads/${id}`} />;
   const query = await searchParams;
   const task = z.uuid().safeParse(query.task);
-  const tab = query.tab === "documents" ? "documents" : undefined;
+  const tab = query.tab === "documents" ? "documents" : query.tab === "handoff" ? "overview" : undefined;
   return <LeadRecord key={`${id}:${tab ?? ""}:${task.success ? task.data : ""}`} id={id} role={identity.profile.user.role} actorId={identity.profile.user.id} initialTab={tab} initialTask={task.success ? task.data : undefined} />;
 }

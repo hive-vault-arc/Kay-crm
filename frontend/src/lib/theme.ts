@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import workspace from "../../../branding/prototype/kay-workspace.tokens.json";
+import workspace from "./design/kay-workspace.tokens.json";
 
 type Variables = CSSProperties & Record<`--${string}`, string>;
 const kebab = (value: string) =>

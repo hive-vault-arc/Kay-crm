@@ -140,6 +140,16 @@ def test_contact_birth_date_is_private_and_optional(settings: Settings, database
     assert "birth_date" not in NewContact.model_validate(fields).model_dump(mode="json")
 
 
+def test_manual_enquiry_creates_an_automatic_buyer(settings: Settings, database: Database) -> None:
+    _, token = actor(settings, database)
+    body = new_lead(source="manual")
+    key = uuid4()
+    lead = create_lead(settings, database, token, body, key)
+    assert create_lead(settings, database, token, body, key) == lead
+    cid = UUID(cast(dict[str, str], lead["contact"])["id"])
+    assert read_detail(database, token, "contacts", cid)["roles"] == ["buyer"]
+
+
 def test_contact_collections_edit_provenance_and_separate_enquiries(
     settings: Settings, database: Database
 ) -> None:

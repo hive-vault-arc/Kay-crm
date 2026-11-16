@@ -31,7 +31,7 @@ test("workspace account: one account location, real role, long name and responsi
       if (mobile) await page.getByRole("button", { name: "Ouvrir la navigation", exact: true }).click();
       const navigation = mobile ? page.getByRole("dialog", { name: "Navigation KAY", exact: true }) : page.locator("aside[data-sidebar]");
       await expect(navigation.getByRole("link", { name: "Prospects", exact: true })).toHaveAttribute("aria-current", "page");
-      await expect(navigation.getByRole("link", { name: "Paramètres", exact: true })).toHaveCount(0);
+      await expect(navigation.getByRole("link", { name: "Paramètres", exact: true })).toHaveAttribute("href", "/settings/users");
       await expect(navigation.getByRole("button", { name: "Se déconnecter", exact: true })).toHaveCount(0);
       expect(await navigation.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
       if (mobile) await page.keyboard.press("Escape");

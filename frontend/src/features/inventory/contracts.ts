@@ -45,7 +45,7 @@ export const listingDetailsSchema = z.object({
   google_maps_url: z.url().max(2048).refine(value => { try { const url = new URL(value); return url.protocol === "https:" && !url.username && !url.password && !url.port && ((["google.com", "www.google.com"].includes(url.hostname) && url.pathname.startsWith("/maps")) || ["maps.google.com", "maps.app.goo.gl"].includes(url.hostname)); } catch { return false; } }).nullable().optional(),
   bedrooms: optionalCount(0, 1000), bathrooms: optionalCount(0, 1000), capacity: optionalCount(1, 1000), minimum_nights: optionalCount(1, 365),
   age_band: z.enum(["under_1", "1_5", "5_10", "10_20", "20_30", "30_50", "50_70", "70_100", "over_100"]).nullable().optional(),
-  floor_type: z.enum(["parquet", "marble", "tile", "other"]).nullable().optional(), unit_floor: optionalCount(0, 20), building_floors: optionalCount(1, 4),
+  floor_type: z.enum(["parquet", "marble", "tile", "other"]).nullable().optional(), unit_floor: z.int().min(0).nullable().optional(), building_floors: z.int().min(1).nullable().optional(),
   orientation: z.enum(["north", "west", "east", "south"]).nullable().optional(), plot_area_sqm: optionalAmount,
   land_delivery: z.enum(["planned", "titled"]).nullable().optional(), land_status: z.enum(["subdivided", "not_subdivided"]).nullable().optional(),
   amenities: z.array(amenitySchema).max(29).default([]), garden_area_sqm: optionalAmount, terrace_area_sqm: optionalAmount, garage_spaces: optionalCount(1, 1000),

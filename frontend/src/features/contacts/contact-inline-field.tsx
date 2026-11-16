@@ -11,7 +11,7 @@ import { InlineFieldForm, InlineFieldLoading, InlineRecordField, type InlineEdit
 import { ApiError } from "@/lib/api/client";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { ContactFields } from "./contact-fields";
-import { contactFieldsSchema, contactSchema, roleLabels, type Contact, type ContactSummary, type ContactFields as Values } from "./contracts";
+import { contactFieldsSchema, contactSchema, type Contact, type ContactSummary, type ContactFields as Values } from "./contracts";
 import { countryLabel } from "./qualification-inputs";
 import { languageLabels, qualificationMetadataSchema, type QualificationMetadata } from "./qualification-contracts";
 import { RecordError } from "./record-states";
@@ -21,7 +21,7 @@ import { contactEditValues as editableContactValues, type ContactEditBinding } f
 import { useContactEditCommand } from "./use-contact-edit-command";
 import { ContactEditRecovery } from "./contact-edit-recovery";
 
-export type ContactField = keyof Values;
+export type ContactField = Exclude<keyof Values, "roles">;
 export { editableContactValues as contactEditValues };
 export function contactFieldText(contact: ContactSummary | Contact, field: ContactField): string {
   if (field === "name") return contact.name;
@@ -31,7 +31,7 @@ export function contactFieldText(contact: ContactSummary | Contact, field: Conta
   if (field === "languages") return contact.languages.map(value => languageLabels[value] ?? value).join(", ") || "Non renseignées";
   if (field === "phones") return "phones" in contact ? contact.phones.map(value => value.number + (value.label ? " · " + value.label : "") + (value.is_primary ? " · principal" : "")).join("\n") : contact.primary_phone;
   if (field === "emails") return "emails" in contact ? contact.emails.map(value => value.email + (value.label ? " · " + value.label : "") + (value.is_primary ? " · principal" : "")).join("\n") || "Non renseignés" : contact.primary_email || "Non renseigné";
-  return "roles" in contact ? contact.roles.map(value => roleLabels[value]).join(", ") || "Non renseignés" : "Non renseignés";
+  return "Non renseigné";
 }
 export function ContactInlineField({ contact, field, label, icon, writable, saved, denied, display, methodScope = "all", phoneAction = "call", actorId, role }: {
   contact: ContactSummary | Contact; field: ContactField; label: string; icon: KayIconComponent; writable: boolean; saved: (contact: Contact) => void | Promise<void>; denied: (error: ApiError, acknowledged?: boolean) => void; display?: ReactNode; methodScope?: "all" | "primary" | "secondary"; phoneAction?: "call" | "whatsapp"; actorId?: ContactEditBinding["actorId"]; role?: ContactEditBinding["role"];

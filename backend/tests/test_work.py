@@ -25,6 +25,7 @@ from app.work.contracts import (
 )
 from app.work.notifications import mark_read, read_notifications
 from app.work.queries import calendar_work, detail, follow_up, read_tasks
+from app.work.visit_reports import REPORT, deliver_visit_reports
 from app.work.worker import acknowledge, claim, deliver, dispatch, run_once
 from tests.contact_support import actor
 from tests.deal_support import setup
@@ -231,8 +232,14 @@ def test_visit_j1_h1_reschedule_cancel_complete_and_followup(settings, database)
     )
     assert not run_once(database, start + timedelta(days=2))
     assert read_notifications(database, token, NotificationQuery())["total"] == 0
-    another = visit_run(settings, database, token, booking(uid, cid, type="office"))
-    assert follow_up(database, token, PageQuery(), start + timedelta(hours=2))["total"] == 1
+    past = datetime(2025, 1, 6, 10, 30, tzinfo=UTC)
+    another = visit_run(
+        settings,
+        database,
+        token,
+        booking(uid, cid, type="office", start_at=past, end_at=past + timedelta(hours=1)),
+    )
+    assert follow_up(database, token, PageQuery(), past + timedelta(hours=2))["total"] == 1
     visit_run(
         settings,
         database,
@@ -241,7 +248,44 @@ def test_visit_j1_h1_reschedule_cancel_complete_and_followup(settings, database)
         UUID(another["id"]),
         "completed",
     )
-    assert follow_up(database, token, PageQuery(), start + timedelta(hours=2))["total"] == 0
+    assert follow_up(database, token, PageQuery(), past + timedelta(hours=2))["total"] == 0
+
+
+def test_visit_report_repeats_after_read_and_ends_on_outcome(settings, database):
+    uid, token, cid, _ = setup(settings, database)
+    _, outsider = actor(settings, database)
+    past = datetime(2025, 1, 6, 10, 30, tzinfo=UTC)
+    end = past + timedelta(hours=1)
+    saved = visit_run(
+        settings, database, token, booking(uid, cid, type="office", start_at=past, end_at=end)
+    )
+    target = UUID(saved["id"])
+    first = end + timedelta(days=9)
+    assert deliver_visit_reports(database, end + timedelta(hours=1, minutes=59)) == 0
+    assert deliver_visit_reports(database, first) == 1
+    assert deliver_visit_reports(database, first) == 0
+    # A previously delayed one-time job cannot create a duplicate first notice.
+    while run_once(database, first):
+        pass
+    inbox = read_notifications(database, token, NotificationQuery())
+    assert inbox["total"] == inbox["unread_total"] == 1 and inbox["items"][0]["kind"] == REPORT
+    alert = UUID(inbox["items"][0]["id"])
+    assert mark_read(database, token, alert) == {"read": True}
+    assert deliver_visit_reports(database, first + timedelta(hours=23, minutes=59)) == 0
+    assert deliver_visit_reports(database, first + timedelta(days=1)) == 1
+    inbox = read_notifications(database, token, NotificationQuery())
+    assert inbox["total"] == inbox["unread_total"] == 1 and inbox["items"][0]["id"] != str(alert)
+    assert read_notifications(database, outsider, NotificationQuery())["total"] == 0
+    visit_run(
+        settings,
+        database,
+        token,
+        FinishVisit(expected_version=1, reason="Compte rendu synthétique"),
+        target,
+        "completed",
+    )
+    assert deliver_visit_reports(database, first + timedelta(days=2)) == 0
+    assert read_notifications(database, token, NotificationQuery())["total"] == 0
 
 
 def test_crash_after_effect_before_ack_expiry_fence_and_unique_notification(settings, database):

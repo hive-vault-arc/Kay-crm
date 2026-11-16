@@ -176,7 +176,7 @@ function DealEditorForm({ contact, role = "agent", actorId, context = {}, offeri
     if (!value && mode === "new" && role !== "agent" && !agent) { setValidationError(new ApiError("INVALID_ASSIGNEE", 422)); return; }
     const clientFields = client.getValues();
     const qualification = { ...fields, projects: projects.map(project => project.selected?.choice ?? {}), offering_id: selectedOffering?.id ?? null, expected_offering_version: selectedOffering?.version ?? null };
-    const body = value ? { ...qualification, expected_version: versions.deal, ...(JSON.stringify(clientFields) !== baseline.current ? { contact_fields: { ...clientFields, expected_version: versions.contact } } : {}) } : { ...qualification, stage, ...(mode === "new" ? { new_contact: { ...clientFields, ...(role !== "agent" ? { primary_agent_id: agent } : {}) } } : { contact_id: selectedContact?.id }) };
+    const body = value ? { ...qualification, expected_version: versions.deal, ...(JSON.stringify(clientFields) !== baseline.current ? { contact_fields: { ...clientFields, expected_version: versions.contact } } : {}) } : { ...qualification, stage, ...(mode === "new" ? { new_contact: { ...clientFields, roles: ["buyer"], ...(role !== "agent" ? { primary_agent_id: agent } : {}) } } : { contact_id: selectedContact?.id }) };
     const parsed = (value ? editDealSchema : newDealSchema).safeParse(body);
     if (!parsed.success) { setValidation([...new Set(parsed.error.issues.map(issue => issue.message))]); return; }
     await command.submit(parsed.data);
