@@ -40,7 +40,7 @@ async function capture(page: Page, name: string) {
   expect(await page.evaluate(() => document.documentElement.clientWidth)).toBe(before);
 }
 
-test("SP09 visible Chrome: actual quarantine, clean/rejected files, private denial, touch, keyboard and 200%", async ({ page, browser, baseURL }) => {
+test("SP09 visible Chrome: pending files, format rejection, private denial, touch, keyboard and 200%", async ({ page, browser, baseURL }) => {
   test.setTimeout(300_000);
   page.setDefaultTimeout(25_000);
   const manager = await createActor("manager"); const owner = await createActor("agent"); const outsider = await createActor("agent");
@@ -49,7 +49,7 @@ test("SP09 visible Chrome: actual quarantine, clean/rejected files, private deni
   const errors: string[] = [];
   const monitor = (target: Page) => {
     target.on("pageerror", () => errors.push("APPLICATION_PAGE_ERROR"));
-    target.on("console", message => { if (message.type() === "error" && !/Failed to load resource:.*(401|403|404|409|422|503)|net::ERR_FAILED/.test(message.text())) errors.push("APPLICATION_CONSOLE_ERROR"); });
+    target.on("console", message => { if (message.type() === "error" && !/Failed to load resource:.*(401|403|404|409|415|422|503)|net::ERR_FAILED/.test(message.text())) errors.push("APPLICATION_CONSOLE_ERROR"); });
   };
   monitor(page); monitor(mobile);
   let zoomContext: Awaited<ReturnType<typeof chromium.launchPersistentContext>> | undefined; let profile: string | undefined;
@@ -119,7 +119,7 @@ test("SP09 visible Chrome: actual quarantine, clean/rejected files, private deni
     for (const width of [320, 360, 768, 1024, 1440]) {
       await mobile.setViewportSize({ width, height: 900 });
       await expect(mobile.getByText("Fichier disponible", { exact: true })).toBeVisible();
-      expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await expect.poll(() => mobile.evaluate(() => ({ width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth }))).toEqual({ width, overflow: false });
       const geometry = await mobilePanel.getByRole("button", { name: "Ajouter un document", exact: true }).evaluate(element => { const box = element.getBoundingClientRect(); return { left: box.left, right: box.right, width: innerWidth, height: box.height }; });
       expect(geometry.left).toBeGreaterThanOrEqual(0); expect(geometry.right).toBeLessThanOrEqual(width); expect(geometry.height).toBeGreaterThanOrEqual(44);
     }
