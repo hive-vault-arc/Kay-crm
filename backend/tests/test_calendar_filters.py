@@ -25,10 +25,23 @@ def test_facets_span_all_pages_and_filters_combine_without_leaking_scope(setting
             settings,
             database,
             token,
-            booking(uid, cid, type="office", status="draft", title=f"Visite synthétique {index}"),
+            booking(
+                uid,
+                cid,
+                type="office",
+                title=f"Visite synthétique {index}",
+                overlap_reason="Chevauchement synthétique",
+            ),
         )
-    car = run(settings, database, token, booking(uid, cid))
-    run(settings, database, token, VisitAction(expected_version=1), UUID(car["id"]), "confirmed")
+    car = run(settings, database, token, booking(uid, cid, overlap_reason="Conflit synthétique"))
+    run(
+        settings,
+        database,
+        token,
+        VisitAction(expected_version=1, reason="Conflit synthétique"),
+        UUID(car["id"]),
+        "confirmed",
+    )
     first = read_visits(database, token, period(page_size=1))
     assert first["total"] == first["unfiltered_total"] == 52
     assert len(first["items"]) == 1 and first["type_counts"] == {

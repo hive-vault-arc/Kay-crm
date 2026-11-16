@@ -12,6 +12,7 @@ test("KAY manual deal: client profile, project qualification, atomic edit and ri
     await signIn(page, actor); await page.goto("/deals/new");
     const form = page.getByRole("form", { name: "Nouvelle affaire", exact: true });
     await expect(form.getByLabel("Nom du contact", { exact: true })).toBeEnabled();
+    await expect(form.getByText("Rôles du contact", { exact: true })).toHaveCount(0);
     await expect(form.getByLabel("Titre de l’affaire", { exact: true })).toHaveCount(0);
     await form.getByLabel("Nom du contact", { exact: true }).fill("Client manuel synthétique");
     await form.getByLabel("Indicatif Téléphone 1 *", { exact: true }).selectOption("FR");
@@ -38,6 +39,7 @@ test("KAY manual deal: client profile, project qualification, atomic edit and ri
     expect(created.title).toBe("Client manuel synthétique · Projet manuel synthétique");
     expect(created.client_snapshot.calling_code).toBe("+33");
     expect(created.contact.primary_phone).toBe("+33600000002");
+    expect((await (await page.request.get(`/api/v1/contacts/${created.contact.id}`)).json()).roles).toEqual(["buyer"]);
     expect(created.active_reservation).toBeNull(); expect(created.enquiry_id).toBeNull();
     await expect(page.getByRole("heading", { name: created.title, exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Modifier", exact: true }).click();

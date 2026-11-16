@@ -1,7 +1,7 @@
-import { adminAccess } from "@/features/users/access";
+import { staffAccess } from "@/features/users/access";
 import { UserForm } from "@/features/users/user-form";
 export default async function NewUserPage() {
-  const access = await adminAccess("/settings/users/new");
+  const access = await staffAccess("/settings/users/new");
   if (access.denied) return access.denied;
-  return <UserForm actorId={access.actorId} />;
+  return <UserForm actorId={access.actorId} agentAccountsOnly={access.manager} />;
 }

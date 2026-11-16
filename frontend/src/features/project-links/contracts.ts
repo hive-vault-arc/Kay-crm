@@ -13,10 +13,14 @@ export const projectLinkQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(1_000_000).optional(),
   page_size: z.coerce.number().int().min(1).max(50).optional(),
 }).strict();
-export const newProjectLinkSchema = z.object({
-  kind: z.enum(["discussed", "visited"]), development_id: z.uuid().optional(),
-  property_id: z.uuid().optional(),
-}).strict().refine(value => Boolean(value.development_id) !== Boolean(value.property_id));
+const targetFields = { development_id: z.uuid().optional(), property_id: z.uuid().optional() };
+function oneTarget(value: { development_id?: string; property_id?: string }) {
+  return Boolean(value.development_id) !== Boolean(value.property_id);
+}
+export const catalogueTargetSchema = z.object(targetFields).strict().refine(oneTarget);
+export type CatalogueTarget = z.infer<typeof catalogueTargetSchema>;
+export const catalogueTargetKey = (target: CatalogueTarget) => target.development_id ? `development:${target.development_id}` : `property:${target.property_id}`;
+export const newProjectLinkSchema = z.object({ kind: z.enum(["discussed", "visited"]), ...targetFields }).strict().refine(oneTarget);
 export const removeProjectLinkSchema = z.object({}).strict();
 export const catalogueChoicesSchema = numberedPage(z.object({
   id: z.uuid(), reference: z.string(), name: z.string().optional(),

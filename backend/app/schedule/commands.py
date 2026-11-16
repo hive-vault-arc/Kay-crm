@@ -91,7 +91,7 @@ def apply_visit(
             contact_id=contact.id,
             origin_contact_id=contact.id,
             organizer_user_id=identity.user.id,
-            status=body.status,
+            status="scheduled",
             version=1,
             updated_by_user_id=identity.user.id,
             policy_version=1,
@@ -121,6 +121,8 @@ def apply_visit(
             if row.status == "confirmed":
                 raise IdentityError("VISIT_STATE_UNCHANGED", 409)
             row.status = "confirmed"
+        elif action == "rescheduled" and row.status == "draft":
+            row.status = "scheduled"
         elif action in ("completed", "not_completed", "cancelled"):
             if not isinstance(body, FinishVisit) or (
                 action in ("completed", "not_completed") and row.status not in ACTIVE
@@ -129,18 +131,19 @@ def apply_visit(
             if action == "not_completed" and row.end_at > datetime.now(UTC):
                 raise IdentityError("VISIT_NOT_ENDED", 409)
             row.status, row.outcome = action, body.reason
-    row.enquiry_id = check_context(session, identity, row, fields, new=isinstance(body, NewVisit))
+    is_new = isinstance(body, NewVisit)
+    row.deal_id, row.enquiry_id = check_context(session, identity, row, fields, new=is_new)
     for name in (
         "title",
         "type",
         "location",
         "start_at",
         "end_at",
-        "deal_id",
         "property_id",
         "overlap_reason",
     ):
-        setattr(row, name, getattr(fields, name))
+        if is_new or name not in {"title", "location"} or name in fields.model_fields_set:
+            setattr(row, name, getattr(fields, name))
     # Old clients omit this field: unrelated edits must preserve stored notes.
     if "notes" in fields.model_fields_set:
         row.notes = fields.notes
@@ -226,6 +229,8 @@ def command(
             if receipt.request_hash != digest:
                 raise IdentityError("IDEMPOTENCY_CONFLICT", 409)
             return receipt.result
+        if isinstance(body, NewVisit) and body.status == "draft":
+            raise IdentityError("INVALID_STATE", 422)
         if isinstance(body, PolicySave):
             with session.no_autoflush:
                 result, row = save(session, identity, body, secret), None

@@ -14,10 +14,10 @@ test("SP18 visible Chrome: mixed/corrected import, confirmation, native states a
     await expect(target.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
     if (!name.startsWith("loading")) await expect(target.getByRole("status").filter({ hasText: /Chargement|en cours/ })).toHaveCount(0);
     const cdp = await target.context().newCDPSession(target);
-    try { if (full) await target.evaluate(() => window.scrollTo(0, 0)); const metrics = full ? await cdp.send("Page.getLayoutMetrics") : undefined, width = await target.evaluate(() => innerWidth); const shot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, ...(metrics ? { captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: metrics.cssContentSize.height, scale: 1 } } : {}) }); const bytes = Buffer.from(shot.data, "base64"); await writeFile(`output/playwright/sp18-${name}.png`, bytes); if (["preview-desktop", "preview-mobile"].includes(name)) await writeFile(`../.impeccable/review/${name.endsWith("desktop") ? "desktop" : "mobile"}.png`, bytes); } finally { await cdp.detach(); }
+    try { if (full) await target.evaluate(() => window.scrollTo(0, 0)); const metrics = full ? await cdp.send("Page.getLayoutMetrics") : undefined, width = await target.evaluate(() => innerWidth); const shot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, ...(metrics ? { captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: metrics.cssContentSize.height, scale: 1 } } : {}) }); const bytes = Buffer.from(shot.data, "base64"); await writeFile(`output/playwright/sp18-${name}.png`, bytes); } finally { await cdp.detach(); }
   }
   try {
-    await mkdir("output/playwright", { recursive: true }); await mkdir("../.impeccable/review", { recursive: true }); await page.setViewportSize({ width: 1440, height: 1000 });
+    await mkdir("output/playwright", { recursive: true }); await page.setViewportSize({ width: 1440, height: 1000 });
     const data = await importFixture(page, actors); monitor(page); await geometry(page); await capture(page, "empty-desktop");
     await page.getByText("Format et colonnes du CSV", { exact: true }).click(); await expect(page.getByText(/En-tête exact/)).toBeVisible(); await page.getByText("Format et colonnes du CSV", { exact: true }).click();
     const mixed = csv([csvRow("+212600000001", "", ""), csvRow("+212600111001", data.agent.email), csvRow("bad-phone", data.agent.email)]);

@@ -2,10 +2,12 @@ import { z } from "zod";
 
 export const maxVideoSize = 300_000_000;
 export const videoPartSize = 8 * 1024 * 1024;
+export const videoFilename = /\.(mov|mp4)$/i;
+export const videoAccept = ".mp4,.mov,video/mp4,video/quicktime";
 export const videoParent = z.object({ parent_kind: z.enum(["property", "development"]), parent_id: z.uuid() }).strict();
 export const newVideo = videoParent.extend({
   id: z.uuid(),
-  filename: z.string().trim().min(5).max(160).regex(/\.(mov|mp4)$/i),
+  filename: z.string().trim().min(5).max(160).regex(videoFilename),
   size_bytes: z.number().int().min(1).max(maxVideoSize),
   source_fingerprint: z.string().regex(/^[a-f0-9]{64}$/),
 }).strict();
@@ -33,6 +35,7 @@ export const videoArchived = z.object({ archived: z.literal(true) }).strict();
 export const videoEmpty = z.object({}).strict();
 
 export const videoErrors: Record<string, string> = {
+  FILE_TOO_LARGE: "Choisissez une vidéo de 300 Mo maximum.",
   VIDEO_LIMIT: "Ce dossier contient déjà cinq vidéos.",
   VIDEO_UPLOAD_EXPIRED: "Ce transfert a expiré. Sélectionnez la vidéo à nouveau.",
   VIDEO_TOO_LONG: "Cette vidéo dépasse trois minutes.",

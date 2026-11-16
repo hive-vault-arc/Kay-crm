@@ -77,10 +77,9 @@
 .kay-calendar-drawer .kay-drawer-body:has(.kay-visit-form) { padding-bottom:0; scroll-padding-bottom:88px; }
 .kay-visit-contact-step { display:grid; min-width:0; gap:12px; }
 .kay-visit-participants { display:flex; flex-wrap:wrap; gap:0 16px; padding-inline:12px; border-radius:var(--workspace-geometry-compact-radius); background:var(--workspace-field); }
-.kay-visit-form .kay-work-context { padding-block:12px; border-block:1px solid var(--workspace-line); }
 @container(min-width:521px) {
-  .kay-visit-form :is(.kay-work-context,.kay-work-property) { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .kay-visit-form .kay-work-context > p,.kay-visit-form .kay-work-property > :not(.kay-work-property-field) { grid-column:1 / -1; }
+  .kay-visit-form .kay-work-property { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .kay-visit-form .kay-work-property > :not(.kay-work-property-field) { grid-column:1 / -1; }
 }
 .kay-visit-form-footer { position:sticky; bottom:0; z-index:1; border-top:1px solid var(--workspace-line); padding-block:12px max(12px,env(safe-area-inset-bottom)); background:var(--workspace-paper); }
 .kay-visit-record-actions,.kay-visit-confirmation-footer { justify-content:flex-end; }

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useId, useRef, useState } from "react";
-import { RefreshIcon } from "@/components/icons";
+import { AlertIcon, RefreshIcon } from "@/components/icons";
 import { useDossierDraft } from "@/components/shared/dossier-form";
 import { FilePicker } from "@/components/shared/file-picker";
 import { RecordSection } from "@/components/shared/record-workspace";
@@ -12,6 +12,7 @@ import { ApiError } from "@/lib/api/client";
 import type { ProtectedDocument } from "./contracts";
 import { photoAccept } from "./photo-conversion";
 import { newPhotoAttempt, photoCanResume, photoDenied, photoSelectionError, sendPhoto, type PhotoPhase } from "./photo-upload-model";
+import { videoFilename } from "./video-contracts";
 
 export function PhotoUploadForm({ parentId, parentKind, resume, writable, uploadable, saved, cancel, denied }: {
   parentId: string; parentKind: "property" | "development"; resume?: ProtectedDocument; writable: boolean; uploadable: boolean;
@@ -22,17 +23,22 @@ export function PhotoUploadForm({ parentId, parentKind, resume, writable, upload
   const [files, setFiles] = useState<File[]>([]), [sent, setSent] = useState(0);
   const [busy, setBusy] = useState(false), [frozen, setFrozen] = useState(false), [error, setError] = useState<ApiError>();
   const [phase, setPhase] = useState<PhotoPhase>("preparing"), [progress, setProgress] = useState<number>();
+  const [videoSelected, setVideoSelected] = useState(false);
   const guard = useUnsavedGuard();
   const draft = useDossierDraft(files.length ? files.map(file => ({ name: file.name, type: file.type, size: file.size, modified: file.lastModified, resume: resume?.id })) : null, busy);
   useEffect(() => { alive.current = true; browse.current?.focus(); return () => { alive.current = false; controller.current?.abort(); }; }, []);
   function chooseFiles(selected: File[]) {
     if (lock.current || attempt.current.started || completed.current) return;
-    setFiles(selected); setSent(0); setError(selected.map(photoSelectionError).find(Boolean)); attempt.current = newPhotoAttempt();
+    const photos = selected.filter(file => !videoFilename.test(file.name));
+    const hasVideo = photos.length < selected.length;
+    setVideoSelected(hasVideo);
+    if (hasVideo && !photos.length) return;
+    setFiles(photos); setSent(0); setError(photos.map(photoSelectionError).find(Boolean)); attempt.current = newPhotoAttempt();
   }
   async function submit() {
     if (!hydrated || lock.current || completed.current || !files.length || !uploadable || files.some(photoSelectionError)) return;
     if (resume && !photoCanResume(resume, writable)) { denied(new ApiError("FORBIDDEN", 403)); return; }
-    lock.current = true; setBusy(true); setError(undefined); setProgress(undefined);
+    lock.current = true; setBusy(true); setError(undefined); setVideoSelected(false); setProgress(undefined);
     const abort = new AbortController(); controller.current = abort;
     try {
       for (const [index, file] of files.entries()) {
@@ -52,6 +58,7 @@ export function PhotoUploadForm({ parentId, parentKind, resume, writable, upload
     } finally { lock.current = false; if (alive.current) { setBusy(false); setProgress(undefined); controller.current = null; } }
   }
   return <>{guard.dialog}<form ref={scope} className="kay-drawer-form" aria-label={resume ? "Reprendre la photo" : "Ajouter une photo"} aria-busy={busy} data-draft-managed data-live-dirty={draft.dirty ? "true" : undefined} noValidate onSubmit={event => { event.preventDefault(); void submit(); }}>
+    {videoSelected ? <div className="kay-record-error"><AlertIcon aria-hidden="true" size={20} /><p role="alert">Pour envoyer un MP4 ou un MOV, ouvrez l’onglet Vidéos MP4 / MOV.</p></div> : null}
     {error ? <RecordError error={error} /> : null}
     {resume ? <div className="kay-upload-context"><RefreshIcon aria-hidden="true" size={20} /><div><span>Photo à reprendre</span><strong>{resume.filename}</strong><small>Sa place est déjà conservée dans la galerie. Choisissez la même image source.</small></div></div> : null}
     <RecordSection title={resume ? "Reprendre la photo" : "Ajouter une photo"} description="Les photos seront partagées avec l’équipe après leur analyse antivirus."><fieldset disabled={!hydrated || busy || frozen || !uploadable} className="min-w-0"><legend className="sr-only">Images à envoyer</legend><FilePicker id={id} label={resume ? "Image à reprendre" : "Photo à ajouter"} accept={photoAccept} description="JPG, PNG, WebP, HEIC ou HEIF · 20 Mo par photo." inputRef={input} browseRef={browse} selected={files[0]} selection={files} choose={file => chooseFiles(file ? [file] : [])} chooseFiles={resume ? undefined : chooseFiles} disabled={!hydrated || busy || frozen || !uploadable} /></fieldset>

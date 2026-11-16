@@ -95,13 +95,16 @@ const dataClass = class { constructor(value) { this.value = value; } get(key) { 
 test("The activity form preserves every optional field, blocks cancel/change during unknown recovery, and rejects invalid new drafts locally", async () => {
   const h = entryHarness(), calls = []; let fail = true, cancelled = 0;
   const hook = loadEntryCommand(h, { ApiError, request: async (...args) => { calls.push(args); args[5](); if (fail) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return { id: randomUUID() }; } });
-  const loaded = loadServer("src/features/activities/activity-form.tsx", { modules: { ...ui(h), "./contracts": activityContracts, "./use-entry-command": hook }, globals: { FormData: dataClass } });
+  const loaded = loadServer("src/features/activities/activity-form.tsx", { modules: { ...ui(h), "./contracts": activityContracts, "./use-entry-command": hook, "./activity-project-picker": { ActivityProjectPicker: "Picker" } }, globals: { FormData: dataClass } });
   const props = { path: `/api/v1/deals/${randomUUID()}/activities`, saved() {}, cancel: () => cancelled++ }, render = () => h.render(() => loaded.ActivityForm(props));
-  const values = { kind: "call", body: "Synthetic note", duration: "15", direction: "outbound", project1: "Synthetic project", project2: "", project3: "" };
-  await find(render(), "form")[0].props.onSubmit({ preventDefault() {}, currentTarget: { ...values, project2: "synthetic PROJECT" } }); assert.equal(calls.length, 0);
+  const values = { kind: "call", body: "Synthetic note", duration: "15", direction: "outbound" };
+  const project = { target: { development_id: randomUUID() }, name: "Synthetic project", reference: "SYN-CHOICE" };
+  find(render(), "Picker")[0].props.change([project, project]);
+  await find(render(), "form")[0].props.onSubmit({ preventDefault() {}, currentTarget: values }); assert.equal(calls.length, 0);
+  find(render(), "Picker")[0].props.change([project]);
   await find(render(), "form")[0].props.onSubmit({ preventDefault() {}, currentTarget: values }); assert.equal(find(render(), "fieldset")[0].props.disabled, true); assert.equal(find(render(), "form")[0].props["data-write-recovery"], true);
   find(render(), "Button").find(node => node.props.action === "close").props.onClick(); assert.equal(cancelled, 0);
-  fail = false; await find(render(), "form")[0].props.onSubmit({ preventDefault() {}, currentTarget: { ...values, body: "Replacement must be ignored" } }); assert.deepEqual(plain(calls[0][1]), plain(calls[1][1])); assert.equal(calls[1][1].duration_minutes, 15); assert.equal(calls[1][1].projects[0], "Synthetic project");
+  fail = false; await find(render(), "form")[0].props.onSubmit({ preventDefault() {}, currentTarget: { ...values, body: "Replacement must be ignored" } }); assert.deepEqual(plain(calls[0][1]), plain(calls[1][1])); assert.equal(calls[1][1].duration_minutes, 15); assert.equal(calls[1][1].project_targets[0].development_id, project.target.development_id);
 });
 
 test("The contact note form freezes its original kind/text and keeps its existing no-send/no-booking explanation", async () => {

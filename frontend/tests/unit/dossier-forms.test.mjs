@@ -94,11 +94,11 @@ test("Lead create validation lock refuses a concurrent submit and releases after
   h.forms[0].trigger=async()=>true;find(tree,"Qualification")[0].props.change({initial_budget:"1400000"});tree=render();submit(tree);await delay(0);assert.equal(calls.length,1);
 });
 
-test("Lead create uses only the explicitly chosen existing contact and retains guarded cancel",async()=>{
-  const h=harness(),client=contact(),calls=[];const loaded=loadServer("src/features/contacts/lead-create.tsx",leadModule(h,async(...args)=>{calls.push(args);throw new ApiError("DEPENDENCY_UNAVAILABLE",503);}));
-  const render=()=>h.render(()=>loaded.LeadCreate({role:"manager"}));let tree=render();find(tree,"Select").find(n=>n.props.id==="contact-mode").props.onChange({target:{value:"existing"}});tree=render();find(tree,"ContactSelector")[0].props.choose(summary(client));find(tree,"Qualification")[0].props.change({initial_budget:"1400000"});tree=render();
+test("Lead create uses a new buyer and retains guarded cancel",async()=>{
+  const h=harness(),calls=[];const loaded=loadServer("src/features/contacts/lead-create.tsx",leadModule(h,async(...args)=>{calls.push(args);throw new ApiError("DEPENDENCY_UNAVAILABLE",503);}));
+  const render=()=>h.render(()=>loaded.LeadCreate({role:"agent"}));let tree=render();assert.equal(find(tree,"ContactSelector").length,0);find(tree,"Qualification")[0].props.change({initial_budget:"1400000"});tree=render();
   find(tree,"Button").find(n=>n.props.action==="cancel").props.onClick();assert.equal(h.guarded.length,1);assert.equal(h.navigated.length,0);
-  submit(tree);await delay(0);assert.equal(calls[0][1].contact_id,client.id);assert.equal(calls[0][1].new_contact,undefined);assert.equal(calls[0][1].assigned_agent_id,client.primary_agent.id);
+  submit(tree);await delay(0);assert.equal(calls[0][1].contact_id,undefined);assert.deepEqual(json(calls[0][1].new_contact.roles),["buyer"]);
 });
 
 test("Lead edit atomically retains contact collections, reloads both versions and clears only successful drafts",async()=>{

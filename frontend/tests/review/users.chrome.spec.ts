@@ -47,7 +47,7 @@ test("SP04 visible Chrome: users, long French form, mobile touch, confirmation a
       await page.keyboard.press("Escape");
     }
     await page.goto("/settings/users/new");
-    await expect(page.getByLabel("Mot de passe initial *", { exact: true })).toBeEnabled();
+    await expect(page.getByLabel("Mot de passe *", { exact: true })).toBeEnabled();
     for (const width of [320, 360, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 }); await geometry(page, width > 830 ? 40 : 44);
     }
@@ -85,8 +85,8 @@ test("SP04 visible Chrome: users, long French form, mobile touch, confirmation a
       await mobile.screenshot({ path: path.join(directory, "sp04-edit-mobile.png"), fullPage: true });
       await mobile.getByRole("button", { name: "Réinitialiser le mot de passe", exact: true }).tap();
       await expect(mobile.getByRole("alertdialog")).toBeVisible();
-      expect(await mobile.getByLabel("Votre mot de passe administrateur", { exact: true }).inputValue() === "").toBe(true);
-      expect(await mobile.getByLabel("Nouveau mot de passe initial", { exact: true }).inputValue() === "").toBe(true);
+      expect(await mobile.getByLabel("Votre mot de passe", { exact: true }).inputValue() === "").toBe(true);
+      expect(await mobile.getByLabel("Nouveau mot de passe", { exact: true }).inputValue() === "").toBe(true);
       await geometry(mobile);
       await mobile.screenshot({ path: path.join(directory, "sp04-reset-mobile-empty.png"), fullPage: true });
       await mobile.getByRole("alertdialog").getByRole("button", { name: "Annuler", exact: true }).tap();
@@ -118,7 +118,7 @@ test("Staff: native 200% Chrome zoom keeps creation and reset keyboard-accessibl
     page = context.pages()[0];
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/settings/users/new");
-    await expect(page.getByLabel("Mot de passe initial *", { exact: true })).toBeEnabled();
+    await expect(page.getByLabel("Mot de passe *", { exact: true })).toBeEnabled();
     expect(await page.evaluate(() => devicePixelRatio) / baseline).toBeCloseTo(2, 1);
     await geometry(page);
     await page.getByRole("button", { name: "Afficher le mot de passe", exact: true }).focus(); await page.keyboard.press("Space");

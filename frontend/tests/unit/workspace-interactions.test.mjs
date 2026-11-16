@@ -177,9 +177,10 @@ test("Jumping around the property wizard preserves entered fields and final save
     "./listing-field-format": loadServer("src/features/inventory/listing-field-format.ts", { modules: { "./contracts": contracts } }), "./level-picker": { LevelPicker: "Picker" }, "@/components/shared/dossier-form": { useDossierDraft: () => ({ dirty: false, accept() {} }) }, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ dialog: null, request: run => run() }) }, "@/components/shared/record-entry": { RecordEntry: "Entry" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/lib/api/client": { ApiError: class extends Error {} }, "./property-conflict-details": { PropertyConflictDetails: "Details" }, "./use-property-listing-command": { usePropertyListingCommand: () => ({ pending: false, protected: false, locked: () => false, canEdit: () => true, submit: async (...args) => { calls.push(args); } }) },
   } });
   const render = () => harness.render(() => PropertyListingWizard({}));
-  find(render(), "Input").find(field => field.props.id === "property-reference").props.onChange({ target: { value: "SYN-DRAFT" } });
+  assert.equal(find(render(), "Input").some(field => field.props.id === "property-reference"), false);
+  find(render(), "Input").find(field => field.props.id === "property-marketing_name").props.onChange({ target: { value: "SYN-DRAFT" } });
   find(render(), "Steps")[0].props.change(3); find(render(), "Steps")[0].props.change(0);
-  assert.equal(find(render(), "Input").find(field => field.props.id === "property-reference").props.value, "SYN-DRAFT");
+  assert.equal(find(render(), "Input").find(field => field.props.id === "property-marketing_name").props.value, "SYN-DRAFT");
   find(render(), "Steps")[0].props.change(4); find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
   assert.equal(calls.length, 0); assert.equal(find(render(), "Steps")[0].props.current, 0);
   assert.ok(find(render(), "p").some(node => node.props.role === "alert"));

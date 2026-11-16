@@ -85,7 +85,7 @@ export async function POST(request: Request, context: { params: Promise<{ path: 
   if (/^(properties|offerings|developments|blocks|floors|unit-types)(\/|$)/.test(key)) return relayInventory(key, request, requestId);
   if (/^(contacts|enquiries)(\/|$)/.test(key)) return relayContacts(key, request, requestId);
   if (key === "users" || key.startsWith("users/")) return relayUsers(key, request, requestId);
-  if (!["auth/login", "auth/logout", "auth/change-password"].includes(key))
+  if (!["auth/login", "auth/logout"].includes(key))
     return facadeError(404, "NOT_FOUND", requestId);
   if (new URL(request.url).search) return facadeError(422, "VALIDATION_ERROR", requestId);
   return relayAuth(key, request, requestId);

@@ -29,12 +29,34 @@
   color:var(--workspace-on-primary);
 }
 .kay-sales-directory .crm-filter-submit > button[type=submit]:hover { background:var(--workspace-primary-hover); }
-.kay-sales-filters .crm-status-filter > div { grid-template-columns:minmax(0,1fr); gap:0; }
-.kay-sales-filters .crm-status-filter label { gap:10px; min-height:36px; border:0; background:transparent; padding:4px; font-weight:500; }
-.kay-sales-filters .crm-status-filter label:is(:hover,[data-selected=true]) { border-radius:10px; background:var(--workspace-hover); }
+.kay-sales-filters .crm-status-filter { min-inline-size:0; container-type:inline-size; }
+.kay-sales-filters .crm-status-filter label {
+  display:var(--crm-status-filter-layout,flex);
+  grid-template-columns:auto minmax(0,1fr);
+  padding:var(--workspace-geometry-space-micro);
+  border-color:var(--crm-state-border);
+  border-radius:var(--workspace-geometry-compact-radius);
+  background:color-mix(in srgb,var(--crm-state-background),var(--workspace-panel-opaque) 25%);
+  font-weight:500;
+}
+.kay-sales-filters .crm-status-filter label:is(:hover,[data-selected=true]) {
+  border-color:var(--crm-state-color);
+  background:var(--crm-state-background);
+}
 .kay-sales-filters .crm-status-filter .crm-status-dot { display:none; }
-.kay-sales-filters .crm-status-filter [data-slot=checkbox] { border-radius:50%; }
-.kay-sales-filters .crm-status-filter-count { margin-inline-start:auto; font-variant-numeric:tabular-nums; }
+.kay-sales-filters .crm-status-filter [data-slot=checkbox] { border-color:var(--crm-state-ink); }
+.kay-sales-filters .crm-status-filter [data-slot=checkbox][data-state=checked] {
+  background:var(--crm-state-ink);
+  color:var(--workspace-panel-opaque);
+}
+.kay-sales-filters .crm-status-filter label > span:not(.crm-status-dot,.crm-status-filter-count) { grid-area:2 / 1 / 3 / -1; }
+.kay-sales-filters .crm-status-filter-count { grid-area:1 / 2; }
+@container (max-width:13rem) {
+  .kay-sales-filters .crm-status-filter label { --crm-status-filter-layout:grid; }
+}
+@container (max-width:15rem) {
+  .kay-sales-filters .crm-status-filter[data-crm-kind=deal] label { --crm-status-filter-layout:grid; }
+}
 .kay-sales-directory :is(.crm-search-input,[data-slot=native-select]) { border-radius:var(--workspace-geometry-control-radius); }
 .kay-sales-loading { display:grid; align-content:start; gap:10px; min-width:0; }
 .kay-sales-loading [data-slot=skeleton] { min-height:48px; border-radius:var(--workspace-geometry-compact-radius); }
@@ -158,7 +180,6 @@
   .kay-sales-directory .kay-directory-card-meta button { padding-inline:4px; }
   .kay-sales-directory .kay-sales-pagination .crm-directory-pagination { justify-content:flex-start; }
   .kay-sales-directory .kay-sales-pagination .crm-directory-pagination > span { width:100%; margin:0 0 4px; }
-  [data-filter-panel=mobile] .kay-sales-filters .crm-status-filter label { min-height:44px; }
   [data-filter-panel=mobile] .kay-sales-filters .crm-filter-submit {
     position:sticky;
     bottom:0;

@@ -24,10 +24,13 @@ from app.deals.contracts import Transition
 from app.deals.queries import read_detail
 from app.identity.security import IdentityError, csrf_token
 from app.main import create_app
+from app.project_links.contracts import LinkQuery
+from app.project_links.service import read_links
 from tests.contact_support import actor, create_lead, new_lead
 from tests.deal_support import new, run
 from tests.test_auth import authority
 from tests.test_foundation import client_for
+from tests.test_inventory import property_draft
 from tests.test_isolation_migrations import migrate
 from tests.test_lead_conversion import conversion
 from tests.test_ownership import change, cid, intent
@@ -49,6 +52,45 @@ def append(settings, database, token, scope, target, key=None, **fields):
 
 def history(database, token, scope, target, **query):
     return read_activities(database, token, scope, target, ActivityQuery(**query))
+
+
+def test_catalogue_projects_link_atomically_and_are_reused(settings, database):
+    _, token = actor(settings, database)
+    _, outsider = actor(settings, database)
+    eid = UUID(create_lead(settings, database, token)["id"])
+    pid = property_draft(settings, database, token, reference="ACTIVITY-CATALOGUE")
+    choice = {"property_id": pid}
+
+    def links():
+        return read_links(database, token, "enquiries", eid, LinkQuery(kind="discussed"))
+
+    before = history(database, token, "enquiries", eid)
+    with pytest.raises(IdentityError, match="ACTIVITY_PROJECT_UNAVAILABLE"):
+        append(
+            settings,
+            database,
+            token,
+            "enquiries",
+            eid,
+            project_targets=[choice, {"development_id": uuid4()}],
+        )
+    assert links()["total"] == 0
+    assert history(database, token, "enquiries", eid) == before
+    with pytest.raises(IdentityError, match="NOT_FOUND"):
+        append(settings, database, outsider, "enquiries", eid, project_targets=[choice])
+    with pytest.raises(ValidationError, match="DUPLICATE_ACTIVITY_PROJECT"):
+        NewActivity(body="Note synthétique", project_targets=[choice, choice])
+
+    key = uuid4()
+    result = append(settings, database, token, "enquiries", eid, key, project_targets=[choice])
+    assert (
+        append(settings, database, token, "enquiries", eid, key, project_targets=[choice]) == result
+    )
+    append(settings, database, token, "enquiries", eid, project_targets=[choice])
+    view = links()
+    assert view["total"] == 1 and view["items"][0]["property_id"] == str(pid)
+    notes = history(database, token, "enquiries", eid, kind="note")["items"]
+    assert len(notes) == 2 and all(note["projects"] == [view["items"][0]["name"]] for note in notes)
 
 
 def test_additive_migration_preserves_existing_history(settings, database):

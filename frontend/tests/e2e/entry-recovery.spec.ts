@@ -6,8 +6,9 @@ import { clearActorContext, createActor, expect, removeActor, signIn, test } fro
 import { dealBody } from "../helpers/deals";
 import { directoryLeadDraft } from "../helpers/directory-fixtures";
 import { staffCommand } from "../helpers/leads";
+import { activityProjectFixture, searchActivityProject } from "../helpers/activity-projects";
 
-test.use({ trace: "off", video: "off", screenshot: "off" });
+test.use({ trace: "off", video: "off", screenshot: "off", hasTouch: true });
 
 async function dossier(page: Page, primaryAgentId: string) {
   const response = await staffCommand(page, "enquiries", directoryLeadDraft(`SYN-ENTRY-${randomUUID().slice(0, 8)}`, `+212611${String(Math.floor(Math.random() * 1_000_000)).padStart(6, "0")}`, { primaryAgentId, assignedAgentId: primaryAgentId }));
@@ -29,7 +30,7 @@ async function loseFirstAcknowledgement(page: Page, path: string) {
 
 // Prepared isolated real-stack cases. Request bodies are transient and never printed.
 for (const surface of ["contacts", "leads", "deals"] as const) {
-  test(`Selected ${surface} activity drawer recovers the original entry once`, async ({ page, actor }) => {
+  test(`Selected ${surface} activity drawer recovers the original entry once`, async ({ page, actor }, info) => {
     const agent = await createActor("agent");
     try {
       await signIn(page, actor); const enquiry = await dossier(page, agent.id); let id = surface === "contacts" ? enquiry.contact.id : enquiry.id;
@@ -38,6 +39,7 @@ for (const surface of ["contacts", "leads", "deals"] as const) {
         if (created.status() !== 200) throw new Error("SYNTHETIC_ENTRY_DEAL_FAILED");
         id = (await created.json()).id;
       }
+      const project = surface === "contacts" ? undefined : await activityProjectFixture(page, surface === "deals" ? "properties" : "developments");
       await page.setViewportSize({ width: surface === "leads" ? 1440 : 390, height: 900 });
       await page.goto(`/${surface}/${id}`); await page.getByRole("tab", { name: /^Activités/ }).click();
       await page.getByRole("button", { name: "Ajouter une activité", exact: true }).click();
@@ -50,7 +52,14 @@ for (const surface of ["contacts", "leads", "deals"] as const) {
         await drawer.getByLabel("Type d’activité", { exact: true }).selectOption("call");
         await drawer.getByLabel("Durée (minutes, facultative)", { exact: true }).fill("15");
         await drawer.getByLabel("Sens de l’échange", { exact: true }).selectOption("outbound");
-        await drawer.getByLabel("Projet 1 (facultatif)", { exact: true }).fill("Synthetic discussed project");
+        if (!project) throw new Error("EXPECTED_SYNTHETIC_PROJECT");
+        const picker = await searchActivityProject(page, drawer, project.reference, surface === "deals" ? "touch" : "click");
+        const result = picker.getByRole("button", { name: `${project.name} ${project.reference}`, exact: true });
+        if (surface === "deals") {
+          await expect(result).toBeVisible();
+          await page.screenshot({ path: info.outputPath("activity-catalogue-mobile.png") });
+          await result.tap();
+        } else await result.click();
       }
       const scope = surface === "contacts" ? "contacts" : surface === "leads" ? "enquiries" : "deals", path = `/api/v1/${scope}/${id}/${surface === "contacts" ? "notes" : "activities"}`;
       const attempts = await loseFirstAcknowledgement(page, path);
@@ -63,6 +72,11 @@ for (const surface of ["contacts", "leads", "deals"] as const) {
       const history = await page.request.get(`/api/v1/${scope}/${id}/${surface === "contacts" ? "timeline" : "activities"}?page_size=100`);
       if (history.status() !== 200) throw new Error("SYNTHETIC_ENTRY_HISTORY_FAILED");
       const result = await history.json(); expect(result.items.filter((row: { body: string }) => row.body === text).length).toBe(1);
+      if (project) {
+        const links = await page.request.get(`/api/v1/${scope}/${id}/project-links?kind=discussed`);
+        expect(links.status()).toBe(200);
+        expect((await links.json()).total).toBe(1);
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
     } finally { await clearActorContext(page); await removeActor(agent); }
   });

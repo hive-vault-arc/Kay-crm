@@ -1,4 +1,4 @@
-"""Administrator staff HTTP boundary; authority is checked again inside each transaction."""
+"""Staff management HTTP boundary with transactional role and target checks."""
 
 from typing import Annotated, cast
 from uuid import UUID

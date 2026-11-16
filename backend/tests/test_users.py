@@ -19,7 +19,7 @@ from app.identity.models import (
     UserCommandReceipt,
 )
 from app.identity.security import IdentityError, csrf_token, verify_password
-from app.identity.service import change_password, login
+from app.identity.service import login
 from app.identity.sessions import current_identity
 from app.identity.user_contracts import EditUser, NewUser, ResetUser, Versioned
 from app.identity.users import command, read_user, read_users
@@ -85,7 +85,7 @@ def invoke(
     return {**result, **({"temporary_password": temporary} if password is not None else {})}
 
 
-def test_complete_admin_chosen_password_first_login_change_delete(
+def test_admin_chosen_password_signs_in_directly_until_delete(
     settings: Settings, database: Database, caplog: pytest.LogCaptureFixture
 ) -> None:
     actor_id, token, _ = admin(settings, database)
@@ -93,20 +93,12 @@ def test_complete_admin_chosen_password_first_login_change_delete(
     user, temporary = created["user"], str(created["temporary_password"])
     assert isinstance(user, dict)
     uid, email = UUID(str(user["id"])), str(user["email"])
-    valid_temporary = user["state"] == "active" and user["must_change_password"]
-    assert valid_temporary
-    expiry = datetime.fromisoformat(str(user["temporary_expires_at"]))
-    assert timedelta(hours=23, minutes=59) < expiry - datetime.now(UTC) <= timedelta(hours=24)
-    restricted, _ = login(database, "test-secret", email, temporary)
+    assert user["state"] == "active" and not user["must_change_password"]
+    assert user["temporary_expires_at"] is None
+    full, expiry = login(database, "test-secret", email, temporary)
+    assert timedelta(days=6, hours=23) < expiry - datetime.now(UTC) <= timedelta(days=7)
     with database.session() as session:
-        with pytest.raises(IdentityError, match="PASSWORD_CHANGE_REQUIRED"):
-            current_identity(session, restricted)
-    final = secrets.token_urlsafe(24)
-    change_password(database, restricted, temporary, final)
-    with database.session() as session:
-        with pytest.raises(IdentityError, match="UNAUTHENTICATED"):
-            current_identity(session, restricted, restricted_allowed=True)
-    full, _ = login(database, "test-secret", email, final)
+        assert current_identity(session, full).user.id == uid
     invoke(settings, database, token, "delete", uid, 1)
     with database.session() as session:
         with pytest.raises(IdentityError, match="UNAUTHENTICATED"):
@@ -116,7 +108,7 @@ def test_complete_admin_chosen_password_first_login_change_delete(
             session.scalar(
                 select(func.count()).select_from(AuditEvent).where(AuditEvent.actor_user_id == uid)
             )
-            == 3
+            == 1
         )
         assert (
             session.scalar(
@@ -127,19 +119,16 @@ def test_complete_admin_chosen_password_first_login_change_delete(
             == 2
         )
         credential = session.get(Credential, uid)
-        if credential is None or not verify_password(credential.password_hash, final):
+        if credential is None or not verify_password(credential.password_hash, temporary):
             raise AssertionError("CREDENTIAL_HASH_INVALID")
         stored = str(session.scalars(select(UserCommandReceipt.result)).all())
-    if temporary in stored or temporary in caplog.text or final in caplog.text:
+    if temporary in stored or temporary in caplog.text:
         raise AssertionError("TEMPORARY_SECRET_PERSISTED_OR_LOGGED")
 
 
-@pytest.mark.parametrize("role", ["manager", "agent"])
 @pytest.mark.anyio
-async def test_every_user_route_denies_non_admin(
-    settings: Settings, database: Database, role: str
-) -> None:
-    _, email, password = create_actor(settings, database, role=role)
+async def test_every_user_route_denies_agents(settings: Settings, database: Database) -> None:
+    _, email, password = create_actor(settings, database, role="agent")
     token, _ = login(database, "test-secret", email, password)
     headers = {
         **authority(settings),
@@ -195,7 +184,92 @@ async def test_every_user_route_denies_non_admin(
             ).status_code == 404
 
 
-def test_reset_wrong_password_expiry_and_recovery(settings: Settings, database: Database) -> None:
+@pytest.mark.anyio
+async def test_manager_creates_and_resets_agents_only(
+    settings: Settings, database: Database
+) -> None:
+    admin_id, _, _ = admin(settings, database)
+    manager_id, manager_email, manager_password = create_actor(settings, database, role="manager")
+    secret = settings.facade_secret.get_secret_value()
+    token, _ = login(database, secret, manager_email, manager_password)
+    headers = {
+        **authority(settings),
+        "X-Kay-Session": token,
+        "X-CSRF-Token": csrf_token(secret, token),
+    }
+    email = f"sp03-{uuid4().hex}@example.com"
+    password, replacement = secrets.token_urlsafe(24), secrets.token_urlsafe(24)
+    create_body = {
+        "display_name": "Agent créé par le responsable",
+        "email": email,
+        "role": "agent",
+        "temporary_password": password,
+    }
+    reset_body = {
+        "expected_version": 1,
+        "admin_password": manager_password,
+        "temporary_password": replacement,
+    }
+
+    def mutation_headers() -> dict[str, str]:
+        return {**headers, "Idempotency-Key": str(uuid4())}
+
+    async with client_for(create_app(settings)) as client:
+        for role in ("manager", "administrator"):
+            denied = await client.post(
+                "/api/v1/users", headers=mutation_headers(), json={**create_body, "role": role}
+            )
+            assert denied.status_code == 403
+        created = await client.post("/api/v1/users", headers=mutation_headers(), json=create_body)
+        assert created.status_code == 200
+        agent_id = created.json()["user"]["id"]
+        roster = await client.get("/api/v1/users", headers=headers)
+        assert roster.status_code == 200
+        assert roster.json()["total"] == 1
+        assert [item["id"] for item in roster.json()["items"]] == [agent_id]
+        for target in (admin_id, manager_id):
+            denied_detail = await client.get(f"/api/v1/users/{target}", headers=headers)
+            assert denied_detail.status_code == 404
+            denied_reset = await client.post(
+                f"/api/v1/users/{target}/reset-password",
+                headers=mutation_headers(),
+                json=reset_body,
+            )
+            assert denied_reset.status_code == 404
+        denied_delete = await client.request(
+            "DELETE",
+            f"/api/v1/users/{agent_id}",
+            headers=mutation_headers(),
+            json={"expected_version": 1},
+        )
+        assert denied_delete.status_code == 403
+        denied_edit = await client.patch(
+            f"/api/v1/users/{agent_id}",
+            headers=mutation_headers(),
+            json={
+                "display_name": create_body["display_name"],
+                "email": email,
+                "role": "agent",
+                "expected_version": 1,
+            },
+        )
+        assert denied_edit.status_code == 403
+        old_session, _ = login(database, secret, email, password)
+        reset = await client.post(
+            f"/api/v1/users/{agent_id}/reset-password", headers=mutation_headers(), json=reset_body
+        )
+        assert reset.status_code == 200
+        assert not reset.json()["user"]["must_change_password"]
+    with database.session() as session, pytest.raises(IdentityError, match="UNAUTHENTICATED"):
+        current_identity(session, old_session)
+    new_session, _ = login(database, secret, email, replacement)
+    with database.session() as session:
+        assert current_identity(session, new_session).user.role == "agent"
+
+
+def test_reset_checks_current_password_and_replaces_signin(
+    settings: Settings, database: Database
+) -> None:
     _, token, password = admin(settings, database)
     uid, email, old = create_actor(settings, database, role="agent")
     old_session, _ = login(database, "test-secret", email, old)
@@ -206,16 +280,15 @@ def test_reset_wrong_password_expiry_and_recovery(settings: Settings, database: 
         assert session.get(User, uid).version == 1
     reset = invoke(settings, database, token, "reset-password", uid, 1, password)
     temporary = str(reset["temporary_password"])
-    with database.session() as session, session.begin():
+    with database.session() as session:
         with pytest.raises(IdentityError, match="UNAUTHENTICATED"):
             current_identity(session, old_session)
-        session.execute(
-            update(Credential)
-            .where(Credential.user_id == uid)
-            .values(temporary_expires_at=datetime.now(UTC) - timedelta(seconds=1))
-        )
+        credential = session.get(Credential, uid)
+        assert credential and not credential.must_change_password
+        assert credential.temporary_expires_at is None
     with pytest.raises(IdentityError, match="INVALID_CREDENTIALS"):
-        login(database, "test-secret", email, temporary)
+        login(database, "test-secret", email, old)
+    login(database, "test-secret", email, temporary)
     replacement = invoke(settings, database, token, "reset-password", uid, 2, password)
     with pytest.raises(IdentityError, match="INVALID_CREDENTIALS"):
         login(database, "test-secret", email, temporary)
@@ -405,7 +478,7 @@ async def test_admin_http_create_strict_input_transport_and_no_get_secret(
             },
             headers={**headers, "Idempotency-Key": str(uuid4())},
         )
-        assert own_reset.status_code == 409
+        assert own_reset.status_code == 403
     if temporary in caplog.text or password in caplog.text:
         raise AssertionError("PASSWORD_LOGGED")
 
@@ -437,10 +510,10 @@ def test_reset_interruption_preserves_prior_sessions_and_credentials(
         assert session.get(User, uid).version == 1
 
 
-def test_expired_activated_temporary_cannot_login_or_continue(
+def test_legacy_temporary_cannot_login_or_continue_until_staff_reset(
     settings: Settings, database: Database
 ) -> None:
-    _, token, _ = admin(settings, database)
+    _, token, administrator_password = admin(settings, database)
     created = create(settings, database, token)
     uid = UUID(created["user"]["id"])
     proof, _ = login(
@@ -450,13 +523,24 @@ def test_expired_activated_temporary_cannot_login_or_continue(
         session.execute(
             update(Credential)
             .where(Credential.user_id == uid)
-            .values(temporary_expires_at=datetime.now(UTC) - timedelta(seconds=1))
+            .values(
+                must_change_password=True,
+                temporary_expires_at=datetime.now(UTC) + timedelta(hours=1),
+            )
         )
     with database.session() as session:
         with pytest.raises(IdentityError, match="UNAUTHENTICATED"):
-            current_identity(session, proof, restricted_allowed=True)
+            current_identity(session, proof)
     with pytest.raises(IdentityError, match="INVALID_CREDENTIALS"):
         login(database, "test-secret", created["user"]["email"], created["temporary_password"])
+    replacement = invoke(
+        settings, database, token, "reset-password", uid, 1, administrator_password
+    )
+    full, _ = login(
+        database, "test-secret", created["user"]["email"], replacement["temporary_password"]
+    )
+    with database.session() as session:
+        assert current_identity(session, full).user.id == uid
 
 
 def test_actor_demoted_while_waiting_cannot_commit_an_admin_command(

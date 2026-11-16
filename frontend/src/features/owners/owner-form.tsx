@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DossierFormHeader, useDossierDraft } from "@/components/shared/dossier-form";
@@ -22,7 +22,7 @@ import { CommandError, RecordError } from "@/features/contacts/record-states";
 import { useQuery } from "@/features/contacts/use-query";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { apiGet, ApiError } from "@/lib/api/client";
-import { editableOwnerValues, ownerRoleBody } from "./owner-form-model";
+import { editableOwnerValues, ownerCategory, ownerCategoryLabels, ownerRoleBody, ownerRoles, type OwnerCategory } from "./owner-form-model";
 import { useOwnerFormCommand } from "./use-owner-form-command";
 import { OwnerContactChoice, OwnerContactSnapshot } from "./owner-form-parts";
 import { OwnerLoading } from "./owner-loading";
@@ -66,6 +66,8 @@ function OwnerFormFields({ role, actorId, metadata, contact, retry, presentation
     defaultValues: editableOwnerValues(contact),
   });
   const values = useWatch({ control: form.control });
+  const categoryId = useId();
+  const [reuseCategory, setReuseCategory] = useState<OwnerCategory>();
   const [mode, setMode] = useState("new"), [selected, setSelected] = useState<Contact>(), [selectedId, setSelectedId] = useState("");
   const [agent, setAgent] = useState(""), [agentName, setAgentName] = useState("");
   const [version, setVersion] = useState(contact?.version ?? 1), [validating, setValidating] = useState(false), [selecting, setSelecting] = useState(false);
@@ -75,15 +77,15 @@ function OwnerFormFields({ role, actorId, metadata, contact, retry, presentation
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; lookup.current?.abort(); }; }, []);
   const hidePrivate = useCallback((failure: ApiError, acknowledged?: boolean) => { lookup.current?.abort(); setDenied(failure); setSelected(undefined); setSelectedId(""); onDenied?.(failure, acknowledged); }, [onDenied]);
   const command = useOwnerFormCommand({ contact, subject: contact ?? selected, actorId, role, available: !unavailable, denied: hidePrivate }), saving = validating || command.busy;
-  const activeValues = { fields: values, agent: !contact ? agent : "", selectedId: isReuse ? selectedId : "", recovery: command.uncertain }, draft = useDossierDraft(activeValues, saving);
+  const activeValues = { fields: values, agent: !contact ? agent : "", selectedId: isReuse ? selectedId : "", reuseCategory, recovery: command.uncertain }, draft = useDossierDraft(activeValues, saving);
   const current = command.comparison, error = localError ?? command.error;
   function authorityDenied(failure: ApiError) { command.deny(failure); }
   async function finish(value: Contact, confirmed: typeof activeValues, signal: AbortSignal) { if (!mounted.current || signal.aborted) return; draft.accept(confirmed); if (onSaved) await onSaved(value.id, value); else router.push(`/owners/${value.id}`); }
-  function clearChoice() { if (lock.current || !command.reset()) return; lookup.current?.abort(); setSelected(undefined); setSelectedId(""); setSelecting(false); setError(undefined); }
+  function clearChoice() { if (lock.current || !command.reset()) return; lookup.current?.abort(); setSelected(undefined); setSelectedId(""); setReuseCategory(undefined); setSelecting(false); setError(undefined); }
   async function chooseExisting(id: string) {
     if (lock.current || !command.canEdit() || !contactSchema.shape.id.safeParse(id).success || !command.reset()) return;
     lookup.current?.abort(); const controller = new AbortController(); lookup.current = controller;
-    setMode("existing"); setSelected(undefined); setSelectedId(id); setSelecting(true); setError(undefined);
+    setMode("existing"); setSelected(undefined); setSelectedId(id); setReuseCategory(undefined); setSelecting(true); setError(undefined);
     try { const result = await apiGet(`/api/v1/contacts/${id}`, contactSchema, controller.signal); if (!controller.signal.aborted && mounted.current) setSelected(result); }
     catch (reason) { if (!controller.signal.aborted && mounted.current) { const failure = reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503); if ([401, 403, 404].includes(failure.status)) authorityDenied(failure); else setError(failure); } }
     finally { if (!controller.signal.aborted && mounted.current) setSelecting(false); }
@@ -94,8 +96,8 @@ function OwnerFormFields({ role, actorId, metadata, contact, retry, presentation
     const completed = (value: Contact, signal: AbortSignal) => finish(value, confirmed, signal);
     if (isReuse && selected?.roles.includes("owner")) { await command.start({ kind: "open", id: selected.id, version: selected.version }, completed); return; }
     if (!isReuse && !contact && role !== "agent" && !agent) { setError(new ApiError("INVALID_ASSIGNEE", 422)); return; }
-    const ownerFields = fields && { ...fields, roles: [...new Set([...fields.roles, "owner" as const])] };
-    const parsed = isReuse && selected ? editContactSchema.safeParse(ownerRoleBody(selected)) : contact ? editContactSchema.safeParse({ ...ownerFields, expected_version: version }) : newContactSchema.safeParse({ ...ownerFields, ...(role !== "agent" ? { primary_agent_id: agent } : {}) });
+    const ownerFields = fields && { ...fields, roles: ownerRoles(fields.roles) };
+    const parsed = isReuse && selected ? editContactSchema.safeParse(ownerRoleBody(selected, reuseCategory)) : contact ? editContactSchema.safeParse({ ...ownerFields, expected_version: version }) : newContactSchema.safeParse({ ...ownerFields, ...(role !== "agent" ? { primary_agent_id: agent } : {}) });
     if (!parsed.success) { setError(new ApiError("VALIDATION_ERROR", 422)); return; }
     const target = isReuse ? selected : contact;
     if (target) await command.start({ kind: isReuse ? "add-role" : "edit", id: target.id, body: editContactSchema.parse(parsed.data) }, completed);
@@ -110,7 +112,7 @@ function OwnerFormFields({ role, actorId, metadata, contact, retry, presentation
   function adopt(value: Contact, keep = false) {
     if (!command.accept(value)) return;
     if (isReuse) { setSelected(value); setSelectedId(value.id); }
-    else { setVersion(value.version); if (!keep) { const fields = editableOwnerValues(value); form.reset(fields); draft.accept({ fields, agent: "", selectedId: "", recovery: false }); } form.setFocus("name"); }
+    else { setVersion(value.version); if (!keep) { const fields = editableOwnerValues(value); form.reset(fields); draft.accept({ fields, agent: "", selectedId: "", reuseCategory: undefined, recovery: false }); } form.setFocus("name"); }
     setError(undefined);
   }
   const route = contact ? `/owners/${contact.id}/edit` : "/owners/new", back = contact ? `/owners/${contact.id}` : "/owners";
@@ -119,7 +121,17 @@ function OwnerFormFields({ role, actorId, metadata, contact, retry, presentation
   if (denied || command.denial) return <>{heading}{command.acknowledged ? <p role="status">La modification est enregistrée. Les droits d’accès ont changé.</p> : null}<RecordError error={denied ?? command.denial!} retry={retry} /></>;
   if (contact?.archived_at && !saving && !command.uncertain) return <>{heading}<p className="text-sm text-warning">Ce contact est archivé. Gérez sa restauration depuis sa fiche avant de le modifier.</p></>;
   const fieldsDisabled = !hydrated || saving || command.uncertain || command.complete || command.needsReview || unavailable || !command.active();
-  const actions = <>{presentation === "drawer" && cancel ? <Button action="cancel" type="button" variant="outline" disabled={saving || command.uncertain} onClick={cancel}>Annuler</Button> : <Button action="cancel" asChild variant="outline" disabled={saving || command.uncertain}><Link prefetch={false} href={back}>Annuler</Link></Button>}<Button ref={trigger} action={command.uncertain ? "retry" : contact ? "save" : isReuse && selected?.roles.includes("owner") ? "show" : "create"} type="submit" disabled={!hydrated || saving || selecting || command.complete || !command.active() || !command.uncertain && (unavailable || command.needsReview || isReuse && (!selected || Boolean(selected.archived_at)))}>{saving ? "Enregistrement…" : command.uncertain ? command.kind === "open" ? "Réessayer l’ouverture" : command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération" : contact ? "Enregistrer les modifications" : isReuse ? selected?.roles.includes("owner") ? "Ouvrir le propriétaire" : "Ajouter le rôle Propriétaire" : "Créer le propriétaire"}</Button></>;
+  const categoryField = <div className="grid gap-2"><Label htmlFor={categoryId}>Catégorie du propriétaire</Label><NativeSelect id={categoryId}
+    value={isReuse && selected ? reuseCategory ?? ownerCategory(selected.roles) : ownerCategory(values.roles ?? [])}
+    onChange={event => {
+      if (lock.current || !command.canEdit()) return;
+      const category = event.target.value as OwnerCategory;
+      if (isReuse) setReuseCategory(category);
+      else form.setValue("roles", ownerRoles(form.getValues("roles"), category), { shouldDirty: true });
+    }}>
+    {Object.entries(ownerCategoryLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+  </NativeSelect></div>;
+  const actions = <>{presentation === "drawer" && cancel ? <Button action="cancel" type="button" variant="outline" disabled={saving || command.uncertain} onClick={cancel}>Annuler</Button> : <Button action="cancel" asChild variant="outline" disabled={saving || command.uncertain}><Link prefetch={false} href={back}>Annuler</Link></Button>}<Button ref={trigger} action={command.uncertain ? "retry" : contact ? "save" : isReuse && selected?.roles.includes("owner") ? "show" : "create"} type="submit" disabled={!hydrated || saving || selecting || command.complete || !command.active() || !command.uncertain && (unavailable || command.needsReview || isReuse && (!selected || Boolean(selected.archived_at)))}>{saving ? "Enregistrement…" : command.uncertain ? command.kind === "open" ? "Réessayer l’ouverture" : command.acknowledged ? "Actualiser le résultat" : "Réessayer la même opération" : contact ? "Enregistrer les modifications" : isReuse ? selected?.roles.includes("owner") ? "Ouvrir le propriétaire" : "Ajouter comme propriétaire" : "Créer le propriétaire"}</Button></>;
   return <>{guard.dialog}<Form {...form}><form ref={scope} noValidate className={presentation === "drawer" ? "kay-drawer-form" : "kay-dossier-form"} aria-label={title} data-draft-managed data-live-dirty={draft.dirty || command.uncertain || undefined} data-write-recovery={command.uncertain || undefined} aria-busy={saving} onSubmit={event => void submit(event)}>
     {presentation === "page" ? <DossierFormHeader title={title} route={route} backHref={back} description="Identité et coordonnées du contact propriétaire." actions={actions} /> : null}
     <div className={presentation === "drawer" ? "kay-owner-drawer-fields" : "kay-surface kay-form-sheet"}>
@@ -128,12 +140,12 @@ function OwnerFormFields({ role, actorId, metadata, contact, retry, presentation
       {command.uncertain ? <p role="status" className="text-sm text-muted-foreground">{command.kind === "open" ? "L’ouverture a été interrompue. Réessayez le même contact pour retrouver son état actuel." : command.acknowledged ? "La modification est enregistrée. Actualisez son résultat sans l’enregistrer à nouveau." : "La réponse est interrompue. Réessayez la même opération pour retrouver son résultat."}</p> : null}
       {command.needsReview && !current ? <Button action="compare" type="button" variant="outline" disabled={saving || unavailable} onClick={() => void command.compare()}>Comparer la version actuelle</Button> : null}
       {!contact ? <RecordSection title="Contact propriétaire"><fieldset disabled={fieldsDisabled} className="grid min-w-0 gap-2"><Label htmlFor="owner-contact-mode">Contact</Label><NativeSelect id="owner-contact-mode" value={mode} onChange={event => { if (!lock.current && command.canEdit()) { clearChoice(); setMode(event.target.value); } }}><option value="new">Créer un nouveau contact</option><option value="existing">Choisir un contact existant</option></NativeSelect>
-        {isReuse ? selected ? <OwnerContactChoice contact={selected} change={clearChoice} disabled={saving || command.uncertain || command.needsReview || unavailable} /> : <><ContactSelector choose={item => void chooseExisting(item.id)} denied={authorityDenied} />{selecting ? <p role="status">Chargement du contact sélectionné…</p> : null}{error && selectedId && !selecting ? <Button action="retry" type="button" variant="outline" className="justify-self-start" onClick={() => void chooseExisting(selectedId)}>Recharger le contact sélectionné</Button> : null}</> : <p className="text-sm text-muted-foreground">Si la personne est déjà dans le CRM, choisissez son contact existant.</p>}
+        {isReuse ? selected ? <><OwnerContactChoice contact={selected} change={clearChoice} disabled={saving || command.uncertain || command.needsReview || unavailable} />{!selected.roles.includes("owner") && !selected.archived_at ? categoryField : null}</> : <><ContactSelector choose={item => void chooseExisting(item.id)} denied={authorityDenied} />{selecting ? <p role="status">Chargement du contact sélectionné…</p> : null}{error && selectedId && !selecting ? <Button action="retry" type="button" variant="outline" className="justify-self-start" onClick={() => void chooseExisting(selectedId)}>Recharger le contact sélectionné</Button> : null}</> : <p className="text-sm text-muted-foreground">Si la personne est déjà dans le CRM, choisissez son contact existant.</p>}
       </fieldset></RecordSection> : null}
-      <fieldset hidden={isReuse} disabled={fieldsDisabled || isReuse} className={`grid min-w-0 gap-0 ${contact ? "" : "border-t pt-5"}`}><ContactFields form={form} metadata={metadata} requiredRole="owner" workspace ownerLayout assignment={!contact && !isReuse && role !== "agent" ? <AgentPicker value={agent} selectedLabel={agentName} change={(id, name) => { if (!lock.current && command.canEdit()) { setAgent(id); setAgentName(name ?? ""); } }} denied={authorityDenied} /> : <p className="text-sm text-muted-foreground">Agent responsable : {contact?.primary_agent.display_name ?? "vous-même"}. L’attribution ne change pas dans cette fiche.</p>} /></fieldset>
+      <fieldset hidden={isReuse} disabled={fieldsDisabled || isReuse} className={`grid min-w-0 gap-0 ${contact ? "" : "border-t pt-5"}`}><ContactFields form={form} metadata={metadata} workspace ownerLayout ownerCategory={isReuse ? undefined : categoryField} assignment={!contact && !isReuse && role !== "agent" ? <AgentPicker value={agent} selectedLabel={agentName} change={(id, name) => { if (!lock.current && command.canEdit()) { setAgent(id); setAgentName(name ?? ""); } }} denied={authorityDenied} /> : <p className="text-sm text-muted-foreground">Agent responsable : {contact?.primary_agent.display_name ?? "vous-même"}. L’attribution ne change pas dans cette fiche.</p>} /></fieldset>
       {current ? <RecordSection title={`Version actuelle ${current.version}`}><OwnerContactSnapshot contact={current} /><p className="text-sm">Votre saisie est conservée. Comparez-la avant de poursuivre.</p>{current.archived_at ? <p className="text-sm text-warning">Contact archivé : aucune modification possible.</p> : <div className="flex flex-wrap gap-2"><Button action="refresh" type="button" variant="outline" disabled={saving || unavailable} onClick={() => guard.request(() => adopt(current), scope.current ?? undefined)}>Charger la version actuelle</Button>{!isReuse ? <Button action="compare" type="button" variant="outline" disabled={saving || unavailable} onClick={() => adopt(current, true)}>Conserver ma saisie sur cette version</Button> : null}</div>}</RecordSection> : null}
       {!isReuse && values.type === "person" ? <p className="text-sm text-muted-foreground">Ajoutez une copie de la carte nationale dans Documents sur la fiche du propriétaire.</p> : null}
-      <p className="text-sm text-muted-foreground">Les biens se rattachent depuis leur fiche dans Projets. Le rôle Propriétaire ne crée aucun lien de propriété.</p>
+      <p className="text-sm text-muted-foreground">Les biens se rattachent depuis leur fiche dans Projets.</p>
     </div>
     {presentation === "drawer" ? <div className="kay-form-footer">{actions}</div> : null}
   </form></Form></>;

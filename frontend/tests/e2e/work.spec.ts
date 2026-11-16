@@ -42,30 +42,38 @@ test("Birthday reminders open the private contact at both stages", async ({ page
     await expect(page.getByText("16/01/1996", { exact: true })).toBeVisible();
     const realtime = page.locator("[data-realtime-status]");
     if (process.env.REALTIME_ENABLED === "true") await expect(realtime).toHaveAttribute("data-realtime-status", "connected");
-    await page.getByRole("button", { name: "Modifier date de naissance", exact: true }).click();
-    const edit = page.getByRole("form", { name: "Modifier date de naissance", exact: true });
+    await page.getByRole("button", { name: "Modifier", exact: true }).click();
+    const edit = page.getByRole("dialog", { name: "Coordonnées du contact", exact: true });
     await edit.getByLabel("Date de naissance (facultatif)", { exact: true }).fill("1996-01-15");
-    await edit.getByRole("button", { name: "Enregistrer date de naissance", exact: true }).click();
+    await edit.getByRole("button", { name: "Enregistrer le contact", exact: true }).click();
     await expect(page.getByText("15/01/1996", { exact: true })).toBeVisible();
     expect(await runReminders(new Date("2035-01-14T12:00:00Z"))).toEqual({ processed: 1 });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/dashboard");
+    const bell = page.getByRole("button", { name: "Ouvrir les notifications", exact: true });
+    await expect(bell.getByRole("status", { name: "1 notification non lue", exact: true })).toHaveText("1");
+    await expect(bell.locator("[data-kay-icon]")).toHaveCount(1);
+    await expect(bell.locator("[data-kay-icon]")).toHaveAttribute("data-kay-icon", "notification");
+    await mkdir("output/playwright/contact-birthdays", { recursive: true });
+    await page.screenshot({ path: "output/playwright/contact-birthdays/bell-phone.png" });
     const inbox = await openInbox(page);
     await expect(inbox.getByText("Rappel d’anniversaire : J-1", { exact: true })).toBeVisible();
+    await expect(inbox.locator('[data-kay-icon="birthday"]')).toBeVisible();
     await expect(inbox.getByText(name, { exact: true })).toBeVisible();
     await expect(inbox.getByText("Date de l’anniversaire", { exact: true })).toBeVisible();
     await expect(inbox.getByRole("link", { name: "Ouvrir le contact", exact: true })).toHaveAttribute("href", `/contacts/${id}`);
     await expect(inbox).not.toContainText("1996");
-    await mkdir("output/playwright/contact-birthdays", { recursive: true });
     await page.screenshot({ path: "output/playwright/contact-birthdays/phone.png" });
     await inbox.getByRole("button", { name: "Marquer comme lue", exact: true }).click();
     await expect(inbox.getByText("Lue", { exact: true })).toBeVisible();
+    await expect(page.locator(".kay-notification-count")).toHaveCount(0);
     await inbox.getByRole("link", { name: "Ouvrir le contact", exact: true }).click();
     await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
     await expect(page.getByText("15/01/1996", { exact: true })).toBeVisible();
     expect(await runReminders(new Date("2035-01-15T12:00:00Z"))).toEqual({ processed: 1 });
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.reload();
+    await page.evaluate(() => window.dispatchEvent(new Event("online")));
+    await expect(bell.getByRole("status", { name: "1 notification non lue", exact: true })).toHaveText("1");
     const updatedInbox = await openInbox(page);
     await expect(updatedInbox.getByText("Anniversaire du jour", { exact: true })).toBeVisible();
     await expect(updatedInbox.getByText("Rappel d’anniversaire : J-1", { exact: true })).toBeVisible();
@@ -122,7 +130,7 @@ test("SP15: deal task due edit, explicit cancellation, refresh and retained cont
   } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
 });
 
-test("Tasks directory creates a dossier reminder, filters it and opens its record", async ({ page }) => {
+test("Tasks directory creates a dossier reminder, filters it and opens its record", async ({ page, browser, baseURL }) => {
   test.setTimeout(150_000);
   const actors: TestActor[] = [];
   try {
@@ -142,10 +150,58 @@ test("Tasks directory creates a dossier reminder, filters it and opens its recor
     await expect(drawer).toBeHidden();
     const task = page.getByRole("button", { name: "Rappel synthétique du répertoire", exact: true });
     await expect(task).toBeVisible();
-    await page.getByLabel("État ou période", { exact: true }).selectOption("completed");
+    const filters = page.getByRole("complementary", { name: "Filtres des tâches", exact: true });
+    const status = filters.getByRole("group", { name: "Statut", exact: true });
+    const tiles = status.locator("label");
+    await expect(tiles).toHaveCount(3);
+    await expect(status.locator(".crm-status-filter-count")).toHaveText(["1", "0", "0"]);
+    const [first, second] = await tiles.evaluateAll(labels => labels.slice(0, 2).map(tile => tile.getBoundingClientRect().toJSON()));
+    expect(second.y).toBe(first.y);
+    expect(second.x).toBeGreaterThan(first.x);
+    expect(first.height).toBeGreaterThanOrEqual(44);
+    const dueTime = page.getByRole("region", { name: "Tableau des tâches", exact: true }).locator("time");
+    expect(await dueTime.evaluate(element => {
+      const cell = element.closest("td")!.getBoundingClientRect();
+      const text = document.createRange();
+      text.selectNodeContents(element);
+      return Array.from(text.getClientRects()).every(rect => rect.left >= cell.left && rect.right <= cell.right + 1);
+    })).toBe(true);
+    await mkdir("output/playwright/tasks-filters", { recursive: true });
+    await page.screenshot({ path: "output/playwright/tasks-filters/desktop.png", animations: "disabled" });
+    const completed = status.getByRole("checkbox", { name: "Terminée", exact: true });
+    await completed.focus();
+    await page.keyboard.press("Space");
+    await expect(completed).toBeChecked();
     await expect(task).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Aucune échéance pour ces filtres", exact: true })).toBeVisible();
-    await page.getByLabel("État ou période", { exact: true }).selectOption("open");
+    await expect(status.locator(".crm-status-filter-count")).toHaveText(["1", "0", "0"]);
+    const period = filters.getByLabel("Échéance des tâches à faire", { exact: true });
+    await period.selectOption("today");
+    await expect(status.getByRole("checkbox", { name: "À faire", exact: true })).toBeChecked();
+    await expect(task).toBeVisible();
+    await period.selectOption("upcoming");
+    await expect(task).toHaveCount(0);
+    await filters.getByRole("button", { name: "Réinitialiser", exact: true }).first().click();
+    await expect(period).toHaveValue("");
+    await expect(task).toBeVisible();
+
+    const touch = await browser.newContext({ baseURL, viewport: { width: 360, height: 800 }, hasTouch: true, ignoreHTTPSErrors: true });
+    try {
+      await touch.addCookies(await page.context().cookies());
+      const phone = await touch.newPage();
+      await phone.goto("/tasks");
+      await phone.getByRole("button", { name: "Afficher les filtres", exact: true }).tap();
+      const phoneFilters = phone.getByRole("dialog", { name: "Filtres des tâches", exact: true });
+      await expect(phoneFilters.locator(".crm-status-filter-count")).toHaveText(["1", "0", "0"]);
+      expect(await phoneFilters.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
+      await phone.screenshot({ path: "output/playwright/tasks-filters/mobile.png", animations: "disabled" });
+      await phoneFilters.getByRole("checkbox", { name: "Annulée", exact: true }).tap();
+      await expect(phoneFilters.getByRole("checkbox", { name: "Annulée", exact: true })).toBeChecked();
+      await phoneFilters.getByRole("button", { name: "Appliquer", exact: true }).tap();
+      await expect(phoneFilters).toHaveCount(0);
+      await expect(phone.getByRole("heading", { name: "Aucune échéance pour ces filtres", exact: true })).toBeVisible();
+    } finally { await touch.close(); }
+
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(task).toBeVisible();
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);

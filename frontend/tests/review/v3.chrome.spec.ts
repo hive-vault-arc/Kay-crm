@@ -40,7 +40,7 @@ test("Approved V3: nine compositions, unpictured routes and contextual panels", 
       await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
     });
     // The restricted password-change page intentionally has no interface icons.
-    iconCoverage.push({ capture: name, icons: await inspectIcons(page, name === "change-password" ? 0 : 1) });
+    iconCoverage.push({ capture: name, icons: await inspectIcons(page, 1) });
     await page.screenshot({ path: `${output}/${name}.png`, fullPage: full, animations: "disabled" });
     captures.push(name);
   }
@@ -84,7 +84,7 @@ test("Approved V3: nine compositions, unpictured routes and contextual panels", 
       [`/projects/properties/${data.stock.sid}/edit`, "property-edit"], ["/settings", "settings"],
       ["/settings/users/new", "staff-create"], [`/settings/users/${actor.id}/edit`, "staff-edit"],
       ["/settings/working-hours", "working-hours"], ["/dashboard?view=audit", "audit"],
-      [`/visits/new?contact_id=${data.contact}`, "visit-create"], ["/change-password", "change-password"],
+      [`/visits/new?contact_id=${data.contact}`, "visit-create"],
     ]) await visit(path, name);
     await visit(`/contacts/${data.contact}`, "contact-record");
     for (const label of ["Identité", "Demandes", "Historique", "Attributions", "Documents", "Recherches", "Affaires", "Tâches"]) {
@@ -120,7 +120,7 @@ test("Approved V3: inventory card uses only an authorized antivirus-clean real i
     await clearActorContext(page); await signIn(page, actor); await page.goto(`/projects/properties/${data.stock.sid}`);
     await testControl("worker-stop");
     await page.getByRole("button", { name: "Galerie", exact: true }).click();
-    const gallery = page.getByRole("dialog", { name: "Photos du dossier", exact: true });
+    const gallery = page.getByRole("dialog", { name: "Galerie du dossier", exact: true });
     await gallery.getByRole("button", { name: "Ajouter une photo", exact: true }).click();
     const form = gallery.getByRole("form", { name: "Ajouter une photo", exact: true });
     await form.getByLabel("Photo à ajouter", { exact: true }).setInputFiles(await syntheticFile("clean", "V3 photographie synthétique.png"));

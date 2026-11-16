@@ -226,11 +226,11 @@ test("project drawers preserve their directory or record and return focus on clo
     await create.click();
     const createDrawer = page.getByRole("dialog", { name: "Créer un bien indépendant", exact: true });
     await expect(createDrawer.getByRole("form", { name: "Créer un bien indépendant", exact: true })).toBeVisible();
-    await createDrawer.locator("#property-reference").fill("SYN-DRAFT-NON-ENREGISTRE");
+    await createDrawer.locator("#property-marketing_name").fill("SYN-DRAFT-NON-ENREGISTRE");
     await page.keyboard.press("Escape");
     const discard = page.getByRole("alertdialog", { name: "Quitter la modification ?", exact: true });
     await discard.getByRole("button", { name: "Continuer la modification", exact: true }).click();
-    await expect(createDrawer.locator("#property-reference")).toHaveValue("SYN-DRAFT-NON-ENREGISTRE");
+    await expect(createDrawer.locator("#property-marketing_name")).toHaveValue("SYN-DRAFT-NON-ENREGISTRE");
     await createDrawer.getByRole("button", { name: "Annuler", exact: true }).click();
     await discard.getByRole("button", { name: "Quitter sans enregistrer", exact: true }).click();
     await expect(createDrawer).toHaveCount(0);

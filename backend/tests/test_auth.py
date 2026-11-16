@@ -4,22 +4,19 @@ import secrets
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from threading import Barrier
-from typing import Annotated
 
 import pytest
-from fastapi import Depends, Request
-from sqlalchemy import event, func, select, update
+from sqlalchemy import func, select, update
 
 from app.db.session import Database
 from app.identity.models import AuditEvent, Credential, LoginRateBucket, StaffSession, User
 from app.identity.rate_limit import consume_login_budget
-from app.identity.router import facade_authority, session_proof
 from app.identity.security import IdentityError, csrf_token, keyed_digest, token_hash
-from app.identity.service import change_password, login
+from app.identity.service import login
 from app.identity.sessions import current_identity, require_role
 from app.main import create_app
 from app.settings import Settings
-from tests.identity_support import create_actor, observe_two_lock_waiters
+from tests.identity_support import create_actor
 from tests.test_foundation import client_for
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
@@ -37,7 +34,7 @@ async def test_login_me_logout_facade_and_csrf(settings: Settings, database: Dat
     user_id, email, password = create_actor(settings, database)
     async with client_for(create_app(settings)) as client:
         headers = authority(settings)
-        for path in ("login", "logout", "change-password"):
+        for path in ("login", "logout"):
             response = await client.post(f"/api/v1/auth/{path}", json={})
             assert response.status_code == 403
         assert (await client.get("/api/v1/auth/me")).status_code == 403
@@ -131,16 +128,14 @@ async def test_invalid_signin_is_generic_bounded_and_redacted(
         "credential_version",
         "expired",
         "revoked",
-        "temporary_expired",
+        "legacy_credential",
         "deleted",
     ],
 )
 def test_current_state_invalidates_session(
     changed: str, settings: Settings, database: Database
 ) -> None:
-    user_id, email, password = create_actor(
-        settings, database, restricted=changed == "temporary_expired"
-    )
+    user_id, email, password = create_actor(settings, database)
     token, _ = login(database, settings.facade_secret.get_secret_value(), email, password)
     with database.session() as session, session.begin():
         if changed in {"disabled", "pending", "role", "user_version", "deleted"}:
@@ -152,11 +147,12 @@ def test_current_state_invalidates_session(
                 "deleted": {"state": "disabled", "deleted_at": datetime.now(UTC)},
             }[changed]
             session.execute(update(User).where(User.id == user_id).values(**values))
-        elif changed in {"credential_version", "temporary_expired"}:
+        elif changed in {"credential_version", "legacy_credential"}:
             changes = {
                 "credential_version": {"version": 2},
-                "temporary_expired": {
-                    "temporary_expires_at": datetime.now(UTC) - timedelta(seconds=1)
+                "legacy_credential": {
+                    "must_change_password": True,
+                    "temporary_expires_at": datetime.now(UTC) + timedelta(hours=1),
                 },
             }[changed]
             session.execute(
@@ -178,81 +174,35 @@ def test_current_state_invalidates_session(
                 )
             )
     with database.session() as session, pytest.raises(IdentityError, match="UNAUTHENTICATED"):
-        current_identity(session, token, restricted_allowed=True)
+        current_identity(session, token)
 
 
 @pytest.mark.anyio
-async def test_restricted_routes_change_and_fresh_login(
+async def test_legacy_temporary_password_requires_staff_reset(
     settings: Settings, database: Database
 ) -> None:
-    user_id, email, password = create_actor(settings, database, restricted=True)
-    application = create_app(settings)
-
-    # Fixture-only business boundary, not a product or public bootstrap route.
-    @application.get("/test/full", dependencies=[Depends(facade_authority)])
-    def full(request: Request, token: Annotated[str, Depends(session_proof)]) -> dict[str, bool]:
-        with request.app.state.database.session() as session:
-            identity = current_identity(session, token)
-            require_role(identity, {"administrator"})
-        return {"allowed": True}
-
-    secret = settings.facade_secret.get_secret_value()
-    token, _ = login(database, secret, email, password)
-    other_token, _ = login(database, secret, email, password)
-    headers = {
-        **authority(settings),
-        "X-Kay-Session": token,
-        "X-CSRF-Token": csrf_token(secret, token),
-    }
-    new_password = secrets.token_urlsafe(24)
-    async with client_for(application) as client:
-        assert (await client.get("/test/full", headers=headers)).status_code == 403
-        assert (await client.get("/api/v1/auth/me", headers=headers)).json()["must_change_password"]
-        for old, new, status in (
-            (password, secrets.token_hex(5), 422),
-            (secrets.token_urlsafe(24), new_password, 401),
-            (password, password, 422),
-        ):
-            response = await client.post(
-                "/api/v1/auth/change-password",
-                headers=headers,
-                json={"old_password": old, "new_password": new},
-            )
-            assert response.status_code == status
-        success = await client.post(
-            "/api/v1/auth/change-password",
-            headers=headers,
-            json={"old_password": password, "new_password": new_password},
+    _, email, password = create_actor(settings, database, restricted=True)
+    async with client_for(create_app(settings)) as client:
+        response = await client.post(
+            "/api/v1/auth/login",
+            headers=authority(settings),
+            json={"email": email, "password": password},
         )
-        assert success.status_code == 200 and success.json()["fresh_login_required"]
-        for stale in (token, other_token):
-            assert (
-                await client.get("/api/v1/auth/me", headers={**headers, "X-Kay-Session": stale})
-            ).status_code == 401
-        with pytest.raises(IdentityError, match="INVALID_CREDENTIALS"):
-            login(database, secret, email, password)
-        fresh, _ = login(database, secret, email, new_password)
-        fresh_headers = {**headers, "X-Kay-Session": fresh}
-        assert (await client.get("/test/full", headers=fresh_headers)).status_code == 200
-        assert not (await client.get("/api/v1/auth/me", headers=fresh_headers)).json()[
-            "must_change_password"
-        ]
-    with database.session() as session:
-        credential = session.get(Credential, user_id)
-        assert credential and credential.version == 2 and credential.temporary_expires_at is None
+        assert response.status_code == 401
+        assert response.json()["error"]["code"] == "INVALID_CREDENTIALS"
+        response = await client.post(
+            "/api/v1/auth/change-password", headers=authority(settings), json={}
+        )
+        assert response.status_code == 404
 
 
-def test_session_csrf_is_bound_and_password_change_rolls_back(
-    settings: Settings, database: Database
-) -> None:
+def test_session_csrf_is_bound(settings: Settings, database: Database) -> None:
     _, email, password = create_actor(settings, database)
     secret = settings.facade_secret.get_secret_value()
     first, _ = login(database, secret, email, password)
     second, _ = login(database, secret, email, password)
     if first == second or csrf_token(secret, first) == csrf_token(secret, second):
         raise AssertionError("SESSION_PROOF_NOT_ROTATED")
-    with pytest.raises(IdentityError, match="INVALID_CREDENTIALS"):
-        change_password(database, first, secrets.token_urlsafe(24), secrets.token_urlsafe(24))
     with database.session() as session:
         identity = current_identity(session, first)
         require_role(identity, {"administrator"})
@@ -282,57 +232,6 @@ def test_rate_limit_persists_and_is_atomic(settings: Settings, database: Databas
         assert record and record.attempts == 8
         record.window_started_at = datetime.now(UTC) - timedelta(minutes=16)
     consume_login_budget(database, secret, email)
-
-
-def test_concurrent_password_change_has_one_winner(settings: Settings, database: Database) -> None:
-    user_id, email, password = create_actor(settings, database)
-    secret = settings.facade_secret.get_secret_value()
-    token, _ = login(database, secret, email, password)
-    replacements = [secrets.token_urlsafe(24), secrets.token_urlsafe(24)]
-
-    def attempt(index: int) -> str:
-        try:
-            change_password(database, token, password, replacements[index])
-            return "changed"
-        except IdentityError as error:
-            return error.code
-
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        with database.session() as holder:
-            holder.execute(select(User).where(User.id == user_id).with_for_update())
-            futures = [executor.submit(attempt, index) for index in (0, 1)]
-            try:
-                observe_two_lock_waiters(database, "user")
-            finally:
-                holder.rollback()
-        outcomes = [future.result(timeout=10) for future in futures]
-    assert sorted(outcomes) == ["UNAUTHENTICATED", "changed"]
-    with database.session() as session:
-        credential = session.get(Credential, user_id)
-        assert credential and credential.version == 2
-        with pytest.raises(IdentityError, match="UNAUTHENTICATED"):
-            current_identity(session, token)
-
-
-def test_interrupted_password_change_rolls_back(settings: Settings, database: Database) -> None:
-    user_id, email, password = create_actor(settings, database)
-    secret = settings.facade_secret.get_secret_value()
-    token, _ = login(database, secret, email, password)
-
-    def interrupt(*_: object) -> None:
-        raise RuntimeError("SYNTHETIC_TRANSACTION_INTERRUPTION")
-
-    event.listen(AuditEvent, "before_insert", interrupt)
-    try:
-        with pytest.raises(RuntimeError, match="SYNTHETIC_TRANSACTION_INTERRUPTION"):
-            change_password(database, token, password, secrets.token_urlsafe(24))
-    finally:
-        event.remove(AuditEvent, "before_insert", interrupt)
-    with database.session() as session:
-        credential = session.get(Credential, user_id)
-        assert credential and credential.version == 1
-        current_identity(session, token)
-    login(database, secret, email, password)
 
 
 @pytest.mark.parametrize("role", ["administrator", "manager", "agent"])

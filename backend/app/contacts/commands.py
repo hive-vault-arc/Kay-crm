@@ -108,6 +108,20 @@ def create_contact(
     return contact
 
 
+def create_buyer_contact(
+    session: Session,
+    identity: CurrentIdentity,
+    body: NewContact,
+    source: str,
+    submission: UUID | None,
+) -> Contact:
+    if body.national_id_number is not None:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    return create_contact(
+        session, identity, body.model_copy(update={"roles": ["buyer"]}), source, submission
+    )
+
+
 def create_enquiry(session: Session, identity: CurrentIdentity, body: NewEnquiry) -> Enquiry:
     if body.source_submission_id and session.scalar(
         select(Enquiry.id).where(
@@ -115,8 +129,9 @@ def create_enquiry(session: Session, identity: CurrentIdentity, body: NewEnquiry
         )
     ):
         raise IdentityError("SOURCE_SUBMISSION_CONFLICT", 409)
+    create = create_buyer_contact if body.source == "manual" else create_contact
     contact = (
-        create_contact(session, identity, body.new_contact, body.source, body.source_submission_id)
+        create(session, identity, body.new_contact, body.source, body.source_submission_id)
         if body.new_contact
         else scoped_contact(session, identity, body.contact_id)
         if body.contact_id

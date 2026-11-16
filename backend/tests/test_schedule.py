@@ -26,6 +26,8 @@ from app.schedule.local_time import resolve_local
 from app.schedule.models import Visit, VisitEvent
 from app.schedule.queries import availability, detail, read_policy, read_visits
 from tests.contact_support import actor, create_lead
+from tests.deal_support import new as new_deal
+from tests.deal_support import run as create_deal
 from tests.deal_support import setup
 from tests.identity_support import observe_two_lock_waiters
 
@@ -83,20 +85,12 @@ def prepared(settings, database):
     return uid, token, cid, admin
 
 
-def test_no_schedule_office_allowed_draft_no_guarantee_and_confirmation(settings, database):
+def test_no_schedule_office_allowed_and_draft_creation_rejected(settings, database):
     uid, token, cid, _ = setup(settings, database)
     with pytest.raises(IdentityError, match="VISIT_SCHEDULE_NOT_CONFIGURED"):
         run(settings, database, token, booking(uid, cid))
-    draft = run(settings, database, token, booking(uid, cid, status="draft"))
-    with pytest.raises(IdentityError, match="VISIT_SCHEDULE_NOT_CONFIGURED"):
-        run(
-            settings,
-            database,
-            token,
-            VisitAction(expected_version=1),
-            UUID(draft["id"]),
-            "confirmed",
-        )
+    with pytest.raises(IdentityError, match="INVALID_STATE"):
+        run(settings, database, token, booking(uid, cid, status="draft"))
     office = run(
         settings,
         database,
@@ -104,7 +98,28 @@ def test_no_schedule_office_allowed_draft_no_guarantee_and_confirmation(settings
         booking(uid, cid, type="office", start_at="2030-01-06T02:00Z", end_at="2030-01-06T03:00Z"),
     )
     assert detail(database, token, UUID(office["id"]))["status"] == "scheduled"
-    assert detail(database, token, UUID(draft["id"]))["status"] == "draft"
+
+
+def test_simple_booking_defaults_and_automatic_dossier(settings, database):
+    uid, token, cid, enquiry_id = setup(settings, database)
+    first = NewVisit(
+        contact_id=cid, type="office", start_at="2030-01-07T10:30:00Z", participant_ids=[uid]
+    )
+    key = uuid4()
+    created = run(settings, database, token, first, key=key)
+    visit = detail(database, token, UUID(created["id"]))
+    assert visit["status"] == "scheduled"
+    assert visit["title"] == "Visite" and visit["location"] == "Non renseigné"
+    assert visit["end_at"] == "2030-01-07T11:30:00+00:00"
+    assert visit["enquiry_id"] == str(enquiry_id) and visit["deal_id"] is None
+    deal = create_deal(settings, database, token, new_deal(cid))
+    assert run(settings, database, token, first, key=key) == created
+    second = NewVisit(
+        contact_id=cid, type="office", start_at="2030-01-07T11:30:00Z", participant_ids=[uid]
+    )
+    created = run(settings, database, token, second)
+    visit = detail(database, token, UUID(created["id"]))
+    assert visit["deal_id"] == deal["id"] and visit["enquiry_id"] is None
 
 
 @pytest.mark.parametrize("kind", ["company_car", "without_company_car"])

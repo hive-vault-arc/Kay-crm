@@ -12,7 +12,7 @@ import { DataState } from "../../src/components/shared/data-state";
 import { inspectIcons } from "../helpers/icons";
 
 test("Workspace glyphs: all verified glyphs SSR, accessibility, native controls and offline vectors", async ({ page }) => {
-  const manifest = JSON.parse(await readFile("../branding/prototype/kay-glyphs.json", "utf8")) as { icons: { export: string; name: string; nodes: unknown[] }[] };
+  const manifest = JSON.parse(await readFile("src/lib/design/kay-glyphs.json", "utf8")) as { icons: { export: string; name: string; nodes: unknown[] }[] };
   const names = Object.keys(Icons).sort();
   expect(names).toEqual(manifest.icons.map(icon => icon.export).sort());
   const cells: string[] = [];

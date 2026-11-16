@@ -13,7 +13,6 @@ export async function capture(page: Page, name: string, full = false) {
     const shot = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, ...(metrics ? { captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: metrics.cssContentSize.height, scale: 1 } } : {}) });
     const bytes = Buffer.from(shot.data, "base64");
     await writeFile(path.resolve(`output/playwright/sp17-${name}.png`), bytes);
-    if (["reports-desktop", "reports-mobile"].includes(name)) await writeFile(path.resolve(`../.impeccable/review/${name.endsWith("desktop") ? "desktop" : "mobile"}.png`), bytes);
   } finally { await cdp.detach(); }
 }
 

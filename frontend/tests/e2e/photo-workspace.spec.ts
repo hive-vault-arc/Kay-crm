@@ -14,7 +14,7 @@ for (const [kind, width] of [["property", 1440], ["development", 390]] as const)
     expect(response.status()).toBe(200); const result = await response.json(); const id = kind === "property" ? result.property_id : result.development_id;
     await page.goto(kind === "property" ? `/projects/properties/${id}` : `/projects/${id}`);
     await page.getByRole("button", { name: "Galerie", exact: true }).click();
-    const drawer = page.getByRole("dialog", { name: "Photos du dossier", exact: true });
+    const drawer = page.getByRole("dialog", { name: "Galerie du dossier", exact: true });
     const gallery = drawer.getByRole("form", { name: "Galerie du dossier", exact: true });
     await expect(gallery.getByText("0 photos", { exact: true })).toBeVisible(); await expect(drawer.locator('input[type="file"]')).toHaveCount(0);
     let creates = 0, transfers = 0;

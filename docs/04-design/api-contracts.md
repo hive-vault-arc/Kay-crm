@@ -268,9 +268,15 @@ read/append explicit record-scoped immutable interactions. POST requires the
 existing facade/session/origin/CSRF guards and UUID `Idempotency-Key`; accepts
 only `kind` (note/call/message/email/meeting/visit/other), required trimmed
 `body` (1–4000), optional integer `duration_minutes` (1–1440), optional
-`direction` (inbound/outbound) and up to3 distinct trimmed `projects` text labels
-(1–160 each). NUL is rejected. No actor, timestamp, record ID, transition or
-external send/scheduling input is accepted. Returns `{id}`. Same body/key
+`direction` (inbound/outbound), and optional `project_targets` with up to three
+distinct catalogue targets. Each target specifies exactly one `development_id`
+or `property_id`. The server captures the catalogue names in activity history
+and adds any missing `discussed` links to the current dossier in the same
+transaction. An unavailable target returns `ACTIVITY_PROJECT_UNAVAILABLE` (409)
+and the entire command rolls back. Existing API clients may still send up to
+three distinct trimmed `projects` text labels (1–160 each). A submission uses one
+project representation. The authenticated server supplies the actor, timestamp
+and dossier context. NUL is rejected. Returns `{id}`. Same body/key
 replays after current authority checks; changed body is409. A fresh append to
 an archived contact is409 CONTACT_ARCHIVED; unauthorized IDs remain404.
 
@@ -428,6 +434,15 @@ current write authority; the 24-hour HMAC-bound receipt returns only
   apartment/land. Reference trimmed/uppercased and unique; other unknown draft
   facts stay null. `PATCH /properties/{id}` uses those fields plus
   `expected_version`; no hidden reparent/stock/author fields.
+  Under D48 the standalone creation form supplies the reference at submission.
+  It uses the normalized listing title, the receipt date in `YYYYMMDD` form and
+  a random suffix. With missing inputs the form uses the category and the current
+  Casablanca date. The existing uniqueness constraint applies to the submitted
+  reference. An uncertain retry reuses the original reference and command key.
+  D49 allows optional whole-number `listing_details.unit_floor` from 0 and
+  `listing_details.building_floors` from 1, up to the exact JSON integer range
+  supported by the browser. Existing property categories determine which field
+  applies. Both values use the existing listing details JSONB column.
 - `GET /properties/{id}`: shared facts/current sale and rental campaigns, plus
   `owners:[{marketing_display:null|string,contact:null|{id,name}}]`. A contact
   identity appears only under the caller's separately current Contacts scope
@@ -571,22 +586,16 @@ obtained transiently through `GET /auth/me`. No HTTP bootstrap/sign-up exists.
   Backend success returns `{session_token,expires_at}` only to the facade, which
   strips the token, sets `__Host-kay_session`, and returns `{signed_in:true}`.
 - `GET /auth/me`: `{user:{id,display_name,email,role},must_change_password,
-  expires_at,csrf_token}`. Current session, account, credential, role/version and
-  temporary expiry/handoff are checked, not a cached authorization claim.
+  expires_at,csrf_token}`. Current session, account, credential and role/version
+  are checked. `must_change_password` is false for authenticated responses and
+  remains in the schema for compatibility.
 - `POST /auth/logout`: revokes the current session, audits, returns
   `{signed_out:true}`; facade clears the cookie after success. Missing/expired
   proof returns 401 `UNAUTHENTICATED` and clears the stale cookie.
-- `POST /auth/change-password`: strict `{old_password,new_password}`; correct
-  current password and 12-1,024-character new password different from the old
-  one. Atomically replaces Argon2id hash, clears temporary state, increments
-  credential version, revokes all own sessions and audits. Returns
-  `{fresh_login_required:true}` and clears the cookie; no automatic re-login.
-
 Private/auth responses are `no-store`. The cookie is host-only, Secure,
 HttpOnly, SameSite=Lax, Path=/, maximum seven days. No browser token storage.
-Restricted sessions can use only me/change-password/logout, with a fresh login
-after change. Other full-session dependencies return 403
-`PASSWORD_CHANGE_REQUIRED`; role denials use 403 `FORBIDDEN`.
+A legacy temporary credential requires staff reset before sign-in. Self-service
+`POST /auth/change-password` returns 404. Role denials use 403 `FORBIDDEN`.
 
 Implementation proposals, not business-policy changes: auth JSON at most 8 KiB,
 password input at most 1,024 characters; persistent atomic HMAC-keyed counters
@@ -640,7 +649,12 @@ does not become a generic proxy. Private reads/errors are no-store.
 
 Contact fields: required trimmed name (1–160), type `person|organization`,
 phones (1–10 `{number,label,is_primary}`), optional emails (0–10
-`{email,label,is_primary}`), roles (distinct buyer/seller/owner/tenant/developer).
+`{email,label,is_primary}`), and stored role codes (buyer/seller/owner/tenant/developer).
+Under D50 the prospect form submits only `new_contact`. Manual prospect
+creation and new contacts created with a deal use `buyer`. Existing contacts
+can receive a deal without an identity update. The owner form writes
+`owner` and `seller`, with `developer` for the Promoteur category. The
+stored codes keep legacy links and existing API clients readable.
 Label maximum 40; exactly one primary phone and one primary email if nonempty.
 Maintained phonenumbers 9.0.41 validates +/00 international input and emits E.164;
 no country guessing/extensions, repeated canonical values or zero/multiple
@@ -755,12 +769,12 @@ cumulative SP-22 regression; no such module is claimed implemented here.
 
 ## Route catalogue
 
-### SP-04 implemented account wire contract
+### Staff account wire contract
 
-Every users route requires facade authority, a current full administrator session,
-and exact Origin plus session-bound CSRF for mutations. Restricted sessions,
-managers and agents cannot read or administer accounts. D37 replaces the earlier
-generated-password/handoff/disable commands; existing staff are not bulk-reset.
+Every users route requires facade authority, an authorized staff session, and
+exact Origin plus session-bound CSRF for mutations. Administrators administer
+staff accounts. Managers list, create and reset agent accounts. Manager detail
+and reset on a higher role return 404, and manager role edits and deletion return 403.
 
 - `GET /users?page=1&page_size=50`: safe `items`, numbered page metadata and total.
   Maximum 100; fixed `-updated_at,id` ordering. Backend also accepts the explicit
@@ -771,20 +785,20 @@ generated-password/handoff/disable commands; existing staff are not bulk-reset.
   returns a hash or temporary plaintext. Deleted accounts are excluded from count
   and page, and their detail returns404. Handoff metadata remains nullable legacy
   compatibility data, not an activation requirement.
-- `POST /users`: strict `{display_name,email,role,temporary_password}`. Admin
-  chooses12–1024 nonblank characters; only Argon2id persists. Active immediately,
- 24-hour initial expiry, mandatory own-password change. Success is only `{user}`.
+- `POST /users`: strict `{display_name,email,role,temporary_password}`. The actor
+  chooses a password of 12–1,024 characters containing a non-space character.
+  `temporary_password` is the compatible field name for the chosen sign-in
+  password. Only Argon2id persists. Success returns `{user}` and the account is
+  immediately usable with that password.
 - `PATCH /users/{id}`: strict named fields plus integer `expected_version`.
   No generic state/credential patch. All saves invalidate target sessions, even
   a name/email edit, because the user version changes. Self-save needs fresh login.
 - `POST /users/{id}/confirm-handoff` and `/disable` are removed (404).
-- `POST /users/{id}/reset-password`: `{expected_version,admin_password,temporary_password}`. Another
-  user only; correct current administrator password required. Replaces the hash,
-  revokes target sessions, increments versions and enables immediate restricted
-  login using the chosen password. Only `{user}` is returned. Nondeleted legacy
-  disabled/pending accounts can explicitly reset; deleted targets return404.
-  Self-reset returns409
-  USE_OWN_PASSWORD_CHANGE; use the existing own-password screen.
+- `POST /users/{id}/reset-password`: `{expected_version,admin_password,temporary_password}`.
+  `admin_password` is the actor’s current password, including for manager resets.
+  Reset replaces the hash, revokes target sessions and enables immediate sign-in
+  with the chosen password. Only `{user}` is returned. Authorized reset can enable
+  legacy disabled/pending accounts. Deleted targets return 404. Self-reset returns 403.
 - `DELETE /users/{id}`: `{expected_version}`; marks disabled/deleted_at, revokes
   sessions and hides the account from staff administration. Returns `{user}`.
   Retains identity, unique email and authored CRM FKs; no physical purge/restore.
@@ -821,9 +835,9 @@ public URL, export or external delivery is added. See [SP-04 evidence](../03-pla
 | C | Route and operation | Authority and effect |
 |---|---|---|
 | C14 | `GET /health/live`, `GET /health/ready` | Local SP-02 foundation: safe status only; readiness checks the real database and returns 503 when unavailable. Never expose connection strings, file paths or secrets. |
-| C01 | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`, `POST /auth/change-password` | Active account; sign-in through facade; own password change requires old password. A temporary-password session is restricted to `/auth/me`, `/auth/change-password`, and logout until the change succeeds, then must sign in again. |
-| C01 | `GET /users`, `GET /users/{id}` | A only; numbered pages and safe account/role/state fields. No credential hash or temporary plaintext is returned. |
-| C01 | `POST /users`, `PATCH /users/{id}`, `POST /users/{id}/reset-password`, `DELETE /users/{id}` | A; create/reset accept an admin-chosen initial password, return safe user metadata and enable immediate restricted login. Own-password change/fresh login required. Reset also requires `admin_password`. Delete revokes/hides access and retains attribution; no handoff/disable route. |
+| C01 | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | Active account signs in through the facade using the password selected at account creation or reset. Legacy temporary credentials require staff reset. |
+| C01 | `GET /users`, `GET /users/{id}` | Administrators see staff. Managers see agents. The response includes numbered pages and safe account, role and state fields. |
+| C01 | `POST /users`, `PATCH /users/{id}`, `POST /users/{id}/reset-password`, `DELETE /users/{id}` | Administrator for all operations. Manager for agent creation or agent reset. Creation and reset set an immediately usable password. Reset checks the actor’s password and revokes target sessions. Administrator deletion hides and revokes access while retaining attribution. |
 | C02 | `GET/POST /contacts`, `GET/PATCH /contacts/{id}`, `POST /contacts/{id}/archive`, `POST /contacts/{id}/restore` | M/A or S; archive/restore M/A; name and phone required. |
 | C02 | `POST /contacts/resolve-phone`, `POST /contacts/{id}/merge`, `POST /contacts/{id}/assign`, `PUT /contacts/{id}/collaborators` | Explained resolution within scope; assignment and collaboration M/A; cross-portfolio merge M/A. |
 | C02 | `GET/POST /enquiries`, `GET/PATCH /enquiries/{id}`, `POST /enquiries/{id}/assign` | These are the UI Leads operations. M/A or S; unassigned queue M/A; assignment M/A and assignee must have current contact scope. A contact transfer clears/reassigns invalid enquiry assignments. A new lead links or creates a contact under the same phone/scope rules; no separate `lead` table. |
@@ -853,7 +867,7 @@ public URL, export or external delivery is added. See [SP-04 evidence](../03-pla
 
 Command `POST` routes accept documented JSON bodies, not a general `PATCH` that could change roles, commissions, or stock states. `GET /enquiries` backs the Leads list with scoped `q`, `status`, `source`, `assigned_agent_id` where authorized, received-date filters, stable sort, and numbered pages; `GET /deals` uses similarly scoped `q`, `stage`, `assigned_agent_id`, offering-kind and updated-date filters. A configurable UI column set never changes field authorization. `GET /properties` accepts `category`, `development_id`, `block_id`, `floor_id`, `unit_type_id`, `offering_kind`, and availability filters; `GET /offerings` accepts `target_level=property|development`. `GET /developments/{id}/inventory` returns block/floor/type summaries and a numbered unit page, not an unbounded tree. Filters and paginated totals distinguish a whole project from its physical units. `GET /search` can return separate `development` and `property` result kinds; a unit-type match navigates to its real units, not a fictitious stock item. Search routes exclude private records before aggregation. For a colleague, `GET /calendar/free-busy` returns only start/end pairs and busy status; a manager obtains full details through ordinary visit routes. Opaque IDs do not replace authorization.
 
-First-administrator bootstrap remains server-local with no HTTP route. `POST /users` requires completed bootstrap and a current full administrator. Under D37, creation/reset accept a chosen initial password and return no-store user metadata only. New accounts are active without handoff; expired initial passwords and legacy pending/disabled/deleted accounts cannot sign in. A valid initial credential creates a restricted session. Own-password change clears the flag, revokes sessions and requires fresh login; temporary expiry is checked on every restricted request. Existing staff credentials/sessions are not bulk-changed. See the [runbook](../06-delivery-and-operations/admin-bootstrap.md).
+First-administrator bootstrap is server-local. `POST /users` requires completed bootstrap and an authorized administrator or manager. The actor chooses the password, and the response returns no-store user metadata. Reset revokes the recipient’s existing sessions. The [runbook](../06-delivery-and-operations/admin-bootstrap.md) covers legacy credentials and password handoff.
 
 An offering's target (`property_id` versus `development_id`) is immutable once referenced by a deal or reservation. `PATCH /offerings/{id}` cannot turn a unit offer into a whole-development offer. Reparenting a committed unit or archiving a development with active child commitments returns `409 STOCK_REVIEW_REQUIRED`; history and child records never disappear through a parent command.
 
@@ -908,7 +922,7 @@ Policy preview body (synthetic Monday-only example, **not** KAY's default workin
 {"expected_version":1,"company_car_capacity_per_hour":2,"working_windows":[{"weekday":1,"start_local":"09:00","end_local":"18:00"}],"lunch_breaks":[{"weekday":1,"start_local":"13:00","end_local":"14:00"}]}
 ```
 
-The response includes `time_zone:"Africa/Casablanca"`; clients cannot change it. `weekday` is ISO 1=Monday through 7=Sunday. PUT uses that proposal plus the returned `preview_hash`; a stale version returns `VERSION_CONFLICT`, and a changed future-visit set returns `SCHEDULE_REPREVIEW_REQUIRED`. Both require review again. `POST /visits` and reschedule bodies include the visit type plus offset-aware start/end instants; the server, not the browser, makes the final work-window and capacity decision.
+The response includes `time_zone:"Africa/Casablanca"`. `weekday` is ISO 1=Monday through 7=Sunday. PUT uses that proposal plus the returned `preview_hash`. A stale version returns `VERSION_CONFLICT` and a changed future-visit set returns `SCHEDULE_REPREVIEW_REQUIRED`. Both require review again. `POST /visits` creates a scheduled booking from the visit type and offset-aware start instant. When omitted, the end is 60 elapsed minutes later and the dossier is inferred from the visible contact context. Rescheduling uses the recorded duration in the drawer. The server makes the final work-window and capacity decision. [Visit scheduling contract](visit-scheduling-local.md#simplified-booking-2026-11-15)
 
 ## Representative examples
 

@@ -39,7 +39,8 @@ References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs
 
 | Action | Administrator | Manager | Agent |
 |---|---|---|---|
-| Create/delete later accounts, change roles, reset another user's password | Yes; chooses initial password; reset also requires their own current password. First login requires own-password change. Delete revokes/hides access, retaining CRM attribution. Existing credentials remain unchanged. First administrator still uses the guarded server-local script. | No | No |
+| List and create later accounts, reset another user’s password | All staff roles. Reset requires the administrator’s own current password. | Agent accounts only. Reset requires the manager’s own current password. | No |
+| Change staff identity or role, delete a staff account | Yes. Delete revokes sessions and hides the account while preserving business attribution. | No | No |
 | Read/edit contacts, enquiries, requirements, notes, and deals | All | All | S |
 | Assign the primary agent or collaborators; merge across portfolios | Yes | Yes | No |
 | Merge duplicates within the same writable scope after confirmation | Yes | Yes | Yes, within S only |

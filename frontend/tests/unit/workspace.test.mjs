@@ -68,11 +68,11 @@ test("Contacts directory is an internal return path without admitting foreign or
 });
 
 test("Selected glyphs preserve every semantic export, source shape hash and accessible SVG contract", () => {
-  const selected = JSON.parse(readFileSync(new URL("../../../branding/prototype/kay-glyphs.json", import.meta.url), "utf8"));
+  const selected = JSON.parse(readFileSync(new URL("../../src/lib/design/kay-glyphs.json", import.meta.url), "utf8"));
   const previous = JSON.parse(readFileSync(new URL("../../../docs/reference/iconsax/assets.json", import.meta.url), "utf8"));
   const icons = loadServer("src/components/icons/index.tsx", { modules: {
     react: { createElement }, "react/jsx-runtime": jsxRuntime,
-    "../../../../branding/prototype/kay-glyphs.json": { default: selected },
+    "../../lib/design/kay-glyphs.json": { default: selected },
   } });
   for (const item of previous.icons) assert.equal(typeof icons[item.export], "function", item.export);
   for (const item of selected.icons) {

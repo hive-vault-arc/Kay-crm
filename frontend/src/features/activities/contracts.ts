@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { numberedPage } from "@/features/contacts/contracts";
+import { catalogueTargetKey, catalogueTargetSchema } from "@/features/project-links/contracts";
 
 export const activityKinds = ["note", "call", "message", "email", "meeting", "visit", "other"] as const;
 export const kindLabels = { note: "Note", call: "Appel", message: "Message", email: "E-mail", meeting: "Rendez-vous", visit: "Visite", other: "Autre interaction" } as const;
@@ -10,7 +11,9 @@ export const newActivitySchema = z.object({
   duration_minutes: z.number().int().min(1).max(1440).nullable().default(null),
   direction: z.enum(["inbound", "outbound"]).nullable().default(null),
   projects: z.array(z.string().trim().min(1).max(160).refine(value => !value.includes("\0"))).max(3).default([]),
-}).strict().refine(value => new Set(value.projects.map(project => project.toLocaleLowerCase())).size === value.projects.length, { path: ["projects"], message: "Chaque projet doit être distinct." });
+  project_targets: z.array(catalogueTargetSchema).max(3).optional(),
+}).strict().refine(value => new Set(value.projects.map(project => project.toLocaleLowerCase())).size === value.projects.length, { path: ["projects"], message: "Chaque projet doit être distinct." })
+  .refine(value => !value.project_targets || !value.projects.length && new Set(value.project_targets.map(catalogueTargetKey)).size === value.project_targets.length, { path: ["project_targets"], message: "Chaque projet du catalogue doit être distinct." });
 export const activityQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(1_000_000).optional(),
   page_size: z.coerce.number().int().min(1).max(100).optional(),

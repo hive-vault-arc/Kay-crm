@@ -13,10 +13,10 @@ generated interface icons to this layer before accepting them; never alter
 chart geometry or mix in a second icon family. See the selected migration record.
 Charts use Bklit when introduced in SP-17. Keep future business states explicit;
 authentication is implemented in SP-03 with per-page guards, transient CSRF and
-protected cookies. SP-04 adds administrator-only Settings/users, strict versioned
-commands; D37 uses admin-chosen initial passwords, immediate restricted login and
-confirmed logical deletion instead of activation/handoff/disable. No GET, persistent browser storage,
-logs, traces or screenshots may retain temporary plaintext. Test credentials exist only in isolated synthetic fixtures,
+protected cookies. D46 gives managers the agent create and password reset flows in
+Settings. Staff sign in with the password set for them. Keep strict versioned
+commands and administrator-only staff deletion. No GET, persistent browser storage,
+logs, traces or screenshots may retain password plaintext. Test credentials exist only in isolated synthetic fixtures,
 never the development database. SP-02's server-only HTTPS facade connects
 safe health status to FastAPI/PostgreSQL; never expose its secret or bypass TLS.
 

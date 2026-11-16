@@ -1,6 +1,6 @@
 """Bounded catalogue-link commands and numbered-page reads."""
 
-from typing import Literal
+from typing import Literal, Self
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -17,16 +17,19 @@ class LinkQuery(BaseModel):
     page_size: int = Field(default=25, ge=1, le=50)
 
 
-class NewLink(StrictBody):
-    kind: LinkKind
+class CatalogueTarget(StrictBody):
     development_id: UUID | None = None
     property_id: UUID | None = None
 
     @model_validator(mode="after")
-    def one_target(self) -> NewLink:
+    def one_target(self) -> Self:
         if (self.development_id is None) == (self.property_id is None):
             raise ValueError("ONE_CATALOGUE_TARGET_REQUIRED")
         return self
+
+
+class NewLink(CatalogueTarget):
+    kind: LinkKind
 
 
 class RemoveLink(StrictBody):

@@ -1,12 +1,28 @@
 import type { Contact, ContactFields } from "@/features/contacts/contracts";
 
+export const ownerCategoryLabels = { seller: "Vendeur", developer: "Promoteur" } as const;
+export type OwnerCategory = keyof typeof ownerCategoryLabels;
+type Roles = ContactFields["roles"];
+
+export function ownerCategory(roles: Roles): OwnerCategory {
+  return roles.includes("developer") ? "developer" : "seller";
+}
+
+export function ownerRoles(roles: Roles, category = ownerCategory(roles)): Roles {
+  return Array.from(new Set<Roles[number]>([
+    ...roles.filter(role => role !== "developer"),
+    "owner", "seller",
+    ...(category === "developer" ? ["developer" as const] : []),
+  ]));
+}
+
 export function ownerValues(contact?: Contact): ContactFields {
   return contact ? {
     name: contact.name, type: contact.type,
     phones: contact.phones.map(phone => ({ ...phone })), emails: contact.emails.map(email => ({ ...email })),
-    roles: [...new Set([...contact.roles, "owner" as const])],
+    roles: ownerRoles(contact.roles),
     country: contact.country, nationality: contact.nationality, birth_date: contact.birth_date, national_id_number: contact.national_id_number, ...(contact.important_remarks !== undefined ? { important_remarks: contact.important_remarks } : {}), languages: [...contact.languages],
-  } : { name: "", type: "person", phones: [{ number: "", label: "", is_primary: true }], emails: [], roles: ["owner"], country: "", nationality: "", languages: [] };
+  } : { name: "", type: "person", phones: [{ number: "", label: "", is_primary: true }], emails: [], roles: ownerRoles([]), country: "", nationality: "", languages: [] };
 }
 
 export const blankOwnerEmail = { email: "", label: "", is_primary: true };
@@ -17,9 +33,9 @@ export function editableOwnerValues(contact?: Contact): ContactFields {
 }
 
 // Reuse is a versioned role update, never a replacement by the new-contact draft.
-export function ownerRoleBody(contact: Contact) {
+export function ownerRoleBody(contact: Contact, category = ownerCategory(contact.roles)) {
   const values = ownerValues(contact);
   delete values.national_id_number;
   delete values.important_remarks;
-  return { ...values, expected_version: contact.version };
+  return { ...values, roles: ownerRoles(values.roles, category), expected_version: contact.version };
 }

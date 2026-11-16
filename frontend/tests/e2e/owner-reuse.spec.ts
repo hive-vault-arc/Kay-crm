@@ -17,9 +17,9 @@ test("Owner reuse preserves canonical identity/assignment and opening an existin
     await page.getByLabel("Rechercher un contact accessible", { exact: true }).fill(name);
     await page.getByRole("button", { name: "Rechercher", exact: true }).click();
     await page.getByRole("button", { name: `Choisir ${name}`, exact: true }).click();
-    await expect(page.getByText("Rôle Propriétaire à ajouter", { exact: true })).toBeVisible();
+    await expect(page.getByText("Contact existant", { exact: true })).toBeVisible();
     const patched = page.waitForResponse(response => new URL(response.url()).pathname === `/api/v1/contacts/${original.id}` && response.request().method() === "PATCH");
-    await page.getByRole("button", { name: "Ajouter le rôle Propriétaire", exact: true }).click();
+    await page.getByRole("button", { name: "Ajouter comme propriétaire", exact: true }).click();
     expect((await patched).status()).toBe(200);
     await expect(page).toHaveURL(new RegExp(`/owners/${original.id}$`));
     const saved = await (await page.request.get(`/api/v1/contacts/${original.id}`)).json();
@@ -30,7 +30,7 @@ test("Owner reuse preserves canonical identity/assignment and opening an existin
       const ordered = (values: Record<string, unknown>[]) => [...values].sort((left, right) => String(left[key]).localeCompare(String(right[key])));
       expect(ordered(saved[field])).toEqual(ordered(original[field]));
     }
-    expect(saved.roles).toContain("owner"); expect(saved.roles).toContain("buyer"); expect(saved.roles).toContain("developer");
+    expect(saved.roles.sort()).toEqual(["buyer", "developer", "owner", "seller"]);
     const portfolio = await (await page.request.get(`/api/v1/contacts/${original.id}/portfolio`)).json(); expect(portfolio.total).toBe(0);
     await page.goto("/owners/new");
     await page.getByLabel("Contact", { exact: true }).selectOption("existing");

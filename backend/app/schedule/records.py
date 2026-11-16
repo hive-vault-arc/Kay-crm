@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.contacts.access import has_scope, readable_contact
 from app.contacts.history import record
-from app.contacts.models import Contact
+from app.contacts.models import Contact, Enquiry
 from app.contacts.work_context import enquiry_context
 from app.deals.models import Deal
 from app.identity.models import User
@@ -33,7 +33,7 @@ def authorized(
 
 def check_context(
     session: Session, identity: CurrentIdentity, row: Visit, fields: VisitFields, *, new: bool
-) -> UUID | None:
+) -> tuple[UUID | None, UUID | None]:
     contact = readable_contact(session, identity, row.contact_id)
     if contact.archived_at:
         raise IdentityError("CONTACT_ARCHIVED", 409)
@@ -41,13 +41,19 @@ def check_context(
         raise IdentityError("INVALID_VISIT_PARTICIPANT", 422)
     if fields.deal_id:
         deal = session.get(Deal, fields.deal_id)
-        if deal is None or deal.contact_id != contact.id or deal.archived_at is not None:
+        if (
+            deal is None
+            or deal.contact_id != contact.id
+            or (deal.archived_at is not None and (new or deal.id != row.deal_id))
+        ):
             raise IdentityError("INVALID_VISIT_CONTEXT", 422)
     if fields.property_id:
         target = session.get(Property, fields.property_id)
         if target is None:
             raise IdentityError("INVALID_VISIT_CONTEXT", 422)
-    return enquiry_context(
+    if new and not fields.enquiry_id and not fields.deal_id:
+        return automatic_context(session, identity, contact.id)
+    return fields.deal_id, enquiry_context(
         session,
         identity,
         row.contact_id,
@@ -56,6 +62,30 @@ def check_context(
         required=new,
         current_enquiry_id=None if new else row.enquiry_id,
     )
+
+
+def automatic_context(
+    session: Session, identity: CurrentIdentity, contact_id: UUID
+) -> tuple[UUID | None, UUID | None]:
+    deal_id = session.scalar(
+        select(Deal.id)
+        .where(Deal.contact_id == contact_id, Deal.archived_at.is_(None))
+        .order_by(Deal.updated_at.desc(), Deal.id)
+        .limit(1)
+    )
+    if deal_id is not None:
+        return deal_id, None
+    query = select(Enquiry.id).where(
+        Enquiry.contact_id == contact_id,
+        Enquiry.archived_at.is_(None),
+        Enquiry.status != "converted",
+    )
+    if identity.user.role == "agent":
+        query = query.where(Enquiry.assigned_agent_id.is_not(None))
+    enquiry_id = session.scalar(query.order_by(Enquiry.received_at.desc(), Enquiry.id).limit(1))
+    if enquiry_id is None:
+        raise IdentityError("VISIT_CONTEXT_UNAVAILABLE", 422)
+    return None, enquiry_id
 
 
 def participants(session: Session, vid: UUID) -> list[UUID]:

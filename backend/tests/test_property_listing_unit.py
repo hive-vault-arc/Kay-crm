@@ -86,6 +86,23 @@ def test_room_orientation_remains_a_valid_saved_fact_on_unrelated_edit() -> None
     assert (saved["orientation"], saved["bathrooms"], saved["unit_floor"]) == ("north", 0, 0)
 
 
+def test_floor_fields_accept_high_whole_numbers_without_losing_precision() -> None:
+    details = ListingDetails(unit_floor=64, building_floors=32)
+    assert (details.unit_floor, details.building_floors) == (64, 32)
+    largest_safe_integer = 9_007_199_254_740_991
+    assert ListingDetails(unit_floor=largest_safe_integer).unit_floor == largest_safe_integer
+    with pytest.raises(ValidationError):
+        ListingDetails(unit_floor=largest_safe_integer + 1)
+
+
+@pytest.mark.parametrize(
+    "values", [{"unit_floor": -1}, {"building_floors": 0}, {"unit_floor": 37.5}]
+)
+def test_floor_fields_preserve_minima_and_whole_number_validation(values) -> None:
+    with pytest.raises(ValidationError):
+        ListingDetails.model_validate(values)
+
+
 @pytest.mark.parametrize("category", ["land", "farm", "commercial", "office"])
 def test_non_residential_rejects_room_count(category: str) -> None:
     body = listing(category)

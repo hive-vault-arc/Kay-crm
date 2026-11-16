@@ -5,7 +5,7 @@ from datetime import UTC, datetime, timedelta
 from typing import cast
 from uuid import UUID
 
-from sqlalchemy import delete, func, select, update
+from sqlalchemy import delete, func, select, true, update
 from sqlalchemy.orm import Session
 
 from app.db.session import Database
@@ -48,19 +48,26 @@ def administrator(session: Session, token: str) -> CurrentIdentity:
     return identity
 
 
+def staff_actor(session: Session, token: str) -> CurrentIdentity:
+    identity = current_identity(session, token)
+    require_role(identity, {"administrator", "manager"})
+    return identity
+
+
 def read_users(database: Database, token: str, page: int, page_size: int) -> dict[str, object]:
     with database.session() as session:
-        administrator(session, token)
+        actor = staff_actor(session, token)
+        scope = User.role == "agent" if actor.user.role == "manager" else true()
         # One statement gives the count and page the same MVCC snapshot.
         total = (
             select(func.count())
             .select_from(User)
-            .where(User.deleted_at.is_(None))
+            .where(User.deleted_at.is_(None), scope)
             .scalar_subquery()
         )
         page_rows = (
             select(User.id)
-            .where(User.deleted_at.is_(None))
+            .where(User.deleted_at.is_(None), scope)
             .order_by(User.updated_at.desc(), User.id)
             .offset((page - 1) * page_size)
             .limit(page_size)
@@ -89,16 +96,17 @@ def read_users(database: Database, token: str, page: int, page_size: int) -> dic
 
 def read_user(database: Database, token: str, target: UUID) -> dict[str, object]:
     with database.session() as session:
-        administrator(session, token)
-        user, credential = target_pair(session, target)
+        actor = staff_actor(session, token)
+        user, credential = target_pair(session, target, actor)
         return public_user(user, credential)
 
 
-def target_pair(session: Session, target: UUID) -> tuple[User, Credential]:
+def target_pair(session: Session, target: UUID, actor: CurrentIdentity) -> tuple[User, Credential]:
+    scope = User.role == "agent" if actor.user.role == "manager" else true()
     row = session.execute(
         select(User, Credential)
         .join(Credential)
-        .where(User.id == target, User.deleted_at.is_(None))
+        .where(User.id == target, User.deleted_at.is_(None), scope)
     ).one_or_none()
     if row is None:
         raise IdentityError("NOT_FOUND", 404)
@@ -142,7 +150,7 @@ def apply_existing(
     operation: str,
     body: EditUser | ResetUser | Versioned,
 ) -> dict[str, object]:
-    user, credential = target_pair(session, target)
+    user, credential = target_pair(session, target, actor)
     if user.version != body.expected_version:
         raise IdentityError("VERSION_CONFLICT", 409)
     now = datetime.now(UTC)
@@ -159,15 +167,15 @@ def apply_existing(
         revoke(session, user)
     elif operation == "reset-password" and isinstance(body, ResetUser):
         if target == actor.user.id:
-            raise IdentityError("USE_OWN_PASSWORD_CHANGE", 409)
+            raise IdentityError("FORBIDDEN", 403)
         if not verify_password(
             actor.credential.password_hash, body.admin_password.get_secret_value()
         ):
             raise IdentityError("ADMIN_PASSWORD_INVALID", 403)
         user.state = "active"
         credential.password_hash = hash_password(body.temporary_password.get_secret_value())
-        credential.must_change_password = True
-        credential.temporary_expires_at = now + timedelta(hours=24)
+        credential.must_change_password = False
+        credential.temporary_expires_at = None
         credential.handoff_confirmed_at = None
         credential.version += 1
         revoke(session, user)
@@ -178,6 +186,18 @@ def apply_existing(
     session.flush()
     result: dict[str, object] = {"user": public_user(user, credential)}
     return result
+
+
+def authorize_staff_command(
+    session: Session, token: str, operation: str, body: NewUser | EditUser | ResetUser | Versioned
+) -> CurrentIdentity:
+    actor = staff_actor(session, token)
+    if actor.user.role == "manager" and not (
+        (operation == "create" and isinstance(body, NewUser) and body.role == "agent")
+        or operation == "reset-password"
+    ):
+        raise IdentityError("FORBIDDEN", 403)
+    return actor
 
 
 def command(
@@ -198,17 +218,22 @@ def command(
     route = f"{operation}:{target or 'new'}"
     if operation == "reset-password":
         with database.session() as session:
-            actor_id = administrator(session, token).user.id
+            actor = authorize_staff_command(session, token, operation, body)
+            if target is not None:
+                target_pair(session, target, actor)
+            actor_id = actor.user.id
         consume_login_budget(database, secret, f"admin-reset:{actor_id}")
     with database.session() as session, session.begin():
-        preliminary = administrator(session, token)
+        preliminary = authorize_staff_command(session, token, operation, body)
         agency = session.scalar(select(Agency).where(Agency.id == AGENCY_ID).with_for_update())
         ids = sorted({preliminary.user.id} | ({target} if target else set()))
         session.execute(select(User.id).where(User.id.in_(ids)).order_by(User.id).with_for_update())
         session.expire_all()
-        actor = administrator(session, token)
+        actor = authorize_staff_command(session, token, operation, body)
         if agency is None or agency.bootstrap_completed_at is None:
             raise IdentityError("BOOTSTRAP_REQUIRED", 409)
+        if actor.user.role == "manager" and target is not None:
+            target_pair(session, target, actor)
         receipt = session.get(UserCommandReceipt, (actor.user.id, key))
         if receipt:
             if receipt.operation != route or receipt.request_digest != digest:
@@ -237,8 +262,7 @@ def command(
             credential = Credential(
                 user_id=user.id,
                 password_hash=hash_password(body.temporary_password.get_secret_value()),
-                must_change_password=True,
-                temporary_expires_at=datetime.now(UTC) + timedelta(hours=24),
+                must_change_password=False,
             )
             session.add(credential)
             session.flush()

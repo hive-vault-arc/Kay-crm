@@ -60,13 +60,31 @@ permission or scheduling rule. Native/final acceptance remains pending.
 The visits layout owns the calendar while the existing create/detail routes open
 shared guarded drawers. Page identity/UUID/query/password gates remain. Forms
 retain date-only entry, resolved instants, scoped contact/property/dossier choices,
-participants, reviewed versions, retries and explicit commands. Draft rescheduling
-retains its draft status without a booking preview. Saved overlap explanations
-remain separate from outcomes. History lazily presents the existing latest100
+participants, reviewed versions, retries and explicit commands. The original
+drawer could reschedule a draft without a booking preview. D47 replaces this
+behavior below. Saved overlap explanations remain separate from outcomes.
+History lazily presents the existing latest100
 entries in20-entry cards; current denial clears the old view. Native route/focus/
 stacking acceptance remains pending. The prototype's separate general Notes field
 still needs a persistence mapping and is not claimed implemented by this UI slice.
 [Current execution](../03-planning/design-prototype-migration-execution.md).
+
+## Simplified booking (2026-11-15)
+
+The drawer captures the contact, visit type, optional property, Date, Heure,
+participants, and optional notes or overlap explanation. The slot rules and
+notes each open with a disclosure button. A successful availability preview
+enables Planifier. The write checks the slot again using Casablanca time.
+
+Local implementation defaults are a 60-minute elapsed slot and a link to the
+latest updated visible non-archived deal. When there is no such deal, use the
+latest received visible non-archived prospect that has yet to convert. A contact
+with neither returns `VISIT_CONTEXT_UNAVAILABLE`. Rescheduling keeps the recorded
+duration and dossier and books a legacy unplanned visit after checking current rules.
+
+Migration 0051 sets the database defaults for title, location and status. Older
+titles, locations, visits and audit events remain readable. The drawer sends
+compatible wire values while an earlier API process is running.
 
 ## Rule and authority
 
@@ -131,11 +149,15 @@ conflict. Current authority is checked before returning an old acknowledgement.
 - PUT `/visit-schedule/policy`: same proposal plus preview_hash. Under the lock,
   changed policy/version or visit set requires a new preview. Success returns
   impact and appends immutable schedule history plus non-secret audit.
-- POST `/visits`: contact_id, title, type, explicit offset-aware minute-precision
-  start_at/end_at, location, unique participant_ids, overlap_reason, nullable
-  deal_id/property_id, and status draft|scheduled. Contact aliases resolve to
-  the authorized survivor. Participants are active, unrestricted staff with
-  current contact authority; membership never grants detail access.
+- POST `/visits`: contact_id, type, offset-aware minute-precision start_at,
+  unique participant_ids, optional property_id, overlap_reason and notes.
+  Omitted end_at uses 60 elapsed minutes. Omitted title and location use
+  “Visite” and “Non renseigné”. The status defaults to scheduled. A new draft
+  write returns INVALID_STATE. Older same-key receipts can still replay.
+  When no dossier is supplied, the backend resolves the link in scope.
+  Contact aliases resolve to the authorized survivor. Participants are active,
+  unrestricted staff with current contact authority. Membership grants no
+  detail access.
 - PATCH `/visits/{id}` and POST `/visits/{id}/reschedule`: full editable fields
   plus expected_version, retaining the contact/organizer/origin/identity.
 - POST `/visits/{id}/confirm`: expected_version and reason, required on overlap.
@@ -225,6 +247,6 @@ local strings determine event position; the browser does only Gregorian date
 arithmetic. Overlap clusters get distinct lanes, short visits retain44px targets,
 and overnight visits continue on the next day. Dynamic hours and local scrolling
 retain early/late events; server pagination remains explicit. Calendar geometry
-is centralized in `branding/prototype/kay-workspace.tokens.json`, not a new library or chart.
+is centralized in `../../frontend/src/lib/design/kay-workspace.tokens.json`, not a new library or chart.
 No schema migration or development-data seed. See the
 [implementation and verification](../03-planning/calendar-reference-refresh.md).

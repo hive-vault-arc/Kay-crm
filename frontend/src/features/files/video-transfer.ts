@@ -1,7 +1,7 @@
 import { boundedRequestSignal } from "@/lib/api/request-signal";
 import { ApiError } from "@/lib/api/client";
 import { apiCommand } from "@/lib/api/command";
-import { maxVideoSize, uploadTarget, videoPart, videoPartSize } from "./video-contracts";
+import { maxVideoSize, uploadTarget, videoFilename, videoPart, videoPartSize } from "./video-contracts";
 
 export async function uploadVideo({
   file, id, parentKind, parentId, signal, progress,
@@ -9,11 +9,13 @@ export async function uploadVideo({
   file: File; id: string; parentKind: "property" | "development"; parentId: string;
   signal: AbortSignal; progress: (value: number) => void;
 }) {
-  if (file.size <= 0 || file.size > maxVideoSize) throw new ApiError("FILE_TOO_LARGE", 413);
-  if (!/\.(mov|mp4)$/i.test(file.name)) throw new ApiError("VIDEO_FORMAT_UNSUPPORTED", 415);
+  signal.throwIfAborted();
+  if (!file.size || !videoFilename.test(file.name)) throw new ApiError("VIDEO_FORMAT_UNSUPPORTED", 415);
+  if (file.size > maxVideoSize) throw new ApiError("FILE_TOO_LARGE", 413);
   const prefix = 65536;
   const sample = await new Blob([file.slice(0, prefix), file.slice(Math.max(0, file.size - prefix))]).arrayBuffer();
   const hash = await crypto.subtle.digest("SHA-256", sample);
+  signal.throwIfAborted();
   const source_fingerprint = Array.from(new Uint8Array(hash), value => value.toString(16).padStart(2, "0")).join("");
   const reservation = await apiCommand("/api/v1/inventory-videos", {
     id, parent_kind: parentKind, parent_id: parentId, filename: file.name, size_bytes: file.size, source_fingerprint,

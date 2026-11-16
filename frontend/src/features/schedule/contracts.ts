@@ -4,7 +4,7 @@ import { agentSchema, numberedPage } from "@/features/contacts/contracts";
 export const visitCreateContextSchema = z.object({ contact_id: z.uuid().optional(), date: z.iso.date().refine(value => value >= "2000-01-01" && value <= "2100-12-31").optional() }).strict();
 
 export const typeLabels = { company_car: "Avec véhicule de société", without_company_car: "Sans véhicule de société", office: "Au bureau", meeting: "Réunion" } as const;
-export const statusLabels = { draft: "Brouillon : aucun créneau garanti", scheduled: "Planifiée", confirmed: "Confirmée", completed: "Terminée", not_completed: "Non réalisée", cancelled: "Annulée" } as const;
+export const statusLabels = { draft: "À planifier", scheduled: "Planifiée", confirmed: "Confirmée", completed: "Terminée", not_completed: "Non réalisée", cancelled: "Annulée" } as const;
 export const actionLabels = { created: "Visite créée", updated: "Visite modifiée", confirmed: "Visite confirmée", rescheduled: "Visite replanifiée", completed: "Visite terminée", not_completed: "Visite non réalisée", cancelled: "Visite annulée", contact_merged: "Contact fusionné" } as const;
 const version = z.number().int().positive();
 const instant = z.iso.datetime({ offset: true });
@@ -17,8 +17,9 @@ export const policyEditSchema = z.object({ ...policyFields, expected_version: ve
 export const policySaveSchema = policyEditSchema.extend({ preview_hash: z.string().regex(/^[a-f0-9]{64}$/) });
 export const policyPreviewSchema = z.object({ policy: policySchema, affected: z.array(z.object({ id: z.uuid(), title: z.string().max(160), start_at: instant, end_at: instant, type, status, version, code: z.string().max(80) }).strict()).max(100), affected_total: z.number().int().nonnegative(), preview_hash: z.string().regex(/^[a-f0-9]{64}$/) }).strict();
 const fields = { title: z.string().trim().min(1).max(160), type, start_at: instant, end_at: instant, location: z.string().trim().min(1).max(1000), participant_ids: z.array(z.uuid()).min(1).max(100), overlap_reason: z.string().trim().max(1000), notes: z.string().trim().max(1000).optional(), deal_id: z.uuid().nullable(), enquiry_id: z.uuid().nullable().optional(), property_id: z.uuid().nullable() };
-export const newVisitSchema = z.object({ ...fields, contact_id: z.uuid(), status: z.enum(["draft", "scheduled"]) }).strict();
-export const editVisitSchema = z.object({ ...fields, expected_version: version }).strict();
+const legacyText = { title: fields.title.optional(), location: fields.location.optional() };
+export const newVisitSchema = z.object({ ...fields, ...legacyText, end_at: instant.optional(), contact_id: z.uuid(), status: z.enum(["draft", "scheduled"]).optional(), deal_id: fields.deal_id.optional(), property_id: fields.property_id.optional() }).strict();
+export const editVisitSchema = z.object({ ...fields, ...legacyText, expected_version: version }).strict();
 export const visitActionSchema = z.object({ expected_version: version, reason: z.string().trim().max(1000) }).strict();
 export const visitFinishSchema = visitActionSchema.extend({ reason: z.string().trim().min(1).max(1000) });
 export const resultSchema = z.object({ id: z.uuid(), version }).strict();

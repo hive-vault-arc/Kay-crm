@@ -73,9 +73,10 @@ test("help: managers see their guides and revoked sessions lose access", async (
   const actor = await createActor("manager");
   try {
     await signIn(page, actor);
+    await page.goto("/help/comptes-utilisateurs");
+    await expect(page.getByRole("article")).toContainText("Un responsable peut créer des comptes agents.");
     await page.goto("/help");
     await expect(page.getByRole("link", { name: /^Importer et exporter des contacts/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: /Créer un compte et gérer/ })).toHaveCount(0);
     await page.getByRole("link", { name: /^Importer et exporter des contacts/ }).click();
     await expect(page.getByRole("article")).toContainText("Mes exports");
     await changeActor(actor, "revoke");
@@ -147,7 +148,7 @@ test("help: the utility rail stays reachable at short desktop heights", async ({
     await expect(aid).toHaveAttribute("aria-current", "page");
     await page.locator(".kay-help-topic").filter({ has: page.getByRole("heading", { name: "Gestion de l’équipe", exact: true }) }).getByRole("link", { name: /^Voir les .* guides$/ }).click();
     await page.getByRole("link", { name: /Créer un compte et gérer/ }).click();
-    await expect(page.getByRole("article")).toContainText("mot de passe initial");
+    await expect(page.getByRole("article")).toContainText("utiliser ce mot de passe dès la création");
     await expect(page.getByRole("link", { name: "Gérer les utilisateurs", exact: true })).toHaveAttribute("href", "/settings/users");
     await clearActorContext(page);
   } finally { await removeActor(actor); }

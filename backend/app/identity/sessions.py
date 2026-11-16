@@ -29,9 +29,7 @@ def credential_active(user: User, credential: Credential, now: datetime) -> bool
     return credential.temporary_expires_at is None
 
 
-def current_identity(
-    session: Session, token: str, *, restricted_allowed: bool = False
-) -> CurrentIdentity:
+def current_identity(session: Session, token: str) -> CurrentIdentity:
     if not TOKEN_PATTERN.fullmatch(token):
         raise IdentityError("UNAUTHENTICATED", 401)
     row = session.execute(
@@ -40,7 +38,7 @@ def current_identity(
         .join(Credential, Credential.user_id == User.id)
         .where(StaffSession.token_hash == token_hash(token))
     ).one_or_none()
-    return validate_identity(row, restricted_allowed=restricted_allowed)
+    return validate_identity(row)
 
 
 def identity_for_session(session: Session, sid: UUID) -> CurrentIdentity:
@@ -53,7 +51,7 @@ def identity_for_session(session: Session, sid: UUID) -> CurrentIdentity:
     return validate_identity(row)
 
 
-def validate_identity(row: object, *, restricted_allowed: bool = False) -> CurrentIdentity:
+def validate_identity(row: object) -> CurrentIdentity:
     if row is None:
         raise IdentityError("UNAUTHENTICATED", 401)
     record, user, credential = cast(tuple[StaffSession, User, Credential], row)
@@ -62,14 +60,13 @@ def validate_identity(row: object, *, restricted_allowed: bool = False) -> Curre
         record.revoked_at is not None
         or record.expires_at <= now
         or record.created_at > now
+        or credential.must_change_password
         or not credential_active(user, credential, now)
         or record.user_version != user.version
         or record.credential_version != credential.version
         or record.role_at_login != user.role
     ):
         raise IdentityError("UNAUTHENTICATED", 401)
-    if credential.must_change_password and not restricted_allowed:
-        raise IdentityError("PASSWORD_CHANGE_REQUIRED", 403)
     return CurrentIdentity(user, credential, record)
 
 

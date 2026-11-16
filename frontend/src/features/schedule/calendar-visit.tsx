@@ -14,7 +14,7 @@ function appointmentLabel(type: Visit["type"]) {
 }
 export function VisitStatus({ status }: { status: Visit["status"] }) {
   const Icon = status === "confirmed" || status === "completed" ? CompletedIcon : status === "cancelled" || status === "not_completed" ? CloseIcon : ClockIcon;
-  return <CrmStatusBadge state={status} dot={false}><Icon aria-hidden="true" size={12} /><span>{status === "draft" ? "Brouillon" : statusLabels[status]}</span></CrmStatusBadge>;
+  return <CrmStatusBadge state={status} dot={false}><Icon aria-hidden="true" size={12} /><span>{statusLabels[status]}</span></CrmStatusBadge>;
 }
 export function CalendarVisit({ visit, onChanged, onCancel, tile = false, day }: { visit: Visit; onChanged?: () => void; onCancel?: (visit: Visit) => void; tile?: boolean; day?: string }) {
   const Icon = visitIcons[visit.type];

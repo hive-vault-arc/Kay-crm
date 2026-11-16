@@ -211,7 +211,7 @@ test("calendar overlap lanes, short overnight visits and detail access stay reac
       ...Array.from({ length: 4 }, (_, index) => [`Chevauchement synthétique ${index}`, "2026-10-19T10:00", "2026-10-19T11:00"]),
       ["Courte visite nocturne synthétique", "2026-10-19T23:55", "2026-10-20T00:05"],
     ]) {
-      const result = await staffCommand(page, "visits", { contact_id: contact, title, type: "office", start_at: await resolve(start), end_at: await resolve(end), location: "Lieu synthétique", participant_ids: [agent.id], overlap_reason: "Chevauchement synthétique délibéré", deal_id: null, property_id: null, status: title.endsWith("3") ? "draft" : "scheduled" });
+      const result = await staffCommand(page, "visits", { contact_id: contact, title, type: "office", start_at: await resolve(start), end_at: await resolve(end), location: "Lieu synthétique", participant_ids: [agent.id], overlap_reason: "Chevauchement synthétique délibéré", deal_id: null, property_id: null, status: "scheduled" });
       expect(result.status()).toBe(200);
     }
     await page.goto("/visits"); await page.getByLabel("Aller à une date", { exact: true }).fill("2026-10-19");
@@ -232,17 +232,18 @@ test("calendar overlap lanes, short overnight visits and detail access stay reac
     await page.goto("/visits"); await page.getByLabel("Aller à une date", { exact: true }).fill("2026-10-19");
     const filtersButton = page.getByRole("button", { name: /^Filtres du calendrier/ });
     const filters = page.getByRole("dialog", { name: "Filtres du calendrier", exact: true });
-    const draft = filters.getByRole("checkbox", { name: "Brouillon", exact: true });
+    const scheduled = filters.getByRole("checkbox", { name: "Planifiée", exact: true });
     await filtersButton.click();
-    await expect(draft).toBeChecked();
-    await draft.focus();
+    await expect(filters.getByRole("checkbox", { name: "À planifier", exact: true })).toHaveCount(0);
+    await expect(scheduled).toBeChecked();
+    await scheduled.focus();
     await page.keyboard.press("Space");
-    await expect(draft).not.toBeChecked();
-    await expect(draft).toBeFocused();
+    await expect(scheduled).not.toBeChecked();
+    await expect(scheduled).toBeFocused();
     await page.keyboard.press("Escape");
-    await expect(page.getByText("4 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
+    await expect(page.getByText("0 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
     await filtersButton.click();
-    await draft.check();
+    await scheduled.check();
     await page.keyboard.press("Escape");
     await expect(page.getByText("5 visite(s) accessible(s) cette semaine.", { exact: true })).toBeVisible();
   } finally { await clearActorContext(page); await removeActor(agent); }

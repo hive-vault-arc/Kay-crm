@@ -88,15 +88,18 @@ test("Calendar keeps desktop presentation and explicit filters across week/mode/
   failure.props.retry(); view = render(); assert.equal(find(view, "Action").length, 0); assert.equal(view.props.value, "week");
 });
 
-test("Drawer filters retain authoritative whole-range facets and every zero-count status", () => {
+test("Drawer filters retain authoritative whole-range facets and show legacy unplanned visits when present", () => {
   const state = harness(), icon = () => createElement("svg", { "aria-hidden": true });
   const { CalendarSidebar } = loadServer("src/features/schedule/calendar-sidebar.tsx", { modules: {
     react: state.react, "react/jsx-runtime": jsxRuntime, "@/components/ui/button": { Button: "button" }, "@/components/ui/checkbox": { Checkbox: ({ checked, onCheckedChange, ...props }) => createElement("input", { ...props, type: "checkbox", checked, onChange: onCheckedChange }) },
     "@/components/ui/input": { Input: "input" }, "@/components/ui/label": { Label: "label" }, "@/components/icons": { ClockIcon: icon, CompletedIcon: icon, CloseIcon: icon }, "./calendar-model": model, "./contracts": contracts, "./calendar-visit": { visitIcons: { office: icon, company_car: icon, without_company_car: icon, meeting: icon } },
   } });
   const value = { items: [], total: 34, type_counts: { office: 17, company_car: 24, without_company_car: 5, meeting: 0 }, status_counts: { confirmed: 24, scheduled: 10, draft: 0, completed: 12, not_completed: 0, cancelled: 0 }, unfiltered_total: 46 };
-  const html = renderToStaticMarkup(createElement(CalendarSidebar, { compact: true, date: "2026-10-19", today: "2026-10-19", choose() {}, value, types: [], statuses: ["cancelled"], toggleType() {}, toggleStatus() {} }));
-  assert.equal((html.match(/type="checkbox"/g) ?? []).length, 10);
+  const render = data => renderToStaticMarkup(createElement(CalendarSidebar, { compact: true, date: "2026-10-19", today: "2026-10-19", choose() {}, value: data, types: [], statuses: ["cancelled"], toggleType() {}, toggleStatus() {} }));
+  const html = render(value);
+  assert.equal((html.match(/type="checkbox"/g) ?? []).length, 9);
+  assert.doesNotMatch(html, /aria-label="À planifier"/);
+  assert.match(render({ ...value, status_counts: { ...value.status_counts, draft: 1 } }), /aria-label="À planifier"/);
   for (const count of [17, 24, 5, 10, 12, 0]) assert.ok(html.includes(`>${count}</span>`));
   assert.match(html, /aria-label="Annulée"[^>]*checked=""/);
   assert.doesNotMatch(html, /Pause déjeuner|calendar-month-choice/);
@@ -149,19 +152,20 @@ test("Root-owned visit cancellation retains reviewed version, reason and retry k
 test("The real booking form keeps date-only context clean, tracks controlled edits and refuses unresolved times", async () => {
   const state = harness(), commands = [], formState = { isSubmitting: false, isDirty: false };
   const { VisitForm } = loadServer("src/features/schedule/visit-form.tsx", { globals: { crypto: { randomUUID } }, modules: {
-    react: state.react, "react/jsx-runtime": runtime, "react-hook-form": { useWatch: () => ({ title: "Synthetic booking", location: "Synthetic location", overlap_reason: "" }), useForm: () => ({ formState, control: {}, setFocus() {}, handleSubmit: callback => () => callback({ title: "Synthetic booking", location: "Synthetic location", overlap_reason: "" }) }) }, "@hookform/resolvers/zod": { zodResolver: () => ({}) },
+    react: state.react, "react/jsx-runtime": runtime, "react-hook-form": { useWatch: () => ({ notes: "", overlap_reason: "" }), useForm: () => ({ formState, control: {}, setFocus() {}, handleSubmit: callback => () => callback({ notes: "", overlap_reason: "" }) }) }, "@hookform/resolvers/zod": { zodResolver: () => ({}) },
     "@/components/shared/page-header": { PageHeader: "Header" }, "@/components/ui/skeleton": { Skeleton: "Skeleton" },
     "@/components/ui/button": { Button: "Button" }, "@/components/ui/input": { Input: "Input" }, "@/components/ui/label": { Label: "Label" }, "@/components/ui/textarea": { Textarea: "Textarea" }, "@/components/ui/native-select": { NativeSelect: "Select" }, "@/components/ui/checkbox": { Checkbox: "Checkbox" },
     "@/components/ui/form": { Form: "Form", FormControl: "Control", FormField: "Field", FormItem: "Item", FormLabel: "FieldLabel", FormMessage: "Message" },
     "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request() {}, dialog: null }) }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": { useQuery: () => ({ value: undefined, refresh() {} }), queryPath: () => "/api/v1/calendar/availability" },
     "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError }, "@/lib/api/command": { apiCommand: async (...args) => commands.push(args) },
     "@/components/shared/dossier-form": loadServer("src/components/shared/dossier-form.tsx", { modules: { react: state.react, "react/jsx-runtime": runtime, "./record-header": {} } }), "./visit-slot-preview": { VisitSlotPreview: "Preview" }, "@/features/work/work-property-select": { WorkPropertySelect: "Property" },
-    "./contracts": contracts, "./local-time-field": { LocalTimeField: "LocalTime" }, "./time": time, "@/features/work/work-context-select": { WorkContextSelect: "Context" },
+    "./contracts": contracts, "./local-time-field": { LocalTimeField: "LocalTime" }, "./time": time,
+    "@/components/icons": { ChevronDownIcon: "Chevron" }, "@/features/contacts/contracts": contacts, "@/features/deals/contracts": { dealsSchema: {} },
   } });
   const props = { actorId: randomUUID(), contactId: randomUUID(), contactName: "Synthetic contact", initialDate: "2026-10-20", saved() {} }, render = () => state.render(() => VisitForm(props));
   let view = render(); assert.equal(find(view, "form")[0].props["data-live-dirty"], undefined); assert.equal(find(view, "form")[0].props["aria-busy"], false);
-  const times = find(view, "LocalTime"); assert.equal(times.length, 2); assert.equal(times[0].props.local, "2026-10-20T"); assert.equal(times[1].props.local, "2026-10-20T"); assert.equal(times[0].props.instant, "");
-  find(view, "Context")[0].props.change({ enquiry_id: randomUUID(), deal_id: null }); view = render();
+  const times = find(view, "LocalTime"); assert.equal(times.length, 1); assert.equal(times[0].props.local, "2026-10-20T"); assert.equal(times[0].props.instant, "");
+  times[0].props.changeLocal("2026-10-20T12:00"); view = render();
   assert.equal(find(view, "form")[0].props["data-live-dirty"], "true");
   find(view, "form")[0].props.onSubmit({ preventDefault() {} }); await delay(0);
   assert.equal(commands.length, 0); assert.equal(find(render(), "Error")[0].props.error.code, "VALIDATION_ERROR");

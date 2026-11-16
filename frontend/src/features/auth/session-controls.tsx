@@ -16,7 +16,7 @@ function expiredRedirect() {
   window.location.replace(`/login?return_to=${encodeURIComponent(safeReturnPath(window.location.pathname))}`);
 }
 
-export function SessionMonitor({ expiresAt, restricted = false }: { expiresAt: string; restricted?: boolean }) {
+export function SessionMonitor({ expiresAt }: { expiresAt: string }) {
   useEffect(() => {
     let cancelled = false;
     let inFlight = false;
@@ -25,8 +25,7 @@ export function SessionMonitor({ expiresAt, restricted = false }: { expiresAt: s
       if (cancelled || inFlight) return;
       inFlight = true;
       try {
-        const profile = await apiGet("/api/v1/auth/me", meSchema, controller.signal);
-        if (!cancelled && profile.must_change_password && !restricted) window.location.replace("/change-password");
+        await apiGet("/api/v1/auth/me", meSchema, controller.signal);
       } catch { /* apiGet dispatches expiry; an outage must not pretend to revoke the cookie. */ }
       finally { inFlight = false; }
     }
@@ -45,7 +44,7 @@ export function SessionMonitor({ expiresAt, restricted = false }: { expiresAt: s
       window.removeEventListener("pageshow", restored);
       document.removeEventListener("visibilitychange", visible);
     };
-  }, [expiresAt, restricted]);
+  }, [expiresAt]);
   return null;
 }
 

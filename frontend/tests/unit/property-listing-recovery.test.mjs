@@ -88,15 +88,33 @@ test("Listing intents bind standalone/unit creation and edits to exact paths, pa
 for (const options of [{ edit: false, unit: false }, { edit: false, unit: true }, { edit: true, unit: false }, { edit: true, unit: true }]) {
   test(`Listing ${JSON.stringify(options)} recovers the original request once without replacing fields, placement or destination`, async () => {
     let lost = true; const s = propertyListingFixture({ ...options, dispatch: ({ commit }) => { const receipt = commit(); if (lost) { lost = false; throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } return receipt; } });
-    s.prepare(); s.step(0); const field = find(s.render(), "Input").find(node => node.props.id === "property-reference"), picker = options.unit ? find(s.render(), "Picker")[0] : undefined, stepper = find(s.render(), "Steps")[0], link = find(s.render(), "Link")[0], cancel = s.cancelButton();
+    s.prepare(); s.step(0); const field = find(s.render(), "Input").find(node => node.props.id === (options.unit || options.edit ? "property-reference" : "property-marketing_name")), picker = options.unit ? find(s.render(), "Picker")[0] : undefined, stepper = find(s.render(), "Steps")[0], link = find(s.render(), "Link")[0], cancel = s.cancelButton();
     s.step(4); await s.save(); assert.equal(s.commits(), 1); assert.equal(s.navigations.length, 0); assert.equal(find(s.render(), "form")[0].props["data-write-recovery"], "true"); assert.equal(find(s.render(), "fieldset")[0].props.disabled, true);
     field.props.onChange({ target: { value: "Unwanted replacement" } }); picker?.props.change(randomUUID(), "Unwanted foreign placement"); stepper.props.change(0); assert.equal(find(s.render(), "Steps")[0].props.current, 4); cancel.props.onClick?.(); if (link) { let prevented = false; link.props.onClick({ preventDefault() { prevented = true; } }); assert.equal(prevented, true); } assert.equal(s.cancelled(), 0);
     if (s.host) s.host.available = false; await s.save(); assert.equal(s.calls.length, 2); assert.equal(s.calls[0][3], s.calls[1][3]); assert.deepEqual(s.calls[0][1], s.calls[1][1]); assert.notEqual(s.calls[1][1].reference, "Unwanted replacement"); assert.equal(s.commits(), 1); assert.deepEqual(s.navigations, [`/projects/properties/${s.server().id}`]); assert.equal(s.server().version, options.edit ? 8 : 2); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], undefined);
-    if (!options.edit) { assert.equal(s.calls[0][1].initial_offering.price_mad, "9007199254740993.01"); assert.equal(s.server().offerings[0].state, "draft"); assert.equal(s.server().offerings[0].version, 1); }
+    if (!options.edit) { assert.equal(s.calls[0][1].initial_offering.price_mad, "9007199254740993.01"); assert.equal(s.server().offerings[0].state, "draft"); assert.equal(s.server().offerings[0].version, 1); if (!options.unit) assert.match(s.server().reference, /^RESIDENCE-ATLAS-20241012-[A-F0-9]{12}$/); }
     else { assert.equal(Object.hasOwn(s.calls[0][1], "initial_offering"), false); assert.equal(s.accepted[0].id, s.source.id); }
     await s.save(); assert.equal(s.calls.length, 2);
   });
 }
+
+test("A rejected automatic reference gets a new suffix on the next submission", async () => {
+  let collision = true;
+  const s = propertyListingFixture({ dispatch: ({ commit }) => {
+    if (collision) throw new ApiError("PROPERTY_REFERENCE_EXISTS", 409);
+    return commit();
+  } });
+  s.prepare();
+  await s.save();
+  assert.match(text(s.render()), /pour en générer une autre/);
+  assert.equal(s.commits(), 0);
+  collision = false;
+  await s.save();
+  assert.match(s.server().reference, /^RESIDENCE-ATLAS-20241012-[A-F0-9]{12}$/);
+  assert.notEqual(s.calls[0][1].reference, s.calls[1][1].reference);
+  assert.notEqual(s.calls[0][3], s.calls[1][3]);
+  assert.equal(s.commits(), 1);
+});
 
 test("Acknowledged unit creation and property editing retry only current reads and awaited original UI completion", async () => {
   for (const options of [{ unit: true }, { edit: true }]) {
@@ -154,7 +172,7 @@ test("Known create collision permits explicit correction with a fresh key while 
 });
 
 test("Hydration, wrong parent context and unavailable source cannot dispatch partial or foreign listing data", async () => {
-  const cold = propertyListingFixture({ hydrated: false }); cold.field("reference", "Unhydrated input"); cold.step(4); await cold.save(); assert.equal(cold.calls.length, 0);
+  const cold = propertyListingFixture({ hydrated: false }); cold.field("marketing_name", "Unhydrated input"); cold.step(4); await cold.save(); assert.equal(cold.calls.length, 0);
   const wrong = propertyListingFixture({ unit: true }); wrong.prepare(); wrong.host.id = randomUUID(); await wrong.save(); assert.equal(wrong.calls.length, 0);
   const unavailable = propertyListingFixture({ edit: true }); unavailable.prepare(); unavailable.host.available = false; await unavailable.save(); assert.equal(unavailable.calls.length, 0); assert.equal(find(unavailable.render(), "form")[0].props["data-live-dirty"], "true");
 });

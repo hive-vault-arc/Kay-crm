@@ -120,7 +120,7 @@ The API binds to `https://localhost:8000`. From `frontend/`, `npm run dev` start
 Next relays it to the API with server-only authority. Readiness makes a real SQL
 round trip and returns 503 on database failure; public liveness is independent.
 Private configuration, database identity and exception details are never returned.
-The facade allowlists health, login/logout/me/change-password and explicit
+The facade allowlists health, login/logout/me and explicit
 per-feature staff/business reads and commands. The [current catalogue](../docs/04-design/api-catalogue-local.md)
 lists the full implemented API; signed source intake and private direct transfers
 keep their separate authentication boundaries. Staff
@@ -150,13 +150,12 @@ No real administrator was created by this sprint's synthetic checks. See the
 
 ## Named staff administration
 
-After migration0026, use administrator-only Settings. No staff seed or public
-signup exists. Admin chooses the initial password; create/reset return only user
-metadata and permit immediate restricted login without activation/handoff.
-Initial credentials last24 hours and require own-password change/fresh login.
-Reset additionally requires the administrator's current password and revokes
-target sessions. DELETE hides/removes access, retaining authored CRM history.
-The last active final-password administrator cannot be deleted/demoted.
+Use Settings → Users. Administrators manage staff at all roles. Managers can
+create agent accounts and reset their passwords. The actor chooses the password
+and the recipient can sign in with it immediately. Reset confirms the actor’s
+current password and revokes target sessions. Administrator DELETE hides and
+revokes the account while retaining authored CRM history. The last active
+administrator with a usable password is protected from deletion or demotion.
 
 User commands require current versions and actor-scoped UUID idempotency keys.
 No plaintext result is persisted for retries: new commands replay safe metadata

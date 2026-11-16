@@ -19,7 +19,7 @@ test("SP17 visible Chrome: Bklit keyboard/touch, scopes, states, widths and actu
     });
   }
   try {
-    await mkdir("output/playwright", { recursive: true }); await mkdir("../.impeccable/review", { recursive: true });
+    await mkdir("output/playwright", { recursive: true });
     const data = await reportFixture(page, actors); monitor(page); await openReports(page); await comparePoints(page);
     const defaultStart = await page.getByLabel("Du (inclus)", { exact: true }).inputValue(), defaultEnd = await page.getByLabel("Au (inclus)", { exact: true }).inputValue();
     expect(defaultStart).toMatch(/^\d{4}-\d{2}-\d{2}$/); expect(defaultEnd).toMatch(/^\d{4}-\d{2}-\d{2}$/);

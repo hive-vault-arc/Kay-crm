@@ -24,7 +24,7 @@ test("Calendar shows meetings and only marked tasks and reminders", async ({ pag
     const taskDue = new Date(day + "T12:30:00Z");
     await createTaskApi(page, agent.id, contact.id, taskDue, { title: "Tâche importante synthétique", important: true });
     await createTaskApi(page, agent.id, contact.id, taskDue, { title: "Tâche ordinaire synthétique" });
-    await fillVisit(page, contact.id, "meeting", day + "T15:00", day + "T16:00", "Réunion synthétique");
+    await fillVisit(page, contact.id, "meeting", day + "T15:00");
     await saveVisit(page);
 
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -33,13 +33,13 @@ test("Calendar shows meetings and only marked tasks and reminders", async ({ pag
     const week = page.getByRole("region", { name: "Visites de la semaine, défilement horizontal", exact: true });
     await expect(week.getByRole("link", { name: /Rappel important · Relance importante synthétique/ })).toBeVisible();
     await expect(week.getByRole("link", { name: /Tâche importante · Tâche importante synthétique/ })).toBeVisible();
-    await expect(week.getByRole("link", { name: /Réunion synthétique/ })).toBeVisible();
+    await expect(week.getByRole("link", { name: /^Visite · .* · Réunion/ })).toBeVisible();
     await expect(week.getByText("Tâche ordinaire synthétique", { exact: true })).toHaveCount(0);
     await week.screenshot({ path: info.outputPath("week.png") });
 
     await page.setViewportSize({ width: 390, height: 850 });
     const agenda = page.getByRole("region", { name: "Agenda des visites", exact: true }).filter({ visible: true });
-    await expect(agenda.getByRole("link", { name: /Réunion synthétique/ })).toBeVisible();
+    await expect(agenda.getByRole("link", { name: /^Visite · .* · Réunion/ })).toBeVisible();
     await expect(agenda.getByRole("link", { name: /Tâche importante · Tâche importante synthétique/ })).toBeVisible();
     await expect(agenda.getByText("Tâche ordinaire synthétique", { exact: true })).toHaveCount(0);
     await agenda.screenshot({ path: info.outputPath("agenda.png") });

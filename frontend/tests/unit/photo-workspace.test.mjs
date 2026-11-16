@@ -12,6 +12,7 @@ function text(node) { return node == null || typeof node === "boolean" ? "" : Ar
 function button(tree, label) { const node = find(tree, "Button").find(item => text(item) === label || item.props["aria-label"] === label); assert.ok(node, label); return node; }
 class ApiError extends Error { constructor(code, status) { super(code); Object.assign(this, { code, status }); } }
 const contracts = loadServer("src/features/files/contracts.ts");
+const videoContracts = loadServer("src/features/files/video-contracts.ts");
 const requestSignals = loadServer("src/lib/api/request-signal.ts", { globals: { AbortController } });
 const previewKey = (id, version) => `${id}:${version}`;
 const source = (name = "source.png", type = "image/png") => new File([new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])], name, { type, lastModified: 1 });
@@ -106,11 +107,11 @@ function harness() {
   };
   return { react, render(run) { cursor = 0; const view = run(); effects.splice(0).forEach(effect => effect()); return view; }, unmount() { slots.forEach(slot => slot?.cleanup?.()); } };
 }
-const shared = { "react/jsx-runtime": runtime, "@/components/icons": { RefreshIcon: "RefreshIcon", CameraIcon: "CameraIcon", ShowPasswordIcon: "Eye" }, "@/components/shared/file-picker": { FilePicker: "Picker", fileSizeLabel: value => String(value) }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/ui/button": { Button: "Button" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError }, "./contracts": contracts };
+const shared = { "react/jsx-runtime": runtime, "@/components/icons": { AlertIcon: "AlertIcon", RefreshIcon: "RefreshIcon", CameraIcon: "CameraIcon", ShowPasswordIcon: "Eye" }, "@/components/shared/file-picker": { FilePicker: "Picker", fileSizeLabel: value => String(value) }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/components/ui/button": { Button: "Button" }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError }, "./contracts": contracts };
 function formSetup({ total = 0, resume, send, uploadable = true } = {}) {
   const h = harness(), decisions = [], sent = [], saved = [], denied = [], m = model(), props = { parentId: randomUUID(), parentKind: "property", writable: true, uploadable, total, resume, saved: result => saved.push(result), cancel() {}, denied: error => denied.push(error) };
   const draft = loadServer("src/components/shared/dossier-form.tsx", { modules: { react: h.react, "react/jsx-runtime": runtime, "./record-header": {} }, globals: { window: { dispatchEvent() {} }, Event } });
-  const loaded = loadServer("src/features/files/photo-upload-form.tsx", { modules: { ...shared, react: h.react, "@/components/shared/dossier-form": draft, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request: run => decisions.push(run) }) }, "./photo-conversion": m, "./photo-upload-model": { ...m, sendPhoto: async args => { sent.push(args); return send ? send(args) : m.sendPhoto(args); } } }, globals: { AbortController } });
+  const loaded = loadServer("src/features/files/photo-upload-form.tsx", { modules: { ...shared, react: h.react, "@/components/shared/dossier-form": draft, "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request: run => decisions.push(run) }) }, "./photo-conversion": m, "./video-contracts": videoContracts, "./photo-upload-model": { ...m, sendPhoto: async args => { sent.push(args); return send ? send(args) : m.sendPhoto(args); } } }, globals: { AbortController } });
   const render = () => h.render(() => loaded.PhotoUploadForm(props)); render();
   return { ...h, render, props, sent, saved, denied, decisions, pick(file) { find(render(), "Picker")[0].props.choose(file); }, submit() { find(render(), "form")[0].props.onSubmit({ preventDefault() {} }); } };
 }
@@ -119,6 +120,17 @@ test("The focused photo form stages a real dirty file, submits explicitly and gu
   const s = formSetup(); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], undefined); s.pick(source()); assert.equal(s.sent.length, 0); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], "true");
   button(s.render(), "Retour à la galerie").props.onClick(); assert.equal(s.decisions.length, 1); assert.equal(find(s.render(), "Picker")[0].props.selected.name, "source.png");
   s.submit(); await delay(0); assert.equal(s.saved.length, 1); assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], undefined);
+});
+
+test("The photo form points MP4 and MOV to the video picker without staging them", () => {
+  const s = formSetup();
+  s.pick(source("walkthrough.MOV", "video/quicktime"));
+  assert.match(text(s.render()), /onglet Vidéos MP4 \/ MOV/);
+  assert.equal(find(s.render(), "form")[0].props["data-live-dirty"], undefined);
+  s.pick(source());
+  s.pick(source("walkthrough.mp4", "video/mp4"));
+  assert.equal(find(s.render(), "Picker")[0].props.selected.name, "source.png");
+  assert.equal(s.sent.length, 0);
 });
 
 test("Unknown photo attempts freeze selection, lock duplicates and can retry their reserved slot after an interrupted upload", async () => {
