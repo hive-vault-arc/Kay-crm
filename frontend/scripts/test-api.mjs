@@ -59,11 +59,11 @@ async function fixture(command) {
     task.stdin.end(JSON.stringify(command));
   }); } finally { if (resumeWorker && !shuttingDown) await startWorker(); }
 }
-async function startWorker(unavailable = false) {
+async function startWorker() {
   workerExit = undefined; workerFailure = ""; workerReady = false; workerCycles = 0;
   const running = spawn(path.join(backend, ".venv/Scripts/python.exe"), ["-m", "tests.supervised_worker"], {
     cwd: backend, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
-    env: { ...process.env, APP_ENVIRONMENT: activeEnvironment, ANTIVIRUS_PORT: unavailable ? "1" : "3310" },
+    env: { ...process.env, APP_ENVIRONMENT: activeEnvironment },
   });
   worker = running;
   running.on("error", () => { process.exitCode = 1; });
@@ -166,7 +166,7 @@ const server = createServer(async (request, response) => {
     response.writeHead(404).end();
     return;
   }
-  if (changing || request.method !== "POST" || !["/start", "/stop", "/fixture", "/worker-start", "/worker-stop", "/worker-unavailable", "/worker-status", "/simulator-start", "/simulator-stop", "/simulator-status", "/recovery-start", "/recovery-stop"].includes(request.url)) {
+  if (changing || request.method !== "POST" || !["/start", "/stop", "/fixture", "/worker-start", "/worker-stop", "/worker-status", "/simulator-start", "/simulator-stop", "/simulator-status", "/recovery-start", "/recovery-stop"].includes(request.url)) {
     response.writeHead(409).end();
     return;
   }
@@ -191,7 +191,7 @@ const server = createServer(async (request, response) => {
     else if (request.url === "/simulator-stop") await stopSimulator();
     else if (request.url === "/simulator-status") result = { running: Boolean(simulator), exit: simulatorExit ?? null, failure: simulatorFailure, elapsedMs: Math.round(performance.now() - simulatorStarted) };
     else if (request.url === "/worker-stop") await stopWorker();
-    else if (request.url === "/worker-start" || request.url === "/worker-unavailable") { await stopWorker(); await startWorker(request.url === "/worker-unavailable"); }
+    else if (request.url === "/worker-start") { await stopWorker(); await startWorker(); }
     else if (request.url === "/stop") await stop();
     else if (!child) await start();
     else await waitForLive(child);

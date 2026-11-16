@@ -14,7 +14,7 @@ for (const width of [390, 1440]) test(`Selected file row recovers an archive aft
     await page.setViewportSize({ width, height: 900 }); await page.getByRole("button", { name: "Documents", exact: true }).click();
     const list = page.getByRole("dialog", { name: "Documents", exact: true }); await list.getByRole("button", { name: "Ajouter un document", exact: true }).click();
     const uploader = page.getByRole("dialog", { name: "Ajouter un document", exact: true }); await uploader.getByLabel("Fichier", { exact: true }).setInputFiles(file); await uploader.getByRole("button", { name: "Envoyer le fichier", exact: true }).click(); await expect(uploader).not.toBeVisible();
-    const row = list.getByRole("listitem").filter({ has: page.getByRole("heading", { name: file.name, exact: true }) }); await expect(row.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 30_000 });
+    const row = list.getByRole("listitem").filter({ has: page.getByRole("heading", { name: file.name, exact: true }) }); await expect(row.getByText("Fichier disponible", { exact: true })).toBeVisible({ timeout: 30_000 });
     const response = await page.request.get(`/api/v1/documents?parent_kind=property&parent_id=${propertyId}&purpose=attachment`); if (response.status() !== 200) throw new Error("SYNTHETIC_FILE_ROW_READ_FAILED");
     const original = documentsSchema.parse(await response.json()).items[0], attempts: { key?: string; body: string | null }[] = [];
     await page.route(`**/api/v1/documents/${original.id}/archive`, async route => {

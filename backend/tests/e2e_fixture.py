@@ -175,16 +175,16 @@ def main() -> int:
         elif action == "file-bytes":
             import base64
 
-            from tests.file_support import eicar_bytes, image_bytes, office_bytes
+            from tests.file_support import image_bytes, office_bytes
 
-            if command.get("kind") not in {"clean", "clean-document", "rejected"}:
+            if command.get("kind") not in {"clean", "clean-document", "invalid-document"}:
                 raise ValueError
             data = (
                 image_bytes()
                 if command["kind"] == "clean"
                 else office_bytes()
                 if command["kind"] == "clean-document"
-                else office_bytes(extra=("word/antivirus-test.txt", eicar_bytes()))
+                else office_bytes(extra=("word/vbaProject.bin", b"synthetic test fixture"))
             )
             print(json.dumps({"base64": base64.b64encode(data).decode("ascii")}))
         elif action == "clear":

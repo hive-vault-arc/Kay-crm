@@ -1,4 +1,3 @@
-import { randomInt } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import { test, expect, clearActorContext, createActor, removeActor, signIn, type TestActor } from "../helpers/auth";
 import { testControl } from "../helpers/api-process";
@@ -28,7 +27,7 @@ async function openDashboardWork(page: import("@playwright/test").Page) {
 test("Birthday reminders open the private contact at both stages", async ({ page }) => {
   const agent = await createActor("agent");
   const name = "Client synthétique anniversaire";
-  const phone = `+2126${randomInt(10_000_000, 100_000_000)}`;
+  const phone = "+12025550171";
   try {
     await signIn(page, agent);
     await testControl("worker-stop");

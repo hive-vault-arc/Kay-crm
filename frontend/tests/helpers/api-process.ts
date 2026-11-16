@@ -6,11 +6,11 @@ export async function apiProcess(action: "start" | "stop") {
   await testControl(action);
 }
 
-export async function testControl(action: "start" | "stop" | "fixture" | "worker-start" | "worker-stop" | "worker-unavailable" | "worker-status" | "simulator-start" | "simulator-stop" | "simulator-status" | "recovery-start" | "recovery-stop", body?: object): Promise<unknown> {
+export async function testControl(action: "start" | "stop" | "fixture" | "worker-start" | "worker-stop" | "worker-status" | "simulator-start" | "simulator-stop" | "simulator-status" | "recovery-start" | "recovery-stop", body?: object): Promise<unknown> {
   const control = JSON.parse(await readFile(
     path.resolve("../backend/.local-data/e2e-api-control.json"), "utf8",
   )) as { url: string; token: string };
-  const signal = AbortSignal.timeout(action === "fixture" && body && "action" in body && ["recovery-prepare", "recovery-run"].includes(String(body.action)) ? 90_000 : action === "fixture" ? 60_000 : action === "worker-start" || action === "worker-unavailable" ? 45_000 : 15_000);
+  const signal = AbortSignal.timeout(action === "fixture" && body && "action" in body && ["recovery-prepare", "recovery-run"].includes(String(body.action)) ? 90_000 : action === "fixture" ? 60_000 : action === "worker-start" ? 45_000 : 15_000);
   const request = () => fetch(`${control.url}/${action}`, {
     method: "POST", headers: { Authorization: control.token },
     body: body ? JSON.stringify(body) : undefined,

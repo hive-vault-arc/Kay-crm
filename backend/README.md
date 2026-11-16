@@ -6,7 +6,7 @@ point, which contains the full pinned/hash-locked runtime dependencies. Read the
 before attempting deployment; detecting Python does not make this local-only
 backend production-ready.
 
-Current copy/paste startup/shutdown, frontend, antivirus, worker and first-login
+Current copy/paste startup/shutdown, frontend, worker and first-login
 commands: [Local startup](../docs/06-delivery-and-operations/local-startup.md).
 Manual development supports the standard `uvicorn app.main:app --reload`
 entry point. Use the runbook's certificate/loop options for the connected HTTPS
@@ -259,7 +259,7 @@ test. The lease is a harness guard, not a product endpoint. Keep all three ports
 See [SP-02 evidence](../docs/03-planning/sprints/sp-02-evidence.md), [SP-03 evidence](../docs/03-planning/sprints/sp-03-evidence.md) and
 [QA commands](../docs/QA_COMMANDS.md) for actual executed results and limitations.
 
-## Protected files and real antivirus (SP-09)
+## Protected files (SP-09)
 
 Install the updated hash locks in this directory's `.venv` (Pillow12.3.0,
 pypdf6.20.1). Reviewed additive Alembic0010/0011 introduce seven file/outbox/job
@@ -267,31 +267,13 @@ tables and session-proof hashes. Inspect first, then
 `scripts/kay.ps1 -Task migrate -Environment development` for ordinary local use,
 or `-Environment test` for isolated tests. Never reset development.
 
-With Docker's Linux engine running, use separate terminals in `backend/`:
+From `backend/`, run `.venv/Scripts/python.exe -m app.cli.worker`.
+Uploads are validated by file type and checked against their recorded size and
+SHA-256 in private storage before they become available. Ctrl+C stops the
+worker. Durable leased work resumes when it restarts.
 
-```powershell
-docker compose -f compose.clamav.yaml up -d
-docker compose -f compose.clamav.yaml ps
-.venv/Scripts/python.exe -m app.cli.worker
-```
-
-Wait for healthy ClamAV before expecting scan completion. The compose file pins
-the digest, persisted signatures,4GiB memory limit and127.0.0.1:3310 only.
-`ANTIVIRUS_HOST` stays `127.0.0.1` in local/isolated environments;
-`ANTIVIRUS_PORT` defaults3310. Explicit `APP_ENVIRONMENT=production` also accepts
-a configured private ClamAV DNS name or IP, with the port configured separately.
-Use the same endpoint in API and worker; see the
-[production configuration and test boundary](../docs/06-delivery-and-operations/production-antivirus.md).
-API and worker share the selected ignored configuration (`APP_ENVIRONMENT=development` normally).
-FastAPI8000 and Next3000 require the exact configured frontend Origin and trusted
-local certificate. Scanner outages retain quarantine, never fake success.
-
-Ctrl+C stops the worker; durable leased work recovers on restart.
-`docker compose -f compose.clamav.yaml stop` stops only KAY's scanner and retains
-its cache. Do not delete volumes or reconfigure unrelated containers. No account,
-worker or database reset is seeded. Private immutable objects live only in
-`.local-data/files/{environment}/`, never frontend/public. Do not manually delete
-committed objects; archive through the application.
+Private immutable objects live in `.local-data/files/{environment}/` or private
+Spaces. Archive committed files through the application.
 
 After inspecting the selected target, `.venv/Scripts/python.exe -m app.cli.file_maintenance`
 reconciles old uncommitted staging/orphans with a one-hour grace period and
@@ -300,7 +282,7 @@ Backups cover both PostgreSQL and the private directory; measured local recovery
 and its limits are recorded in [SP-21 execution](../docs/03-planning/sprints/sp-21-execution.md).
 
 Focused verification: `.venv/Scripts/python.exe -m pytest tests/test_files.py tests/test_file_edges.py -q`.
-It requires healthy real ClamAV and isolated test PostgreSQL. Browser suites start
+It requires isolated test PostgreSQL. Browser suites start
 a separate explicit-venv worker with private outage controls. Never run them
 concurrently with pytest. See the [wire contract](../docs/04-design/api-contracts.md#sp-09-protected-file-wire-contract)
 and [SP-09 evidence](../docs/03-planning/sprints/sp-09-evidence.md) for current results.
@@ -322,8 +304,7 @@ must never be reset/seeded; downgrade refuses development and retained history.
 Use the explicit venv for every migration, application and test command.
 
 Focused tests: `.venv/Scripts/python.exe -m pytest tests/test_requirements.py -q`.
-Full tests include earlier real-antivirus regressions and therefore require the
-SP-09 local ClamAV service. Browser/pytest fixtures share the exclusive test lease
+Full tests include the protected file regressions. Browser/pytest fixtures share the exclusive test lease
 and must not run concurrently. No additional worker/broker/dependency is added
 by SP-10. See the [wire contract](../docs/04-design/api-contracts.md#sp-10-requirements-and-manual-shortlist-wire-contract)
 and [execution record](../docs/03-planning/sprints/sp-10-evidence.md).
@@ -338,12 +319,12 @@ commands; SP-13 adds outcomes/reopening, visits/tasks/finance remain SP-14/15/16
 Reviewed additive0013_deal_pipeline adds four tables and typed document/audit/
 timeline deal links. Inspect then migrate the selected environment with the
 existing scripts/kay.ps1 tasks; never reset/seed development. Downgrade refuses
-development or retained history. Deal documents reuse the real ClamAV/private
+development or retained history. Deal documents reuse the verification/private
 file pipeline and follow current contact scope after transfer/merge.
 
 Focused command (backend cwd): `.venv/Scripts/python.exe -m pytest tests/test_deals.py tests/test_deal_edges.py tests/test_deal_links.py -q --tb=short -x`.
 Run all DB-writing suites serially under the existing lease. Full pytest/browser
-regressions require healthy local ClamAV. No dependency, broker or scanner mock
+regressions require the regular worker. No external broker
 was introduced. [Wire/model contract](../docs/04-design/deal-pipeline-local.md)
 and [actual evidence](../docs/03-planning/sprints/sp-11-evidence.md) distinguish
 implementation from technical acceptance and Khalid's product review.
@@ -362,7 +343,7 @@ The existing file worker still consumes only `file.scan`; stock notifications
 remain SP-15. No new worker, broker or dependency was introduced.
 
 Focused command: `.venv/Scripts/python.exe -m pytest tests/test_reservations.py tests/test_reservation_migration.py tests/test_reservation_http.py -q --tb=short`.
-Run DB-writing suites serially. Full regressions need healthy real local ClamAV.
+Run DB-writing suites serially. Full regressions need the real regular worker.
 See the [local protocol](../docs/04-design/reservations-local.md) and
 [execution evidence](../docs/03-planning/sprints/sp-12-execution.md).
 

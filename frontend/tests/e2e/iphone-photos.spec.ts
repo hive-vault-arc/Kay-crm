@@ -73,7 +73,7 @@ test("iPhone photos: real HEIC/HEIF batch converts privately under a CSP without
     ]);
     await sendBatch(form);
     await expect(gallery.getByText("3 photos", { exact: true })).toBeVisible({ timeout: 30_000 });
-    await expect(gallery.getByText("Analyse réussie", { exact: true })).toHaveCount(3, { timeout: 60_000 });
+    await expect(gallery.getByText("Fichier disponible", { exact: true })).toHaveCount(3, { timeout: 60_000 });
     expect(writes.map(item => item.filename)).toEqual(["IMG_0001.webp", "principal.webp", "patio.webp"]);
     expect(writes.every(item => item.mime_type === "image/webp")).toBe(true);
     expect(types).toEqual(["image/webp", "image/webp", "image/webp"]);
@@ -128,7 +128,7 @@ test("iPhone photos: batch retry keeps successes and handles a lost acknowledgem
     await expect(form.getByText(/1 \/ 2 photos envoyées/)).toBeVisible();
     await gallery.getByRole("button", { name: "Réessayer", exact: true }).tap();
     await expect(gallery.getByText(/2 photos envoyées/)).toBeVisible();
-    await expect(gallery.getByText("Analyse réussie", { exact: true })).toHaveCount(2, { timeout: 60_000 });
+    await expect(gallery.getByText("Fichier disponible", { exact: true })).toHaveCount(2, { timeout: 60_000 });
     expect(puts).toBe(2);
     const result = await (await page.request.get(`/api/v1/documents?parent_kind=development&parent_id=${project.id}&purpose=photo`)).json();
     expect(result.total).toBe(10);
@@ -162,7 +162,7 @@ test("iPhone photos: cancelled conversion keeps the remaining selection for retr
     await page.evaluate(() => (window as unknown as { releaseSyntheticPhoto: () => void }).releaseSyntheticPhoto());
     await gallery.getByRole("button", { name: "Réessayer", exact: true }).tap();
     await expect(gallery.getByText("2 photos", { exact: true })).toBeVisible();
-    await expect(gallery.getByText("Analyse réussie", { exact: true })).toHaveCount(2, { timeout: 60_000 });
+    await expect(gallery.getByText("Fichier disponible", { exact: true })).toHaveCount(2, { timeout: 60_000 });
   } finally { await testControl("worker-stop"); await clearActorContext(page); await removeActor(actor); }
 });
 
@@ -182,7 +182,7 @@ test("iPhone photos: private contact attachments accept HEIC batches and preserv
     await expect(input).toHaveAttribute("multiple", "");
     await input.setInputFiles([{ name: "prive.HEIC", mimeType: "", buffer: await readFile(source("synthetic-grid.heic")) }, docx]);
     await page.getByRole("button", { name: "Envoyer les fichiers", exact: true }).tap();
-    await expect(page.getByText("Analyse réussie", { exact: true })).toHaveCount(2, { timeout: 60_000 });
+    await expect(page.getByText("Fichier disponible", { exact: true })).toHaveCount(2, { timeout: 60_000 });
     await downloadFile(page, docx.name, docx.buffer);
     await expect(panel.getByText("prive.webp", { exact: true })).toBeVisible();
     await clearActorContext(page); await signIn(page, outsider);
@@ -205,7 +205,7 @@ test("iPhone photos: a full ten-photo agent batch fits the existing permit budge
     await sendBatch(form);
     await expect(gallery.getByText("10 photos", { exact: true })).toBeVisible({ timeout: 30_000 });
     await expect(gallery.getByText(/10 photos envoyées/)).toBeVisible();
-    await expect(gallery.getByText("Analyse réussie", { exact: true })).toHaveCount(10, { timeout: 60_000 });
+    await expect(gallery.getByText("Fichier disponible", { exact: true })).toHaveCount(10, { timeout: 60_000 });
     await expect(gallery.getByRole("button", { name: /^Ouvrir la photo/ })).toHaveCount(10);
     await expect(gallery.getByRole("alert")).toHaveCount(0);
     // Let the separate cover-thumbnail refresh finish before measuring navigation.

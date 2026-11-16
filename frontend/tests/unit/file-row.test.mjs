@@ -61,10 +61,10 @@ test("Acknowledged archive retries only current read and original completion, re
 });
 
 test("Analysis retry keeps its original operation after current scan status changes and never fabricates a clean verdict", async () => {
-  const source = fileRecord({ versions: [{ id: randomUUID(), state: "pending_scan", scan_error: "ANTIVIRUS_UNAVAILABLE", created_at: "2026-10-30T12:00:00Z" }] }); let first = true;
+  const source = fileRecord({ versions: [{ id: randomUUID(), state: "pending_scan", scan_error: "FILE_STORAGE_UNAVAILABLE", created_at: "2026-10-30T12:00:00Z" }] }); let first = true;
   const s = fixture({ source, command: async ({ commit }) => { const result = commit(); if (first) { first = false; throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } return result; } });
-  s.click(`Réessayer l’analyse de ${source.filename}`); await delay(0); s.sync(); assert.equal(find(s.render(), "li")[0].props["data-write-recovery"], true);
-  s.click(`Réessayer l’analyse de ${source.filename}`); await delay(0); const commands = s.calls.filter(value => value.type === "command"); assert.equal(commands.length, 2); assert.equal(commands[0].args[3], commands[1].args[3]); assert.equal(commands[1].args[1].expected_version, 7); assert.equal(s.commits(), 1); assert.equal(s.server().versions[0].state, "pending_scan"); assert.equal(s.server().versions[0].scan_error, null); s.dispose();
+  s.click(`Relancer la vérification de ${source.filename}`); await delay(0); s.sync(); assert.equal(find(s.render(), "li")[0].props["data-write-recovery"], true);
+  s.click(`Relancer la vérification de ${source.filename}`); await delay(0); const commands = s.calls.filter(value => value.type === "command"); assert.equal(commands.length, 2); assert.equal(commands[0].args[3], commands[1].args[3]); assert.equal(commands[1].args[1].expected_version, 7); assert.equal(s.commits(), 1); assert.equal(s.server().versions[0].state, "pending_scan"); assert.equal(s.server().versions[0].scan_error, null); s.dispose();
 });
 
 test("Current list read failure cancels held bytes, retains its row and refuses stale or unhydrated delivery handlers", async () => {
@@ -94,7 +94,7 @@ test("Authorized read-only files still download and preview; a lost readable con
 });
 
 test("A fresh analysis result retires an old in-progress error without inventing a new document version", async () => {
-  const source = fileRecord({ versions: [{ id: randomUUID(), state: "pending_scan", scan_error: "ANTIVIRUS_UNAVAILABLE", created_at: "2026-10-30T12:00:00Z" }] }), s = fixture({ source, command: async () => { throw new ApiError("FILE_SCAN_IN_PROGRESS", 409); } });
-  s.click(`Réessayer l’analyse de ${source.filename}`); await delay(0); assert.equal(find(s.render(), "p").some(value => value.props.role === "alert"), true);
+  const source = fileRecord({ versions: [{ id: randomUUID(), state: "pending_scan", scan_error: "FILE_STORAGE_UNAVAILABLE", created_at: "2026-10-30T12:00:00Z" }] }), s = fixture({ source, command: async () => { throw new ApiError("FILE_SCAN_IN_PROGRESS", 409); } });
+  s.click(`Relancer la vérification de ${source.filename}`); await delay(0); assert.equal(find(s.render(), "p").some(value => value.props.role === "alert"), true);
   s.setServer({ ...source, versions: [{ ...source.versions[0], state: "clean", scan_error: null }] }); s.sync(); assert.equal(s.server().version, source.version); assert.equal(find(s.render(), "p").some(value => value.props.role === "alert"), false); assert.equal(s.calls.filter(value => value.type === "command").length, 1); s.dispose();
 });

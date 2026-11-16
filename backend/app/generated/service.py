@@ -293,7 +293,6 @@ def generate(
             sha256=hashlib.sha256(payload).digest(),
             state="clean",
             scanned_at=datetime.now(UTC),
-            scanner_version="server-generated",
         )
         session.add(document)
         session.flush()

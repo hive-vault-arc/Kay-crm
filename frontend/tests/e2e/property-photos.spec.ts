@@ -38,7 +38,7 @@ test("property photos: private viewer, browser WebP conversion, cross-page navig
     await upload.getByRole("button", { name: "Réessayer", exact: true }).click(); await expect(upload).not.toBeVisible();
     await page.unroute("**/transfers/**");
     await expect(gallery.getByText("1 photo")).toBeVisible();
-    await expect(gallery.getByText("Analyse réussie")).toBeVisible({ timeout: 60_000 });
+    await expect(gallery.getByText("Fichier disponible")).toBeVisible({ timeout: 60_000 });
     await expect(gallery.locator('img[src^="blob:"]')).toBeVisible();
     const firstPhoto = gallery.getByRole("button", { name: "Ouvrir la photo patio.webp" });
     await firstPhoto.click();
@@ -161,7 +161,7 @@ test("property photos: private viewer, browser WebP conversion, cross-page navig
     await page.screenshot({ path: "output/playwright/property-photos/primary-mobile.png" });
     await uploadPhoto(page, path.resolve("tests/fixtures/projects-reference/patio.png"));
     await expect(gallery.getByText("11 photos")).toBeVisible();
-    await expect(gallery.getByText("Analyse réussie")).toHaveCount(2, { timeout: 60_000 });
+    await expect(gallery.getByText("Fichier disponible")).toHaveCount(2, { timeout: 60_000 });
     expect((await staffCommand(page, "documents", { parent_kind: "property", parent_id: id, filename: "private.pdf", mime_type: "application/pdf", size_bytes: 100 })).status()).toBe(403);
   } finally { await testControl("worker-stop"); await clearActorContext(page); await removeActor(agent); await removeActor(manager); }
 });

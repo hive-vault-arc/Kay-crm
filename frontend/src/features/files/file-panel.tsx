@@ -127,7 +127,7 @@ function FilePanelBody({ parentKind, parentId, writable, actorId, role, purpose 
           await uploadBytes(permit, uploadFile, value => { if (current() && !controller.signal.aborted) setProgress(value); }, controller.signal);
         }
         if (!check()) return;
-        setNotice(previous && previous.state !== "awaiting_upload" ? "Le transfert est enregistré. Consultez le résultat de l’analyse dans la liste." : "Transfert terminé. Le fichier reste en quarantaine jusqu’au résultat de l’analyse.");
+        setNotice(previous && previous.state !== "awaiting_upload" ? "Le transfert est enregistré. Consultez l’état du fichier dans la liste." : "Transfert terminé. Le fichier est en cours de vérification.");
         setFiles(files.slice(index + 1)); setResume(undefined); setRecovering(false);
         owned = emptyUploadAttempt(); attempt.current = owned;
       }
@@ -176,12 +176,12 @@ function FilePanelBody({ parentKind, parentId, writable, actorId, role, purpose 
       {list && (list.has_previous || list.has_next) ? <NumberedPages label="Pages des pièces jointes" page={page} total={list.total} size={list.page_size} change={next => guard.request(() => { rowOwnership.current = new Map(); setProtectedRows(rowOwnership.current); setPage(next); }, scope.current ?? undefined)} /> : null}
     </> : null}
     <Sheet open={uploadOpen} onOpenChange={open => { if (!open) closeUpload(); }}><SheetContent id={uploadId} className="kay-record-drawer kay-document-uploader" closeLabel="Fermer l’ajout de document" onOpenAutoFocus={event => { event.preventDefault(); browse.current?.focus(); }} onCloseAutoFocus={event => { event.preventDefault(); const target = uploadTrigger.current; if (target?.isConnected) target.focus(); else chooser.current?.focus(); }}>
-      <SheetHeader className="kay-drawer-head"><SheetTitle>{resume ? resume.versions[0]?.state === "clean" ? "Ajouter une version" : "Reprendre le transfert" : addLabel}</SheetTitle><SheetDescription>Le fichier sera disponible après son analyse antivirus.</SheetDescription></SheetHeader>
+      <SheetHeader className="kay-drawer-head"><SheetTitle>{resume ? resume.versions[0]?.state === "clean" ? "Ajouter une version" : "Reprendre le transfert" : addLabel}</SheetTitle><SheetDescription>Les fichiers sont disponibles après vérification.</SheetDescription></SheetHeader>
       <form className="kay-document-upload" data-draft-managed data-write-recovery={recovering || undefined} data-live-dirty={file || recovering ? "true" : undefined} aria-busy={busy} onSubmit={event => { event.preventDefault(); void upload(); }}>
         <div className="kay-drawer-body">
           {resume ? <div className="kay-upload-context"><FileIcon size={20} aria-hidden="true" /><div><span>Document concerné</span><strong>{resume.filename}</strong><small>Conservez le même nom, format et nombre d’octets ({new Intl.NumberFormat("fr-MA").format(resume.size_bytes)}).</small></div></div> : null}
           <FilePicker id={inputId} label={resume ? "Fichier à envoyer à nouveau" : "Fichier"} accept={inventoryParent ? ".pdf,.docx,.xlsx" : identityCard ? `${photoAccept},.pdf` : `${photoAccept},.pdf,.docx,.xlsx`} inputRef={fileInput} browseRef={browse} selected={file} selection={files} chooseFiles={inventoryParent || resume ? undefined : chooseFiles} disabled={!hydrated || busy || recovering || !writable} description={inventoryParent ? "PDF, DOCX ou XLSX sans macro · 20 Mo maximum. Les images s’ajoutent dans Photos." : identityCard ? "JPEG, PNG, WebP, HEIC, HEIF ou PDF · 20 Mo par fichier." : "JPEG, PNG, WebP, HEIC, HEIF, PDF, DOCX ou XLSX sans macro · 20 Mo par fichier."} choose={selected => chooseFiles(selected ? [selected] : [])} />
-          {progress !== undefined ? <div className="kay-upload-progress" role="status"><progress max={100} value={progress} aria-label="Progression du transfert" /><p>Transfert : {progress} %. Analyse antivirus à suivre.</p></div> : null}
+          {progress !== undefined ? <div className="kay-upload-progress" role="status"><progress max={100} value={progress} aria-label="Progression du transfert" /><p>Transfert : {progress} %.</p></div> : null}
           {error ? <p role="alert" className="text-sm text-danger">{error.message}</p> : null}
         </div>
         <footer className="kay-upload-footer">{busy ? <Button action="cancel" type="button" variant="outline" onClick={() => abort.current?.abort()}>Interrompre le transfert</Button> : <Button action="cancel" type="button" variant="outline" onClick={closeUpload}>Annuler</Button>}<Button action="upload" type="submit" disabled={!hydrated || busy || !file || !writable}>{busy ? "Transfert…" : error ? "Réessayer" : files.length > 1 ? "Envoyer les fichiers" : "Envoyer le fichier"}</Button></footer>

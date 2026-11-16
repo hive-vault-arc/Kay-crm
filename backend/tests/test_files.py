@@ -1,4 +1,4 @@
-"""SP-09 real PostgreSQL and ClamAV: deny first, publish only a real clean verdict."""
+"""Private file integrity, transfer permissions, and durable publication on PostgreSQL."""
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
@@ -9,9 +9,9 @@ from sqlalchemy import func, select, update
 from sqlalchemy.exc import IntegrityError
 
 from app.files.contracts import FORMATS, MAX_FILE_BYTES, ArchiveDocument
-from app.files.models import Document, FilePermit, Job, Notification, OutboxEvent
-from app.files.scanner import scan
+from app.files.models import Document, DocumentVersion, FilePermit, Job, Notification, OutboxEvent
 from app.files.service import consume_permit, document_command, list_documents, read_document
+from app.files.storage import PrivateStorage
 from app.files.validation import validate_file
 from app.files.worker import claim, finish, run_once
 from app.identity.models import StaffSession
@@ -21,7 +21,6 @@ from app.work.contracts import NotificationQuery
 from app.work.notifications import mark_read, read_notifications
 from tests.contact_support import actor, create_lead, new_lead
 from tests.file_support import (
-    eicar_bytes,
     grant,
     image_bytes,
     new_document,
@@ -62,10 +61,8 @@ def headers(settings, permit, mime="image/png"):
     ],
     ids=["png", "jpeg", "webp", "pdf", "docx", "xlsx"],
 )
-def test_six_real_formats_validate_and_scan_clean(settings, extension, data):
+def test_six_real_formats_validate(extension, data):
     validate_file(data, f"Synthétique.{extension}", FORMATS[f".{extension}"])
-    verdict, version = scan(settings, data)
-    assert verdict == "clean" and version.startswith("ClamAV ") and "/" in version
 
 
 @pytest.mark.parametrize(
@@ -84,14 +81,6 @@ def test_six_real_formats_validate_and_scan_clean(settings, extension, data):
 def test_malformed_and_active_containers_denied(filename, mime, data):
     with pytest.raises(IdentityError, match="UNSUPPORTED_MEDIA_TYPE"):
         validate_file(data, filename, mime)
-
-
-def test_real_scanner_detects_controlled_test_signature(settings):
-    assert scan(settings, eicar_bytes())[0] == "rejected"
-    assert (
-        scan(settings, office_bytes(extra=("word/antivirus-test.txt", eicar_bytes())))[0]
-        == "rejected"
-    )
 
 
 @pytest.mark.anyio
@@ -150,29 +139,7 @@ async def test_real_upload_pending_clean_download_and_single_use(settings, datab
 
 
 @pytest.mark.anyio
-async def test_infected_allowed_office_container_is_never_readable(settings, database):
-    _, token, contact = setup_contact(settings, database)
-    data = office_bytes(extra=("word/antivirus-test.txt", eicar_bytes()))
-    document = new_document(
-        settings, database, token, "contact", contact, data, "Test antivirus.docx", FORMATS[".docx"]
-    )
-    permit = grant(database, token, document)
-    async with client_for(create_app(settings)) as client:
-        response = await client.put(
-            f"/api/v1/transfers/{permit['permit_id']}",
-            headers=headers(settings, permit, FORMATS[".docx"]),
-            content=data,
-        )
-        assert response.status_code == 200
-    assert run_once(database, settings)
-    current = read_document(database, token, UUID(document["id"]))
-    assert current["versions"][0]["state"] == "rejected"
-    with pytest.raises(IdentityError, match="FILE_NOT_CLEAN"):
-        grant(database, token, current, "download", permit["version_id"])
-
-
-@pytest.mark.anyio
-async def test_scanner_outage_retry_and_expired_lease_fencing(settings, database):
+async def test_storage_outage_retry_and_expired_lease_fencing(settings, database):
     _, token, contact = setup_contact(settings, database)
     data = image_bytes()
     document = new_document(settings, database, token, "contact", contact, data)
@@ -185,17 +152,22 @@ async def test_scanner_outage_retry_and_expired_lease_fencing(settings, database
                 content=data,
             )
         ).status_code == 200
-    assert run_once(database, settings.model_copy(update={"antivirus_port": 1}))
+    with database.session() as session:
+        version = session.get_one(DocumentVersion, UUID(permit["version_id"]))
+        path = PrivateStorage(settings).path(version.object_key)
+    path.unlink()
+    assert run_once(database, settings)
+    path.write_bytes(data)
     current = read_document(database, token, UUID(document["id"]))
     assert current["versions"][0]["state"] == "pending_scan"
-    assert current["versions"][0]["scan_error"] == "ANTIVIRUS_UNAVAILABLE"
+    assert current["versions"][0]["scan_error"] == "FILE_STORAGE_UNAVAILABLE"
     with database.session() as session, session.begin():
         session.execute(update(Job).values(available_at=datetime.now(UTC) - timedelta(seconds=1)))
     old = claim(database)
     assert old is not None
     with database.session() as session, session.begin():
         session.execute(update(Job).values(lease_until=datetime.now(UTC) - timedelta(seconds=1)))
-    assert not finish(database, *old, ("clean", "not-a-real-verdict"))
+    assert not finish(database, *old)
     assert run_once(database, settings)
     current = read_document(database, token, UUID(document["id"]))
     assert current["versions"][0]["state"] == "clean"

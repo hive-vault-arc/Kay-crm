@@ -112,23 +112,15 @@ Approval is required for a material scope change, production/real-data action, i
 
 ## SP-09 verification boundary
 
-Real healthy local ClamAV is a file-test prerequisite, not a fake verdict flag.
-Use backend's pinned compose/runbook and explicit venv for workers and every
-Python command. Test API supervisor starts a separate actual file worker and
-privately stops/restarts it or points it at a refused loopback port for outage
-cases. No fault-control endpoint is mounted in FastAPI/Next. Cleanup pauses that
-worker before deleting only isolated synthetic actors, preserving FK/history
-invariants. Never run a second fixture suite against the same database lease.
+Use the explicit venv for workers and Python commands. The test supervisor
+starts and stops the real file worker on the isolated target. Backend tests cover
+storage unavailability, retry and stale leases. Browser cases cover file format
+rejection, interrupted transfer, pending download denial and worker restart.
+Both suites share the exclusive test-database lease. Run them sequentially.
 
-Binary bytes use direct FastAPI grants; browser/API fixtures prove real clean/
-controlled rejection, no public URL, current private/shared scope, single-use
-session binding, interruption/retry and durable scan states. Use numeric progress
-and actual response/verdict observations, not arbitrary sleeps. Native captures
-must show their named state; full-page review uses a separate authenticated test
-tab so screenshot scrollbar changes cannot disturb workflow geometry. Sources,
-failures, corrected runs and final limits are in
-[SP-09 evidence](03-planning/sprints/sp-09-evidence.md). No production or real-data
-operation is authorized by this synthetic harness.
+Binary bytes use direct FastAPI grants. Verify current private/shared scope,
+single-use session binding and byte integrity. Use actual response and state
+observations. Historical SP-09 evidence describes its original verification.
 
 ## SP-10 verification boundary
 

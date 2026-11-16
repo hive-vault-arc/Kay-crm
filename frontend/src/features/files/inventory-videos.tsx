@@ -16,8 +16,8 @@ import { uploadVideo } from "./video-transfer";
 
 const statusLabel = {
   uploading: "Transfert à terminer",
-  queued: "En attente d’analyse",
-  processing: "Analyse et compression en cours",
+  queued: "En attente de compression",
+  processing: "Compression en cours",
   ready: "Prête à lire",
   failed: "Traitement échoué",
 };
@@ -126,7 +126,7 @@ export function InventoryVideos({ kind, id }: { kind: "property" | "development"
       </div> : null}
       {resume && !busy ? <Button action="cancel" type="button" variant="outline" className="justify-self-start" onClick={() => { setResume(undefined); setFile(undefined); setUploadId(undefined); setError(undefined); }}>Annuler la reprise</Button> : null}
     </form>
-    {sent ? <p role="status" className="text-info">Vidéo envoyée. Elle sera disponible après l’analyse antivirus et la compression.</p> : null}
+    {sent ? <p role="status" className="text-info">Vidéo envoyée. Elle sera disponible après compression.</p> : null}
     {error && !archiveId ? <p role="alert" className="text-sm text-danger">{videoErrors[error.code] ?? error.message}</p> : null}
     {videos.length ? <ul className="grid gap-3">{videos.map(video => (
       <li key={video.id} className="grid min-w-0 gap-2 rounded-md border p-3">

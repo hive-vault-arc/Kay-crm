@@ -248,14 +248,19 @@ async def test_retry_exhaustion_explicit_retry_and_immutable_clean_version(setti
                 content=data,
             )
         ).status_code == 200
+    with database.session() as session:
+        version = session.get_one(DocumentVersion, UUID(permit["version_id"]))
+        path = PrivateStorage(settings).path(version.object_key)
+    path.unlink()
     for _ in range(5):
-        assert run_once(database, settings.model_copy(update={"antivirus_port": 1}))
+        assert run_once(database, settings)
         with database.session() as session, session.begin():
             session.execute(
                 update(Job).values(available_at=datetime.now(UTC) - timedelta(seconds=1))
             )
     with database.session() as session:
         assert session.scalar(select(Job.state)) == "failed"
+    path.write_bytes(data)
     did = UUID(document["id"])
     current = read_document(database, token, did)
     body, key = ArchiveDocument(expected_version=current["version"]), uuid4()

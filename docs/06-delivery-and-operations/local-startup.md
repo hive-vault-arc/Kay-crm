@@ -9,7 +9,7 @@ ordinary daily operation in one file:
 - Required software and locked Python/Node dependencies.
 - Native PostgreSQL preparation, private configuration and separate test targets.
 - Local HTTPS certificates, migrations and one-time administrator bootstrap.
-- Docker/ClamAV, Uvicorn, worker and frontend startup.
+- Uvicorn, the regular and video workers, and frontend startup.
 - Health checks, troubleshooting, compiled mode and safe shutdown.
 
 Use frontend `https://localhost:3100` and API `https://localhost:8100` with

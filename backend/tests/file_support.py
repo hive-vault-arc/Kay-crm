@@ -1,6 +1,5 @@
 """Only synthetic binary fixtures; never copy a user's files into test storage."""
 
-import base64
 import io
 import struct
 import zipfile
@@ -33,20 +32,12 @@ def image_bytes(format_name="PNG", size=None):
     return data
 
 
-def eicar_bytes():
-    # Official harmless antivirus test string, constructed in memory only.
-    return base64.b64decode(
-        "WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNULUZJTEUhJEgrSCo="
-    )
-
-
-def pdf_bytes(infected=False):
+def pdf_bytes():
     output = io.BytesIO()
     writer = PdfWriter()
     writer.add_blank_page(width=100, height=100)
     writer.write(output)
-    result = output.getvalue()
-    return result.replace(b"%%EOF", b"% " + eicar_bytes() + b"\n%%EOF") if infected else result
+    return output.getvalue()
 
 
 def office_bytes(extension="docx", extra=None):

@@ -64,7 +64,7 @@ def test_optional_cin_uses_canonical_contact_and_private_reads(settings, databas
 
 
 @pytest.mark.anyio
-async def test_identity_copy_is_private_and_must_pass_antivirus(settings, database):
+async def test_identity_copy_is_private_and_requires_integrity_verification(settings, database):
     _, token = actor(settings, database)
     _, outsider = actor(settings, database)
     result = command(

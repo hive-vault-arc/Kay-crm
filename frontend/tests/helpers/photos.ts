@@ -16,7 +16,7 @@ export async function choosePhoto(page: Page, file: Parameters<Locator["setInput
 export async function uploadPhoto(page: Page, file: Parameters<Locator["setInputFiles"]>[0]) {
   const form = await choosePhoto(page, file);
   await form.getByRole("button", { name: "Ajouter la photo", exact: true }).click(); await expect(form).not.toBeVisible();
-  await expect(page.getByRole("dialog", { name: "Galerie du dossier", exact: true }).getByText("Photo envoyée. Elle sera visible après l’analyse antivirus.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Galerie du dossier", exact: true }).getByText("Photo envoyée. Elle sera visible après vérification.", { exact: true })).toBeVisible();
 }
 export async function closePhotos(page: Page) {
   const gallery = page.getByRole("dialog", { name: "Galerie du dossier", exact: true });

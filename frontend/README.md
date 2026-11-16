@@ -192,8 +192,7 @@ HTTPS with a single-use, session-bound permit and no third-party cookie.
 French shadcn controls cover selection, progress/interruption, immutable retry,
 quarantine/real verdict, clean-only preview/download and archive confirmation.
 No additional frontend dependency or chart was introduced. Start the separate
-real ClamAV and explicit-venv worker using the [backend runbook](../backend/README.md#protected-files-and-real-antivirus-sp-09).
-Scanner failure keeps files quarantined; it never permits opening them.
+the explicit-venv worker using the [backend runbook](../backend/README.md#protected-files-sp-09). Files stay unavailable until the worker verifies their stored integrity.
 
 Run `npm run test:e2e -- --grep SP09` for the five configured browser projects,
 and `npm run test:chrome -- --grep 'SP09 visible Chrome'` for headed responsive,

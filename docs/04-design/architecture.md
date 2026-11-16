@@ -53,7 +53,7 @@ HTTPS facade and composes lazy local Bklit wrappers with numeric tables. No cach
 broker, reporting database, background metric mutation or client-wide aggregation.
 See [local reporting](dashboard-local.md).
 
-The approved [22-sprint roadmap](../03-planning/local-roadmap.md) implements the same business modules locally in separate frontend/ and backend/ directories. The backend and every Python tool run through backend/.venv. Local HTTPS frontend/API origins preserve cookie/facade and direct-transfer behavior; the existing PostgreSQL installation has isolated test, benchmark and restore targets. A private filesystem storage adapter and real ClamAV replace cloud storage for local execution. A signed loopback form server exercises website intake; a separate worker uses the shared backend package. No Vercel, DigitalOcean, Spaces or cloud backup is provisioned by these sprints. Provider-specific sections below remain future production design references.
+The approved [22-sprint roadmap](../03-planning/local-roadmap.md) implements the same business modules locally in separate frontend/ and backend/ directories. The backend and every Python tool run through backend/.venv. Local HTTPS frontend/API origins preserve cookie/facade and direct-transfer behavior; the existing PostgreSQL installation has isolated test, benchmark and restore targets. A private filesystem adapter supplies local storage. A signed loopback form server exercises website intake; a separate worker uses the shared backend package. No Vercel, DigitalOcean, Spaces or cloud backup is provisioned by these sprints. Provider-specific sections below remain future production design references.
 
 SP-05 locally implements contacts as contracts/access/queries/commands/projections/
 router plus reviewed 0004 DDL. It shares current database sessions, CSRF and typed
@@ -205,7 +205,7 @@ Changing a role, disabling an account, or resetting a password revokes affected 
 
 ## Files up to 20 MB
 
-The browser requests a `file_permit` through the facade, limited to one action, session, parent resource, and size. It then sends the file directly to FastAPI at the DigitalOcean address. FastAPI consumes the permit once, rechecks session and permissions, limits size/MIME/signature, places the object in private quarantine, and starts antivirus scanning. A document becomes readable only after a clean verdict. A download uses another short permit and is streamed by FastAPI from Spaces, without a public bucket URL or query-string token. This avoids passing 20 MB bodies through Vercel Functions, whose [documented body limit](https://vercel.com/docs/functions/limitations) is lower. [Mermaid source](../../diagrams/files.mmd).
+The browser requests a `file_permit` through the facade, limited to one action, session, parent resource, and size. It then sends the file directly to FastAPI at the DigitalOcean address. FastAPI consumes the permit once, rechecks session and permissions, limits size/MIME/signature, stores the object privately, and queues its integrity verification. A document becomes readable once the worker verifies its stored length and SHA-256. A download uses another short permit and is streamed by FastAPI from Spaces, without a public bucket URL or query-string token. This avoids passing 20 MB bodies through Vercel Functions, whose [documented body limit](https://vercel.com/docs/functions/limitations) is lower. [Mermaid source](../../diagrams/files.mmd).
 
 The direct transfer route accepts only the configured Vercel origin in CORS, with the necessary methods and headers and no third-party cookie. The page passes the permit in a header from transient memory. A download can use `fetch` and present the resulting file to the browser. An interrupted transfer needs a fresh permit; the old one is not silently reused.
 
@@ -218,7 +218,7 @@ sequenceDiagram
     participant A as FastAPI
     participant P as PostgreSQL
     participant S as Private Spaces
-    participant W as Antivirus worker
+    participant W as File worker
     B->>N: POST /api/v1/files/permits
     N->>A: Session and resource
     A->>P: Check right and issue short permit
@@ -227,21 +227,21 @@ sequenceDiagram
     A->>P: Consume permit and recheck session
     A->>S: Quarantined object
     A->>P: Document pending_scan and outbox
-    W->>S: Scan object
-    W->>P: clean or rejected verdict
+    W->>S: Verify object length and SHA-256
+    W->>P: Mark available
     B->>A: Direct GET with fresh permit
-    A->>P: Recheck right and clean verdict
+    A->>P: Recheck right and availability
     A->>S: Read private object
     A-->>B: Protected stream
 ```
 
-Proposed formats are JPEG, PNG, WebP, PDF, and common DOCX/XLSX office files, at most 20 MB each; the final allowlist must be tested with the antivirus tool. Reject contradictory extension/MIME/signature, executable archives, and infected files with explicit error codes. No OCR. Development and physical-property attachments are shared with agents; private owner/developer attachments belong to their protected contact records. A shared project view may aggregate clean unit attachments but does not inherit private contact documents.
+Support JPEG, PNG, WebP, PDF and ordinary DOCX/XLSX up to 20 MiB. Reject contradictory extension, MIME or structure and disallowed active content. No OCR. Development and physical-property attachments are shared with agents; private owner/developer attachments belong to their protected contact records. A shared project view may aggregate clean unit attachments but does not inherit private contact documents.
 
 ## Failures, measurements, and capacity
 
-A conflicting write returns `409 VERSION_CONFLICT` with the authorized current version and non-secret fields; the interface keeps local input until the user resolves it. Project/unit overlap returns a distinct conflict with safe inventory references and a manager-review path where required. Reservation, closing, import, and receipt commits lock rows and recheck invariants. The API reports success only after commit. Notifications and scans are deferred and show a pending state. If Spaces or antivirus fails, the document stays unavailable. If the worker stops, outbox work waits and resumes without duplicate notifications. If PostgreSQL is unavailable, writes fail visibly.
+A conflicting write returns `409 VERSION_CONFLICT` with the authorized current version and non-secret fields; the interface keeps local input until the user resolves it. Project/unit overlap returns a distinct conflict with safe inventory references and a manager-review path where required. Reservation, closing, import, and receipt commits lock rows and recheck invariants. The API reports success only after commit. Notifications and file verification are deferred and show a pending state. If storage verification fails, the document stays unavailable. If the worker stops, outbox work waits and resumes without duplicate notifications. If PostgreSQL is unavailable, writes fail visibly.
 
-Measure error rates, p50/p95/p99 per route, SQL latency, project/unit lock contention and conflicts, outbox depth/age, scan duration, imports, and restore exercises. Traces and logs carry `request_id`, never cookies, permits, passwords, private content, or full phone numbers. The target to test is 100 accounts and 100 concurrent users, 200,000 contacts, and 20,000 physical properties including development units; vary project sizes and depth in the fixture. p95 ≤ 1 second for ordinary APIs and ≤ 2 seconds for the dashboard. Files, imports, and asynchronous exports have separate measurements. See [release and recovery](../06-delivery-and-operations/release-and-recovery.md).
+Measure error rates, p50/p95/p99 per route, SQL latency, project/unit lock contention and conflicts, outbox depth/age, verification duration, imports, and restore exercises. Traces and logs carry `request_id`, never cookies, permits, passwords, private content, or full phone numbers. The target to test is 100 accounts and 100 concurrent users, 200,000 contacts, and 20,000 physical properties including development units; vary project sizes and depth in the fixture. p95 ≤ 1 second for ordinary APIs and ≤ 2 seconds for the dashboard. Files, imports, and asynchronous exports have separate measurements. See [release and recovery](../06-delivery-and-operations/release-and-recovery.md).
 ## SP-09 local file implementation boundary
 
 The metadata facade authorizes typed contact/development/property attachments;
@@ -256,24 +256,15 @@ grant was issued, a collaborator was removed, a contact transferred or merged.
 Exclusive staging, bounded streaming, structural validation and atomic no-clobber
 promotion precede the transactional pending-scan metadata/outbox publication.
 A failed publication leaves an unreadable orphan, not a readable file. SHA-256
-is checked on every scan/read. Archiving never purges committed evidence.
+is checked during processing and on read. Archiving never purges committed evidence.
 
 The separate explicit-venv `app.cli.worker` dispatches PostgreSQL outbox rows
-with deduplicated jobs. SKIP LOCKED claims have90-second UUID-fenced leases;
-actual ClamAV INSTREAM happens outside the database transaction: loopback locally,
-or the explicitly configured private DNS/IP endpoint in production. See the
-[production configuration boundary](../06-delivery-and-operations/production-antivirus.md).
-Only the still-current lease can publish a verdict and one deduplicated internal
-notification. Errors retain quarantine, bounded backoff and at most5 attempts;
-expired claims recover after worker restart. An explicit authorized retry resets
-an exhausted pending job. No application fake-success scanner exists.
-
-The pinned Docker service has a dedicated persisted signature cache,4GiB memory
-limit, no automatic restart and loopback-only3310. Its readiness and real clean/
-controlled-test scans are independent gates. The [backend runbook](../../backend/README.md)
-describes startup, shutdown and maintenance; [SP-09 evidence](../03-planning/sprints/sp-09-evidence.md)
-records actual results, not production acceptance. Notification UI/reminders
-remain SP-15; deal attachment support is implemented in SP-11.
+with deduplicated jobs. SKIP LOCKED claims have 90-second UUID-fenced leases.
+The worker checks private storage outside the database transaction. Only the
+current lease can mark a document available. Failures use capped retries.
+Expired claims recover after worker restart and authorized users can retry
+exhausted work. Existing rejected rows remain unavailable. See the
+[backend runbook](../../backend/README.md).
 
 SP-11 app.deals shares current-contact authorization, agency/current-user locking
 and repeatable-read queries. Deal/proposal/history/receipt mutations are atomic;

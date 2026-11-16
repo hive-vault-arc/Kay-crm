@@ -68,7 +68,7 @@ export async function restoredJourney(page: Page, baseURL: string, visible = fal
     }
     await capture("contact-desktop");
     await openDocuments(page, "contact");
-    await expect(page.getByText("Analyse réussie", { exact: true })).toBeVisible();
+    await expect(page.getByText("Fichier disponible", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Télécharger SP21 preuve synthétique.png", exact: true })).toBeEnabled();
     const downloadEvent = page.waitForEvent("download");
     await page.getByRole("button", { name: "Télécharger SP21 preuve synthétique.png", exact: true }).click();

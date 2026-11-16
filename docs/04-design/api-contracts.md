@@ -1070,7 +1070,7 @@ for actual verification and independent product-review status.
 All metadata calls use the existing authenticated, no-store, same-origin facade.
 Writes require current session/role/scope, CSRF/Origin and strict bodies; create,
 archive and retry-scan also require `Idempotency-Key`. Reads never expose storage
-keys, paths, hashes, other-parent identities or scanner diagnostics.
+keys, paths, hashes, other-parent identities or internal worker diagnostics.
 
 | Method/path under `/api/v1` | Request and result |
 |---|---|
@@ -1078,7 +1078,7 @@ keys, paths, hashes, other-parent identities or scanner diagnostics.
 | `GET /documents` | `parent_kind`, `parent_id`, optional `purpose=photo\|attachment`, numbered `page`/`page_size`; default50, maximum100; excludes archived documents. Property photo filtering includes existing JPEG/PNG/WebP attachments without rewriting their bytes |
 | `GET /documents/{id}` | Rechecks current parent scope, including on receipt replay |
 | `POST /documents/{id}/archive` | `{expected_version}`; retains versions/history, blocks future grants/transfers |
-| `POST /documents/{id}/retry-scan` | `{expected_version}`; only pending scans, refuses a live worker lease; retry is explicit and idempotent |
+| `POST /documents/{id}/retry-scan` | `{expected_version}`; only pending integrity checks, refuses a live worker lease; retry is explicit and idempotent |
 | `POST /files/permits` | `{action: upload\|download, document_id, expected_version, version_id?}`; download requires a particular clean version; upload appends a new immutable version |
 | `PUT /transfers/{permit_id}` | Bytes directly to FastAPI, never through Next; matching MIME/size, no content encoding; returns only `pending_scan` and version ID after publication |
 | `GET /transfers/{permit_id}` | Direct authorized clean bytes, attachment disposition, sandbox CSP, no-store; integrity checked before streaming and current scope/session checked per chunk |
@@ -1088,16 +1088,16 @@ Document output: `id`, `filename`, `mime_type`, `purpose`, `size_bytes`, optimis
 `scan_error`, and `created_at`. The projection is bounded to the newest49 plus
 the most recent older clean version when needed (at most50); historical versions
 remain immutable in storage. States are `awaiting_upload`, `pending_scan`, `clean`
-and `rejected`. A dependency failure never becomes a clean verdict.
+and `rejected`. `pending_scan` and `retry-scan` keep their historical identifiers for compatibility. `clean` means the worker verified the stored size and hash. Older rejected versions remain unavailable.
 
 Property photos are limited to 10 active image documents per physical property,
 whether standalone or a programme unit. The server counts legacy image
 attachments too, under the existing serialized create transaction, so concurrent
-requests cannot exceed the limit. A pending upload or rejected scan still uses
+requests cannot exceed the limit. A pending upload or rejected version still uses
 one slot until archived. The UI accepts JPEG/PNG/WebP/HEIC/HEIF source images up to 20 MiB,
 re-encodes to WebP at quality0.82 with a 2560-pixel maximum side before sending
 any bytes, and publishes only WebP through the existing private transfer. The
-server validates actual WebP structure; scanning still gates all reads. Source
+server validates actual WebP structure, then the worker verifies storage integrity before reads. Source
 metadata/EXIF are not copied by canvas re-encoding. Existing stored JPEG/PNG
 files are preserved and remain readable, not silently recompressed.
 
@@ -1109,7 +1109,7 @@ decoder runs in a disposable worker only when needed. Cancellation, timeout and
 record navigation terminate fallback decoding; no original HEIF bytes reach the
 API. Private contact/Deal attachments accept bounded multi-file selection and
 convert HEIC/HEIF only; existing image and PDF/DOCX/XLSX bytes remain unchanged.
-The REST schema, permissions, scanner and one-use transfer contracts do not change.
+The REST schema, permissions and one-use transfer contracts do not change.
 Within one mounted inventory gallery, thumbnails and the viewer share the bytes
 already downloaded for an immutable clean version. This avoids spending a new
 permit merely to enlarge or revisit the same image after a ten-photo batch.
@@ -1135,7 +1135,7 @@ actual JPEG/PNG/WebP, PDF, DOCX or XLSX structure. Filename length is1–180;
 path/control characters, macros, active/embedded content, malformed/encrypted
 containers and excessive expansion/decoding are rejected server-side. French UI
 errors distinguish invalid/consumed/expired permits, conflicts, interrupted
-transfer, size/type errors and recoverable scanner/storage dependency failures.
+transfer, size/type errors and recoverable storage failures.
 Private contact denials use404 to avoid revealing filenames or existence;
 unauthorized shared-inventory writes use403. Standard safe error envelopes apply.
 
