@@ -63,6 +63,16 @@ def resolve(body: ResolvePhone, request: Request, token: Proof) -> dict[str, boo
     return resolve_phone(configuration(request)[0], token, body.phone)
 
 
+@router.get("/contacts/{target}/collaboration-options")
+def collaboration_options(
+    target: UUID, request: Request, token: Proof, query: Annotated[ListQuery, Query()]
+) -> dict[str, object]:
+    validate_query(request)
+    if set(request.query_params) - {"q", "page", "page_size"}:
+        raise IdentityError("VALIDATION_ERROR", 422)
+    return assignment_options(configuration(request)[0], token, query, collaboration_for=target)
+
+
 @router.get("/contacts/responsible-options")
 def directory_agents(
     request: Request, token: Proof, query: Annotated[ListQuery, Query()]

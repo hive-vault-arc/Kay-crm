@@ -138,7 +138,7 @@ test("Ownership transport binds fresh actor/role/password authority and reuses t
   await assert.rejects(() => loaded.ownershipRequest(contact.id, "archive", body, {}, key, binding, controller.signal, () => dispatched++)); assert.equal(dispatched, 1);
 });
 
-test("Agent transport permits only merge and previews never broadcast a saved mutation", async () => {
+test("Agent transport permits merge and collaboration and previews never broadcast a saved mutation", async () => {
   const contact = ownershipContact(), actor = randomUUID(), calls = [], events = [];
   const loaded = loadServer("src/features/contacts/ownership-client.ts", { modules: {
     "@/lib/api/client": { ApiError, apiGet: async (...args) => { calls.push(args); return args[0].endsWith("/me") ? { user: { id: actor, role: "agent" }, csrf_token: "synthetic-csrf", must_change_password: false } : {}; } }, "@/lib/auth/contracts": { meSchema: {} },
@@ -146,8 +146,11 @@ test("Agent transport permits only merge and previews never broadcast a saved mu
   const binding = { role: "agent" }, signal = new AbortController().signal, change = intent(contact, "merge", { survivor_id: randomUUID(), survivor_expected_version: 3 });
   await loaded.ownershipRequest(contact.id, "preview", change, {}, randomUUID(), binding, signal);
   assert.equal(calls[1][3].method, "POST"); assert.deepEqual(events, []);
+  const collaboration = intent(contact, "collaborators", { collaborator_ids: [] });
+  await loaded.ownershipRequest(contact.id, "preview", collaboration, {}, randomUUID(), binding, signal);
+  assert.equal(calls[3][3].method, "POST"); assert.deepEqual(events, []);
   await assert.rejects(() => loaded.ownershipRequest(contact.id, "archive", intent(contact), {}, randomUUID(), binding, signal), error => error.status === 403);
-  assert.equal(calls.filter(([path]) => !path.endsWith("/me")).length, 1);
+  assert.equal(calls.filter(([path]) => !path.endsWith("/me")).length, 2);
 });
 
 test("Ownership facade rejects foreign or incoherent impacts/receipts but preserves reversed merge order and canonical reads", async () => {

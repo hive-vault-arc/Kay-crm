@@ -116,7 +116,7 @@ export function contactRoute(key: string, method: string) {
   if (["contacts", "enquiries"].includes(key)) return method === "GET" || method === "POST";
   if (key === "contacts/resolve-phone") return method === "POST";
   if (["contacts/assignment-options", "contacts/responsible-options", "enquiries/assigned-options", "contacts/metadata"].includes(key)) return method === "GET";
-  if (/^contacts\/[a-f0-9-]{36}\/(timeline|assignment-events)$/.test(key)) return method === "GET";
+  if (/^contacts\/[a-f0-9-]{36}\/(timeline|assignment-events|collaboration-options)$/.test(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/portfolio$/.test(key)) return method === "GET";
   if (/^contacts\/[a-f0-9-]{36}\/collaborators$/.test(key)) return method === "PUT";
   if (/^contacts\/[a-f0-9-]{36}\/(preview|assign|archive|restore|merge|notes)$/.test(key)) return method === "POST";

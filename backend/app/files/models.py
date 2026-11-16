@@ -293,8 +293,24 @@ class Notification(Base):
             "(kind IN ('holiday.eve','holiday.today') AND holiday_id IS NOT NULL "
             "AND contact_id IS NULL AND birthday_on IS NULL AND document_id IS NULL "
             "AND visit_id IS NULL AND task_id IS NULL AND schedule_version IS NULL "
-            "AND event_key=kind||':'||holiday_id::text)",
+            "AND event_key=kind||':'||holiday_id::text) OR "
+            "(kind='coverage.note' AND coverage_note_id IS NOT NULL "
+            "AND contact_id IS NULL AND birthday_on IS NULL AND document_id IS NULL "
+            "AND visit_id IS NULL AND task_id IS NULL AND schedule_version IS NULL "
+            "AND event_key LIKE kind||':'||coverage_note_id::text||':%')",
             name="notification_typed_parent",
+        ),
+        CheckConstraint(
+            "(kind='coverage.note') = (coverage_note_id IS NOT NULL)",
+            name="notification_coverage_parent",
+        ),
+        Index(
+            "ix_notification_coverage",
+            "coverage_note_id",
+            "user_id",
+            "created_at",
+            "id",
+            postgresql_where=text("coverage_note_id IS NOT NULL"),
         ),
         CheckConstraint(
             "(holiday_id IS NULL OR kind IN ('holiday.eve','holiday.today')) "
@@ -329,5 +345,8 @@ class Notification(Base):
         ForeignKey("holiday_occurrence.id", name="fk_notification_holiday_id", ondelete="RESTRICT")
     )
     holiday_revision: Mapped[int | None] = mapped_column(BigInteger)
+    coverage_note_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("coverage_note.id", name="fk_notification_coverage_note", ondelete="RESTRICT")
+    )
     read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

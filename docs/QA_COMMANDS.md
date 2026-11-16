@@ -1,5 +1,24 @@
 # KAY QA command register
 
+## Agent handoff and collaboration (D51)
+
+From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_coverage.py`
+passed all three real PostgreSQL cases. They cover exact-phone lookup, proof
+binding and revocation, collaborative access, concurrent note replay, working
+hours and lunch breaks, and stopping reminders from either acknowledgement path.
+The combined run with `tests/test_ownership.py` and `tests/test_discovery.py`
+passed all 38 tests. Ruff, formatting and mypy passed. Migration 0052 and
+`alembic check` passed on the isolated and local development databases.
+
+From `frontend/`, `npm.cmd run test:unit` passed 1,008 tests. Focused ownership
+and discovery tests, TypeScript and ESLint passed. Headed native Chrome
+`npm.cmd run test:chrome -- tests/e2e/coverage.spec.ts --reporter=list` passed
+on isolated ports 3112/8112/8113/8114. The case covers mobile search and note
+retry, the responsive handoff view, owner acknowledgement, the prospect and
+deal collaboration buttons and editing access after the grant. Reviewed the
+1280 px owner capture and 390 px mobile capture. CRM UX, design-system-ops and
+React guidance were applied. Antislop and design-taste were unavailable.
+
 ## Catalogue selection in activities
 
 From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --tb=short tests/test_scoped_activities.py`

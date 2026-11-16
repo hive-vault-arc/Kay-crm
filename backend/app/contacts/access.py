@@ -46,6 +46,11 @@ def scoped_contact(session: Session, identity: CurrentIdentity, cid: UUID) -> Co
     return contact
 
 
+def require_collaboration_manager(identity: CurrentIdentity, contact: Contact) -> None:
+    if identity.user.role == "agent" and contact.primary_agent_id != identity.user.id:
+        raise IdentityError("FORBIDDEN", 403)
+
+
 def readable_contact(session: Session, identity: CurrentIdentity, cid: UUID) -> Contact:
     # Aliases grant no authority: check only the final survivor's current scope.
     visited: set[UUID] = set()

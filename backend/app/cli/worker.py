@@ -22,6 +22,7 @@ def main() -> None:
     from app.recovery.maintenance import Admission
     from app.settings import load_settings
     from app.work.birthdays import deliver_birthdays
+    from app.work.coverage_reminders import deliver_coverage
     from app.work.holiday_sync import sync_loop
     from app.work.holidays import deliver_holidays
     from app.work.status import queue_status
@@ -39,7 +40,7 @@ def main() -> None:
     if settings.realtime_enabled:
         stop_publisher = install(database)
     admission = Admission(settings)
-    birthday_poll = holiday_poll = 0.0
+    birthday_poll = holiday_poll = coverage_poll = 0.0
     sync_stop = Event()
     sync_thread = None
     try:
@@ -76,6 +77,16 @@ def main() -> None:
                         )
                     if not birthdays:
                         birthday_poll = time.monotonic() + 30
+                coverage = 0
+                if time.monotonic() >= coverage_poll:
+                    try:
+                        coverage = deliver_coverage(database, datetime.now(UTC))
+                    except Exception:
+                        logging.getLogger("kay.worker").warning(
+                            "COVERAGE_REMINDER_DELIVERY_UNAVAILABLE"
+                        )
+                    if not coverage:
+                        coverage_poll = time.monotonic() + 30
                 holidays = 0
                 if settings.holidays_enabled and time.monotonic() >= holiday_poll:
                     try:
@@ -97,6 +108,7 @@ def main() -> None:
                 and not received
                 and not pushed
                 and not birthdays
+                and not coverage
                 and not holidays
             ):
                 time.sleep(0.5)

@@ -79,7 +79,9 @@ remains in history and in the optional cancelled-status filter.
 
 ## W06: collaborate or hand over (C02, C05)
 
-A manager adds a collaborator or transfers a contact's primary agent after previewing active enquiries, deals, visits, and tasks. The action records the former and new assignees and the true actor. Historical actions remain attributed to their authors; a collaborator does not become the primary agent. Any enquiry assignment that would point to an agent losing contact access is cleared or reassigned in the same transaction for manager review; it does not preserve a hidden access path. The former agent's access is recalculated after commit.
+The primary agent or a manager can manage collaborators from a prospect or deal header after reviewing the impact on the contact and linked dossiers. A manager may transfer ownership. The action records the former and new assignees and the true actor. Historical actions remain attributed to their authors. Any enquiry assignment that would point to an agent losing contact access is cleared or reassigned in the same transaction for manager review. The former agent's access is recalculated after commit.
+
+For coverage during an absence, an agent enters the complete phone number in global search and opens the affected dossier in read-only mode. The agent adds a note at the end of the overview. The current responsible agent receives internal reminders during work hours and can acknowledge the note inside the dossier or in the inbox. [Handoff contract](docs/04-design/agent-handoff-local.md).
 
 ## W07: close and reopen a deal (C08, C04)
 

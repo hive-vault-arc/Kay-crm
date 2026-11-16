@@ -57,6 +57,7 @@
   .kay-sales-record .record-facts > .kay-record-fact { grid-template-columns:minmax(110px,30%) minmax(0,1fr); }
 }
 @media(max-width:830px) {
+  .kay-shell:has(.kay-handoff-record) .kay-global-bar { background:var(--workspace-panel-opaque); }
   .kay-sales-record .kay-record-heading-actions { justify-content:flex-start; }
   .kay-sales-record .kay-record-heading-actions > button[data-action=create] { flex:1; }
   .kay-sales-record .kay-record-meta > a { min-height:44px; }

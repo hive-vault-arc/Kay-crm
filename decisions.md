@@ -63,6 +63,7 @@ References: [product brief](Project-brief.md), [business rules](docs/02-requirem
 | D48 | The standalone property form assigns the reference automatically from the listing title and date. | C04,C13, [inventory API](docs/04-design/api-contracts.md#sp-07-standalone-inventory-wire-contract) |
 | D49 | Khalid removes the upper limits of 20 for the property’s floor and 4 for the number of floors in a building. | C04,C13, [inventory API](docs/04-design/api-contracts.md#sp-07-standalone-inventory-wire-contract) |
 | D50 | The prospect form creates a new buyer contact. An accessible existing contact can receive a new deal without changing their contact record. A new contact created with a deal is a buyer. An owner has a single visible category, Vendeur or Promoteur. The forms omit generic contact-role controls. | C02,C04,C08,C13, [contact API](docs/04-design/api-contracts.md) |
+| D51 | Prospect and deal headers expose collaboration. Exact phone searches can open a colleague’s dossier in read-only handoff mode and add an attributed note. The responsible agent receives an internal reminder during working hours every four hours until acknowledgement. | C02,C05,C13,C14, [handoff contract](docs/04-design/agent-handoff-local.md) |
 
 | ID | Local resolution or later validation | Timing / boundary |
 |---|---|---|

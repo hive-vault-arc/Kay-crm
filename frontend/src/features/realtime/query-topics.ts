@@ -7,6 +7,7 @@ const groups: Record<string, string[]> = {
   visits: ["visits", "tasks", "contacts", "inventory"], calendar: ["visits"],
   "visit-schedule": ["visits"], tasks: ["tasks", "contacts", "visits"],
   notifications: ["notifications", "tasks", "visits", "contacts"],
+  coverage: ["notifications", "contacts", "enquiries", "deals"],
   reports: ["reports"], commissions: ["finance"], documents: ["files"], files: ["files"],
   imports: ["imports"], exports: ["exports"], work: ["tasks", "visits", "contacts", "enquiries", "deals"],
   users: ["identity"], requirements: ["requirements", "inventory"], search: ["contacts", "enquiries", "deals", "inventory", "files"],

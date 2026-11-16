@@ -36,7 +36,7 @@ export function useOwnershipCommand({ sourceId, role, completed, denied }: {
     setError(failure); if (authorityLost(failure)) deny(failure); return failure;
   }
   async function prepare(intent: ChangeIntent) {
-    if (!canEdit() || role === "agent" && intent.operation !== "merge") return false;
+    if (!canEdit() || role === "agent" && intent.operation !== "merge" && intent.operation !== "collaborators") return false;
     lock.current = true; setBusy(true); setError(undefined); setAliases([]);
     const controller = new AbortController(); request.current = controller;
     try {

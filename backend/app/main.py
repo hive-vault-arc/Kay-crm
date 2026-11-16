@@ -46,6 +46,7 @@ from app.shares.router import public as public_listing_router
 from app.shares.router import staff as listing_shares_router
 from app.videos.router import router as video_router
 from app.videos.router import transfers as video_transfers
+from app.work.coverage_router import router as coverage_router
 from app.work.router import router as work_router
 
 logger = logging.getLogger("kay.requests")
@@ -112,6 +113,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(activities_router)
     application.include_router(finance_router)
     application.include_router(work_router)
+    application.include_router(coverage_router)
     application.include_router(realtime_router)
     application.include_router(reports_router)
     application.include_router(imports_router)

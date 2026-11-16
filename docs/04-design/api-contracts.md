@@ -1418,3 +1418,16 @@ The façade opts into `holiday.eve` and `holiday.today` with
 `X-Kay-Holiday-Notifications: 1` on inbox reads and mark-as-read. Existing
 clients retain their original inbox shape and unread count. Holiday rows
 carry a date span, estimated and corrected flags, and a null record link.
+
+## Agent handoff endpoints
+
+The authenticated global search supports `X-Kay-Coverage-Search: 1`. Its separate
+`coverage` array contains limited dossier hits with a session-bound proof in
+the link fragment. `POST /coverage/{enquiries|deals}/{id}/view` accepts that proof
+for a read-only context projection. `POST .../notes` adds a note with a proof
+and idempotency key. The ordinary scoped owner or collaborator reads notes
+with `GET .../notes`. The current primary agent can acknowledge an item via
+`POST .../notes/{note_id}/seen` or the existing notification-read command.
+`GET /contacts/{id}/collaboration-options` provides eligible candidates to the
+current primary agent, manager, or administrator. See the
+[handoff contract](agent-handoff-local.md) for projections and reminder scope.

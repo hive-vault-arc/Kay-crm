@@ -59,6 +59,13 @@ Prepared-PDF discovery was a genuine gap in the UI checkpoint above. Its source
 implementation now follows the versioned extension below; actual PostgreSQL/native
 verification remains pending. [UI evidence](../03-planning/design-migration-evidence/search-ui-2026-10-27.json).
 
+### Exact-phone handoff
+
+The global-search façade requests the D51 projection with `X-Kay-Coverage-Search: 1`.
+It returns a separate array for a complete normalized phone on the first page.
+Ordinary search hits and counts continue to use the existing portfolio scope.
+The handoff destination and proof follow the [handoff contract](agent-handoff-local.md).
+
 ### Prepared PDF search extension, 2026-10-27
 
 The server facade opts in with the bounded header `X-Kay-Search-Version: 2` only

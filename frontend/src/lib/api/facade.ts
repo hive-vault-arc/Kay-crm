@@ -17,7 +17,7 @@ export function facadeError(status: number, code: string, requestId: string) {
 }
 
 export async function upstreamRequest(path: string, requestId: string, options: {
-  method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE"; body?: string; token?: string; csrf?: string; origin?: string; idempotencyKey?: string; maxResponseBytes?: number; timeoutMs?: number; photoCapabilities?: boolean; visitNotes?: boolean; preparedSearch?: boolean; developmentPhase?: boolean; contactDirectory?: boolean; contactBirthDate?: boolean; birthdayNotifications?: boolean; holidayNotifications?: boolean;
+  method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE"; body?: string; token?: string; csrf?: string; origin?: string; idempotencyKey?: string; maxResponseBytes?: number; timeoutMs?: number; photoCapabilities?: boolean; visitNotes?: boolean; preparedSearch?: boolean; coverageSearch?: boolean; developmentPhase?: boolean; contactDirectory?: boolean; contactBirthDate?: boolean; birthdayNotifications?: boolean; holidayNotifications?: boolean; coverageNotifications?: boolean;
 } = {}) {
   let origin: URL;
   try { origin = new URL(process.env.API_BASE_URL ?? ""); }
@@ -54,7 +54,9 @@ export async function upstreamRequest(path: string, requestId: string, options: 
         ...(options.visitNotes && /^\/api\/v1\/(?:visits(?:[/?]|$)|calendar\/context$)/.test(path) ? { "X-Kay-Visit-Notes": "1" } : {}),
         ...(options.preparedSearch && (options.method ?? "GET") === "GET" && /^\/api\/v1\/search(?:\?|$)/.test(path) ? { "X-Kay-Search-Version": "2" } : {}),
         ...(options.contactBirthDate && (options.method ?? "GET") === "GET" && /^\/api\/v1\/contacts\/[0-9a-f-]+(?:\?owner_identity=true)?$/i.test(path) ? { "X-Kay-Contact-Birth-Date": "1" } : {}),
+        ...(options.coverageSearch && (options.method ?? "GET") === "GET" && /^\/api\/v1\/search(?:\?|$)/.test(path) ? { "X-Kay-Coverage-Search": "1" } : {}),
         ...(options.holidayNotifications && /^\/api\/v1\/notifications(?:[/?]|$)/.test(path) ? { "X-Kay-Holiday-Notifications": "1" } : {}),
+        ...(options.coverageNotifications && /^\/api\/v1\/notifications(?:[/?]|$)/.test(path) ? { "X-Kay-Coverage-Notifications": "1" } : {}),
         ...(options.birthdayNotifications && (options.method ?? "GET") === "GET" && /^\/api\/v1\/notifications(?:\?|$)/.test(path) ? { "X-Kay-Birthday-Notifications": "1" } : {}),
         ...(options.contactDirectory && (options.method ?? "GET") === "GET" && /^\/api\/v1\/contacts(?:\?|$)/.test(path) ? { "X-Kay-Contact-Directory": "1" } : {}),
         ...(options.developmentPhase && (options.method ?? "GET") === "GET" && /^\/api\/v1\/developments(?:\?[^#]*|\/[0-9a-fA-F-]{36}(?:\/(?:history|inventory))?(?:\?[^#]*)?)?$/.test(path) ? { "X-Kay-Development-Phase": "1" } : {}),

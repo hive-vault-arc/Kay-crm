@@ -8,7 +8,8 @@ export type OwnershipIdentity = { actorId?: string; role: StaffRole };
 export async function ownershipIdentity(binding: OwnershipIdentity, signal: AbortSignal, operation?: Operation) {
   const identity = await apiGet("/api/v1/auth/me", meSchema, signal);
   signal.throwIfAborted();
-  if (identity.user.role !== binding.role || binding.actorId && identity.user.id !== binding.actorId || operation && operation !== "merge" && identity.user.role === "agent") throw new ApiError("FORBIDDEN", 403);
+  const agentOperationDenied = identity.user.role === "agent" && operation && operation !== "merge" && operation !== "collaborators";
+  if (identity.user.role !== binding.role || binding.actorId && identity.user.id !== binding.actorId || agentOperationDenied) throw new ApiError("FORBIDDEN", 403);
   if (identity.must_change_password) throw new ApiError("PASSWORD_CHANGE_REQUIRED", 403);
   binding.actorId ??= identity.user.id;
   return identity;

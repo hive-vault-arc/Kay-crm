@@ -1,5 +1,20 @@
 # KAY security check for changes
 
+## Agent handoff and collaboration
+
+Standard portfolio filters and command permissions remain independent of the
+exact-phone handoff path. The limited read and note endpoints validate the
+signed session-bound proof and current phone, primary-agent, and dossier grants.
+The handoff projection excludes documents, finance, general contact identity,
+unrelated dossier activity and other write capabilities. The author and clock
+come from the server. Note writes and acknowledgements audit only IDs and action
+names. The worker checks the current recipient and working windows before
+delivery, and coverage reminders stay in the internal inbox.
+
+Collaboration preview and confirmation both require the contact’s current
+primary agent or a privileged staff role. Receipt replay rechecks that
+authority. A collaborator may neither delegate access nor transfer ownership.
+
 ## Catalogue projects in activities
 
 The activity command checks current contact and dossier authority before looking

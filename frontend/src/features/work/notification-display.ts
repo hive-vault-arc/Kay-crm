@@ -2,6 +2,7 @@ import { BirthdayIcon, CalendarIcon, ClockIcon, EmailIcon, FileIcon, FlagIcon, P
 import type { NotificationPage } from "./notification-feed";
 
 const types = {
+  coverage: { Icon: FileIcon, label: "Note d’un autre agent" },
   birthday: { Icon: BirthdayIcon, label: "Anniversaire" },
   holiday: { Icon: FlagIcon, label: "Jour férié" },
   visit: { Icon: CalendarIcon, label: "Rappel de visite" },
@@ -15,6 +16,7 @@ const types = {
 
 export function notificationType(item: NotificationPage["items"][number]) {
   switch (item.kind) {
+    case "coverage.note": return types.coverage;
     case "contact.birthday.eve":
     case "contact.birthday.today": return types.birthday;
     case "holiday.eve":
