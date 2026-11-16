@@ -41,9 +41,7 @@ export async function setVisitTimes(page: Page, start: string) {
   const [day, time] = start.split("T");
   await page.getByLabel("Date", { exact: true }).fill(day);
   await page.getByLabel("Heure", { exact: true }).fill(time);
-  await expect(page.getByRole("button",{name:"Vérifier le créneau",exact:true})).toBeEnabled();
-  await page.getByRole("button",{name:"Vérifier le créneau",exact:true}).click();
-  await expect(page.locator('[aria-label="Disponibilité du créneau"]')).toBeVisible();
+  await expect(page.getByRole("button", { name: /^(Planifier|Enregistrer)$/ })).toBeEnabled();
 }
 export async function saveVisit(page: Page) {
   await page.getByRole("button",{name:"Planifier",exact:true}).click();

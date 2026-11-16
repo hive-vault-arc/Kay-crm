@@ -121,7 +121,8 @@ class VisitFields(Period):
 
 class NewVisit(VisitFields):
     contact_id: UUID
-    status: Literal["draft", "scheduled"] = "scheduled"
+    # Retain the old wire default for replay of receipts issued before direct confirmation.
+    status: Literal["draft", "scheduled", "confirmed"] = "scheduled"
 
     @model_validator(mode="before")
     @classmethod
@@ -134,6 +135,12 @@ class NewVisit(VisitFields):
 
 class EditVisit(VisitFields):
     expected_version: Version
+
+
+class VisitPropertyQuery(Strict):
+    contact_id: UUID
+    visit_id: UUID | None = None
+    page: Annotated[int, Field(ge=1, le=1_000_000)] = 1
 
 
 class VisitAction(Strict):

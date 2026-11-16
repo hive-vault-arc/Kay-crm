@@ -113,7 +113,7 @@ def test_edit_retains_or_explicitly_replaces_notes_in_the_actual_history(monkeyp
     )
     identity = SimpleNamespace(user=SimpleNamespace(id=actor, display_name="Acteur synthétique"))
     monkeypatch.setattr(commands, "authorized", lambda *args, **kwargs: row)
-    monkeypatch.setattr(commands, "check_context", lambda *args, **kwargs: None)
+    monkeypatch.setattr(commands, "check_context", lambda *args, **kwargs: (None, None))
     monkeypatch.setattr(commands, "booking_check", lambda *args: None)
     monkeypatch.setattr(commands, "policy_view", lambda *args: {"version": 1})
     monkeypatch.setattr(commands, "synchronize", lambda *args: None)
@@ -123,6 +123,8 @@ def test_edit_retains_or_explicitly_replaces_notes_in_the_actual_history(monkeyp
         fields()
         | {
             "expected_version": 1,
+            "start_at": "2025-01-06T10:00Z",
+            "end_at": "2025-01-06T11:00Z",
             "participant_ids": [participant],
             "overlap_reason": "Autre explication",
         }

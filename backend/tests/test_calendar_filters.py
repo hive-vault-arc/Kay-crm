@@ -1,12 +1,10 @@
 """Calendar facets are full-range scoped facts, not current-page or free/busy leaks."""
 
-from uuid import UUID
-
 import pytest
 from pydantic import ValidationError
 
 from app.identity.security import IdentityError
-from app.schedule.contracts import CalendarQuery, VisitAction
+from app.schedule.contracts import CalendarQuery
 from app.schedule.queries import read_visits
 from tests.contact_support import actor
 from tests.test_schedule import booking, prepared, run
@@ -34,14 +32,6 @@ def test_facets_span_all_pages_and_filters_combine_without_leaking_scope(setting
             ),
         )
     car = run(settings, database, token, booking(uid, cid, overlap_reason="Conflit synthétique"))
-    run(
-        settings,
-        database,
-        token,
-        VisitAction(expected_version=1, reason="Conflit synthétique"),
-        UUID(car["id"]),
-        "confirmed",
-    )
     first = read_visits(database, token, period(page_size=1))
     assert first["total"] == first["unfiltered_total"] == 52
     assert len(first["items"]) == 1 and first["type_counts"] == {
@@ -54,7 +44,7 @@ def test_facets_span_all_pages_and_filters_combine_without_leaking_scope(setting
     assert filtered["total"] == 1 and filtered["items"][0]["id"] == car["id"]
     assert filtered["type_counts"] == first["type_counts"]
     assert filtered["status_counts"] == first["status_counts"]
-    assert read_visits(database, token, period(types="office", statuses="confirmed"))["total"] == 0
+    assert read_visits(database, token, period(types="office", statuses="confirmed"))["total"] == 51
     assert read_visits(database, token, period(types=""))["total"] == 0
     assert read_visits(database, token, period(statuses=""))["total"] == 0
     assert read_visits(database, admin, period())["unfiltered_total"] == 52

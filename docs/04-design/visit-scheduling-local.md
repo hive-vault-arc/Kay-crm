@@ -1,5 +1,8 @@
 # Local visit scheduling contract (SP-14)
 
+[Direct confirmation and visit reports](#direct-confirmation-and-visit-reports)
+supersedes the earlier booking and reminder flow described below.
+
 Current selected command recovery,2026-10-29: the
 [working-hours owner](policy-command-recovery-local.md) now pins the original
 reviewed operation, verifies contextual receipts and completes from a fresh
@@ -250,3 +253,30 @@ retain early/late events; server pagination remains explicit. Calendar geometry
 is centralized in `../../frontend/src/lib/design/kay-workspace.tokens.json`, not a new library or chart.
 No schema migration or development-data seed. See the
 [implementation and verification](../03-planning/calendar-reference-refresh.md).
+
+## Direct confirmation and visit reports
+
+Under D52, **Planifier** submits the visit once. The server checks current
+Casablanca work windows, lunch breaks, participant access and shared vehicle
+capacity in the transaction that records the confirmed appointment.
+Ordinary participant overlaps are permitted while the hard capacity and
+working-hour rules still apply. The form has one optional **Bien concerné**
+selector. It shows active properties already linked to the chosen prospect
+or deal, including a deal's physical offer or listed properties. The server
+rechecks a new property selection. Existing property links can be retained
+when rescheduling the same dossier.
+
+The standalone confirmation dialog is retired. Legacy scheduled visits are
+shown as **Confirmée** in the calendar and detail view, together with confirmed
+visits in the status filter. Legacy drafts remain distinguishable until
+replanned. The migration preserves recorded statuses and event snapshots.
+New bookings and rescheduling save as confirmed.
+
+The result and non-realization commands are available after the stored end
+time. The first report reminder is due two hours after end. An unresolved
+visit sends another reminder every 24 elapsed hours while the organizer or
+participant still has access. Only the latest reminder for the current
+schedule appears in the inbox. Reading that reminder leaves the visit open.
+Recording a result, marking the visit not realized or cancelling retires
+the old schedule's notifications. Migration `0053_confirmed_visit_reports`
+adds the recurring notification key and supporting indexes.

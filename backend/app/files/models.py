@@ -260,8 +260,19 @@ class Notification(Base):
     __table_args__ = (
         CheckConstraint(
             "schedule_version IS NULL OR event_key=kind||':'||"
-            "coalesce(visit_id,task_id)::text||':'||schedule_version::text",
+            "coalesce(visit_id,task_id)::text||':'||schedule_version::text OR "
+            "(kind='visit.follow_up' AND event_key ~ "
+            "('^visit[.]follow_up:'||visit_id::text||':'||schedule_version::text||':r:[0-9]+$'))",
             name="notification_reminder_key",
+        ),
+        Index(
+            "ix_notification_visit_follow_up",
+            "visit_id",
+            "schedule_version",
+            "user_id",
+            "created_at",
+            "id",
+            postgresql_where=text("kind='visit.follow_up'"),
         ),
         Index("uq_notification_user_event", "user_id", "event_key", unique=True),
         Index("ix_notification_user_created", "user_id", "created_at", "id"),

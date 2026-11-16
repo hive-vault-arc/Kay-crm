@@ -11,6 +11,8 @@ from sqlalchemy.exc import IntegrityError
 
 from app.identity.models import AGENCY_ID, Agency
 from app.identity.security import IdentityError
+from app.project_links.contracts import NewLink
+from app.project_links.service import mutate_link
 from app.schedule.commands import command
 from app.schedule.contracts import (
     AvailabilityQuery,
@@ -21,15 +23,18 @@ from app.schedule.contracts import (
     PolicyEdit,
     PolicySave,
     VisitAction,
+    VisitPropertyQuery,
 )
 from app.schedule.local_time import resolve_local
 from app.schedule.models import Visit, VisitEvent
 from app.schedule.queries import availability, detail, read_policy, read_visits
+from app.schedule.records import property_options
 from tests.contact_support import actor, create_lead
 from tests.deal_support import new as new_deal
 from tests.deal_support import run as create_deal
 from tests.deal_support import setup
 from tests.identity_support import observe_two_lock_waiters
+from tests.test_inventory import property_draft
 
 pytestmark = [pytest.mark.postgres, pytest.mark.usefixtures("clean_identity")]
 
@@ -97,7 +102,7 @@ def test_no_schedule_office_allowed_and_draft_creation_rejected(settings, databa
         token,
         booking(uid, cid, type="office", start_at="2030-01-06T02:00Z", end_at="2030-01-06T03:00Z"),
     )
-    assert detail(database, token, UUID(office["id"]))["status"] == "scheduled"
+    assert detail(database, token, UUID(office["id"]))["status"] == "confirmed"
 
 
 def test_simple_booking_defaults_and_automatic_dossier(settings, database):
@@ -108,7 +113,7 @@ def test_simple_booking_defaults_and_automatic_dossier(settings, database):
     key = uuid4()
     created = run(settings, database, token, first, key=key)
     visit = detail(database, token, UUID(created["id"]))
-    assert visit["status"] == "scheduled"
+    assert visit["status"] == "confirmed"
     assert visit["title"] == "Visite" and visit["location"] == "Non renseigné"
     assert visit["end_at"] == "2030-01-07T11:30:00+00:00"
     assert visit["enquiry_id"] == str(enquiry_id) and visit["deal_id"] is None
@@ -120,6 +125,35 @@ def test_simple_booking_defaults_and_automatic_dossier(settings, database):
     created = run(settings, database, token, second)
     visit = detail(database, token, UUID(created["id"]))
     assert visit["deal_id"] == deal["id"] and visit["enquiry_id"] is None
+
+
+def test_visit_property_choices_and_writes_follow_the_selected_dossier(settings, database):
+    uid, token, cid, enquiry_id = setup(settings, database)
+    _, manager = actor(settings, database, "manager")
+    _, outsider = actor(settings, database)
+    pid = property_draft(settings, database, manager)
+    query = VisitPropertyQuery(contact_id=cid)
+    assert property_options(database, token, query)["items"] == []
+    body = booking(uid, cid, type="office", property_id=pid)
+    with pytest.raises(IdentityError, match="INVALID_VISIT_PROPERTY"):
+        run(settings, database, token, body)
+    mutate_link(
+        database,
+        token,
+        settings.facade_secret.get_secret_value(),
+        uuid4(),
+        "enquiries",
+        enquiry_id,
+        NewLink(kind="discussed", property_id=pid),
+    )
+    assert [item["id"] for item in property_options(database, token, query)["items"]] == [str(pid)]
+    with pytest.raises(IdentityError, match="NOT_FOUND"):
+        property_options(database, outsider, query)
+    saved = run(settings, database, token, body)
+    assert detail(database, token, UUID(saved["id"]))["property_id"] == str(pid)
+    assert property_options(
+        database, token, VisitPropertyQuery(contact_id=cid, visit_id=UUID(saved["id"]))
+    )["current"]["id"] == str(pid)
 
 
 @pytest.mark.parametrize("kind", ["company_car", "without_company_car"])
@@ -166,13 +200,22 @@ def test_hour_intersection_exact_end_capacity_and_without_car(settings, database
         token,
         booking(uid, cid, type="without_company_car", overlap_reason="Conflit expliqué"),
     )
+    with pytest.raises(IdentityError, match="VISIT_NOT_ENDED"):
+        run(
+            settings,
+            database,
+            token,
+            FinishVisit(expected_version=1, reason="Trop tôt"),
+            UUID(result["id"]),
+            "completed",
+        )
     run(
         settings,
         database,
         token,
-        FinishVisit(expected_version=1, reason="Terminée synthétiquement"),
+        FinishVisit(expected_version=1, reason="Annulation synthétique"),
         UUID(result["id"]),
-        "completed",
+        "cancelled",
     )
     run(
         settings,
@@ -196,15 +239,13 @@ def test_hour_intersection_exact_end_capacity_and_without_car(settings, database
     assert preview["bookable"] and preview["company_car_intervals"][0]["used"] == 0
 
 
-def test_overlap_reason_versions_reschedule_retry_and_history(settings, database):
+def test_direct_confirmation_versions_reschedule_retry_and_history(settings, database):
     uid, token, cid, _ = prepared(settings, database)
     first = run(settings, database, token, booking(uid, cid, type="office"))
     body = booking(uid, cid, type="without_company_car")
-    with pytest.raises(IdentityError, match="VISIT_OVERLAP_REASON_REQUIRED"):
-        run(settings, database, token, body)
-    body = body.model_copy(update=dict(overlap_reason="Accompagnement partagé, synthétique"))
     key = uuid4()
     second = run(settings, database, token, body, key=key)
+    assert detail(database, token, UUID(second["id"]))["status"] == "confirmed"
     assert run(settings, database, token, body, key=key) == second
     with pytest.raises(IdentityError, match="IDEMPOTENCY_CONFLICT"):
         run(settings, database, token, body.model_copy(update=dict(title="Autre titre")), key=key)
@@ -221,18 +262,18 @@ def test_overlap_reason_versions_reschedule_retry_and_history(settings, database
     run(settings, database, token, edited, vid, "rescheduled")
     with pytest.raises(IdentityError, match="VERSION_CONFLICT"):
         run(settings, database, token, edited, vid, "rescheduled")
-    run(settings, database, token, VisitAction(expected_version=2), vid, "confirmed")
+    with pytest.raises(IdentityError, match="VISIT_STATE_UNCHANGED"):
+        run(settings, database, token, VisitAction(expected_version=2), vid, "confirmed")
     run(
         settings,
         database,
         token,
-        FinishVisit(expected_version=3, reason="Annulation synthétique"),
+        FinishVisit(expected_version=2, reason="Annulation synthétique"),
         vid,
         "cancelled",
     )
     assert [e["action"] for e in detail(database, token, vid, history=True)["items"]] == [
         "cancelled",
-        "confirmed",
         "rescheduled",
         "created",
     ]
@@ -241,7 +282,7 @@ def test_overlap_reason_versions_reschedule_retry_and_history(settings, database
     assert finished["outcome"] == "Annulation synthétique"
     assert finished["overlap_reason"] == ""
     with pytest.raises(IdentityError, match="VISIT_TERMINAL"):
-        run(settings, database, token, VisitAction(expected_version=4), vid, "confirmed")
+        run(settings, database, token, VisitAction(expected_version=3), vid, "confirmed")
 
 
 def test_policy_preview_preserves_future_visits_and_rechecks_new_booking(settings, database):
@@ -270,7 +311,7 @@ def test_policy_preview_preserves_future_visits_and_rechecks_new_booking(setting
         PolicySave.model_validate(body.model_dump() | dict(preview_hash=impact["preview_hash"])),
     )
     actual = detail(database, token, UUID(visit["id"]))
-    assert actual["status"] == "scheduled" and actual["version"] == 1
+    assert actual["status"] == "confirmed" and actual["version"] == 1
     assert actual["review_code"] == "VISIT_SCHEDULE_NOT_CONFIGURED"
 
 

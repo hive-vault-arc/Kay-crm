@@ -64,6 +64,7 @@ References: [product brief](Project-brief.md), [business rules](docs/02-requirem
 | D49 | Khalid removes the upper limits of 20 for the property’s floor and 4 for the number of floors in a building. | C04,C13, [inventory API](docs/04-design/api-contracts.md#sp-07-standalone-inventory-wire-contract) |
 | D50 | The prospect form creates a new buyer contact. An accessible existing contact can receive a new deal without changing their contact record. A new contact created with a deal is a buyer. An owner has a single visible category, Vendeur or Promoteur. The forms omit generic contact-role controls. | C02,C04,C08,C13, [contact API](docs/04-design/api-contracts.md) |
 | D51 | Prospect and deal headers expose collaboration. Exact phone searches can open a colleague’s dossier in read-only handoff mode and add an attributed note. The responsible agent receives an internal reminder during working hours every four hours until acknowledgement. | C02,C05,C13,C14, [handoff contract](docs/04-design/agent-handoff-local.md) |
+| D52 | Planning a visit checks the slot and immediately confirms the appointment. The optional property comes from the linked dossier. An ordinary participant overlap requires no explanation. Record the result once the visit ends. Reminders recur until the visit has a result or is cancelled. | C06,C07,C13, [confirmed booking](docs/04-design/visit-scheduling-local.md#direct-confirmation-and-visit-reports) |
 
 | ID | Local resolution or later validation | Timing / boundary |
 |---|---|---|

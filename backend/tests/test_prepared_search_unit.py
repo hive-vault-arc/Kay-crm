@@ -173,16 +173,19 @@ def test_actual_router_binds_the_bounded_header_and_preserves_legacy_default(mon
         with pytest.raises(ValidationError):
             header.validate_python(value)
     calls = []
-    monkeypatch.setattr(discovery_routes, "configuration", lambda _: (None, None))
+    monkeypatch.setattr(discovery_routes, "configuration", lambda _: (None, "synthetic-binding"))
     monkeypatch.setattr(
         discovery_routes,
         "search",
-        lambda _db, _token, _query, *, prepared: calls.append(prepared) or {},
+        lambda _db, _token, _query, *, prepared, coverage_secret=None: (
+            calls.append((prepared, coverage_secret)) or {}
+        ),
     )
     request = SimpleNamespace(query_params=QueryParams("q=synthetic"))
     discovery_routes.find(request, "synthetic", SearchQuery(q="synthetic"))
     discovery_routes.find(request, "synthetic", SearchQuery(q="synthetic"), "2")
-    assert calls == [False, True]
+    discovery_routes.find(request, "synthetic", SearchQuery(q="synthetic"), "2", "1")
+    assert calls == [(False, None), (True, None), (True, "synthetic-binding")]
     with pytest.raises(IdentityError, match="VALIDATION_ERROR"):
         discovery_routes.find(
             SimpleNamespace(query_params=QueryParams("q=synthetic&scope=agency")),
@@ -190,7 +193,7 @@ def test_actual_router_binds_the_bounded_header_and_preserves_legacy_default(mon
             SearchQuery(q="synthetic"),
             "2",
         )
-    assert calls == [False, True]
+    assert len(calls) == 3
 
 
 @pytest.mark.parametrize("role", ["agent", "manager", "administrator"])

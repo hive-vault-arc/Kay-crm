@@ -1,5 +1,16 @@
 # KAY security check for changes
 
+## Direct visit confirmation and repeated reports
+
+The booking and rescheduling commands still serialize with current agency
+and policy state and record the real actor. Direct confirmation checks all
+hard working-time and capacity rules. Property choices and writes are
+scoped to the authorized dossier. The notification worker checks the
+current visit version, organizer and participant access before delivery.
+Repeated reminders retain immutable rows, with only the latest visible
+per person and current visit schedule. Recording an outcome or cancelling
+invalidates the current reminder context under the same transaction lock.
+
 ## Agent handoff and collaboration
 
 Standard portfolio filters and command permissions remain independent of the

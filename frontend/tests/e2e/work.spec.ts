@@ -284,7 +284,7 @@ test("SP15 AT-17/16: actual visit reminders track reschedule, cancellation and u
     await openDashboardWork(page); const followup = page.getByRole("region", { name: "Visites à renseigner", exact: true }); await expect(followup.getByRole("link")).toHaveCount(1);
     await followup.getByRole("link").click(); await expect(page).toHaveURL(new RegExp(`/visits/${past}$`));
     await page.getByRole("dialog").getByRole("button", { name: "Actions", exact: true }).click();
-    await page.getByRole("button", { name: "Terminer la visite", exact: true }).click(); await page.getByRole("alertdialog").getByLabel("Résultat de la visite (obligatoire)", { exact: true }).fill("SP15 résultat consigné sans deuxième visite"); await page.getByRole("alertdialog").getByRole("button", { name: "Terminer la visite", exact: true }).click(); await expect(page.getByRole("alertdialog")).not.toBeVisible();
+    await page.getByRole("button", { name: "Saisir le résultat", exact: true }).click(); await page.getByRole("alertdialog").getByLabel("Résultat de la visite (obligatoire)", { exact: true }).fill("SP15 résultat consigné sans deuxième visite"); await page.getByRole("alertdialog").getByRole("button", { name: "Enregistrer le résultat", exact: true }).click(); await expect(page.getByRole("alertdialog")).not.toBeVisible();
     expect((await (await page.request.get("/api/v1/visits/follow-up")).json()).total).toBe(0);
   } finally { await clearActorContext(page); await testControl("worker-start"); for (const actor of actors) await removeActor(actor); }
 });

@@ -20,6 +20,8 @@ test("SP14 AT-16/40: working policy, all three visit types and reschedule lifecy
           await expect(form.getByLabel(label)).toHaveCount(0);
         }
         await expect(form.getByLabel("Bien concerné", { exact: true })).toBeVisible();
+        await expect(form.getByLabel("Rechercher un bien ou une unité")).toHaveCount(0);
+        await expect(form.getByRole("button", { name: "Vérifier le créneau" })).toHaveCount(0);
         const rules = form.locator("summary").filter({ hasText: "Règles du créneau" });
         await expect(form.getByText(/Au bureau et en réunion/)).toBeHidden();
         await rules.focus();
@@ -34,18 +36,12 @@ test("SP14 AT-16/40: working policy, all three visit types and reschedule lifecy
       await setVisitTimes(page,nextStart);
       await page.getByRole("button",{name:"Enregistrer",exact:true}).click();
       await expect(page.getByText("Visite enregistrée.",{exact:true})).toBeVisible();
-      await page.getByRole("button",{name:"Confirmer",exact:true}).click();
-      await page.getByRole("alertdialog").getByRole("button",{name:"Confirmer la visite",exact:true}).click();
-      await expect(page.getByRole("alertdialog")).not.toBeVisible();
+      await expect(page.getByRole("button", {name: "Confirmer", exact: true})).toHaveCount(0);
       const record=await(await page.request.get(`/api/v1/visits/${vid}`)).json();
-      expect(record.type).toBe(kind);expect(record.status).toBe("confirmed");expect(record.version).toBe(3);expect(record.organizer_user_id).toBe(agent.id);
+      expect(record.type).toBe(kind);expect(record.status).toBe("confirmed");expect(record.version).toBe(2);expect(record.organizer_user_id).toBe(agent.id);
       expect(record.enquiry_id).toBeTruthy();
       expect(Date.parse(record.end_at) - Date.parse(record.start_at)).toBe(60 * 60 * 1000);
-      await page.getByRole("button",{name:"Terminer la visite",exact:true}).click();
-      await page.getByRole("alertdialog").getByLabel("Résultat de la visite (obligatoire)",{exact:true}).fill("SP14 visite effectuée, résultat synthétique");
-      await page.getByRole("alertdialog").getByRole("button",{name:"Terminer la visite",exact:true}).click();
-      await expect(page.getByRole("alertdialog")).not.toBeVisible();
-      await expect(page.getByText("Visite conservée en lecture seule. Une nouvelle visite garde sa propre identité.",{exact:true})).toBeVisible();
+      await expect(page.getByRole("button", {name: "Saisir le résultat", exact: true})).toBeDisabled();
     }
     await page.goto("/visits");await page.getByLabel("Aller à une date",{exact:true}).fill("2030-01-07");
     await expect(page.getByText("2 visite(s) accessible(s) cette semaine.",{exact:true})).toBeVisible();
@@ -54,31 +50,23 @@ test("SP14 AT-16/40: working policy, all three visit types and reschedule lifecy
   } finally {await clearActorContext(page);for(const actor of actors)await removeActor(actor);}
 });
 
-test("SP14 AT-16/40: explained overlap versus hard lunch and capacity rejection",async({page})=>{
+test("SP14 AT-16/40: direct confirmation across ordinary overlap and hard lunch/capacity rejection",async({page})=>{
   test.setTimeout(180_000);const actors:TestActor[]=[];
   try {
     const {agent,contactId}=await scheduleFixture(page,actors);
     await commandVisit(page,agent.id,contactId,{type:"office"});
     await page.setViewportSize({ width: 390, height: 844 });
     const form = await fillVisit(page,contactId,"without_company_car");
-    const notes = form.locator("summary").filter({ hasText: "Notes et chevauchement" });
-    await expect(form.getByLabel("Explication du chevauchement éventuel",{exact:true})).toBeHidden();
-    expect((await notes.boundingBox())?.height).toBeGreaterThanOrEqual(44);
-    await notes.click();
-    await expect(form.getByLabel("Explication du chevauchement éventuel",{exact:true})).toBeVisible();
-    await notes.click();
-    await page.getByRole("button",{name:"Planifier",exact:true}).click();
-    await expect(page.getByRole("alert").filter({hasText:"Un participant a déjà un rendez-vous"})).toBeVisible();
-    await expect(form.getByLabel("Explication du chevauchement éventuel",{exact:true})).toBeVisible();
-    await page.getByLabel("Explication du chevauchement éventuel",{exact:true}).fill("SP14 accompagnement partagé, chevauchement délibéré");await saveVisit(page);
+    await expect(form.getByLabel("Explication du chevauchement éventuel", { exact: true })).toHaveCount(0);
+    const overlapping = await saveVisit(page);
+    expect((await (await page.request.get(`/api/v1/visits/${overlapping}`)).json()).status).toBe("confirmed");
     await fillVisit(page,contactId,"company_car","2030-01-07T12:30");
-    await expect(page.locator('[aria-label="Disponibilité du créneau"]')).toContainText("pause déjeuner");
-    await page.getByText("Notes et chevauchement", { exact: true }).click();
-    await page.getByLabel("Explication du chevauchement éventuel",{exact:true}).fill("Ne contourne pas la pause");
-    await expect(page.getByRole("button",{name:"Planifier",exact:true})).toBeDisabled();
+    await page.getByRole("button", {name:"Planifier", exact:true}).click();
+    await expect(page.getByRole("alert").filter({hasText:"pause déjeuner"})).toBeVisible();
     await commandVisit(page,agent.id,contactId);await commandVisit(page,agent.id,contactId);
     const third=await staffCommand(page,"visits",visitBody(agent.id,contactId));expect(third.status()).toBe(409);expect((await third.json()).error.code).toBe("COMPANY_CAR_CAPACITY_FULL");
-    await fillVisit(page,contactId);await expect(page.locator('[aria-label="Disponibilité du créneau"]')).toContainText("capacité avec véhicule de société est atteinte");
+    await fillVisit(page,contactId); await page.getByRole("button", {name:"Planifier", exact:true}).click();
+    await expect(page.getByRole("alert").filter({hasText:"capacité avec véhicule de société est atteinte"})).toBeVisible();
   } finally {await clearActorContext(page);for(const actor of actors)await removeActor(actor);}
 });
 
@@ -132,7 +120,7 @@ test.describe("Simplified booking", () => {
       const { id: dealId } = await deal.json();
       const form = await fillVisit(page, contact.id, "office");
       const rules = form.locator("summary").filter({ hasText: "Règles du créneau" });
-      const notes = form.locator("summary").filter({ hasText: "Notes et chevauchement" });
+      const notes = form.locator("summary").filter({ hasText: "Notes (facultatif)" });
       await rules.scrollIntoViewIfNeeded();
       await page.getByRole("dialog").screenshot({ path: info.outputPath("visit-desktop.png") });
 
@@ -148,7 +136,7 @@ test.describe("Simplified booking", () => {
       const visitId = await saveVisit(page);
       const visit = await (await page.request.get(`/api/v1/visits/${visitId}`)).json();
       expect(visit).toMatchObject({
-        type: "office", status: "scheduled", deal_id: dealId, enquiry_id: null,
+        type: "office", status: "confirmed", deal_id: dealId, enquiry_id: null,
         notes: "Préparation synthétique de la visite.",
       });
     } finally {

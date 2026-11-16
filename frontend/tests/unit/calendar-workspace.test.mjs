@@ -97,10 +97,11 @@ test("Drawer filters retain authoritative whole-range facets and show legacy unp
   const value = { items: [], total: 34, type_counts: { office: 17, company_car: 24, without_company_car: 5, meeting: 0 }, status_counts: { confirmed: 24, scheduled: 10, draft: 0, completed: 12, not_completed: 0, cancelled: 0 }, unfiltered_total: 46 };
   const render = data => renderToStaticMarkup(createElement(CalendarSidebar, { compact: true, date: "2026-10-19", today: "2026-10-19", choose() {}, value: data, types: [], statuses: ["cancelled"], toggleType() {}, toggleStatus() {} }));
   const html = render(value);
-  assert.equal((html.match(/type="checkbox"/g) ?? []).length, 9);
-  assert.doesNotMatch(html, /aria-label="À planifier"/);
-  assert.match(render({ ...value, status_counts: { ...value.status_counts, draft: 1 } }), /aria-label="À planifier"/);
-  for (const count of [17, 24, 5, 10, 12, 0]) assert.ok(html.includes(`>${count}</span>`));
+  assert.equal((html.match(/type="checkbox"/g) ?? []).length, 8);
+  assert.doesNotMatch(html, /aria-label="À replanifier"/);
+  assert.match(render({ ...value, status_counts: { ...value.status_counts, draft: 1 } }), /aria-label="À replanifier"/);
+  for (const count of [17, 24, 5, 34, 12, 0]) assert.ok(html.includes(`>${count}</span>`));
+  assert.equal((html.match(/aria-label="Confirmée"/g) ?? []).length, 1);
   assert.match(html, /aria-label="Annulée"[^>]*checked=""/);
   assert.doesNotMatch(html, /Pause déjeuner|calendar-month-choice/);
 });
@@ -158,7 +159,7 @@ test("The real booking form keeps date-only context clean, tracks controlled edi
     "@/components/ui/form": { Form: "Form", FormControl: "Control", FormField: "Field", FormItem: "Item", FormLabel: "FieldLabel", FormMessage: "Message" },
     "@/components/shared/unsaved-guard": { useUnsavedGuard: () => ({ request() {}, dialog: null }) }, "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": { useQuery: () => ({ value: undefined, refresh() {} }), queryPath: () => "/api/v1/calendar/availability" },
     "@/hooks/use-hydrated": { useHydrated: () => true }, "@/lib/api/client": { ApiError }, "@/lib/api/command": { apiCommand: async (...args) => commands.push(args) },
-    "@/components/shared/dossier-form": loadServer("src/components/shared/dossier-form.tsx", { modules: { react: state.react, "react/jsx-runtime": runtime, "./record-header": {} } }), "./visit-slot-preview": { VisitSlotPreview: "Preview" }, "@/features/work/work-property-select": { WorkPropertySelect: "Property" },
+    "@/components/shared/dossier-form": loadServer("src/components/shared/dossier-form.tsx", { modules: { react: state.react, "react/jsx-runtime": runtime, "./record-header": {} } }), "./visit-slot-preview": { VisitSlotRules: "Rules" }, "./visit-property-select": { VisitPropertySelect: "Property" },
     "./contracts": contracts, "./local-time-field": { LocalTimeField: "LocalTime" }, "./time": time,
     "@/components/icons": { ChevronDownIcon: "Chevron" }, "@/features/contacts/contracts": contacts, "@/features/deals/contracts": { dealsSchema: {} },
   } });

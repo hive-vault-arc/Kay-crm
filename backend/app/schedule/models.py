@@ -13,6 +13,7 @@ from sqlalchemy import (
     String,
     Time,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
@@ -96,6 +97,12 @@ class Visit(Base):
         Index("ix_visit_start_end_id", "start_at", "end_at", "id"),
         Index("ix_visit_type_status_time", "type", "status", "start_at", "end_at"),
         Index("ix_visit_contact_id", "contact_id", "id"),
+        Index(
+            "ix_visit_due_report",
+            "end_at",
+            "id",
+            postgresql_where=text("status IN ('scheduled','confirmed')"),
+        ),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     contact_id: Mapped[UUID] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
@@ -108,7 +115,7 @@ class Visit(Base):
     organizer_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     title: Mapped[str] = mapped_column(String(160), server_default=DEFAULT_VISIT_TITLE)
     type: Mapped[str] = mapped_column(String(24))
-    status: Mapped[str] = mapped_column(String(16), server_default="scheduled")
+    status: Mapped[str] = mapped_column(String(16), server_default="confirmed")
     start_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     end_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     location: Mapped[str] = mapped_column(String(1000), server_default=DEFAULT_VISIT_LOCATION)

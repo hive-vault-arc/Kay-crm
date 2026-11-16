@@ -24,6 +24,7 @@ from app.work.holiday_models import HolidayOccurrence
 from app.work.holidays import EVE, holiday_at
 from app.work.models import Task
 from app.work.queries import page
+from app.work.visit_reports import latest_visit_report
 
 
 def scope(
@@ -33,6 +34,7 @@ def scope(
     holidays: bool = False,
     coverage: bool = False,
     latest_coverage: bool = True,
+    latest_visits: bool = True,
 ) -> ColumnElement[bool]:
     def contact_allowed(
         cid: SQLColumnExpression[UUID] | SQLColumnExpression[UUID | None],
@@ -73,7 +75,10 @@ def scope(
         )
         .exists()
     )
-    sources: list[ColumnElement[bool]] = [task, visit]
+    sources: list[ColumnElement[bool]] = [
+        task,
+        and_(visit, latest_visit_report()) if latest_visits else visit,
+    ]
     if coverage:
         sources.append(inbox_scope(latest=latest_coverage))
     if birthdays:
@@ -245,7 +250,13 @@ def mark_read(
             select(Notification)
             .where(
                 Notification.id == nid,
-                scope(identity, holidays=holidays, coverage=coverage, latest_coverage=False),
+                scope(
+                    identity,
+                    holidays=holidays,
+                    coverage=coverage,
+                    latest_coverage=False,
+                    latest_visits=False,
+                ),
             )
             .with_for_update()
         )
