@@ -40,11 +40,9 @@ export const videoErrors: Record<string, string> = {
   VIDEO_UPLOAD_EXPIRED: "Ce transfert a expiré. Sélectionnez la vidéo à nouveau.",
   VIDEO_TOO_LONG: "Cette vidéo dépasse trois minutes.",
   VIDEO_FORMAT_UNSUPPORTED: "Choisissez une vidéo MOV ou MP4 lisible.",
-  VIDEO_SCAN_REJECTED: "L’analyse antivirus a refusé ce fichier.",
   VIDEO_OUTPUT_TOO_LARGE: "La vidéo compressée dépasse 48 Mo.",
   VIDEO_PROCESSING_FAILED: "Le traitement a échoué. Réessayez avec une autre vidéo.",
   VIDEO_ENCODER_UNAVAILABLE: "Le traitement est temporairement indisponible.",
-  ANTIVIRUS_UNAVAILABLE: "L’analyse antivirus est temporairement indisponible.",
   IDEMPOTENCY_CONFLICT: "Sélectionnez le même fichier pour reprendre le transfert.",
   FILE_TRANSFER_INTERRUPTED: "Le transfert a été interrompu. Vous pouvez le reprendre.",
 };

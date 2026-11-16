@@ -1,4 +1,4 @@
-"""Bounded structural validation before antivirus; a valid format is not a clean verdict."""
+"""Bounded structural validation for supported private file formats."""
 
 import io
 import logging

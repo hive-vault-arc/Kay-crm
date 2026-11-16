@@ -45,20 +45,13 @@ The manual backend regression includes real Windows DPAPI/ACL/pg_dump recovery t
 
 ## CI isolation and supply chain
 
-PostgreSQL/ClamAV/fixture provisioning below belongs to the manual workflow, not
+PostgreSQL and fixture provisioning below belongs to the manual workflow, not
 automatic CI. Read-only Actions permissions/supply-chain rules apply to both.
 `CI required` checks exactly repository/frontend/backend/managed-runtime results.
 
 - GitHub-hosted runners only; no self-hosted access to this laptop/development DB.
-- Windows job downloads PostgreSQL18.6 binaries from EDB, the official Windows
-  distribution linked by PostgreSQL, and ClamAV1.5.4 from Cisco-Talos. ZIPs are
-  pinned by SHA256; antivirus definitions are fetched and verified by freshclam.
-  Failed download/update/readiness fails the job; no fake scan verdict fallback.
-  Native ClamAV runs through its official Windows service mode, with an explicit
-  writable temporary directory. Readiness requires a real clean image and a real
-  rejected controlled signature, not merely an open port/PONG. Owned services are
-  stopped in an always-run cleanup step, even after test failure.
-  Local PostgreSQL18.2 and Docker configuration are not upgraded by CI setup.
+- The Windows job verifies the SHA-256 of the pinned EDB PostgreSQL archive.
+  The always-run cleanup stops the cluster provisioned by that job.
 - A new loopback-only PostgreSQL cluster uses5433 and a random masked password.
   Four fresh named databases preserve development/test/benchmark/recovery identity
   separation. Configuration refuses existing targets/configuration or non-GitHub

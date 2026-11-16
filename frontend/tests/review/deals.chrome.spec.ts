@@ -57,7 +57,7 @@ test("SP11 visible Chrome: explicit deals, proposals, skip, private files, state
     const trigger = page.getByRole("button", { name: "Modifier l’affaire et la prochaine action", exact: true }); await trigger.click(); await page.getByRole("button", { name: "Annuler les modifications", exact: true }).click(); await expect(trigger).toBeFocused();
     await testControl("worker-start");
     await page.getByRole("tab", { name: "Documents", exact: true }).click();
-    const file = await syntheticFile("clean", "SP11 pièce synthétique.png"); const row = await uploadFile(page, file); await expect(row.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 30_000 }); await downloadFile(page, file.name, file.buffer);
+    const file = await syntheticFile("clean", "SP11 pièce synthétique.png"); const row = await uploadFile(page, file); await expect(row.getByText("Fichier disponible", { exact: true })).toBeVisible({ timeout: 30_000 }); await downloadFile(page, file.name, file.buffer);
     await page.getByRole("tab", { name: "Activités", exact: true }).click();
     const history = page.getByRole("tabpanel", { name: "Activités", exact: true }).locator("details").filter({ has: page.locator("summary").filter({ hasText: /^Historique de l’affaire$/ }) });
     if (await history.getAttribute("open") === null) await history.locator("summary").click();

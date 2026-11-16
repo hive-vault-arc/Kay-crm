@@ -35,7 +35,7 @@ for (const [kind, width] of [["property", 1440], ["development", 390]] as const)
     await form.getByRole("button", { name: "Réessayer", exact: true }).click();
     await expect(form).toHaveCount(0); expect(creates).toBe(1);
     await expect(gallery.getByText("1 photo", { exact: true })).toBeVisible();
-    await expect(gallery.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 60_000 });
+    await expect(gallery.getByText("Fichier disponible", { exact: true })).toBeVisible({ timeout: 60_000 });
     await expect(gallery.getByRole("button", { name: "Archiver", exact: true })).toHaveCount(0);
     await gallery.getByRole("button", { name: "Ouvrir la photo patio.webp", exact: true }).click();
     const viewer = page.getByRole("dialog", { name: "Photos du dossier", exact: true }).filter({ has: page.getByRole("button", { name: "Fermer la photo", exact: true }) });

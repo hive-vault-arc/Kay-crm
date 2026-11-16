@@ -417,7 +417,7 @@ def test_actual_shared_worker_cli_publishes_export(settings, database):
     eid = UUID(request_export(database, manager, uuid4(), NewExport())["id"])
     result = subprocess.run(
         [sys.executable, "-m", "app.cli.worker", "--once"],
-        env=os.environ | {"APP_ENVIRONMENT": "test", "ANTIVIRUS_PORT": "3310"},
+        env=os.environ | {"APP_ENVIRONMENT": "test"},
         capture_output=True,
         text=True,
         timeout=20,

@@ -2,7 +2,7 @@ import { test, expect, createActor, removeActor, signIn, clearActorContext } fro
 import { createLead, staffCommand } from "../helpers/leads";
 import { createProperty } from "../helpers/inventory";
 import { createDevelopment } from "../helpers/developments";
-import { chooseDocument, downloadFile, openDocuments, syntheticFile, uploadFile } from "../helpers/files";
+import { chooseDocument, downloadFile, expectInvalidDocument, openDocuments, syntheticFile, uploadFile } from "../helpers/files";
 import { testControl } from "../helpers/api-process";
 import { manage, previewOperation, confirmOperation } from "../helpers/ownership";
 import { testPorts } from "../../scripts/test-ports.mjs";
@@ -11,21 +11,21 @@ test.beforeEach(({ page }) => { page.setDefaultTimeout(20000); });
 test.use({ trace: "off", video: "off", screenshot: "off" });
 
 // SP-09 focus: real bytes, actual separate worker, scoped grants, clean/rejected/recovery.
-test("SP09 AT-06/26/35: private contact versus shared property/programme and actual clean/rejected bytes", async ({ page }) => {
+test("SP09 AT-06/26/35: private contact versus shared property/programme and invalid format rejection", async ({ page }) => {
   test.setTimeout(180000);
   const owner = await createActor("agent"); const manager = await createActor("manager"); const outsider = await createActor("agent");
   try {
-    const clean = await syntheticFile(); const cleanDocument = await syntheticFile("clean-document"); const rejected = await syntheticFile("rejected");
+    const clean = await syntheticFile(); const cleanDocument = await syntheticFile("clean-document"); const invalid = await syntheticFile("invalid-document");
     await signIn(page, owner);
     const lead = await createLead(page, "SP09 contact privé synthétique");
     const contact = (await (await page.request.get(`/api/v1/enquiries/${lead}`)).json()).contact;
     await page.goto(`/contacts/${contact.id}`); await openDocuments(page, "contact");
     await testControl("worker-stop");
     const privateRow = await uploadFile(page, clean);
-    await expect(privateRow.getByText("En quarantaine, analyse en attente", { exact: true })).toBeVisible();
+    await expect(privateRow.getByText("Vérification en attente", { exact: true })).toBeVisible();
     await expect(privateRow.getByRole("button", { name: `Télécharger ${clean.name}`, exact: true })).toBeDisabled();
     await testControl("worker-start");
-    await expect(privateRow.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 20_000 });
+    await expect(privateRow.getByText("Fichier disponible", { exact: true })).toBeVisible({ timeout: 20_000 });
     await downloadFile(page, clean.name, clean.buffer);
     await privateRow.getByRole("button", { name: `Afficher ${clean.name}`, exact: true }).click();
     await expect(page.getByRole("img", { name: `Aperçu du fichier ${clean.name}`, exact: true })).toBeVisible();
@@ -37,12 +37,11 @@ test("SP09 AT-06/26/35: private contact versus shared property/programme and act
     const property = await createProperty(page);
     await openDocuments(page, "inventory");
     const sharedRow = await uploadFile(page, cleanDocument);
-    await expect(sharedRow.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 20_000 });
+    await expect(sharedRow.getByText("Fichier disponible", { exact: true })).toBeVisible({ timeout: 20_000 });
     const development = await createDevelopment(page);
     await openDocuments(page, "inventory");
-    const rejectedRow = await uploadFile(page, rejected);
-    await expect(rejectedRow.getByText("Fichier rejeté par l’antivirus", { exact: true })).toBeVisible({ timeout: 20_000 });
-    await expect(rejectedRow.getByRole("button", { name: `Télécharger ${rejected.name}`, exact: true })).toBeDisabled();
+    const invalidUpload = await expectInvalidDocument(page, invalid);
+    await invalidUpload.getByRole("button", { name: "Annuler", exact: true }).click();
     await clearActorContext(page); await signIn(page, outsider);
     expect((await page.request.get(`/api/v1/documents?parent_kind=contact&parent_id=${contact.id}`)).status()).toBe(404);
     const outsiderSession = await (await page.request.get("/api/v1/auth/me")).json();
@@ -59,7 +58,8 @@ test("SP09 AT-06/26/35: private contact versus shared property/programme and act
     expect((await staffCommand(page, "files/permits", { action: "upload", document_id: documents.items[0].id, expected_version: documents.items[0].version })).status()).toBe(403);
     await page.goto(`/projects/${development.id}`);
     await openDocuments(page, "inventory");
-    await expect(page.getByText("Fichier rejeté par l’antivirus", { exact: true })).toBeVisible();
+    await expect(page.getByText("Transfert à reprendre", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: `Télécharger ${invalid.name}`, exact: true })).toBeDisabled();
     await clearActorContext(page); await signIn(page, manager); await page.goto(`/contacts/${contact.id}`);
     await manage(page, "archive"); await previewOperation(page); await confirmOperation(page);
     const archivedDocuments = await openDocuments(page, "contact");
@@ -69,7 +69,7 @@ test("SP09 AT-06/26/35: private contact versus shared property/programme and act
   } finally { await testControl("worker-start"); await clearActorContext(page); await removeActor(manager); await removeActor(owner); await removeActor(outsider); }
 });
 
-test("SP09: interrupted network transfer and unavailable scanner recover without false success", async ({ page }) => {
+test("SP09: interrupted network transfer and stopped worker recover without false success", async ({ page }) => {
   test.setTimeout(240000);
   const manager = await createActor("manager");
   try {
@@ -82,24 +82,16 @@ test("SP09: interrupted network transfer and unavailable scanner recover without
     await uploader.getByRole("button", { name: "Envoyer le fichier", exact: true }).click();
     await expect(uploader.getByRole("alert").filter({ hasText: "Transfert interrompu" })).toBeVisible();
     await page.unroute(transferRoute);
-    await testControl("worker-unavailable");
+    await testControl("worker-stop");
     const publication = page.waitForResponse(response => response.request().method() === "PUT" && new URL(response.url()).pathname.startsWith("/api/v1/transfers/"));
     await uploader.getByRole("button", { name: "Réessayer", exact: true }).click();
     expect((await publication).status()).toBe(200);
     await expect(uploader).not.toBeVisible();
     const row = documents.getByRole("listitem").filter({ has: page.getByRole("heading", { name: file.name, exact: true }) });
-    await expect(row.getByText(/L’analyse est indisponible/)).toBeVisible({ timeout: 20_000 });
+    await expect(row.getByText("Vérification en attente", { exact: true })).toBeVisible({ timeout: 20_000 });
     await expect(row.getByRole("button", { name: `Télécharger ${file.name}`, exact: true })).toBeDisabled();
-    await testControl("worker-stop");
-    const scanRetry = page.waitForResponse(response => response.request().method() === "POST" && new URL(response.url()).pathname.endsWith("/retry-scan"));
-    await row.getByRole("button", { name: `Réessayer l’analyse de ${file.name}`, exact: true }).click();
-    const scanResponse = await scanRetry;
-    const scanPayload = await scanResponse.json();
-    expect([200, 409]).toContain(scanResponse.status());
-    if (scanResponse.status() === 409) expect(scanPayload.error.code).toBe("FILE_SCAN_IN_PROGRESS");
     await testControl("worker-start");
-    // Forced worker termination can leave its fenced 90-second lease until recovery.
-    await expect(row.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 120_000 });
+    await expect(row.getByText("Fichier disponible", { exact: true })).toBeVisible({ timeout: 120_000 });
     await downloadFile(page, file.name, file.buffer);
     await row.getByRole("button", { name: `Archiver ${file.name}`, exact: true }).click();
     const confirmation = page.getByRole("alertdialog", { name: "Archiver cette pièce jointe ?", exact: true }); await expect(confirmation).toBeVisible();

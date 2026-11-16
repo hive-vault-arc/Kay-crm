@@ -1,4 +1,4 @@
-"""Durable processing isolated from reminders and ordinary file scans."""
+"""Durable video encoding isolated from ordinary background work."""
 
 import hashlib
 import logging
@@ -10,7 +10,6 @@ from uuid import UUID, uuid4
 from sqlalchemy import delete, or_, select, text
 
 from app.db.session import Database
-from app.files.scanner import scan_stream
 from app.identity.security import IdentityError
 from app.inventory.hierarchy_models import Development
 from app.inventory.models import Property
@@ -178,10 +177,6 @@ def run_once(database: Database, settings: Settings) -> bool:
                         source = Path(directory) / "original.mov"
                         target = Path(directory) / "encoded.mp4"
                         assembled(database, storage, vid, source)
-                        with source.open("rb") as stream:
-                            state, _ = scan_stream(settings, stream)
-                        if state != "clean":
-                            raise IdentityError("VIDEO_SCAN_REJECTED", 422)
                         seconds = encode(source, target)
                         publish(database, storage, vid, fence, key, target, seconds)
                 except IdentityError as error:

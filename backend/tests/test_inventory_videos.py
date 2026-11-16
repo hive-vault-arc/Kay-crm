@@ -86,12 +86,16 @@ def test_video_resumes_without_replaying_parts_and_rejects_unsafe_input(
     assert service.accept_part(
         database, settings, body.id, cast(str, resumed["permit"]), 1, b"last"
     ) == {"next_part": 2}
-    monkeypatch.setattr(worker, "scan_stream", lambda *_: ("rejected", "synthetic scanner verdict"))
-    monkeypatch.setattr(worker, "encode", lambda *_: pytest.fail("rejected input reached encoder"))
+
+    def reject_invalid_source(source: Path, target: Path) -> int:
+        assert source.read_bytes() == b"12345678last"
+        raise IdentityError("VIDEO_FORMAT_UNSUPPORTED", 422)
+
+    monkeypatch.setattr(worker, "encode", reject_invalid_source)
     assert worker.run_once(database, settings)
     with database.session() as session:
         row = session.get_one(InventoryVideo, body.id)
-        assert row.state == "failed" and row.error_code == "VIDEO_SCAN_REJECTED"
+        assert row.state == "failed" and row.error_code == "VIDEO_FORMAT_UNSUPPORTED"
         assert not session.scalars(select(VideoPart).where(VideoPart.video_id == body.id)).all()
     with pytest.raises(IdentityError, match="NOT_FOUND"):
         service.grant_playback(database, manager, body.id)
@@ -111,7 +115,6 @@ async def test_video_stream_serves_only_authorized_ranges(settings, database, mo
         target.write_bytes(output)
         return 2
 
-    monkeypatch.setattr(worker, "scan_stream", lambda *_: ("clean", "synthetic scanner verdict"))
     monkeypatch.setattr(worker, "encode", encoded)
     assert worker.run_once(database, settings)
     token = service.grant_playback(database, manager, body.id)["grant"]

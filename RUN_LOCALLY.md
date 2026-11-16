@@ -22,11 +22,6 @@ follow sections 3 through 7 before returning to daily startup.
 | Backend API | `https://localhost:8100` | FastAPI through Uvicorn |
 | Background worker | No listening port | Python process using the PostgreSQL queue |
 | PostgreSQL | `localhost:5432` on this laptop | Existing native Windows PostgreSQL 18 service |
-| ClamAV antivirus | `127.0.0.1:3310` | Project-owned Linux container in Docker Desktop |
-
-Only ClamAV runs in Docker in this local setup. The repository does not provide
-a Compose stack for the frontend, backend or database. Redis/Valkey, a mail
-server, Vercel and DigitalOcean accounts are not required to run the local CRM.
 
 The current manual configuration is 3100/8100. Some source defaults, examples
 and older records still use 3000/8000. The explicit port arguments and matching
@@ -38,24 +33,13 @@ Use this section when dependencies, private configuration, certificates,
 migrations and the first administrator already exist. Do not reinstall,
 recreate databases or bootstrap an administrator each time you start the app.
 
-Open Docker Desktop and wait until its Linux engine is running. The Windows
-PostgreSQL service must also be running. Keep the following three PowerShell
-terminals open while using the CRM.
+The Windows PostgreSQL service must be running. Keep the application terminals
+open while using the CRM.
 
-### Terminal 1: ClamAV, then backend API
+### Terminal 1: backend API
 
 ```powershell
 Set-Location -LiteralPath 'C:\Users\khali\Desktop\HVA\03 - PROJECTS\CUSTOM PROJECTS\Kayrealestate\backend'
-docker compose -f compose.clamav.yaml up -d --wait
-```
-
-Wait for a healthy container. The first image download and antivirus signature
-initialization can take several minutes. If this command fails, diagnose it
-before continuing; do not disable scanning.
-
-Then, in the same terminal:
-
-```powershell
 .\.venv\Scripts\uvicorn.exe app.main:app --host 127.0.0.1 --port 8100 `
   --ssl-keyfile .local-data/certificates/localhost-key.pem `
   --ssl-certfile .local-data/certificates/localhost.pem `
@@ -83,7 +67,7 @@ Set-Location -LiteralPath 'C:\Users\khali\Desktop\HVA\03 - PROJECTS\CUSTOM PROJE
 .\.venv\Scripts\python.exe -m app.cli.worker
 ```
 
-Leave this running for file scanning, reminder delivery, exports and signed
+Leave this running for file integrity verification, reminder delivery, exports and signed
 website intake. A quiet terminal when there are no pending jobs is normal.
 Do not start a test fixture supervisor in its place.
 
@@ -101,7 +85,16 @@ Use HTTPS, not HTTP, and use `localhost` rather than substituting another
 hostname. The frontend origin participates in cookie, CSRF and origin checks.
 Plain `npm run dev` uses 3000; it does not select 3100 automatically.
 
-### Terminal 4: verify the running stack
+### Optional terminal: video worker
+
+With `ffmpeg.exe` and `ffprobe.exe` on `PATH`, set `INVENTORY_VIDEO_ENABLED=true`
+in `backend/.env`, then start this process from `backend/`.
+
+```powershell
+.\.venv\Scripts\python.exe -m app.cli.video_worker
+```
+
+### Verify the running stack
 
 Run the checks in [section 8](#8-check-that-the-stack-is-working). A listening
 port alone does not prove database readiness, successful authentication or
@@ -119,25 +112,7 @@ to whatever is newest.
 | Node.js | **24.13.1**, matching `.nvmrc`; this laptop uses npm **11.8.0** | [Official 24.13.1 release and Windows installers](https://nodejs.org/en/blog/release/v24.13.1) |
 | Python | **3.14.3 exactly**, including pip and venv support | [Official Python 3.14.3 Windows installer](https://www.python.org/downloads/release/python-3143/) |
 | PostgreSQL | **18**, native Windows server plus command-line tools; installed laptop version is 18.2 | [Official PostgreSQL Windows installer page](https://www.postgresql.org/download/windows/) |
-| Docker Desktop | Linux containers, working `docker compose` command | [Official Windows installation and prerequisites](https://docs.docker.com/desktop/setup/install/windows-install/) |
 | Browser | Chrome or another supported modern browser; installed Chrome is used by headed Chrome tests | Install separately if absent |
-
-Docker's WSL 2 setup requires enabled hardware virtualization and a supported
-Windows version. Follow Docker's linked prerequisites; its current instructions
-require WSL 2.1.5 or newer and at least 8 GB system RAM. KAY's ClamAV container
-alone has a 4 GB memory limit, so allow room for it as well as PostgreSQL, Node,
-Python and Windows. Docker Desktop licensing must suit your organization.
-
-If WSL is missing, these are installation commands for an administrator
-PowerShell, not daily startup commands. Restart Windows if prompted:
-
-```powershell
-wsl --install
-wsl --update
-```
-
-In Docker Desktop, use the WSL 2 engine / Linux containers. You do not need to
-install Python, Node or PostgreSQL inside WSL for this Windows procedure.
 
 Check the installed tools in a new PowerShell:
 
@@ -146,9 +121,6 @@ git --version
 node --version
 npm.cmd --version
 py -3.14 --version
-docker version
-docker compose version
-wsl --version
 & 'C:\Program Files\PostgreSQL\18\bin\psql.exe' --version
 ```
 
@@ -331,8 +303,6 @@ In `backend/.env`:
 ```dotenv
 APP_ENVIRONMENT=development
 FRONTEND_ORIGIN="https://localhost:3100"
-ANTIVIRUS_HOST=127.0.0.1
-ANTIVIRUS_PORT=3310
 ```
 
 In `frontend/.env.local`:
@@ -475,25 +445,13 @@ Now follow [Daily startup](#1-daily-startup).
 Use a separate PowerShell while the three application terminals remain open.
 These checks do not require printing credentials or disabling TLS verification.
 
-### Database server and antivirus
+### Database server
 
 ```powershell
 & 'C:\Program Files\PostgreSQL\18\bin\pg_isready.exe' -h localhost -p 5432
-Set-Location -LiteralPath 'C:\Users\khali\Desktop\HVA\03 - PROJECTS\CUSTOM PROJECTS\Kayrealestate\backend'
-docker compose -f compose.clamav.yaml ps
 ```
 
-Expected: PostgreSQL accepts connections, and ClamAV is running/healthy with its
-host port bound to `127.0.0.1`. `pg_isready` alone does not validate the app's
-password, migration revision or authorization.
-
-Optional ClamAV protocol check, without sending any files:
-
-```powershell
-.\.venv\Scripts\python.exe -c "import socket; s=socket.create_connection(('127.0.0.1',3310),timeout=5); s.sendall(b'zPING\0'); print(s.recv(64).decode().strip('\0')); s.close()"
-```
-
-Expected: `PONG`. Keep ClamD private; it is not a public HTTP endpoint.
+Use frontend readiness below to check the application's database connection.
 
 ### HTTPS API and frontend facade
 
@@ -571,7 +529,7 @@ Backend checks from `backend/`, using the locked development dependencies:
 database connections. It is not a substitute for database integration testing.
 
 Full pytest/browser integration uses the separate test database, synthetic
-fixtures, real ClamAV and the shared isolated-database lease. Run those suites
+fixtures and the shared isolated-database lease. Run those suites
 serially, never against development or production. Browser harnesses also use
 3100/8100 and control ports, so stop the manual frontend/API/worker first.
 Do not run `scripts/test-api.mjs` as an ordinary development server: it owns
@@ -599,11 +557,10 @@ not passed. See [production settings and CI](docs/06-delivery-and-operations/pro
 | Facade `503` | Check API liveness, exact `API_BASE_URL`, readable local `API_CA_FILE` and matching `FACADE_SECRET`. Check values privately, never paste the secret or URL credentials into logs/chat. |
 | Anonymous direct API readiness returns `403` | Expected. Request readiness through the frontend facade instead. |
 | Configuration error | Read only the variable name and safe error code. Confirm local development mode and required values; do not print the full settings object or private environment files. |
-| PostgreSQL connection refused | Check the native Windows service and verified port with `pg_isready`. Docker Desktop does not start the native database for you. |
+| PostgreSQL connection refused | Check the native Windows service and verified port with `pg_isready`. Check the native service configuration if it is stopped. |
 | Database permission / identity / migration refusal | Verify the intended local role, target and migration history. Keep isolation/DDL safeguards. Do not stamp, downgrade, reset or point test URLs at the application database. |
 | `LOCAL_SETUP_FAILED` | Review the private note's one-password format, native installer registry entry, readable `postgresql.conf`, existing development database, role privileges and complete certificate set. The helper does not reveal credentials in diagnostics. |
-| ClamAV remains starting or unhealthy | Check Docker Linux engine, available memory, image download and signature updates; inspect the project container logs with the command below. |
-| Upload stays quarantined / export or reminder pending | Keep the worker running and verify ClamAV where relevant. Quarantine during scanner failure is intentional; never mark unscanned files clean. |
+| Upload verification, export or reminder pending | Check the regular worker and storage connectivity. |
 | Bootstrap refuses another administrator | Installation is already initialized, migrations are missing or manual recovery is needed. Use an existing admin or the bootstrap runbook, not an ad hoc database insert. |
 | Application opens but has no records | Fresh installations have no seeded CRM records. Check the selected account's permissions before assuming data is missing. |
 
@@ -615,32 +572,16 @@ Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
   Select-Object LocalAddress,LocalPort,OwningProcess
 ```
 
-ClamAV diagnostics from `backend/`:
-
-```powershell
-docker compose -f compose.clamav.yaml logs --tail 50 clamav
-```
-
 Do not share logs containing credentials, cookies, tokens or private records.
 Do not globally suppress errors to make startup appear successful.
 
 ## 12. Stop KAY safely
 
-Press **Ctrl+C** in each KAY frontend, API and worker terminal. If the npm batch
+Press **Ctrl+C** in each KAY frontend, API and worker terminal, including the optional video worker. If the npm batch
 wrapper asks `Terminate batch job (Y/N)?`, answer `Y`. Stop any optional KAY
 simulator or test supervisor you deliberately started as well.
 
-Then stop only the project's antivirus container:
-
-```powershell
-Set-Location -LiteralPath 'C:\Users\khali\Desktop\HVA\03 - PROJECTS\CUSTOM PROJECTS\Kayrealestate\backend'
-docker compose -f compose.clamav.yaml stop
-```
-
-This retains the signature cache. Do not use `down -v`, delete `.local-data`,
-or stop all Node/Python processes. PostgreSQL on this laptop is shared with other
-projects: leave its Windows service running. Leave unrelated Docker containers
-and Docker Desktop alone.
+Keep `.local-data` and leave the shared PostgreSQL Windows service running.
 
 Check the three ordinary KAY service ports:
 
@@ -662,7 +603,7 @@ Keep these private and out of Git:
 - The local database credentials note.
 - `backend/.local-data/`, including private files, certificates and inspection
   metadata, plus any separate backup locations.
-- PostgreSQL database contents and the Docker ClamAV signature volume.
+- PostgreSQL database contents.
 
 Do not delete them as a dependency/cache cleanup step. Source code alone is
 not a database/file backup. Use the

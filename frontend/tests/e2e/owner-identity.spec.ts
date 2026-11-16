@@ -50,7 +50,7 @@ test("An agent can create and edit owner identity and upload a private card copy
     await upload.getByLabel("Fichier", { exact: true }).setInputFiles(copy);
     await upload.getByRole("button", { name: "Envoyer le fichier", exact: true }).click();
     await expect(upload).toHaveCount(0);
-    await expect(cards.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(cards.getByText("Fichier disponible", { exact: true })).toBeVisible({ timeout: 30_000 });
     await expect(docs.getByRole("region", { name: "Pièces jointes", exact: true }).getByText(copy.name)).toHaveCount(0);
     await downloadFile(page, copy.name, copy.buffer);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

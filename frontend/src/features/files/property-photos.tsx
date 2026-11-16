@@ -62,7 +62,7 @@ function PhotoWorkspace({ propertyId, parentKind = "property", writable, uploada
     requestAnimationFrame(() => { const target = uploadTrigger.current; if (target?.isConnected && !target.disabled) target.focus(); else heading.current?.focus(); });
   }
   function saved(result: Awaited<ReturnType<typeof sendPhoto>>, remaining = 0, count = 1) {
-    setNotice(count > 1 ? `${count} photos envoyées. Elles seront visibles après l’analyse antivirus.` : result.recovered ? "Le transfert de cette photo est déjà enregistré. Consultez son état dans la galerie." : "Photo envoyée. Elle sera visible après l’analyse antivirus.");
+    setNotice(count > 1 ? `${count} photos envoyées. Elles seront visibles après vérification.` : result.recovered ? "Le transfert de cette photo est déjà enregistré. Consultez son état dans la galerie." : "Photo envoyée. Elle sera visible après vérification.");
     if (result.state === "pending_scan") thumbnailPending.current.add(result.documentId);
     if (result.state === "clean") onChanged();
     setPage(1); refresh();
@@ -130,7 +130,7 @@ function PhotoWorkspace({ propertyId, parentKind = "property", writable, uploada
   }
   return <form className="kay-photo-gallery" aria-label="Galerie du dossier" aria-busy={busy} data-draft-managed onSubmit={event => event.preventDefault()}>
     <header className="kay-section-head"><div><h2 ref={heading} tabIndex={-1}>Galerie</h2><p className="text-sm text-muted-foreground">JPG, PNG, WebP, HEIC ou HEIF · 20 Mo par photo</p></div><span className="text-sm text-muted-foreground" aria-live="polite">{query.value ? `${query.value.total} ${query.value.total === 1 ? "photo" : "photos"}` : "Chargement…"}</span></header>
-    <p className="text-sm text-muted-foreground">Conversion WebP à l’envoi. Chaque photo reste protégée jusqu’à la fin de son analyse antivirus.</p>
+    <p className="text-sm text-muted-foreground">Conversion WebP à l’envoi. Les photos sont visibles après vérification.</p>
     {notice ? <p role="status" className="text-info">{notice}</p> : null}
     {query.error ? <RecordError error={query.error} retry={query.refresh} /> : !query.value ? <p role="status">Chargement des photos…</p> : <>
       {uploadable ? <Button action="photos" type="button" className="justify-self-start" disabled={!hydrated || busy} onClick={event => show("new", event.currentTarget)}>Ajouter une photo</Button> : null}

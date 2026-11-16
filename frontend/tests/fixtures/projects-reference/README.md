@@ -2,7 +2,7 @@
 
 Eight generated, fictional photographs for isolated Projects browser tests.
 These are not real listings, production seed data or public Next.js assets.
-The tests upload them through the normal protected file and real antivirus flow.
+The tests upload them through the normal protected upload and integrity verification flow.
 
 The [provenance manifest](../../../../docs/03-planning/projects-reference-assets.json)
 records the generation prompts and exact SHA256 values. The original generated

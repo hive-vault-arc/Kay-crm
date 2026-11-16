@@ -1,4 +1,4 @@
-"""Constrained decoding and re-encoding of scanned QuickTime and MP4 files."""
+"""Constrained decoding and re-encoding of QuickTime and MP4 files."""
 
 import json
 import math

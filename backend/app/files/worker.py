@@ -1,4 +1,4 @@
-"""PostgreSQL outbox dispatch, SKIP LOCKED leases and fenced ClamAV completion."""
+"""Dispatch and finalize private uploads with leased, fenced integrity checks."""
 
 from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
@@ -7,7 +7,6 @@ from sqlalchemy import and_, or_, select
 
 from app.db.session import Database
 from app.files.models import DocumentVersion, Job, OutboxEvent
-from app.files.scanner import scan
 from app.files.storage import PrivateStorage
 from app.identity.security import IdentityError
 from app.settings import Settings
@@ -89,7 +88,6 @@ def finish(
     jid: UUID,
     fence: UUID,
     vid: UUID,
-    verdict: tuple[str, str] | None,
     error: str | None = None,
 ) -> bool:
     now = datetime.now(UTC)
@@ -110,12 +108,13 @@ def finish(
             job.state, job.lease_token, job.lease_until = "done", None, None
             return True
         job.lease_token, job.lease_until = None, None
-        if verdict is None:
+        if error is not None:
             job.state = "failed" if job.attempts >= 5 else "retry"
             job.available_at = now + timedelta(seconds=min(300, 2**job.attempts))
-            job.error_code = version.scan_error = error or "ANTIVIRUS_UNAVAILABLE"
+            job.error_code = version.scan_error = error
             return True
-        version.state, version.scanner_version = verdict
+        # Retain the persisted state and timestamp names for rolling deploys and old rows.
+        version.state = "clean"
         version.scanned_at, version.scan_error = now, None
         job.state, job.error_code = "done", None
         return True
@@ -132,12 +131,9 @@ def run_once(database: Database, settings: Settings) -> bool:
             version = session.get(DocumentVersion, vid)
             if version is None:
                 raise IdentityError("FILE_STORAGE_UNAVAILABLE", 503)
-            data = PrivateStorage(settings).read(
-                version.object_key, version.size_bytes, version.sha256
-            )
-        verdict = scan(settings, data)
+            PrivateStorage(settings).read(version.object_key, version.size_bytes, version.sha256)
     except IdentityError as error:
-        finish(database, jid, fence, vid, None, error.code)
+        finish(database, jid, fence, vid, error.code)
     else:
-        finish(database, jid, fence, vid, verdict)
+        finish(database, jid, fence, vid)
     return True

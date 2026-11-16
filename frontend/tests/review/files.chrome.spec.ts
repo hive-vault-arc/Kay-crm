@@ -4,7 +4,7 @@ import path from "node:path";
 import { clearActorContext, test, expect, createActor, removeActor, signIn } from "../helpers/auth";
 import { createLead } from "../helpers/leads";
 import { createProperty } from "../helpers/inventory";
-import { chooseDocument, downloadFile, openDocuments, syntheticFile, uploadFile } from "../helpers/files";
+import { chooseDocument, downloadFile, expectInvalidDocument, openDocuments, syntheticFile, uploadFile } from "../helpers/files";
 import { testControl } from "../helpers/api-process";
 import { manage, previewOperation, confirmOperation } from "../helpers/ownership";
 
@@ -22,7 +22,7 @@ async function capture(page: Page, name: string) {
       try {
         await fullPage.setViewportSize(page.viewportSize()!); await fullPage.goto(page.url());
         await openDocuments(fullPage, "inventory");
-        await expect(fullPage.getByText("Analyse réussie", { exact: true })).toBeVisible();
+        await expect(fullPage.getByText("Fichier disponible", { exact: true })).toBeVisible();
         await expect(fullPage.locator('input[type="password"], [data-private-credential]')).toHaveCount(0);
         await fullPage.evaluate(() => window.scrollTo(0, 0));
         const fullCdp = await page.context().newCDPSession(fullPage);
@@ -58,13 +58,13 @@ test("SP09 visible Chrome: actual quarantine, clean/rejected files, private deni
     await testControl("worker-start");
     const clean = await syntheticFile("clean", `SP09 pièce synthétique ${"document".repeat(17)}.png`);
     const sharedClean = await syntheticFile("clean-document", `SP09 pièce synthétique ${"document".repeat(17)}.docx`);
-    const rejected = await syntheticFile("rejected");
+    const invalid = await syntheticFile("invalid-document");
     await signIn(page, owner);
     const lead = await createLead(page, "SP09 contact privé synthétique");
     const contact = (await (await page.request.get(`/api/v1/enquiries/${lead}`)).json()).contact;
     await page.goto(`/contacts/${contact.id}`); await openDocuments(page, "contact");
     const privateRow = await uploadFile(page, clean);
-    await expect(privateRow.getByText("Analyse réussie", { exact: true })).toBeVisible();
+    await expect(privateRow.getByText("Fichier disponible", { exact: true })).toBeVisible();
     await downloadFile(page, clean.name, clean.buffer);
     await privateRow.getByRole("button", { name: `Afficher ${clean.name}`, exact: true }).click();
     await expect(page.getByRole("img", { name: `Aperçu du fichier ${clean.name}`, exact: true })).toBeVisible();
@@ -93,22 +93,13 @@ test("SP09 visible Chrome: actual quarantine, clean/rejected files, private deni
     } finally { releasePermit(); await page.unroute("**/api/v1/files/permits", holdPermit); }
     await uploader.getByRole("button", { name: "Réessayer", exact: true }).click();
     await expect(uploader).not.toBeVisible();
-    await expect(page.getByText("Transfert terminé. Le fichier reste en quarantaine jusqu’au résultat de l’analyse.", { exact: true })).toBeVisible();
+    await expect(page.getByText("Transfert terminé. Le fichier est en cours de vérification.", { exact: true })).toBeVisible();
     const row = panel.getByRole("listitem").filter({ has: page.getByRole("heading", { name: sharedClean.name, exact: true }) });
-    await expect(row.getByText("En quarantaine, analyse en attente", { exact: true })).toBeVisible();
+    await expect(row.getByText("Vérification en attente", { exact: true })).toBeVisible();
     await expect(row.getByRole("button", { name: `Télécharger ${sharedClean.name}`, exact: true })).toBeDisabled();
     await row.scrollIntoViewIfNeeded(); await capture(page, "pending-desktop");
-    await testControl("worker-unavailable");
-    await expect(row.getByText(/L’analyse est indisponible/)).toBeVisible(); await capture(page, "scanner-unavailable-desktop");
-    await testControl("worker-stop");
-    const scanRetry = page.waitForResponse(response => response.request().method() === "POST" && new URL(response.url()).pathname.endsWith("/retry-scan"));
-    await row.getByRole("button", { name: `Réessayer l’analyse de ${sharedClean.name}`, exact: true }).click();
-    const scanResponse = await scanRetry;
-    const scanPayload = await scanResponse.json();
-    expect([200, 409]).toContain(scanResponse.status());
-    if (scanResponse.status() === 409) expect(scanPayload.error.code).toBe("FILE_SCAN_IN_PROGRESS");
     await testControl("worker-start");
-    await expect(row.getByText("Analyse réussie", { exact: true })).toBeVisible({ timeout: 120_000 });
+    await expect(row.getByText("Fichier disponible", { exact: true })).toBeVisible({ timeout: 120_000 });
     await downloadFile(page, sharedClean.name, sharedClean.buffer);
     const archive = row.getByRole("button", { name: `Archiver ${sharedClean.name}`, exact: true });
     await archive.focus(); await page.keyboard.press("Enter"); await expect(page.getByRole("alertdialog")).toBeVisible();
@@ -121,14 +112,13 @@ test("SP09 visible Chrome: actual quarantine, clean/rejected files, private deni
     await expect(browse).toBeFocused(); const picker = page.waitForEvent("filechooser"); await browse.press("Enter"); await (await picker).setFiles([]);
     await keyboardUpload.getByRole("button", { name: "Annuler", exact: true }).click(); await expect(keyboardUpload).not.toBeVisible(); await expect(chooser).toBeFocused();
     await panel.scrollIntoViewIfNeeded(); await capture(page, "clean-desktop");
-    const badRow = await uploadFile(page, rejected);
-    await expect(badRow.getByText("Fichier rejeté par l’antivirus", { exact: true })).toBeVisible();
-    await expect(badRow.getByRole("button", { name: `Télécharger ${rejected.name}`, exact: true })).toBeDisabled();
-    await badRow.scrollIntoViewIfNeeded(); await capture(page, "rejected-desktop");
+    const invalidUpload = await expectInvalidDocument(page, invalid);
+    await capture(page, "invalid-format-desktop");
+    await invalidUpload.getByRole("button", { name: "Annuler", exact: true }).click();
     await signIn(mobile, manager); await mobile.goto(propertyPath); const mobilePanel = await openDocuments(mobile, "inventory");
     for (const width of [320, 360, 768, 1024, 1440]) {
       await mobile.setViewportSize({ width, height: 900 });
-      await expect(mobile.getByText("Analyse réussie", { exact: true })).toBeVisible();
+      await expect(mobile.getByText("Fichier disponible", { exact: true })).toBeVisible();
       expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       const geometry = await mobilePanel.getByRole("button", { name: "Ajouter un document", exact: true }).evaluate(element => { const box = element.getBoundingClientRect(); return { left: box.left, right: box.right, width: innerWidth, height: box.height }; });
       expect(geometry.left).toBeGreaterThanOrEqual(0); expect(geometry.right).toBeLessThanOrEqual(width); expect(geometry.height).toBeGreaterThanOrEqual(44);
@@ -147,11 +137,11 @@ test("SP09 visible Chrome: actual quarantine, clean/rejected files, private deni
     const loading = async (route: Route) => { await gate; await route.continue(); };
     await page.route("**/api/v1/documents?**", loading);
     await page.reload(); await openDocuments(page, "inventory"); await expect(page.getByText("Chargement des pièces jointes…", { exact: true })).toBeVisible(); await page.getByText("Chargement des pièces jointes…", { exact: true }).scrollIntoViewIfNeeded(); await capture(page, "loading-desktop");
-    release(); await expect(page.getByText("Analyse réussie", { exact: true })).toBeVisible(); await page.unroute("**/api/v1/documents?**", loading);
+    release(); await expect(page.getByText("Fichier disponible", { exact: true })).toBeVisible(); await page.unroute("**/api/v1/documents?**", loading);
     const unavailable = (route: Route) => route.abort("failed");
     await page.route("**/api/v1/documents?**", unavailable); await page.reload(); await openDocuments(page, "inventory");
     await expect(panel.getByRole("alert").filter({ hasText: "service local est indisponible" })).toBeVisible(); await capture(page, "error-desktop");
-    await page.unroute("**/api/v1/documents?**", unavailable); await panel.getByRole("button", { name: "Réessayer", exact: true }).click(); await expect(page.getByText("Analyse réussie", { exact: true })).toBeVisible();
+    await page.unroute("**/api/v1/documents?**", unavailable); await panel.getByRole("button", { name: "Réessayer", exact: true }).click(); await expect(page.getByText("Fichier disponible", { exact: true })).toBeVisible();
     profile = await mkdtemp(path.resolve("test-results/sp09-zoom-"));
     const launch = { ignoreHTTPSErrors: true, channel: "chrome", headless: false, viewport: null, deviceScaleFactor: undefined, args: ["--window-size=1440,1000"] } as const;
     zoomContext = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] });
@@ -159,7 +149,7 @@ test("SP09 visible Chrome: actual quarantine, clean/rejected files, private deni
     const baseline = await zoom.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth })); await zoomContext.close(); zoomContext = undefined;
     const preferencesPath = path.join(profile, "Default", "Preferences"); const preferences = JSON.parse(await readFile(preferencesPath, "utf8")); preferences.partition = { ...preferences.partition, default_zoom_level: { x: Math.log(2) / Math.log(1.2) } }; await writeFile(preferencesPath, JSON.stringify(preferences));
     zoomContext = await chromium.launchPersistentContext(profile, { ...launch, args: [...launch.args] }); zoom = zoomContext.pages()[0]; monitor(zoom);
-    await zoom.goto(`${baseURL}${propertyPath}`); await openDocuments(zoom, "inventory"); await expect(zoom.getByText("Analyse réussie", { exact: true })).toBeVisible();
+    await zoom.goto(`${baseURL}${propertyPath}`); await openDocuments(zoom, "inventory"); await expect(zoom.getByText("Fichier disponible", { exact: true })).toBeVisible();
     const measurement = await zoom.evaluate(() => ({ ratio: devicePixelRatio, width: innerWidth, overflow: document.documentElement.scrollWidth > innerWidth }));
     expect(measurement.ratio / baseline.ratio).toBeCloseTo(2, 1); expect(measurement.width).toBeLessThan(baseline.width * 0.6); expect(measurement.overflow).toBe(false);
     await zoom.getByRole("region", { name: "Pièces jointes", exact: true }).scrollIntoViewIfNeeded(); await zoom.bringToFront();

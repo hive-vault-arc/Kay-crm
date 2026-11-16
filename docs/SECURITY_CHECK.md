@@ -1,5 +1,14 @@
 # KAY security check for changes
 
+## Private uploads without antivirus
+
+The API still checks file structure before accepting photos and documents.
+The regular worker verifies length and SHA-256 in private storage before marking
+an upload available. Existing rejected files remain rejected. Database and API
+state names remain compatible with queued and previously published files.
+The video worker verifies staged parts and only publishes the encoded H.264 MP4.
+The authorization checks and short-lived private transfer grants still apply.
+
 ## Direct visit confirmation and repeated reports
 
 The booking and rescheduling commands still serialize with current agency
@@ -39,8 +48,8 @@ receipt replay stay compatible. Inventory, reservations and offers are unaffecte
 
 The MP4/MOV tab uses the existing scoped inventory video commands and private
 part upload and playback grants. The photo picker still rejects videos. The
-separate worker checks FFmpeg availability before claiming a job, scans the
-private input with ClamAV, and publishes the encoded output after verification.
+separate worker checks FFmpeg availability before claiming a job, verifies the
+staged input and publishes the encoded output after encoding.
 Playback remains bound to current staff authority. No session, grant, or client
 file is included in synthetic browser captures.
 

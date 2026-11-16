@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm_synthetic_targets:
-        description: 'Run only disposable synthetic PostgreSQL/ClamAV targets, never production'
+        description: 'Run only disposable synthetic PostgreSQL targets, never production'
         required: true
         default: false
         type: boolean
@@ -68,7 +68,7 @@ jobs:
           ./.venv/Scripts/python.exe -m pip install --no-deps --no-build-isolation -e .
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           ./.venv/Scripts/python.exe -m pip check
-      - name: Start disposable loopback PostgreSQL18 and real ClamAV
+      - name: Start disposable loopback PostgreSQL 18
         run: ./.github/scripts/windows-services.ps1
       - name: Configure fresh synthetic targets and HTTPS without workstation secrets
         working-directory: backend
@@ -131,23 +131,10 @@ jobs:
           } else {
             npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=12
           }
-      - name: Safe scanner diagnostics on failure
-        if: failure()
-        run: |
-          $services = Join-Path $env:RUNNER_TEMP 'kay-ci-services'
-          @{ clamav_processes = @(Get-Process clamd -ErrorAction SilentlyContinue).Count; scanner_listeners = @(Get-NetTCPConnection -State Listen -LocalPort 3310 -ErrorAction SilentlyContinue).Count } | ConvertTo-Json -Compress
-          $scannerLog = Join-Path $services 'clamd.log'
-          if (Test-Path -LiteralPath $scannerLog) { Get-Content -LiteralPath $scannerLog -Tail 15 }
       - name: Stop only this disposable job's services
         if: always()
         run: |
           $services = Join-Path $env:RUNNER_TEMP 'kay-ci-services'
-          $clamav = Get-CimInstance Win32_Service -Filter "Name='clamd'"
-          if ($clamav -and $clamav.PathName.Contains($services)) {
-            Stop-Service -Name clamd -ErrorAction Stop
-            sc.exe delete clamd
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          }
           $pgCtl = Join-Path $services 'postgres/pgsql/bin/pg_ctl.exe'
           $pgData = Join-Path $services 'pgdata'
           if ((Test-Path -LiteralPath $pgCtl) -and (Test-Path -LiteralPath (Join-Path $pgData 'postmaster.pid'))) {

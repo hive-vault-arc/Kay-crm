@@ -17,7 +17,8 @@ export const newDocumentSchema = parentSchema.extend({
 }).strict();
 export const versionSchema = z.object({
   id: z.uuid(), state: z.enum(["awaiting_upload", "pending_scan", "clean", "rejected"]),
-  scan_error: z.enum(["ANTIVIRUS_UNAVAILABLE", "FILE_STORAGE_UNAVAILABLE", "FILE_INTEGRITY_ERROR", "WORKER_INTERRUPTED", "FILE_TRANSFER_INTERRUPTED"]).nullable(),
+  // Existing rows may still expose historical worker error codes.
+  scan_error: z.string().regex(/^[A-Z_]{1,40}$/).nullable(),
   created_at: z.iso.datetime({ offset: true }),
 }).strict();
 export const documentSchema = z.object({ id: z.uuid(), filename: z.string().min(1).max(180), mime_type: z.string().max(120), purpose: uploadPurpose, size_bytes: z.number().int().positive().max(maxFileBytes), version: z.number().int().positive(), archived: z.boolean(), can_upload: z.boolean().optional(), is_primary_photo: z.boolean().optional(), versions: z.array(versionSchema).max(50) }).strict();

@@ -180,7 +180,7 @@ def test_administrator_evidence_binding_and_archive_retains_readonly_finance(set
     execute(settings, database, admin, Recognize(expected_version=1), cid=cid)
     contact = UUID(read_detail(database, manager, did)["contact"]["id"])
     document_id, version_id = uuid4(), uuid4()
-    # Metadata-only isolated fixture: this does not claim a fresh antivirus scan.
+    # Metadata-only isolated fixture for finance tests.
     with database.session() as session, session.begin():
         session.execute(text("SET LOCAL kay.synthetic_cleanup='on'"))
         session.add(
