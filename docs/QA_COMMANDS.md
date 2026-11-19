@@ -1,5 +1,26 @@
 # KAY QA command register
 
+## D54 shared discovery-helper correction — 2026-11-19
+
+Run 44567587437 passed all 1,321 backend tests (991.79s), but exposed a
+second retired inventory-archive entry point in the shared discovery helper.
+The search/export journey now preserves both roles' original visibility and
+export/audit-denial assertions, then deletes the property, checks its 404 and
+absence from global search, and verifies the retained deletion audit event.
+The shared helper opens the real deletion confirmation; its review caller
+checks cancellation preserves the live record. The old root-archive labels
+have no remaining matches across frontend source and all test/helper files.
+
+On isolated ports 3112/8112/8113/8114, visible Chrome passed 5/5 in 2.1m:
+`npx playwright test --config=playwright.chrome.config.ts
+tests/e2e/discovery.spec.ts tests/e2e/inventory-lifecycle-recovery.spec.ts
+tests/e2e/record-removal.spec.ts --grep 'SP19|Permanent|D54' --max-failures=1`.
+This covers filtered export and same-key recovery, scoped global search,
+retained audit, mobile programme deletion and both root-deletion lost-response
+races with current offers. TypeScript and ESLint pass. The historical visual
+discovery review was not rerun; its changed helper call is type/lint checked.
+A new full exact-head hosted run remains required before merge.
+
 ## D54 legacy browser regression correction — 2026-11-19
 
 Hosted run 44557245281 passed all 1,321 backend tests, including recovery

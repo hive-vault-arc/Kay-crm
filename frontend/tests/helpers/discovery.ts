@@ -29,13 +29,10 @@ export async function openExport(page: Page) {
   await drawer.getByRole("checkbox", { name: "Confirmer ce périmètre", exact: true }).check();
   return drawer;
 }
-export async function lifecycle(page: Page, restore = false) {
+export async function inventoryDeletion(page: Page) {
   await page.getByRole("button", { name: "Actions", exact: true }).click();
-  await page.getByRole("button", { name: "Gérer le dossier", exact: true }).click();
-  const drawer = page.getByRole("dialog", { name: "Gérer le dossier", exact: true });
-  await page.getByRole("button", { name: restore ? "Restaurer ce dossier" : "Archiver ce dossier", exact: true }).click();
-  await page.getByLabel("Motif obligatoire", { exact: true }).fill("SP19 contrôle synthétique");
-  await page.getByRole("button", { name: restore ? "Confirmer la restauration" : "Confirmer l’archivage", exact: true }).click();
-  await expect(page.getByRole("heading", { name: restore ? "État : Actif" : "État : Archivé", exact: true })).toBeVisible();
-  await drawer.getByRole("button", { name: "Fermer : Gérer le dossier", exact: true }).click();
+  await page.getByRole("button", { name: "Supprimer ce bien", exact: true }).click();
+  const dialog = page.getByRole("alertdialog", { name: "Supprimer définitivement ce bien ?", exact: true });
+  await expect(dialog.getByRole("button", { name: "Annuler", exact: true })).toBeFocused();
+  return dialog;
 }
