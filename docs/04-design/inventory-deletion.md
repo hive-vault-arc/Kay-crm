@@ -20,6 +20,9 @@ key and body; its saved receipt resolves the deletion even though the live recor
 is gone. Success returns the ordinary inventory result with the requested root
 ID, its final version, deletion event and `offering_id: null`. Another key for an
 already deleted ID returns 404. A response with the wrong root is rejected.
+A quiet live read returning 404 for that exact root waits for the pending
+deletion receipt, including an already in-flight read. The marker is scoped to
+inventory and the exact path; 401/403 and other records still redact immediately.
 Legacy archive/restore endpoints and queries remain compatible for old clients;
 they cannot restore a deleted root.
 
@@ -41,7 +44,9 @@ are withdrawn. Completed sale/rental stock effects and finance remain immutable.
 Retained offerings resolve a shared target snapshot labelled **Bien supprimé** or
 **Programme supprimé** for historical dossier reads. They do not appear in stock
 selectors or current offering totals. New deals and shortlist links cannot
-target deleted inventory; existing dossier context remains readable. Failure
+target deleted inventory; existing dossier context remains readable. An existing
+deal may keep its own current project choices when editing other client facts;
+the deleted project cannot be copied into a new or different deal. Failure
 before commit rolls back catalogue, reservation, audit and receipt changes.
 
 ## Media removal and operations

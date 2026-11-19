@@ -9,15 +9,18 @@ deleted reference assets and private configuration are excluded from publication
 - Real isolated PostgreSQL: the initial inventory/development/permissions selection
   passes 58 tests; the requirements/deals/migration selection passes 52 tests;
   the deletion/work/project-link/photo/report selection passes 43 tests.
-- Final deletion selection passes 9 tests after ordinary linked-deal and parent
+- Final deletion selection passes 11 tests after ordinary linked-deal and parent
   programme invalidation was added. It covers physical root/hierarchy removal,
   retained completed deals, released reservations, task/visit/shortlist reads,
   forbidden new links, agent denial, strict HTTP/CSRF/key checks, concurrent retry,
   rollback, resurrection denial, single-unit removal preserving its programme
-  and siblings, and durable private-storage cleanup.
+  and siblings, preserving an existing deal's project choices while denying
+  copied deleted projects, and durable private-storage cleanup. The final
+  deletion/deal regression selection passes 22 tests. The related manual
+  qualification, deal-link and qualification-history selection passes 34 tests.
 - Test migration down to 0053, back to head and `alembic check` pass. Development
   `alembic upgrade head` and `alembic check` pass with no metadata drift.
-- Frontend `npm.cmd run test:unit`: 997 pass, 0 fail. `npm.cmd run lint` and
+- Frontend `npm.cmd run test:unit`: 998 pass, 0 fail. `npm.cmd run lint` and
   `npm.cmd run typecheck` pass.
 - Visible isolated Chrome, ports 3112/8112/8113/8114:
   `npm.cmd run test:chrome -- tests/e2e/inventory-lifecycle-recovery.spec.ts --max-failures=1 --reporter=list`
@@ -26,7 +29,9 @@ deleted reference assets and private configuration are excluded from publication
   checks initial focus on Cancel, Escape dismissal, focus return and Enter
   reopening, then disabled cancellation and Escape protection, replays the original key,
   returns to Projects and verifies a 404 for the deleted root. No horizontal
-  viewport overflow was observed. The ordinary 3100/8100 servers were untouched.
+  viewport overflow was observed. A forced in-flight live root read returns 404
+  after commit and before the lost acknowledgement; the dialog remains mounted
+  and same-key recovery succeeds. The ordinary 3100/8100 servers were untouched.
 
 The baseline Next.js runtime failed the existing dependency gate. The official
 [16.4.5 release](https://github.com/vercel/next.js/releases/tag/v16.4.5) fixes the

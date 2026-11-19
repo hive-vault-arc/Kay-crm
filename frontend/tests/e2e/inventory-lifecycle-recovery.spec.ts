@@ -10,6 +10,7 @@ for (const scenario of [{ root: "properties", width: 390 }, { root: "development
   test(`Permanent ${scenario.root} deletion recovers a lost acknowledgement with current offers`, async ({ page }) => {
     test.setTimeout(180_000);
     const actor = await createActor("manager"), attempts: { body: string | null; key?: string }[] = [];
+    let releaseRead = () => {};
     try {
       await signIn(page, actor);
       const reference = `DEL-${randomUUID().slice(0, 8)}`.toUpperCase();
@@ -33,15 +34,29 @@ for (const scenario of [{ root: "properties", width: 390 }, { root: "development
       await expect.poll(() => dialog.count()).toBe(1);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
       if (process.env.KAY_INVENTORY_DELETE_EVIDENCE === "1") await dialog.screenshot({ path: resolve(`../.local-data/inventory-delete-${scenario.width}.png`) });
+      let readHeld = false;
+      const readGate = new Promise<void>(resolve => { releaseRead = resolve; });
+      await page.route(`**${path}`, async route => {
+        if (route.request().method() !== "GET" || readHeld) return route.fallback();
+        readHeld = true; await readGate;
+        return route.fulfill({ status: 404, contentType: "application/json", body: JSON.stringify({ error: { code: "NOT_FOUND" } }) });
+      });
+      await page.evaluate(() => window.dispatchEvent(new CustomEvent("kay:live-invalidate", { detail: ["inventory"] })));
+      await expect.poll(() => readHeld).toBe(true);
       await page.route(`**${path}/delete`, async route => {
         if (route.request().method() !== "POST") return route.fallback();
         attempts.push({ body: route.request().postData(), key: route.request().headers()["idempotency-key"] });
         const response = await route.fetch();
         if (response.status() !== 200) throw new Error("SYNTHETIC_DELETE_COMMAND_FAILED");
-        if (attempts.length === 1) return route.abort("failed");
+        if (attempts.length === 1) { releaseRead(); return route.abort("failed"); }
         return route.fulfill({ response });
       });
+      const deferredRead = page.evaluate(() => new Promise<boolean>(resolve => {
+        const timeout = setTimeout(() => resolve(false), 10_000);
+        window.addEventListener("kay:live-deferred", () => { clearTimeout(timeout); resolve(true); }, { once: true });
+      }));
       await dialog.getByRole("button", { name: "Supprimer définitivement", exact: true }).click();
+      expect(await deferredRead).toBe(true);
       const retry = dialog.getByRole("button", { name: "Réessayer la suppression", exact: true });
       await expect.poll(() => retry.count()).toBe(1);
       await expect.poll(() => dialog.getByRole("button", { name: "Annuler", exact: true }).isDisabled()).toBe(true);
@@ -52,6 +67,6 @@ for (const scenario of [{ root: "properties", width: 390 }, { root: "development
       expect(JSON.parse(attempts[0].body ?? "{}")).toEqual({ confirm: true });
       expect((await page.request.get(path)).status()).toBe(404);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
-    } finally { await clearActorContext(page); await removeActor(actor); }
+    } finally { releaseRead(); await clearActorContext(page); await removeActor(actor); }
   });
 }

@@ -56,7 +56,7 @@ export function DeleteInventoryButton({ kind, id, reference, returnHref }: {
     }
   }
   return <AlertDialog open={open} onOpenChange={close}><AlertDialogTrigger asChild><Button ref={trigger} action="remove" type="button" variant="outline" disabled={!hydrated || busy} onClick={() => close(true)}>Supprimer {noun}</Button></AlertDialogTrigger>
-    <AlertDialogContent onEscapeKeyDown={event => { if (busy || uncertain) event.preventDefault(); }}>
+    <AlertDialogContent data-live-dirty={busy || uncertain ? "true" : undefined} data-pending-inventory-delete={busy || uncertain ? `/api/v1/${kind}/${id}` : undefined} onEscapeKeyDown={event => { if (busy || uncertain) event.preventDefault(); }}>
       <div className="grid gap-3"><AlertDialogTitle>Supprimer définitivement {noun} ?</AlertDialogTitle><AlertDialogDescription>
         {reference}. {kind === "developments" ? "Le programme et toutes ses unités seront supprimés du catalogue." : "Le bien sera supprimé du catalogue."} Les réservations seront libérées et les photos et vidéos supprimées. Les références historiques des affaires et paiements sont conservées. Cette suppression est définitive.
       </AlertDialogDescription></div>

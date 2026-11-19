@@ -9,8 +9,12 @@ the agency lock. Historical foreign keys retain typed identities; no foreign-key
 or immutable-history guard is disabled. Deleted UUID resurrection is rejected.
 Live parent authorization denies retained files/grants; durable blob cleanup
 retries in the ordinary worker. Deleted offerings cannot acquire new deals or
-shortlist links and are excluded from current stock counts. Real production
-records are not deleted for acceptance testing.
+shortlist links and are excluded from current stock counts. Retaining a deleted
+project during deal editing looks up only that authorized deal's current project
+rows; new and different deals cannot copy the deleted target.
+Live-read 404 deferral is limited to the exact inventory root with a pending
+deletion command. Session/permission errors and unrelated targets still redact.
+Real production records are not deleted for acceptance testing.
 
 ## Private uploads without antivirus
 

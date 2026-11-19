@@ -234,6 +234,41 @@ def test_linked_tasks_visits_shortlists_survive_and_new_links_are_denied(setting
         )
 
 
+@pytest.mark.parametrize("programme", [False, True])
+def test_existing_deal_project_can_be_kept_but_not_copied_after_deletion(
+    settings, database, programme
+):
+    from tests.deal_support import edit, new, setup
+
+    _, token, cid, _ = setup(settings, database)
+    _, manager = actor(settings, database, "manager")
+    target = (
+        development(settings, database, manager)
+        if programme
+        else property_draft(settings, database, manager)
+    )
+    choice = {"development_id" if programme else "property_id": target}
+    did = UUID(deal_command(settings, database, token, new(cid, projects=[choice]))["id"])
+    original = read_deal(database, token, did)
+    other = UUID(deal_command(settings, database, token, new(cid))["id"])
+    remove(settings, database, manager, target, programme=programme)
+    version = read_deal(database, token, did)["version"]
+    deal_command(
+        settings,
+        database,
+        token,
+        edit(version, projects=[choice], next_action="Continuer le suivi du client"),
+        did,
+    )
+    updated = read_deal(database, token, did)
+    assert updated["projects"] == original["projects"]
+    assert updated["version"] == version + 1
+    with pytest.raises(IdentityError, match="PROJECT_UNAVAILABLE"):
+        deal_command(settings, database, token, new(cid, projects=[choice]))
+    with pytest.raises(IdentityError, match="PROJECT_UNAVAILABLE"):
+        deal_command(settings, database, token, edit(1, projects=[choice]), other)
+
+
 def test_storage_cleanup_is_durable_and_idempotent(settings, database, monkeypatch):
     from app.files.storage import PrivateStorage
     from tests.file_support import grant, image_bytes, new_document

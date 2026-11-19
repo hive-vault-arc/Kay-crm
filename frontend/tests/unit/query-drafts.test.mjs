@@ -6,7 +6,7 @@ import { loadServer } from "./load-server.mjs";
 
 class ApiError extends Error { constructor(code, status) { super(code); this.code = code; this.status = status; } }
 function queryHarness(path) {
-  let cursor = 0, dirty = false, busy = false, currentPath = path;
+  let cursor = 0, dirty = false, busy = false, deleting, currentPath = path;
   const states = [], deps = [], cleanups = [], effects = [], reads = [], events = [];
   const differs = (old, next) => !old || next.some((value, index) => !Object.is(value, old[index]));
   const react = {
@@ -15,10 +15,10 @@ function queryHarness(path) {
     useCallback(callback, dependencies) { const index = cursor++; if (differs(deps[index], dependencies)) { deps[index] = [...dependencies]; states[index] = callback; } return states[index]; },
     useEffect(callback, dependencies) { const index = cursor++; if (differs(deps[index], dependencies)) { deps[index] = [...dependencies]; effects.push(() => { cleanups[index]?.(); cleanups[index] = callback(); }); } },
   };
-  const { useQuery } = loadServer("src/features/contacts/use-query.ts", { globals: { AbortController, Event, window: { dispatchEvent: event => events.push(event.type) }, document: { visibilityState: "visible", querySelector: selector => dirty || busy && selector.includes("aria-busy") ? {} : null } }, modules: { react, "@/lib/api/client": { ApiError, apiGet: (target, schema, signal) => new Promise((resolve, reject) => reads.push({ target, signal, resolve, reject })) }, "@/features/realtime/query-topics": { matchesTopics: () => true }, "@/features/realtime/live-events": { subscribeLive: () => () => {} } } });
+  const { useQuery } = loadServer("src/features/contacts/use-query.ts", { globals: { AbortController, Event, window: { dispatchEvent: event => events.push(event.type) }, document: { visibilityState: "visible", querySelector: selector => selector.startsWith("[data-pending-inventory-delete=") ? selector === `[data-pending-inventory-delete="${deleting}"]` ? {} : null : dirty || busy && selector.includes("aria-busy") ? {} : null } }, modules: { react, "@/lib/api/client": { ApiError, apiGet: (target, schema, signal) => new Promise((resolve, reject) => reads.push({ target, signal, resolve, reject })) }, "@/features/realtime/query-topics": { matchesTopics: () => true }, "@/features/realtime/live-events": { subscribeLive: () => () => {} } } });
   const schema = {};
   function Harness(next = currentPath) { currentPath = next; cursor = 0; const result = useQuery(currentPath, schema); effects.splice(0).forEach(effect => effect()); return result; }
-  return { reads, events, setDirty: value => { dirty = value; }, setBusy: value => { busy = value; }, render: Harness, close() { cleanups.forEach(cleanup => cleanup?.()); } };
+  return { reads, events, setDirty: value => { dirty = value; }, setBusy: value => { busy = value; }, setDeletion: value => { deleting = value; dirty = Boolean(value); }, render: Harness, close() { cleanups.forEach(cleanup => cleanup?.()); } };
 }
 
 test("Quiet detail and field-metadata failures retain the validated projection while a draft is active", async () => {
@@ -29,6 +29,19 @@ test("Quiet detail and field-metadata failures retain the validated projection w
       hook.render().refreshQuietly(); hook.render(); hook.setDirty(true); hook.reads[1].reject(new ApiError("DEPENDENCY_UNAVAILABLE", 503)); await delay(0);
       assert.equal(hook.render().value, original); assert.equal(hook.render().error, undefined); assert.deepEqual(hook.events, ["kay:live-deferred"]);
       hook.setDirty(false); hook.render().refreshQuietly(); hook.render(); const current = { value: "Current synthetic projection" }; hook.reads[2].resolve(current); await delay(0); assert.equal(hook.render().value, current);
+    } finally { hook.close(); }
+  }
+});
+
+test("A pending inventory deletion defers only its own quiet 404 while still exposing authority loss", async () => {
+  for (const kind of ["properties", "developments"]) for (const [status, same] of [[404, true], [401, true], [403, true], [404, false]]) {
+    const path = `/api/v1/${kind}/${randomUUID()}`, hook = queryHarness(path), original = { version: 1 };
+    try {
+      hook.render(); hook.reads[0].resolve(original); await delay(0); hook.render();
+      hook.render().refreshQuietly(); hook.render(); hook.setDeletion(same ? path : `/api/v1/${kind}/${randomUUID()}`);
+      hook.reads[1].reject(new ApiError(status === 404 ? "NOT_FOUND" : "FORBIDDEN", status)); await delay(0);
+      if (status === 404 && same) { assert.equal(hook.render().value, original); assert.equal(hook.render().error, undefined); assert.deepEqual(hook.events, ["kay:live-deferred"]); }
+      else { assert.equal(hook.render().value, undefined); assert.equal(hook.render().error.status, status); }
     } finally { hook.close(); }
   }
 });

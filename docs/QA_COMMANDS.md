@@ -14,8 +14,9 @@ archive SHA-256 verification and the full redacted scan remain enabled.
 See [verification](05-quality/inventory-deletion-verification.md). Explicit
 backend venv runs pass Ruff, mypy and the real PostgreSQL selections (58, 52 and
 43 cases); the final `pytest -q --tb=short --maxfail=1 tests/test_inventory_deletion.py`
-passes 9 cases, including single-unit deletion preserving its programme/siblings.
-`alembic check` finds no drift. Frontend lint, types, 997 unit tests and both visible
+passes 11 cases, including single-unit deletion preserving its programme/siblings
+and retention of the same deal's project choices without copying deleted targets.
+`alembic check` finds no drift. Frontend lint, types, 998 unit tests and both visible
 390/1440 Chrome deletion/recovery journeys pass. Next.js 16.4.5 resolves the
 pre-existing runtime advisory; the dependency gate reports 0 vulnerabilities.
 Production was upgraded from 0050 to 0054 before application rollout. Full
