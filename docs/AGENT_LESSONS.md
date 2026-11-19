@@ -1,5 +1,14 @@
 # KAY agent lessons
 
+## Permanent media removal changes required backup objects (2026-11-19)
+
+Retained file metadata can outlive deliberately erased inventory media. Backup
+validation must distinguish a deleted inventory root from a live/archive root
+and continue requiring protected contact/deal objects. Test a real stored hash
+before and after deletion, and restore all new tables. Never bypass an identity
+guard to clean an unregistered recovery target; use the signed isolated CI target.
+
+
 ## Keep the PowerShell host and modules on the same runtime (2026-11-19)
 
 Launching `powershell.exe` from a PowerShell 7 CI environment can import its

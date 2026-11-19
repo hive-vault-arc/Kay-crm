@@ -1,5 +1,18 @@
 # KAY QA command register
 
+## D54 backup compatibility — 2026-11-19
+
+The first hosted full backend run reached 1,046 passing cases before recovery's
+stale 85-table assertion. The schema has 88 tables. After correcting the count
+and required-object validation for erased inventory media, the explicit venv
+`pytest -q --tb=short --maxfail=1 tests/test_inventory_deletion.py` passes 11.
+The local restore function verified 88 tables/45 objects (RPO 7.62s, restore
+8.81s), but fixture cleanup refused the recreated recovery target's identity.
+The guard is unchanged and the local recovery suite is not claimed as passed.
+The final hosted full run must verify recovery and cleanup with its signed
+disposable-target baseline before merge.
+
+
 ## Windows CI tool extraction — 2026-11-19
 
 The required scanner intermittently failed before scanning because Windows

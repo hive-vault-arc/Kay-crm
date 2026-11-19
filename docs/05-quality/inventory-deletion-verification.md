@@ -54,3 +54,20 @@ The security review is recorded in `docs/SECURITY_CHECK.md`. Full hosted CI and
 full release integration must succeed on the PR head before merge. Production
 schema must reach 0054 before the new API and ordinary worker deploy. No real
 production property is deleted to test this change.
+
+## Backup compatibility correction
+
+The first full hosted backend run passed 1,046 tests before the recovery case
+asserted the old table count, 85. Its expected count is now 88 and it explicitly
+checks restored inventory identities and the blob-deletion table. Required-object
+verification excludes only document versions whose inventory root was permanently
+deleted. The deletion regression uses a real published WebP with a non-null hash:
+missing bytes fail while its property is live, and erased bytes are allowed only
+after catalogue deletion. All 11 deletion cases pass after this correction.
+
+The local restore function verified 88 tables and 45 objects, with RPO 7.62s and
+restore time 8.81s. Its fixture teardown refused the newly provisioned recovery
+database's identity under the existing hardcoded local guard. That guard remains
+unchanged; the local recovery module is not reported as a passing suite. Full
+hosted recovery/cleanup uses its existing signed disposable-target baseline and
+remains required on the final PR head.

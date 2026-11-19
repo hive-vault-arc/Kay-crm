@@ -59,6 +59,11 @@ bounded in-flight transfers to finish and fail their final authorization check.
 Cleanup is idempotent, claims with `SKIP LOCKED`, and retains failed work with
 bounded retry backoff. It adds no service or recurring infrastructure cost.
 
+Backup object verification still requires every referenced live/archive, contact,
+deal, import, export and video object. Retained document metadata under a deleted
+inventory root does not require erased media bytes. The database dump retains
+the three new tables, including typed identities and pending deletion work.
+
 Apply migration 0054 before deploying code that queries its tables, including
 the ordinary worker. It is compatible with the preceding application version.
 Do not downgrade after any deletion; the migration explicitly refuses that

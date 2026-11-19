@@ -16,6 +16,7 @@ from app.identity.models import User
 from app.identity.security import IdentityError
 from app.identity.service import login
 from app.identity.sessions import current_identity
+from app.inventory.deletion_models import PropertyIdentity
 from app.recovery.maintenance import Admission, flag, pause
 from app.recovery.private import RecoveryError
 from app.recovery.service import create, extract_code, recovery_settings, restore
@@ -113,13 +114,15 @@ def test_coherent_point_real_restore_revoke_reconcile_and_immutable_replay(setti
     old_playback = grant_playback(database, data["active_token"], video_id)["grant"]
     point = create(settings)
     result = restore(settings, UUID(point["point_id"]), replace_recovery=True)
-    assert result["verified_tables"] == 85 and result["objects"] >= 3
+    assert result["verified_tables"] == 88 and result["objects"] >= 3
     assert 0 <= result["rpo_seconds"] <= 3600 and result["restore_seconds"] < 14400
     target = recovery_settings(settings)
     db = Database(target.selected_database_url())
     try:
         with db.session() as session:
             assert session.scalar(text("SELECT to_regclass('property_period') IS NOT NULL"))
+            assert session.get(PropertyIdentity, listing_id) is not None
+            assert session.scalar(text("SELECT to_regclass('inventory_blob_deletion') IS NOT NULL"))
             note = session.get(CoverageNote, note_id)
             assert note is not None
             assert (note.deal_id, note.author_user_id, note.body) == (

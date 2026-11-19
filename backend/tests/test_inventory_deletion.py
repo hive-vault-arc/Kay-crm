@@ -270,27 +270,44 @@ def test_existing_deal_project_can_be_kept_but_not_copied_after_deletion(
 
 
 def test_storage_cleanup_is_durable_and_idempotent(settings, database, monkeypatch):
+    from hashlib import sha256
+
+    from app.files.service import consume_permit, publish_upload
     from app.files.storage import PrivateStorage
+    from app.recovery.private import RecoveryError
+    from app.recovery.service import validate_objects
     from tests.file_support import grant, image_bytes, new_document
 
     _, manager = actor(settings, database, "manager")
     pid = property_draft(settings, database, manager)
+    payload = image_bytes("WEBP")
     doc = new_document(
         settings,
         database,
         manager,
         "property",
         pid,
-        image_bytes("WEBP"),
+        payload,
         "SYN-delete.webp",
         "image/webp",
         purpose="photo",
     )
-    grant(database, manager, doc)
-    with database.session() as session:
-        key = session.scalar(select(DocumentVersion.object_key))
+    permit = grant(database, manager, doc)
+    vid, key, _, _, _, sid = consume_permit(
+        database, UUID(permit["permit_id"]), permit["token"], "upload", permit["binding"]
+    )
     path = PrivateStorage(settings).path(key)
-    path.write_bytes(b"synthetic staged file")
+    path.write_bytes(payload)
+    publish_upload(database, vid, sid, sha256(payload).digest())
+    with database.session() as session:
+        assert session.get_one(DocumentVersion, vid).sha256 is not None
+    path.unlink()
+    with (
+        pytest.raises(RecoveryError, match="BACKUP_REFERENCED_OBJECT_MISSING"),
+        database.engine.connect() as connection,
+    ):
+        validate_objects(connection, PrivateStorage(settings).root)
+    path.write_bytes(payload)
     remove(settings, database, manager, pid)
     with database.session() as session, session.begin():
         session.execute(update(BlobDeletion).values(available_at=datetime.now(UTC)))
@@ -309,6 +326,9 @@ def test_storage_cleanup_is_durable_and_idempotent(settings, database, monkeypat
     assert cleanup_once(database, settings)
     assert not path.exists()
     assert not cleanup_once(database, settings)
+    # Deleted inventory keeps file metadata, so backup must not demand erased bytes.
+    with database.engine.connect() as connection:
+        validate_objects(connection, PrivateStorage(settings).root)
 
 
 @pytest.mark.anyio
