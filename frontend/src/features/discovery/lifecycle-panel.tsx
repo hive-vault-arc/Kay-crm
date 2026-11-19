@@ -3,7 +3,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { RecordError } from "@/features/contacts/record-states";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { ApiError } from "@/lib/api/client";
@@ -55,14 +55,13 @@ export function DeleteInventoryButton({ kind, id, reference, returnHref }: {
       if (alive.current && !controller.signal.aborted) { setBusy(false); publishBusy(false); }
     }
   }
-  return <><Button ref={trigger} action="remove" type="button" variant="outline" disabled={!hydrated || busy} onClick={() => close(true)}>Supprimer {noun}</Button>
-    <AlertDialog open={open} onOpenChange={close}><AlertDialogContent onEscapeKeyDown={event => { if (busy || uncertain) event.preventDefault(); }}>
+  return <AlertDialog open={open} onOpenChange={close}><AlertDialogTrigger asChild><Button ref={trigger} action="remove" type="button" variant="outline" disabled={!hydrated || busy} onClick={() => close(true)}>Supprimer {noun}</Button></AlertDialogTrigger>
+    <AlertDialogContent onEscapeKeyDown={event => { if (busy || uncertain) event.preventDefault(); }}>
       <div className="grid gap-3"><AlertDialogTitle>Supprimer définitivement {noun} ?</AlertDialogTitle><AlertDialogDescription>
         {reference}. {kind === "developments" ? "Le programme et toutes ses unités seront supprimés du catalogue." : "Le bien sera supprimé du catalogue."} Les réservations seront libérées et les photos et vidéos supprimées. Les références historiques des affaires et paiements sont conservées. Cette suppression est définitive.
       </AlertDialogDescription></div>
       {error ? <RecordError error={error} /> : null}
       {uncertain ? <p role="status" className="text-sm">La réponse a été interrompue. Réessayez pour retrouver le résultat de cette suppression.</p> : null}
-      <div className="flex flex-wrap justify-end gap-2"><Button action="cancel" type="button" variant="outline" disabled={busy || uncertain} onClick={() => close(false)}>Annuler</Button><Button action={uncertain ? "retry" : "remove"} type="button" variant="destructive" disabled={!hydrated || busy || denied} onClick={() => void remove()}>{busy ? "Suppression…" : uncertain ? "Réessayer la suppression" : "Supprimer définitivement"}</Button></div>
-    </AlertDialogContent></AlertDialog>
-  </>;
+      <div className="flex flex-wrap justify-end gap-2"><AlertDialogCancel asChild><Button action="cancel" type="button" variant="outline" disabled={busy || uncertain} onClick={() => close(false)}>Annuler</Button></AlertDialogCancel><Button action={uncertain ? "retry" : "remove"} type="button" variant="destructive" disabled={!hydrated || busy || denied} onClick={() => void remove()}>{busy ? "Suppression…" : uncertain ? "Réessayer la suppression" : "Supprimer définitivement"}</Button></div>
+    </AlertDialogContent></AlertDialog>;
 }

@@ -15,7 +15,7 @@ function fixture({ root = "properties", hydrated = true, command } = {}) {
       react: { ...h.react, useContext: context => context.value }, "react/jsx-runtime": runtime,
       "next/navigation": { useRouter: () => ({ replace: value => navigations.push(value), refresh() {} }) },
       "@/components/ui/button": { Button: "Button" },
-      "@/components/ui/alert-dialog": Object.fromEntries(["AlertDialog", "AlertDialogContent", "AlertDialogTitle", "AlertDialogDescription"].map(name => [name, name])),
+      "@/components/ui/alert-dialog": Object.fromEntries(["AlertDialog", "AlertDialogCancel", "AlertDialogTrigger", "AlertDialogContent", "AlertDialogTitle", "AlertDialogDescription"].map(name => [name, name])),
       "@/features/contacts/record-states": { RecordError: "Error" }, "@/hooks/use-hydrated": { useHydrated: () => hydrated },
       "@/lib/api/client": { ApiError }, "@/features/inventory/contracts": inventory,
       "@/features/inventory/record-scope": { InventoryRecordContext: host }, "@/features/inventory/use-command": { InventoryBusyContext: busy },

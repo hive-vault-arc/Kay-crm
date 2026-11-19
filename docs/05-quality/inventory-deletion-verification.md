@@ -23,7 +23,8 @@ deleted reference assets and private configuration are excluded from publication
   `npm.cmd run test:chrome -- tests/e2e/inventory-lifecycle-recovery.spec.ts --max-failures=1 --reporter=list`
   passes both 390px property and 1440px programme journeys. Each creates a current
   offer, deletes through the actual dialog, loses its first acknowledgement,
-  checks disabled cancellation and Escape protection, replays the original key,
+  checks initial focus on Cancel, Escape dismissal, focus return and Enter
+  reopening, then disabled cancellation and Escape protection, replays the original key,
   returns to Projects and verifies a 404 for the deleted root. No horizontal
   viewport overflow was observed. The ordinary 3100/8100 servers were untouched.
 

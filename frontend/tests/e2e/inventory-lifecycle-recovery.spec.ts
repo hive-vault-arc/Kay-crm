@@ -21,8 +21,15 @@ for (const scenario of [{ root: "properties", width: 390 }, { root: "development
       await page.setViewportSize({ width: scenario.width, height: 900 });
       await page.goto(scenario.root === "properties" ? `/projects/properties/${id}` : `/projects/${id}`);
       await page.getByRole("button", { name: "Actions", exact: true }).click();
-      await page.getByRole("button", { name: scenario.root === "properties" ? "Supprimer ce bien" : "Supprimer ce programme", exact: true }).click();
+      const deleteTrigger = page.getByRole("button", { name: scenario.root === "properties" ? "Supprimer ce bien" : "Supprimer ce programme", exact: true });
+      await deleteTrigger.click();
       const dialog = page.getByRole("alertdialog");
+      await expect.poll(() => dialog.count()).toBe(1);
+      await expect(dialog.getByRole("button", { name: "Annuler", exact: true })).toBeFocused();
+      await page.keyboard.press("Escape");
+      await expect.poll(() => dialog.count()).toBe(0);
+      await expect(deleteTrigger).toBeFocused();
+      await deleteTrigger.press("Enter");
       await expect.poll(() => dialog.count()).toBe(1);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
       if (process.env.KAY_INVENTORY_DELETE_EVIDENCE === "1") await dialog.screenshot({ path: resolve(`../.local-data/inventory-delete-${scenario.width}.png`) });
