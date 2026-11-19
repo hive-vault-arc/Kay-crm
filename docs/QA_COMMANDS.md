@@ -1,5 +1,14 @@
 # KAY QA command register
 
+## D54 acceptance-selector verification — 2026-11-19
+
+The full unit gate caught a renamed SP19 test missing the cumulative
+acceptance regex. Retaining its `SP19 AT22/24/29` prefix preserves the
+same 19 representative journeys without weakening the selector assertion.
+`npm run test:unit` passes all 998 cases (15.02s) after that title-only
+correction. The real browser assertions and application code are unchanged
+from the five passing focused Chrome journeys recorded below.
+
 ## D54 shared discovery-helper correction — 2026-11-19
 
 Run 44567587437 passed all 1,321 backend tests (991.79s), but exposed a

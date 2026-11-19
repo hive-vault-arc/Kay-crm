@@ -1,5 +1,12 @@
 # KAY agent lessons
 
+## Preserve acceptance selection when renaming browser tests (2026-11-19)
+
+Representative browser profiles select stable acceptance prefixes. Keep
+those prefixes when updating a scenario's wording, and run the real
+acceptance-selection unit gate before publishing a renamed journey.
+Do not lower its expected count to hide a missing selected scenario.
+
 ## Search legacy journeys when replacing a lifecycle action (2026-11-19)
 
 Replacing an inventory action also changes tests in shared record-removal

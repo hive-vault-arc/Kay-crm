@@ -6,7 +6,7 @@ import { changeLeadFilters } from "../helpers/leads";
 
 test.beforeEach(({ page }) => { page.setDefaultTimeout(20_000); });
 
-test("SP19/D54 AT22/24/29: scoped search, filtered export, inventory deletion and retained privileged audit", async ({ page }) => {
+test("SP19 AT22/24/29: scoped search, filtered export, inventory deletion and retained privileged audit (D54)", async ({ page }) => {
   test.setTimeout(120000); const actors: TestActor[] = [];
   try {
     const data = await discoveryFixture(page, actors);
