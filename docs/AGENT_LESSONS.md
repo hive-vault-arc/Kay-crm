@@ -1,5 +1,14 @@
 # KAY agent lessons
 
+## Search legacy journeys when replacing a lifecycle action (2026-11-19)
+
+Replacing an inventory action also changes tests in shared record-removal
+journeys. Search retired labels across all browser tests, not only the
+feature's own files. Preserve the real discovery, confirmation, mobile
+and persisted-state assertions using the approved new lifecycle. Do not
+skip an obsolete journey or keep an archive action merely to satisfy it.
+A list return URL can retain its kind filter; assert that intended context.
+
 ## Permanent media removal changes required backup objects (2026-11-19)
 
 Retained file metadata can outlive deliberately erased inventory media. Backup

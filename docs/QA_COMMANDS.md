@@ -1,5 +1,23 @@
 # KAY QA command register
 
+## D54 legacy browser regression correction — 2026-11-19
+
+Hosted run 44557245281 passed all 1,321 backend tests, including recovery
+and guarded fixture cleanup. Its browser regression detected the retired
+programme archive button in `record-removal.spec.ts`. That journey now
+checks the mobile header deletion, focused Cancel, retained live record
+before confirmation, exact programmes-list return and permanent 404.
+The first local check exposed its too-strict return URL assertion; the
+actual return correctly preserves `kind=programmes`. After correction,
+`npx playwright test --config=playwright.chrome.config.ts
+tests/e2e/record-removal.spec.ts --grep D54 --max-failures=1` passed 1/1
+in visible isolated Chrome at 360px (18.3s; total 41.8s), using ports
+3112/8112/8113/8114. ESLint, TypeScript and actual actionlint pass.
+The browser job budget is 90 minutes: the prior successful hosted full
+job took 74m41s against a 75-minute cap before the added journeys.
+Assertions, test timeouts, serial database isolation and full scope remain
+unchanged. A fresh exact-head full hosted run is required before merge.
+
 ## D54 backup compatibility — 2026-11-19
 
 The first hosted full backend run reached 1,046 passing cases before recovery's
