@@ -91,7 +91,9 @@ def test_unit_deletion_keeps_the_programme_and_other_units(settings, database):
     _, manager = actor(settings, database, "manager")
     did = development(settings, database, manager)
     _, floors, template = hierarchy(settings, database, manager, did)
-    removed, retained = [unit(settings, database, manager, did, floor, template) for floor in floors]
+    removed, retained = [
+        unit(settings, database, manager, did, floor, template) for floor in floors
+    ]
     offering_draft(settings, database, manager, removed)
     with database.session() as session:
         version = session.get_one(Development, did).version
