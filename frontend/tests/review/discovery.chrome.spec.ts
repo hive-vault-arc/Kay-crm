@@ -2,11 +2,11 @@ import { chromium, type Page, type Route } from "@playwright/test";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { test, expect, clearActorContext, removeActor, signIn, type TestActor } from "../helpers/auth";
-import { discoveryFixture, lifecycle, searchFor } from "../helpers/discovery";
+import { discoveryFixture, inventoryDeletion, searchFor } from "../helpers/discovery";
 import { geometry } from "../helpers/report-review";
 import { testControl } from "../helpers/api-process";
 
-test("SP19 visible Chrome: search/export/lifecycle/audit, states, keyboard, touch and real zoom", async ({ page, browser, baseURL }) => {
+test("SP19 visible Chrome: search/export/deletion confirmation/audit, states, keyboard, touch and real zoom", async ({ page, browser, baseURL }) => {
   test.setTimeout(180000); const actors: TestActor[] = [], errors: string[] = [], expected: string[] = [];
   const mobileContext = await browser.newContext({ baseURL, ignoreHTTPSErrors: true, viewport: { width: 390, height: 844 }, hasTouch: true, locale: "fr-FR", timezoneId: "Africa/Casablanca" }), mobile = await mobileContext.newPage();
   let injected = false, profile: string | undefined, zoomContext: Awaited<ReturnType<typeof chromium.launchPersistentContext>> | undefined;
@@ -30,7 +30,7 @@ test("SP19 visible Chrome: search/export/lifecycle/audit, states, keyboard, touc
     await searchFor(page); await sheetGeometry(page); await capture(page, "search-desktop");
     await page.getByLabel("Type de résultat", { exact: true }).selectOption("property"); await page.getByRole("button", { name: "Lancer la recherche", exact: true }).click(); await expect(page.getByText("1 résultat(s) accessible(s).", { exact: true })).toBeVisible();
     await page.getByRole("link", { name: "SP19-SHARED : SP19 bien synthétique", exact: true }).click(); await expect(page.getByRole("heading", { name: "Fiche du bien", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Archiver ce dossier", exact: true }).click(); await page.getByLabel("Motif obligatoire", { exact: true }).fill("SP19 vérification synthétique"); await geometry(page); await capture(page, "archive-confirmation-desktop", true); await page.getByRole("button", { name: "Confirmer l’archivage", exact: true }).click(); await expect(page.getByRole("heading", { name: "État : Archivé", exact: true })).toBeVisible(); await expect(page.getByText("Lecture seule : restaurez ce dossier pour le modifier.", { exact: true })).toBeVisible(); await capture(page, "archived-desktop", true); await lifecycle(page, true);
+    const deletion = await inventoryDeletion(page); await geometry(page); await capture(page, "delete-confirmation-desktop", true); await deletion.getByRole("button", { name: "Annuler", exact: true }).click(); expect((await page.request.get(`/api/v1/properties/${data.pid}`)).status()).toBe(200);
     await page.goto("/leads"); await page.getByRole("button", { name: "Exporter les résultats filtrés", exact: true }).click(); await page.getByRole("button", { name: "Confirmer l’export CSV", exact: true }).click(); await expect(page.getByText(/Export demandé/)).toBeVisible(); await page.getByRole("link", { name: "Mes exports", exact: true }).click();
     await testControl("worker-start"); await expect.poll(async () => (await (await page.request.get("/api/v1/exports")).json()).items[0]?.state, { timeout: 15000 }).toBe("ready"); await page.getByRole("button", { name: "Actualiser les exports", exact: true }).click(); await expect(page.getByRole("button", { name: "Télécharger le CSV", exact: true })).toBeVisible(); await geometry(page); await capture(page, "export-ready-desktop", true); injected = true; await page.route("**/api/v1/transfers/exports/*", route => route.abort("connectionfailed")); await page.getByRole("button", { name: "Télécharger le CSV", exact: true }).click(); await expect(page.getByRole("alert").filter({ hasText: "Transfert interrompu" })).toBeVisible(); await capture(page, "download-error-desktop", true); await page.unroute("**/api/v1/transfers/exports/*"); injected = false; const download = page.waitForEvent("download"); await page.getByRole("button", { name: "Réessayer", exact: true }).click(); await (await download).delete(); await testControl("worker-stop");
     await page.goto("/dashboard?view=audit"); await expect(page.getByText("exports.downloaded", { exact: true })).toBeVisible(); await geometry(page); await capture(page, "audit-desktop", true);

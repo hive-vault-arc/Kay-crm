@@ -1,5 +1,89 @@
 # KAY QA command register
 
+## D54 acceptance-selector verification — 2026-11-19
+
+The full unit gate caught a renamed SP19 test missing the cumulative
+acceptance regex. Retaining its `SP19 AT22/24/29` prefix preserves the
+same 19 representative journeys without weakening the selector assertion.
+`npm run test:unit` passes all 998 cases (15.02s) after that title-only
+correction. The real browser assertions and application code are unchanged
+from the five passing focused Chrome journeys recorded below.
+
+## D54 shared discovery-helper correction — 2026-11-19
+
+Run 44567587437 passed all 1,321 backend tests (991.79s), but exposed a
+second retired inventory-archive entry point in the shared discovery helper.
+The search/export journey now preserves both roles' original visibility and
+export/audit-denial assertions, then deletes the property, checks its 404 and
+absence from global search, and verifies the retained deletion audit event.
+The shared helper opens the real deletion confirmation; its review caller
+checks cancellation preserves the live record. The old root-archive labels
+have no remaining matches across frontend source and all test/helper files.
+
+On isolated ports 3112/8112/8113/8114, visible Chrome passed 5/5 in 2.1m:
+`npx playwright test --config=playwright.chrome.config.ts
+tests/e2e/discovery.spec.ts tests/e2e/inventory-lifecycle-recovery.spec.ts
+tests/e2e/record-removal.spec.ts --grep 'SP19|Permanent|D54' --max-failures=1`.
+This covers filtered export and same-key recovery, scoped global search,
+retained audit, mobile programme deletion and both root-deletion lost-response
+races with current offers. TypeScript and ESLint pass. The historical visual
+discovery review was not rerun; its changed helper call is type/lint checked.
+A new full exact-head hosted run remains required before merge.
+
+## D54 legacy browser regression correction — 2026-11-19
+
+Hosted run 44557245281 passed all 1,321 backend tests, including recovery
+and guarded fixture cleanup. Its browser regression detected the retired
+programme archive button in `record-removal.spec.ts`. That journey now
+checks the mobile header deletion, focused Cancel, retained live record
+before confirmation, exact programmes-list return and permanent 404.
+The first local check exposed its too-strict return URL assertion; the
+actual return correctly preserves `kind=programmes`. After correction,
+`npx playwright test --config=playwright.chrome.config.ts
+tests/e2e/record-removal.spec.ts --grep D54 --max-failures=1` passed 1/1
+in visible isolated Chrome at 360px (18.3s; total 41.8s), using ports
+3112/8112/8113/8114. ESLint, TypeScript and actual actionlint pass.
+The browser job budget is 90 minutes: the prior successful hosted full
+job took 74m41s against a 75-minute cap before the added journeys.
+Assertions, test timeouts, serial database isolation and full scope remain
+unchanged. A fresh exact-head full hosted run is required before merge.
+
+## D54 backup compatibility — 2026-11-19
+
+The first hosted full backend run reached 1,046 passing cases before recovery's
+stale 85-table assertion. The schema has 88 tables. After correcting the count
+and required-object validation for erased inventory media, the explicit venv
+`pytest -q --tb=short --maxfail=1 tests/test_inventory_deletion.py` passes 11.
+The local restore function verified 88 tables/45 objects (RPO 7.62s, restore
+8.81s), but fixture cleanup refused the recreated recovery target's identity.
+The guard is unchanged and the local recovery suite is not claimed as passed.
+The final hosted full run must verify recovery and cleanup with its signed
+disposable-target baseline before merge.
+
+
+## Windows CI tool extraction — 2026-11-19
+
+The required scanner intermittently failed before scanning because Windows
+PowerShell 5 imported the PowerShell 7 Archive module. The tool runner now uses
+`pwsh.exe -NoProfile -NonInteractive` with terminating extraction errors. Actual
+`node .github/scripts/check-tools.mjs gitleaks` and `actionlint` pass on Windows;
+archive SHA-256 verification and the full redacted scan remain enabled.
+
+
+## Permanent inventory deletion — D54, 2026-11-19
+
+See [verification](05-quality/inventory-deletion-verification.md). Explicit
+backend venv runs pass Ruff, mypy and the real PostgreSQL selections (58, 52 and
+43 cases); the final `pytest -q --tb=short --maxfail=1 tests/test_inventory_deletion.py`
+passes 11 cases, including single-unit deletion preserving its programme/siblings
+and retention of the same deal's project choices without copying deleted targets.
+`alembic check` finds no drift. Frontend lint, types, 998 unit tests and both visible
+390/1440 Chrome deletion/recovery journeys pass. Next.js 16.4.5 resolves the
+pre-existing runtime advisory; the dependency gate reports 0 vulnerabilities.
+Production was upgraded from 0050 to 0054 before application rollout. Full
+exact-candidate hosted release integration remains required before merge.
+
+
 ## Direct visit confirmation and report reminders (D52)
 
 From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --unit-only` passed

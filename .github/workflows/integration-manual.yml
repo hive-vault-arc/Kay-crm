@@ -34,7 +34,8 @@ jobs:
   integration:
     name: ${{ matrix.suite == 'backend' && 'Backend regression' || 'Browser regression' }}
     runs-on: windows-2025
-    timeout-minutes: 75
+    # The serial browser gate previously took 74m41s; leave room for added journeys.
+    timeout-minutes: ${{ matrix.suite == 'browser' && 90 || 75 }}
     strategy:
       fail-fast: false
       matrix:

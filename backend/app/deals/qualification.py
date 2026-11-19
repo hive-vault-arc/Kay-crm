@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.contacts.models import Contact
@@ -21,16 +21,36 @@ def project_interest(
     name = choice.external_name
     if choice.development_id:
         development = session.get(Development, choice.development_id)
-        if development is None or development.archived_at is not None:
+        if development is None:
+            name = session.scalar(
+                select(DealProject.name).where(
+                    DealProject.deal_id == did,
+                    DealProject.development_id == choice.development_id,
+                )
+            )
+            if name is None:
+                raise IdentityError("PROJECT_UNAVAILABLE", 422)
+        elif development.archived_at is not None:
             raise IdentityError("PROJECT_UNAVAILABLE", 422)
-        name = development.name
+        else:
+            name = development.name
     if choice.property_id:
         property = session.get(Property, choice.property_id)
-        if property is None or property.archived_at is not None:
+        if property is None:
+            name = session.scalar(
+                select(DealProject.name).where(
+                    DealProject.deal_id == did,
+                    DealProject.property_id == choice.property_id,
+                )
+            )
+            if name is None:
+                raise IdentityError("PROJECT_UNAVAILABLE", 422)
+        elif property.archived_at is not None:
             raise IdentityError("PROJECT_UNAVAILABLE", 422)
-        if property.development_id is not None:
+        elif property.development_id is not None:
             raise IdentityError("PROJECT_DEVELOPMENT_REQUIRED", 422)
-        name = property.marketing_name or property.reference
+        else:
+            name = property.marketing_name or property.reference
     if not name:
         raise IdentityError("PROJECT_REQUIRED", 422)
     return DealProject(

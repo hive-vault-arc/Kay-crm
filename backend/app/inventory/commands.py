@@ -21,6 +21,7 @@ from app.inventory.contracts import (
     CreateProperty,
     EditOffering,
     EditProperty,
+    ForceDelete,
     NewOffering,
     Owners,
     PropertyFields,
@@ -58,6 +59,7 @@ Body = (
     | ExternalOutcome
     | SavePeriod
     | CancelPeriod
+    | ForceDelete
 )
 
 
@@ -204,6 +206,13 @@ def execute(
     item: Property | Development
     offering: Offering | None = None
     reason = ""
+    if isinstance(body, ForceDelete):
+        from app.inventory.deletion import remove
+
+        if target is None or operation not in {"property-delete", "development-delete"}:
+            raise IdentityError("VALIDATION_ERROR", 422)
+        item, eid = remove(session, identity, target, development=operation == "development-delete")
+        return item, None, eid
     if isinstance(body, SavePeriod | CancelPeriod):
         if target is None:
             raise IdentityError("NOT_FOUND", 404)

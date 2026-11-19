@@ -13,6 +13,7 @@ from app.identity import models as identity_models  # noqa: F401
 from app.imports import models as import_models  # noqa: F401
 from app.intake import models as intake_models  # noqa: F401
 from app.inventory import (
+    deletion_models,  # noqa: F401
     hierarchy_models,  # noqa: F401
     outcome_models,  # noqa: F401
     period_models,  # noqa: F401

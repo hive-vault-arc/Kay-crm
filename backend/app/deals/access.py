@@ -12,6 +12,7 @@ from app.deals.models import CustomerOffer, Deal
 from app.identity.security import IdentityError
 from app.identity.sessions import CurrentIdentity
 from app.inventory.models import Offering
+from app.inventory.selection import require_live_target
 from app.requirements.models import Requirement
 
 
@@ -76,6 +77,8 @@ def check_links(
     offering = session.get(Offering, body.offering_id) if body.offering_id else None
     if body.offering_id and offering is None:
         raise IdentityError("NOT_FOUND", 404)
+    if offering and (not did or session.get_one(Deal, did).offering_id != offering.id):
+        require_live_target(session, offering)
     if offering and offering.kind == "holiday":
         raise IdentityError("HOLIDAY_DEAL_NOT_SUPPORTED", 422)
     if offering and offering.version != body.expected_offering_version:

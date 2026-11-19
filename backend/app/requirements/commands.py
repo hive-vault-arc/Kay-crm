@@ -15,6 +15,7 @@ from app.identity.models import AGENCY_ID, Agency, User
 from app.identity.security import IdentityError, keyed_digest
 from app.identity.sessions import CurrentIdentity, current_identity
 from app.inventory.models import Offering
+from app.inventory.selection import require_live_target
 from app.requirements.contracts import (
     EditRequirement,
     NewRequirement,
@@ -106,6 +107,7 @@ def apply(
             offering = session.get(Offering, body.offering_id)
             if offering is None:
                 raise IdentityError("NOT_FOUND", 404)
+            require_live_target(session, offering)
             if offering.kind != row.intent:
                 raise IdentityError("OFFERING_INTENT_MISMATCH", 422)
             if offering.version != body.expected_offering_version:

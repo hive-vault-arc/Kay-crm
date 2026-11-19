@@ -99,7 +99,7 @@ class PropertyOwner(Base):
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     property_id: Mapped[UUID] = mapped_column(
-        ForeignKey("property.id", ondelete="RESTRICT"), index=True
+        ForeignKey("property_identity.id", ondelete="RESTRICT"), index=True
     )
     contact_id: Mapped[UUID] = mapped_column(
         ForeignKey("contact.id", ondelete="RESTRICT"), index=True
@@ -159,10 +159,10 @@ class Offering(Base):
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     property_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("property.id", ondelete="RESTRICT"), index=True
+        ForeignKey("property_identity.id", ondelete="RESTRICT"), index=True
     )
     development_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("development.id", ondelete="RESTRICT"), index=True
+        ForeignKey("development_identity.id", ondelete="RESTRICT"), index=True
     )
     kind: Mapped[str] = mapped_column(String(10))
     price_mad: Mapped[Decimal | None] = mapped_column(Numeric(18, 2))
@@ -192,9 +192,11 @@ class InventoryEvent(Base):
         ),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
-    property_id: Mapped[UUID | None] = mapped_column(ForeignKey("property.id", ondelete="RESTRICT"))
+    property_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("property_identity.id", ondelete="RESTRICT")
+    )
     development_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("development.id", ondelete="RESTRICT"), index=True
+        ForeignKey("development_identity.id", ondelete="RESTRICT"), index=True
     )
     offering_id: Mapped[UUID | None] = mapped_column(ForeignKey("offering.id", ondelete="RESTRICT"))
     actor_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
@@ -221,9 +223,11 @@ class InventoryReceipt(Base):
     route: Mapped[str] = mapped_column(String(120), primary_key=True)
     key: Mapped[UUID] = mapped_column(primary_key=True)
     request_hash: Mapped[bytes] = mapped_column(LargeBinary(32))
-    property_id: Mapped[UUID | None] = mapped_column(ForeignKey("property.id", ondelete="RESTRICT"))
+    property_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("property_identity.id", ondelete="RESTRICT")
+    )
     development_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("development.id", ondelete="RESTRICT"), index=True
+        ForeignKey("development_identity.id", ondelete="RESTRICT"), index=True
     )
     offering_id: Mapped[UUID | None] = mapped_column(ForeignKey("offering.id", ondelete="RESTRICT"))
     event_id: Mapped[UUID] = mapped_column(ForeignKey("inventory_event.id", ondelete="RESTRICT"))

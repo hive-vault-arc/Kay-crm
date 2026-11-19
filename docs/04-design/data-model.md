@@ -1,5 +1,11 @@
 # Data model: dictionary, conceptual, logical, and physical views
 
+D54/migration 0054 adds typed `property_identity` and `development_identity`
+tables for retained historical foreign keys, and `inventory_blob_deletion` for
+durable media cleanup. Live catalogue/hierarchy rows are physically deleted by
+the authorized inventory command. See [inventory deletion](inventory-deletion.md)
+for lifecycle, stock and migration-order constraints.
+
 Selected unit rich drafts,2026-10-28: the existing property.listing_details
 JSON stores known partial unit facts; missing facts remain null/unknown. This
 preserves existing incomplete-unit drafts without dropping entered details.

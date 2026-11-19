@@ -25,6 +25,20 @@ ComparisonAmount = Annotated[
     str, Field(pattern=r"^[0-9]{1,18}(\.[0-9]{1,2})?$"), AfterValidator(positive)
 ]
 Version = Annotated[int, Field(strict=True, ge=1)]
+
+
+class ForceDelete(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    confirm: Literal[True]
+
+    @field_validator("confirm", mode="before")
+    @classmethod
+    def explicit_confirmation(cls, value: object) -> object:
+        if value is not True:
+            raise ValueError("EXPLICIT_CONFIRMATION_REQUIRED")
+        return value
+
+
 # Property details are read and edited as JSON numbers in the browser.
 MAX_SAFE_JSON_INTEGER = 2**53 - 1
 Category = Literal[

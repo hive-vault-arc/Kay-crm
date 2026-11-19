@@ -1,5 +1,12 @@
 # HTTP contracts for `/api/v1`
 
+D54 replaces inventory removal UI with the M/A-only permanent
+[`POST /properties/{id}/delete` and `POST /developments/{id}/delete`](inventory-deletion.md).
+The strict body is `{ "confirm": true }`; normal facade, CSRF and idempotency
+checks apply. Force deletion reads current stock rather than a client version.
+Legacy inventory archive endpoints remain compatible. Contact/deal removal is
+unchanged.
+
 [Client listing links](client-listing-links.md): the authenticated `/listing-shares`
 commands manage approvals and expiring grants. The separate `/client-listing`
 read endpoints use only the opaque client grant and return an explicit public

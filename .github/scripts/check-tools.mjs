@@ -27,7 +27,7 @@ if (!bytes) {
 if (createHash("sha256").update(bytes).digest("hex") !== platform.sha256) throw new Error("CHECK_TOOL_INTEGRITY_FAILED");
 if (process.platform === "win32") {
   const escape = value => value.replaceAll("'", "''");
-  execFileSync("powershell.exe", ["-NoProfile", "-Command", `Expand-Archive -LiteralPath '${escape(archive)}' -DestinationPath '${escape(directory)}' -Force`], { stdio: "inherit", windowsHide: true });
+  execFileSync("pwsh.exe", ["-NoProfile", "-NonInteractive", "-Command", `$ErrorActionPreference = 'Stop'; Expand-Archive -LiteralPath '${escape(archive)}' -DestinationPath '${escape(directory)}' -Force`], { stdio: "inherit", windowsHide: true });
 } else execFileSync("tar", ["-xzf", archive, "-C", directory], { stdio: "inherit" });
 const binary = path.join(directory, `${name}${process.platform === "win32" ? ".exe" : ""}`);
 await chmod(binary, 0o755);

@@ -10,6 +10,11 @@ function deferDetail(path: string) {
   return (recordRead || path === "/api/v1/contacts/metadata" || path === "/api/v1/visit-schedule/policy" || path === "/api/v1/work/holidays" || path.startsWith("/api/v1/generated-documents/context")) && Boolean(document.querySelector('[data-live-dirty="true"], form[data-draft-managed][aria-busy="true"]'));
 }
 
+function pendingInventoryDeletion(path: string) {
+  return /^\/api\/v1\/(properties|developments)\/[a-f0-9-]{36}$/.test(path)
+    && Boolean(document.querySelector(`[data-pending-inventory-delete="${path}"]`));
+}
+
 export function queryPath(kind: string, values: Record<string, string | number | undefined>) {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(values)) if (value !== undefined && value !== "") query.set(key, String(value));
@@ -34,8 +39,11 @@ export function useQuery<T>(path: `/api/v1/${string}`, schema: z.ZodType<T>, rev
       if (abort.signal.aborted) return;
       const failure = reason instanceof ApiError ? reason : new ApiError("DEPENDENCY_UNAVAILABLE", 503);
       // A transient quiet read must not tear down the editor it was meant to refresh.
-      // Current authority/validation errors still replace the previous projection.
-      if (failure.status >= 500 && deferCurrent()) { window.dispatchEvent(new Event("kay:live-deferred")); return; }
+      // Own deletion can beat its acknowledgement; authority failures still redact.
+      const deletedDuringCommand = failure.status === 404 && backgroundLive
+        && projection.current?.path === path && projection.current.value !== undefined
+        && pendingInventoryDeletion(path);
+      if (deletedDuringCommand || failure.status >= 500 && deferCurrent()) { window.dispatchEvent(new Event("kay:live-deferred")); return; }
       setState({ path, error: failure });
     }).finally(() => {
       if (!abort.signal.aborted) {

@@ -49,11 +49,11 @@ class DealProject(Base):
     )
     position: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
     development_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("development.id", ondelete="RESTRICT"),
+        ForeignKey("development_identity.id", ondelete="RESTRICT"),
         index=True,
     )
     property_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("property.id", ondelete="RESTRICT"),
+        ForeignKey("property_identity.id", ondelete="RESTRICT"),
         index=True,
     )
     external_name: Mapped[str | None] = mapped_column(String(160))

@@ -109,7 +109,7 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
     "@/components/shared/page-header": { PageHeader: "PageHeader" }, "@/components/ui/skeleton": { Skeleton: "Skeleton" }, "@/components/icons": {},
     "@/components/shared/important-remarks": { ImportantRemarks: "Remarks" }, "@/lib/format": loadServer("src/lib/format/index.ts"),
     "@/features/contacts/record-states": { RecordError: "Error" }, "@/features/contacts/use-query": { useQuery: () => ({ value: development, refreshQuietly() {} }) },
-    "@/features/discovery/lifecycle-panel": { LifecyclePanel: "Lifecycle" }, "@/features/files/file-panel": { FilePanel: "Files" },
+    "@/features/discovery/lifecycle-panel": { DeleteInventoryButton: "DeleteInventory" }, "@/features/files/file-panel": { FilePanel: "Files" },
     "@/features/shares/share-drawer": { ListingShareDrawer: "Share" },
     "./project-edit-link": { ProjectEditLink: "EditLink" }, "./development-contracts": {}, "./development-phase": { DevelopmentPhaseBadge: "Phase" }, "./development-editor": { DevelopmentEditor: "Editor" }, "./hierarchy-panel": { HierarchyPanel: "Hierarchy" },
     "./unit-directory": { UnitDirectory: "Units" }, "./owner-editor": { OwnerEditor: "OwnerEditor" }, "./inventory-history": { InventoryHistory: "History" },
@@ -132,7 +132,7 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
     assert.equal(find(header.props.actions, "Share")[0].props.id, development.id);
     const owners = find(workspace.props.aside, "Section").find(section => section.props.title === "Propriétaires");
     assert.equal(Boolean(owners.props.action), role !== "agent");
-    assert.equal(find(header.props.actions, "Lifecycle").length, role === "agent" ? 0 : 1);
+    assert.equal(find(header.props.actions, "DeleteInventory").length, role === "agent" ? 0 : 1);
   }
   development = { ...development, phase_supported: true, phase: "marketing" };
   const phase = find(find(render("agent"), "Workspace")[0].props.tabs[0].content, "Fact").find(node => node.props.label === "État du programme");

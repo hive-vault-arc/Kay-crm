@@ -17,6 +17,7 @@ def main() -> None:
     from app.discovery.export_worker import run_once as export_once
     from app.files.worker import run_once
     from app.intake.worker import run_once as intake_once
+    from app.inventory.deletion import cleanup_once
     from app.realtime.events import install
     from app.realtime.push import run_once as push_once
     from app.recovery.maintenance import Admission
@@ -64,6 +65,7 @@ def main() -> None:
                 continue
             try:
                 worked = run_once(database, settings)
+                cleaned = cleanup_once(database, settings)
                 reminded = remind_once(database)
                 exported = export_once(database, settings)
                 received = intake_once(database)
@@ -112,6 +114,7 @@ def main() -> None:
                 return
             if (
                 not worked
+                and not cleaned
                 and not reminded
                 and not exported
                 and not received

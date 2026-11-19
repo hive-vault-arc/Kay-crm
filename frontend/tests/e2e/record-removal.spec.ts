@@ -73,23 +73,25 @@ test("D44: owner archives and restores a Lead and a deal from their pages", asyn
   } finally { await clearActorContext(page); await removeActor(agent); }
 });
 
-test("D44: a manager finds the project archive from its header", async ({ page }, testInfo) => {
+test("D54: a manager permanently deletes a programme from its header on mobile", async ({ page }, testInfo) => {
   test.setTimeout(120_000);
   const manager = await createActor("manager");
   try {
     await signIn(page, manager);
     const project = await createDevelopment(page);
-    await page.getByRole("button", { name: "Actions", exact: true }).click();
-    await page.getByRole("button", { name: "Gérer le dossier", exact: true }).click();
-    await expect(page.getByRole("region", { name: "Cycle de vie de l’inventaire" })).toBeInViewport();
-    await page.getByRole("button", { name: "Archiver ce dossier" }).click();
-    await page.getByLabel("Motif obligatoire").fill("Retrait synthétique du projet");
-    await page.getByRole("button", { name: "Confirmer l’archivage" }).click();
-    await expect(page.getByText("État : Archivé")).toBeVisible();
     await page.setViewportSize({ width: 360, height: 780 });
+    await page.getByRole("button", { name: "Actions", exact: true }).click();
+    await page.getByRole("button", { name: "Supprimer ce programme", exact: true }).click();
+    const dialog = page.getByRole("alertdialog", { name: "Supprimer définitivement ce programme ?", exact: true });
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toContainText("Le programme et toutes ses unités seront supprimés du catalogue.");
+    await expect(dialog.getByRole("button", { name: "Annuler", exact: true })).toBeFocused();
+    expect((await page.request.get(`/api/v1/developments/${project.id}`)).status()).toBe(200);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
-    await page.screenshot({ path: testInfo.outputPath("d44-project-mobile.png") });
-    expect((await (await page.request.get(`/api/v1/developments/${project.id}`)).json()).archived_at).not.toBeNull();
+    await dialog.screenshot({ path: testInfo.outputPath("d54-project-delete-mobile.png") });
+    await dialog.getByRole("button", { name: "Supprimer définitivement", exact: true }).click();
+    await expect(page).toHaveURL(/\/projects\?kind=programmes$/);
+    expect((await page.request.get(`/api/v1/developments/${project.id}`)).status()).toBe(404);
   } finally { await clearActorContext(page); await removeActor(manager); }
 });
 

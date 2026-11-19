@@ -48,6 +48,7 @@ from app.identity.models import (
 from app.identity.security import hash_password
 from app.imports.models import ImportBatch, ImportPreview, ImportRow
 from app.intake.models import WebsiteReceipt, WebsiteSource
+from app.inventory.deletion_models import BlobDeletion, DevelopmentIdentity, PropertyIdentity
 from app.inventory.hierarchy_models import Block, Development, DevelopmentOwner, Floor, UnitType
 from app.inventory.models import InventoryEvent, InventoryReceipt, Offering, Property, PropertyOwner
 from app.inventory.outcome_models import StockEffect, StockOutcome, StockReversal
@@ -190,6 +191,9 @@ def clear_identity(settings: Settings, database: Database) -> None:
             Floor,
             Block,
             Development,
+            PropertyIdentity,
+            DevelopmentIdentity,
+            BlobDeletion,
             IdempotencyRecord,
             AssignmentEvent,
             Enquiry,
@@ -278,6 +282,11 @@ def delete_actor_business(session: Session, user_id: UUID) -> None:
             )
         )
     )
+    developments.extend(
+        session.scalars(
+            select(DevelopmentIdentity.id).where(DevelopmentIdentity.created_by_user_id == user_id)
+        )
+    )
     properties = list(
         session.scalars(
             select(Property.id).where(
@@ -295,6 +304,11 @@ def delete_actor_business(session: Session, user_id: UUID) -> None:
                     .exists(),
                 )
             )
+        )
+    )
+    properties.extend(
+        session.scalars(
+            select(PropertyIdentity.id).where(PropertyIdentity.created_by_user_id == user_id)
         )
     )
     session.execute(text("SET LOCAL kay.synthetic_cleanup='on'"))
@@ -417,6 +431,8 @@ def delete_actor_business(session: Session, user_id: UUID) -> None:
     )
     session.execute(delete(Block).where(Block.development_id.in_(developments)))
     session.execute(delete(Development).where(Development.id.in_(developments)))
+    session.execute(delete(PropertyIdentity).where(PropertyIdentity.id.in_(properties)))
+    session.execute(delete(DevelopmentIdentity).where(DevelopmentIdentity.id.in_(developments)))
     enquiries = list(
         session.scalars(
             select(Enquiry.id).where(

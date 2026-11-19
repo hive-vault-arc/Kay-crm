@@ -144,7 +144,11 @@ def create(settings: Settings) -> dict[str, object]:
 def validate_objects(connection: Connection, root: Path) -> None:
     references = connection.execute(
         text("""
-        SELECT object_key,size_bytes,sha256 FROM document_version WHERE sha256 IS NOT NULL
+        SELECT v.object_key,v.size_bytes,v.sha256 FROM document_version v
+        JOIN document d ON d.id=v.document_id WHERE v.sha256 IS NOT NULL
+          AND (d.property_id IS NULL OR EXISTS(SELECT 1 FROM property p WHERE p.id=d.property_id))
+          AND (d.development_id IS NULL OR EXISTS(
+            SELECT 1 FROM development d2 WHERE d2.id=d.development_id))
         UNION ALL SELECT object_key,size_bytes,file_hash FROM import_batch
         WHERE file_hash IS NOT NULL
         UNION ALL SELECT object_key,size_bytes,file_hash FROM export_job WHERE state='ready'

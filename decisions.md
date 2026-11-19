@@ -67,6 +67,7 @@ References: [product brief](Project-brief.md), [business rules](docs/02-requirem
 | D52 | Planning a visit checks the slot and immediately confirms the appointment. The optional property comes from the linked dossier. An ordinary participant overlap requires no explanation. Record the result once the visit ends. Reminders recur until the visit has a result or is cancelled. | C06,C07,C13, [confirmed booking](docs/04-design/visit-scheduling-local.md#direct-confirmation-and-visit-reports) |
 
 | D53 | Khalid retires ClamAV locally and on DigitalOcean to reduce cost. Private uploads keep scoped grants and format validation. The regular worker verifies stored size and SHA-256 for documents and photos. The dedicated FFmpeg worker publishes only encoded MP4. | C04,C14, [file architecture](docs/04-design/architecture.md#sp-09-local-file-implementation-boundary), [video rollout](docs/06-delivery-and-operations/inventory-video.md) |
+| D54 | On 2026-11-19 Khalid replaces the inventory archive action with permanent deletion for biens and programmes only. M/A may delete a property or a programme and its units despite current offerings. Active reservations are released atomically. Historical deal, visit, task, ownership, commercial and finance references remain valid; private inventory media are removed in the background. Contacts, prospects and deals retain their existing lifecycle. | C04,C14, [inventory deletion](docs/04-design/inventory-deletion.md) |
 
 | ID | Local resolution or later validation | Timing / boundary |
 |---|---|---|

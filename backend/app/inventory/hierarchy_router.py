@@ -6,7 +6,13 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, Request
 
 from app.identity.router import facade_authority
-from app.inventory.contracts import ConfirmAvailability, DevelopmentQuery, InventoryQuery, Owners
+from app.inventory.contracts import (
+    ConfirmAvailability,
+    DevelopmentQuery,
+    ForceDelete,
+    InventoryQuery,
+    Owners,
+)
 from app.inventory.hierarchy_contracts import (
     ArchiveDevelopment,
     DevelopmentFields,
@@ -211,6 +217,13 @@ def archive(
     request: Request, token: Proof, key: RetryKey, did: UUID, body: ArchiveDevelopment
 ) -> dict[str, object]:
     return mutate(request, token, key, "development-archive", body, did)
+
+
+@router.post("/developments/{did}/delete")
+def delete_development(
+    request: Request, token: Proof, key: RetryKey, did: UUID, body: ForceDelete
+) -> dict[str, object]:
+    return mutate(request, token, key, "development-delete", body, did)
 
 
 @router.post("/developments/{did}/restore")
