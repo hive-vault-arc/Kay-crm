@@ -46,7 +46,11 @@ def check_context(
         deal = session.get(Deal, fields.deal_id)
         if deal is None or deal.contact_id != row.contact_id or deal.archived_at is not None:
             raise IdentityError("INVALID_TASK_CONTEXT", 422)
-    if fields.property_id and session.get(Property, fields.property_id) is None:
+    if (
+        fields.property_id
+        and (new or fields.property_id != row.property_id)
+        and session.get(Property, fields.property_id) is None
+    ):
         raise IdentityError("INVALID_TASK_CONTEXT", 422)
     return enquiry_context(
         session,

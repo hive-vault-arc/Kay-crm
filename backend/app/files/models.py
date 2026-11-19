@@ -65,10 +65,10 @@ class Document(Base):
         ForeignKey("contact.id", ondelete="RESTRICT"), index=True
     )
     development_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("development.id", ondelete="RESTRICT"), index=True
+        ForeignKey("development_identity.id", ondelete="RESTRICT"), index=True
     )
     property_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("property.id", ondelete="RESTRICT"), index=True
+        ForeignKey("property_identity.id", ondelete="RESTRICT"), index=True
     )
     deal_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("deal.id", ondelete="RESTRICT"), index=True

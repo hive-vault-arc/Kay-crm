@@ -58,9 +58,11 @@ class ProjectLink(Base):
     enquiry_id: Mapped[UUID | None] = mapped_column(ForeignKey("enquiry.id", ondelete="RESTRICT"))
     deal_id: Mapped[UUID | None] = mapped_column(ForeignKey("deal.id", ondelete="RESTRICT"))
     development_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("development.id", ondelete="RESTRICT")
+        ForeignKey("development_identity.id", ondelete="RESTRICT")
     )
-    property_id: Mapped[UUID | None] = mapped_column(ForeignKey("property.id", ondelete="RESTRICT"))
+    property_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("property_identity.id", ondelete="RESTRICT")
+    )
     kind: Mapped[str] = mapped_column(String(12))
     name: Mapped[str] = mapped_column(String(160))
     created_by_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))

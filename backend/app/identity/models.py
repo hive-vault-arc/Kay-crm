@@ -111,9 +111,11 @@ class AuditEvent(Base):
     target_user_id: Mapped[UUID | None] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     contact_id: Mapped[UUID | None] = mapped_column(ForeignKey("contact.id", ondelete="RESTRICT"))
     enquiry_id: Mapped[UUID | None] = mapped_column(ForeignKey("enquiry.id", ondelete="RESTRICT"))
-    property_id: Mapped[UUID | None] = mapped_column(ForeignKey("property.id", ondelete="RESTRICT"))
+    property_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("property_identity.id", ondelete="RESTRICT")
+    )
     development_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("development.id", ondelete="RESTRICT")
+        ForeignKey("development_identity.id", ondelete="RESTRICT")
     )
     offering_id: Mapped[UUID | None] = mapped_column(ForeignKey("offering.id", ondelete="RESTRICT"))
     deal_id: Mapped[UUID | None] = mapped_column(ForeignKey("deal.id", ondelete="RESTRICT"))

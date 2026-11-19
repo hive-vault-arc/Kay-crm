@@ -7,11 +7,23 @@ from uuid import UUID
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
+from app.identity.security import IdentityError
 from app.inventory.contracts import InventoryQuery
+from app.inventory.deletion_models import DevelopmentIdentity, PropertyIdentity
 from app.inventory.directory_filters import comparison_price
 from app.inventory.hierarchy_models import Block, Development, Floor, UnitType
 from app.inventory.models import Offering, Property
 from app.inventory.reservations import shared_conflicts
+
+
+def require_live_target(session: Session, offering: Offering) -> None:
+    target = (
+        session.get(Property, offering.property_id)
+        if offering.property_id
+        else session.get(Development, offering.development_id)
+    )
+    if target is None:
+        raise IdentityError("NOT_FOUND", 404)
 
 
 def target_views(session: Session, offerings: Sequence[Offering]) -> dict[UUID, dict[str, object]]:
@@ -51,6 +63,31 @@ def target_views(session: Session, offerings: Sequence[Offering]) -> dict[UUID, 
         )
     }
     result: dict[UUID, dict[str, object]] = {}
+    missing_properties = {o.property_id for o in offerings if o.property_id} - properties.keys()
+    missing_developments = {
+        o.development_id for o in offerings if o.development_id
+    } - developments.keys()
+    removed: dict[UUID, dict[str, object]] = {}
+    if missing_properties:
+        removed.update(
+            (row.id, row.snapshot)
+            for row in session.scalars(
+                select(PropertyIdentity).where(
+                    PropertyIdentity.id.in_(missing_properties),
+                    PropertyIdentity.deleted_at.is_not(None),
+                )
+            )
+        )
+    if missing_developments:
+        removed.update(
+            (row.id, row.snapshot)
+            for row in session.scalars(
+                select(DevelopmentIdentity).where(
+                    DevelopmentIdentity.id.in_(missing_developments),
+                    DevelopmentIdentity.deleted_at.is_not(None),
+                )
+            )
+        )
     for o in offerings:
         p = properties.get(o.property_id) if o.property_id else None
         did = p.development_id if p else o.development_id
@@ -59,6 +96,15 @@ def target_views(session: Session, offerings: Sequence[Offering]) -> dict[UUID, 
         template = types.get(p.unit_type_id) if p and p.unit_type_id else None
         target = p or d
         if target is None:
+            target_id = o.property_id or o.development_id
+            snapshot = removed.get(target_id) if target_id else None
+            if snapshot:
+                result[o.id] = {
+                    **snapshot,
+                    "label": "Bien supprimé" if o.property_id else "Programme supprimé",
+                    "archived": True,
+                }
+                continue
             raise RuntimeError("OFFERING_TARGET_MISSING")
         result[o.id] = {
             "id": str(target.id),
@@ -157,7 +203,7 @@ def select_offerings(
             Development,
             Development.id == func.coalesce(Offering.development_id, Property.development_id),
         )
-        .where(*filters)
+        .where(*filters, or_(Property.id.is_not(None), Development.id.is_not(None)))
     )
     total = session.scalar(select(func.count()).select_from(base.subquery())) or 0
     rows = session.scalars(

@@ -111,7 +111,9 @@ class Visit(Base):
     enquiry_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("enquiry.id", ondelete="RESTRICT"), index=True
     )
-    property_id: Mapped[UUID | None] = mapped_column(ForeignKey("property.id", ondelete="RESTRICT"))
+    property_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("property_identity.id", ondelete="RESTRICT")
+    )
     organizer_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     title: Mapped[str] = mapped_column(String(160), server_default=DEFAULT_VISIT_TITLE)
     type: Mapped[str] = mapped_column(String(24))

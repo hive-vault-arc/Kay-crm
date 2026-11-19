@@ -53,7 +53,7 @@ class PropertyPeriod(Base):
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     property_id: Mapped[UUID] = mapped_column(
-        ForeignKey("property.id", ondelete="RESTRICT"), index=True
+        ForeignKey("property_identity.id", ondelete="RESTRICT"), index=True
     )
     kind: Mapped[str] = mapped_column(String(12))
     start_on: Mapped[date] = mapped_column(Date)

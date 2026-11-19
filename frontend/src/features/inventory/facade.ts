@@ -40,7 +40,7 @@ export async function relayInventory(key: string, request: Request, requestId: s
   if (mutation) {
     if (request.headers.get("Origin") !== frontendOrigin()) return facadeError(403, "FORBIDDEN", requestId);
     if (!z.uuid().safeParse(retryKey).success) return facadeError(422, "VALIDATION_ERROR", requestId);
-    const schema = calendar ? action === "cancel" ? cancelPropertyPeriodSchema : savePropertyPeriodSchema : suffix === "external-outcome" ? externalSchema : suffix === "owners" ? ownersSchema : suffix === "confirm-availability" ? confirmSchema : ["archive", "restore"].includes(suffix) ? archiveDevelopmentSchema : key === "developments" ? developmentFieldsSchema : key.startsWith("developments/") && request.method === "PATCH" ? editDevelopmentSchema : suffix === "unit-types" || key.startsWith("unit-types/") ? typeFieldsSchema : suffix === "blocks" || suffix === "floors" || /^(blocks|floors)\//.test(key) ? structureFieldsSchema : request.method === "PATCH" ? key.startsWith("properties/") ? editPropertySchema : editOfferingSchema : key === "properties" ? createPropertySchema : newOfferingSchema;
+    const schema = suffix === "delete" ? z.object({ confirm: z.literal(true) }).strict() : calendar ? action === "cancel" ? cancelPropertyPeriodSchema : savePropertyPeriodSchema : suffix === "external-outcome" ? externalSchema : suffix === "owners" ? ownersSchema : suffix === "confirm-availability" ? confirmSchema : ["archive", "restore"].includes(suffix) ? archiveDevelopmentSchema : key === "developments" ? developmentFieldsSchema : key.startsWith("developments/") && request.method === "PATCH" ? editDevelopmentSchema : suffix === "unit-types" || key.startsWith("unit-types/") ? typeFieldsSchema : suffix === "blocks" || suffix === "floors" || /^(blocks|floors)\//.test(key) ? structureFieldsSchema : request.method === "PATCH" ? key.startsWith("properties/") ? editPropertySchema : editOfferingSchema : key === "properties" ? createPropertySchema : newOfferingSchema;
     try {
       const parsed = schema.safeParse(await boundedJson(request, 131072));
       if (!parsed.success) return facadeError(422, "VALIDATION_ERROR", requestId);
@@ -73,6 +73,11 @@ export async function relayInventory(key: string, request: Request, requestId: s
       const input = externalSchema.parse(JSON.parse(body!)), receipt = resultSchema.parse(result);
       const rightTarget = root === "properties" ? "property_id" in receipt && receipt.property_id === targetId : "development_id" in receipt && receipt.development_id === targetId;
       if (!rightTarget || receipt.offering_id !== input.offering_id || receipt.version <= input.expected_version) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
+    }
+    if (mutation && suffix === "delete") {
+      const receipt = resultSchema.parse(result);
+      const rightTarget = root === "properties" ? "property_id" in receipt && receipt.property_id === targetId : "development_id" in receipt && receipt.development_id === targetId;
+      if (!rightTarget || receipt.offering_id !== null) return facadeError(503, "DEPENDENCY_UNAVAILABLE", requestId);
     }
     if (mutation && ["archive", "restore"].includes(suffix)) {
       const input = archiveDevelopmentSchema.parse(JSON.parse(body!)), receipt = resultSchema.parse(result);

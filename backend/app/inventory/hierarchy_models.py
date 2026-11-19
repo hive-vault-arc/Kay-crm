@@ -80,7 +80,7 @@ class DevelopmentOwner(Base):
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     development_id: Mapped[UUID] = mapped_column(
-        ForeignKey("development.id", ondelete="RESTRICT"), index=True
+        ForeignKey("development_identity.id", ondelete="RESTRICT"), index=True
     )
     contact_id: Mapped[UUID] = mapped_column(
         ForeignKey("contact.id", ondelete="RESTRICT"), index=True

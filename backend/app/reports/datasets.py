@@ -233,6 +233,7 @@ def dataset(
             if scope is not None and identity.user.role == "agent"
             else offering_scope(identity),
             Offering.is_current,
+            or_(Property.id.is_not(None), Development.id.is_not(None)),
             Offering.property_id.is_not(None)
             if metric == "property_offerings"
             else and_(Offering.development_id.is_not(None), Development.archived_at.is_(None)),

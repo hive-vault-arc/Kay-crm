@@ -1,5 +1,17 @@
 # KAY security check for changes
 
+## D54 permanent inventory deletion
+
+Deletion is M/A-only, protected by the existing facade, origin, CSRF and session
+checks, with authority rechecked before idempotent replay. Database changes,
+reservation releases, true-actor audit and the receipt commit atomically under
+the agency lock. Historical foreign keys retain typed identities; no foreign-key
+or immutable-history guard is disabled. Deleted UUID resurrection is rejected.
+Live parent authorization denies retained files/grants; durable blob cleanup
+retries in the ordinary worker. Deleted offerings cannot acquire new deals or
+shortlist links and are excluded from current stock counts. Real production
+records are not deleted for acceptance testing.
+
 ## Private uploads without antivirus
 
 The API still checks file structure before accepting photos and documents.

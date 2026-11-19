@@ -14,6 +14,7 @@ from app.inventory.contracts import (
     CreateProperty,
     EditOffering,
     EditProperty,
+    ForceDelete,
     InventoryQuery,
     NewOffering,
     Owners,
@@ -95,6 +96,13 @@ def archive_property(
     request: Request, token: Proof, key: RetryKey, pid: UUID, body: ArchiveDevelopment
 ) -> dict[str, object]:
     return mutate(request, token, key, "property-archive", body, pid)
+
+
+@router.post("/properties/{pid}/delete")
+def delete_property(
+    request: Request, token: Proof, key: RetryKey, pid: UUID, body: ForceDelete
+) -> dict[str, object]:
+    return mutate(request, token, key, "property-delete", body, pid)
 
 
 @router.post("/properties/{pid}/restore")

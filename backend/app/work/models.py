@@ -45,7 +45,9 @@ class Task(Base):
     enquiry_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("enquiry.id", ondelete="RESTRICT"), index=True
     )
-    property_id: Mapped[UUID | None] = mapped_column(ForeignKey("property.id", ondelete="RESTRICT"))
+    property_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("property_identity.id", ondelete="RESTRICT")
+    )
     owner_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     created_by_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))
     updated_by_user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="RESTRICT"))

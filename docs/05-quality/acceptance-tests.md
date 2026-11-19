@@ -1,5 +1,18 @@
 # Acceptance scenarios
 
+## D54 inventory deletion
+
+M/A deletes a property despite current offers, or a programme and all its units.
+Agents, invalid confirmations, missing CSRF and missing idempotency keys fail.
+Concurrent same-key retries return one durable result after deletion; a lost
+acknowledgement keeps the destructive dialog open until the original result is
+recovered. A transaction failure preserves the original live catalogue. Deleted
+UUIDs cannot be recreated. Active reservations release with true-actor history;
+completed deals stay readable. Deleted targets disappear from current stock and
+cannot acquire new dossier links. Media cleanup survives storage failure and
+retries idempotently. Check mobile/desktop dialog, keyboard Escape, focus, busy
+and error states with synthetic isolated fixtures. Contacts/deals keep D44.
+
 Selected affair forms,2026-10-29 (AT-23/24): preserve all contact/qualification/
 project/context fields, zero, creation-only stage and both atomic edit versions.
 Unknown writes retain original body/key; acknowledged current-read/parent failure

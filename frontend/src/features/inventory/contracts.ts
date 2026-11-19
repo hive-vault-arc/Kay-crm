@@ -104,7 +104,7 @@ export function inventoryRoute(key: string, method: string) {
   if (new RegExp(`^properties/${id}/owners$`).test(key)) return method === "PUT";
   if (new RegExp(`^developments/${id}/owners$`).test(key)) return ["GET", "PUT"].includes(method);
   if (new RegExp(`^(properties|developments)/${id}/stock-review$`).test(key)) return method === "GET";
-  if (new RegExp(`^(properties|developments)/${id}/(external-outcome|confirm-availability|archive|restore)$`).test(key)) return method === "POST";
+  if (new RegExp(`^(properties|developments)/${id}/(external-outcome|confirm-availability|archive|restore|delete)$`).test(key)) return method === "POST";
   if (new RegExp(`^(properties|developments)/${id}/history$`).test(key)) return method === "GET";
   if (new RegExp(`^developments/${id}/inventory$`).test(key)) return method === "GET";
   if (new RegExp(`^developments/${id}/(blocks|unit-types)$`).test(key)) return ["GET", "POST"].includes(method);
