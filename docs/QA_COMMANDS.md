@@ -1,5 +1,14 @@
 # KAY QA command register
 
+## Windows CI tool extraction — 2026-11-19
+
+The required scanner intermittently failed before scanning because Windows
+PowerShell 5 imported the PowerShell 7 Archive module. The tool runner now uses
+`pwsh.exe -NoProfile -NonInteractive` with terminating extraction errors. Actual
+`node .github/scripts/check-tools.mjs gitleaks` and `actionlint` pass on Windows;
+archive SHA-256 verification and the full redacted scan remain enabled.
+
+
 ## Permanent inventory deletion — D54, 2026-11-19
 
 See [verification](05-quality/inventory-deletion-verification.md). Explicit

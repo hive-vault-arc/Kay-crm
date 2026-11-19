@@ -1,5 +1,13 @@
 # KAY agent lessons
 
+## Keep the PowerShell host and modules on the same runtime (2026-11-19)
+
+Launching `powershell.exe` from a PowerShell 7 CI environment can import its
+Archive module into Windows PowerShell 5 and fail with an ExtractToDirectory
+overload error. The pinned-tool installer must use `pwsh.exe` explicitly and stop
+on extraction errors. Preserve archive hashes and the actual secret scan.
+
+
 ## Deferred history checks after catalogue deletion (2026-11-19)
 
 A deferred version/history trigger can run after an authorized live row has been
