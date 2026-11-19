@@ -1,5 +1,18 @@
 # KAY QA command register
 
+## Permanent inventory deletion — D54, 2026-11-19
+
+See [verification](05-quality/inventory-deletion-verification.md). Explicit
+backend venv runs pass Ruff, mypy and the real PostgreSQL selections (58, 52 and
+43 cases); the final `pytest -q --tb=short --maxfail=1 tests/test_inventory_deletion.py`
+passes 9 cases, including single-unit deletion preserving its programme/siblings.
+`alembic check` finds no drift. Frontend lint, types, 997 unit tests and both visible
+390/1440 Chrome deletion/recovery journeys pass. Next.js 16.4.5 resolves the
+pre-existing runtime advisory; the dependency gate reports 0 vulnerabilities.
+Production was upgraded from 0050 to 0054 before application rollout. Full
+exact-candidate hosted release integration remains required before merge.
+
+
 ## Direct visit confirmation and report reminders (D52)
 
 From `backend/`, `./.venv/Scripts/python.exe -m pytest -q --unit-only` passed

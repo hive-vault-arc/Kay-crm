@@ -9,11 +9,12 @@ deleted reference assets and private configuration are excluded from publication
 - Real isolated PostgreSQL: the initial inventory/development/permissions selection
   passes 58 tests; the requirements/deals/migration selection passes 52 tests;
   the deletion/work/project-link/photo/report selection passes 43 tests.
-- Final deletion selection passes 8 tests after ordinary linked-deal and parent
+- Final deletion selection passes 9 tests after ordinary linked-deal and parent
   programme invalidation was added. It covers physical root/hierarchy removal,
   retained completed deals, released reservations, task/visit/shortlist reads,
   forbidden new links, agent denial, strict HTTP/CSRF/key checks, concurrent retry,
-  rollback, resurrection denial and durable private-storage cleanup.
+  rollback, resurrection denial, single-unit removal preserving its programme
+  and siblings, and durable private-storage cleanup.
 - Test migration down to 0053, back to head and `alembic check` pass. Development
   `alembic upgrade head` and `alembic check` pass with no metadata drift.
 - Frontend `npm.cmd run test:unit`: 997 pass, 0 fail. `npm.cmd run lint` and

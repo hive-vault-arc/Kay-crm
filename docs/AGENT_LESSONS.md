@@ -1,5 +1,14 @@
 # KAY agent lessons
 
+## Deferred history checks after catalogue deletion (2026-11-19)
+
+A deferred version/history trigger can run after an authorized live row has been
+deleted in the same transaction. Explicitly handle the missing live root while
+retaining every check for existing roots. Do not disable immutable-history or
+foreign-key guards. Preserve typed historical identities and apply schema before
+new workers query it; test rollback, receipt replay and populated upgrades.
+
+
 ## Bound production inspection before opening an editor (2026-11-08)
 
 An environment editor can render every credential as a plain textbox even when

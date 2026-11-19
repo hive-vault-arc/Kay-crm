@@ -87,6 +87,22 @@ def test_programme_deletion_removes_all_units_and_hierarchy(settings, database):
             assert session.scalar(select(func.count()).select_from(model)) == 0
 
 
+def test_unit_deletion_keeps_the_programme_and_other_units(settings, database):
+    _, manager = actor(settings, database, "manager")
+    did = development(settings, database, manager)
+    _, floors, template = hierarchy(settings, database, manager, did)
+    removed, retained = [unit(settings, database, manager, did, floor, template) for floor in floors]
+    offering_draft(settings, database, manager, removed)
+    with database.session() as session:
+        version = session.get_one(Development, did).version
+    remove(settings, database, manager, removed)
+    with database.session() as session:
+        assert session.get(Property, removed) is None
+        assert session.get_one(Property, retained).development_id == did
+        assert session.get_one(Development, did).version == version + 1
+        assert session.scalar(select(func.count()).select_from(Floor)) == len(floors)
+
+
 @pytest.mark.parametrize("closed", [False, True])
 def test_reserved_and_completed_deals_keep_their_context(settings, database, closed):
     _, token, _, manager, pid, _, did = reserved_fixture(settings, database)
