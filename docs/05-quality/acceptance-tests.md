@@ -2,8 +2,10 @@
 
 ## D54 inventory deletion
 
-M/A deletes a property despite current offers, or a programme and all its units.
-Agents, invalid confirmations, missing CSRF and missing idempotency keys fail.
+Under D55, an active agent, manager or administrator deletes a property despite
+current offers, or a programme and all its units, including another agent's
+shared inventory. Invalid confirmations, missing CSRF and missing idempotency
+keys fail. A disabled agent cannot start a deletion or replay a saved receipt.
 Concurrent same-key retries return one durable result after deletion; a lost
 acknowledgement keeps the destructive dialog open until the original result is
 recovered. A transaction failure preserves the original live catalogue. Deleted

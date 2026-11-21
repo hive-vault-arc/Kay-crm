@@ -2,7 +2,7 @@
 
 ## D54 permanent inventory deletion
 
-Deletion is M/A-only, protected by the existing facade, origin, CSRF and session
+Under D55, deletion admits active agents as well as M/A, protected by the existing facade, origin, CSRF and session
 checks, with authority rechecked before idempotent replay. Database changes,
 reservation releases, true-actor audit and the receipt commit atomically under
 the agency lock. Historical foreign keys retain typed identities; no foreign-key

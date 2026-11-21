@@ -32,14 +32,14 @@ env:
 
 jobs:
   integration:
-    name: ${{ matrix.suite == 'backend' && 'Backend regression' || 'Browser regression' }}
+    name: ${{ matrix.suite == 'backend' && 'Backend regression' || format('Browser regression (shard {0})', matrix.shard) }}
     runs-on: windows-2025
-    # The serial browser gate previously took 74m41s; leave room for added journeys.
+    # Shards use separate hosted clusters; each target keeps its serial writer lease.
     timeout-minutes: ${{ matrix.suite == 'browser' && 90 || 75 }}
     strategy:
       fail-fast: false
       matrix:
-        suite: ${{ fromJSON(inputs.browser_scope == 'full' && '["backend","browser"]' || '["browser"]') }}
+        include: ${{ fromJSON(inputs.browser_scope == 'full' && '[{"suite":"backend","shard":1},{"suite":"browser","shard":1},{"suite":"browser","shard":2},{"suite":"browser","shard":3},{"suite":"browser","shard":4},{"suite":"browser","shard":5},{"suite":"browser","shard":6},{"suite":"browser","shard":7},{"suite":"browser","shard":8}]' || '[{"suite":"browser","shard":1}]') }}
     defaults:
       run:
         shell: pwsh
@@ -104,13 +104,13 @@ jobs:
         working-directory: frontend
         run: node scripts/scan-client-secrets.mjs
       - name: Real WSS and opt-in Web Push browser regression (serial)
-        if: matrix.suite == 'browser' && inputs.browser_scope == 'full'
+        if: matrix.suite == 'browser' && matrix.shard == 1 && inputs.browser_scope == 'full'
         working-directory: frontend
         env:
           KAY_E2E_PRODUCTION: '1'
         run: npm run test:realtime -- --max-failures=1
       - name: Holiday confirmation and live inbox browser regression (serial)
-        if: matrix.suite == 'browser' && inputs.browser_scope == 'full'
+        if: matrix.suite == 'browser' && matrix.shard == 1 && inputs.browser_scope == 'full'
         working-directory: frontend
         env:
           KAY_E2E_PRODUCTION: '1'
@@ -123,6 +123,7 @@ jobs:
         env:
           KAY_E2E_PRODUCTION: '1'
           BROWSER_SCOPE: ${{ inputs.browser_scope }}
+          BROWSER_SHARD: ${{ matrix.shard }}
           INVENTORY_SHARES_ENABLED: 'true'
         run: |
           if ($env:BROWSER_SCOPE -eq 'recovery-only') {
@@ -130,7 +131,7 @@ jobs:
           } elseif ($env:BROWSER_SCOPE -eq 'crm-reference-only') {
             npx playwright test --config=playwright.ci.config.ts '[\\/](crm-reference)[.]spec[.]ts$' --max-failures=1
           } else {
-            npm run test:e2e -- --config=playwright.ci.config.ts --max-failures=12
+            npm run test:e2e -- --config=playwright.ci.config.ts --shard="$env:BROWSER_SHARD/8" --max-failures=12
           }
       - name: Stop only this disposable job's services
         if: always()

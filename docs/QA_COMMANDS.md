@@ -1,5 +1,35 @@
 # KAY QA command register
 
+## Agent inventory deletion and parallel release checks — D55, 2026-11-21
+
+The explicit backend venv command `python.exe -m pytest -q
+tests/test_inventory_deletion.py tests/test_project_permissions.py --tb=short
+--maxfail=1` passed 42 PostgreSQL tests on the isolated target. Coverage includes
+agent/manager/administrator deletion, programmes and units, CSRF/confirmation/
+idempotency validation, concurrent retries, true-actor history and disabled-agent
+receipt denial. Ruff checks/format and strict mypy passed.
+
+Frontend lint, typecheck, the production build and all 1,002 unit tests passed.
+Visible isolated Chrome with `KAY_E2E_PRODUCTION=1`, ports 3112/8112/8113/8114 and
+`node node_modules/@playwright/test/cli.js test
+--config=playwright.chrome.config.ts tests/e2e/inventory-lifecycle-recovery.spec.ts
+--workers=1 --max-failures=1` passed all four manager/agent journeys at 390/1440px
+in 1.6 minutes. These retain destructive confirmation, keyboard Escape/Cancel
+focus, no horizontal overflow, committed deletion and lost-response recovery.
+The existing shared interface and AFTER audit timing are retained; this is a
+permission change, with no new visual design, component kit or chart.
+
+Actual actionlint and all eight CI policy tests passed. Native Playwright
+collection verified that the eight release shards cover all 259 configured
+browser tests exactly once (36/30/34/31/33/32/31/32). Each hosted shard owns its
+own disposable PostgreSQL cluster and serial fixture lease. Realtime and holiday
+journeys run once on shard 1; the full backend suite remains serial separately.
+The aggregate requires every matrix job, with diagnostics retaining their
+distinct non-release check name. Full exact-head hosted integration and automatic
+CI remain required before merge; no pass is inferred from collection or local
+scoped tests. No migration is needed and no development/production records were
+deleted during verification. Browser supervision stopped its local test ports.
+
 ## D54 acceptance-selector verification — 2026-11-19
 
 The full unit gate caught a renamed SP19 test missing the cumulative

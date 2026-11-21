@@ -132,7 +132,7 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
     assert.equal(find(header.props.actions, "Share")[0].props.id, development.id);
     const owners = find(workspace.props.aside, "Section").find(section => section.props.title === "Propriétaires");
     assert.equal(Boolean(owners.props.action), role !== "agent");
-    assert.equal(find(header.props.actions, "DeleteInventory").length, role === "agent" ? 0 : 1);
+    assert.equal(find(header.props.actions, "DeleteInventory").length, 1);
   }
   development = { ...development, phase_supported: true, phase: "marketing" };
   const phase = find(find(render("agent"), "Workspace")[0].props.tabs[0].content, "Fact").find(node => node.props.label === "État du programme");

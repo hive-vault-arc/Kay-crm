@@ -6,19 +6,20 @@ import { staffCommand } from "../helpers/leads";
 import { unitProgrammeDraft } from "../helpers/unit-listing-fixtures";
 
 test.use({ trace: "off", video: "off", screenshot: "off" });
-for (const scenario of [{ root: "properties", width: 390 }, { root: "developments", width: 1440 }] as const) {
-  test(`Permanent ${scenario.root} deletion recovers a lost acknowledgement with current offers`, async ({ page }) => {
+for (const scenario of [{ root: "properties", width: 390, role: "manager" }, { root: "developments", width: 1440, role: "manager" }, { root: "properties", width: 390, role: "agent" }, { root: "developments", width: 1440, role: "agent" }] as const) {
+  test(`Permanent ${scenario.root} deletion by ${scenario.role} recovers a lost acknowledgement with current offers`, async ({ page }) => {
     test.setTimeout(180_000);
-    const actor = await createActor("manager"), attempts: { body: string | null; key?: string }[] = [];
+    const creator = await createActor("manager"), actor = scenario.role === "manager" ? creator : await createActor("agent"), attempts: { body: string | null; key?: string }[] = [];
     let releaseRead = () => {};
     try {
-      await signIn(page, actor);
+      await signIn(page, creator);
       const reference = `DEL-${randomUUID().slice(0, 8)}`.toUpperCase();
       const created = await staffCommand(page, scenario.root, scenario.root === "properties" ? { reference, category: "house", marketing_name: null, location: null, area_sqm: null } : unitProgrammeDraft(reference));
       if (created.status() !== 200) throw new Error("SYNTHETIC_DELETE_CREATE_FAILED");
       const receipt = resultSchema.parse(await created.json()), id = "property_id" in receipt ? receipt.property_id : receipt.development_id, path = `/api/v1/${scenario.root}/${id}`;
       const offer = await staffCommand(page, "offerings", { [scenario.root === "properties" ? "property_id" : "development_id"]: id, [scenario.root === "properties" ? "expected_property_version" : "expected_development_version"]: receipt.version, kind: "sale", price_mad: "100000.00", currency: "MAD", price_period: null, conditions: "" });
       if (offer.status() !== 200) throw new Error("SYNTHETIC_DELETE_OFFER_FAILED");
+      if (actor !== creator) { await clearActorContext(page); await signIn(page, actor); }
       await page.setViewportSize({ width: scenario.width, height: 900 });
       await page.goto(scenario.root === "properties" ? `/projects/properties/${id}` : `/projects/${id}`);
       await page.getByRole("button", { name: "Actions", exact: true }).click();
@@ -33,7 +34,7 @@ for (const scenario of [{ root: "properties", width: 390 }, { root: "development
       await deleteTrigger.press("Enter");
       await expect.poll(() => dialog.count()).toBe(1);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
-      if (process.env.KAY_INVENTORY_DELETE_EVIDENCE === "1") await dialog.screenshot({ path: resolve(`../.local-data/inventory-delete-${scenario.width}.png`) });
+      if (process.env.KAY_INVENTORY_DELETE_EVIDENCE === "1") await dialog.screenshot({ path: resolve(`../.local-data/inventory-delete-${scenario.role}-${scenario.width}.png`) });
       let readHeld = false;
       const readGate = new Promise<void>(resolve => { releaseRead = resolve; });
       await page.route(`**${path}`, async route => {
@@ -67,6 +68,6 @@ for (const scenario of [{ root: "properties", width: 390 }, { root: "development
       expect(JSON.parse(attempts[0].body ?? "{}")).toEqual({ confirm: true });
       expect((await page.request.get(path)).status()).toBe(404);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
-    } finally { releaseRead(); await clearActorContext(page); await removeActor(actor); }
+    } finally { releaseRead(); await clearActorContext(page); try { await removeActor(actor); } finally { if (creator !== actor) await removeActor(creator); } }
   });
 }

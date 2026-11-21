@@ -92,6 +92,15 @@ Scopes have separate concurrency groups and separate hosted disposable clusters;
 tests remain serial within each target. Diagnostic check names are distinct,
 rather than skipped required-name checks that GitHub might treat as successful.
 
+The full compiled browser suite uses eight native Playwright shards, each on
+its own Windows runner, PostgreSQL cluster and isolated database lease. No two
+shards share data. The backend suite remains serial on its own runner. Realtime
+and holiday journeys run once on browser shard 1; all eight compiled shards and
+the backend must succeed for `Release integration required`. Diagnostic scopes
+still use one browser target and cannot satisfy that release gate. This reduces
+the previous hour-long browser bottleneck without omitting tests or weakening
+`main` protection.
+
 Initial publication uses a setup branch first. Main is created only after a real
 successful CI run on the intended commit. Server-side protection is then configured
 and read back; a workflow file alone does not enforce merge policy.

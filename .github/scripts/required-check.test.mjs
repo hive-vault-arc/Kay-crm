@@ -45,7 +45,16 @@ test("only manual workflow contains database services, migrations and integratio
   for (const pattern of [/windows-services/, /tests\.ci_setup/, /alembic upgrade head/, /pytest -q/, /test:e2e/, /Stop only this disposable/])
     assert.match(manual, pattern);
   assert.doesNotMatch(manual, /continue-on-error|\$\{\{\s*secrets\.|pull_request_target/);
-  assert.match(manual, /suite: \$\{\{ fromJSON\(inputs\.browser_scope == 'full' && '\["backend","browser"\]' \|\| '\["browser"\]'\) \}\}/);
+  const matrix = manual.match(/include: \$\{\{ fromJSON\(inputs\.browser_scope == 'full' && '([^']+)' \|\| '([^']+)'\) \}\}/);
+  assert.ok(matrix, "full and diagnostic matrices must be explicit");
+  const full = JSON.parse(matrix[1]);
+  assert.deepEqual(full.filter(job => job.suite === "backend"), [{ suite: "backend", shard: 1 }]);
+  assert.deepEqual(full.filter(job => job.suite === "browser").map(job => job.shard), [1, 2, 3, 4, 5, 6, 7, 8]);
+  assert.equal(full.length, 9);
+  assert.deepEqual(JSON.parse(matrix[2]), [{ suite: "browser", shard: 1 }]);
+  assert.match(manual, /--shard="\$env:BROWSER_SHARD\/8"/);
+  assert.match(manual, /BROWSER_SHARD: \$\{\{ matrix\.shard \}\}/);
+  assert.equal((manual.match(/if: matrix\.suite == 'browser' && matrix\.shard == 1 && inputs\.browser_scope == 'full'/g) ?? []).length, 2);
   assert.match(triggers, /browser_scope:[\s\S]*default: full/);
   const releaseGate = manual.split("  release-integration:")[1];
   // A skipped required-name job is treated as success by branch protection.

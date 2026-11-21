@@ -32,7 +32,7 @@ export function DeleteInventoryButton({ kind, id, reference, returnHref }: {
     try {
       const receipt = await apiCommand(`/api/v1/${kind}/${id}/delete`, { confirm: true }, resultSchema, key, "POST", undefined, controller.signal, {
         beforeDispatch: identity => {
-          if (identity.must_change_password || identity.user.role === "agent" || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
+          if (identity.must_change_password || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
           binding.current = { actor: identity.user.id, role: identity.user.role };
         },
         dispatched: () => { dispatched = true; },
