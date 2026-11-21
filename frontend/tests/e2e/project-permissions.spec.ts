@@ -109,7 +109,12 @@ for (const [root, width] of [["properties", 390], ["developments", 1440]] as con
         expected_version: target.version, offering_id: rental.id, expected_offering_version: rental.version, reason: "Vérification synthétique",
       })).status()).toBe(403);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    } finally { await clearActorContext(page); await removeActor(editor); await removeActor(creator); }
+    } finally {
+      await clearActorContext(page);
+      // The editor's new offer belongs to the creator's record.
+      await removeActor(creator);
+      await removeActor(editor);
+    }
   });
 }
 

@@ -125,7 +125,9 @@ test("Programme presentation keeps agent fact/unit editing separate from managed
     assert.equal(find(editing, "Provider").length, 1);
     assert.equal(workspace.props.tabs[1].content.props.writable, true);
     assert.ok(find(workspace.props.tabs[1].content.props.structureAction, "Hierarchy").every(node => node.props.writable));
-    assert.equal(find(workspace.props.tabs[0].content, "Offers")[0].props.writable, role !== "agent");
+    const offers = find(workspace.props.tabs[0].content, "Offers")[0];
+    assert.equal(offers.props.writable, true);
+    assert.equal(offers.props.managedWritable, role !== "agent");
     assert.equal(find(workspace.props.aside, "Photos")[0].props.writable, role !== "agent");
     const header = find(view, "Header")[0];
     assert.equal(find(header.props.actions, "Files")[0].props.writable, role !== "agent");
