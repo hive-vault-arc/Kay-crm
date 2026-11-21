@@ -63,7 +63,7 @@ Body = (
 )
 
 
-PROJECT_EDIT_OPERATIONS = frozenset(
+AGENT_PROJECT_OPERATIONS = frozenset(
     {
         "create-development",
         "development-edit",
@@ -75,6 +75,8 @@ PROJECT_EDIT_OPERATIONS = frozenset(
         "edit-floor",
         "create-type",
         "edit-type",
+        "property-delete",
+        "development-delete",
     }
 )
 
@@ -87,7 +89,7 @@ def locked_identity(session: Session, token: str, operation: str) -> CurrentIden
     session.expire_all()
     identity = current_identity(session, token)
     require_role(
-        identity, {"manager", "agent"} if operation in PROJECT_EDIT_OPERATIONS else {"manager"}
+        identity, {"manager", "agent"} if operation in AGENT_PROJECT_OPERATIONS else {"manager"}
     )
     return identity
 

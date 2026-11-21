@@ -10,12 +10,13 @@ from sqlalchemy.exc import IntegrityError
 
 from app.deals.queries import read_detail as read_deal
 from app.files.models import DocumentVersion
+from app.identity.models import User
 from app.identity.security import IdentityError, csrf_token
 from app.inventory.contracts import ForceDelete, InventoryQuery
 from app.inventory.deletion import cleanup_once
 from app.inventory.deletion_models import BlobDeletion, PropertyIdentity
 from app.inventory.hierarchy_models import Block, Development, Floor, UnitType
-from app.inventory.models import Offering, Property
+from app.inventory.models import InventoryEvent, Offering, Property
 from app.inventory.queries import read_detail, read_list
 from app.inventory.selection import select_offerings
 from app.main import create_app
@@ -44,17 +45,16 @@ def remove(settings, database, token, target, *, programme=False, key=None):
     )
 
 
-def test_current_offer_deletion_retry_race_and_agent_denial(settings, database):
+@pytest.mark.parametrize("role", ["agent", "manager", "administrator"])
+def test_current_offer_deletion_retry_race_and_true_actor(settings, database, role):
     _, manager = actor(settings, database, "manager")
-    _, agent = actor(settings, database)
+    uid, token = actor(settings, database, role)
     pid = property_draft(settings, database, manager)
     oid = UUID(offering_draft(settings, database, manager, pid)["offering_id"])
-    with pytest.raises(IdentityError, match="FORBIDDEN"):
-        remove(settings, database, agent, pid)
     key = uuid4()
     with ThreadPoolExecutor(max_workers=2) as pool:
         results = list(
-            pool.map(lambda _: remove(settings, database, manager, pid, key=key), range(2))
+            pool.map(lambda _: remove(settings, database, token, pid, key=key), range(2))
         )
     assert results[0] == results[1]
     with pytest.raises(IdentityError, match="NOT_FOUND"):
@@ -63,6 +63,7 @@ def test_current_offer_deletion_retry_race_and_agent_denial(settings, database):
     with database.session() as session:
         assert session.get(Property, pid) is None
         assert session.get_one(PropertyIdentity, pid).deleted_at is not None
+        assert session.get_one(InventoryEvent, UUID(results[0]["event_id"])).actor_user_id == uid
         assert session.get_one(Offering, oid).state == "withdrawn"
         assert (
             select_offerings(session, InventoryQuery(state="all"), lambda row: {"id": str(row.id)})[
@@ -70,18 +71,21 @@ def test_current_offer_deletion_retry_race_and_agent_denial(settings, database):
             ]
             == 0
         )
-    assert remove(settings, database, manager, pid, key=key) == results[0]
+    assert remove(settings, database, token, pid, key=key) == results[0]
 
 
-def test_programme_deletion_removes_all_units_and_hierarchy(settings, database):
+@pytest.mark.parametrize("role", ["agent", "manager", "administrator"])
+def test_programme_deletion_removes_all_units_and_hierarchy(settings, database, role):
     _, manager = actor(settings, database, "manager")
+    uid, token = actor(settings, database, role)
     did = development(settings, database, manager)
     _, floors, template = hierarchy(settings, database, manager, did)
     pids = [unit(settings, database, manager, did, floor, template) for floor in floors]
     offering_draft(settings, database, manager, pids[0])
-    remove(settings, database, manager, did, programme=True)
+    result = remove(settings, database, token, did, programme=True)
     with database.session() as session:
         assert session.get(Development, did) is None
+        assert session.get_one(InventoryEvent, UUID(result["event_id"])).actor_user_id == uid
         assert not session.scalars(select(Property).where(Property.id.in_(pids))).all()
         for model in (Block, Floor, UnitType):
             assert session.scalar(select(func.count()).select_from(model)) == 0
@@ -332,9 +336,17 @@ def test_storage_cleanup_is_durable_and_idempotent(settings, database, monkeypat
 
 
 @pytest.mark.anyio
-async def test_delete_http_requires_confirmation_csrf_and_retry_key(settings, database):
-    _, manager = actor(settings, database, "manager")
-    pid = property_draft(settings, database, manager)
+@pytest.mark.parametrize("role", ["agent", "manager", "administrator"])
+@pytest.mark.parametrize("programme", [False, True])
+async def test_delete_http_requires_confirmation_csrf_and_retry_key(
+    settings, database, role, programme
+):
+    _, manager = actor(settings, database, role)
+    pid = (
+        development(settings, database, manager)
+        if programme
+        else property_draft(settings, database, manager)
+    )
     secret = settings.facade_secret.get_secret_value()
     headers = {
         "X-Kay-Facade-Secret": secret,
@@ -343,7 +355,8 @@ async def test_delete_http_requires_confirmation_csrf_and_retry_key(settings, da
         "Origin": settings.frontend_origin,
         "Idempotency-Key": str(uuid4()),
     }
-    path = f"/api/v1/properties/{pid}/delete"
+    root = "developments" if programme else "properties"
+    path = f"/api/v1/{root}/{pid}/delete"
     async with client_for(create_app(settings)) as client:
         response = await client.post(path, json={"confirm": True})
         assert response.status_code in (401, 403)
@@ -371,3 +384,23 @@ async def test_delete_http_requires_confirmation_csrf_and_retry_key(settings, da
             path, json={"confirm": True}, headers={**headers, "Idempotency-Key": str(uuid4())}
         )
         assert response.status_code == 404
+
+
+@pytest.mark.parametrize("programme", [False, True])
+def test_disabled_agent_cannot_replay_deletion_or_delete_another_project(
+    settings, database, programme
+):
+    _, manager = actor(settings, database, "manager")
+    uid, token = actor(settings, database)
+    create = development if programme else property_draft
+    removed = create(settings, database, manager)
+    retained = create(settings, database, manager)
+    key = uuid4()
+    remove(settings, database, token, removed, programme=programme, key=key)
+    with database.session() as session, session.begin():
+        session.execute(update(User).where(User.id == uid).values(state="disabled"))
+    for target, retry in ((removed, key), (retained, uuid4())):
+        with pytest.raises(IdentityError, match="UNAUTHENTICATED"):
+            remove(settings, database, token, target, programme=programme, key=retry)
+    with database.session() as session:
+        assert session.get(Development if programme else Property, retained) is not None

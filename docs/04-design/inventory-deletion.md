@@ -1,4 +1,4 @@
-# Permanent inventory deletion — D54
+# Permanent inventory deletion — D54/D55
 
 Khalid requested permanent deletion on 2026-11-19 and explicitly limited the
 change to biens and programmes. This supersedes D44's inventory archive action.
@@ -6,14 +6,18 @@ The existing contact, prospect, deal and visit lifecycle rules remain in effect.
 
 ## Command and interface
 
-Managers and administrators see **Supprimer ce bien** or **Supprimer ce programme**
+Under D55 (2026-11-21), active agents, managers and administrators see
+**Supprimer ce bien** or **Supprimer ce programme**
 in the record's Actions menu. One accessible destructive confirmation explains
 the scope. It requires no reason, version comparison or stock-review workflow.
 The API uses `POST /api/v1/properties/{id}/delete` and
 `POST /api/v1/developments/{id}/delete`, with strict JSON `{ "confirm": true }`.
 The existing facade authority, origin, session, CSRF and UUID `Idempotency-Key`
-checks apply. Agents cannot delete inventory. The command rechecks current
+checks apply. The command rechecks current
 authority before receipt replay and serializes under the existing agency lock.
+The grant covers shared inventory regardless of its creator. It does not grant
+agents direct owner, offering, availability, external-outcome or legacy
+archive/restore commands, or access to private contacts. D55 needs no migration.
 
 A lost acknowledgement keeps the confirmation open. Retry sends the same command
 key and body; its saved receipt resolves the deletion even though the live record

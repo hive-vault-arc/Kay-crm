@@ -1,6 +1,7 @@
 # HTTP contracts for `/api/v1`
 
-D54 replaces inventory removal UI with the M/A-only permanent
+D54 replaces inventory removal UI with permanent deletion, available to active
+agents, managers and administrators under D55:
 [`POST /properties/{id}/delete` and `POST /developments/{id}/delete`](inventory-deletion.md).
 The strict body is `{ "confirm": true }`; normal facade, CSRF and idempotency
 checks apply. Force deletion reads current stock rather than a client version.

@@ -6,10 +6,10 @@ import { loadServer } from "./load-server.mjs";
 import { inventory, development, inventoryHostFixture, find, text, runtime, ExternalApiError as ApiError, tick } from "./external-stock-fixtures.mjs";
 import { stockContracts } from "./deal-action-fixtures.mjs";
 
-function fixture({ root = "properties", hydrated = true, command } = {}) {
+function fixture({ root = "properties", role = "manager", hydrated = true, command } = {}) {
   const h = componentHarness(), id = randomUUID(), actorId = randomUUID(), calls = [], publications = [], navigations = [], receipts = new Map();
-  const host = { value: { actorId, role: "manager" } }, busy = { value: value => publications.push(value) };
-  let identity = { user: { id: actorId, role: "manager" }, must_change_password: false };
+  const host = { value: { actorId, role } }, busy = { value: value => publications.push(value) };
+  let identity = { user: { id: actorId, role }, must_change_password: false };
   const loaded = loadServer("src/features/discovery/lifecycle-panel.tsx", {
     modules: {
       react: { ...h.react, useContext: context => context.value }, "react/jsx-runtime": runtime,
@@ -33,17 +33,17 @@ function fixture({ root = "properties", hydrated = true, command } = {}) {
   const render = () => h.render(() => ({ type: loaded.DeleteInventoryButton, props }));
   function button(label) { const node = find(render(), "Button").find(node => text(node).replace(/\s+/g, " ").trim() === label); assert.ok(node, label); return node; }
   render();
-  return { ...h, id, calls, navigations, publications, render, button, receipts, identity: value => { identity = value; },
+  return { ...h, id, actorId, calls, navigations, publications, render, button, receipts, identity: value => { identity = value; },
     open() { find(render(), "AlertDialog")[0].props.onOpenChange(true); render(); },
     async save() { button("Supprimer définitivement").props.onClick(); await tick(); },
     async retry() { button("Réessayer la suppression").props.onClick(); await tick(); },
   };
 }
 
-for (const root of ["properties", "developments"]) {
-  test(`${root}: lost deletion acknowledgement replays exactly once and keeps its confirmation open`, async () => {
+for (const root of ["properties", "developments"]) for (const role of ["agent", "manager", "administrator"]) {
+  test(`${root}/${role}: lost deletion acknowledgement replays exactly once and keeps its confirmation open`, async () => {
     let lost = true;
-    const s = fixture({ root, command: ({ commit }) => { const result = commit(); if (lost) { lost = false; throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } return result; } });
+    const s = fixture({ root, role, command: ({ commit }) => { const result = commit(); if (lost) { lost = false; throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); } return result; } });
     s.open(); await s.save();
     assert.equal(s.receipts.size, 1); assert.equal(s.navigations.length, 0);
     assert.equal(s.button("Annuler").props.disabled, true);
@@ -58,9 +58,9 @@ for (const root of ["properties", "developments"]) {
   });
 }
 
-test("Deletion refuses changed identities and agents before sending a command", async () => {
-  for (const role of ["agent", "manager"]) {
-    const s = fixture(); s.identity({ user: { id: randomUUID(), role }, must_change_password: false }); s.open(); await s.save();
+test("Deletion refuses changed accounts, roles and password authority before dispatch", async () => {
+  for (const change of [value => ({ ...value, user: { ...value.user, id: randomUUID() } }), value => ({ ...value, user: { ...value.user, role: "manager" } }), value => ({ ...value, must_change_password: true })]) {
+    const s = fixture({ role: "agent" }); s.identity(change({ user: { id: s.actorId, role: "agent" }, must_change_password: false })); s.open(); await s.save();
     assert.equal(s.calls.length, 0); assert.equal(s.button("Supprimer définitivement").props.disabled, true); assert.equal(s.navigations.length, 0);
   }
 });
@@ -73,11 +73,11 @@ test("Deletion blocks duplicate clicks, aborts on unmount and never navigates af
   assert.equal(s.navigations.length, 0); assert.equal(s.lateUpdates(), 0); assert.equal(s.publications.at(-1), false);
 });
 
-test("Inventory hosts expose permanent deletion only to managers and administrators", () => {
+test("Inventory hosts expose permanent deletion to agents, managers and administrators", () => {
   for (const root of ["properties", "developments"]) {
     const s = inventoryHostFixture(root); const control = find(s.render(), "DeleteInventoryButton")[0];
     assert.equal(control.props.id, s.record.id); assert.equal(control.props.kind, root); assert.ok(control.props.returnHref.startsWith("/projects"));
-    s.props.role = "agent"; assert.equal(find(s.render(), "DeleteInventoryButton").length, 0);
+    for (const role of ["agent", "manager", "administrator"]) { s.props.role = role; assert.equal(find(s.render(), "DeleteInventoryButton").length, 1); }
   }
 });
 
