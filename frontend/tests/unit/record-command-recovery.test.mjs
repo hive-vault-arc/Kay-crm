@@ -84,9 +84,13 @@ test("Original uncertain recovery survives unavailable source but not a changed 
   }
   let lost = true; const s = fixture("structure", { dispatch: ({ commit }) => { const result = commit(); if (lost) throw new ApiError("DEPENDENCY_UNAVAILABLE", 503); return result; } }); await s.save(); s.host.available = false; lost = false; await s.render().retry(); assert.equal(s.calls.length, 2); assert.equal(s.completed.length, 1);
 });
-test("Agent structure grants remain separate from manager-only owners and campaigns", async () => {
-  const allowed = fixture("structure", { role: "agent" }); await allowed.save(); assert.equal(allowed.calls.length, 1); assert.equal(allowed.completed.length, 1);
-  for (const kind of ["owners", "offering"]) { const denied = fixture(kind, { role: "agent" }); await denied.save(); assert.equal(denied.calls.length, 0); assert.equal(denied.denials.length, 1); }
+test("Agents may edit inventory structure and offers, while owners and availability require a manager", async () => {
+  for (const [kind, options] of [["structure", {}], ["offering", {}], ["offering", { edit: true }]]) {
+    const allowed = fixture(kind, { ...options, role: "agent" }); await allowed.save(); assert.equal(allowed.calls.length, 1); assert.equal(allowed.completed.length, 1);
+  }
+  for (const [kind, options] of [["owners", {}], ["offering", { availability: true }]]) {
+    const denied = fixture(kind, { ...options, role: "agent" }); await denied.save(); assert.equal(denied.calls.length, 0); assert.equal(denied.denials.length, 1);
+  }
 });
 test("Synchronous double dispatch, disposed readers/writes and an unmounting completion cannot mutate late state", async () => {
   let release; const pending = new Promise(resolve => { release = resolve; }), s = fixture("owners", { dispatch: async ({ commit }) => { await pending; return commit(); } }); const first = s.save(); await s.save(); await tick(); assert.equal(s.calls.length, 1); s.dispose(); assert.equal(s.calls[0][6].aborted, true); release(); await first; assert.equal(s.lateUpdates(), 0); assert.equal(s.completed.length, 0); assert.equal(s.publications.at(-1), false);
@@ -102,7 +106,7 @@ test("Actual record saved callbacks install the verified parent before a drawer 
 });
 test("Actual campaign drawer callback forwards the verified record before closing", () => {
   const source = recordFixture(), events = [], campaign = loadServer("src/features/inventory/campaign.tsx", { modules: { "react/jsx-runtime": runtime, "@/components/shared/record-drawer": { RecordDrawer: "Drawer" }, "@/components/shared/record-workspace": { RecordSection: "Section" }, "@/lib/format": { formatInstant: value => value }, "./contracts": { kindLabels: { sale: "Vente" } }, "./offering-editor": { OfferingEditor: "Editor", Availability: "Availability" }, "./states": { InventoryStatus: "Status", Price: "Price" }, "./external-outcome": { ExternalOutcome: "External" } } });
-  const view = campaign.CampaignActions({ property: source, offering: source.offerings[0], writable: true, busy: false, saved: record => events.push(record) }), current = { ...source, version: 8 };
+  const view = campaign.CampaignActions({ property: source, offering: source.offerings[0], writable: true, managedWritable: true, busy: false, saved: record => events.push(record) }), current = { ...source, version: 8 };
   for (const drawer of find(view, "Drawer")) { const form = drawer.props.children(() => {}, () => events.push("closed")); form.props.saved(current); }
   assert.equal(events[0], current); assert.equal(events[1], "closed"); assert.equal(events[2], current); assert.equal(events[3], "closed");
 });

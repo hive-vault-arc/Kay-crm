@@ -59,30 +59,37 @@ def test_initial_price_is_atomic_and_visible(settings, database, role, kind, per
     }
     assert actions == {"properties.created": 1, "offerings.created": 2}
     if role == "agent":
-        with pytest.raises(IdentityError, match="FORBIDDEN"):
+        editor_id, editor_token = actor(settings, database)
+        with pytest.raises(IdentityError, match="CURRENT_OFFERING_EXISTS"):
             run(
                 settings,
                 database,
-                token,
+                editor_token,
                 "create-offering",
-                NewOffering(property_id=pid, expected_property_version=2, kind="sale"),
-            )
-        with pytest.raises(IdentityError, match="FORBIDDEN"):
-            run(
-                settings,
-                database,
-                token,
-                "edit-offering",
-                EditOffering(
-                    expected_property_version=2,
-                    expected_version=1,
-                    state="draft",
-                    price_mad=price,
-                    price_period=period,
-                    reason="Tentative synthétique",
+                NewOffering(
+                    property_id=pid, expected_property_version=2, kind=kind, price_period=period
                 ),
-                target=UUID(created["offering_id"]),
             )
+        updated = run(
+            settings,
+            database,
+            editor_token,
+            "edit-offering",
+            EditOffering(
+                expected_property_version=2,
+                expected_version=1,
+                state="draft",
+                price_mad="12345.67",
+                price_period=period,
+                reason="Tarif synthétique révisé",
+            ),
+            target=UUID(created["offering_id"]),
+        )
+        assert updated["version"] == 3
+        assert read_detail(database, token, pid)["offerings"][0]["price_mad"] == "12345.67"
+        event = read_history(database, token, pid, InventoryQuery())["items"][0]
+        assert event["action"] == "offerings.updated"
+        assert event["actor"]["id"] == str(editor_id)
 
 
 @pytest.mark.parametrize(

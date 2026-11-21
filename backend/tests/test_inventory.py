@@ -322,23 +322,11 @@ def test_versions_retries_denial_and_rollback(settings, database):
     for operation, command_body, target in [
         ("owners", Owners(expected_version=1, owners=[]), pid),
         (
-            "create-offering",
-            NewOffering(property_id=pid, expected_property_version=1, kind="sale"),
-            None,
-        ),
-        (
             "confirm-availability",
             ConfirmAvailability(
                 expected_version=1, offering_id=uuid4(), expected_offering_version=1, reason="Test"
             ),
             pid,
-        ),
-        (
-            "edit-offering",
-            EditOffering(
-                expected_property_version=1, expected_version=1, state="draft", reason="Test"
-            ),
-            uuid4(),
         ),
     ]:
         with pytest.raises(IdentityError, match="FORBIDDEN"):

@@ -73,7 +73,7 @@ export function DevelopmentRecord({ id, edit = false, role, actorId, initialTab 
           {development.phase_supported ? <RecordFact icon={DevelopmentIcon} label="État du programme"><DevelopmentPhaseBadge phase={development.phase} /></RecordFact> : <RecordFact icon={PropertyIcon} label="Catégorie">{development.category === "mixed" ? "Mixte" : categoryLabels[development.category]}</RecordFact>}
           <RecordFact icon={PropertyIcon} label="Unités physiques"><Button action="forward" variant="quiet" onClick={() => setTab("units")}>{development.unit_count} unités · {development.available_unit_count} disponibles</Button></RecordFact>
         </RecordFacts></RecordSection>
-        <InventoryOfferSection target={target} kinds={["sale", "rental"]} writable={managedWritable} busy={busy} saved={saved} programme />
+        <InventoryOfferSection target={target} kinds={["sale", "rental"]} writable={writable} managedWritable={managedWritable} busy={busy} saved={saved} programme />
         <RecordSection title="Présentation" action={writable ? editAction("Modifier la présentation") : undefined}><p className="whitespace-pre-wrap wrap-anywhere text-sm leading-relaxed">{development.briefing_text ?? "Aucune présentation renseignée."}</p><div className="grid gap-2"><h3 className="text-xs text-muted-foreground">Promoteur</h3><InventoryParty link={development.developer} /></div></RecordSection>
       </> },
       { id: "units", label: "Unités", count: development.unit_count, content: <UnitDirectory id={id} developmentLabel={development.name} writable={writable} blockId={blockId} floorId={floorId} unitTypeId={unitTypeId} structureAction={structure} /> },

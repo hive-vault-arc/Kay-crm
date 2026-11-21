@@ -29,7 +29,8 @@ export function useInventoryRecordCommand(scope: RecordCommandScope) {
   const authorize: NonNullable<CommandLifecycle["beforeDispatch"]> = identity => {
     if (!active() || hostRef.current?.id !== scope.id || hostRef.current.root !== scope.root) throw new ApiError("FORBIDDEN", 403);
     if (identity.must_change_password) throw new ApiError("PASSWORD_CHANGE_REQUIRED", 403);
-    if ((scope.kind === "owners" || scope.kind === "period" || scope.kind === "offering" || scope.kind === "lifecycle") && identity.user.role === "agent" || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
+    const managerOnly = scope.kind === "owners" || scope.kind === "period" || scope.kind === "lifecycle" || (scope.kind === "offering" && scope.availability);
+    if (managerOnly && identity.user.role === "agent" || binding.current.actor && binding.current.actor !== identity.user.id || binding.current.role && binding.current.role !== identity.user.role) throw new ApiError("FORBIDDEN", 403);
     binding.current = { actor: identity.user.id, role: identity.user.role };
   };
   async function prove(signal: AbortSignal) { const identity = await apiGet("/api/v1/auth/me", meSchema, signal); if (!current() || signal.aborted) return false; authorize(identity); return true; }

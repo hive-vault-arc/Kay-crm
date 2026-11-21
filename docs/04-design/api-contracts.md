@@ -419,14 +419,13 @@ Current D43 creation extension (2026-10-20): `POST /properties` accepts
 price_period:null|month|year,currency:MAD}`. The staff creation wizard requires it;
 sale has no period, rent requires month/year. The property and this one draft
 offering commit under the existing idempotency key and true-actor history in one
-transaction. An active agent may use this narrow create path but cannot invoke
-`POST/PATCH /offerings`, change owners or confirm availability. The wizard
-requires this field, while existing API callers may still create incomplete
-drafts. Existing records are not backfilled.
+transaction. The wizard requires this field. Existing records and API callers
+may still have incomplete drafts.
 
 All inventory routes reuse the current staff session/facade proof. All active
-staff read shared facts. Under D34, all active staff may POST/PATCH property
-facts; owner/offering/availability/lifecycle commands remain M/A-only. Every
+staff read shared facts. Under D34 and D56, all active staff may create and edit
+property facts and ordinary offerings regardless of creator. Confirming
+availability, changing legal owners and recording external outcomes remain M/A-only. Every
 mutation requires Origin/CSRF and UUID `Idempotency-Key`. Agency → current actor → property locks
 serialize mutations, rechecking authority after waits. Receipt replay requires
 current write authority; the 24-hour HMAC-bound receipt returns only
@@ -856,7 +855,8 @@ public URL, export or external delivery is added. See [SP-04 evidence](../03-pla
 | C04 | `POST /developments/{id}/archive`, `POST /developments/{id}/restore`, `POST /developments/{id}/confirm-availability`, `POST /developments/{id}/external-outcome`, `PUT /developments/{id}/owners` | M/A; whole-development actions check child commitments and version. Developer/owner contact links never expand private contact scope. |
 | C04 | `GET/POST /developments/{id}/blocks`, `GET/POST /blocks/{id}/floors`, `GET/POST /developments/{id}/unit-types`, `PATCH /blocks/{id}`, `PATCH /floors/{id}`, `PATCH /unit-types/{id}` | R under D34; prevent moving a referenced level/type to another development and validate category/floor consistency. |
 | C04 | `POST /properties`, `PATCH /properties/{id}` | R under D34; standalone or physical unit facts only, versioned and subject to unchanged hierarchy/committed-stock guards. |
-| C04 | `POST /properties/{id}/archive`, `POST /properties/{id}/restore`, `POST /properties/{id}/confirm-availability`, `POST /properties/{id}/external-outcome`, `PUT /properties/{id}/owners`, `POST /offerings`, `PATCH /offerings/{id}` | M/A; offering target is exactly one `property_id` or `development_id`; stock confirmation requires version and reason. Local H-01/H-02 require positive known price/legal owner; later real-data validation remains separate. |
+| C04 | `POST /offerings`, `PATCH /offerings/{id}` | All active staff (D56). Target is exactly one `property_id` or `development_id`. Existing version and stock checks apply. |
+| C04 | `POST /properties/{id}/archive`, `POST /properties/{id}/restore`, `POST /properties/{id}/confirm-availability`, `POST /properties/{id}/external-outcome`, `PUT /properties/{id}/owners` | M/A. Stock confirmation requires version, reason, positive known price and legal owner. |
 | C05 | `GET /contacts/{id}/timeline`, `POST /contacts/{id}/notes`, `GET /contacts/{id}/assignment-events` | M/A or S; current scope filtering, immutable true actor. |
 | C06 | `GET/POST /tasks`, `GET/PATCH /tasks/{id}`, `POST /tasks/{id}/complete`, `POST /tasks/{id}/cancel`, `GET /notifications` | M/A or S according to contact and task; inaccessible private details omitted from notifications. |
 | C07 | `GET/POST /visits`, `GET/PATCH /visits/{id}`, `POST /visits/{id}/confirm`, `POST /visits/{id}/reschedule`, `POST /visits/{id}/complete`, `POST /visits/{id}/cancel`, `GET /calendar/free-busy`, `GET /calendar/availability` | M/A or S; three visit types. Ordinary conflict confirmation requires a reason; colleague free/busy excludes private metadata. Off-site working-time and company-car capacity are hard server checks. |
@@ -944,7 +944,7 @@ Creating a reusable apartment type and a physical unit in a development (C04). T
 {"reference":"ATLAS-B1-F02-07","category":"apartment","development_id":"dddddddd-dddd-4ddd-8ddd-dddddddddddd","floor_id":"ffffffff-ffff-4fff-8fff-ffffffffffff","unit_type_id":"eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee","area_sqm":"80.00"}
 ```
 
-The first body targets `POST /developments/{id}/unit-types` (the `development_id` must match the path); the second targets `POST /properties`. A standalone land parcel instead has `category:"land"` and null development/floor/type fields. The API rejects an apartment unit whose floor or type belongs to a different development with `INVALID_HIERARCHY`. All active staff can create/edit these records under D34; offering/availability commands remain M/A-only.
+The first body targets `POST /developments/{id}/unit-types` (the `development_id` must match the path); the second targets `POST /properties`. A standalone land parcel instead has `category:"land"` and null development/floor/type fields. The API rejects an apartment unit whose floor or type belongs to a different development with `INVALID_HIERARCHY`. All active staff can create and edit these records and ordinary offerings under D34 and D56. Availability confirmation remains M/A-only.
 
 Creating a whole-development sale offering uses `POST /offerings` and its own price; a unit sale/rental offering instead uses `property_id` and `development_id:null`:
 

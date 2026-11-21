@@ -69,6 +69,8 @@ AGENT_PROJECT_OPERATIONS = frozenset(
         "development-edit",
         "create-property",
         "edit-property",
+        "create-offering",
+        "edit-offering",
         "create-block",
         "edit-block",
         "create-floor",
