@@ -198,7 +198,7 @@ test("projects campaigns, house category, numbered pages and real outage/retry",
     await expect(page.getByRole("heading", { name: "Aucun bien correspondant", exact: true })).toBeVisible();
     await clearActorContext(page); await signIn(page, agent); await page.goto("/projects"); await expect(page.locator("article")).toHaveCount(12);
     await propertyFilters(page).getByLabel("Type d’offre", { exact: true }).selectOption("rental"); await expect(page.locator("article")).toHaveCount(1);
-    const denial = await staffCommand(page, "offerings", { property_id: house, expected_property_version: 1, kind: "sale", price_mad: "1000", currency: "MAD", price_period: null, conditions: "Tentative synthétique interdite" }); expect(denial.status()).toBe(403);
+    const duplicate = await staffCommand(page, "offerings", { property_id: house, expected_property_version: 3, kind: "sale", price_mad: "1000", currency: "MAD", price_period: null, conditions: "Tentative de doublon synthétique" }); expect(duplicate.status()).toBe(409);
     await page.getByRole("tab", { name: "Programmes immobiliers", exact: true }).click(); await expect(page.getByText("0 programme", { exact: true })).toBeVisible(); await expect(page.getByRole("link", { name: "Créer un programme", exact: true })).toBeVisible();
   } finally { release(); await apiProcess("start"); await clearActorContext(page); await removeActor(agent); await removeActor(manager); }
 });

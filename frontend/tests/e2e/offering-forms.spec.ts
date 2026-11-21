@@ -43,7 +43,7 @@ for (const [width, level] of [[1440, "development"], [390, "property"]] as const
       await expect(page.getByText("Conditions de location", { exact: true })).toBeVisible();
       await expect(page.getByText("Animaux acceptés sur accord.", { exact: true })).toBeVisible();
     }
-    await clearActorContext(page); await signIn(page, agent); await page.goto(route); await expect(page.getByRole("button", { name: "Modifier la campagne vente", exact: true })).toHaveCount(0); await expect(page.getByRole("button", { name: "Confirmer la disponibilité vente", exact: true })).toHaveCount(0);
+    await clearActorContext(page); await signIn(page, agent); await page.goto(route); await expect(page.getByRole("button", { name: "Modifier la campagne vente", exact: true })).toBeEnabled(); await expect(page.getByRole("button", { name: "Confirmer la disponibilité vente", exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   } finally { await clearActorContext(page); await removeActor(agent); await removeActor(manager); }
 });

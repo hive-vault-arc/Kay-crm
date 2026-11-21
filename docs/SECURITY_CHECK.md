@@ -1,5 +1,15 @@
 # KAY security check for changes
 
+## D56 shared inventory offering edits
+
+The existing offering POST/PATCH commands authorize active staff after
+locking and rechecking the current identity. They retain strict bodies, CSRF,
+idempotency, parent and offering versions, stock guards and true-actor history.
+The editor uses the same command and receipt flow at both inventory levels.
+Availability confirmation, legal owners and external outcomes keep their
+existing grants. Editing a shared offer grants no access to owner contacts,
+deals, reservations or private documents.
+
 ## D54 permanent inventory deletion
 
 Under D55, deletion admits active agents as well as M/A, protected by the existing facade, origin, CSRF and session

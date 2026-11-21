@@ -282,8 +282,9 @@ async def test_inventory_http_authority_and_strict_routes(settings, database):
                 json={
                     "expected_property_version": 4,
                     "expected_version": 1,
+                    "price_mad": "16002",
                     "state": "draft",
                     "reason": "Test",
                 },
             )
-        ).status_code == 403
+        ).status_code == 200

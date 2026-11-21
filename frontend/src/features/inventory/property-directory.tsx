@@ -63,6 +63,6 @@ function StandaloneDirectory({ role, view, rail }: { role: StaffRole; rail: Proj
       {query.error ? <RecordError error={query.error} retry={query.refresh} /> :
         data && !data.items.length ? <DirectoryEmpty title={data.total ? "Aucun bien sur cette page" : activeCount ? "Aucun bien correspondant" : "Aucun bien indépendant"} action={data.total ? <Button action="back" variant="outline" onClick={() => setPage(1)}>Première page</Button> : activeCount ? <Button action="reset" variant="outline" onClick={reset}>Réinitialiser les filtres</Button> : <Button action="create" asChild><Link href="/projects/properties/new">Créer le premier bien</Link></Button>}>{data.total ? "Revenez à la première page pour retrouver les biens." : activeCount ? "Essayez un autre nom, une référence ou un filtre." : "Les biens ajoutés à l’inventaire apparaîtront ici."}</DirectoryEmpty> : null}
     </ProjectResultsView>
-    {role === "agent" ? <p className="sr-only">Vous pouvez créer et modifier les fiches. Les offres, disponibilités et archives restent gérées par les responsables.</p> : null}
+    {role === "agent" ? <p className="sr-only">Vous pouvez créer et modifier les fiches et leurs offres. La confirmation de disponibilité reste réservée aux responsables.</p> : null}
   </ProjectFilters>;
 }

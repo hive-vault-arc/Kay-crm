@@ -139,8 +139,6 @@ def test_agent_preserves_hidden_developer_and_cannot_link_or_remove_private_cont
     [
         "owners",
         "development-owners",
-        "create-offering",
-        "edit-offering",
         "confirm-availability",
         "development-confirm",
         "property-archive",
@@ -244,7 +242,7 @@ async def test_project_http_create_edit_preserves_auth_csrf_validation(settings,
         )
         assert patched.status_code == 200 and patched.json()["version"] == 2
         if role == "agent":
-            denied = await client.post(
+            offer = await client.post(
                 "/api/v1/offerings",
                 headers=headers,
                 json=NewOffering(
@@ -253,7 +251,7 @@ async def test_project_http_create_edit_preserves_auth_csrf_validation(settings,
                     kind="sale",
                 ).model_dump(mode="json"),
             )
-            assert denied.status_code == 403
+            assert offer.status_code == 200 and offer.json()["version"] == 3
 
 
 def test_waiting_agent_edit_and_receipt_replay_recheck_revocation(settings, database):

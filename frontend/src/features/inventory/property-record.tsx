@@ -65,7 +65,7 @@ export function PropertyRecord({ id, role, actorId, edit = false, initialTab }: 
         {!["land", "farm", "commercial", "office", "room"].includes(property.category) ? <RecordFact icon={PropertyIcon} label="Pièces">{property.rooms ?? "Non renseigné"}</RecordFact> : null}
         {property.received_on ? <RecordFact icon={CalendarIcon} label={receivedDateLabel}>{formatBusinessDate(property.received_on)}</RecordFact> : null}
       </RecordFacts></RecordSection>
-      <InventoryOfferSection target={property} kinds={[...kinds]} writable={managedWritable} busy={busy} saved={saved} />
+      <InventoryOfferSection target={property} kinds={[...kinds]} writable={!archived} managedWritable={managedWritable} busy={busy} saved={saved} />
       {property.owner_asking_price_mad || property.monthly_syndic_fee_mad ? <RecordSection title="Prix propriétaire et charges"><RecordFacts>
         {property.owner_asking_price_mad ? <RecordFact icon={FinanceIcon} label={propertyCostLabels.owner_asking_price_mad}>{formatMAD(property.owner_asking_price_mad)}</RecordFact> : null}
         {property.monthly_syndic_fee_mad ? <RecordFact icon={FinanceIcon} label={propertyCostLabels.monthly_syndic_fee_mad}>{formatMAD(property.monthly_syndic_fee_mad)} / mois</RecordFact> : null}

@@ -122,7 +122,8 @@ test("SP07 AT-06/08/27/31: manager standalone inventory, separate prices and unr
     expect(JSON.stringify(facts).includes(contact.id)).toBe(false);
     expect((await agent.request.get(`/api/v1/contacts/${contact.id}`)).status()).toBe(404);
     await inventorySection(agent, "Offres").scrollIntoViewIfNeeded();
-    await expect(agent.getByRole("button", { name: /Modifier la campagne/ })).toHaveCount(0);
+    await expect(agent.getByRole("button", { name: /Modifier la campagne/ })).toHaveCount(2);
+    await expect(agent.getByRole("button", { name: /Confirmer la disponibilité/ })).toHaveCount(0);
     expect((await staffCommand(agent, `properties/${id}/owners`, { owners: [], expected_version: facts.version }, "PUT")).status()).toBe(403);
     await agent.goto(`/projects/properties/${id}/edit`);
     await expect(agent.getByRole("form", { name: "Modifier le bien", exact: true })).toBeVisible();

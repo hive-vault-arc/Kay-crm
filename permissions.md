@@ -35,7 +35,7 @@ Confirmed decisions: managers have full business access and administrators inher
 Technical proposals: capability checks and typed-parent authorization on every operation.  
 References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs/04-design/api-contracts.md), [security](docs/04-design/security-and-privacy.md), and [tests](docs/05-quality/acceptance-tests.md).
 
-`S` means a contact for whom the agent is the current primary agent or an active collaborator. `All` means every active KAY team member. Under D34 (Khalid, 2026-10-16), active agents may create/edit shared project facts, hierarchy, reusable types and physical properties/units. D43 permits one positive-priced draft sale/rental offering only inside the atomic creation of that property; other offering commands remain manager-only. This grants no private-contact access. Administrators inherit all managers' business rights.
+`S` means a contact for whom the agent is the current primary agent or an active collaborator. `All` means every active KAY team member. D34 permits agents to create and edit shared inventory facts, hierarchy, reusable types and properties/units. D56 also permits ordinary offering creation and editing by every active agent. Private-contact scope still applies. Administrators inherit all managers' business rights.
 
 | Action | Administrator | Manager | Agent |
 |---|---|---|---|
@@ -48,7 +48,8 @@ References: [BR-04 to BR-06](docs/02-requirements/business-rules.md), [API](docs
 | Merge duplicates within the same writable scope after confirmation | Yes | Yes | Yes, within S only |
 | Read developments, blocks, floors, unit types, properties/units, their offerings, and shared inventory attachments | All | All | All |
 | Create/edit development facts and shared briefing, hierarchy, unit types, properties/units | Yes | Yes | Yes; developer selection requires current contact scope |
-| Change legal owners, inventory files, offerings, availability, external outcomes or archive/restore inventory | Yes | Yes | No, except one priced draft offering during property creation (D43) |
+| Create or edit ordinary inventory offerings, including price, period and conditions (D56) | All | All | All, subject to stock and version checks |
+| Change legal owners, administer inventory files, confirm availability, record external outcomes or archive/restore inventory | Yes | Yes | No, except for specifically granted shared photo operations |
 | Permanently delete a property or a programme and its units (D54/D55) | Yes | Yes | Yes, after the same destructive confirmation |
 | Read an owner/developer's private contact details/documents | All | All | Only if S for that contact |
 | Use the owner directory and read current/former property links | All contact owners | All contact owners | Only S contacts; property visibility alone grants no owner identity or telephone |
